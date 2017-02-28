@@ -12,7 +12,7 @@ Install Git and screen:
 
 Clone the Little Backup Box Git repository on your Raspberry Pi:
 
-    git clone https://gitlab.com/dmpop/little-backup-box.git
+    git clone https://github.com/dmpop/little-backup-box.git
 
 Switch to the *little-backup-box* directory and make the *install-little-backup-box.sh* script executable:
 
