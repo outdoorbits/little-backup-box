@@ -6,24 +6,11 @@ Bash shell scripts that transform a Raspberry Pi (or any single-board computer r
 
 ## Installation
 
-Install Git and screen:
+Run the following command on your Raspberry Pi:
 
-    sudo apt install git-core screen
+    curl -sSL https://goo.gl/btmpKd | bash
 
-Clone the Little Backup Box Git repository on your Raspberry Pi:
-
-    git clone https://github.com/dmpop/little-backup-box.git
-
-Switch to the *little-backup-box* directory and make the *install-little-backup-box.sh* script executable:
-
-```
-cd little-backup-box
-chmod +x install-little-backup-box.sh
-```
-
-Run the installer script:
-
-    ./install-little-backup-box.sh
+When prompted, reboot the Raspberry Pi.
 
 ## Usage
 
@@ -35,7 +22,7 @@ Run the installer script:
 
 # Problems?
 
-Please report bugs and issues in the [Issues](https://gitlab.com/dmpop/little-backup-box/issues) section.
+Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
 
 ## Linux Photography
 
