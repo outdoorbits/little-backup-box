@@ -20,16 +20,9 @@ When prompted, reboot the Raspberry Pi.
 
 **Note:** To differentiate between different storage cards, the backup script assigns a random 8-digit identifying number to each card (this number is stored in the *CARD_ID* file in the root of the card). The contents of the card is saved on the storage device in a folder with the identifying number as its name.
 
-# Problems?
+## Problems?
 
 Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
-
-## Linux Photography
-
-Little Backup Box is a part of a streamlined and automated Linux-based photographic workflow described in the [Linux Photography](https://gumroad.com/l/linux-photography) book. The book provides step-by-step instructions on building a Raspberry Pi-based photo backup device running the Little Backup Box script. Get your copy at [Gumroad](https://gumroad.com/l/linux-photography).
-
-<img src="https://scribblesandsnaps.files.wordpress.com/2016/07/linux-photography-6.jpg" width="200"/>
-
 
 ## Author
 
@@ -38,3 +31,9 @@ Dmitri Popov [dmpop@linux.com](mailto:dmpop@linux.com)
 ## License
 
 The [GNU General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.en.html)
+
+## Linux Photography
+
+Little Backup Box is a part of a streamlined and automated Linux-based photographic workflow described in the [Linux Photography](https://gumroad.com/l/linux-photography) book. The book provides step-by-step instructions on building a Raspberry Pi-based photo backup device running the Little Backup Box script. Get your copy at [Gumroad](https://gumroad.com/l/linux-photography).
+
+<img src="https://scribblesandsnaps.files.wordpress.com/2016/07/linux-photography-6.jpg" width="200"/>
