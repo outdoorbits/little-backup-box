@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sudo apt update && sudo apt dist-upgrade -y && sudo apt install rsync exfat-fuse exfat-utils ntfs-3g minidlna gphoto2 -y
+sudo apt update && sudo apt dist-upgrade -y && sudo apt install git-core screen rsync exfat-fuse exfat-utils ntfs-3g minidlna gphoto2 -y
 
 sudo mkdir /media/card
 sudo mkdir /media/storage
