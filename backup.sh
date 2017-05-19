@@ -9,7 +9,6 @@ STORAGE_DEV="sda1"
 STORAGE_MOUNT_POINT="/media/storage"
 CARD_DEV="sdb1"
 CARD_MOUNT_POINT="/media/card"
-LOG_FILE="$HOME/little-backup-box.log"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
@@ -23,7 +22,7 @@ while [ -z ${STORAGE} ]
 done
 
 # When the USB storage device is detected, mount it
-mount /dev/$STORAGE_DEV $STORAGE_MOUNT_POINT 2> $LOG_FILE
+mount /dev/$STORAGE_DEV $STORAGE_MOUNT_POINT
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
@@ -39,7 +38,7 @@ done
 
 # If the card reader is detected, mount it and obtain its UUID
 if [ ! -z $CARD_READER ]; then
-  mount /dev/$CARD_DEV $CARD_MOUNT_POINT 2> $LOG_FILE
+  mount /dev/$CARD_DEV $CARD_MOUNT_POINT
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
   # Create the CARD_ID file containing a random 8-digit identifier if doesn't exist
@@ -51,7 +50,7 @@ if [ ! -z $CARD_READER ]; then
   read -r ID < $CARD_MOUNT_POINT/CARD_ID
   BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
 # Perform backup using rsync
-rsync -avh $CARD_MOUNT_POINT/ $BACKUP_PATH 2> $LOG_FILE
+rsync -avh $CARD_MOUNT_POINT/ $BACKUP_PATH
 # Turn off the ACT LED to indicate that the backup is completed
 sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
 fi
