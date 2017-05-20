@@ -12,7 +12,7 @@ cd
 git clone https://github.com/dmpop/little-backup-box.git
 
 crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/backup.sh > /home/pi/little-backup-box.log"; } | crontab
-crontab -l | { cat; echo "# @reboot sudo /home/pi/little-backup-box/gphoto-backup.sh > /home/pi/gphoto-backup.log"; } | crontab
+crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh > /home/pi/gphoto-backup.log"; } | crontab
 
 cd little-backup-box
 sudo /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak/etc/wpa_supplicant/wpa_supplicant.conf
