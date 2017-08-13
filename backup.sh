@@ -45,6 +45,18 @@ if [ ! -z $CARD_READER ]; then
   if [ ! -f $CARD_MOUNT_POINT/CARD_ID ]; then
     < /dev/urandom tr -cd 0-9 | head -c 8 > $CARD_MOUNT_POINT/CARD_ID
   fi
+
+  # If there is a wpa_supplicant.conf file in the root of the storage device
+  # Rename the original config file,
+  # move wpa_supplicant.conf from the card to /etc/wpa_supplicant/
+  # Reboot to enable networking
+  
+  if [ -f "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" ]; then
+      mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
+      mv "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" /etc/wpa_supplicant/wpa_supplicant.conf
+      reboot
+  fi
+  
   # Read the 8-digit identifier number from the CARD_ID file on the card
   # and use it as a directory name in the backup path
   read -r ID < $CARD_MOUNT_POINT/CARD_ID
