@@ -52,6 +52,7 @@ if [ ! -z $CARD_READER ]; then
   # Reboot to enable networking
   
   if [ -f "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" ]; then
+      sudo sh -c "echo 100 > /sys/class/leds/led0/delay_on"
       mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
       mv "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" /etc/wpa_supplicant/wpa_supplicant.conf
       reboot
