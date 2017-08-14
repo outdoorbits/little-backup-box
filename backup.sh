@@ -28,14 +28,6 @@ mount /dev/$STORAGE_DEV $STORAGE_MOUNT_POINT
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-# Wait for a card reader or a camera
-CARD_READER=$(ls /dev/* | grep $CARD_DEV | cut -d"/" -f3)
-until [ ! -z $CARD_READER ]
-  do
-  sleep 1
-  CARD_READER=$(ls /dev/sd* | grep $CARD_DEV | cut -d"/" -f3)
-done
-
 # If there is a wpa_supplicant.conf file in the root of the storage device
 # Rename the original config file,
 # move wpa_supplicant.conf from the card to /etc/wpa_supplicant/
@@ -46,6 +38,14 @@ if [ -f "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" ]; then
     mv "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" /etc/wpa_supplicant/wpa_supplicant.conf
     reboot
 fi
+
+# Wait for a card reader or a camera
+CARD_READER=$(ls /dev/* | grep $CARD_DEV | cut -d"/" -f3)
+until [ ! -z $CARD_READER ]
+  do
+  sleep 1
+  CARD_READER=$(ls /dev/sd* | grep $CARD_DEV | cut -d"/" -f3)
+done
 
 # If the card reader is detected, mount it and obtain its UUID
 if [ ! -z $CARD_READER ]; then
