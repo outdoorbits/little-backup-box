@@ -61,6 +61,15 @@ if [ ! -z $CARD_READER ]; then
   # and use it as a directory name in the backup path
   read -r ID < $CARD_MOUNT_POINT/CARD_ID
   BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
+  
+# Shutdown if there is not enough free space on storage
+STORAGEFREE=$(df -P /dev/sda1 | awk 'NR==2 {print $4}')
+TRANSFERTAMOUNT=$(($(rsync -an --stats $CARD_MOUNT_POINT/ $BACKUP_PATH | awk '/Total transferred file size:/ {print $5}' | sed 's/,//g') /1024 ))
+if (($STORAGEFREE < $TRANSFERTAMOUNT)); then
+sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
+shutdown -h now
+fi
+  
 # Perform backup using rsync
 rsync -avh $CARD_MOUNT_POINT/ $BACKUP_PATH
 # Turn off the ACT LED to indicate that the backup is completed
