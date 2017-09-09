@@ -66,7 +66,8 @@ if [ ! -z $CARD_READER ]; then
 STORAGEFREE=$(df -P /dev/sda1 | awk 'NR==2 {print $4}')
 TRANSFERTAMOUNT=$(($(rsync -an --stats $CARD_MOUNT_POINT/ $BACKUP_PATH | awk '/Total transferred file size:/ {print $5}' | sed 's/,//g') /1024 ))
 if (($STORAGEFREE < $TRANSFERTAMOUNT)); then
-sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
+sudo sh -c "echo 250 > /sys/class/leds/led0/delay_on"
+sleep 15
 shutdown -h now
 fi
   
