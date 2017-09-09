@@ -56,20 +56,11 @@ if [ ! -z $CARD_READER ]; then
   if [ ! -f $CARD_MOUNT_POINT/CARD_ID ]; then
     < /dev/urandom tr -cd 0-9 | head -c 8 > $CARD_MOUNT_POINT/CARD_ID
   fi
-  
-  # Read the 8-digit identifier number from the CARD_ID file on the card
-  # and use it as a directory name in the backup path
-  read -r ID < $CARD_MOUNT_POINT/CARD_ID
-  BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
-  
-# Shutdown if there is not enough free space on storage
-STORAGEFREE=$(df -P /dev/sda1 | awk 'NR==2 {print $4}')
-TRANSFERTAMOUNT=$(($(rsync -an --stats $CARD_MOUNT_POINT/ $BACKUP_PATH | awk '/Total transferred file size:/ {print $5}' | sed 's/,//g') /1024 ))
-if (($STORAGEFREE < $TRANSFERTAMOUNT)); then
-sudo sh -c "echo 250 > /sys/class/leds/led0/delay_on"
-sleep 15
-shutdown -h now
-fi
+
+# Read the 8-digit identifier number from the CARD_ID file on the card
+# and use it as a directory name in the backup path
+read -r ID < $CARD_MOUNT_POINT/CARD_ID
+BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
   
 # Perform backup using rsync
 rsync -avh $CARD_MOUNT_POINT/ $BACKUP_PATH
