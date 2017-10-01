@@ -4,14 +4,14 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
-# Log the output of the lsblk command for troubleshooting
-sudo lsblk > lsblk.log
-
 # Specify devices and their mount points
 STORAGE_DEV="sda1"
 STORAGE_MOUNT_POINT="/media/storage"
 CARD_DEV="sdb1"
 CARD_MOUNT_POINT="/media/card"
+
+# Log the output of the lsblk command for troubleshooting
+sudo lsblk > "$HOME/lsblk.log"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
