@@ -6,7 +6,9 @@ Bash shell scripts that transform a Raspberry Pi (or any single-board computer r
 
 ## Installation
 
-Run the following command on your Raspberry Pi:
+First of all, make sure that your Raspberry Pi is connected to the internet.
+
+Run the following command on the Raspberry Pi:
 
     curl -sSL https://goo.gl/btmpKd | bash
 
