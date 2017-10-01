@@ -10,9 +10,6 @@ STORAGE_MOUNT_POINT="/media/storage"
 CARD_DEV="sdb1"
 CARD_MOUNT_POINT="/media/card"
 
-# Log the output of the lsblk command for troubleshooting
-sudo lsblk > "$HOME/lsblk.log"
-
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
@@ -59,6 +56,9 @@ if [ ! -z $CARD_READER ]; then
   if [ ! -f $CARD_MOUNT_POINT/CARD_ID ]; then
     < /dev/urandom tr -cd 0-9 | head -c 8 > $CARD_MOUNT_POINT/CARD_ID
   fi
+
+# Log the output of the lsblk command for troubleshooting
+sudo lsblk > "/home/pi/lsblk.log"
 
 # Read the 8-digit identifier number from the CARD_ID file on the card
 # and use it as a directory name in the backup path
