@@ -4,6 +4,9 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
+# Log the output of the lsblk command for troubleshooting
+sudo lsblk > lsblk.log
+
 # Specify devices and their mount points
 STORAGE_DEV="sda1"
 STORAGE_MOUNT_POINT="/media/storage"
