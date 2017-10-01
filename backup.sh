@@ -58,7 +58,7 @@ if [ ! -z $CARD_READER ]; then
   fi
 
 # Log the output of the lsblk command for troubleshooting
-sudo lsblk > "/home/pi/lsblk.log"
+sudo lsblk > lsblk.log
 
 # Read the 8-digit identifier number from the CARD_ID file on the card
 # and use it as a directory name in the backup path

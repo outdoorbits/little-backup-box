@@ -2,7 +2,7 @@
 
 Bash shell scripts that transform a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup and streaming device.
 
-<img src="http://i.imgur.com/xrpfK9h.jpg" alt="" width="375"/>
+<img src="https://i.imgur.com/n1xGPn8.jpg" alt="" width="375"/>
 
 ## Installation
 
