@@ -56,6 +56,9 @@ if [ ! -z $CARD_READER ]; then
   if [ ! -f $CARD_MOUNT_POINT/*.id ]; then
     ID=$RANDOM 
     touch $ID."id"
+  else
+    ID_FILE=$(ls *.id)
+    ID="${ID_FILE%.*}"
   fi
 
 # Set the backup path
