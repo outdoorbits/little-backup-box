@@ -53,8 +53,8 @@ if [ ! -z $CARD_READER ]; then
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
   # Create  a .id random identifier file if doesn't exist
-  if [ ! -f $CARD_MOUNT_POINT/*.id ]; then
-    cd $CARD_MOUNT_POINT/
+  cd $CARD_MOUNT_POINT
+  if [ ! -f *.id ]; then
     touch $(date -d "today" +"%Y%m%d%H%M").id
   fi
   ID_FILE=$(ls *.id)
