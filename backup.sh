@@ -54,12 +54,11 @@ if [ ! -z $CARD_READER ]; then
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
   # Create  a .id random identifier file if doesn't exist
   if [ ! -f $CARD_MOUNT_POINT/*.id ]; then
-    ID=$(date -d "today" +"%Y%m%d%H%M").id 
-    touch $ID
-  else
-    ID_FILE=$(ls *.id)
-    ID="${ID_FILE%.*}"
+    touch $(date -d "today" +"%Y%m%d%H%M").id
   fi
+ID_FILE=$(ls *.id)
+ID="${ID_FILE%.*}"
+fi
 
 # Set the backup path
 BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
