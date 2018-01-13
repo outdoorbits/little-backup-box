@@ -57,10 +57,9 @@ if [ ! -z $CARD_READER ]; then
     cd $CARD_MOUNT_POINT/
     touch $(date -d "today" +"%Y%m%d%H%M").id
   fi
-ID_FILE=$(ls *.id)
-ID="${ID_FILE%.*}"
-cd
-fi
+  ID_FILE=$(ls *.id)
+  ID="${ID_FILE%.*}"
+  cd
 
 # Set the backup path
 BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
