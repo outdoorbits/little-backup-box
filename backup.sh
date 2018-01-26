@@ -23,13 +23,13 @@ fi
 
 # If there is a nfs_mount file in the root of the storage device
 # Read the mount command and mount an NFS export
-if [ -f "$STORAGE_MOUNT_POINT/nfs_mount" ]; then
+if [ -f "$STORAGE_MOUNT_POINT/share_mount" ]; then
     sudo sh -c "echo 100 > /sys/class/leds/led0/delay_on"
-    NFS_COMMAND=$(head -n 1 "$STORAGE_MOUNT_POINT/nfs_mount")
-    sudo $NFS_COMMAND
-    NFS_MOUNT_POINT=`echo "$NFS_COMMAND" cut -d" " -f5`
+    MOUNT_COMMAND=$(head -n 1 "$STORAGE_MOUNT_POINT/share_mount")
+    sudo $MOUNT_COMMAND
+    SHARE_MOUNT_POINT=`echo "$MOUNT_COMMAND" cut -d" " -f5`
 else
-    NFS_MOUNT_POINT=""
+    SHARE_MOUNT_POINT=""
 fi
 
 # Set the ACT LED to heartbeat
@@ -89,8 +89,8 @@ rsync -av --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
 
 # If an NFS export is mounted
 # Back up files to it
-if [ ! -z "$NFS_MOUNT_POINT" ]; then
-  rsync -av --exclude "*.id" $BACKUP_PATH/ $NFS_MOUNT_POINT
+if [ ! -z "$SHARE_MOUNT_POINT" ]; then
+  rsync -av --exclude "*.id" $BACKUP_PATH/ $SHARE_MOUNT_POINT
 fi
 
 # Turn off the ACT LED to indicate that the backup is completed
