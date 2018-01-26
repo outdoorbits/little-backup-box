@@ -13,6 +13,9 @@ CARD_MOUNT_POINT="/media/card"
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
+# Shutdown after 7 minutes if no device is connected.
+sudo shutdown -h 7 "Shutdown is activated. To cancel: sudo shutdown -c"
+
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep $STORAGE_DEV | cut -d"/" -f3)
 while [ -z ${STORAGE} ]
@@ -23,6 +26,9 @@ done
 
 # When the USB storage device is detected, mount it
 mount /dev/$STORAGE_DEV $STORAGE_MOUNT_POINT
+
+# Cancel shutdown
+sudo shutdown -c
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
