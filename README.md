@@ -30,7 +30,7 @@ Save the changes.
 2. Plug in the backup storage device (or camera, if you configured Little Backup Box as described above)
 3. Plug in the card reader and wait till the Raspberry Pi shuts down
 
-**Note:** To differentiate between different storage cards, the backup script assigns a random 8-digit identifying number to each card (this number is stored in the *CARD_ID* file in the root of the card). The contents of the card is saved on the storage device in a folder with the identifying number as its name.
+**Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
 ## Problems?
 
