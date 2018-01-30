@@ -6,11 +6,12 @@
 
 # Specify devices and their mount points
 # and other settings
-STORAGE_DEV="sda1"
-STORAGE_MOUNT_POINT="/media/storage"
-CARD_DEV="sdb1"
-CARD_MOUNT_POINT="/media/card"
-GEO_REF="GEO.JPG"
+STORAGE_DEV="sda1" # Name of the storage device
+STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
+CARD_DEV="sdb1" # Name of the storage card
+CARD_MOUNT_POINT="/media/card" # Mount point of the storage card
+GEO_REF="GEO.JPG" # Name of the reference photo to be used for geotagging
+SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
 # If there is a wpa_supplicant.conf file in the root of the storage device
 # Rename the original config file,
@@ -26,8 +27,8 @@ fi
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# Shutdown after 5 minutes if no device is connected.
-sudo shutdown -h 5 "Shutdown is activated. To cancel: sudo shutdown -c"
+# Shutdown after a specified period of time (in minutes) if no device is connected.
+sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep $STORAGE_DEV | cut -d"/" -f3)
