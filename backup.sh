@@ -82,7 +82,7 @@ rsync -av --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
 # Geotag photos if the reference photo exists
 if [ -f "$STORAGE_MOUNT_POINT/$GEO_REF" ]; then
   cd $STORAGE_MOUNT_POINT
-  exiftool −overwrite_original_in_place -r -tagsFromFile $GEO_REF -gps:all -ext=JPG .
+  exiftool −overwrite_original_in_place -r -ext jpg -tagsFromFile $GEO_REF -gps:all .
 fi
 
 # Turn off the ACT LED to indicate that the backup is completed
