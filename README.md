@@ -30,6 +30,8 @@ Save the changes.
 2. Plug in the backup storage device (or camera, if you configured Little Backup Box as described above)
 3. Plug in the card reader and wait till the Raspberry Pi shuts down
 
+To geocorrelate the backed up photos, place a GPX file in the root of the storage device before plugging it into the Raspberry Pi.
+
 **Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
 ## Problems?
