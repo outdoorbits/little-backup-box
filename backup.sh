@@ -10,7 +10,7 @@ STORAGE_DEV="sda1" # Name of the storage device
 STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
 CARD_DEV="sdb1" # Name of the storage card
 CARD_MOUNT_POINT="/media/card" # Mount point of the storage card
-GEO_REF="GEOREF.JPG" # Name of the reference photo to be used for geotagging
+GPX="geo.gpx" # Name of the reference photo to be used for geotagging
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
 # If there is a wpa_supplicant.conf file in the root of the storage device
@@ -79,10 +79,10 @@ sudo lsblk > lsblk.log
 # Perform backup using rsync
 rsync -av --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
 
-# Geotag photos if the reference photo exists
-if [ -f "$STORAGE_MOUNT_POINT/$GEO_REF" ]; then
+# Geocorrelate photos if a .gpx file exists
+if [ -f "$STORAGE_MOUNT_POINT/$GPX" ]; then
   cd $STORAGE_MOUNT_POINT
-  exiftool −overwrite_original_in_place -r -ext jpg -tagsFromFile $GEO_REF -gps:all .
+  exiftool -overwrite_original -r -ext jpg -geotag "$GPX" -geosync=180 .
 fi
 
 # Turn off the ACT LED to indicate that the backup is completed
