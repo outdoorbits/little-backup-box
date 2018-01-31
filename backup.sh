@@ -81,9 +81,9 @@ if [ ! -z $CARD_READER ]; then
 
   # Geocorrelate photos if a .gpx file exists
   cd $STORAGE_MOUNT_POINT
-  if [ -f "*.gpx" ]; then
-    GPX=$(ls *.gpx)
-    exiftool -overwrite_original -r -ext jpg -geotag "$GPX" -geosync=180 .
+  if [ -f *.gpx ]; then
+    GPX="$(ls *.gpx)"
+    exiftool -overwrite_original -r -ext jpg -geotag "$GPX" -geosync=120 .
   fi
 
   # Turn off the ACT LED to indicate that the backup is completed
