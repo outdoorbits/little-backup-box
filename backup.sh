@@ -80,9 +80,9 @@ if [ ! -z $CARD_READER ]; then
   rsync -av --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
 
   # Geocorrelate photos if a .gpx file exists
-  if [ -f "$STORAGE_MOUNT_POINT/*.gpx" ]; then
+  cd $STORAGE_MOUNT_POINT
+  if [ -f "*.gpx" ]; then
     GPX=$(ls *.gpx)
-    cd $STORAGE_MOUNT_POINT
     exiftool -overwrite_original -r -ext jpg -geotag "$GPX" -geosync=180 .
   fi
 
