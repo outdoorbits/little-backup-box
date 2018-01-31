@@ -10,7 +10,6 @@ STORAGE_DEV="sda1" # Name of the storage device
 STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
 CARD_DEV="sdb1" # Name of the storage card
 CARD_MOUNT_POINT="/media/card" # Mount point of the storage card
-GPX="geo.gpx" # Name of the reference photo to be used for geotagging
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
 # If there is a wpa_supplicant.conf file in the root of the storage device
@@ -61,6 +60,7 @@ if [ ! -z $CARD_READER ]; then
   mount /dev/$CARD_DEV $CARD_MOUNT_POINT
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
+
   # Create  a .id random identifier file if doesn't exist
   cd $CARD_MOUNT_POINT
   if [ ! -f *.id ]; then
@@ -70,23 +70,24 @@ if [ ! -z $CARD_READER ]; then
   ID="${ID_FILE%.*}"
   cd
 
-# Set the backup path
-BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
+  # Set the backup path
+  BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
 
-# Log the output of the lsblk command for troubleshooting
-sudo lsblk > lsblk.log
+  # Log the output of the lsblk command for troubleshooting
+  sudo lsblk > lsblk.log
   
-# Perform backup using rsync
-rsync -av --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
+  # Perform backup using rsync
+  rsync -av --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
 
-# Geocorrelate photos if a .gpx file exists
-if [ -f "$STORAGE_MOUNT_POINT/$GPX" ]; then
-  cd $STORAGE_MOUNT_POINT
-  exiftool -overwrite_original -r -ext jpg -geotag "$GPX" -geosync=180 .
-fi
+  # Geocorrelate photos if a .gpx file exists
+  if [ -f "$STORAGE_MOUNT_POINT/*.gpx" ]; then
+    GPX=$(ls *.gpx)
+    cd $STORAGE_MOUNT_POINT
+    exiftool -overwrite_original -r -ext jpg -geotag "$GPX" -geosync=180 .
+  fi
 
-# Turn off the ACT LED to indicate that the backup is completed
-sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
+  # Turn off the ACT LED to indicate that the backup is completed
+  sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
 fi
 # Shutdown
 sync
