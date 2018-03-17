@@ -13,7 +13,6 @@ git clone https://github.com/dmpop/little-backup-box.git
 
 crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/backup.sh > /home/pi/little-backup-box.log"; } | crontab
 crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh > /home/pi/gphoto-backup.log"; } | crontab
-crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup-alt.sh > /home/pi/gphoto-backup-alt.log"; } | crontab
 
 sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
 sudo service minidlna start

@@ -28,14 +28,6 @@ Keep in mind that in this case, the transferred files are saved in the */home/pi
 
 **Important** Make sure that the camera is set to the MTP USB connection mode.
 
-### Alternative Direct File Transfer Script
-
-Some cameras (notably Sony Alpha models) may not work with the default direct file transfer script. In this case, try the *gphoto-backup-alt.sh* script instead by enabling the following cron job as described above:
-
-    #@reboot sudo /home/pi/little-backup-box/gphoto-backup-alt.sh > /home/pi/gphoto-backup-alt.log
-
-This script saves transferred files in the */home/pi/BACKUP* directory.
-
 ## Usage
 
 1. Boot the Raspberry Pi
