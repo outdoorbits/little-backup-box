@@ -24,7 +24,7 @@ Uncomment then the line below by removing *#*:
 
 Save the changes.
 
-Keep in mind that the script that transfers files directly from the camera saves them in the */home/pi/BACKUP* directory on the system storage. Make sure that the storage card you use with Raspberry Pi has adequate storage capacity.
+Keep in mind that in this case, the transferred files are saved in the */home/pi/BACKUP* directory on the system storage card. Make sure that the card you use with Raspberry Pi has adequate storage capacity.
 
 **Important** Make sure that the camera is set to the MTP USB connection mode.
 
@@ -43,7 +43,7 @@ With the direct camera transfer script enabled, follow this steps:
 1. Boot the Raspberry Pi
 2. Connect the camera and turn it on and wait till the Raspberry Pi shuts down
 
-Note that the direct camera transfer script doesn't support geocorrelation.
+Note that the direct camera file transfer script doesn't support geocorrelation.
 
 ## Problems?
 
