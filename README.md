@@ -49,7 +49,8 @@ To geocorrelate the backed up photos, place a GPX file in the root of the storag
 With the direct camera transfer script enabled, follow this steps:
 
 1. Boot the Raspberry Pi
-2. Connect the camera and turn it on and wait till the Raspberry Pi shuts down
+2. Connect the camera to the Raspberry Pi
+3. Turn the camera on on and wait till the Raspberry Pi shuts down
 
 Note that the direct camera file transfer script doesn't support geocorrelation.
 
