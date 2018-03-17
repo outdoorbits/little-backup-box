@@ -24,6 +24,10 @@ Uncomment then the line below by removing *#*:
 
 Save the changes.
 
+Keep in mind that the script that transfers files directly from the camera saves them in the */home/pi/BACKUP* directory on the system storage. Make sure that the storage card you use with Raspberry Pi has adequate storage capacity.
+
+**Important** Make sure that the camera is set to the MTP USB connection mode.
+
 ## Usage
 
 1. Boot the Raspberry Pi
@@ -33,6 +37,13 @@ Save the changes.
 To geocorrelate the backed up photos, place a GPX file in the root of the storage device before plugging it into the Raspberry Pi.
 
 **Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
+
+With the direct camera transfer script enabled, follow this steps:
+
+1. Boot the Raspberry Pi
+2. Connect the camera and turn it on and wait till the Raspberry Pi shuts down
+
+Note that the direct camera transfer script doesn't support geocorrelation.
 
 ## Problems?
 
