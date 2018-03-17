@@ -5,10 +5,15 @@
 # to install the required packages and configure the system.
 
 # Specify a storage device and its mount point
-HOME_DIR="/home/pi"
+STORAGE_MOUNT_POINT="/home/pi/BACKUP"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
+
+# Create the target directory if it doesn't exist
+if [ ! -d "$STORAGE_MOUNT_POINT" ]; then
+  mkdir $STORAGE_MOUNT_POINT
+fi
 
 # Wait for camera
 DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
@@ -17,11 +22,6 @@ while [ -z ${DEVICE} ]
 	sleep 1
 	DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
 done
-
-# Obtain camera model
-# Create the target directory with the camera model as its name
-CAMERA=$(gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
-STORAGE_MOUNT_POINT="$HOME_DIR/$CAMERA"
 
 # Set the ACT LED to blink at 500ms to indicate that the camera has been detected
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
