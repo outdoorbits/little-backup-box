@@ -1,6 +1,6 @@
 # Little Backup Box
 
-Bash shell scripts that transform a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup and streaming device.
+Bash shell scripts that transform a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
 
 <img src="https://i.imgur.com/OQ3AQfM.jpg" alt="" width="375"/>
 
@@ -12,23 +12,21 @@ Run the following command on the Raspberry Pi:
 
     curl -sSL https://goo.gl/btmpKd | bash
 
+Little Backup Box supports three backup modes:
+
+- **Card backup** Automatically backs up the contents of a storage card to an external storage device.
+- **Camera backup** Transfers photos, raw files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the */home/pi/[CAMERA MODEL]* directory on the system storage card. **Important** Make sure that the camera is set to the **MTP** USB connection mode.
+- **Web UI** Simple web interface that allows you to manually choose one of the two modes described above.
+
+During the installation, choose the desired mode from the selection dialog.
+
+<img src="installer.png" alt="" width="600"/>
+
 When prompted, reboot the Raspberry Pi.
 
-By default, Little Backup Box is configured to back up storage cards. To make the script transfer files directly from the connected camera, run the `crontab -e` command on Raspberry Pi. Comment the following line by prepending *#* to it:
-
-    @reboot sudo /home/pi/little-backup-box/backup.sh
-
-Uncomment then the line below by removing *#*:
-
-    #@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh
-
-Save the changes.
-
-Keep in mind that in this case, the transferred files are saved in the */home/pi/[CAMERA MODEL]* directory on the system storage card. Make sure that the card you use with Raspberry Pi has adequate storage capacity.
-
-**Important** Make sure that the camera is set to the MTP USB connection mode.
-
 ## Usage
+
+In the card backup mode:
 
 1. Boot the Raspberry Pi
 2. Plug in the backup storage device (or camera, if you configured Little Backup Box as described above)
@@ -38,13 +36,22 @@ To geocorrelate the backed up photos, place a GPX file in the root of the storag
 
 **Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
-With the direct camera transfer script enabled, follow this steps:
+With the direct camera transfer script enabled, follow the steps described below.
+
+In the camera backup mode:
 
 1. Boot the Raspberry Pi
 2. Connect the camera to the Raspberry Pi
 3. Turn the camera on on and wait till the Raspberry Pi shuts down
 
 Note that the direct camera file transfer script doesn't support geocorrelation.
+
+In the Web UI mode:
+
+1. Point the browser to *http://[IP-ADDRESS]:8080* (replace *[IP-ADDRESS]* with the actual IP address of the Raspberry Pi)
+2. Start the desired backup mode by pressing the appropriate button.
+
+<img src="webui.png" alt="" width="375"/>
 
 ## Problems?
 
