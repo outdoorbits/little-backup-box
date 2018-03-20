@@ -25,9 +25,43 @@ sudo setfacl -Rdm g:pi:rw /media/storage
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 
-crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/backup.sh"; } | crontab
-crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh"; } | crontab
-crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/webui.py"; } | crontab
+HEIGHT=15
+WIDTH=40
+CHOICE_HEIGHT=4
+BACKTITLE="Little Backup Box"
+TITLE="Backup mode"
+MENU="Select the desired backup mode:"
+
+OPTIONS=(1 "Card Backup"
+         2 "Camera Backup"
+         3 "Web UI")
+
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+        1)
+            crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/backup.sh"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/webui.py"; } | crontab
+            ;;
+        2)
+            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/backup.sh"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/webui.py"; } | crontab
+            ;;
+        3)
+            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/backup.sh"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/webui.py"; } | crontab
+            ;;
+esac
 
 echo "------------------------"
 echo "All done! Please reboot."
