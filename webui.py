@@ -32,9 +32,9 @@ def control():
     <div id="content"><p><input id="btn" name="cardbackup" type="submit" value="Card backup"></p>
     <p class="left">Back up a storage card connected via a card reader</p>
     <div id="content"><p><input id="btn" class="orange" name="camerabackup" type="submit" value="Camera backup"></p>
-    <p class="left">Transfer files directly from the connected camera.</p>
+    <p class="left">Transfer files directly from the connected camera</p>
     <p><input id="btn" class="red" name="shutdown" value="Shut down" type="submit" /></p>
-    <p class="left">Shut down the Little Backup Box.</p>
+    <p class="left">Shut down the Little Backup Box</p>
     </form>
     <style>
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
