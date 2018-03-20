@@ -15,7 +15,7 @@
 
 sudo apt update
 sudo apt dist-upgrade -y
-sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl python-pip -y
+sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python-pip -y
 sudo pip install bottle
 
 sudo mkdir /media/card
@@ -25,7 +25,7 @@ sudo chmod -R 775 /media/storage
 sudo setfacl -Rdm g:pi:rw /media/storage
 
 cd
-git clone -b feature/webui https://github.com/dmpop/little-backup-box.git
+git clone https://github.com/dmpop/little-backup-box.git
 
 HEIGHT=15
 WIDTH=40
