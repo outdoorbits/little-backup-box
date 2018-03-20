@@ -16,11 +16,11 @@ When prompted, reboot the Raspberry Pi.
 
 By default, Little Backup Box is configured to back up storage cards. To make the script transfer files directly from the connected camera, run the `crontab -e` command on Raspberry Pi. Comment the following line by prepending *#* to it:
 
-    @reboot sudo /home/pi/little-backup-box/backup.sh > /home/pi/little-backup-box.log
+    @reboot sudo /home/pi/little-backup-box/backup.sh
 
 Uncomment then the line below by removing *#*:
 
-    #@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh > /home/pi/gphoto-backup.log
+    #@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh
 
 Save the changes.
 
