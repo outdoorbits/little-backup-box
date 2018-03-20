@@ -1,4 +1,3 @@
- 
 #!/usr/bin/python
 
 # This program is free software: you can redistribute it and/or modify
@@ -23,7 +22,7 @@ def control():
     if (request.POST.get("cardbackup")):
             os.system("sudo /home/pi/little-backup-box/backup.sh")
     if (request.POST.get("camerabackup")):
-            os.system("sudo /home/pi/little-backup-box/backup.sh")
+            os.system("sudo /home/pi/little-backup-box/gphoto-backup.sh")
     if (request.POST.get("shutdown")):
             os.system("sudo shutdown -h now")
     return """
@@ -72,5 +71,4 @@ def control():
     }
     </style>
     """
-
-run(host="0.0.0.0",port=8080, debug=True, reloader=True)
+run(host="0.0.0.0", port=8080, debug=True, reloader=True)
