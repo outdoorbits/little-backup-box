@@ -13,7 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-sudo apt update && sudo apt dist-upgrade -y && sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g minidlna gphoto2 libimage-exiftool-perl -y
+sudo apt update && sudo apt dist-upgrade -y && sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl python-pip -y
+sudo pip install bottle
 
 sudo mkdir /media/card
 sudo mkdir /media/storage
@@ -26,9 +27,7 @@ git clone https://github.com/dmpop/little-backup-box.git
 
 crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/backup.sh"; } | crontab
 crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh"; } | crontab
-
-sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
-sudo service minidlna start
+crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/webui.py"; } | crontab
 
 echo "------------------------"
 echo "All done! Please reboot."
