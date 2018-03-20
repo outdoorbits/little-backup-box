@@ -15,7 +15,7 @@ Run the following command on the Raspberry Pi:
 Little Backup Box supports three backup modes:
 
 - **Card backup** Automatically backs up the contents of a storage card to an external storage device.
-- **Camera backup** Transfers photos, raw files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the */home/pi/[CAMERA MODEL]* directory on the system storage card. **Important** Make sure that the camera is set to the **MTP** USB connection mode.
+- **Camera backup** Transfers photos, raw files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the */home/pi/[CAMERA MODEL]* directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
 - **Web UI** Simple web interface that allows you to manually choose one of the two modes described above.
 
 During the installation, choose the desired mode from the selection dialog.
@@ -29,20 +29,20 @@ When prompted, reboot the Raspberry Pi.
 In the card backup mode:
 
 1. Boot the Raspberry Pi
-2. Plug in the backup storage device (or camera, if you configured Little Backup Box as described above)
-3. Plug in the card reader and wait till the Raspberry Pi shuts down
+2. Plug in a backup storage device
+3. Insert a storage card into a card reader and plug it into the Raspberry Pi
+4. Wait till the Raspberry Pi shuts down
 
 To geocorrelate the backed up photos, place a GPX file in the root of the storage device before plugging it into the Raspberry Pi.
 
 **Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
-With the direct camera transfer script enabled, follow the steps described below.
-
 In the camera backup mode:
 
 1. Boot the Raspberry Pi
 2. Connect the camera to the Raspberry Pi
-3. Turn the camera on on and wait till the Raspberry Pi shuts down
+3. Turn the camera on
+4. Wait till the Raspberry Pi shuts down
 
 Note that the direct camera file transfer script doesn't support geocorrelation.
 
