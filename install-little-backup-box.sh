@@ -15,8 +15,7 @@
 
 sudo apt update
 sudo apt dist-upgrade -y
-sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python-pip -y
-sudo pip install bottle
+sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php5-cli -y
 
 sudo mkdir /media/card
 sudo mkdir /media/storage
@@ -51,17 +50,17 @@ case $CHOICE in
         1)
             crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
+	    crontab -l | { cat; echo "#@reboot cd /home/pi/little-backup-box ; sudo php -S 0.0.0.0:8080"; } | crontab
             ;;
         2)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
+	    crontab -l | { cat; echo "#@reboot cd /home/pi/little-backup-box ; sudo php -S 0.0.0.0:8080"; } | crontab
             ;;
         3)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
+	    crontab -l | { cat; echo "@reboot cd /home/pi/little-backup-box ; sudo php -S 0.0.0.0:8080"; } | crontab
             ;;
 esac
 
