@@ -48,7 +48,7 @@ To geocorrelate the backed up photos, place a GPX file in the root of the storag
 
 Note that the direct camera file transfer script doesn't support geocorrelation.
 
-### Remote control mode:
+### Remote control mode
 
 1. Point the browser to *http://[IP-ADDRESS]:8080* (replace *[IP-ADDRESS]* with the actual IP address of the Raspberry Pi)
 2. Start the desired backup mode by pressing the appropriate button.
