@@ -18,11 +18,11 @@ import os
 
 @route('/')
 @route('/', method='POST')
-def control():
+def remote_control():
     if (request.POST.get("cardbackup")):
-            os.system("sudo /home/pi/little-backup-box/backup.sh")
+            os.system("sudo /home/pi/little-backup-box/card-backup.sh")
     if (request.POST.get("camerabackup")):
-            os.system("sudo /home/pi/little-backup-box/gphoto-backup.sh")
+            os.system("sudo /home/pi/little-backup-box/camera-backup.sh")
     if (request.POST.get("shutdown")):
             os.system("sudo shutdown -h now")
     return """

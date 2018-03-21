@@ -34,9 +34,9 @@ BACKTITLE="Little Backup Box"
 TITLE="Backup mode"
 MENU="Select the desired backup mode:"
 
-OPTIONS=(1 "Card Backup"
-         2 "Camera Backup"
-         3 "Web UI")
+OPTIONS=(1 "Card backup"
+         2 "Camera backup"
+         3 "Remote backup")
 
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
@@ -49,19 +49,19 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         1)
-            crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/webui.py"; } | crontab
+            crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
             ;;
         2)
-            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/backup.sh"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/webui.py"; } | crontab
+            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
             ;;
         3)
-            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/gphoto-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/webui.py"; } | crontab
+            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
             ;;
 esac
 
