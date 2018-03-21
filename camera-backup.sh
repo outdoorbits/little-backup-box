@@ -25,10 +25,10 @@ SHUTD="5" # Minutes to wait before shutdown due to inactivity
 # Rename the original config file,
 # move wpa_supplicant.conf from the card to /etc/wpa_supplicant/
 # Reboot to enable networking
-if [ -f "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" ]; then
+if [ -f "$HOME_DIR/wpa_supplicant.conf" ]; then
     sudo sh -c "echo 100 > /sys/class/leds/led0/delay_on"
     mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
-    mv "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" /etc/wpa_supplicant/wpa_supplicant.conf
+    mv "$HOME_DIR/wpa_supplicant.conf" /etc/wpa_supplicant/wpa_supplicant.conf
     reboot
 fi
 
