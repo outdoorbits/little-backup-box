@@ -25,17 +25,6 @@ CARD_DEV="sdb1" # Name of the storage card
 CARD_MOUNT_POINT="/media/card" # Mount point of the storage card
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
-# If there is a wpa_supplicant.conf file in the root of the storage device
-# Rename the original config file,
-# move wpa_supplicant.conf from the card to /etc/wpa_supplicant/
-# Reboot to enable networking
-if [ -f "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" ]; then
-    sudo sh -c "echo 100 > /sys/class/leds/led0/delay_on"
-    mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
-    mv "$STORAGE_MOUNT_POINT/wpa_supplicant.conf" /etc/wpa_supplicant/wpa_supplicant.conf
-    reboot
-fi
-
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
@@ -85,19 +74,9 @@ if [ ! -z $CARD_READER ]; then
 
   # Set the backup path
   BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
-
-  # Log the output of the lsblk command for troubleshooting
-  sudo lsblk > lsblk.log
   
   # Perform backup using rsync
   rsync -av --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
-
-  # Geocorrelate photos if a .gpx file exists
-  cd $STORAGE_MOUNT_POINT
-  if [ -f *.gpx ]; then
-    GPX="$(ls *.gpx)"
-    exiftool -overwrite_original -r -ext jpg -geotag "$GPX" -geosync=120 .
-  fi
 
   # Turn off the ACT LED to indicate that the backup is completed
   sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"

@@ -26,7 +26,7 @@ When prompted, reboot the Raspberry Pi.
 
 ## Usage
 
-The exact backup steps depend on the backup mode.
+The exact steps depend on the backup mode.
 
 ### Card backup mode
 
@@ -34,8 +34,6 @@ The exact backup steps depend on the backup mode.
 2. Plug in a backup storage device
 3. Insert a storage card into a card reader and plug it into the Raspberry Pi
 4. Wait till the Raspberry Pi shuts down
-
-To geocorrelate the backed up photos, place a GPX file in the root of the storage device before plugging it into the Raspberry Pi.
 
 **Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
@@ -46,9 +44,7 @@ To geocorrelate the backed up photos, place a GPX file in the root of the storag
 3. Turn the camera on
 4. Wait till the Raspberry Pi shuts down
 
-Note that the direct camera file transfer script doesn't support geocorrelation.
-
-### Remote control mode:
+### Remote control mode
 
 1. Point the browser to *http://[IP-ADDRESS]:8080* (replace *[IP-ADDRESS]* with the actual IP address of the Raspberry Pi)
 2. Start the desired backup mode by pressing the appropriate button.
