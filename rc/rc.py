@@ -23,9 +23,11 @@ def remote_control():
     st = os.statvfs("/home/dmpop")
     free = "%.2f" % float((st.f_bavail * st.f_frsize)/1.073741824e9)
     if (request.POST.get("cardbackup")):
-            os.system("sudo /home/pi/little-backup-box/card-backup.sh")
+            os.system("sudo /home/pi/little-backup-box/scripts/card-backup.sh")
     if (request.POST.get("camerabackup")):
-            os.system("sudo /home/pi/little-backup-box/camera-backup.sh")
+            os.system("sudo /home/pi/little-backup-box/scripts/camera-backup.sh")
+    if (request.POST.get("internalbackup")):
+            os.system("sudo /home/pi/little-backup-box/scripts/device-backup.sh")
     if (request.POST.get("shutdown")):
             os.system("sudo shutdown -h now")
     return template('rc.tpl', freespace=free)
