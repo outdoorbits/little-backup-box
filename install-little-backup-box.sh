@@ -51,17 +51,17 @@ case $CHOICE in
         1)
             crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/rc/rc.py"; } | crontab
             ;;
         2)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/rc/rc.py"; } | crontab
             ;;
         3)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/rc.py"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/rc/rc.py"; } | crontab
             ;;
 esac
 
