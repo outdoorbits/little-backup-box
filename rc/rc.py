@@ -20,13 +20,13 @@ import os
 @route('/', method='POST')
 def remote_control():
     #dh = os.system("df -h | grep '/dev/sda' | awk '{print $4}'")
-    st = os.statvfs("/home/dmpop")
+    st = os.statvfs("/home/pi")
     free = "%.2f" % float((st.f_bavail * st.f_frsize)/1.073741824e9)
     if (request.POST.get("cardbackup")):
             os.system("sudo /home/pi/little-backup-box/scripts/card-backup.sh")
     if (request.POST.get("camerabackup")):
             os.system("sudo /home/pi/little-backup-box/scripts/camera-backup.sh")
-    if (request.POST.get("internalbackup")):
+    if (request.POST.get("devicebackup")):
             os.system("sudo /home/pi/little-backup-box/scripts/device-backup.sh")
     if (request.POST.get("shutdown")):
             os.system("sudo shutdown -h now")
