@@ -48,12 +48,12 @@ sudo shutdown -c
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
   
-  # Perform backup using rsync
-  rsync -av $SOURCE_DIR $STORAGE_MOUNT_POINT
+# Perform backup using rsync
+rsync -av $SOURCE_DIR $STORAGE_MOUNT_POINT
 
-  # Turn off the ACT LED to indicate that the backup is completed
-  sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
-fi
+# Turn off the ACT LED to indicate that the backup is completed
+sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
+
 # Shutdown
 sync
 shutdown -h now

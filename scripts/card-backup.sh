@@ -81,6 +81,7 @@ if [ ! -z $CARD_READER ]; then
   # Turn off the ACT LED to indicate that the backup is completed
   sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
 fi
+
 # Shutdown
 sync
 shutdown -h now
