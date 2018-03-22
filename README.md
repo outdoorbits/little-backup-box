@@ -15,12 +15,12 @@ Run the following command on the Raspberry Pi:
 Little Backup Box supports three backup modes:
 
 - **Card backup** Automatically backs up the contents of a storage card to an external storage device.
-- **Camera backup** Transfers photos, raw files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the */home/pi/[CAMERA MODEL]* directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
+- **Camera backup** Transfers photos, raw files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the */home/pi/BACKUP/[CAMERA MODEL]* directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
 - **Remote control** Provides a simple web interface to manually choose one of the two modes described above.
 
 During the installation, choose the desired mode from the selection dialog.
 
-<img src="installer.png" alt="" width="600"/>
+<img src="img/installer.png" alt="" width="600"/>
 
 When prompted, reboot the Raspberry Pi.
 
@@ -49,7 +49,9 @@ The exact steps depend on the backup mode.
 1. Point the browser to *http://[IP-ADDRESS]:8080* (replace *[IP-ADDRESS]* with the actual IP address of the Raspberry Pi)
 2. Start the desired backup mode by pressing the appropriate button.
 
-<img src="rc.png" alt="" width="375"/>
+<img src="img/rc.png" alt="" width="375"/>
+
+The remote control mode gives you access to the **Device backup** action that backs up the */home/pi/BACKUP* folder on the Raspberry Pi to an external storage device.
 
 ## Problems?
 

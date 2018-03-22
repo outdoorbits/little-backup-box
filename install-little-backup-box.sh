@@ -32,7 +32,7 @@ WIDTH=40
 CHOICE_HEIGHT=4
 BACKTITLE="Little Backup Box"
 TITLE="Backup mode"
-MENU="Select the desired backup mode:"
+MENU="Select the default backup mode:"
 
 OPTIONS=(1 "Remote control"
          2 "Card backup"
