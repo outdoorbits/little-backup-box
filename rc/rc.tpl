@@ -44,7 +44,7 @@
 	<p class="left">Back up a storage card connected via a card reader</p>
 	<p><input id="btn" name="camerabackup" type="submit" value="Camera backup"></p>
 	<p class="left">Transfer files directly from the connected camera</p>
-	<p><input id="btn" class="orange" name="devicebackup" type="submit" value="Internal backup"></p>
+	<p><input id="btn" class="orange" name="devicebackup" type="submit" value="Device backup"></p>
 	<p class="left">Back up files from the internal storage to an external storage device</p>
 	<p><input id="btn" class="red" name="shutdown" value="Shut down" type="submit" /></p>
 	<p class="left">Shut down the Little Backup Box</p>
