@@ -13,22 +13,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from bottle import post, route, request, template, run
+from bottle import post, route, request, redirect, template, run
 import os
 
 @route('/')
 @route('/', method='POST')
 def remote_control():
-    #dh = os.system("df -h | grep '/dev/sda' | awk '{print $4}'")
-    st = os.statvfs("/home/pi")
+    st = os.statvfs("/home/dmpop")
     free = "%.2f" % float((st.f_bavail * st.f_frsize)/1.073741824e9)
     if (request.POST.get("cardbackup")):
-            os.system("sudo /home/pi/little-backup-box/scripts/card-backup.sh")
+        os.system("sudo /home/pi/little-backup-box/scripts/card-backup.sh")
+        return ('Backup started. You can close this page.')
+
     if (request.POST.get("camerabackup")):
-            os.system("sudo /home/pi/little-backup-box/scripts/camera-backup.sh")
+        os.system("sudo /home/pi/little-backup-box/scripts/camera-backup.sh")
+        return ('Backup started. You can close this page.')
     if (request.POST.get("devicebackup")):
-            os.system("sudo /home/pi/little-backup-box/scripts/device-backup.sh")
+        os.system("sudo /home/pi/little-backup-box/scripts/device-backup.sh")
+        return ('Transfer started. You can close this page.')
     if (request.POST.get("shutdown")):
-            os.system("sudo shutdown -h now")
+        os.system("sudo shutdown -h now")
+        return ('Shutdown request sent. You can close this page.')
     return template('rc.tpl', freespace=free)
 run(host="0.0.0.0", port=8080, debug=True, reloader=True)

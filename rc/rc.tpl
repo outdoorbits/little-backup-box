@@ -1,6 +1,5 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="static/styles.css">
     <style>
      <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
      body {
@@ -49,4 +48,3 @@
 	<p><input id="btn" class="red" name="shutdown" value="Shut down" type="submit" /></p>
 	<p class="left">Shut down the Little Backup Box</p>
     </div>
-    </form>
