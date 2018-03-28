@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from bottle import post, route, request, redirect, template, run
+from bottle import post, route, request, redirect, template, static_file, run
 import os
 
 @route('/')
@@ -35,4 +35,9 @@ def remote_control():
         os.system("sudo shutdown -h now")
         return ('Shutdown request sent. You can close this page.')
     return template('rc.tpl', freespace=free)
+
+@route('/static/:path#.+#', name='static')
+def static(path):
+    return static_file(path, root='static')
+
 run(host="0.0.0.0", port=8080, debug=True, reloader=True)

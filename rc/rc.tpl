@@ -2,20 +2,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
      <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
-     body {
-         font: 15px/25px 'Lato', sans-serif;
-     }
+
      p.left {
          text-align: left;
      }
      p.center {
          text-align: center;
      }
+     img {
+	 display: block;
+	 margin-left: auto;
+	 margin-right: auto;
+     }
      #content {
-         font: 15px/25px 'Open Sans', sans-serif;
+	 font: 1em/1.5em 'Lato', sans-serif;
          margin: 0px auto;
          width: 275px;
          text-align: left;
+     }
+     #header {
+	 font: bold 1.7em/2em 'Lato', sans-serif;
+	 text-align: center;
      }
      #btn {
          width: 11em;  height: 2em;
@@ -38,6 +45,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <form method="POST" action="/">
     <div id="content">
+	<div id="header"><img src="static/ichigo.svg" height="39px" alt="Ichigo" align=""> Little Backup Box</div>
 	<p class="center">Free disk space: <b>{{freespace}}</b> GB</p>
 	<hr>
 	<p class="left">Back up a storage card connected via a card reader</p>
