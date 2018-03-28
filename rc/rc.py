@@ -19,7 +19,7 @@ import os
 @route('/')
 @route('/', method='POST')
 def remote_control():
-    st = os.statvfs("/home/dmpop")
+    st = os.statvfs("/home")
     free = "%.2f" % float((st.f_bavail * st.f_frsize)/1.073741824e9)
     if (request.POST.get("cardbackup")):
         os.system("sudo /home/pi/little-backup-box/scripts/card-backup.sh")
