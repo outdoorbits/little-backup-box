@@ -46,7 +46,7 @@
 <form method="POST" action="/">
     <div id="content">
 	<div id="header"><img src="static/ichigo.svg" height="39px" alt="Ichigo" align=""> Little Backup Box</div>
-	<p class="center">Free disk space: <b>{{freespace}}</b> GB</p>
+	<p class="center">Free disk space on <i>/home</i>: <b>{{freespace}}</b> GB</p>
 	<hr>
 	<p class="left">Back up a storage card connected via a card reader</p>
 	<p><input id="btn" name="cardbackup" type="submit" value="Card backup"></p>

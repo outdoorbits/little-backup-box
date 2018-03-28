@@ -15,8 +15,8 @@
 
 sudo apt update
 sudo apt dist-upgrade -y
-sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python-pip -y
-sudo pip install bottle
+sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python3-pip -y
+sudo pip3 install bottle
 
 sudo mkdir /media/card
 sudo mkdir /media/storage
@@ -51,17 +51,17 @@ case $CHOICE in
         1)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "@reboot cd /home/pi/little-backup-box/rc ; sudo rc.py"; } | crontab
+	    crontab -l | { cat; echo "@reboot cd /home/pi/little-backup-box/rc ; sudo python3 rc.py"; } | crontab
             ;;
         2)
             crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/pi/little-backup-box/rc ; sudo rc.py"; } | crontab
+	    crontab -l | { cat; echo "#@reboot cd /home/pi/little-backup-box/rc ; sudo python3 rc.py"; } | crontab
             ;;
         3)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh"; } | crontab
 	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/pi/little-backup-box/rc ; sudo rc.py"; } | crontab
+	    crontab -l | { cat; echo "#@reboot cd /home/pi/little-backup-box/rc ; sudo python3 rc.py"; } | crontab
             ;;
 esac
 

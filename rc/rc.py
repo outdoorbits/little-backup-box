@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from bottle import post, route, request, redirect, template, static_file, run
+from bottle import post, route, request, template, static_file, run
 import os
 
 @route('/')
