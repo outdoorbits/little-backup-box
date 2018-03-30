@@ -76,7 +76,7 @@ if [ ! -z $CARD_READER ]; then
   BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
   
   # Perform backup using rsync
-  rsync -av --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
+  rsync -ah --exclude "*.id" $CARD_MOUNT_POINT/ $BACKUP_PATH
 
   # Turn off the ACT LED to indicate that the backup is completed
   sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
