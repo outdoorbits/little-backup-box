@@ -54,17 +54,17 @@ case $CHOICE in
         1)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "@reboot cd /home/pi/little-backup-box/rc && sudo python3 rc.py"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/keep-rc-alive.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
             ;;
         2)
             crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/pi/little-backup-box/rc && sudo python3 rc.py"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/keep-rc-alive.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
             ;;
         3)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/pi/little-backup-box/rc && sudo python3 rc.py"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/keep-rc-alive.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
             ;;
 esac
 
