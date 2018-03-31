@@ -21,7 +21,7 @@
 # and other settings
 STORAGE_DEV="sda1" # Name of the storage device
 STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
-SOURCE_DIR="/home/pi/BACKUP/"
+SOURCE_DIR="/home/lilbox/BACKUP/"
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
 # Set the ACT LED to heartbeat
