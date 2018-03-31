@@ -18,7 +18,7 @@
 # to install the required packages and configure the system.
 
 # Specify a storage device and its mount point
-HOME_DIR="/home/lilbox/BACKUP" # Home directory path
+HOME_DIR="/home/pi/BACKUP" # Home directory path
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
 # Set the ACT LED to heartbeat

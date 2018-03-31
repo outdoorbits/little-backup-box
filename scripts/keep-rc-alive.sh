@@ -18,7 +18,7 @@
 while :
 do
   if [[ ! $(pgrep -f rc.py) ]]; then
-    cd /home/lilbox/little-backup-box/rc/
+    cd /home/pi/little-backup-box/rc/
     sudo python3 rc.py
   fi
 done 

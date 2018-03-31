@@ -18,25 +18,16 @@ sudo apt dist-upgrade -y
 sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python3-pip -y
 sudo pip3 install bottle
 
-sudo useradd -m -p "WJhSjeba7N.Rw" -s /bin/bash lilbox
-
-echo "------------------------------------------------"
-echo "System will reboot in 1 minute."
-echo "Login with lilbox/ichigo user name and password."
-echo "------------------------------------------------"
-
-sudo shutdown -r 1
-
 sudo mkdir /media/card
 sudo mkdir /media/storage
-sudo chown -R lilbox:lilbox /media/storage
+sudo chown -R pi:pi /media/storage
 sudo chmod -R 775 /media/storage
-sudo setfacl -Rdm g:lilbox:rw /media/storage
+sudo setfacl -Rdm g:pi:rw /media/storage
 
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 cd little-backup-box/fonts
-cp -R . /home/lilbox/.fonts
+cp -R . /home/pi/.fonts
 cd
 
 HEIGHT=15
@@ -61,19 +52,19 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         1)
-            crontab -l | { cat; echo "#@reboot sudo /home/lilbox/little-backup-box/scripts/card-backup.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/lilbox/little-backup-box/scripts/camera-backup.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/lilbox/little-backup-box/scripts/keep-rc-alive.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
+            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/keep-rc-alive.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
             ;;
         2)
-            crontab -l | { cat; echo "@reboot sudo /home/lilbox/little-backup-box/scripts/card-backup.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/lilbox/little-backup-box/scripts/camera-backup.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/lilbox/little-backup-box/scripts/keep-rc-alive.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
+            crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/keep-rc-alive.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
             ;;
         3)
-            crontab -l | { cat; echo "#@reboot sudo /home/lilbox/little-backup-box/scripts/card-backup.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/lilbox/little-backup-box/scripts/camera-backup.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/lilbox/little-backup-box/scripts/keep-rc-alive.sh >> /home/lilbox/little-backup-box.log 2>&1"; } | crontab
+            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/keep-rc-alive.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
             ;;
 esac
 
