@@ -10,7 +10,7 @@ First of all, make sure that your Raspberry Pi is connected to the internet.
 
 Run the following command on the Raspberry Pi:
 
-    curl -sSL https://goo.gl/btmpKd | bash
+    curl -sSL https://is.gd/littlebackupbox | bash
 
 Little Backup Box supports three backup modes:
 
