@@ -24,16 +24,16 @@ def remote_control():
     
     if (request.POST.get("cardbackup")):
         process = subprocess.Popen("sudo /home/pi/little-backup-box/scripts/card-backup.sh", shell=True)
-        return ('Backup started. You can close this page.')
+        return template('exit.tpl')
     if (request.POST.get("camerabackup")):
         process = subprocess.Popen("sudo /home/pi/little-backup-box/scripts/camera-backup.sh", shell=True)
-        return ('Backup started. You can close this page.')
+        return template('exit.tpl')
     if (request.POST.get("devicebackup")):
         process = subprocess.Popen("sudo /home/pi/little-backup-box/scripts/device-backup.sh", shell=True)
-        return ('Transfer started. You can close this page.')
+        return template('exit.tpl')
     if (request.POST.get("shutdown")):
         process = subprocess.Popen("sudo shutdown -h now", shell=True)
-        return ('Shutdown request sent. You can close this page.')
+        return template('exit.tpl')
     return template('rc.tpl', freespace_home=free_home)
 
 @route('/static/:path#.+#', name='static')
