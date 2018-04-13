@@ -15,6 +15,7 @@
 
 sudo apt update
 sudo apt dist-upgrade -y
+sudo apt update
 sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python3-pip -y
 sudo pip3 install bottle
 
