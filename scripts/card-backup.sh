@@ -66,7 +66,8 @@ if [ ! -z $CARD_READER ]; then
   # Create  a .id random identifier file if doesn't exist
   cd $CARD_MOUNT_POINT
   if [ ! -f *.id ]; then
-    touch $(date -d "today" +"%Y%m%d%H%M").id
+    random=$(echo $RANDOM)
+    touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
   fi
   ID_FILE=$(ls *.id)
   ID="${ID_FILE%.*}"
