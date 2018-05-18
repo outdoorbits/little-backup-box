@@ -77,9 +77,6 @@ Dmitri Popov [dmpop@linux.com](mailto:dmpop@linux.com)
 
 The [GNU General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.en.html)
 
-## Donate
-
-<script src="https://liberapay.com/dmpop/widgets/button.js"></script>
 <noscript><a href="https://liberapay.com/dmpop/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
 
 ## Linux Photography
