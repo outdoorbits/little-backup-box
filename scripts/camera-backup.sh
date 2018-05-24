@@ -47,7 +47,7 @@ mkdir -p $STORAGE_MOUNT_POINT
 # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
 # Rename the transferred files using the YYYYMMDD-HHMMSS format
 cd $STORAGE_MOUNT_POINT
-gphoto2 --get-all-files --skip-existing --filename=%Y%m%d-%H%M%S.%C
+gphoto2 --get-all-files --skip-existing
 
 # Shutdown
 shutdown -h now 
