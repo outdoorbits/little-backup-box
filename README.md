@@ -1,8 +1,11 @@
 # Little Backup Box
 
-Bash shell scripts that transform a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
+Bash shell scripts that transforms a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
 
 <img src="https://i.imgur.com/OQ3AQfM.jpg" alt="" width="375"/>
+
+**IMPORTANT**
+Little Backup Box is designed to work with USB sticks as backup media. Theoretically, it's possible to make Little Backup Box work with an external hard disk, but this setup is not officially supported.
 
 ## Installation
 
