@@ -9,9 +9,9 @@ Little Backup Box is designed to work with USB sticks as backup media. Theoretic
 
 ## Installation
 
-First of all, make sure that your Raspberry Pi is connected to the internet.
-
-Run the following command on the Raspberry Pi:
+1. Create a bootable SD card with the latest version of Raspbian Lite for use with Little Backup Box.
+2. Make sure that your Raspberry Pi is connected to the internet.
+3. Run the following command on the Raspberry Pi:
 
     curl -sSL https://is.gd/littlebackupbox | bash
 
