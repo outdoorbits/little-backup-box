@@ -6,7 +6,7 @@ A bash shell scripts that transforms your Raspberry Pi (or any single-board comp
 
 
 **IMPORTANT**
-Little Backup Box is designed to work with USB sticks as backup media. Theoretically, it's possible to make Little Backup Box work with an external hard disk, but this setup is not officially supported.
+Raspberry Pi Backup Box is designed to work with USB sticks as backup media. Theoretically, it's possible to make Little Backup Box work with an external hard disk, but this setup is not officially supported.
 
 ## Installation
 
