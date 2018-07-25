@@ -42,9 +42,9 @@ BACKTITLE="Little Backup Box"
 TITLE="If you Backup from and to a USB device, plugin the destination first, and the source second."
 MENU="What is my purpose?"
 
-OPTIONS=(1 "Remote control what I do my WIFI/LAN interface"
-         2 "Sync all data from one USB drive to another"
-         3 "Backup from your camera to the drive SD Card of your Pi")
+OPTIONS=(1 "remote control what I do my WIFI/LAN interface"
+         2 "sync all data from one USB drive to another"
+         3 "backup your camera to the drive SD Card of this Pi")
 
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
