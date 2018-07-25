@@ -49,6 +49,8 @@ The exact steps depend on the operational mode.
 
 ### remote control what I do my WIFI/LAN interface
 
+# this still needs to be edited, I didn't change anything here
+
 1. Point the browser to *http://[IP-ADDRESS]:8080* (replace *[IP-ADDRESS]* with the actual IP address of the Raspberry Pi)
 2. Start the desired backup mode by pressing the appropriate button.
 
