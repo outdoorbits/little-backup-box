@@ -1,4 +1,4 @@
-# Raspberry Pi Backup Box
+# PiBackupBox
 
 This is a fork of the famous https://github.com/dmpop/little-backup-box from dmpop.
 
@@ -6,7 +6,7 @@ A bash shell scripts that transforms your Raspberry Pi (or any single-board comp
 
 
 **IMPORTANT**
-Raspberry Pi Backup Box is designed to work with USB sticks as backup media. Theoretically, it's possible to make Little Backup Box work with an external hard disk, but this setup is not officially supported.
+PiBackupBox is designed to work with USB sticks as backup media. Theoretically, it's possible to make Little Backup Box work with an external hard disk, but this setup is not officially supported.
 
 ## Installation
 
