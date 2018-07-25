@@ -22,8 +22,6 @@ Little Backup Box supports three operation modes:
 
 During the installation, choose the desired mode from the selection dialog.
 
-<img src="img/installer.png" alt="" width="600"/>
-
 When prompted, reboot the Raspberry Pi.
 
 ## Usage
