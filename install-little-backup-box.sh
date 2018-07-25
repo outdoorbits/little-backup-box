@@ -38,11 +38,11 @@ cd
 HEIGHT=15
 WIDTH=40
 CHOICE_HEIGHT=4
-BACKTITLE="Little Backup Box"
-TITLE="operstion mode"
+BACKTITLE="BackupPi"
+TITLE="select operation mode"
 MENU="If you Backup from and to a USB device, plugin the destination first, and the source second."
 
-OPTIONS=(1 "remote control what I do my WIFI/LAN interface"
+OPTIONS=(1 "remote control what I do via my WIFI/LAN interface"
          2 "sync all data from one USB drive to another"
          3 "backup your camera to the drive SD Card of this Pi")
 
