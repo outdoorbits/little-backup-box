@@ -39,10 +39,10 @@ HEIGHT=15
 WIDTH=40
 CHOICE_HEIGHT=4
 BACKTITLE="Little Backup Box"
-TITLE="What is my purpose?"
-MENU="If you Backup from and to a USB device, plugin the destination first, and the source second. choose:"
+TITLE="If you Backup from and to a USB device, plugin the destination first, and the source second."
+MENU="What is my purpose?"
 
-OPTIONS=(1 "Remote control what I do via WIFI/LAN"
+OPTIONS=(1 "Remote control what I do my WIFI/LAN interface"
          2 "Sync all data from one USB drive to another"
          3 "Backup from your camera to the drive SD Card of your Pi")
 
