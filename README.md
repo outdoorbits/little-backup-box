@@ -1,6 +1,8 @@
-# Little Backup Box
+# Raspberry Pi Backup Box
 
-Bash shell scripts that transforms a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
+This is a fork of the famous https://github.com/dmpop/little-backup-box from dmpop.
+
+A bash shell scripts that transforms your Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable data backup device.
 
 <img src="https://i.imgur.com/OQ3AQfM.jpg" alt="" width="375"/>
 
@@ -11,7 +13,7 @@ Little Backup Box is designed to work with USB sticks as backup media. Theoretic
 
 1. Create a bootable SD card with the latest version of Raspbian Lite for use with Little Backup Box.
 2. Make sure that your Raspberry Pi is connected to the internet.
-3. Run the following command on the Raspberry Pi: `curl -sSL https://is.gd/littlebackupbox | bash`
+3. Run the following command on the Raspberry Pi: `curl -sSL https://raw.githubusercontent.com/danielschmalhofer/Raspberry_Pi_Backup_Bbox/master/install-little-backup-box.sh | bash`
 
 Little Backup Box supports three backup modes:
 
@@ -27,9 +29,9 @@ When prompted, reboot the Raspberry Pi.
 
 ## Usage
 
-The exact steps depend on the backup mode.
+The exact steps depend on the operational mode.
 
-### Card backup mode
+### sync all data from one USB drive to another
 
 1. Boot the Raspberry Pi
 2. Plug in a backup storage device
@@ -38,14 +40,14 @@ The exact steps depend on the backup mode.
 
 **Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
-### Camera backup mode
+### backup your camera to the drive SD Card of this Pi
 
 1. Boot the Raspberry Pi
 2. Connect the camera to the Raspberry Pi
 3. Turn the camera on
 4. Wait till the Raspberry Pi shuts down
 
-### Remote control mode
+### remote control what I do my WIFI/LAN interface
 
 1. Point the browser to *http://[IP-ADDRESS]:8080* (replace *[IP-ADDRESS]* with the actual IP address of the Raspberry Pi)
 2. Start the desired backup mode by pressing the appropriate button.
@@ -73,6 +75,10 @@ To add a new feature or fix issues yourself, follow the following steps.
 ## Author
 
 Dmitri Popov [dmpop@linux.com](mailto:dmpop@linux.com)
+
+## little changes in des description
+
+danielschmalhofer.net
 
 ## License
 
