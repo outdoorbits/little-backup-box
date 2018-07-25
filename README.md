@@ -72,6 +72,7 @@ To add a new feature or fix issues yourself, follow the following steps.
 ## Author
 
 Dmitri Popov [dmpop@linux.com](mailto:dmpop@linux.com)
+
 <noscript><a href="https://liberapay.com/dmpop/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
 
 ## little changes in the description
