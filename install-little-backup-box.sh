@@ -40,7 +40,7 @@ WIDTH=40
 CHOICE_HEIGHT=4
 BACKTITLE="Little Backup Box"
 TITLE="What is my purpose?"
-MENU="If you Backup from and to a USB device, plugin the destination first, and the source second."
+MENU="If you Backup from and to a USB device, plugin the destination first, and the source second. choose:"
 
 OPTIONS=(1 "Remote control what I do via WIFI/LAN"
          2 "Sync all data from one USB drive to another"
