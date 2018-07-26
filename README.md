@@ -1,5 +1,7 @@
 # BackupPi
 
+<img src="https://i.imgur.com/OQ3AQfM.jpg" alt="" width="375"/>
+
 This is a fork of the famous https://github.com/dmpop/little-backup-box from dmpop.
 
 A bash shell scripts that transforms your Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable data backup device.
