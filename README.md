@@ -12,7 +12,7 @@ BackupPi is designed to work with USB sticks as backup media. Theoretically, it'
 
 1. Create a bootable SD card with the latest version of Raspbian Lite for use with BackupPi.
 2. Make sure that your Raspberry Pi is connected to the internet.
-3. Run the following command on the Raspberry Pi: `curl -sSL https://raw.githubusercontent.com/danielschmalhofer/Raspberry_Pi_Backup_Bbox/master/install-backuppi.sh | bash`
+3. Run the following command on the Raspberry Pi: `curl -sSL https://raw.githubusercontent.com/danielschmalhofer/BackupPi/master/install-backuppi.sh | bash`
 
 BackupPi supports three operation modes:
 
