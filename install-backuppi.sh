@@ -13,34 +13,38 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+### Now we will check if the system is up to date and that the necessary programs are installed ###
 sudo apt update
 sudo apt dist-upgrade -y
 sudo apt update
 sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python3-pip -y
 sudo pip3 install bottle
 
+### We need to make a dictionarys where we can process the data, and we need to own them ###
 sudo mkdir /media/card
 sudo mkdir /media/storage
 sudo chown -R pi:pi /media/storage
 sudo chmod -R 775 /media/storage
 sudo setfacl -Rdm g:pi:rw /media/storage
 
+### Now lets downlad the backup-box-scripts from github and install fonts ###
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 cd little-backup-box/fonts
 sudo cp -R . /home/pi/.fonts
 cd
 
+### Here are the variables or the displayed Install Screen ###
 HEIGHT=15
 WIDTH=40
 CHOICE_HEIGHT=4
-BACKTITLE="Little Backup Box"
-TITLE="Backup mode"
-MENU="Select the default backup mode:"
+BACKTITLE="BackupPi"
+TITLE="select operation mode"
+MENU="If you Backup from and to a USB device, plugin the destination first, and the source second."
 
-OPTIONS=(1 "Remote control"
-         2 "Card backup"
-         3 "Camera backup")
+OPTIONS=(1 "remote control what I do via my WIFI/LAN interface"
+         2 "sync all data from one USB drive to another"
+         3 "backup your camera to the drive SD Card of this Pi")
 
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
@@ -56,17 +60,17 @@ case $CHOICE in
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/rc.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-            ;;
+	    ;;
         2)
             crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/rc.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-            ;;
+	    ;;
         3)
             crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/rc.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-            ;;
+	    ;;
 esac
 
 echo "---------------------------------------------"

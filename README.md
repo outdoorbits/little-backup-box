@@ -1,35 +1,36 @@
-# Little Backup Box
-
-Bash shell scripts that transforms a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
+# BackupPi
 
 <img src="https://i.imgur.com/OQ3AQfM.jpg" alt="" width="375"/>
 
+This is a fork of the famous https://github.com/dmpop/little-backup-box from dmpop.
+
+A bash shell scripts that transforms your Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable data backup device.
+
+
 **IMPORTANT**
-Little Backup Box is designed to work with USB sticks as backup media. Theoretically, it's possible to make Little Backup Box work with an external hard disk, but this setup is not officially supported.
+BackupPi is designed to work with USB sticks as backup media. Theoretically, it's possible to make Little Backup Box work with an external hard disk, but this setup is not officially supported.
 
 ## Installation
 
-1. Create a bootable SD card with the latest version of Raspbian Lite for use with Little Backup Box.
+1. Create a bootable SD card with the latest version of Raspbian Lite for use with BackupPi.
 2. Make sure that your Raspberry Pi is connected to the internet.
-3. Run the following command on the Raspberry Pi: `curl -sSL https://is.gd/littlebackupbox | bash`
+3. Run the following command on the Raspberry Pi: `curl -sSL https://raw.githubusercontent.com/danielschmalhofer/BackupPi/master/install-backuppi.sh | bash`
 
-Little Backup Box supports three backup modes:
+BackupPi supports three operation modes:
 
-- **Card backup** Automatically backs up the contents of a storage card to an external storage device.
-- **Camera backup** Transfers photos, raw files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the */home/pi/BACKUP/[CAMERA MODEL]* directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
-- **Remote control** Provides a simple web interface to manually choose one of the two modes described above.
+- **sync all data from one USB drive to another** Automatically backs up the contents of a storage card to an external storage device (eg. USB Stick or USB HDD (untested, tell if it works please!:)).
+- **backup your camera to the drive SD Card of this Pi** Transfers photos, raw files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the */home/pi/BACKUP/[CAMERA MODEL]* directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
+- **remote control what I do my WIFI/LAN interface** Provides a simple web interface to manually choose one of the two modes described above.
 
 During the installation, choose the desired mode from the selection dialog.
-
-<img src="img/installer.png" alt="" width="600"/>
 
 When prompted, reboot the Raspberry Pi.
 
 ## Usage
 
-The exact steps depend on the backup mode.
+The exact steps depend on the operational mode.
 
-### Card backup mode
+### sync all data from one USB drive to another
 
 1. Boot the Raspberry Pi
 2. Plug in a backup storage device
@@ -38,19 +39,17 @@ The exact steps depend on the backup mode.
 
 **Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
-### Camera backup mode
+### backup your camera to the drive SD Card of this Pi
 
 1. Boot the Raspberry Pi
 2. Connect the camera to the Raspberry Pi
 3. Turn the camera on
 4. Wait till the Raspberry Pi shuts down
 
-### Remote control mode
+### remote control what I do my WIFI/LAN interface
 
 1. Point the browser to *http://[IP-ADDRESS]:8080* (replace *[IP-ADDRESS]* with the actual IP address of the Raspberry Pi)
 2. Start the desired backup mode by pressing the appropriate button.
-
-<img src="img/rc.png" alt="" />
 
 The remote control mode gives you access to the **Device backup** action that backs up the */home/pi/BACKUP* folder on the Raspberry Pi to an external storage device. This can be useful when you transfer files in the camera backup mode, and later want to back up the transferred files to a external storage device.
 
@@ -74,14 +73,24 @@ To add a new feature or fix issues yourself, follow the following steps.
 
 Dmitri Popov [dmpop@linux.com](mailto:dmpop@linux.com)
 
+<noscript><a href="https://liberapay.com/dmpop/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+
+## little changes in the description
+
+danielschmalhofer.net
+
 ## License
 
 The [GNU General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.en.html)
 
-<noscript><a href="https://liberapay.com/dmpop/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
 
+
+
+<!-- Great project by dmpop! Should it stay visible?
 ## Linux Photography
 
 Little Backup Box is a part of a streamlined and automated Linux-based photographic workflow described in the [Linux Photography](https://gumroad.com/l/linux-photography) book. The book provides step-by-step instructions on building a Raspberry Pi-based photo backup device running the Little Backup Box script. Get your copy at [Google Play Store](https://play.google.com/store/books/details/Dmitri_Popov_Linux_Photography?id=cO70CwAAQBAJ) or [Gumroad](https://gumroad.com/l/linux-photography).
 
 <img src="https://scribblesandsnaps.files.wordpress.com/2016/07/linux-photography-6.jpg" width="200"/>
+
+-->
