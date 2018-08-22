@@ -17,12 +17,34 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
-# Specify devices and their mount points
+# Create a new configuraion file if it doesn't exist
+# and prompt for required values
+
+CONFIG_DIR=$(dirname "$0")
+CONFIG="${CONFIG_DIR}/remote-backup.cfg"
+
+if [ ! -f "$CONFIG" ]; then
+    echo "Enter remote user name and press [ENTER]:"
+    read USER
+    echo 'USER="'$USER'"' >> "$CONFIG"
+    echo "Enter remote server IP address or domain name and press [ENTER]:"
+    read REMOTE
+    echo 'REMOTE="'$REMOTE'"' >> "$CONFIG"
+    echo "Specify target backup directory (include the trailing slash) and press [ENTER]"
+    read BACKUP_DIR
+    echo 'BACKUP_DIR="'$BACKUP_DIR'"' >> "$CONFIG"
+    echo "Enter your Notify token and press [ENTER]."
+    echo "Skip to disable:"
+    read NOTIFY_TOKEN
+    echo 'NOTIFY_TOKEN="'$NOTIFY_TOKEN'"' >> "$CONFIG"
+    fi
+# Initialize the configuration file
+source "$CONFIG"
+
+# Specify backup device and its mount points,
 # and other settings
 STORAGE_DEV="sda1" # Name of the storage device
 STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
-CARD_DEV="sdb1" # Name of the storage card
-CARD_MOUNT_POINT="/media/card" # Mount point of the storage card
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
 # Set the ACT LED to heartbeat
@@ -40,7 +62,7 @@ while [ -z ${STORAGE} ]
 done
 
 # When the USB storage device is detected, mount it
-mount /dev/$STORAGE_DEV $STORAGE_MOUNT_POINT
+mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 
 # Cancel shutdown
 sudo shutdown -c
@@ -49,39 +71,18 @@ sudo shutdown -c
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-# Wait for a card reader or a camera
-CARD_READER=$(ls /dev/* | grep $CARD_DEV | cut -d"/" -f3)
-until [ ! -z "$CARD_READER" ]
-  do
-  sleep 1
-  CARD_READER=$(ls /dev/sd* | grep $CARD_DEV | cut -d"/" -f3)
-done
+# Perform backup using rsync
+rsync -avhz -e ssh --delete --progress "$STORAGE_MOUNT_POINT" "$USER"@"$REMOTE":"$BACKUP_DIR"
 
-# If the card reader is detected, mount it and obtain its UUID
-if [ ! -z "$CARD_READER" ]; then
-  mount /dev/$CARD_DEV $CARD_MOUNT_POINT
-  # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
-  sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
-
-  # Create  a .id random identifier file if doesn't exist
-  cd "$CARD_MOUNT_POINT"
-  if [ ! -f *.id ]; then
-    random=$(echo $RANDOM)
-    touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
-  fi
-  ID_FILE=$(ls *.id)
-  ID="${ID_FILE%.*}"
-  cd
-
-  # Set the backup path
-  BACKUP_PATH=$STORAGE_MOUNT_POINT/"$ID"
-  
-  # Perform backup using rsync
-  rsync -ah --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
+if [ ! -z "$NOTIFY_TOKEN" ]; then
+	TEXT=$(sed 's/ /%20/g' <<< "Remote backup completed.")
+	curl -k \
+"https://us-central1-notify-b7652.cloudfunctions.net/sendNotification?to=${NOTIFY_TOKEN}&text=${TEXT}" \
+> /dev/null
+fi
 
   # Turn off the ACT LED to indicate that the backup is completed
   sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
-fi
 
 # Shutdown
 sync
