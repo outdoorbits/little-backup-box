@@ -29,7 +29,7 @@ sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
 # Wait for camera
 DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
-while [ -z ${DEVICE} ]
+while [ -z "${DEVICE}" ]
 	do
 	sleep 1
 	DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')

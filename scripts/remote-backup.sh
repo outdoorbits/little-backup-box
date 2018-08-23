@@ -54,11 +54,11 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
-STORAGE=$(ls /dev/* | grep $STORAGE_DEV | cut -d"/" -f3)
+STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 while [ -z ${STORAGE} ]
   do
   sleep 1
-  STORAGE=$(ls /dev/* | grep $STORAGE_DEV | cut -d"/" -f3)
+  STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
 
 # When the USB storage device is detected, mount it
@@ -72,7 +72,7 @@ sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # Perform backup using rsync
-rsync -avhz -e ssh --delete --progress "$STORAGE_MOUNT_POINT" "$USER"@"$REMOTE":"$BACKUP_DIR"
+rsync -avhz -e ssh --delete --progress "$STORAGE_MOUNT_POINT"/ "$USER"@"$REMOTE":"$BACKUP_DIR"
 
 if [ ! -z "$NOTIFY_TOKEN" ]; then
 	TEXT=$(sed 's/ /%20/g' <<< "Remote backup completed.")
