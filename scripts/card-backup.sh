@@ -33,6 +33,7 @@ sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
+#STORAGE=$(lsblk -x SIZE | grep sd[a-z]1  | awk '{print $1}' | sort | head -n 1)
 while [ -z "${STORAGE}" ]
   do
   sleep 1
@@ -55,14 +56,14 @@ CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
 until [ ! -z "${CARD_READER[0]}" ]
   do
   sleep 1
-  CARD_READER=$(ls /dev/sd* | grep "$CARD_DEV" | cut -d"/" -f3)
+  CARD_READER=($(ls /dev/sd* | grep "$CARD_DEV" | cut -d"/" -f3))
 done
 
 # If the card reader is detected, mount it and obtain its UUID
 if [ ! -z "${CARD_READER[0]}" ]; then
   mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
-  sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
+  sudo sh -c "echo 250 > /sys/class/leds/led0/delay_on"
 
   # Create  a .id random identifier file if doesn't exist
   cd "$CARD_MOUNT_POINT"
