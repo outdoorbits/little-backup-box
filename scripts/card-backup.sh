@@ -21,7 +21,7 @@
 # and other settings
 STORAGE_DEV="sda1" # Name of the storage device
 STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
-CARD_DEV="sdb1" # Name of the storage card
+CARD_DEV="sd[b-z]1" # Name of the storage card
 CARD_MOUNT_POINT="/media/card" # Mount point of the storage card
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
@@ -50,16 +50,17 @@ sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # Wait for a card reader or a camera
-CARD_READER=$(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3)
-until [ ! -z "$CARD_READER" ]
+# takes first device found
+CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
+until [ ! -z "${CARD_READER[0]}" ]
   do
   sleep 1
   CARD_READER=$(ls /dev/sd* | grep "$CARD_DEV" | cut -d"/" -f3)
 done
 
 # If the card reader is detected, mount it and obtain its UUID
-if [ ! -z "$CARD_READER" ]; then
-  mount /dev"/$CARD_DEV" "$CARD_MOUNT_POINT"
+if [ ! -z "${CARD_READER[0]}" ]; then
+  mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
@@ -75,7 +76,7 @@ if [ ! -z "$CARD_READER" ]; then
 
   # Set the backup path
   BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
-  
+
   # Perform backup using rsync
   rsync -ah --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
 
