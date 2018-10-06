@@ -56,7 +56,7 @@ CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
 until [ ! -z "${CARD_READER[0]}" ]
   do
   sleep 1
-  CARD_READER=($(ls /dev/sd* | grep "$CARD_DEV" | cut -d"/" -f3))
+  CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
 done
 
 # If the card reader is detected, mount it and obtain its UUID
