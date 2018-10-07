@@ -65,7 +65,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
 
   CARD_COUNT=$(find $CARD_MOUNT_POINT/ -type f | wc -l)
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
-  sudo sh -c "echo 250 > /sys/class/leds/led0/delay_on"
+  sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
   # Create  a .id random identifier file if doesn't exist
   cd "$CARD_MOUNT_POINT"
@@ -88,12 +88,23 @@ if [ ! -z "${CARD_READER[0]}" ]; then
     do
     STORAGE_COUNT=$(find $BACKUP_PATH/ -type f | wc -l)
     PERCENT=$(expr 100 \* $STORAGE_COUNT / $CARD_COUNT)
-    echo $PERCENT
+    sudo sh -c "echo $PERCENT"
+    #IF STATEMENTS HERE FOR LEDS
+    if [ $PERCENT -gt 25 ]; then
+      sudo sh -c "echo 300 > /sys/class/leds/led0/delay_on"
+    elif [ $PERCENT -gt 50 ]; then 
+      sudo sh -c "echo 200 > /sys/class/leds/led0/delay_on"
+    elif [ $PERCENT -gt 75 ]; then
+      sudo sh -c "echo 100 > /sys/class/leds/led0/delay_on"
+    fi
+    # then
+    #LEDS
+    #fi
     sleep 1
   done
-
-  # Turn off the ACT LED to indicate that the backup is completed
-  sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
+  sudo sh -c "echo 1 > /sys/class/leds/led0/brightness"
+  # Turn off the POWER LED to indicate that the backup is completed
+  sudo sh -c "echo 0 > /sys/class/leds/led1/brightness"
 fi
 
 # Shutdown
