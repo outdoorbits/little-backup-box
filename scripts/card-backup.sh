@@ -19,9 +19,9 @@
 
 # Specify devices and their mount points
 # and other settings
-STORAGE_DEV="sda1" # Name of the storage device
+STORAGE_DEV="sdc1" # Name of the storage device
 STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
-CARD_DEV="sd[b-z]1" # Name of the storage card
+CARD_DEV="sd[ab]1" # Name of the storage card
 CARD_MOUNT_POINT="/media/card" # Mount point of the storage card
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
 
@@ -62,6 +62,8 @@ done
 # If the card reader is detected, mount it and obtain its UUID
 if [ ! -z "${CARD_READER[0]}" ]; then
   mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
+
+  CARD_COUNT=$(find $CARD_MOUNT_POINT/ -type f | wc -l)
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 250 > /sys/class/leds/led0/delay_on"
 
@@ -77,9 +79,18 @@ if [ ! -z "${CARD_READER[0]}" ]; then
 
   # Set the backup path
   BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
-
+  STORAGE_COUNT=$(find $BACKUP_PATH/ -type f | wc -l)
   # Perform backup using rsync
-  rsync -ah --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
+  rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH" &
+  pid=$!
+
+  while kill -0 $pid 2> /dev/null
+    do
+    STORAGE_COUNT=$(find $BACKUP_PATH/ -type f | wc -l)
+    PERCENT=$(expr 100 \* $STORAGE_COUNT / $CARD_COUNT)
+    echo $PERCENT
+    sleep 1
+  done
 
   # Turn off the ACT LED to indicate that the backup is completed
   sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
