@@ -90,11 +90,11 @@ if [ ! -z "${CARD_READER[0]}" ]; then
     PERCENT=$(expr 100 \* $STORAGE_COUNT / $CARD_COUNT)
     sudo sh -c "echo $PERCENT"
     #IF STATEMENTS HERE FOR LEDS
-    if [ $PERCENT -gt 25 ]; then
+    if [ $PERCENT -gt 25 ] && [ $PERCENT -lt 49 ]; then
       sudo sh -c "echo 300 > /sys/class/leds/led0/delay_on"
-    elif [ $PERCENT -gt 50 ]; then 
+    elif [ $PERCENT -gt 50 ] && [ $PERCENT -lt 74 ]; then
       sudo sh -c "echo 200 > /sys/class/leds/led0/delay_on"
-    elif [ $PERCENT -gt 75 ]; then
+    elif [ $PERCENT -gt 75 ] && [ $PERCENT -lt 100 ]; then
       sudo sh -c "echo 100 > /sys/class/leds/led0/delay_on"
     fi
     # then
