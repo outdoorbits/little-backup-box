@@ -17,8 +17,8 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
-# Specify devices and their mount points
-# and other settings
+# Specify devices and their their mount points
+# as well as other settings
 STORAGE_DEV="sda1" # Name of the storage device
 STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
 CARD_DEV="sdb1" # Name of the storage card
@@ -33,6 +33,7 @@ sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
+#STORAGE=$(lsblk -x SIZE | grep sd[a-z]1  | awk '{print $1}' | sort | head -n 1)
 while [ -z "${STORAGE}" ]
   do
   sleep 1
@@ -50,16 +51,19 @@ sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # Wait for a card reader or a camera
-CARD_READER=$(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3)
-until [ ! -z "$CARD_READER" ]
+# takes first device found
+CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
+until [ ! -z "${CARD_READER[0]}" ]
   do
   sleep 1
-  CARD_READER=$(ls /dev/sd* | grep "$CARD_DEV" | cut -d"/" -f3)
+  CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
 done
 
 # If the card reader is detected, mount it and obtain its UUID
-if [ ! -z "$CARD_READER" ]; then
-  mount /dev"/$CARD_DEV" "$CARD_MOUNT_POINT"
+if [ ! -z "${CARD_READER[0]}" ]; then
+  mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
+
+  CARD_COUNT=$(find $CARD_MOUNT_POINT/ -type f | wc -l)
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
@@ -75,12 +79,32 @@ if [ ! -z "$CARD_READER" ]; then
 
   # Set the backup path
   BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
-  
+  STORAGE_COUNT=$(find $BACKUP_PATH/ -type f | wc -l)
   # Perform backup using rsync
-  rsync -ah --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
+  rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH" &
+  pid=$!
 
-  # Turn off the ACT LED to indicate that the backup is completed
-  sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
+  while kill -0 $pid 2> /dev/null
+    do
+    STORAGE_COUNT=$(find $BACKUP_PATH/ -type f | wc -l)
+    PERCENT=$(expr 100 \* $STORAGE_COUNT / $CARD_COUNT)
+    sudo sh -c "echo $PERCENT"
+    #IF STATEMENTS HERE FOR LEDS
+    if [ $PERCENT -gt 25 ] && [ $PERCENT -lt 49 ]; then
+      sudo sh -c "echo 300 > /sys/class/leds/led0/delay_on"
+    elif [ $PERCENT -gt 50 ] && [ $PERCENT -lt 74 ]; then
+      sudo sh -c "echo 200 > /sys/class/leds/led0/delay_on"
+    elif [ $PERCENT -gt 75 ] && [ $PERCENT -lt 100 ]; then
+      sudo sh -c "echo 100 > /sys/class/leds/led0/delay_on"
+    fi
+    # then
+    #LEDS
+    #fi
+    sleep 1
+  done
+  sudo sh -c "echo 1 > /sys/class/leds/led0/brightness"
+  # Turn off the POWER LED to indicate that the backup is completed
+  sudo sh -c "echo 0 > /sys/class/leds/led1/brightness"
 fi
 
 # Shutdown
