@@ -17,8 +17,8 @@
 
 while :
 do
-  if [[ ! $(pgrep -f rc.py) ]]; then
-    cd /home/pi/little-backup-box/rc/
-    sudo python3 rc.py
+  if [[ ! $(pgrep php) ]]; then
+    cd /home/$USER/little-backup-box/script/
+    php -S localhost:8000
   fi
 done 
