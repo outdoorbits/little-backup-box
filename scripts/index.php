@@ -47,14 +47,14 @@
 <?php
 if (isset($_POST['cardbackup']))
 {
-    shell_exec('sudo ./card-backup.sh');
+    shell_exec('sudo ./card-backup.sh 2>&1 & echo $!');
 }
 if (isset($_POST['camerabackup']))
 {
-    shell_exec('sudo ./camera-backup.sh');
+    shell_exec('sudo ./camera-backup.sh 2>&1 & echo $!');
 }
 if (isset($_POST['shutdown']))
 {
-    shell_exec('sudo shutdown -h now');
+    shell_exec('sudo shutdown -h now 2>&1 & echo $!');
 }
 ?>

@@ -47,12 +47,10 @@ The exact steps depend on the backup mode.
 
 ### Remote control mode
 
-1. Point the browser to *http://[IP-ADDRESS]:8080* (replace *[IP-ADDRESS]* with the actual IP address of the Raspberry Pi)
-2. Start the desired backup mode by pressing the appropriate button.
+1. Point the browser to *http://127.0.0.1:8000* (replace *127.0.0.1* with the actual IP address of the Raspberry Pi).
+2. Start the desired action by pressing the appropriate button.
 
 <img src="img/rc.png" alt="" />
-
-The remote control mode gives you access to the **Device backup** action that backs up the */home/pi/BACKUP* folder on the Raspberry Pi to an external storage device. This can be useful when you transfer files in the camera backup mode, and later want to back up the transferred files to a external storage device.
 
 ## Problems?
 
