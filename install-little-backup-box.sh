@@ -35,15 +35,12 @@ echo "-----------------------"
 sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
 sudo service minidlna start
 
-echo "--------------------------------------------------"
-echo "Fetching Little Backup Box and installing fonts..."
-echo "--------------------------------------------------"
+echo "-----------------------------"
+echo "Fetching Little Backup Box..."
+echo "-----------------------------"
 
 cd
 git clone https://github.com/dmpop/little-backup-box.git
-cd little-backup-box/fonts
-sudo cp -R . /home/$USER/.fonts
-cd
 
 HEIGHT=15
 WIDTH=40
