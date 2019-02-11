@@ -1,6 +1,6 @@
 # Little Backup Box
 
-Bash shell scripts that transforms a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
+A collection of scripts that transform a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
 
 <img src="https://i.imgur.com/OQ3AQfM.jpg" alt="" width="375"/>
 
