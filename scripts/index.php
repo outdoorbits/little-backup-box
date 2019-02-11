@@ -33,6 +33,12 @@
                     <button name="camerabackup">Camera backup</button>
 		</form>
             </p>
+	    <p>Activate the DLNA server</p>
+            <p>
+		<form method="post">
+                    <button name="minidlna">DLNA server</button>
+		</form>
+            </p>
             <p class="left">Shut down the Little Backup Box</p>
             <p>
 		<form method="post">
@@ -52,6 +58,10 @@ if (isset($_POST['cardbackup']))
 if (isset($_POST['camerabackup']))
 {
     shell_exec('sudo ./camera-backup.sh 2>&1 & echo $!');
+}
+if (isset($_POST['minidlna']))
+{
+    shell_exec('sudo ./minidlna.sh 2>&1 & echo $!');
 }
 if (isset($_POST['shutdown']))
 {

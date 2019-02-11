@@ -50,6 +50,8 @@ The exact steps depend on the backup mode.
 1. Point the browser to *http://127.0.0.1:8000* (replace *127.0.0.1* with the actual IP address of the Raspberry Pi).
 2. Start the desired action by pressing the appropriate button.
 
+The access the contents of the storage device, plug it into the Raspberry Pi and press the **DLNA SERVER** button. You can then use a uPnP application on any device on the same network to browse and view the contents of the storage device.
+
 <img src="img/rc.png" alt="" />
 
 ## Problems?
