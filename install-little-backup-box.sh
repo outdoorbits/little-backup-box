@@ -16,19 +16,34 @@
 sudo apt update
 sudo apt dist-upgrade -y
 sudo apt update
-sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python3-pip -y
+sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog python3-pip minidlna -y
 sudo pip3 install bottle
+
+echo "------------------------------------"
+echo "Creating the required directories..."
+echo "------------------------------------"
 
 sudo mkdir /media/card
 sudo mkdir /media/storage
-sudo chown -R pi:pi /media/storage
+sudo chown -R $USER:users /media/storage
 sudo chmod -R 775 /media/storage
-sudo setfacl -Rdm g:pi:rw /media/storage
+sudo setfacl -Rdm g:$USER:rw /media/storage
+
+echo "-----------------------"
+echo "Configuring minidlna..."
+echo "-----------------------"
+
+sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
+sudo service minidlna start
+
+echo "--------------------------------------------------"
+echo "Fetching Little Backup Box and installing fonts..."
+echo "--------------------------------------------------"
 
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 cd little-backup-box/fonts
-sudo cp -R . /home/pi/.fonts
+sudo cp -R . /home/$USER/.fonts
 cd
 
 HEIGHT=15
@@ -53,19 +68,19 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         1)
-            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/rc.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+            crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/rc.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
             ;;
         2)
-            crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/rc.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+            crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/rc.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
             ;;
         3)
-            crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/card-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/pi/little-backup-box/scripts/camera-backup.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/pi/little-backup-box/scripts/rc.sh >> /home/pi/little-backup-box.log 2>&1"; } | crontab
+            crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/rc.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
             ;;
 esac
 
