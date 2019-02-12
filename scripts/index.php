@@ -10,16 +10,23 @@
       <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <style>
-
        #content {
 	   margin: 0px auto;
            text-align: center;
+       }
+       img {
+	   display: block;
+	   margin-left: auto;
+	   margin-right: auto;
+	   margin-top: 1%;
+	   margin-bottom: 1%;
        }
       </style>
     </head>
 
     <body>
 	<div id="content">
+	    <img src="ichigo.svg" height="39px" alt="Ichigo">
             <h1>Little Backup Box</h1>
             <p>Back up a storage card connected via a card reader</p>
             <p>

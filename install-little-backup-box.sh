@@ -27,11 +27,10 @@ echo "-----------------------------------"
 
 sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna -y
 
-echo "Enter user name (e.g., pi) and press [ENTER]:"
-read USERNAME
+USER="$1"
 
-if [ -z "$USERNAME" ]; then
-    USERNAME="pi"
+if [ -z "$USER" ]; then
+    USER="pi"
     fi
 
 echo "------------------------------------"
@@ -40,9 +39,9 @@ echo "------------------------------------"
 
 sudo mkdir /media/card
 sudo mkdir /media/storage
-sudo chown -R $USERNAME:users /media/storage
+sudo chown -R $USER:users /media/storage
 sudo chmod -R 775 /media/storage
-sudo setfacl -Rdm g:$USERNAME:rw /media/storage
+sudo setfacl -Rdm g:$USER:rw /media/storage
 
 sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
 sudo service minidlna start
@@ -76,19 +75,19 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         1)
-            crontab -l | { cat; echo "#@reboot sudo /home/"$USERNAME"/little-backup-box/scripts/card-backup.sh >> /home/"$USERNAME"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/"$USERNAME"/little-backup-box/scripts/camera-backup.sh >> /home/"$USERNAME"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "@reboot cd /home/"$USERNAME"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
+            crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
             ;;
         2)
-            crontab -l | { cat; echo "@reboot sudo /home/"$USERNAME"/little-backup-box/scripts/card-backup.sh >> /home/"$USERNAME"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/"$USERNAME"/little-backup-box/scripts/camera-backup.sh >> /home/"$USERNAME"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/"$USERNAME"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
+            crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
             ;;
         3)
-            crontab -l | { cat; echo "#@reboot sudo /home/"$USERNAME"/little-backup-box/scripts/card-backup.sh >> /home/"$USERNAME"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "@reboot sudo /home/"$USERNAME"/little-backup-box/scripts/camera-backup.sh >> /home/"$USERNAME"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/"$USERNAME"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
+            crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+	    crontab -l | { cat; echo "#@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
             ;;
 esac
 
