@@ -56,6 +56,8 @@ The access the contents of the storage device, plug it into the Raspberry Pi and
 
 Activating the DLNA server also returns the disk space usage information. You can use this information to monitor the remaining free space on the storage device.
 
+The **System info** link gives you access to basic system information, such as a list of storage devices and memory usage.
+
 ## Problems?
 
 Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
