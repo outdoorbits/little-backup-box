@@ -106,6 +106,7 @@
 		shell_exec('sudo shutdown -h now 2>&1 & echo $!');
 	    }
 	    ?>
+	    Read the <a href="https://gumroad.com/l/linux-photography">Linux Photography</a> book
 	</div>
     </body>
 </html>

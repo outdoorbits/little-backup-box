@@ -48,6 +48,7 @@
 	    <form>
 		<input type="button" onClick="history.go(0)" value="Refresh">
 	    </form>
+	    <p>Read the <a href="https://gumroad.com/l/linux-photography">Linux Photography</a> book</p>
 	</div>
     </body>
 </html>
