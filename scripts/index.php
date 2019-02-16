@@ -57,15 +57,15 @@
 	    <?php
 	    if (isset($_POST['cardbackup']))
 	    {
-		shell_exec('sudo ./card-backup.sh 2>&1 & echo $!');
+		shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
 	    }
 	    if (isset($_POST['camerabackup']))
 	    {
-		shell_exec('sudo ./camera-backup.sh 2>&1 & echo $!');
+		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 	    }
 	    if (isset($_POST['minidlna']))
 	    {
-		shell_exec('sudo ./minidlna.sh 2>&1 & echo $!');
+		shell_exec('sudo ./minidlna.sh > /dev/null 2>&1 & echo $!');
 
 		// folder to check
 		$dir = '/media/storage';
@@ -103,7 +103,7 @@
 	    }
 	    if (isset($_POST['shutdown']))
 	    {
-		shell_exec('sudo shutdown -h now 2>&1 & echo $!');
+		shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
 	    }
 	    ?>
 	    Read the <a href="https://gumroad.com/l/linux-photography">Linux Photography</a> book
