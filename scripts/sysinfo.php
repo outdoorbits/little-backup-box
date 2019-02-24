@@ -26,7 +26,7 @@
 
     <body>
 	<div id="content">
-	    <img src="ichigo.svg" height="39px" alt="Ichigo">
+	    <a href="/"><img src="ichigo.svg" height="39px" alt="Ichigo"></a>
             <h1>Little Backup Box</h1>
             <p>Basic system information</p>
 	    <h2>Devices</h2>

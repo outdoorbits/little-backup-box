@@ -26,7 +26,7 @@
 
     <body>
 	<div id="content">
-	    <img src="ichigo.svg" height="39px" alt="Ichigo">
+	    <a href="/"><img src="ichigo.svg" height="39px" alt="Ichigo"></a>
             <h1>Little Backup Box</h1>
 	    <p><a href="sysinfo.php">System info</a></p>
             <p>Back up a storage card connected via a card reader</p>
