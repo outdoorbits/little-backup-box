@@ -58,10 +58,12 @@
 	    if (isset($_POST['cardbackup']))
 	    {
 		shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
+		echo "<p>OK</p>";
 	    }
 	    if (isset($_POST['camerabackup']))
 	    {
 		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
+		echo "<p>OK</p>";
 	    }
 	    if (isset($_POST['minidlna']))
 	    {
@@ -104,6 +106,7 @@
 	    if (isset($_POST['shutdown']))
 	    {
 		shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
+		echo "<p>OK</p>";
 	    }
 	    ?>
 	    Read the <a href="https://gumroad.com/l/linux-photography">Linux Photography</a> book
