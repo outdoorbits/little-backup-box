@@ -5,7 +5,7 @@
     <head>
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
-	<link rel="shortcut icon" href="ichigo.png" />
+	<link rel="shortcut icon" href="favicon.png" />
 	<link rel="stylesheet" href="milligram.min.css">
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +13,9 @@
 	 #content {
 	     margin: 0px auto;
              text-align: center;
+	 }
+	 h2 {
+	     letter-spacing: 3px;
 	 }
 	 img {
 	     display: block;
@@ -26,8 +29,8 @@
 
     <body>
 	<div id="content">
-	    <a href="/"><img src="ichigo.svg" height="39px" alt="Ichigo"></a>
-            <h1>Little Backup Box</h1>
+	    <a href="/"><img src="tokyo-taxi.svg" height="51px" alt="Tokyo taxi"></a>
+            <h2>Little Backup Box</h2>
             <p>Basic system information</p>
 	    <h2>Devices</h2>
 	    <div style="display: inline-block; text-align: left;">
