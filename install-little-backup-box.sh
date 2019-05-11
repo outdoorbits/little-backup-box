@@ -32,11 +32,6 @@ USER="$1"
 if [ -z "$USER" ]; then
     USER="pi"
     fi
-
-echo "------------------------------------"
-echo "Creating the required directories..."
-echo "------------------------------------"
-
 sudo mkdir /media/card
 sudo mkdir /media/storage
 sudo chown -R $USER:users /media/storage
