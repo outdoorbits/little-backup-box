@@ -25,7 +25,7 @@ echo "-----------------------------------"
 echo "Installing the required packages..."
 echo "-----------------------------------"
 
-sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna -y
+sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin -y
 
 USER="$1"
 
@@ -90,6 +90,41 @@ case $CHOICE in
 	    crontab -l | { cat; echo "#@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
             ;;
 esac
+
+echo "--------------------"
+echo "Configuring Samba..."
+echo "--------------------"
+pw="raspberry"
+(echo $pw; echo $pw ) | sudo smbpasswd -s -a pi
+sudo sh -c "echo '### Global Settings ###' > /etc/samba/smb.conf"
+sudo sh -c "echo '[global]' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'workgroup = WORKGROUP' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'wide links = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'unix extensions = no' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'dns proxy = no' >> /etc/samba/smb.conf"
+sudo sh -c "echo '### Debugging/Accounting ###' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'log file = /var/log/samba/log.%m' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'max log size = 1000' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'syslog = 0' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'panic action = /usr/share/samba/panic-action %d' >> /etc/samba/smb.conf"
+sudo sh -c "echo '### Authentication ###' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'security = user' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'map to guest = Bad User' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'guest account = pi' >> /etc/samba/smb.conf"
+sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
+sudo sh -c "echo '[little-backup-box]' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'comment = Little Backup Box /media/storage' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'path = /media/storage' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'force user = pi' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'force group = pi' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'admin users = pi' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
+sudo samba restart
 
 echo "---------------------------------------------"
 echo "All done! The system will reboot in 1 minute."

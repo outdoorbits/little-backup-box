@@ -41,10 +41,10 @@
                     <button name="camerabackup">Camera backup</button>
 		</form>
             </p>
-	    <p>Activate the DLNA server</p>
+	    <p>Activate the DLNA and Samba servers</p>
             <p>
 		<form method="post">
-                    <button name="minidlna">DLNA server</button>
+                    <button name="minidlna">DLNA & SAMBA</button>
 		</form>
             </p>
             <p class="left">Shut down the Little Backup Box</p>

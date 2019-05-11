@@ -50,11 +50,11 @@ The exact steps depend on the backup mode.
 1. Point the browser to *http://127.0.0.1:8000* (replace *127.0.0.1* with the actual IP address of the Raspberry Pi).
 2. Start the desired action by pressing the appropriate button.
 
-The access the contents of the storage device, plug it into the Raspberry Pi and press the **DLNA SERVER** button. You can then use a uPnP application on any device on the same network to browse and view the contents of the storage device.
+The access the contents of the storage device, plug it into the Raspberry Pi and press the **DLNA & SAMBA** button. You can then use a uPnP or Samba client on any device on the same network to browse and view the contents of the storage device.
 
 <img src="img/rc.png" alt="" />
 
-Activating the DLNA server also returns the disk space usage information. You can use this information to monitor the remaining free space on the storage device.
+Activating the DLNA and Samba servers also returns the disk space usage information. You can use this information to monitor the remaining free space on the storage device.
 
 The **System info** link gives you access to basic system information, such as a list of storage devices and memory usage.
 
