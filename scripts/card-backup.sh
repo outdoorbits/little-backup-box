@@ -24,6 +24,9 @@ STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
 CARD_DEV="sdb1" # Name of the storage card
 CARD_MOUNT_POINT="/media/card" # Mount point of the storage card
 SHUTD="5" # Minutes to wait before shutdown due to inactivity
+INTERNAL=true # Set to true to enable internal storage as backup destination
+              # With internal storage option enabled, modify the STORAGE_DEV
+              # and CARD_DEV values
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
@@ -31,18 +34,20 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 # Shutdown after a specified period of time (in minutes) if no device is connected.
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
-# Wait for a USB storage device (e.g., a USB flash drive)
-STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-#STORAGE=$(lsblk -x SIZE | grep sd[a-z]1  | awk '{print $1}' | sort | head -n 1)
-while [ -z "${STORAGE}" ]
-  do
-  sleep 1
-  STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-done
-
-# When the USB storage device is detected, mount it
-mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
-
+if [ INTERNAL = true ]; then
+    STORAGE_MOUNT_POINT="/home/pi/BACKUP"
+    mkdir -p "$STORAGE_MOUNT_POINT"
+else
+    # Wait for a USB storage device (e.g., a USB flash drive)
+    STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
+    while [ -z "${STORAGE}" ]
+    do
+	sleep 1
+	STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
+    done
+    # When the USB storage device is detected, mount it
+    mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
+    fi
 # Cancel shutdown
 sudo shutdown -c
 
