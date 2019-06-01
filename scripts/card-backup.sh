@@ -28,8 +28,8 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 # Shutdown after a specified period of time (in minutes) if no device is connected.
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
-if [ INTERNAL = true ]; then
-    STORAGE_MOUNT_POINT="/home/pi/BACKUP"
+if [ "$INTERNAL" = true ]; then
+    STORAGE_MOUNT_POINT="$BAK_DIR"
     mkdir -p "$STORAGE_MOUNT_POINT"
 else
     # Wait for a USB storage device (e.g., a USB flash drive)

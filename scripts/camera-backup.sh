@@ -40,7 +40,7 @@ sudo shutdown -c
 # Obtain camera model
 # Create the target directory with the camera model as its name
 CAMERA=$(gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
-STORAGE_MOUNT_POINT="$HOME_DIR/$CAMERA"
+STORAGE_MOUNT_POINT="$BAK_DIR/$CAMERA"
 mkdir -p "$STORAGE_MOUNT_POINT"
 
 # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
