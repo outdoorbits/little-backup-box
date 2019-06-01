@@ -47,7 +47,7 @@
 	    <p>Activate the DLNA and Samba servers</p>
             <p>
 		<form method="post">
-                    <button name="minidlna">DLNA & SAMBA</button>
+                    <button name="dlnasamba">DLNA & SAMBA</button>
 		</form>
             </p>
             <p class="left">Shut down the Little Backup Box</p>
@@ -68,9 +68,9 @@
 		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 		echo "<p>OK</p>";
 	    }
-	    if (isset($_POST['minidlna']))
+	    if (isset($_POST['dlnasamba']))
 	    {
-		shell_exec('sudo ./minidlna.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./dlnasamba.sh > /dev/null 2>&1 & echo $!');
 
 		// folder to check
 		$dir = '/media/storage';

@@ -17,9 +17,8 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
-# Specify a storage device and its mount point
-HOME_DIR="/home/pi/BACKUP" # Home directory path
-SHUTD="5" # Minutes to wait before shutdown due to inactivity
+CONFIG_DIR=$(dirname "$0")
+CONFIG="${CONFIG_DIR}/config.cfg"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"

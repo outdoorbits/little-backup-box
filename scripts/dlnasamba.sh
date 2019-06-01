@@ -17,10 +17,7 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
-# Specify devices and their their mount points
-# as well as other settings
-STORAGE_DEV="sda1" # Name of the storage device
-STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device
+source "$CONFIG"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
