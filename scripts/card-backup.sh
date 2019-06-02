@@ -77,11 +77,8 @@ if [ ! -z "${CARD_READER[0]}" ]; then
 
   # Set the backup path
   BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
-  STORAGE_COUNT=$(find $BACKUP_PATH/ -type f | wc -l)
   # Perform backup using rsync
   rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
-  # Turn off the POWER LED to indicate that the backup is completed
-  sudo sh -c "echo 0 > /sys/class/leds/led1/brightness"
 fi
 
 # Shutdown
