@@ -62,7 +62,6 @@ done
 if [ ! -z "${CARD_READER[0]}" ]; then
   mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
 
-  CARD_COUNT=$(find $CARD_MOUNT_POINT/ -type f | wc -l)
   # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
@@ -80,28 +79,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
   BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
   STORAGE_COUNT=$(find $BACKUP_PATH/ -type f | wc -l)
   # Perform backup using rsync
-  rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH" &
-  pid=$!
-
-  while kill -0 $pid 2> /dev/null
-    do
-    STORAGE_COUNT=$(find $BACKUP_PATH/ -type f | wc -l)
-    PERCENT=$(expr 100 \* $STORAGE_COUNT / $CARD_COUNT)
-    sudo sh -c "echo $PERCENT"
-    #IF STATEMENTS HERE FOR LEDS
-    if [ $PERCENT -gt 25 ] && [ $PERCENT -lt 49 ]; then
-      sudo sh -c "echo 300 > /sys/class/leds/led0/delay_on"
-    elif [ $PERCENT -gt 50 ] && [ $PERCENT -lt 74 ]; then
-      sudo sh -c "echo 200 > /sys/class/leds/led0/delay_on"
-    elif [ $PERCENT -gt 75 ] && [ $PERCENT -lt 100 ]; then
-      sudo sh -c "echo 100 > /sys/class/leds/led0/delay_on"
-    fi
-    # then
-    #LEDS
-    #fi
-    sleep 1
-  done
-  sudo sh -c "echo 1 > /sys/class/leds/led0/brightness"
+  rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
   # Turn off the POWER LED to indicate that the backup is completed
   sudo sh -c "echo 0 > /sys/class/leds/led1/brightness"
 fi
