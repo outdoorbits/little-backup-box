@@ -109,7 +109,7 @@
 	    if (isset($_POST['shutdown']))
 	    {
 		shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
-		echo "<p>OK</p>";
+		echo "<p>Little Backup Box is shut down. You can close this page.</p>";
 	    }
 	    ?>
 	    Read the <a href="https://gumroad.com/l/linux-photography">Linux Photography</a> book
