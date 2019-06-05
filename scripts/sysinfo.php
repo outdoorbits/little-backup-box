@@ -40,6 +40,14 @@
 		echo '</pre>';
 		?>
 	    </div>
+	    <h2>Disk space</h2>
+	    <div style="display: inline-block; text-align: left;">
+		<?php
+		echo '<pre>';
+		passthru("df -H");
+		echo '</pre>';
+		?>
+	    </div>
 	    <h2>Memory (in MB)</h2>
 	    <div style="display: inline-block; text-align: left;">
 		<?php
