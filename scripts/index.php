@@ -61,22 +61,30 @@
 	    if (isset($_POST['cardbackup']))
 	    {
 		shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
-		echo "<p>OK</p>";
+		echo '<script language="javascript">';
+		echo 'alert("Card backup initiated.")';
+		echo '</script>';
 	    }
 	    if (isset($_POST['camerabackup']))
 	    {
 		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
-		echo "<p>OK</p>";
+		echo '<script language="javascript">';
+		echo 'alert("Camera backup initiated.")';
+		echo '</script>';
 	    }
 	    if (isset($_POST['dlnasamba']))
 	    {
 		shell_exec('sudo ./dlnasamba.sh > /dev/null 2>&1 & echo $!');
-		echo "<p>The DLNA and Samba servers are up and running.</p>";
+		echo '<script language="javascript">';
+		echo 'alert("The DLNA and Samba servers are up and running.")';
+		echo '</script>';
 	    }
 	    if (isset($_POST['shutdown']))
 	    {
 		shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
-		echo "<p>Little Backup Box is shut down. You can close this page.</p>";
+		echo '<script language="javascript">';
+		echo 'alert("Little Backup Box is shut down. You can close this page.")';
+		echo '</script>';
 	    }
 	    ?>
 	    Read the <a href="https://gumroad.com/l/linux-photography">Linux Photography</a> book
