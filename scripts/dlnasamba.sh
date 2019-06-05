@@ -17,6 +17,8 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
+CONFIG_DIR=$(dirname "$0")
+CONFIG="${CONFIG_DIR}/config.cfg"
 source "$CONFIG"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
