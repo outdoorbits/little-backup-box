@@ -58,9 +58,11 @@ Activating the DLNA and Samba servers also returns the disk space usage informat
 
 The **System info** link gives you access to basic system information, such as a list of storage devices and memory usage.
 
-## Problems?
+## Problems, comments, ideas, updates?
 
 Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
+
+To discuss Little Backup Box-related topics and get the latest updates, visit the [official forum at PIXLS.US](https://discuss.pixls.us/c/hardware/little-backup-box).
 
 ## Contribute
 
