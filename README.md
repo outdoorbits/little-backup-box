@@ -78,7 +78,7 @@ To add a new feature or fix issues yourself, follow the following steps.
 
 ## Author
 
-Dmitri Popov [dmpop@linux.com](mailto:dmpop@linux.com)
+[Dmitri Popov](https://www.tokyomade.photography/)
 
 ## License
 
