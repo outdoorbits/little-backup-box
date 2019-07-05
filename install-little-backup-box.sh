@@ -27,6 +27,8 @@ echo "-----------------------------------"
 
 sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin -y
 
+curl https://rclone.org/install.sh | sudo bash
+
 USER="$1"
 
 if [ -z "$USER" ]; then
