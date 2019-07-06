@@ -29,7 +29,7 @@
 
     <body>
 	<div id="content">
-	    <a href="/"><img src="tokyo-taxi.svg" height="51px" alt="Tokyo taxi"></a>
+	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
             <h2>Little Backup Box</h2>
             <p>Basic system information</p>
 	    <h2>Devices</h2>
