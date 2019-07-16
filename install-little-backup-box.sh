@@ -28,8 +28,8 @@ echo "-----------------------------------"
 sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin -y
 curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
 echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
-sudo apt-get update
-sudo apt-get install syncthing
+sudo apt update
+sudo apt install syncthing
 
 USER="$1"
 
@@ -131,6 +131,8 @@ echo "---------------------"
 
 sudo systemctl start syncthing@pi.service
 sudo sed -i "s/127\.0\.0\.1/0.0.0.0/g" ~/.config/syncthing/config.xml
+
+chmod +x little-backup-box/scripts/*.sh
 
 echo "---------------------------------------------"
 echo "All done! The system will reboot in 1 minute."

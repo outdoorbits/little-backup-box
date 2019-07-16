@@ -78,7 +78,8 @@
 		echo '<script language="javascript">';
 		echo 'alert("DLNA, Samba, and Syncthing are up and running.")';
 		echo '</script>';
-		echo "<p><a href='".$_SERVER['SERVER_NAME'].":8384'>Syncthing server</a></p>";
+		$ip=shell_exec("hostname -I | cut -d' ' -f1");
+                echo '<p><a href="http://'.$ip.':8384">Syncthing server</a></p>';
 	    }
 	    if (isset($_POST['shutdown']))
 	    {
