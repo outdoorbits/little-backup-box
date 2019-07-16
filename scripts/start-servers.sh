@@ -40,3 +40,7 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 sudo minidlnad -R
 sudo service minidlna restart
+
+# Start Syncthing
+
+sudo systemctl start syncthing@pi.service

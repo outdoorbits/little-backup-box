@@ -44,10 +44,10 @@
                     <button name="camerabackup">Camera backup</button>
 		</form>
             </p>
-	    <p>Activate the DLNA and Samba servers</p>
+	    <p>Start DLNA, Samba, and Syncthing</p>
             <p>
 		<form method="post">
-                    <button name="dlnasamba">DLNA & SAMBA</button>
+                    <button name="servers">Start servers</button>
 		</form>
             </p>
             <p class="left">Shut down the Little Backup Box</p>
@@ -72,11 +72,11 @@
 		echo 'alert("Camera backup initiated.")';
 		echo '</script>';
 	    }
-	    if (isset($_POST['dlnasamba']))
+	    if (isset($_POST['servers']))
 	    {
-		shell_exec('sudo ./dlnasamba.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./start-servers.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("The DLNA and Samba servers are up and running.")';
+		echo 'alert("DLNA, Samba, and Syncthing are up and running.")';
 		echo '</script>';
 	    }
 	    if (isset($_POST['shutdown']))

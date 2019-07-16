@@ -26,8 +26,10 @@ echo "Installing the required packages..."
 echo "-----------------------------------"
 
 sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin -y
-
-curl https://rclone.org/install.sh | sudo bash
+curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
+echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
+sudo apt-get update
+sudo apt-get install syncthing
 
 USER="$1"
 
@@ -122,6 +124,13 @@ sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
 sudo samba restart
+
+echo "---------------------"
+echo "Starting Syncthing..."
+echo "---------------------"
+
+sudo systemctl start syncthing@pi.service
+sudo sed -i "s/127\.0\.0\.1/0.0.0.0/g" ~/.config/syncthing/config.xml
 
 echo "---------------------------------------------"
 echo "All done! The system will reboot in 1 minute."
