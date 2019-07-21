@@ -43,4 +43,6 @@ sudo service minidlna restart
 
 # Start Syncthing
 
-sudo systemctl start syncthing@pi.service
+if [ "$SYNCTHING" = true ]; then
+    sudo systemctl start syncthing@pi.service
+fi
