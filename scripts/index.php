@@ -75,6 +75,7 @@
 	    if (isset($_POST['servers']))
 	    {
 		shell_exec('sudo ./start-servers.sh > /dev/null 2>&1 & echo $!');
+        sleep(5); # Give Syncthing time to start
 		echo '<script language="javascript">';
 		echo 'alert("DLNA, Samba, and Syncthing are up and running.")';
 		echo '</script>';
