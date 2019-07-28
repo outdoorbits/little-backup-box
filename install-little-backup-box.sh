@@ -126,12 +126,7 @@ sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
 sudo samba restart
 
 sudo systemctl start syncthing@pi.service
-PROC=$(pgrep syncthing)
-while [ -z "$PROC" ]
-  do
-  sleep 1
-  PROC=$(pgrep syncthing)
-done
+sleep 15
 sudo sed -i "s/127\.0\.0\.1/0.0.0.0/g" ~/.config/syncthing/config.xml
 
 chmod +x little-backup-box/scripts/*.sh
