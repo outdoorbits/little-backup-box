@@ -38,6 +38,12 @@
                     <button name="cardbackup">Card backup</button>
 		</form>
             </p>
+	    <p>Back up a storage card to the internal storage</p>
+            <p>
+		<form method="post">
+                    <button name="internalbackup">Internal backup</button>
+		</form>
+            </p>
             <p>Transfer files directly from the connected camera</p>
             <p>
 		<form method="post">
@@ -65,6 +71,13 @@
 		echo 'alert("Card backup initiated.")';
 		echo '</script>';
 	    }
+	    if (isset($_POST['internalbackup']))
+	    {
+		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
+		echo '<script language="javascript">';
+		echo 'alert("Internal backup initiated.")';
+		echo '</script>';
+	    }
 	    if (isset($_POST['camerabackup']))
 	    {
 		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
@@ -75,7 +88,7 @@
 	    if (isset($_POST['servers']))
 	    {
 		shell_exec('sudo ./start-servers.sh > /dev/null 2>&1 & echo $!');
-        sleep(5); # Give Syncthing time to start
+		sleep(5); # Give Syncthing time to start
 		echo '<script language="javascript">';
 		echo 'alert("DLNA, Samba, and Syncthing are up and running.")';
 		echo '</script>';

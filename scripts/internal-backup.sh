@@ -25,57 +25,30 @@ source "$CONFIG"
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# Shutdown after a specified period of time (in minutes) if no device is connected.
-sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
-
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-while [ -z "${STORAGE}" ]
-do
-    sleep 1
-    STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
+while [ -z ${STORAGE} ]
+  do
+  sleep 1
+  STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
+
 # When the USB storage device is detected, mount it
 mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
-
-# Cancel shutdown
-sudo shutdown -c
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-# Wait for a card reader or a camera
-# takes first device found
-CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
-until [ ! -z "${CARD_READER[0]}" ]
-  do
-  sleep 1
-  CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
-done
+# Create backup directory, if necessary
+mkdir -p "$BAK_DIR"
+chown pi:users -R "$BAK_DIR"
 
-# If the card reader is detected, mount it and obtain its UUID
-if [ ! -z "${CARD_READER[0]}" ]; then
-  mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
+# Perform backup using rsync
+rsync -av "$STORAGE_MOUNT_POINT" "$BAK_DIR"
 
-  # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
-  sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
-
-  # Create  a .id random identifier file if doesn't exist
-  cd "$CARD_MOUNT_POINT"
-  if [ ! -f *.id ]; then
-    random=$(echo $RANDOM)
-    touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
-  fi
-  ID_FILE=$(ls *.id)
-  ID="${ID_FILE%.*}"
-  cd
-
-  # Set the backup path
-  BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
-  # Perform backup using rsync
-  rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
-fi
+# Turn off the ACT LED to indicate that the backup is completed
+sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
 
 # Shutdown
 sync
