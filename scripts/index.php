@@ -24,6 +24,7 @@
 	     margin-top: 1%;
 	     margin-bottom: 1%;
 	 }
+	 button {width: 19%;}
 	</style>
     </head>
 

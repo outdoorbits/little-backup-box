@@ -43,6 +43,7 @@ sudo chmod -R 775 /media/storage
 sudo setfacl -Rdm g:$USER:rw /media/storage
 
 sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
+sudo sh -c "echo 'media_dir=/home/$USER/BACKUP' >> /etc/minidlna.conf"
 sudo service minidlna start
 
 echo "-----------------------------"
@@ -115,14 +116,28 @@ sudo sh -c "echo '[little-backup-box]' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'comment = Little Backup Box /media/storage' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'path = /media/storage' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'force user = pi' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'force group = pi' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'admin users = pi' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'force user = $USER' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'force group = $USER' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'admin users = $USER' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
+
+sudo sh -c "echo '[internal-backup]' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'comment = Little Backup Box internal backup' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'path = /home/$USER/BACKUP' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'force user = $USER' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'force group = $USER' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'admin users = $USER' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
+
 sudo samba restart
 
 sudo systemctl start syncthing@pi.service
