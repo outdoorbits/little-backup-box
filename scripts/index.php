@@ -24,7 +24,10 @@
 	     margin-top: 1%;
 	     margin-bottom: 1%;
 	 }
-	 button {width: 19%;}
+	 button {width: 15%;}
+	 button.red { background-color: #f44336; border: none; }
+	 button.green { background-color: #009933; border: none; }
+	 button.orange { background-color: #ff9900; border: none; }
 	</style>
     </head>
 
@@ -39,28 +42,28 @@
                     <button name="cardbackup">Card backup</button>
 		</form>
             </p>
-	    <p>Back up a storage card to the internal storage</p>
-            <p>
-		<form method="post">
-                    <button name="internalbackup">Internal backup</button>
-		</form>
-            </p>
             <p>Transfer files directly from the connected camera</p>
             <p>
 		<form method="post">
                     <button name="camerabackup">Camera backup</button>
 		</form>
             </p>
+	    <p>Back up a storage card to the internal storage</p>
+            <p>
+		<form method="post">
+                    <button class="green" name="internalbackup">Internal backup</button>
+		</form>
+            </p>
 	    <p>Start DLNA, Samba, and Syncthing</p>
             <p>
 		<form method="post">
-                    <button name="servers">Start servers</button>
+                    <button class="orange" name="servers">Start servers</button>
 		</form>
             </p>
             <p class="left">Shut down the Little Backup Box</p>
             <p>
 		<form method="post">
-                    <button class="button button-outline" name="shutdown">Shut down</button>
+                    <button class="red" name="shutdown">Shut down</button>
 		</form>
             </p>
 
