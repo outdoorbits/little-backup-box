@@ -24,7 +24,7 @@
 	     margin-top: 1%;
 	     margin-bottom: 1%;
 	 }
-	 button {width: 15%;}
+	 button {width: 175px;}
 	 button.red { background-color: #f44336; border: none; }
 	</style>
     </head>
