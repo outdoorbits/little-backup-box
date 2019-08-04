@@ -26,8 +26,6 @@
 	 }
 	 button {width: 15%;}
 	 button.red { background-color: #f44336; border: none; }
-	 button.green { background-color: #009933; border: none; }
-	 button.orange { background-color: #ff9900; border: none; }
 	</style>
     </head>
 
@@ -51,13 +49,13 @@
 	    <p>Back up a storage card to the internal storage</p>
             <p>
 		<form method="post">
-                    <button class="green" name="internalbackup">Internal backup</button>
+                    <button name="internalbackup">Internal backup</button>
 		</form>
             </p>
 	    <p>Start DLNA, Samba, and Syncthing</p>
             <p>
 		<form method="post">
-                    <button class="orange" name="servers">Start servers</button>
+                    <button class="button button-outline" name="servers">Start servers</button>
 		</form>
             </p>
             <p class="left">Shut down the Little Backup Box</p>

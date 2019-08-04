@@ -53,7 +53,7 @@ echo "-----------------------------"
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 
-echo 'BAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backup-box/scripts/config.cfg
+echo '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backup-box/scripts/config.cfg
 
 HEIGHT=15
 WIDTH=40
@@ -93,9 +93,9 @@ case $CHOICE in
             ;;
 esac
 
-echo "--------------------"
-echo "Configuring Samba..."
-echo "--------------------"
+echo "----------------------------------"
+echo "Configuring Samba and Syncthing..."
+echo "----------------------------------"
 pw="raspberry"
 (echo $pw; echo $pw ) | sudo smbpasswd -s -a pi
 sudo sh -c "echo '### Global Settings ###' > /etc/samba/smb.conf"
