@@ -95,6 +95,8 @@ case $CHOICE in
             ;;
 esac
 
+crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
+
 echo "----------------------------------"
 echo "Configuring Samba and Syncthing..."
 echo "----------------------------------"

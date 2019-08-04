@@ -49,13 +49,7 @@
 	    <p>Back up a storage card to the internal storage</p>
             <p>
 		<form method="post">
-                    <button name="internalbackup">Internal backup</button>
-		</form>
-            </p>
-	    <p>Start DLNA, Samba, and Syncthing</p>
-            <p>
-		<form method="post">
-                    <button class="button button-outline" name="servers">Start servers</button>
+                    <button class="button button-outline" name="internalbackup">Internal backup</button>
 		</form>
             </p>
             <p class="left">Shut down the Little Backup Box</p>
@@ -86,19 +80,6 @@
 		echo '<script language="javascript">';
 		echo 'alert("Camera backup initiated.")';
 		echo '</script>';
-	    }
-	    if (isset($_POST['servers']))
-	    {
-		shell_exec('sudo ./start-servers.sh > /dev/null 2>&1 & echo $!');
-		sleep(5); # Give Syncthing time to start
-		echo '<script language="javascript">';
-		echo 'alert("DLNA, Samba, and Syncthing are up and running.")';
-		echo '</script>';
-		exec("pgrep syncthing", $pids);
-		if( !empty($pids)) {
-		    $ip=shell_exec("hostname -I | cut -d' ' -f1");
-                    echo '<p><a href="http://'.$ip.':8384">Syncthing server</a></p>';
-		}
 	    }
 	    if (isset($_POST['shutdown']))
 	    {
