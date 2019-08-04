@@ -40,10 +40,6 @@ mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-# Create backup directory, if necessary
-mkdir -p "$BAK_DIR"
-chown pi:users -R "$BAK_DIR"
-
 # Perform backup using rsync
 rsync -av "$STORAGE_MOUNT_POINT" "$BAK_DIR"
 

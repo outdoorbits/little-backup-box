@@ -53,7 +53,9 @@ echo "-----------------------------"
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 
-echo '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backup-box/scripts/config.cfg
+echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backup-box/scripts/config.cfg
+mkdir -p "$BAK_DIR"
+chown $USER:users -R "$BAK_DIR"
 
 HEIGHT=15
 WIDTH=40
