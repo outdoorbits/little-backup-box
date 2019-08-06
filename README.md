@@ -13,11 +13,12 @@ Little Backup Box is designed to work with USB sticks as backup media. Theoretic
 2. Make sure that your Raspberry Pi is connected to the internet.
 3. Run the following command on the Raspberry Pi: `curl -sSL https://is.gd/littlebackupbox | bash`
 
-Little Backup Box supports three backup modes:
+Little Backup Box supports four backup modes:
 
+- **Remote control** Provides a simple web interface to manually choose one of the two modes described above.
 - **Card backup** Automatically backs up the contents of a storage card to an external storage device.
 - **Camera backup** Transfers photos, raw files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the */home/pi/BACKUP/[CAMERA MODEL]* directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
-- **Remote control** Provides a simple web interface to manually choose one of the two modes described above.
+- **Internal backup** Automatically backs up the contents of a storage card to the internal storage.
 
 During the installation, choose the desired mode from the selection dialog.
 
@@ -28,6 +29,11 @@ When prompted, reboot the Raspberry Pi.
 ## Usage
 
 The exact steps depend on the backup mode.
+
+### Remote control mode
+
+1. Point the browser to *http://127.0.0.1:8000* (replace *127.0.0.1* with the actual IP address of the Raspberry Pi).
+2. Start the desired action by pressing the appropriate button.
 
 ### Card backup mode
 
@@ -45,24 +51,21 @@ The exact steps depend on the backup mode.
 3. Turn the camera on
 4. Wait till the Raspberry Pi shuts down
 
-### Remote control mode
+### Internal backup mode
 
-1. Point the browser to *http://127.0.0.1:8000* (replace *127.0.0.1* with the actual IP address of the Raspberry Pi).
-2. Start the desired action by pressing the appropriate button.
-
-The access the contents of the storage device, plug it into the Raspberry Pi and press the **DLNA & SAMBA** button. You can then use a uPnP or Samba client on any device on the same network to browse and view the contents of the storage device.
+1. Boot the Raspberry Pi
+2. Insert a storage card into a card reader and plug it into the Raspberry Pi
+3. Wait till the Raspberry Pi shuts down
 
 <img src="img/rc.png" alt="" />
-
-Activating the DLNA and Samba servers also returns the disk space usage information. You can use this information to monitor the remaining free space on the storage device.
 
 The **System info** link gives you access to basic system information, such as a list of storage devices and memory usage.
 
 ## Problems, comments, ideas, updates?
 
-Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
-
 To discuss Little Backup Box-related topics and get the latest updates, visit the [official forum at PIXLS.US](https://discuss.pixls.us/c/hardware/little-backup-box).
+
+Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
 
 ## Contribute
 
@@ -86,6 +89,8 @@ The [GNU General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.e
 
 ## Linux Photography
 
-Little Backup Box is a part of a streamlined and automated Linux-based photographic workflow described in the [Linux Photography](https://gumroad.com/l/linux-photography) book. The book provides step-by-step instructions on building a Raspberry Pi-based photo backup device running the Little Backup Box script. Get your copy at [Google Play Store](https://play.google.com/store/books/details/Dmitri_Popov_Linux_Photography?id=cO70CwAAQBAJ) or [Gumroad](https://gumroad.com/l/linux-photography).
+The [Linux Photography](https://gumroad.com/l/linux-photography) book provides step-by-step instructions on building a Raspberry Pi-based photo backup device running Little Backup Box. Get your copy at [Google Play Store](https://play.google.com/store/books/details/Dmitri_Popov_Linux_Photography?id=cO70CwAAQBAJ) or [Gumroad](https://gumroad.com/l/linux-photography).
 
 <img src="https://scribblesandsnaps.files.wordpress.com/2016/07/linux-photography-6.jpg" width="200"/>
+
+By buying the book, you are supporting the Linux Backup Box project.
