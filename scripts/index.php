@@ -95,7 +95,7 @@
 		echo '</script>';
 	    }
 	    ?>
-	    Read the <a href="https://gumroad.com/l/linux-photography">Linux Photography</a> book
+        <p><a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a></p>
 	</div>
     </body>
 </html>
