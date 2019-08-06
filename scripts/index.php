@@ -30,32 +30,38 @@
     </head>
 
     <body>
+	<?php
+	// include i18n class and initialize it
+	require_once 'i18n.class.php';
+	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
+	$i18n->init();
+	?>
 	<div id="content">
 	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
             <h2>Little Backup Box</h2>
-	    <p><a href="sysinfo.php">System info</a></p>
-            <p>Back up a storage card connected via a card reader</p>
+	    <p><a href="sysinfo.php"><?php echo L::sys_info; ?></a></p>
+            <p><?php echo L::cardbackup_lbl; ?></p>
             <p>
 		<form method="post">
-                    <button name="cardbackup">Card backup</button>
+                    <button name="cardbackup"><?php echo L::cardbackup_btn; ?></button>
 		</form>
             </p>
-            <p>Transfer files directly from the connected camera</p>
+            <p><?php echo L::camerabackup_lbl; ?></p>
             <p>
 		<form method="post">
-                    <button name="camerabackup">Camera backup</button>
+                    <button name="camerabackup"><?php echo L::camerabackup_btn; ?></button>
 		</form>
             </p>
-	    <p>Back up a storage card to the internal storage</p>
+	    <p><?php echo L::internalbackup_lbl; ?></p>
             <p>
 		<form method="post">
-                    <button class="button button-outline" name="internalbackup">Internal backup</button>
+                    <button class="button button-outline" name="internalbackup"><?php echo L::internalbackup_btn; ?></button>
 		</form>
             </p>
-            <p class="left">Shut down the Little Backup Box</p>
+            <p class="left"><?php echo L::shutdown_lbl; ?></p>
             <p>
 		<form method="post">
-                    <button class="red" name="shutdown">Shut down</button>
+                    <button class="red" name="shutdown"><?php echo L::shutdown_btn; ?></button>
 		</form>
             </p>
 
@@ -64,28 +70,28 @@
 	    {
 		shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("Card backup initiated.")';
-		echo '</script>';
-	    }
-	    if (isset($_POST['internalbackup']))
-	    {
-		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
-		echo '<script language="javascript">';
-		echo 'alert("Internal backup initiated.")';
+		echo 'alert("'.L::cardbackup_ntf.'")';
 		echo '</script>';
 	    }
 	    if (isset($_POST['camerabackup']))
 	    {
 		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("Camera backup initiated.")';
+		echo 'alert("'.L::camerabackup_ntf.'")';
+		echo '</script>';
+	    }
+	    if (isset($_POST['internalbackup']))
+	    {
+		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
+		echo '<script language="javascript">';
+		echo 'alert("'.L::internalbackup_ntf.'")';
 		echo '</script>';
 	    }
 	    if (isset($_POST['shutdown']))
 	    {
 		shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("Little Backup Box is shut down. You can close this page.")';
+		echo 'alert("'.L::shutdown_ntf.'")';
 		echo '</script>';
 	    }
 	    ?>
