@@ -106,7 +106,7 @@ case $CHOICE in
             ;;
 esac
 
-crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
+crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 
 echo "----------------------------------"
 echo "Configuring Samba and Syncthing..."
