@@ -40,8 +40,20 @@ mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
+# Create  a .id random identifier file if doesn't exist
+cd "$STORAGE_MOUNT_POINT"
+if [ ! -f *.id ]; then
+  random=$(echo $RANDOM)
+  touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
+fi
+ID_FILE=$(ls *.id)
+ID="${ID_FILE%.*}"
+cd
+
+# Set the backup path
+BACKUP_PATH="$BAK_DIR"/"$ID"
 # Perform backup using rsync
-rsync -av "$STORAGE_MOUNT_POINT" "$BAK_DIR"
+rsync -av "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 
 # Turn off the ACT LED to indicate that the backup is completed
 sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
