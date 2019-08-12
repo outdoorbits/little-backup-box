@@ -54,6 +54,7 @@ cd
 BACKUP_PATH="$BAK_DIR"/"$ID"
 # Perform backup using rsync
 rsync -av "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 
 # Turn off the ACT LED to indicate that the backup is completed
 sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
