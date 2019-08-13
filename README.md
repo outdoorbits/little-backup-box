@@ -7,6 +7,17 @@ A collection of scripts that transform a Raspberry Pi (or any single-board compu
 **IMPORTANT**
 Little Backup Box is designed to work with USB sticks as backup media. Theoretically, it's possible to make Little Backup Box work with an external hard disk, but this setup is not officially supported.
 
+## Little Backup Box features
+
+- Back up the contents of a storage card to an external USB storage device. Little Backup Box supports practically any USB card reader, and, by extension, any card format.
+- Transfer photos and RAW files directly from a camera to an external USB storage device. If your camera is supported by gPhoto2 software, it will work with Little Backup Box.
+- Use multiple cards. Little Backup Box assigns a unique ID to each card and create a separate folder for each card on the backup storage device.
+- Perform card backup fully automatically with no user interaction.
+- Start specific backup operations manually using Little Backup Box's web UI.
+- Stream the backed up photos to any DLNA-compatible client.
+- Access the backed up content from other machines on the network.
+- Synchronize the backed up content with multiple machines.
+
 ## Installation
 
 1. Create a bootable SD card with the latest version of Raspbian Lite for use with Little Backup Box.
@@ -22,7 +33,7 @@ Little Backup Box supports four backup modes:
 
 During the installation, choose the desired mode from the selection dialog.
 
-<img src="img/installer.png" alt="" width="600"/>
+<img src="img/installer.png" alt="" width="800"/>
 
 When prompted, reboot the Raspberry Pi.
 
@@ -34,6 +45,10 @@ The exact steps depend on the backup mode.
 
 1. Point the browser to *http://127.0.0.1:8000* (replace *127.0.0.1* with the actual IP address of the Raspberry Pi).
 2. Start the desired action by pressing the appropriate button.
+
+<img src="img/rc.png" alt="Remote control interface" width="800" />
+
+The **System info** link gives you access to basic system information, such as a list of storage devices and memory usage.
 
 ### Card backup mode
 
@@ -56,10 +71,6 @@ The exact steps depend on the backup mode.
 1. Boot the Raspberry Pi
 2. Insert a storage card into a card reader and plug it into the Raspberry Pi
 3. Wait till the Raspberry Pi shuts down
-
-<img src="img/rc.png" alt="" />
-
-The **System info** link gives you access to basic system information, such as a list of storage devices and memory usage.
 
 ## Problems, comments, ideas, updates?
 
