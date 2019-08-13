@@ -56,7 +56,6 @@ git clone https://github.com/dmpop/little-backup-box.git
 echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backup-box/scripts/config.cfg
 mkdir -p /home/$USER/BACKUP
 chown $USER:users -R /home/$USER/BACKUP
-touch -t 197310301000 /home/$USER/BACKUP
 
 HEIGHT=15
 WIDTH=40
