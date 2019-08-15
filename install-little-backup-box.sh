@@ -13,23 +13,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-echo "----------------------"
 echo "Updating the system..."
-echo "----------------------"
 
-sudo apt update
-sudo apt dist-upgrade -y
-sudo apt update
+sudo apt-get update -qq >/dev/null
+sudo apt-get dist-upgrade -y -qq >/dev/null
+sudo apt-get update -qq >/dev/null
 
-echo "-----------------------------------"
+
 echo "Installing the required packages..."
-echo "-----------------------------------"
 
-sudo apt install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin -y
-curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
+sudo apt-get install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin -y >/dev/null
+curl -s https://syncthing.net/release-key.txt | sudo apt-key add - >/dev/null
 echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
-sudo apt update
-sudo apt install syncthing
+echo "Finishing up..."
+sudo apt-get update -qq >/dev/null
+sudo apt-get install syncthing >/dev/null
 
 USER="$1"
 
@@ -46,9 +44,7 @@ sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/m
 sudo sh -c "echo 'media_dir=/home/$USER/BACKUP' >> /etc/minidlna.conf"
 sudo service minidlna start
 
-echo "-----------------------------"
 echo "Fetching Little Backup Box..."
-echo "-----------------------------"
 
 cd
 git clone https://github.com/dmpop/little-backup-box.git
@@ -107,9 +103,8 @@ esac
 
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 
-echo "----------------------------------"
 echo "Configuring Samba and Syncthing..."
-echo "----------------------------------"
+
 pw="raspberry"
 (echo $pw; echo $pw ) | sudo smbpasswd -s -a pi
 sudo sh -c "echo '### Global Settings ###' > /etc/samba/smb.conf"
@@ -162,8 +157,6 @@ sudo sed -i "s/127\.0\.0\.1/0.0.0.0/g" ~/.config/syncthing/config.xml
 
 chmod +x little-backup-box/scripts/*.sh
 
-echo "---------------------------------------------"
 echo "All done! The system will reboot in 1 minute."
-echo "---------------------------------------------"
 
 sudo shutdown -r 1
