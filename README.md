@@ -46,7 +46,7 @@ The exact steps depend on the backup mode.
 1. Point the browser to *http://127.0.0.1:8000* (replace *127.0.0.1* with the actual IP address of the Raspberry Pi).
 2. Start the desired action by pressing the appropriate button.
 
-<img src="img/rc.png" alt="Remote control interface" width="800" />
+<img src="img/rc.png" alt="Remote control interface" />
 
 The **System info** link gives you access to basic system information, such as a list of storage devices and memory usage.
 

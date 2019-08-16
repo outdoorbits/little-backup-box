@@ -70,28 +70,28 @@
 	    {
 		shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("'.L::cardbackup_ntf.'")';
+		echo 'alert("'.L::cardbackup_msg.'")';
 		echo '</script>';
 	    }
 	    if (isset($_POST['camerabackup']))
 	    {
 		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("'.L::camerabackup_ntf.'")';
+		echo 'alert("'.L::camerabackup_msg.'")';
 		echo '</script>';
 	    }
 	    if (isset($_POST['internalbackup']))
 	    {
 		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("'.L::internalbackup_ntf.'")';
+		echo 'alert("'.L::internalbackup_msg.'")';
 		echo '</script>';
 	    }
 	    if (isset($_POST['shutdown']))
 	    {
 		shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("'.L::shutdown_ntf.'")';
+		echo 'alert("'.L::shutdown_msg.'")';
 		echo '</script>';
 	    }
 	    ?>
