@@ -27,7 +27,7 @@ curl -s https://syncthing.net/release-key.txt | sudo apt-key add - >/dev/null
 echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
 echo "Finishing up..."
 sudo apt-get update -qq >/dev/null
-sudo apt-get install syncthing >/dev/null
+sudo apt-get install syncthing -y >/dev/null
 
 USER="$1"
 
@@ -53,12 +53,7 @@ echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backu
 mkdir -p /home/$USER/BACKUP
 chown $USER:users -R /home/$USER/BACKUP
 
-HEIGHT=15
-WIDTH=40
-CHOICE_HEIGHT=4
 BACKTITLE="Little Backup Box"
-TITLE="Backup mode"
-MENU="Select the default backup mode:"
 
 OPTIONS=(1 "Remote control"
          2 "Card backup"
@@ -67,9 +62,9 @@ OPTIONS=(1 "Remote control"
 
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
-                --title "$TITLE" \
-                --menu "$MENU" \
-                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                --title "Backup Mode" \
+                --menu "Select the default backup mode:" \
+                15 40 4 \
                 "${OPTIONS[@]}" \
                 2>&1 >/dev/tty)
 
@@ -102,6 +97,27 @@ case $CHOICE in
 esac
 
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
+
+dialog --title "Enable OLED support" \
+--backtitle "$BACKTITLE" \
+       --yesno "Enable support for a 128x32 OLED display?" 7 60
+
+response=$?
+case $response in
+    0) cd
+       sudo apt-get install wiringpi -y >/dev/null
+       https://github.com/nopnop2002/ssd1306_rpi.git
+       cd ssd1306_rpi
+       cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C -DX32
+       sudo cp oled /usr/local/bin/
+       sudo chown root:root /usr/local/bin/oled
+       sudo chmod 755 /usr/local/bin/oled
+       crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
+       echo "OLED display support enabled."
+       ;;
+   1) echo "OLED display support not enabled.";;
+   255) echo "OLED display support not enabled.";;
+esac
 
 echo "Configuring Samba and Syncthing..."
 
