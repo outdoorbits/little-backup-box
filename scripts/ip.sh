@@ -18,6 +18,7 @@
 # to install the required packages and configure the system.
 
 ip=$(hostname -I | cut -d' ' -f1)
+echo "$ip"
 oled r
 oled +a "Hello! I'm here:"
 oled +b "$ip"

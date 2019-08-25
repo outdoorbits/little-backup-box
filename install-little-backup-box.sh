@@ -22,12 +22,12 @@ sudo apt-get update -qq >/dev/null
 
 echo "Installing the required packages..."
 
-sudo apt-get install acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin -y >/dev/null
-curl -s https://syncthing.net/release-key.txt | sudo apt-key add - >/dev/null
+sudo apt-get install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin >/dev/null
+curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
 echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
 echo "Finishing up..."
 sudo apt-get update -qq >/dev/null
-sudo apt-get install syncthing -y >/dev/null
+sudo apt-get install -y syncthing >/dev/null
 
 USER="$1"
 
@@ -160,7 +160,7 @@ response=$?
 case $response in
     0) cd
        sudo apt-get install wiringpi i2c-tools -y >/dev/null
-       https://github.com/dmpop/ssd1306_rpi.git
+       git clone https://github.com/dmpop/ssd1306_rpi.git
        cd ssd1306_rpi
        cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C -DX32
        sudo cp oled /usr/local/bin/
