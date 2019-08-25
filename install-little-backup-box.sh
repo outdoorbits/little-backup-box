@@ -98,27 +98,6 @@ esac
 
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 
-dialog --title "Enable OLED support" \
---backtitle "$BACKTITLE" \
-       --yesno "Enable support for a 128x32 OLED display?" 7 60
-
-response=$?
-case $response in
-    0) cd
-       sudo apt-get install wiringpi -y >/dev/null
-       https://github.com/nopnop2002/ssd1306_rpi.git
-       cd ssd1306_rpi
-       cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C -DX32
-       sudo cp oled /usr/local/bin/
-       sudo chown root:root /usr/local/bin/oled
-       sudo chmod 755 /usr/local/bin/oled
-       crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
-       echo "OLED display support enabled."
-       ;;
-   1) echo "OLED display support not enabled.";;
-   255) echo "OLED display support not enabled.";;
-esac
-
 echo "Configuring Samba and Syncthing..."
 
 pw="raspberry"
@@ -173,6 +152,33 @@ sudo sed -i "s/127\.0\.0\.1/0.0.0.0/g" ~/.config/syncthing/config.xml
 
 chmod +x little-backup-box/scripts/*.sh
 
-echo "All done! The system will reboot in 1 minute."
+dialog --title "Enable OLED support" \
+       --backtitle "$BACKTITLE" \
+       --yesno "Enable support for a 128x32 OLED display?" 7 60
 
-sudo shutdown -r 1
+response=$?
+case $response in
+    0) cd
+       sudo apt-get install wiringpi i2c-tools -y >/dev/null
+       https://github.com/dmpop/ssd1306_rpi.git
+       cd ssd1306_rpi
+       cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C -DX32
+       sudo cp oled /usr/local/bin/
+       sudo chown root:root /usr/local/bin/oled
+       sudo chmod 755 /usr/local/bin/oled
+       crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
+       dialog --title "Enable I2C" \
+       --backtitle "$BACKTITLE" \
+       --msgbox "Almost done! Run the following command:\n\nsudo raspi-config\n\nSwitch to the Interfacing Options section and enable I2C. Then reboot the system." 15 30
+       ;;
+    1) dialog --title "Setup finished" \
+	      --backtitle "$BACKTITLE" \
+	      --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
+      sudo reboot
+      ;;
+   255) dialog --title "Setup finished" \
+	      --backtitle "$BACKTITLE" \
+	      --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
+	sudo reboot
+	;;
+esac
