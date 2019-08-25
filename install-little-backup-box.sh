@@ -13,21 +13,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-echo "Updating the system. This may take a while..."
+sudo apt-get update
+sudo apt-get dist-upgrade -y
+sudo apt-get update
 
-sudo apt-get update -qq >/dev/null
-sudo apt-get dist-upgrade -y -qq >/dev/null
-sudo apt-get update -qq >/dev/null
-
-
-echo "Installing the required packages. This may take a while, too..."
-
-sudo apt-get install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin >/dev/null
+sudo apt-get install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin
 curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
 echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
-echo "Finishing up. Shouldn't take too long..."
-sudo apt-get update -qq >/dev/null
-sudo apt-get install -y syncthing >/dev/null
+sudo apt-get update
+sudo apt-get install -y syncthing
 
 USER="$1"
 
@@ -43,8 +37,6 @@ sudo setfacl -Rdm g:$USER:rw /media/storage
 sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
 sudo sh -c "echo 'media_dir=/home/$USER/BACKUP' >> /etc/minidlna.conf"
 sudo service minidlna start
-
-echo "Fetching Little Backup Box..."
 
 cd
 git clone https://github.com/dmpop/little-backup-box.git
@@ -97,8 +89,6 @@ case $CHOICE in
 esac
 
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
-
-echo "Configuring Samba and Syncthing..."
 
 pw="raspberry"
 (echo $pw; echo $pw ) | sudo smbpasswd -s -a pi
@@ -160,7 +150,8 @@ dialog --clear \
 response=$?
 case $response in
     0) cd
-       sudo apt-get install wiringpi i2c-tools -y >/dev/null
+       clear
+       sudo apt-get install -y wiringpi i2c-tools
        git clone https://github.com/dmpop/ssd1306_rpi.git
        cd ssd1306_rpi
        cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C -DX32
@@ -172,17 +163,20 @@ case $response in
 	      --title "Enable I2C" \
 	      --backtitle "$BACKTITLE" \
 	      --msgbox "Almost done! Run the following command:\n\nsudo raspi-config\n\nSwitch to the Interfacing Options section and enable I2C. Then reboot the system." 15 30
+       clear
        ;;
     1) dialog --clear \
 	      --title "Setup finished" \
 	      --backtitle "$BACKTITLE" \
 	      --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
-      sudo reboot
+       clear
+       sudo reboot
       ;;
     255) dialog --clear \
 		--title "Setup finished" \
 		--backtitle "$BACKTITLE" \
 		--infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
-	sudo reboot
+	 clear
+	 sudo reboot
 	;;
 esac
