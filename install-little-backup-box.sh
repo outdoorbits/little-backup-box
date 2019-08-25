@@ -13,19 +13,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-echo "Updating the system..."
+echo "Updating the system. This may take a while..."
 
 sudo apt-get update -qq >/dev/null
 sudo apt-get dist-upgrade -y -qq >/dev/null
 sudo apt-get update -qq >/dev/null
 
 
-echo "Installing the required packages..."
+echo "Installing the required packages. This may take a while, too..."
 
 sudo apt-get install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin >/dev/null
 curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
 echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
-echo "Finishing up..."
+echo "Finishing up. Shouldn't take too long..."
 sudo apt-get update -qq >/dev/null
 sudo apt-get install -y syncthing >/dev/null
 
@@ -152,7 +152,8 @@ sudo sed -i "s/127\.0\.0\.1/0.0.0.0/g" ~/.config/syncthing/config.xml
 
 chmod +x little-backup-box/scripts/*.sh
 
-dialog --title "Enable OLED support" \
+dialog --clear \
+       --title "Enable OLED support" \
        --backtitle "$BACKTITLE" \
        --yesno "Enable support for a 128x32 OLED display?" 7 60
 
@@ -167,18 +168,21 @@ case $response in
        sudo chown root:root /usr/local/bin/oled
        sudo chmod 755 /usr/local/bin/oled
        crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
-       dialog --title "Enable I2C" \
-       --backtitle "$BACKTITLE" \
-       --msgbox "Almost done! Run the following command:\n\nsudo raspi-config\n\nSwitch to the Interfacing Options section and enable I2C. Then reboot the system." 15 30
+       dialog --clear \
+	      --title "Enable I2C" \
+	      --backtitle "$BACKTITLE" \
+	      --msgbox "Almost done! Run the following command:\n\nsudo raspi-config\n\nSwitch to the Interfacing Options section and enable I2C. Then reboot the system." 15 30
        ;;
-    1) dialog --title "Setup finished" \
+    1) dialog --clear \
+	      --title "Setup finished" \
 	      --backtitle "$BACKTITLE" \
 	      --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
       sudo reboot
       ;;
-   255) dialog --title "Setup finished" \
-	      --backtitle "$BACKTITLE" \
-	      --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
+    255) dialog --clear \
+		--title "Setup finished" \
+		--backtitle "$BACKTITLE" \
+		--infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
 	sudo reboot
 	;;
 esac
