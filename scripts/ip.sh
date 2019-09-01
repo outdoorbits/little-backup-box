@@ -17,6 +17,7 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
+sleep 15
 ip=$(hostname -I | cut -d' ' -f1)
 echo "$ip"
 oled r

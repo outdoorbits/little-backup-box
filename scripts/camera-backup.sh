@@ -37,7 +37,7 @@ done
 # If display support is enabled, notify that the camera is detected
 if [ $DISP=true ]; then
     oled r
-    oled +a "Camera detected"
+    oled +a "Camera OK"
     oled +b "Working..."
     sudo oled s 
 fi

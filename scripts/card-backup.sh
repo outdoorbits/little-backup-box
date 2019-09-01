@@ -48,8 +48,8 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP=true ]; then
     oled r
-    oled +a "Backup storage OK"
-    oled +b "Waiting card reader..."
+    oled +a "Storage OK"
+    oled +b "Card reader..."
     sudo oled s 
 fi
 
