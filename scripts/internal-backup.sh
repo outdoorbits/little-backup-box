@@ -33,12 +33,20 @@ while [ -z ${STORAGE} ]
   STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
 
-# When the USB storage device is detected, mount it
+# When the card reader is detected, mount it
 mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 
-# Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
+# Set the ACT LED to blink at 1000ms to indicate that the card reader has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
+
+# If display support is enabled, notify that the card reader has been mounted
+if [ $DISP=true ]; then
+    oled r
+    oled +a "Card reader OK"
+    oled +b "Working..."
+    sudo oled s 
+fi
 
 # Create  a .id random identifier file if doesn't exist
 cd "$STORAGE_MOUNT_POINT"
@@ -56,9 +64,13 @@ BACKUP_PATH="$BAK_DIR"/"$ID"
 rsync -av "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 
-# Turn off the ACT LED to indicate that the backup is completed
-sudo sh -c "echo 0 > /sys/class/leds/led0/brightness"
-
+# If display support is enabled, notify that the backup is complete
+if [ $DISP=true ]; then
+    oled r
+    oled +a "Backup complete"
+    oled +b "Shutdown"
+    sudo oled s 
+fi
 # Shutdown
 sync
 shutdown -h now

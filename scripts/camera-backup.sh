@@ -34,6 +34,14 @@ while [ -z "${DEVICE}" ]
 	DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
 done
 
+# If display support is enabled, notify that the camera is detected
+if [ $DISP=true ]; then
+    oled r
+    oled +a "Camera detected"
+    oled +b "Working..."
+    sudo oled s 
+fi
+
 # Cancel shutdown
 sudo shutdown -c
 
@@ -48,5 +56,12 @@ mkdir -p "$STORAGE_MOUNT_POINT"
 cd "$STORAGE_MOUNT_POINT"
 gphoto2 --get-all-files --skip-existing
 
+# If display support is enabled, notify that the backup is complete
+if [ $DISP=true ]; then
+    oled r
+    oled +a "Backup complete"
+    oled +b "Shutdown"
+    sudo oled s 
+fi
 # Shutdown
 shutdown -h now 

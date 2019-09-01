@@ -159,24 +159,27 @@ case $response in
        sudo chown root:root /usr/local/bin/oled
        sudo chmod 755 /usr/local/bin/oled
        crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
+       echo -e '\nDISP=true" # Enable OLED display' >> little-backup-box/scripts/config.cfg
        dialog --clear \
 	      --title "Enable I2C" \
 	      --backtitle "$BACKTITLE" \
 	      --msgbox "Almost done! Run the following command:\n\nsudo raspi-config\n\nSwitch to the Interfacing Options section and enable I2C. Then reboot the system." 15 30
        clear
        ;;
-    1) dialog --clear \
-	      --title "Setup finished" \
-	      --backtitle "$BACKTITLE" \
-	      --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
-       clear
-       sudo reboot
-      ;;
-    255) dialog --clear \
-		--title "Setup finished" \
-		--backtitle "$BACKTITLE" \
-		--infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
-	 clear
-	 sudo reboot
+    1)  echo -e '\nDISP=false" # Enable OLED display' >> little-backup-box/scripts/config.cfg
+	dialog --clear \
+	       --title "Setup finished" \
+	       --backtitle "$BACKTITLE" \
+	       --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
+	clear
+	sudo reboot
 	;;
+    255)  echo -e '\nDISP=false" # Enable OLED display' >> little-backup-box/scripts/config.cfg
+	  dialog --clear \
+		 --title "Setup finished" \
+		 --backtitle "$BACKTITLE" \
+		 --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
+	  clear
+	  sudo reboot
+	  ;;
 esac

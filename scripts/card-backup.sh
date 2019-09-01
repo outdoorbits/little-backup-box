@@ -45,6 +45,14 @@ sudo shutdown -c
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
+# If display support is enabled, notify that the storage device has been mounted
+if [ $DISP=true ]; then
+    oled r
+    oled +a "Backup storage OK"
+    oled +b "Waiting card reader..."
+    sudo oled s 
+fi
+
 # Wait for a card reader or a camera
 # takes first device found
 CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
@@ -58,8 +66,16 @@ done
 if [ ! -z "${CARD_READER[0]}" ]; then
   mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
 
-  # # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
+  # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
+  
+  # If display support is enabled, notify that the card has been mounted
+  if [ $DISP=true ]; then
+      oled r
+      oled +a "Card reader OK"
+      oled +b "Working..."
+      sudo oled s 
+  fi
 
   # Create  a .id random identifier file if doesn't exist
   cd "$CARD_MOUNT_POINT"
@@ -77,6 +93,13 @@ if [ ! -z "${CARD_READER[0]}" ]; then
   rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
 fi
 
-# Shutdown
+# If display support is enabled, notify that the backup is complete
+if [ $DISP=true ]; then
+    oled r
+    oled +a "Backup complete"
+    oled +b "Shutdown"
+    sudo oled s 
+fi
+# Shutdown 
 sync
 shutdown -h now
