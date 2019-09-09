@@ -45,7 +45,7 @@ if [ $DISP=true ]; then
     oled r
     oled +a "Card reader OK"
     oled +b "Working..."
-    sudo oled s 
+    sudo oled s
 fi
 
 # Create  a .id random identifier file if doesn't exist
@@ -60,16 +60,23 @@ cd
 
 # Set the backup path
 BACKUP_PATH="$BAK_DIR"/"$ID"
+
+
 # Perform backup using rsync
-rsync -av "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
-sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+if [ $DISP=true ]; then
+  rsync -avh --info=progress2 --exclude "*.id" "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH" | ./oled-rsync-progress.sh exclude-file.txt
+  sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+else
+  rsync -avh --info=progress2 --exclude "*.id" "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+  sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+fi
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP=true ]; then
     oled r
     oled +a "Backup complete"
     oled +b "Shutdown"
-    sudo oled s 
+    sudo oled s
 fi
 # Shutdown
 sync

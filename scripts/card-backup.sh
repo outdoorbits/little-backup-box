@@ -93,7 +93,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
 
   # Perform backup using rsync
   if [ $DISP=true ]; then
-    rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH" | ./rsync-progress.sh exclude-file.txt
+    rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH" | ./oled-rsync-progress.sh exclude-file.txt
   else
     rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
   fi
