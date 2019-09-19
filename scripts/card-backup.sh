@@ -27,6 +27,12 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # Shutdown after a specified period of time (in minutes) if no device is connected.
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
+if [ $DISP=true ]; then
+    oled r
+    oled +a "Shutdown active"
+    oled +b "Insert storage"
+    sudo oled s 
+fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
@@ -37,9 +43,6 @@ do
 done
 # When the USB storage device is detected, mount it
 mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
-
-# Cancel shutdown
-sudo shutdown -c
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
@@ -68,6 +71,9 @@ if [ ! -z "${CARD_READER[0]}" ]; then
 
   # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
+
+  # Cancel shutdown
+  sudo shutdown -c
   
   # If display support is enabled, notify that the card has been mounted
   if [ $DISP=true ]; then
