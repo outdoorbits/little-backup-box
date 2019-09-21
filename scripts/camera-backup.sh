@@ -26,7 +26,7 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 # Shutdown after a specified period of time (in minutes) if no device is connected.
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 # If display support is enabled, notify that shutdown is activated
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Shutdown active"
     oled +b "Connect camera"
@@ -45,7 +45,7 @@ done
 sudo shutdown -c
 
 # If display support is enabled, notify that the camera is detected
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Camera OK"
     oled +b "Working..."
@@ -64,7 +64,7 @@ cd "$STORAGE_MOUNT_POINT"
 gphoto2 --get-all-files --skip-existing
 
 # If display support is enabled, notify that the backup is complete
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Backup complete"
     oled +b "Shutdown"

@@ -27,7 +27,7 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # Shutdown after a specified period of time (in minutes) if no device is connected.
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Shutdown active"
     oled +b "Insert storage"
@@ -49,7 +49,7 @@ sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the storage device has been mounted
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Storage OK"
     oled +b "Card reader..."
@@ -76,7 +76,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
   sudo shutdown -c
   
   # If display support is enabled, notify that the card has been mounted
-  if [ $DISP=true ]; then
+  if [ $DISP = true ]; then
       oled r
       oled +a "Card reader OK"
       oled +b "Working..."
@@ -100,7 +100,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
 fi
 
 # If display support is enabled, notify that the backup is complete
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Backup complete"
     oled +b "Shutdown"
