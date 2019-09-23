@@ -85,4 +85,7 @@ if [ $DISP = true ]; then
 fi
 # Shutdown
 sync
+if [ $DISP = true ]; then
+    oled r
+fi
 shutdown -h now

@@ -106,6 +106,9 @@ if [ $DISP = true ]; then
     oled +b "Shutdown"
     sudo oled s 
 fi
-# Shutdown 
+# Shutdown
 sync
+if [ $DISP = true ]; then
+    oled r
+fi
 shutdown -h now

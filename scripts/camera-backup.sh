@@ -71,4 +71,7 @@ if [ $DISP = true ]; then
     sudo oled s 
 fi
 # Shutdown
+if [ $DISP = true ]; then
+    oled r
+fi
 shutdown -h now 
