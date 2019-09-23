@@ -41,7 +41,7 @@ sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the card reader has been mounted
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Card reader OK"
     oled +b "Working..."
@@ -63,7 +63,7 @@ BACKUP_PATH="$BAK_DIR"/"$ID"
 
 
 # Perform backup using rsync
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
   rsync -avh --info=progress2 --exclude "*.id" "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH" | ./oled-rsync-progress.sh exclude-file.txt
   sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 else
@@ -72,7 +72,7 @@ else
 fi
 
 # If display support is enabled, notify that the backup is complete
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Backup complete"
     oled +b "Shutdown"

@@ -46,7 +46,7 @@ sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the storage device has been mounted
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Storage OK"
     oled +b "Card reader..."
@@ -70,7 +70,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
   # If display support is enabled, notify that the card has been mounted
-  if [ $DISP=true ]; then
+  if [ $DISP = true ]; then
       oled r
       oled +a "Card reader OK"
       oled +b "Working..."
@@ -92,7 +92,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
 
 
   # Perform backup using rsync
-  if [ $DISP=true ]; then
+  if [ $DISP = true ]; then
     rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH" | ./oled-rsync-progress.sh exclude-file.txt
   else
     rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
@@ -100,7 +100,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
 fi
 
 # If display support is enabled, notify that the backup is complete
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
     oled r
     oled +a "Backup complete"
     oled +b "Shutdown"
