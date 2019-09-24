@@ -33,7 +33,7 @@ while IFS=$'\n' read -r -d $'\r' -a pieces; do
       [[:space:]]*)
         read -r size pct rate time <<<"$piece"
         oled r
-        oled +a "Transfer Progress:"
+        oled +a "Backup progress:"
         oled +b "$pct - $rate"
         sudo oled s
         ;;
