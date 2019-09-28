@@ -20,7 +20,7 @@
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
 
-OLEDBIN="/home/cy/source/ssd1306_rpi/oled"
+OLEDBIN="/home/$USER/source/ssd1306_rpi/oled"
 
 source "$CONFIG"
 

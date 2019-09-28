@@ -15,7 +15,7 @@
 
 
 # Variables
-OLEDBIN="/home/cy/source/ssd1306_rpi/oled"
+OLEDBIN="/home/$USER/source/ssd1306_rpi/oled"
 filename=
 
 [[ $1 ]] || {
