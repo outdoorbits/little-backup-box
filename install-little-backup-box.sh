@@ -142,7 +142,7 @@ case $response in
        sudo apt-get install -y wiringpi i2c-tools
        git clone https://github.com/dmpop/ssd1306_rpi.git
        cd ssd1306_rpi
-       cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C -DX32
+       cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C
        sudo cp oled /usr/local/bin/
        sudo chown root:root /usr/local/bin/oled
        sudo chmod 755 /usr/local/bin/oled
