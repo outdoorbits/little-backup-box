@@ -14,16 +14,14 @@
 ################################################################################################
 
 
-# Catch incorrect commandline and print usage information
-[[ $1 ]] || {
-  echo "Usage:  rsync -Pah --info=progress2 --exclude=exclude-file ... | $0 exclude-file" >&2
-  exit 1
-}
-
 # Variables
-exclude_file=$1
+OLEDBIN="/home/cy/source/ssd1306_rpi/oled"
 filename=
 
+[[ $1 ]] || {
+  echo "Usage: rsync -P --exclude=exclude-file ... | $0 exclude-file" >&2
+  exit 1
+}
 
 while IFS=$'\n' read -r -d $'\r' -a pieces; do
 
@@ -32,10 +30,11 @@ while IFS=$'\n' read -r -d $'\r' -a pieces; do
       "sending incremental file list") continue ;;
       [[:space:]]*)
         read -r size pct rate time <<<"$piece"
-        oled r
-        oled +a "Backup progress:"
-        oled +b "$pct - $rate"
-        sudo oled s
+        $OLEDBIN r
+        $OLEDBIN +a "Backup progress:"
+        $OLEDBIN +b "$pct - $rate"
+        sudo $OLEDBIN s
+        echo "Backup progress: $pct - $rate"
         ;;
       *) filename=$piece;  ;;
     esac

@@ -20,6 +20,8 @@
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
 
+OLEDBIN="/home/cy/source/ssd1306_rpi/oled"
+
 source "$CONFIG"
 
 # st599 added debugging print outs
@@ -36,15 +38,15 @@ fi
 
 # If display support is enabled, state programme run
 if [ $DISP = true ]; then
-    oled r
-    oled +a "Lit. Bac. Box"
-    oled +b "Card Backup"
-    sudo oled s
+    $OLEDBIN r
+    $OLEDBIN +a "Lit. Bac. Box"
+    $OLEDBIN +b "Card Backup"
+    sudo $OLEDBIN s
     sleep 1
-    oled r
-    oled +a "Card Backup"
-    oled +b "Storage..."
-    sudo oled s
+    $OLEDBIN r
+    $OLEDBIN +a "Card Backup"
+    $OLEDBIN +b "Storage..."
+    sudo $OLEDBIN s
 fi
 
 
@@ -57,7 +59,7 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 if [ $DEBUG = true ]; then
   echo "Activating Shutdown"
 fi
-sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
+#sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 if [ $DEBUG = true ]; then
@@ -70,7 +72,8 @@ do
     STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
 # When the USB storage device is detected, mount it
-mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
+sudo mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
+sudo chmod a+rwx "$STORAGE_MOUNT_POINT"
 
 # Cancel shutdown
 sudo shutdown -c
@@ -81,10 +84,10 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
-    oled r
-    oled +a "Storage OK"
-    oled +b "Card reader..."
-    sudo oled s
+    $OLEDBIN r
+    $OLEDBIN +a "Storage OK"
+    $OLEDBIN +b "Card reader..."
+    sudo $OLEDBIN s
 fi
 
 # Wait for a card reader or a camera
@@ -101,17 +104,17 @@ done
 
 # If the card reader is detected, mount it and obtain its UUID
 if [ ! -z "${CARD_READER[0]}" ]; then
-  mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
+  sudo mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
 
   # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
   sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
   # If display support is enabled, notify that the card has been mounted
   if [ $DISP = true ]; then
-      oled r
-      oled +a "Card reader OK"
-      oled +b "Backup start"
-      sudo oled s
+      $OLEDBIN r
+      $OLEDBIN +a "Card reader OK"
+      $OLEDBIN +b "Backup start"
+      sudo $OLEDBIN s
   fi
 
   # Create  a .id random identifier file if doesn't exist
@@ -136,7 +139,7 @@ if [ ! -z "${CARD_READER[0]}" ]; then
     echo "Perform Backup"
   fi
   if [ $DISP = true ]; then
-    rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH" | ./oled-rsync-progress.sh exclude-file.txt
+    rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH" | /home/"$USER"/little-backup-box/scripts/oled-rsync-progress.sh exclude.txt
   else
     rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
   fi
@@ -148,13 +151,13 @@ fi
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
-    oled r
-    oled +a "Backup complete"
-    oled +b "Shutdown"
-    sudo oled s
+    $OLEDBIN r
+    $OLEDBIN +a "Complete"
+    $OLEDBIN +b "Shutdown"
+    sudo $OLEDBIN s
     sleep 5
-    oled r
-    sudo oled s
+    $OLEDBIN r
+    sudo $OLEDBIN s
 fi
 # Shutdown
 
@@ -162,4 +165,4 @@ if [ $DEBUG = true ]; then
   echo "Shutdown"
 fi
 sync
-shutdown -h now
+sudo shutdown -h now
