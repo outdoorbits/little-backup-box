@@ -25,6 +25,13 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # Shutdown after a specified period of time (in minutes) if no device is connected.
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
+# If display support is enabled, notify that shutdown is activated
+if [ $DISP = true ]; then
+    oled r
+    oled +a "Shutdown active"
+    oled +b "Connect camera"
+    sudo oled s 
+fi
 
 # Wait for camera
 DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
@@ -34,6 +41,9 @@ while [ -z "${DEVICE}" ]
 	DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
 done
 
+# Cancel shutdown
+sudo shutdown -c
+
 # If display support is enabled, notify that the camera is detected
 if [ $DISP = true ]; then
     oled r
@@ -41,9 +51,6 @@ if [ $DISP = true ]; then
     oled +b "Working..."
     sudo oled s
 fi
-
-# Cancel shutdown
-sudo shutdown -c
 
 # Obtain camera model
 # Create the target directory with the camera model as its name
@@ -64,4 +71,7 @@ if [ $DISP = true ]; then
     sudo oled s
 fi
 # Shutdown
-shutdown -h now
+if [ $DISP = true ]; then
+    oled r
+fi
+shutdown -h now 

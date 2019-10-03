@@ -55,11 +55,14 @@ fi
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # Shutdown after a specified period of time (in minutes) if no device is connected.
-#
-if [ $DEBUG = true ]; then
-  echo "Activating Shutdown"
+
+sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
+if [ $DISP = true ]; then
+    oled r
+    oled +a "Shutdown active"
+    oled +b "Insert storage"
+    sudo oled s 
 fi
-#sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 if [ $DEBUG = true ]; then
@@ -75,15 +78,13 @@ done
 sudo mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 sudo chmod a+rwx "$STORAGE_MOUNT_POINT"
 
-# Cancel shutdown
-sudo shutdown -c
-
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
+
     $OLEDBIN r
     $OLEDBIN +a "Storage OK"
     $OLEDBIN +b "Card reader..."
@@ -115,6 +116,9 @@ if [ ! -z "${CARD_READER[0]}" ]; then
       $OLEDBIN +a "Card reader OK"
       $OLEDBIN +b "Backup start"
       sudo $OLEDBIN s
+  # Cancel shutdown
+  sudo shutdown -c
+  
   fi
 
   # Create  a .id random identifier file if doesn't exist
@@ -151,6 +155,7 @@ fi
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
+
     $OLEDBIN r
     $OLEDBIN +a "Complete"
     $OLEDBIN +b "Shutdown"
@@ -159,8 +164,8 @@ if [ $DISP = true ]; then
     $OLEDBIN r
     sudo $OLEDBIN s
 fi
-# Shutdown
 
+# Shutdown
 if [ $DEBUG = true ]; then
   echo "Shutdown"
 fi

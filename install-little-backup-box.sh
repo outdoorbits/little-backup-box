@@ -63,28 +63,16 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         1)
-            crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
             ;;
         2)
             crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
             ;;
         3)
-            crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
             ;;
 	4)
-            crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
 	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-	    crontab -l | { cat; echo "#@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
             ;;
 esac
 
@@ -154,19 +142,19 @@ case $response in
        sudo apt-get install -y wiringpi i2c-tools
        git clone https://github.com/dmpop/ssd1306_rpi.git
        cd ssd1306_rpi
-       cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C -DX32
+       cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C
        sudo cp oled /usr/local/bin/
        sudo chown root:root /usr/local/bin/oled
        sudo chmod 755 /usr/local/bin/oled
-       crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
-       echo -e '\nDISP=true" # Enable OLED display' >> little-backup-box/scripts/config.cfg
+       crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
+       echo -e '\nDISP=true # Enable OLED display' >> little-backup-box/scripts/config.cfg
        dialog --clear \
 	      --title "Enable I2C" \
 	      --backtitle "$BACKTITLE" \
 	      --msgbox "Almost done! Run the following command:\n\nsudo raspi-config\n\nSwitch to the Interfacing Options section and enable I2C. Then reboot the system." 15 30
        clear
        ;;
-    1)  echo -e '\nDISP=false" # Enable OLED display' >> little-backup-box/scripts/config.cfg
+    1)  echo -e '\nDISP=false # Enable OLED display' >> little-backup-box/scripts/config.cfg
 	dialog --clear \
 	       --title "Setup finished" \
 	       --backtitle "$BACKTITLE" \

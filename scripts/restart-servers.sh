@@ -45,3 +45,16 @@ sudo service minidlna restart
 if [ "$SYNCTHING" = true ]; then
     sudo systemctl start syncthing@pi.service
 fi
+
+# If display support is enabled, display storage space info
+if [ $DISP = true ]; then
+    storsize=$(df /dev/"$STORAGE_DEV"  -h --output=size | sed '1d')
+    storused=$(df /dev/"$STORAGE_DEV"  -h --output=pcent | sed '1d')
+    storfree=$(df /dev/"$STORAGE_DEV"  -h --output=avail | sed '1d')
+    oled r
+    oled +a "Avail. storage"
+    oled +b "Total: $storsize"
+    oled +c " Used: $storused"
+    oled +d " Free: $storfree"
+    sudo oled s
+fi

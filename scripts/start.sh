@@ -17,10 +17,27 @@
 # Run the install-little-backup-box.sh script first
 # to install the required packages and configure the system.
 
-sleep 15
+oled r
+secs=11
+while [ $secs -gt 1 ]; do
+   sleep 1
+   : $((secs--))
+   oled +a "Ready in $secs sec."
+   oled +b "******************"
+   oled s
+done
+
 ip=$(hostname -I | cut -d' ' -f1)
+if [ -z "$ip" ]; then
+    a="Hello! I'm not"
+    b="on the network"
+else
+    a="Hello! I'm here:"
+    b=$ip
+fi
 echo "$ip"
 oled r
-oled +a "Hello! I'm here:"
-oled +b "$ip"
-sudo oled s 
+oled +a "$a"
+oled +b "$b"
+sudo oled s
+

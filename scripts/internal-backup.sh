@@ -25,6 +25,15 @@ source "$CONFIG"
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
+# Shutdown after a specified period of time (in minutes) if no device is connected.
+sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
+if [ $DISP = true ]; then
+    oled r
+    oled +a "Shutdown active"
+    oled +b "Card reader..."
+    sudo oled s 
+fi
+
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 while [ -z ${STORAGE} ]
@@ -39,6 +48,9 @@ mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 # Set the ACT LED to blink at 1000ms to indicate that the card reader has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
+
+# Cancel shutdown
+sudo shutdown -c
 
 # If display support is enabled, notify that the card reader has been mounted
 if [ $DISP = true ]; then
@@ -80,4 +92,7 @@ if [ $DISP = true ]; then
 fi
 # Shutdown
 sync
+if [ $DISP = true ]; then
+    oled r
+fi
 shutdown -h now

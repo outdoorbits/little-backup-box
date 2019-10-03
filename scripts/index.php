@@ -39,7 +39,7 @@
 	<div id="content">
 	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
             <h2>Little Backup Box</h2>
-	    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></p>
+    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
             <p><?php echo L::cardbackup_lbl; ?></p>
             <p>
 		<form method="post">
