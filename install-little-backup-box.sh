@@ -45,7 +45,37 @@ echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backu
 mkdir -p /home/$USER/BACKUP
 chown $USER:users -R /home/$USER/BACKUP
 
-crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/launch.sh"; } | crontab
+BACKTITLE="Little Backup Box"
+
+OPTIONS=(1 "Remote control"
+         2 "Card backup"
+         3 "Camera backup"
+	 4 "Internal backup")
+
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "Backup Mode" \
+                --menu "Select the default backup mode:" \
+                15 40 4 \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+        1)
+	    crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
+            ;;
+        2)
+            crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+            ;;
+        3)
+	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+            ;;
+	4)
+	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
+            ;;
+esac
+
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 
 pw="raspberry"
