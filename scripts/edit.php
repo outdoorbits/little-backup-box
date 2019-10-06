@@ -6,16 +6,12 @@
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="milligram.min.css">
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+	<link rel="stylesheet" href="terminal.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 	 #content {
              margin: 0px auto;
              text-align: center;
-	 }
-	 h2 {
-	     letter-spacing: 3px;
 	 }
 	 textarea {
 	     font-size: 15px;
@@ -35,7 +31,6 @@
     <body>
 	<div id="content">
 	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
-            <h2>Little Backup Box</h2>
             <?php
             function Read() {
 		$CONFIGFILE = "config.cfg";
@@ -60,7 +55,7 @@
             ?>      
             <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
 		<textarea name="text"><?php Read(); ?></textarea><br /><br />
-		<input type="submit" name="submit" value="<?php echo L::edit_save_btn; ?>">
+		<button class="btn btn-default btn-ghost" type="submit" role="button" name="submit"><?php echo L::edit_save_btn; ?></button>
 		<input type="hidden" name="submit_check" value="1">
             </form>
             <p>Read the <a href='https://gumroad.com/l/linux-photography'>Linux Photography</a> book</p>

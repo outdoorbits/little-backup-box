@@ -6,16 +6,12 @@
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="milligram.min.css">
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+	<link rel="stylesheet" href="terminal.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 	 #content {
 	     margin: 0px auto;
              text-align: center;
-	 }
-	 h2 {
-	     letter-spacing: 3px;
 	 }
 	 img {
 	     display: block;
@@ -24,8 +20,7 @@
 	     margin-top: 1%;
 	     margin-bottom: 1%;
 	 }
-	 button {width: 175px;}
-	 button.red { background-color: #f44336; border: none; }
+	 button {width: 15em;}
 	</style>
     </head>
 
@@ -38,30 +33,29 @@
 	?>
 	<div id="content">
 	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
-            <h2>Little Backup Box</h2>
-    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
+	    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
             <p><?php echo L::cardbackup_lbl; ?></p>
             <p>
 		<form method="post">
-                    <button name="cardbackup"><?php echo L::cardbackup_btn; ?></button>
+                    <button class="btn btn-primary" name="cardbackup"><?php echo L::cardbackup_btn; ?></button>
 		</form>
             </p>
             <p><?php echo L::camerabackup_lbl; ?></p>
             <p>
 		<form method="post">
-                    <button name="camerabackup"><?php echo L::camerabackup_btn; ?></button>
+                    <button class="btn btn-primary" name="camerabackup"><?php echo L::camerabackup_btn; ?></button>
 		</form>
             </p>
 	    <p><?php echo L::internalbackup_lbl; ?></p>
             <p>
 		<form method="post">
-                    <button class="button button-outline" name="internalbackup"><?php echo L::internalbackup_btn; ?></button>
+                    <button class="btn btn-primary" name="internalbackup"><?php echo L::internalbackup_btn; ?></button>
 		</form>
             </p>
             <p class="left"><?php echo L::shutdown_lbl; ?></p>
             <p>
 		<form method="post">
-                    <button class="red" name="shutdown"><?php echo L::shutdown_btn; ?></button>
+                    <button class="btn btn-error" name="shutdown"><?php echo L::shutdown_btn; ?></button>
 		</form>
             </p>
 

@@ -6,16 +6,12 @@
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="milligram.min.css">
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+	<link rel="stylesheet" href="terminal.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 	 #content {
 	     margin: 0px auto;
              text-align: center;
-	 }
-	 h2 {
-	     letter-spacing: 3px;
 	 }
 	 img {
 	     display: block;
@@ -36,26 +32,26 @@
 	?>
 	<div id="content">
 	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
-            <h2>Little Backup Box</h2>
             <p><?php echo L::sysinfo_hed; ?></p>
-	    <h2>Devices</h2>
-	    <div style="display: inline-block; text-align: left;">
+	    <h3 style="margin-top: 2em;">Devices</h3>
+	    <div style="display: inline-block; text-align: left; margin-bottom: 1.5em;">
 		<?php
 		echo '<pre>';
 		passthru("lsblk");
 		echo '</pre>';
 		?>
 	    </div>
-	    <h2><?php echo L::diskspace_lbl; ?></h2>
-	    <div style="display: inline-block; text-align: left;">
+	    <h3><?php echo L::diskspace_lbl; ?></h3>
+	    <p></p>
+	    <div style="display: inline-block; text-align: left; margin-bottom: 1.5em;">
 		<?php
 		echo '<pre>';
 		passthru("df -H");
 		echo '</pre>';
 		?>
 	    </div>
-	    <h2><?php echo L::memory_lbl; ?></h2>
-	    <div style="display: inline-block; text-align: left;">
+	    <h3><?php echo L::memory_lbl; ?></h3>
+	    <div style="display: inline-block; text-align: left; margin-bottom: 2em;">
 		<?php
 		echo '<pre>';
 		passthru("free -m");
@@ -63,7 +59,7 @@
 		?>
 	    </div>
 	    <form>
-		<input type="button" onClick="history.go(0)" value="<?php echo L::refresh_btn; ?>">
+		<button class="btn btn-default btn-ghost" type="button" onClick="history.go(0)" role="button"><?php echo L::refresh_btn; ?></button>
 	    </form>
             <p><a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a></p>
 	</div>
