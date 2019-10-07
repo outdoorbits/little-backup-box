@@ -133,7 +133,7 @@ chmod +x little-backup-box/scripts/*.sh
 dialog --clear \
        --title "Enable OLED support" \
        --backtitle "$BACKTITLE" \
-       --yesno "Enable support for a 128x32 OLED display?" 7 60
+       --yesno "Enable support for a 128x64 OLED display?" 7 60
 
 response=$?
 case $response in
