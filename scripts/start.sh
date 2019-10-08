@@ -18,26 +18,30 @@
 # to install the required packages and configure the system.
 
 oled r
+oled +a "  LITTLE BACKUP "
+oled +b "       BOX      "
+oled +c " by Dmitri Popov"
+oled +R 1
+oled +R 2
+
 secs=11
 while [ $secs -gt 1 ]; do
    sleep 1
    : $((secs--))
-   oled +a "Ready in $secs sec."
-   oled +b "******************"
+   oled +d "Ready in $secs sec."
    oled s
 done
 
 ip=$(hostname -I | cut -d' ' -f1)
 if [ -z "$ip" ]; then
-    a="Hello! I'm not"
-    b="on the network"
+    c="Hello! I'm not"
+    d="on the network"
 else
-    a="Hello! I'm here:"
-    b=$ip
+    c="Hello! I'm here:"
+    d=$ip
 fi
 echo "$ip"
-oled r
-oled +a "$a"
-oled +b "$b"
+oled +c "$c"
+oled +d "$d"
 sudo oled s
 
