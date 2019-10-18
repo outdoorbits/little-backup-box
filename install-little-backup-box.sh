@@ -129,7 +129,7 @@ sleep 15
 sudo sed -i "s/127\.0\.0\.1/0.0.0.0/g" ~/.config/syncthing/config.xml
 
 chmod +x little-backup-box/scripts/*.sh
-
+cd
 dialog --clear \
        --title "Enable OLED support" \
        --backtitle "$BACKTITLE" \
@@ -137,8 +137,7 @@ dialog --clear \
 
 response=$?
 case $response in
-    0) cd
-       clear
+    0) clear
        sudo apt-get install -y wiringpi i2c-tools
        git clone https://github.com/dmpop/ssd1306_rpi.git
        cd ssd1306_rpi
@@ -146,6 +145,7 @@ case $response in
        sudo cp oled /usr/local/bin/
        sudo chown root:root /usr/local/bin/oled
        sudo chmod 755 /usr/local/bin/oled
+       cd
        crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
        echo -e '\nDISP=true # Enable OLED display' >> little-backup-box/scripts/config.cfg
        dialog --clear \
