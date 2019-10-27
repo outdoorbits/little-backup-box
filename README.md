@@ -78,6 +78,12 @@ To discuss Little Backup Box-related topics and get the latest updates, visit th
 
 Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
 
+## Uninstall Little Backup Box
+
+To uninstall Little Backup Box, run the following command:
+
+    curl -sSL https://is.gd/unlittlebackupbox | bash
+
 ## Contribute
 
 If you've found a bug or have a suggestion for improvement, open an issue in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.

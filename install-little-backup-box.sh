@@ -34,6 +34,7 @@ sudo chown -R $USER:users /media/storage
 sudo chmod -R 775 /media/storage
 sudo setfacl -Rdm g:$USER:rw /media/storage
 
+sudo cp /etc/minidlna.conf /etc/minidlna.conf.orig
 sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
 sudo sh -c "echo 'media_dir=/home/$USER/BACKUP' >> /etc/minidlna.conf"
 sudo service minidlna start
@@ -78,6 +79,7 @@ esac
 
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
 pw="raspberry"
 (echo $pw; echo $pw ) | sudo smbpasswd -s -a pi
 sudo sh -c "echo '### Global Settings ###' > /etc/samba/smb.conf"
