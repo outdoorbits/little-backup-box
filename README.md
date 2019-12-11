@@ -100,9 +100,12 @@ To add a new feature or fix issues yourself, follow the following steps.
 
 [Dmitri Popov](https://www.tokyomade.photography/)
 
-## License
+### I like coffee
 
-The [GNU General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.en.html)
+<a href="https://paypal.me/dmpop" target="_blank">Buy me a coffee</a>, and I'll work even harder on Little Backup Box.
+
+<a href="https://paypal.me/dmpop" target="_blank"><img
+src="https://i.imgur.com/cERczks.png" alt="Buy Me A Coffee" width="128"></a>
 
 ## Linux Photography
 
@@ -111,3 +114,7 @@ The [Linux Photography](https://gumroad.com/l/linux-photography) book provides s
 <img src="https://scribblesandsnaps.files.wordpress.com/2016/07/linux-photography-6.jpg" width="200"/>
 
 By buying the book, you are supporting the Linux Backup Box project.
+
+## License
+
+The [GNU General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.en.html)
