@@ -11,7 +11,7 @@ define('PROJECT_ROOT', getcwd());
 	<!-- Include stylesheet -->
 	<link href="viewer/css/styles.css" rel="stylesheet"/> 
 	<!-- FancyBox --> 
-	<link rel="stylesheet" href="viewer/js/jquery.fancybox.min.css" />
+	<link rel="stylesheet" href="viewer/css/jquery.fancybox.min.css" />
 	<script src="viewer/js/jquery.fancybox.min.js"></script>
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
