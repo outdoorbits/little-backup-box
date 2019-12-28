@@ -23,7 +23,7 @@ define('PROJECT_ROOT', getcwd());
 			</div>
 			<div class="breadcrumbs"></div>
 			<a class="button folderName" id="backButton" href=""><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
-			<a class="button" href="./"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+			<a class="button" href="./"><i class="fa fa-home" area-hidden="true"></i> Home</a>
 			<ul class="data"></ul>
 			
 			<!-- Include script files -->
