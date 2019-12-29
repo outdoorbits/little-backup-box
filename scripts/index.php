@@ -33,7 +33,7 @@
 	?>
 	<div id="content">
 	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
-	    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
+	    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="viewer/"><?php echo L::viewer; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
             <p>
 		<form method="post">
                     <button class="btn btn-primary" name="cardbackup"><?php echo L::cardbackup_btn; ?></button>
