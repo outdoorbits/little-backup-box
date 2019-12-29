@@ -8,6 +8,7 @@ define('PROJECT_ROOT', getcwd());
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<title>Little Backup Box</title>
+	<link rel="shortcut icon" href="favicon.png" />
 	<!-- Include stylesheet -->
 	<link href="css/styles.css" rel="stylesheet"/> 
 	<!-- FancyBox --> 

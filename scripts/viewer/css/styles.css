@@ -10,20 +10,13 @@
 }
 
 /*-------------------------
-   Demo page
+   Main page
    -------------------------*/
 
 html {	
     /* Full height */
     height: 100%;
-    /* The image used */
-    background-image: url("../background.jpg");
-    background-color: #373743;
-    /* Center and scale the image nicely */
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    background-color: #1a1a1a;
     font: 14px normal Arial, Helvetica, sans-serif;
     z-index: -4;
 }

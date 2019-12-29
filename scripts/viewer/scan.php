@@ -30,8 +30,8 @@ function scan($dir){
 		$files[] = array(
 		    "name" => $f,
 		    "type" => "folder",
-		    "path" => $dir . $f,
-		    "items" => scan($dir . $f) // Recursively get the contents of the folder
+		    "path" => $dir . '/' . $f,
+		    "items" => scan($dir . '/' . $f) // Recursively get the contents of the folder
 		);
 	    }
 	    
