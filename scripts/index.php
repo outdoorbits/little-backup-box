@@ -33,26 +33,22 @@
 	?>
 	<div id="content">
 	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
-	    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
-            <p><?php echo L::cardbackup_lbl; ?></p>
+	    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="viewer/"><?php echo L::viewer; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
             <p>
 		<form method="post">
                     <button class="btn btn-primary" name="cardbackup"><?php echo L::cardbackup_btn; ?></button>
 		</form>
             </p>
-            <p><?php echo L::camerabackup_lbl; ?></p>
             <p>
 		<form method="post">
                     <button class="btn btn-primary" name="camerabackup"><?php echo L::camerabackup_btn; ?></button>
 		</form>
             </p>
-	    <p><?php echo L::internalbackup_lbl; ?></p>
             <p>
 		<form method="post">
                     <button class="btn btn-primary" name="internalbackup"><?php echo L::internalbackup_btn; ?></button>
 		</form>
             </p>
-            <p class="left"><?php echo L::shutdown_lbl; ?></p>
             <p>
 		<form method="post">
                     <button class="btn btn-error" name="shutdown"><?php echo L::shutdown_btn; ?></button>
@@ -89,7 +85,14 @@
 		echo '</script>';
 	    }
 	    ?>
-        <p><a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a></p>
+	    <p>
+		<details>
+		    <summary><?php echo L::help; ?></summary>
+		    <div div style="display: inline-block; text-align: left;"><?php echo L::help_txt; ?></div>
+		</details>
+	    </p>
+
+	    <p><a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a></p>
 	</div>
     </body>
 </html>

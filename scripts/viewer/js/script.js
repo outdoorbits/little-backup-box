@@ -6,7 +6,7 @@ $(function(){
 
 	// Start by fetching the file data from scan.php with an AJAX request
 
-	$.get('viewer/scan.php', function(data) {
+	$.get('scan.php', function(data) {
 
 		var response = [data],
 			currentPath = '',

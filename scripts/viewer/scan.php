@@ -42,7 +42,7 @@ function scan($dir){
 		$files[] = array(
 		    "name" => $f,
 		    "type" => "file",
-		    "path" => 'viewer/' . $dir . '/' . $f,
+		    "path" => $dir . '/' . $f,
 		    "size" => filesize($dir . '/' . $f) // Gets the size of this file
 		);
 	    }
@@ -62,6 +62,6 @@ header('Content-type: application/json');
 echo json_encode(array(
     "name" => basename($dir),
     "type" => "folder",
-    "path" => 'viewer/' . $dir,
+    "path" => $dir,
     "items" => $response
 ));
