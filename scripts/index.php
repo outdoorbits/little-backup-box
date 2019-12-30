@@ -91,8 +91,9 @@
 		    <div div style="display: inline-block; text-align: left;"><?php echo L::help_txt; ?></div>
 		</details>
 	    </p>
-
-	    <p><a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a></p>
+	    <p>
+		<a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a>
+	    </p>
 	</div>
     </body>
 </html>

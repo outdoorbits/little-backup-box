@@ -61,7 +61,9 @@
 	    <form>
 		<button class="btn btn-default btn-ghost" type="button" onClick="history.go(0)" role="button"><?php echo L::refresh_btn; ?></button>
 	    </form>
-            <p><a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a></p>
+            <p>
+		<a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a>
+	    </p>
 	</div>
     </body>
 </html>

@@ -58,7 +58,9 @@
 		<button class="btn btn-default btn-ghost" type="submit" role="button" name="submit"><?php echo L::edit_save_btn; ?></button>
 		<input type="hidden" name="submit_check" value="1">
             </form>
-            <p>Read the <a href='https://gumroad.com/l/linux-photography'>Linux Photography</a> book</p>
+            <p>
+		<a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a>
+	    </p>
 	</div>
     </body>
 </html>
