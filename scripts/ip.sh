@@ -19,11 +19,12 @@
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
+source "$CONFIG"
 
 ping -c1 google.com &>/dev/null
 
 if [ $? -eq 0 ]; then
-    IP=$(ip -4 addr show "$NETWORK" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+    IP=$(hostname -I | cut -d' ' -f1)
     echo "$IP"
-    curl -d ip="$IP" -G "$IP_ADDR"
+    curl -d ip="$IP" -G "$IP_ENDP"
 fi 

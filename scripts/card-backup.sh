@@ -19,7 +19,6 @@
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
-
 source "$CONFIG"
 
 # Set the ACT LED to heartbeat
