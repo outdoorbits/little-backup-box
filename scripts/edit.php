@@ -59,7 +59,7 @@
 		<input type="hidden" name="submit_check" value="1">
             </form>
             <p>
-		<a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a>
+		<a href="https://gumroad.com/l/linux-photography"><img src="svg/life-ring.svg" height="35px" alt="Linux Photography book"></a>
 	    </p>
 	</div>
     </body>

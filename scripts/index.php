@@ -32,8 +32,16 @@
 	$i18n->init();
 	?>
 	<div id="content">
-	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
-	    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="viewer/"><?php echo L::viewer; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
+	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="logo.svg" height="51px" alt="Little Backup Box"></a></div>
+		<div style="display: inline-block; text-align: left;">
+		    <a href="sysinfo.php"><img src="svg/speedometer.svg" height="35px" alt="<?php echo L::sysinfo; ?>"></a>
+		</div>
+		<div style="display: inline-block; text-align: left;">
+		    <a href="viewer/"><img src="svg/image1.svg" height="35px" alt="<?php echo L::viewer; ?>"></a>
+		</div>
+		<div style="display: inline-block; text-align: center;">
+		    <a href="edit.php"><img src="svg/burger.svg" height="35px" alt="<?php echo L::edit; ?>"></a>
+	    </div>
             <p>
 		<form method="post">
                     <button class="btn btn-primary" name="cardbackup"><?php echo L::cardbackup_btn; ?></button>
@@ -88,11 +96,11 @@
 	    <p>
 		<details>
 		    <summary><?php echo L::help; ?></summary>
-		    <div div style="display: inline-block; text-align: left;"><?php echo L::help_txt; ?></div>
+		    <div style="display: inline-block; text-align: left;"><?php echo L::help_txt; ?></div>
 		</details>
 	    </p>
 	    <p>
-		<a href="https://gumroad.com/l/linux-photography"><img src="info.svg" height="35px" alt="Linux Photography book"></a>
+		<a href="https://gumroad.com/l/linux-photography"><img src="svg/life-ring.svg" height="35px" alt="Linux Photography book"></a>
 	    </p>
 	</div>
     </body>
