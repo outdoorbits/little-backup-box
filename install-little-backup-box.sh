@@ -81,6 +81,8 @@ esac
 
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 
+crontab -l | { cat; echo "*/5 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
+
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
 pw="raspberry"
 (echo $pw; echo $pw ) | sudo smbpasswd -s -a pi
