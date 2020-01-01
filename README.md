@@ -49,7 +49,9 @@ The exact steps depend on the backup mode.
 
 <img src="img/rc.png" alt="Remote control interface" />
 
-The **System info** link gives you access to basic system information, such as a list of storage devices and memory usage.
+- Click the **Speedometer** icon to access basic system information, such as a list of storage devices and memory usage.
+- To view JPEG files on the backup storage device, click the  **Image** icon.
+- To edit the configuration file, click the **Hamburger** icon.
 
 ### Card backup mode
 
