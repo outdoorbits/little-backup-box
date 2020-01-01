@@ -17,7 +17,7 @@
     
     <body>
 	<div id="content">
-	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="logo.svg" height="51px" alt="Little Backup Box"></a></div>
+	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a></div>
 	    <div style="display: inline-block; text-align: left;">
 		<?php
 		$ext = Array ( 'jpeg', 'jpg' );

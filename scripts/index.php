@@ -32,7 +32,7 @@
 	$i18n->init();
 	?>
 	<div id="content">
-	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="logo.svg" height="51px" alt="Little Backup Box"></a></div>
+	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a></div>
 		<div style="display: inline-block; text-align: left;">
 		    <a href="sysinfo.php"><img src="svg/speedometer.svg" height="35px" alt="<?php echo L::sysinfo; ?>"></a>
 		</div>

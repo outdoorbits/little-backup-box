@@ -26,7 +26,7 @@
 
     <body>
 	<div id="content">
-	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
+	    <a href="/"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a>
 	    <?php
 	    // include i18n class and initialize it
 	    require_once 'i18n.class.php';

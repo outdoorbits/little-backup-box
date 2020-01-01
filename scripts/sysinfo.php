@@ -31,7 +31,7 @@
 	$i18n->init();
 	?>
 	<div id="content">
-	    <a href="/"><img src="logo.svg" height="51px" alt="Little Backup Box"></a>
+	    <a href="/"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a>
             <p><?php echo L::sysinfo_hed; ?></p>
 	    <h3 style="margin-top: 2em;">Devices</h3>
 	    <div style="display: inline-block; text-align: left; margin-bottom: 1.5em;">
