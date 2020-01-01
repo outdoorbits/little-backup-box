@@ -18,10 +18,8 @@ sudo apt-get dist-upgrade -y
 sudo apt-get update
 
 sudo apt-get install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin
-curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
-echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
-sudo apt-get update
-sudo apt-get install -y syncthing
+
+curl https://rclone.org/install.sh | sudo bash
 
 USER="$1"
 
@@ -81,6 +79,8 @@ esac
 
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 
+crontab -l | { cat; echo "IP=$(hostname -I | cut -d' ' -f1) && rclone rcd --rc-web-gui --rc-addr $IP:5572 --rc-user pi --rc-pass raspberry --rc-serve"; } | crontab
+
 crontab -l | { cat; echo "*/5 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
 
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
@@ -127,12 +127,7 @@ sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
-
 sudo samba restart
-
-sudo systemctl start syncthing@pi.service
-sleep 15
-sudo sed -i "s/127\.0\.0\.1/0.0.0.0/g" ~/.config/syncthing/config.xml
 
 chmod +x little-backup-box/scripts/*.sh
 cd

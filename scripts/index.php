@@ -57,6 +57,11 @@
                     <button class="btn btn-primary" name="internalbackup"><?php echo L::internalbackup_btn; ?></button>
 		</form>
             </p>
+	    <p>
+		<form method="post">
+                    <button class="btn btn-primary" name="rclone"><?php echo L::rclone_btn; ?></button>
+		</form>
+            </p>
             <p>
 		<form method="post">
                     <button class="btn btn-error" name="shutdown"><?php echo L::shutdown_btn; ?></button>
@@ -81,6 +86,13 @@
 	    if (isset($_POST['internalbackup']))
 	    {
 		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
+		echo '<script language="javascript">';
+		echo 'alert("'.L::internalbackup_msg.'")';
+		echo '</script>';
+	    }
+	    if (isset($_POST['rclone']))
+	    {
+		shell_exec('sudo ./rclone.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
 		echo 'alert("'.L::internalbackup_msg.'")';
 		echo '</script>';
