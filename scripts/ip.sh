@@ -26,5 +26,5 @@ ping -c1 google.com &>/dev/null
 if [ $? -eq 0 ]; then
     IP=$(hostname -I | cut -d' ' -f1)
     echo "$IP"
-    curl -d ip="$IP" -G "$IP_ENDP"
+    curl -d ip="$IP" -G "$IP_URL"
 fi 
