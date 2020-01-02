@@ -79,7 +79,7 @@ esac
 
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 
-crontab -l | { cat; echo "IP=$(hostname -I | cut -d' ' -f1) && rclone rcd --rc-web-gui --rc-addr $IP:5572 --rc-user pi --rc-pass raspberry --rc-serve"; } | crontab
+crontab -l | { cat; echo "@reboot IP=\$(hostname -I | cut -d' ' -f1) && rclone rcd --rc-web-gui --rc-addr \$IP:5572 --rc-user pi --rc-pass raspberry --rc-serve"; } | crontab
 
 crontab -l | { cat; echo "*/5 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
 
