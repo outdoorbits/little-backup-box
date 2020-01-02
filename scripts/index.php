@@ -94,7 +94,7 @@
 	    {
 		shell_exec('sudo ./rclone.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
-		echo 'alert("'.L::internalbackup_msg.'")';
+		echo 'alert("'.L::rclone_msg.'")';
 		echo '</script>';
 	    }
 	    if (isset($_POST['shutdown']))

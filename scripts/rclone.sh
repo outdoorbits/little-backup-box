@@ -21,4 +21,4 @@ CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
 source "$CONFIG"
 
-rclone sync /storage/media "$RCLONE_REMOTE":"RCLONE_$BUCKET"
+rclone sync /media/storage "$RCLONE_REMOTE:$RCLONE_BUCKET"
