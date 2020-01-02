@@ -26,30 +26,27 @@
 
     <body>
 	<div id="content">
-	    <a href="/"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a>
-	    <?php
-	    // include i18n class and initialize it
-	    require_once 'i18n.class.php';
-	    $i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
-	    $i18n->init();
-	    ?>
-	    <p><a href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull; <a href="edit.php"><?php echo L::edit; ?></a></p>
-	    <?php
-	    $upload_dir = "/home/dmpop/UPLOAD";
-	    if(isset($_POST['submit'])){
-		// Count total files
-		$countfiles = count($_FILES['file']['name']);
-		// Looping all files
-		for($i=0;$i<$countfiles;$i++){
-		    $filename = $_FILES['file']['name'][$i];
-		    if (!file_exists($upload_dir)) {
-			mkdir($upload_dir, 0777, true);
+	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a></div>
+		<?php
+		// include i18n class and initialize it
+		require_once 'i18n.class.php';
+		$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
+		$i18n->init();
+		$upload_dir = "/home/pi/UPLOAD";
+		if(isset($_POST['submit'])){
+		    // count total files
+		    $countfiles = count($_FILES['file']['name']);
+		    // looping all files
+		    for($i=0;$i<$countfiles;$i++){
+			$filename = $_FILES['file']['name'][$i];
+			if (!file_exists($upload_dir)) {
+			    mkdir($upload_dir, 0777, true);
+			}
+			// upload file
+			move_uploaded_file($_FILES['file']['tmp_name'][$i], $upload_dir.DIRECTORY_SEPARATOR.$filename);
 		    }
-		    // Upload file
-		    move_uploaded_file($_FILES['file']['tmp_name'][$i], $upload_dir.DIRECTORY_SEPARATOR.$filename);
-		}
-	    } 
-	    ?>
+		} 
+		?>
 	    <form method='post' action='' enctype='multipart/form-data'>
 		<input type="file" name="file[]" id="file" multiple>
 		<p></p>
