@@ -25,12 +25,7 @@ dialog --clear \
 
 response=$?
 case $response in
-    0) sudo systemctl disable syncthing@pi.service
-       sudo rm -rf ~/.config/syncthing
-       sudo apt-get remove --purge syncthing
-       sudo rm /etc/apt/sources.list.d/syncthing.list
-       sudo rm -rf /home/$USER/Sync
-       sudo rm /home/$USER/little-backup-box.log
+    0) sudo rm /home/$USER/little-backup-box.log
        sudo rm /home/$USER/oledoled.conf
        sudo rm -rf /home/$USER/little-backup-box
        sudo rm -rf /home/$USER/ssd1306_rpi

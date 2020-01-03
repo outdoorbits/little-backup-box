@@ -22,3 +22,4 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 source "$CONFIG"
 
 rclone sync /media/storage "$RCLONE_REMOTE:$RCLONE_BUCKET"
+shutdown -h now

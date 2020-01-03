@@ -20,11 +20,11 @@
 	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a></div>
 	    <div style="display: inline-block; text-align: left;">
 		<?php
-		$ext = Array ( 'jpeg', 'jpg' );
+		$format = Array ( 'jpeg', 'jpg' );
 		$rdi = new RecursiveDirectoryIterator("storage/");
 		$it = new RecursiveIteratorIterator($rdi);
 		foreach($it as $item)
-		if (in_array(strtolower(array_pop(explode('.', $item))), $ext))
+		if (in_array(strtolower(array_pop(explode('.', $item))), $format))
 		    echo '<a href="'.$item.'"><img style="vertical-align:middle;" src="svg/image1.svg"></a> <div style="vertical-align:middle; display:inline;">'.basename($item).'</div><br />';
 		?>
 	    </div>
