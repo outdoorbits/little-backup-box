@@ -12,22 +12,28 @@
 	     margin: 0px auto;
 	     text-align: center;
 	 }
+	 ul {
+	     -webkit-column-count: 3;
+	     -moz-column-count: 3;
+	     column-count: 3;
+	     list-style-type: none;
+	 }
 	</style>
     </head>
     
     <body>
 	<div id="content">
 	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a></div>
-	    <div style="display: inline-block; text-align: left;">
+	    <ul>
 		<?php
 		$format = Array ( 'jpeg', 'jpg' );
 		$rdi = new RecursiveDirectoryIterator("storage/");
 		$it = new RecursiveIteratorIterator($rdi);
 		foreach($it as $item)
 		if (in_array(strtolower(array_pop(explode('.', $item))), $format))
-		    echo '<a href="'.$item.'"><img style="vertical-align:middle;" src="svg/image1.svg"></a> <div style="vertical-align:middle; display:inline;">'.basename($item).'</div><br />';
+		    echo '<li><a href="'.$item.'"><img style="vertical-align:middle;" src="svg/image1.svg"></a> <div style="vertical-align:middle; display:inline;">'.pathinfo($item, PATHINFO_FILENAME).'</div></li>';
 		?>
-	    </div>
+	    </ul>
 	    <p>
 		<a href="https://gumroad.com/l/linux-photography"><img src="svg/life-ring.svg" height="35px" alt="Linux Photography book"></a>
 	    </p>
