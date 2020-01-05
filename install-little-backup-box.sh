@@ -13,11 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-sudo apt-get update
-sudo apt-get dist-upgrade -y
-sudo apt-get update
+sudo apt update
+sudo apt full-upgrade -y
+sudo apt update
 
-sudo apt-get install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin
+sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin
+
+sudo apt autoremove
 
 curl https://rclone.org/install.sh | sudo bash
 
