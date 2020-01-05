@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Author: Dmitri Popov, dmpop@linux.com
+
+#######################################################################
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -12,7 +15,6 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 #######################################################################
 
 # Update source and perform the full system upgrade
@@ -24,7 +26,7 @@ sudo apt update
 sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin
 
 # Remove obsolete packages
-sudo apt autoremove
+sudo apt autoremove -y
 
 #Install Rclone
 curl https://rclone.org/install.sh | sudo bash
@@ -138,15 +140,7 @@ sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
 sudo samba restart
 cd
 
-# Install comitup
-echo "deb http://davesteele.github.io/comitup/repo comitup main" | sudo tee -a /etc/apt/sources.list
-wget https://davesteele.github.io/key-366150CE.pub.txt
-sudo apt-key add key-366150CE.pub.txt
-sudo apt update
-sudo apt install comitup
-sudo systemctl disable systemd-resolved
-mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
-
+# Enable OLED screen support
 dialog --clear \
        --title "Enable OLED support" \
        --backtitle "$BACKTITLE" \

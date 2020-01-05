@@ -17,27 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-oled r
-secs=11
-while [ $secs -gt 1 ]; do
-   sleep 1
-   : $((secs--))
-   oled +a "Ready in $secs sec."
-   oled +b "******************"
-   oled s
-done
-
-ip=$(hostname -I | cut -d' ' -f1)
-if [ -z "$ip" ]; then
-    a="Hello! I'm not"
-    b="on the network"
-else
-    a="Hello! I'm here:"
-    b=$ip
-fi
-echo "$ip"
-oled r
-oled +a "$a"
-oled +b "$b"
-sudo oled s
-
+echo "deb http://davesteele.github.io/comitup/repo comitup main" | sudo tee -a /etc/apt/sources.list
+wget https://davesteele.github.io/key-366150CE.pub.txt
+sudo apt-key add key-366150CE.pub.txt
+sudo apt update
+sudo apt install comitup -y
+sudo systemctl disable systemd-resolved
+mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak 
+sudo reboot
