@@ -33,14 +33,14 @@
 	?>
 	<div id="content">
 	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a></div>
-		<div style="display: inline-block; text-align: left;">
-		    <a href="sysinfo.php"><img src="svg/speedometer.svg" height="35px" alt="<?php echo L::sysinfo; ?>"></a>
-		</div>
-		<div style="display: inline-block; text-align: left;">
-		    <a href="viewer.php"><img src="svg/image1.svg" height="35px" alt="<?php echo L::viewer; ?>"></a>
-		</div>
-		<div style="display: inline-block; text-align: center;">
-		    <a href="edit.php"><img src="svg/burger.svg" height="35px" alt="<?php echo L::edit; ?>"></a>
+	    <div style="display: inline-block; text-align: left;">
+		<a href="sysinfo.php"><img src="svg/speedometer.svg" height="35px" alt="<?php echo L::sysinfo; ?>"></a>
+	    </div>
+	    <div style="display: inline-block; text-align: left;">
+		<a href="viewer.php"><img src="svg/image1.svg" height="35px" alt="<?php echo L::viewer; ?>"></a>
+	    </div>
+	    <div style="display: inline-block; text-align: center;">
+		<a href="edit.php"><img src="svg/burger.svg" height="35px" alt="<?php echo L::edit; ?>"></a>
 	    </div>
             <p>
 		<form method="post">
@@ -100,7 +100,7 @@
 		</details>
 	    </p>
 	    <p>
-		<a href="https://gumroad.com/l/linux-photography"><img src="svg/life-ring.svg" height="35px" alt="Linux Photography book"></a>
+		<a href="https://gumroad.com/l/little-backup-book"><img src="svg/life-ring.svg" height="35px" alt="Little Backup Book"></a>
 	    </p>
 	</div>
     </body>

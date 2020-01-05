@@ -110,11 +110,11 @@ To add a new feature or fix issues yourself, follow the following steps.
 <a href="https://paypal.me/dmpop" target="_blank"><img
 src="https://i.imgur.com/cERczks.png" alt="Buy Me A Coffee" width="128"></a>
 
-## Linux Photography
+## Little Backup Book
 
-The [Linux Photography](https://gumroad.com/l/linux-photography) book provides step-by-step instructions on building a Raspberry Pi-based photo backup device running Little Backup Box. Get your copy at [Google Play Store](https://play.google.com/store/books/details/Dmitri_Popov_Linux_Photography?id=cO70CwAAQBAJ) or [Gumroad](https://gumroad.com/l/linux-photography).
+The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides step-by-step instructions on building, configuring, using, and troubleshooting a Raspberry Pi-based photo backup device running Little Backup Box. Get your copy on [Google Play Store](https://play.google.com/store/books/details?id=VvrHDwAAQBAJ) or [Gumroad](https://gumroad.com/l/little-backup-book).
 
-<img src="https://scribblesandsnaps.files.wordpress.com/2016/07/linux-photography-6.jpg" width="200"/>
+<img src="https://i.imgur.com/O31FnrF.jpg" width="200"/>
 
 By buying the book, you are supporting the Linux Backup Box project.
 

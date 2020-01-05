@@ -52,6 +52,9 @@
 		<p></p>
 		<button class="btn btn-primary" type="submit" role="button" name="submit"><?php echo L::upload_btn; ?></button>
 	    </form>
+	    <p>
+		<a href="https://gumroad.com/l/little-backup-book"><img src="svg/life-ring.svg" height="35px" alt="Little Backup Book"></a>
+	    </p>
 	</div>
     </body>
 </html>
