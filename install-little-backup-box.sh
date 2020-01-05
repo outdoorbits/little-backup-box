@@ -13,48 +13,56 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#######################################################################
+
+# Update source and perform the full system upgrade
 sudo apt update
 sudo apt full-upgrade -y
 sudo apt update
 
+# Install the required packages
 sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php minidlna samba samba-common-bin
 
+# Remove obsolete packages
 sudo apt autoremove
 
+#Install Rclone
 curl https://rclone.org/install.sh | sudo bash
 
+# Read user
 USER="$1"
-
 if [ -z "$USER" ]; then
     USER="pi"
-    fi
+fi
+
+# Create the required directories
 sudo mkdir /media/card
 sudo mkdir /media/storage
 sudo chown -R $USER:users /media/storage
 sudo chmod -R 775 /media/storage
 sudo setfacl -Rdm g:$USER:rw /media/storage
 
+# Configure miniDLNA
 sudo cp /etc/minidlna.conf /etc/minidlna.conf.orig
 sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
 sudo sh -c "echo 'media_dir=/home/$USER/BACKUP' >> /etc/minidlna.conf"
 sudo service minidlna start
 
+# Clone and configure Little Backup Box
 cd
 git clone https://github.com/dmpop/little-backup-box.git
-
 ln -s /media/storage /home/$USER/little-backup-box/scripts
-
 echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backup-box/scripts/config.cfg
 mkdir -p /home/$USER/BACKUP
 chown $USER:users -R /home/$USER/BACKUP
+chmod +x little-backup-box/scripts/*.sh
 
+# Prompt to choose the default backup mode
 BACKTITLE="Little Backup Box"
-
 OPTIONS=(1 "Remote control"
          2 "Card backup"
          3 "Camera backup"
 	 4 "Internal backup")
-
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
                 --title "Backup Mode" \
@@ -62,7 +70,6 @@ CHOICE=$(dialog --clear \
                 15 40 4 \
                 "${OPTIONS[@]}" \
                 2>&1 >/dev/tty)
-
 clear
 case $CHOICE in
         1)
@@ -83,6 +90,7 @@ crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/r
 
 crontab -l | { cat; echo "*/5 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
 
+# Configure Samba
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
 pw="raspberry"
 (echo $pw; echo $pw ) | sudo smbpasswd -s -a pi
@@ -128,9 +136,17 @@ sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
 sudo samba restart
-
-chmod +x little-backup-box/scripts/*.sh
 cd
+
+# Install comitup
+echo "deb http://davesteele.github.io/comitup/repo comitup main" | sudo tee -a /etc/apt/sources.list
+wget https://davesteele.github.io/key-366150CE.pub.txt
+sudo apt-key add key-366150CE.pub.txt
+sudo apt update
+sudo apt install comitup
+sudo systemctl disable systemd-resolved
+mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
+
 dialog --clear \
        --title "Enable OLED support" \
        --backtitle "$BACKTITLE" \
