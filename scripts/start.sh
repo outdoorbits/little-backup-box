@@ -20,14 +20,14 @@
 oled r
 ip=$(hostname -I | cut -d' ' -f1)
 if [ -z "$ip" ]; then
-    a="Hello! No network"
+    a="No network"
     b="-------------------"
 else
-    a="My IP: $ip"
+    a="$ip"
     b="-------------------"
 fi
 echo "$ip"
-oled r
+# oled r
 oled +a "$a"
 oled +b "$b"
 sudo oled s
