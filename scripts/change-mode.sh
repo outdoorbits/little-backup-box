@@ -61,6 +61,7 @@ crontab -l | { cat; echo "*/5 * * * * sudo /home/"$USER"/little-backup-box/scrip
 
 if [ $DISP = true ]; then
     crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
+    crontab -l | { cat; echo "*/1 * * * * sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
 fi
 
 dialog --clear \

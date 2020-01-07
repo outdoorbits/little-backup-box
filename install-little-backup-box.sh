@@ -158,6 +158,7 @@ case $response in
        sudo chmod 755 /usr/local/bin/oled
        cd
        crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
+       crontab -l | { cat; echo "*/1 * * * * sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
        echo -e 'DISP=true # Enable OLED display' >> little-backup-box/scripts/config.cfg
        dialog --clear \
 	      --title "Enable I2C" \
