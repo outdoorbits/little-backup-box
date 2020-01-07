@@ -18,22 +18,13 @@
 #######################################################################
 
 oled r
-secs=11
-while [ $secs -gt 1 ]; do
-   sleep 1
-   : $((secs--))
-   oled +a "Ready in $secs sec."
-   oled +b "******************"
-   oled s
-done
-
 ip=$(hostname -I | cut -d' ' -f1)
 if [ -z "$ip" ]; then
-    a="Hello! I'm not"
-    b="on the network"
+    a="Hello! No network"
+    b="-------------------"
 else
-    a="Hello! I'm here:"
-    b=$ip
+    a="My IP: $ip"
+    b="-------------------"
 fi
 echo "$ip"
 oled r

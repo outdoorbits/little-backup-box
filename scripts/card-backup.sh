@@ -28,8 +28,8 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 if [ $DISP = true ]; then
     oled r
-    oled +a "Shutdown active"
-    oled +b "Insert storage"
+    oled +c "Shutdown active"
+    oled +d "Insert storage"
     sudo oled s 
 fi
 
@@ -50,8 +50,8 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
     oled r
-    oled +a "Storage OK"
-    oled +b "Card reader..."
+    oled +c "Storage OK"
+    oled +d "Card reader..."
     sudo oled s 
 fi
 
@@ -77,8 +77,8 @@ if [ ! -z "${CARD_READER[0]}" ]; then
   # If display support is enabled, notify that the card has been mounted
   if [ $DISP = true ]; then
       oled r
-      oled +a "Card reader OK"
-      oled +b "Working..."
+      oled +c "Card reader OK"
+      oled +d "Working..."
       sudo oled s 
   fi
 
@@ -101,8 +101,8 @@ fi
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
     oled r
-    oled +a "Backup complete"
-    oled +b "Shutdown"
+    oled +c "Backup complete"
+    oled +d "Shutdown"
     sudo oled s 
 fi
 # Shutdown
