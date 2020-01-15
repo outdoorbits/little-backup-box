@@ -47,8 +47,6 @@ if [ $DISP = true ]; then
     storused=$(df /dev/"$STORAGE_DEV"  -h --output=pcent | sed '1d')
     storfree=$(df /dev/"$STORAGE_DEV"  -h --output=avail | sed '1d')
     oled r
-    oled +b "Total: $storsize"
-    oled +c " Used: $storused"
-    oled +d " Free: $storfree"
+    oled +d "Disk: $storfree/$storsize $storused"
     sudo oled s
 fi
