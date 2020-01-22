@@ -43,10 +43,10 @@ sudo service minidlna restart
 
 # If display support is enabled, display storage space info
 if [ $DISP = true ]; then
-    storsize=$(df /dev/"$STORAGE_DEV"  -h --output=size | sed '1d')
-    storused=$(df /dev/"$STORAGE_DEV"  -h --output=pcent | sed '1d')
-    storfree=$(df /dev/"$STORAGE_DEV"  -h --output=avail | sed '1d')
+    storsize=$(df /dev/"$STORAGE_DEV"  -h --output=size | sed '1d' | tr -d ' ')
+    storused=$(df /dev/"$STORAGE_DEV"  -h --output=pcent | sed '1d' | tr -d ' ')
+    storfree=$(df /dev/"$STORAGE_DEV"  -h --output=avail | sed '1d' | tr -d ' ')
     oled r
-    oled +d "Disk: $storfree/$storsize $storused"
+    oled +c "$storfree free"
     sudo oled s
 fi

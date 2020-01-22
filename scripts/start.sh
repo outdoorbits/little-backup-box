@@ -21,7 +21,7 @@ oled r
 ip=$(hostname -I | cut -d' ' -f1)
 if [ -z "$ip" ]; then
     a="No network"
-    b="-------------------"
+    b="(Wait 1 min)"
 else
     a="$ip"
     b="-------------------"
