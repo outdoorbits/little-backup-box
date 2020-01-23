@@ -23,7 +23,7 @@
     </head>
     <body>
 	<div id="content">
-	    <div style="margin-top: 1.9em; font-size: 3em;">
+	    <div style="margin-top: 1.9em; font-size: 2em;">
 		<?php
 		if( $_GET["ip"] )
 		{
