@@ -75,7 +75,7 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         1)
-	    crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
+	    crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:80"; } | crontab
             ;;
         2)
             crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
@@ -157,7 +157,7 @@ case $response in
        sudo chown root:root /usr/local/bin/oled
        sudo chmod 755 /usr/local/bin/oled
        cd
-       crontab -l | { cat; echo "*/1 * * * * sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
+       crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
        echo -e 'DISP=true # Enable OLED display' >> little-backup-box/scripts/config.cfg
        dialog --clear \
 	      --title "Enable I2C" \

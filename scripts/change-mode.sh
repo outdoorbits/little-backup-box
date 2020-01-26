@@ -42,7 +42,7 @@ crontab -r
 
 case $CHOICE in
         1)
-	    crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
+	    crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:80"; } | crontab
             ;;
         2)
             crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
@@ -60,7 +60,7 @@ crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/r
 crontab -l | { cat; echo "*/5 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
 
 if [ $DISP = true ]; then
-    crontab -l | { cat; echo "*/1 * * * * sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
+    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
 fi
 
 dialog --clear \

@@ -29,8 +29,8 @@ sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 # If display support is enabled, notify that shutdown is activated
 if [ $DISP = true ]; then
     oled r
-    oled +c "Shutdown active"
-    oled +d "Connect camera"
+    oled +b "Shutdown active"
+    oled +c "Connect camera"
     sudo oled s 
 fi
 
@@ -48,8 +48,8 @@ sudo shutdown -c
 # If display support is enabled, notify that the camera is detected
 if [ $DISP = true ]; then
     oled r
-    oled +c "Camera OK"
-    oled +d "Working..."
+    oled +b "Camera OK"
+    oled +c "Working..."
     sudo oled s 
 fi
 
@@ -67,8 +67,8 @@ gphoto2 --get-all-files --skip-existing
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
     oled r
-    oled +c "Backup complete"
-    oled +d "Shutdown"
+    oled +b "Backup complete"
+    oled +c "Shutdown"
     sudo oled s 
 fi
 # Shutdown

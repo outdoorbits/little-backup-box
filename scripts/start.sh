@@ -17,18 +17,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-oled r
 ip=$(hostname -I | cut -d' ' -f1)
-if [ -z "$ip" ]; then
-    a="No network"
-    b="(Wait 1 min)"
-else
-    a="$ip"
-    b="-------------------"
-fi
+
+until [ ! -z "$ip" ]
+  do
+  sleep 1
+  ip=$(hostname -I | cut -d' ' -f1)
+done
+
+a="$ip"
 echo "$ip"
-# oled r
+oled r
 oled +a "$a"
-oled +b "$b"
 sudo oled s
 
