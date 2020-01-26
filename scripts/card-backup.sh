@@ -40,6 +40,7 @@ do
     sleep 1
     STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
+
 # When the USB storage device is detected, mount it
 mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 
@@ -65,38 +66,36 @@ until [ ! -z "${CARD_READER[0]}" ]
 done
 
 # If the card reader is detected, mount it and obtain its UUID
-if [ ! -z "${CARD_READER[0]}" ]; then
-  mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
+mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
 
-  # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
-  sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
+# Set the ACT LED to blink at 500ms to indicate that the card has been mounted
+sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
-  # Cancel shutdown
-  sudo shutdown -c
-  
-  # If display support is enabled, notify that the card has been mounted
-  if [ $DISP = true ]; then
-      oled r
-      oled +b "Card reader OK"
-      oled +c "Working..."
-      sudo oled s 
-  fi
+# Cancel shutdown
+sudo shutdown -c
 
-  # Create  a .id random identifier file if doesn't exist
-  cd "$CARD_MOUNT_POINT"
-  if [ ! -f *.id ]; then
+# If display support is enabled, notify that the card has been mounted
+if [ $DISP = true ]; then
+    oled r
+    oled +b "Card reader OK"
+    oled +c "Working..."
+    sudo oled s 
+fi
+
+# Create  a .id random identifier file if doesn't exist
+cd "$CARD_MOUNT_POINT"
+if [ ! -f *.id ]; then
     random=$(echo $RANDOM)
     touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
-  fi
-  ID_FILE=$(ls *.id)
-  ID="${ID_FILE%.*}"
-  cd
-
-  # Set the backup path
-  BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
-  # Perform backup using rsync
-  rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
 fi
+ID_FILE=$(ls *.id)
+ID="${ID_FILE%.*}"
+cd
+
+# Set the backup path
+BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
+# Perform backup using rsync
+rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
