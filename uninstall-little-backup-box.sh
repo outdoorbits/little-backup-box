@@ -36,7 +36,7 @@ case $response in
        sudo rm -rf /media/card
        sudo rm -rf /media/storage
        sudo rm -rf /home/$USER/BACKUP
-       sudo rm /user/local/bin/oled
+       sudo rm /usr/local/bin/oled
        sudo mv /etc/minidlna.conf.orig /etc/minidlna.conf
        sudo mv /etc/samba/smb.conf.orig /etc/samba/smb.conf
        sudo smbpasswd -x $USER

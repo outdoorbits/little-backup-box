@@ -38,8 +38,8 @@ if [ -z "$USER" ]; then
 fi
 
 # Create the required directories
-sudo mkdir /media/card
-sudo mkdir /media/storage
+sudo mkdir -p /media/card
+sudo mkdir -p /media/storage
 sudo chown -R $USER:users /media/storage
 sudo chmod -R 775 /media/storage
 sudo setfacl -Rdm g:$USER:rw /media/storage
@@ -95,7 +95,7 @@ crontab -l | { cat; echo "*/5 * * * * sudo /home/"$USER"/little-backup-box/scrip
 # Configure Samba
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
 pw="raspberry"
-(echo $pw; echo $pw ) | sudo smbpasswd -s -a pi
+(echo $pw; echo $pw ) | sudo smbpasswd -s -a "$USER"
 sudo sh -c "echo '### Global Settings ###' > /etc/samba/smb.conf"
 sudo sh -c "echo '[global]' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'workgroup = WORKGROUP' >> /etc/samba/smb.conf"
@@ -162,7 +162,7 @@ case $response in
        dialog --clear \
 	      --title "Enable I2C" \
 	      --backtitle "$BACKTITLE" \
-	      --msgbox "Almost done! Run the following command:\n\nsudo raspi-config\n\nSwitch to the Interfacing Options section and enable I2C. Then reboot the system." 15 30
+	      --msgbox "Almost done! Enable I2C and reboot the system." 5 50
        clear
        ;;
     1)  echo -e 'DISP=false # Enable OLED display' >> little-backup-box/scripts/config.cfg
