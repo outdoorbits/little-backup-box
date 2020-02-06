@@ -17,7 +17,7 @@ Little Backup Box is designed to work with USB sticks as backup media. Theoretic
 - Browse and view the backed up files using the integrated web-based file viewer.
 - Stream the backed up photos to any DLNA-compatible client.
 - Access the backed up content from other machines on the network.
-- Synchronize the backed up content with multiple machines.
+- Push backed up contents to a cloud storage service.
 
 ## Installation
 
