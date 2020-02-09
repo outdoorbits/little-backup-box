@@ -7,6 +7,7 @@
         <title>Little Backup Box</title>
         <link rel="shortcut icon" href="favicon.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="css/featherlight.min.css" type="text/css" rel="stylesheet" />
 	<style>
 	 #content {
 	     margin: 0px auto;
@@ -22,6 +23,8 @@
     </head>
     
     <body>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 	<div id="content">
 	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a></div>
 	    <ul>
@@ -31,7 +34,7 @@
 		$it = new RecursiveIteratorIterator($rdi);
 		foreach($it as $item)
 		if (in_array(strtolower(array_pop(explode('.', $item))), $format))
-		    echo '<li><a href="'.$item.'"><img style="vertical-align:middle;" src="svg/image1.svg"></a> <div style="vertical-align:middle; display:inline;">'.pathinfo($item, PATHINFO_FILENAME).'</div></li>';
+		    echo '<li><a href="'.$item.'" data-featherlight="image"><img style="vertical-align:middle;" src="svg/image1.svg"></a> <div style="vertical-align:middle; display:inline;">'.pathinfo($item, PATHINFO_FILENAME).'</div></li>';
 		?>
 	    </ul>
 	    <p>

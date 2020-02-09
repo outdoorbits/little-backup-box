@@ -25,7 +25,7 @@
 	<div id="content">
 	    <div style="margin-top: 1.9em; font-size: 2em;">
 		<?php
-		if( $_GET["ip"] )
+		if( isset($_GET["ip"]) )
 		{
 		    echo $_GET['ip'];
 		    $f = fopen("ip", "w");

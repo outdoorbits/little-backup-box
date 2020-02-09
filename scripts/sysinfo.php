@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="terminal.css">
+	<link rel="stylesheet" href="css/terminal.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 	 #content {
