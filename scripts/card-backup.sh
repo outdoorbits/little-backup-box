@@ -48,6 +48,9 @@ mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
+# Cancel shutdown
+sudo shutdown -c
+
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
     oled r
@@ -70,9 +73,6 @@ mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
 
 # Set the ACT LED to blink at 500ms to indicate that the card has been mounted
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
-
-# Cancel shutdown
-sudo shutdown -c
 
 # If display support is enabled, notify that the card has been mounted
 if [ $DISP = true ]; then
