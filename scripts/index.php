@@ -66,6 +66,9 @@
 	    <?php
 	    if (isset($_POST['cardbackup']))
 	    {
+		shell_exec('sudo pkill -f card-backup*');
+		shell_exec('sudo umount /media/storage');
+		shell_exec('sudo shutdown -c');
 		shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
 		echo 'alert("'.L::cardbackup_msg.'")';
@@ -73,6 +76,9 @@
 	    }
 	    if (isset($_POST['camerabackup']))
 	    {
+		shell_exec('sudo pkill -f camera-backup*');
+		shell_exec('sudo umount /media/storage');
+		shell_exec('sudo shutdown -c');
 		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
 		echo 'alert("'.L::camerabackup_msg.'")';
@@ -80,6 +86,9 @@
 	    }
 	    if (isset($_POST['internalbackup']))
 	    {
+		shell_exec('sudo pkill -f internal-backup*');
+		shell_exec('sudo umount /media/storage');
+		shell_exec('sudo shutdown -c');
 		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
 		echo 'alert("'.L::internalbackup_msg.'")';

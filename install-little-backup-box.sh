@@ -61,10 +61,9 @@ chmod +x little-backup-box/scripts/*.sh
 
 # Prompt to choose the default backup mode
 BACKTITLE="Little Backup Box"
-OPTIONS=(1 "Remote control"
-         2 "Card backup"
-         3 "Camera backup"
-	 4 "Internal backup")
+OPTIONS=(1 "Card backup"
+         2 "Camera backup"
+	 3 "Internal backup")
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
                 --title "Backup Mode" \
@@ -75,22 +74,19 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         1)
-	    crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:80"; } | crontab
-            ;;
-        2)
             crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
             ;;
-        3)
+        2)
 	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
             ;;
-	4)
+	3)
 	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
             ;;
 esac
 
+crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:80"; } | crontab
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
-
-crontab -l | { cat; echo "*/5 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
+crontab -l | { cat; echo "*/3 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
 
 # Configure Samba
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
