@@ -24,14 +24,14 @@ source "$CONFIG"
 BACKTITLE="Little Backup Box"
 
 OPTIONS=(1 "Card backup"
-         3 "Camera backup"
-	 4 "Internal backup")
+         2 "Camera backup"
+	 3 "Internal backup")
 
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
                 --title "Backup Mode" \
                 --menu "Select the desired backup mode:" \
-                15 40 4 \
+                15 40 3 \
                 "${OPTIONS[@]}" \
                 2>&1 >/dev/tty)
 
