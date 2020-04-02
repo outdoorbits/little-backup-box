@@ -84,7 +84,7 @@ case $CHOICE in
             ;;
 esac
 
-crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:80"; } | crontab
+crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
 crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
 crontab -l | { cat; echo "*/3 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
 
