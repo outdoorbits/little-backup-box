@@ -57,6 +57,11 @@
                     <button class="btn btn-primary" name="internalbackup"><?php echo L::internalbackup_btn; ?></button>
 		</form>
             </p>
+	    <p>
+		<form method="post">
+                    <button class="btn" name="cancelshutdown"><?php echo L::cancel_shutdown_btn; ?></button>
+		</form>
+            </p>
             <p>
 		<form method="post">
                     <button class="btn btn-error" name="shutdown"><?php echo L::shutdown_btn; ?></button>
@@ -68,7 +73,7 @@
 	    {
 		shell_exec('sudo pkill -f card-backup*');
 		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo shutdown -c');
+		shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 		shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
 		echo 'alert("'.L::cardbackup_msg.'")';
@@ -78,7 +83,7 @@
 	    {
 		shell_exec('sudo pkill -f camera-backup*');
 		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo shutdown -c');
+		shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
 		echo 'alert("'.L::camerabackup_msg.'")';
@@ -88,7 +93,7 @@
 	    {
 		shell_exec('sudo pkill -f internal-backup*');
 		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo shutdown -c');
+		shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
 		echo 'alert("'.L::internalbackup_msg.'")';
@@ -99,6 +104,13 @@
 		shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
 		echo '<script language="javascript">';
 		echo 'alert("'.L::shutdown_msg.'")';
+		echo '</script>';
+	    }
+	    if (isset($_POST['cancelshutdown']))
+	    {
+		shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
+		echo '<script language="javascript">';
+		echo 'alert("'.L::cancel_shutdown_msg.'")';
 		echo '</script>';
 	    }
 	    ?>
