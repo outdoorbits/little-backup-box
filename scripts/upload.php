@@ -6,7 +6,8 @@
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="css/terminal.css">
+	<link rel="stylesheet" href="css/lit.css">
+	<link href="https://fonts.googleapis.com/css2?family=Nunito" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 	 #content {
@@ -25,8 +26,7 @@
     </head>
 
     <body>
-	<div id="content">
-	    <a href="/"><div style="margin-bottom: 1.9em;"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a></div>
+	<div class="c">
 	    <?php
 	    // include i18n class and initialize it
 	    require_once 'i18n.class.php';
@@ -47,14 +47,14 @@
 		}
 	    } 
 	    ?>
+	    <h1><?php echo L::upload; ?></h1>
+	    <hr>
 	    <form method='post' action='' enctype='multipart/form-data'>
 		<input type="file" name="file[]" id="file" multiple>
 		<p></p>
-		<button class="btn btn-primary" type="submit" role="button" name="submit"><?php echo L::upload_btn; ?></button>
+		<button class="btn primary" type="submit" role="button" name="submit"><?php echo L::upload; ?></button>
+		<a class="btn" href="index.php"><?php echo L::back_b; ?></a>
 	    </form>
-	    <p>
-		<a href="https://gumroad.com/l/little-backup-book"><img src="svg/life-ring.svg" height="35px" alt="Little Backup Book"></a>
-	    </p>
 	</div>
     </body>
 </html>

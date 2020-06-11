@@ -6,21 +6,9 @@
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="css/terminal.css">
+	<link rel="stylesheet" href="css/lit.css">
+	<link href="https://fonts.googleapis.com/css2?family=Nunito" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style>
-	 #content {
-	     margin: 0px auto;
-             text-align: center;
-	 }
-	 img {
-	     display: block;
-	     margin-left: auto;
-	     margin-right: auto;
-	     margin-top: 1%;
-	     margin-bottom: 1%;
-	 }
-	</style>
     </head>
 
     <body>
@@ -30,18 +18,19 @@
 	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
 	$i18n->init();
 	?>
-	<div id="content">
-	    <a href="/"><img src="svg/logo.svg" height="51px" alt="Little Backup Box"></a>
-            <p><?php echo L::sysinfo_hed; ?></p>
-	    <h3 style="margin-top: 2em;">Devices</h3>
-	    <div style="display: inline-block; text-align: left; margin-bottom: 1.5em;">
+	<div class="c">
+            <h1><?php echo L::sysinfo; ?></h1>
+	    <hr>
+	    <h3>Devices</h3>
+	    <div style="display: inline-block; text-align: left;">
 		<?php
 		echo '<pre>';
 		passthru("lsblk");
 		echo '</pre>';
 		?>
 	    </div>
-	    <h3><?php echo L::diskspace_lbl; ?></h3>
+	    <hr>
+	    <h3><?php echo L::diskspace; ?></h3>
 	    <p></p>
 	    <div style="display: inline-block; text-align: left; margin-bottom: 1.5em;">
 		<?php
@@ -50,7 +39,8 @@
 		echo '</pre>';
 		?>
 	    </div>
-	    <h3><?php echo L::memory_lbl; ?></h3>
+	    <hr>
+	    <h3><?php echo L::memory; ?></h3>
 	    <div style="display: inline-block; text-align: left; margin-bottom: 2em;">
 		<?php
 		echo '<pre>';
@@ -59,11 +49,9 @@
 		?>
 	    </div>
 	    <form>
-		<button class="btn btn-default btn-ghost" type="button" onClick="history.go(0)" role="button"><?php echo L::refresh_btn; ?></button>
+		<button class="btn primary" type="button" onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
+		<a class="btn" href="index.php"><?php echo L::back_b; ?></a>
 	    </form>
-            <p>
-		<a href="https://gumroad.com/l/linux-photography"><img src="svg/life-ring.svg" height="35px" alt="Linux Photography book"></a>
-	    </p>
 	</div>
     </body>
 </html>
