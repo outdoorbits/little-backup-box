@@ -14,7 +14,7 @@ Little Backup Box is designed to work with USB sticks as backup media. Theoretic
 - Use multiple cards. Little Backup Box assigns a unique ID to each card and create a separate folder for each card on the backup storage device.
 - Perform card backup fully automatically with no user interaction.
 - Start specific backup operations manually using Little Backup Box's web UI.
-- Browse and view the backed up files using the integrated web-based file viewer.
+- Automatically generate a minimalist responsive gallery from the backed up RAW files.
 - Stream the backed up photos to any DLNA-compatible client.
 - Access the backed up content from other machines on the network.
 - Push backed up contents to a cloud storage service.

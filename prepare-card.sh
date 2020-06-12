@@ -34,11 +34,14 @@ sudo umount /mnt
 sudo mount "$2"2 /mnt
 sudo mv /mnt/etc/wpa_supplicant/wpa_supplicant.conf /mnt/etc/wpa_supplicant/wpa_supplicant.conf.bak
 
+echo "Enter your country code (e.g., DE): "
+read COUNTRY
 echo "Enter the name of the wireless network: "
 read SSID
 echo "Enter the wireless network password: "
 read -s PASS
 cat >$HOME/wpa_supplicant.conf <<EOF
+country=$COUNTRY
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 
@@ -47,10 +50,8 @@ network={
 	psk="$PASS"
 	proto=RSN
 	key_mgmt=WPA-PSK
-	pairwise=CCMP
-	auth_alg=OPEN
 }
 EOF
-sudo mv $HOME/wpa_supplicant.conf /mnt/etc/wpa_supplicant/wpa_supplicant.conf
+sudo mv $HOME/wpa_supplicant.conf /mnt/wpa_supplicant.conf
 sudo umount /mnt
 echo "All done!"
