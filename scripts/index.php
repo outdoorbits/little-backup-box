@@ -26,7 +26,7 @@
 		<a href="sysinfo.php"><img src="svg/speedometer.svg" height="39px" alt="<?php echo L::sysinfo; ?>"></a>
 	    </div>
 	    <div style="display: inline-block; text-align: left;">
-		<a href="raw.php"><img src="svg/image1.svg" height="39px" alt="<?php echo L::viewer; ?>"></a>
+		<a href="raw-viewer/"><img src="svg/image1.svg" height="39px" alt="<?php echo L::viewer; ?>"></a>
 	    </div>
 	    <div style="display: inline-block; text-align: center;">
 		<a href="edit.php"><img src="svg/burger.svg" height="39px" alt="<?php echo L::edit; ?>"></a>

@@ -7,9 +7,9 @@ include('config.php');
     <head>
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
-	<link rel="icon" href="favicon.png">
-	<link rel="stylesheet" href="css/lit.css">
-	<link href="css/featherlight.min.css" type="text/css" rel="stylesheet" />
+	<link rel="icon" href="../favicon.png">
+	<link rel="stylesheet" href="../css/lit.css">
+	<link href="../css/featherlight.min.css" type="text/css" rel="stylesheet" />
 	<link href="https://fonts.googleapis.com/css2?family=Nunito" rel="stylesheet"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
@@ -51,12 +51,12 @@ include('config.php');
     <body>
 	<?php
 	// include i18n class and initialize it
-	require_once 'i18n.class.php';
-	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
+	require_once '../i18n.class.php';
+	$i18n = new i18n('../lang/{LANGUAGE}.ini', 'cache/', 'en');
 	$i18n->init();
 	?>
-	<script src="js/jquery.min.js"></script>
-	<script src="js/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 	<div class="c">
 	    <h1><?php echo L::viewer; ?></h1>
 	    <hr>
@@ -98,7 +98,7 @@ include('config.php');
 	    <hr>
 	    <form method='POST' action=''>
 		<input display: inline!important; class="btn primary"  type="submit" name="refresh" value="<?php echo L::refresh_b; ?>">
-		<a class="btn" href="index.php"><?php echo L::back_b; ?></a> 
+		<a class="btn" href="../index.php"><?php echo L::back_b; ?></a> 
 	    </form>
 	    <?php
 	    if(isset($_POST["refresh"])) {
