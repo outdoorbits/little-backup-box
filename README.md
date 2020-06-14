@@ -112,7 +112,7 @@ src="https://i.imgur.com/cERczks.png" alt="Buy Me A Coffee" width="128"></a>
 
 The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides step-by-step instructions on building, configuring, using, and troubleshooting a Raspberry Pi-based photo backup device running Little Backup Box. Get your copy on [Google Play Store](https://play.google.com/store/books/details?id=VvrHDwAAQBAJ) or [Gumroad](https://gumroad.com/l/little-backup-book).
 
-<img src="https://i.imgur.com/O31FnrF.jpg" width="200"/>
+<img src="https://i.imgur.com/ZHBgpIf.jpg" width="200"/>
 
 By buying the book, you are supporting the Linux Backup Box project.
 

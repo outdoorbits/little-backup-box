@@ -29,10 +29,6 @@ sudo dd if="$1" of="$2" bs=1M status=progress
 
 sudo mount "$2"1 /mnt
 sudo touch /mnt/ssh
-sudo umount /mnt
-
-sudo mount "$2"2 /mnt
-sudo mv /mnt/etc/wpa_supplicant/wpa_supplicant.conf /mnt/etc/wpa_supplicant/wpa_supplicant.conf.bak
 
 echo "Enter your country code (e.g., DE): "
 read COUNTRY
