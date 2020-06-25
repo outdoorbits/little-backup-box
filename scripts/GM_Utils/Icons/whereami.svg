@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	x="0px" y="0px" width="20px" height="20px" 
+	viewBox="0 0 101 101"
+	style="enable-background:new 0 0 101 101"
+	xml:space="preserve" stroke="black" stroke-width="10" fill="black">
+		<circle cx="50" cy="50" r="37" fill="none"/>
+		<line x1="85" y1="50" x2="101" y2="50"/>
+		<line x1="15" y1="50" x2="0" y2="50"/>
+		<line x1="50" y1="85" x2="50" y2="101"/>
+		<line x1="50" y1="15" x2="50" y2="0"/>
+		<circle cx="50" cy="50" r="20"/>
+</svg>

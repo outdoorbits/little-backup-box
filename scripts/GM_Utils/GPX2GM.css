@@ -1,0 +1,54 @@
+/* GPX2GM.css
+   Lizenz CC BY-NC-SA 4.0
+   Jürgen Berkemeier
+   www.j-berkemeier.de
+   4. 12. 2019 */
+
+.JBinfofenster { position:absolute; z-index:1000; margin-top:10px; margin-left:10px; border:1px solid #aaa; border-radius:3px; 
+                box-shadow:1px 1px 5px #aaa; background-color:white; padding:0.5em; font-size:0.8em; line-height:1.2em; 
+								max-width:50%; color: black } 
+.JBinfofenster strong { font-size:1.2em }
+
+.JBinfofenster_gm { color: black !important }
+.JBinfofenster_gm strong { white-space:nowrap }
+
+.JBmaphead { position: absolute; margin:0;padding:0;font-size:16px;line-height:24px;z-index:510;max-width:100% }
+.JBmaphead * { margin:0;padding:0; }
+.JBmaphead div { display:inline-block; }
+.JBmaphead button { border: none; background-color: transparent; font: inherit; color: inherit; text-align: inherit; padding: 0; cursor: pointer; } 
+
+.visually-hidden { position: absolute !important; clip: rect(1px, 1px, 1px, 1px) !important; padding: 0 !important; border: 0 !important; height: 1px !important; width: 1px !important; overflow: hidden !important; white-space: nowrap !important; }
+
+.JBcheckbox ol { position: absolute; }
+.JBcheckbox li { list-style-type: none; white-space:nowrap; background-color: white; }
+.JBcheckbox input { margin-right:3px; margin-left:3px; }
+.JBcheckbox li input:hover ~ label, .JBcheckbox li label:hover, .JBcheckbox li button:hover,
+.JBcheckbox li input:focus ~ label, .JBcheckbox li button:focus { outline: 1px dotted red; background-color: lightgray; }
+.JBcheckbox [aria-pressed="false"]::after { content: " ▼" }
+.JBcheckbox ol[aria-expanded="false"] { display: none }
+.JBcheckbox [aria-pressed="true"]::after { content: " ▲" }
+.JBcheckbox ol[aria-expanded="true"] { overflow-y:auto }
+.JBcheckbox ol[aria-expanded="true"] li { padding-right: 1.5em }
+
+.JBinfodiv { border:3px solid black; background-color:white; padding:30px; font-size:1.2em; line-height:3em; text-align:center;
+						position:relative; z-index:1000; left:20%; top:-80%; width:60%; height:60%} 
+.JBinfodiv img { position:absolute; top:50%; left:50%; transform: translateX(-50%) translateY(-50%); }
+          
+.JBmapdiv_map { width:100%; height:100%; color: black }
+.JBmapdiv_map img { max-width: none }
+.JBmapdiv { font-size:16px; position:relative }
+.JBmapdiv img { image-orientation:from-image }
+
+.JBfull { background-color:#eee; 
+          -webkit-transition: left 1s, top 1s, height 1s, width 1s; 
+                  transition: left 1s, top 1s, height 1s, width 1s;
+          z-index: 2001}
+
+.JBprofildiv  {  }
+
+div.JBcluster-icon {  }
+div.JBcluster-icon > div { display: flex; align-items: center; justify-content: center; font-weight: bold }
+div.JBdirection-marker { width: auto !important; height: auto !important; }
+div.JBdirection-marker > div { display: flex; align-items: center; justify-content: center; font-size: 2em; }
+
+div.leaflet-top { z-index: 500 !important }

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	x="0px" y="0px" width="31px" height="31px" 
+	viewBox="0 0 101 101"
+	style="enable-background:new 0 0 101 101"
+	xml:space="preserve">
+		<style>
+			#inner {
+				animation-name: changing;
+				animation-duration: 4s;
+				animation-direction: alternate;
+				animation-timing-function: ease-in-out;
+				animation-iteration-count: infinite;
+			}
+
+			@keyframes changing {
+				0% {
+					fill:#f00;
+					fill-opacity:1.0;
+				}
+				50% {
+					fill:#f0f;
+					fill-opacity:0.3;
+				}
+				100% {
+					fill:#00f;
+					fill-opacity:1.0;
+				}
+			}
+		</style>
+		<circle cx="50" cy="50" r="40" fill="none" stroke-width="15" stroke="gray" stroke-opacity="0.3"/>
+		<circle cx="50" cy="50" r="25" fill="none" stroke-width="5" stroke="white" stroke-opacity="0.8"/>
+		<circle id="inner" cx="50" cy="50" r="20" fill="red" fill-opacity="0.8"/>
+</svg>
