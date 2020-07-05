@@ -106,12 +106,6 @@
 		echo '</script>';
 	    }
 	    ?>
-		<p>
-		<details>
-		    <summary><?php echo L::tools; ?></summary>
-		    <div style="display: inline-block; text-align: left;"><?php echo L::tools_txt; ?></div>
-		</details>
-	    </p>
 	    <p>
 		<details>
 		    <summary><?php echo L::help; ?></summary>
