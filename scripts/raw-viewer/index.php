@@ -92,7 +92,25 @@ include('config.php');
 		echo '<div class="desc">'.basename($filename).'</div>';
 		echo '</div>';
 		echo '</div>';
-	    }
+		}
+		echo "<form action='process.php' method='post'>";
+		echo "<select name='img'>";
+		$files = glob("JPG/*");
+			foreach ($files as $file) {
+				$img = basename($file);
+				echo "<option value='$img'>$img</option>";
+			}
+			echo "</select>";
+		echo "<select style='margin-left:0.5em;' name='lut'>";
+		$files = glob($lut_dir."*");
+			foreach ($files as $file) {
+				$lut_name = basename($file);
+				$lut = basename($file, ".png");
+				echo "<option value='$lut_name'>$lut</option>";
+			}
+			echo "</select>";
+			echo "<input class='btn' style='margin-left:0.5em;' type='submit' value='".L::process_b."' name='submit'>";
+			echo "</form>";
 	    ?>
 	    <div class="clearfix"></div>
 	    <hr>
