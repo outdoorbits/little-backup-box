@@ -19,8 +19,7 @@
 
 ip=$(hostname -I | cut -d' ' -f1)
 
-until [ ! -z "$ip" ]
-  do
+until [ ! -z "$ip" ]; do
   sleep 1
   ip=$(hostname -I | cut -d' ' -f1)
 done
@@ -30,4 +29,3 @@ echo "$ip"
 oled r
 oled +a "$a"
 sudo oled s
-

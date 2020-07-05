@@ -23,8 +23,7 @@ source "$CONFIG"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-while [ -z "${STORAGE}" ]
-  do
+while [ -z "${STORAGE}" ]; do
   sleep 1
   STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
@@ -43,10 +42,10 @@ sudo service minidlna restart
 
 # If display support is enabled, display storage space info
 if [ $DISP = true ]; then
-    storsize=$(df /dev/"$STORAGE_DEV"  -h --output=size | sed '1d' | tr -d ' ')
-    storused=$(df /dev/"$STORAGE_DEV"  -h --output=pcent | sed '1d' | tr -d ' ')
-    storfree=$(df /dev/"$STORAGE_DEV"  -h --output=avail | sed '1d' | tr -d ' ')
-    oled r
-    oled +b "Free: $storfree"
-    sudo oled s
+  storsize=$(df /dev/"$STORAGE_DEV" -h --output=size | sed '1d' | tr -d ' ')
+  storused=$(df /dev/"$STORAGE_DEV" -h --output=pcent | sed '1d' | tr -d ' ')
+  storfree=$(df /dev/"$STORAGE_DEV" -h --output=avail | sed '1d' | tr -d ' ')
+  oled r
+  oled +b "Free: $storfree"
+  sudo oled s
 fi

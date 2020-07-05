@@ -27,4 +27,4 @@ if [ $? -eq 0 ]; then
     IP=$(hostname -I | cut -d' ' -f1)
     echo "$IP"
     curl -d ip="$IP" -G "$IP_URL"
-fi 
+fi

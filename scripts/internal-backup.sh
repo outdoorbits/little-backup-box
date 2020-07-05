@@ -28,16 +28,15 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 # Shutdown after a specified period of time (in minutes) if no device is connected.
 sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
 if [ $DISP = true ]; then
-    oled r
-    oled +a "Shutdown active"
-    oled +b "Card reader..."
-    sudo oled s 
+  oled r
+  oled +a "Shutdown active"
+  oled +b "Card reader..."
+  sudo oled s
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-while [ -z ${STORAGE} ]
-  do
+while [ -z ${STORAGE} ]; do
   sleep 1
   STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
@@ -54,10 +53,10 @@ sudo shutdown -c
 
 # If display support is enabled, notify that the card reader has been mounted
 if [ $DISP = true ]; then
-    oled r
-    oled +a "Card reader OK"
-    oled +b "Working..."
-    sudo oled s 
+  oled r
+  oled +a "Card reader OK"
+  oled +b "Working..."
+  sudo oled s
 fi
 
 # Create  a .id random identifier file if doesn't exist
@@ -78,14 +77,14 @@ sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
-    oled r
-    oled +a "Backup complete"
-    oled +b "Shutdown"
-    sudo oled s 
+  oled r
+  oled +a "Backup complete"
+  oled +b "Shutdown"
+  sudo oled s
 fi
 # Shutdown
 sync
 if [ $DISP = true ]; then
-    oled r
+  oled r
 fi
 shutdown -h now

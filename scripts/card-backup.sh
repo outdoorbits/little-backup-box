@@ -30,13 +30,12 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Shutdown active"
     oled +c "Insert storage"
-    sudo oled s 
+    sudo oled s
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-while [ -z "${STORAGE}" ]
-do
+while [ -z "${STORAGE}" ]; do
     sleep 1
     STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
@@ -56,16 +55,15 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Storage OK"
     oled +c "Card reader..."
-    sudo oled s 
+    sudo oled s
 fi
 
 # Wait for a card reader or a camera
 # takes first device found
 CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
-until [ ! -z "${CARD_READER[0]}" ]
-  do
-  sleep 1
-  CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
+until [ ! -z "${CARD_READER[0]}" ]; do
+    sleep 1
+    CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
 done
 
 # If the card reader is detected, mount it and obtain its UUID
@@ -79,7 +77,7 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Card reader OK"
     oled +c "Working..."
-    sudo oled s 
+    sudo oled s
 fi
 
 # Create  a .id random identifier file if doesn't exist
@@ -102,7 +100,7 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Backup complete"
     oled +c "Shutdown"
-    sudo oled s 
+    sudo oled s
 fi
 # Shutdown
 sync

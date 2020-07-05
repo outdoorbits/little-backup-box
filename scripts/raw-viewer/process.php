@@ -27,13 +27,13 @@ include('config.php');
 
 <body>
 	<div class="c">
-	<?php
-	// include i18n class and initialize it
-	require_once '../i18n.class.php';
-	$i18n = new i18n('../lang/{LANGUAGE}.ini', 'cache/', 'en');
-	$i18n->init();
-	?>
-	<h1><?php echo L::viewer; ?></h1>
+		<?php
+		// include i18n class and initialize it
+		require_once '../i18n.class.php';
+		$i18n = new i18n('../lang/{LANGUAGE}.ini', 'cache/', 'en');
+		$i18n->init();
+		?>
+		<h1><?php echo L::viewer; ?></h1>
 		<hr style="margin-bottom:3em;">
 		<?php
 		if (isset($_POST["submit"])) {
@@ -49,7 +49,7 @@ include('config.php');
 			echo '<a download="' . $result_dir . $img . '" href="' . $result_dir . $img . '" title="Click to download the file"><img alt="Click to download the file" src="' . $result_dir . $img . '"></a>';
 		}
 		?>
-	    <hr style="margin-top:3em; margin-bottom:3em;">
+		<hr style="margin-top:3em; margin-bottom:3em;">
 		<p><a class="btn" href="index.php">Back</a></p>
 	</div>
 </body>

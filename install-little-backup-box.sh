@@ -54,7 +54,7 @@ sudo service minidlna start
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 ln -s /media/storage /home/$USER/little-backup-box/scripts
-echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >> little-backup-box/scripts/config.cfg
+echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >>little-backup-box/scripts/config.cfg
 mkdir -p /home/$USER/BACKUP
 chown $USER:users -R /home/$USER/BACKUP
 chmod +x little-backup-box/scripts/*.sh
@@ -62,36 +62,57 @@ chmod +x little-backup-box/scripts/*.sh
 # Prompt to choose the default backup mode
 BACKTITLE="Little Backup Box"
 OPTIONS=(1 "Card backup"
-         2 "Camera backup"
-	 3 "Internal backup")
+    2 "Camera backup"
+    3 "Internal backup")
 CHOICE=$(dialog --clear \
-                --backtitle "$BACKTITLE" \
-                --title "Backup Mode" \
-                --menu "Select the default backup mode:" \
-                15 40 3 \
-                "${OPTIONS[@]}" \
-                2>&1 >/dev/tty)
+    --backtitle "$BACKTITLE" \
+    --title "Backup Mode" \
+    --menu "Select the default backup mode:" \
+    15 40 3 \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
 clear
 case $CHOICE in
-        1)
-            crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-            ;;
-        2)
-	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-            ;;
-	3)
-	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-            ;;
+1)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
+2)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
+3)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
 esac
 
-crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"; } | crontab
-crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
-crontab -l | { cat; echo "*/3 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
+crontab -l | {
+    cat
+    echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"
+} | crontab
+crontab -l | {
+    cat
+    echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"
+} | crontab
+crontab -l | {
+    cat
+    echo "*/3 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
+} | crontab
 
 # Configure Samba
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
 pw="raspberry"
-(echo $pw; echo $pw ) | sudo smbpasswd -s -a "$USER"
+(
+    echo $pw
+    echo $pw
+) | sudo smbpasswd -s -a "$USER"
 sudo sh -c "echo '### Global Settings ###' > /etc/samba/smb.conf"
 sudo sh -c "echo '[global]' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'workgroup = WORKGROUP' >> /etc/samba/smb.conf"
@@ -142,43 +163,51 @@ sudo service vsftpd restart
 
 # Enable OLED screen support
 dialog --clear \
-       --title "Enable OLED support" \
-       --backtitle "$BACKTITLE" \
-       --yesno "Enable support for a 128x64 OLED display?" 7 60
+    --title "Enable OLED support" \
+    --backtitle "$BACKTITLE" \
+    --yesno "Enable support for a 128x64 OLED display?" 7 60
 
 response=$?
 case $response in
-    0) clear
-       sudo apt-get install -y wiringpi i2c-tools
-       git clone https://github.com/dmpop/ssd1306_rpi.git
-       cd ssd1306_rpi
-       cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C
-       sudo cp oled /usr/local/bin/
-       sudo chown root:root /usr/local/bin/oled
-       sudo chmod 755 /usr/local/bin/oled
-       cd
-       crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
-       echo -e 'DISP=true # Enable OLED display' >> little-backup-box/scripts/config.cfg
-       dialog --clear \
-	      --title "Enable I2C" \
-	      --backtitle "$BACKTITLE" \
-	      --msgbox "Almost done! Enable I2C and reboot the system." 5 50
-       clear
-       ;;
-    1)  echo -e 'DISP=false # Enable OLED display' >> little-backup-box/scripts/config.cfg
-	dialog --clear \
-	       --title "Setup finished" \
-	       --backtitle "$BACKTITLE" \
-	       --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
-	clear
-	sudo reboot
-	;;
-    255)  echo -e 'DISP=false" # Enable OLED display' >> little-backup-box/scripts/config.cfg
-	  dialog --clear \
-		 --title "Setup finished" \
-		 --backtitle "$BACKTITLE" \
-		 --infobox "\nAll done! The system will reboot now." 5 45 ; sleep 3
-	  clear
-	  sudo reboot
-	  ;;
+0)
+    clear
+    sudo apt-get install -y wiringpi i2c-tools
+    git clone https://github.com/dmpop/ssd1306_rpi.git
+    cd ssd1306_rpi
+    cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C
+    sudo cp oled /usr/local/bin/
+    sudo chown root:root /usr/local/bin/oled
+    sudo chmod 755 /usr/local/bin/oled
+    cd
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"
+    } | crontab
+    echo -e 'DISP=true # Enable OLED display' >>little-backup-box/scripts/config.cfg
+    dialog --clear \
+        --title "Enable I2C" \
+        --backtitle "$BACKTITLE" \
+        --msgbox "Almost done! Enable I2C and reboot the system." 5 50
+    clear
+    ;;
+1)
+    echo -e 'DISP=false # Enable OLED display' >>little-backup-box/scripts/config.cfg
+    dialog --clear \
+        --title "Setup finished" \
+        --backtitle "$BACKTITLE" \
+        --infobox "\nAll done! The system will reboot now." 5 45
+    sleep 3
+    clear
+    sudo reboot
+    ;;
+255)
+    echo -e 'DISP=false" # Enable OLED display' >>little-backup-box/scripts/config.cfg
+    dialog --clear \
+        --title "Setup finished" \
+        --backtitle "$BACKTITLE" \
+        --infobox "\nAll done! The system will reboot now." 5 45
+    sleep 3
+    clear
+    sudo reboot
+    ;;
 esac

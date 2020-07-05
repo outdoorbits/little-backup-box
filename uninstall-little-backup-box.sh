@@ -23,29 +23,32 @@ fi
 cp little-backup-box/scripts/config.cfg $HOME/config.cfg.bak
 cd
 dialog --clear \
-       --title "Warning" \
-       --backtitle "Uninstall Little Backup Box" \
-       --yesno "This will uninstall Little Backup Box and clear all cron jobs.\nAre you sure you want to proceed?" 7 60
+    --title "Warning" \
+    --backtitle "Uninstall Little Backup Box" \
+    --yesno "This will uninstall Little Backup Box and clear all cron jobs.\nAre you sure you want to proceed?" 7 60
 
 response=$?
 case $response in
-    0) sudo rm /home/$USER/little-backup-box.log
-       sudo rm /home/$USER/oledoled.conf
-       sudo rm -rf /home/$USER/little-backup-box
-       sudo rm -rf /home/$USER/ssd1306_rpi
-       sudo rm -rf /media/card
-       sudo rm -rf /media/storage
-       sudo rm -rf /home/$USER/BACKUP
-       sudo rm /usr/local/bin/oled
-       sudo mv /etc/minidlna.conf.orig /etc/minidlna.conf
-       sudo mv /etc/samba/smb.conf.orig /etc/samba/smb.conf
-       sudo smbpasswd -x $USER
-       sudo samba restart
-       crontab -r
-       sudo reboot
-       ;;
-    1)  exit 1
-	;;
-    255)  exit 1
-	  ;;
+0)
+    sudo rm /home/$USER/little-backup-box.log
+    sudo rm /home/$USER/oledoled.conf
+    sudo rm -rf /home/$USER/little-backup-box
+    sudo rm -rf /home/$USER/ssd1306_rpi
+    sudo rm -rf /media/card
+    sudo rm -rf /media/storage
+    sudo rm -rf /home/$USER/BACKUP
+    sudo rm /usr/local/bin/oled
+    sudo mv /etc/minidlna.conf.orig /etc/minidlna.conf
+    sudo mv /etc/samba/smb.conf.orig /etc/samba/smb.conf
+    sudo smbpasswd -x $USER
+    sudo samba restart
+    crontab -r
+    sudo reboot
+    ;;
+1)
+    exit 1
+    ;;
+255)
+    exit 1
+    ;;
 esac

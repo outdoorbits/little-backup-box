@@ -31,15 +31,14 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Shutdown active"
     oled +c "Connect camera"
-    sudo oled s 
+    sudo oled s
 fi
 
 # Wait for camera
 DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
-while [ -z "${DEVICE}" ]
-	do
-	sleep 1
-	DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
+while [ -z "${DEVICE}" ]; do
+    sleep 1
+    DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
 done
 
 # Cancel shutdown
@@ -50,7 +49,7 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Camera OK"
     oled +c "Working..."
-    sudo oled s 
+    sudo oled s
 fi
 
 # Obtain camera model
@@ -69,10 +68,10 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Backup complete"
     oled +c "Shutdown"
-    sudo oled s 
+    sudo oled s
 fi
 # Shutdown
 if [ $DISP = true ]; then
     oled r
 fi
-shutdown -h now 
+shutdown -h now

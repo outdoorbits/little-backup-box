@@ -24,45 +24,66 @@ source "$CONFIG"
 BACKTITLE="Little Backup Box"
 
 OPTIONS=(1 "Card backup"
-         2 "Camera backup"
-	 3 "Internal backup")
+    2 "Camera backup"
+    3 "Internal backup")
 
 CHOICE=$(dialog --clear \
-                --backtitle "$BACKTITLE" \
-                --title "Backup Mode" \
-                --menu "Select the desired backup mode:" \
-                15 40 3 \
-                "${OPTIONS[@]}" \
-                2>&1 >/dev/tty)
+    --backtitle "$BACKTITLE" \
+    --title "Backup Mode" \
+    --menu "Select the desired backup mode:" \
+    15 40 3 \
+    "${OPTIONS[@]}" \
+    2>&1 >/dev/tty)
 
 clear
 
 crontab -r
 
 case $CHOICE in
-        1)
-            crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-            ;;
-        2)
-	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-            ;;
-	3)
-	    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"; } | crontab
-            ;;
+1)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
+2)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
+3)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
 esac
 
-crontab -l | { cat; echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:80"; } | crontab
-crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"; } | crontab
-crontab -l | { cat; echo "*/3 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"; } | crontab
+crontab -l | {
+    cat
+    echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:80"
+} | crontab
+crontab -l | {
+    cat
+    echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"
+} | crontab
+crontab -l | {
+    cat
+    echo "*/3 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
+} | crontab
 
 if [ $DISP = true ]; then
-    crontab -l | { cat; echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"; } | crontab
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"
+    } | crontab
 fi
 
 dialog --clear \
-       --title "Change Backup Mode" \
-       --backtitle "$BACKTITLE" \
-       --msgbox "All done! Press OK to reboot Little Backup Box." 15 30
+    --title "Change Backup Mode" \
+    --backtitle "$BACKTITLE" \
+    --msgbox "All done! Press OK to reboot Little Backup Box." 15 30
 clear
 
 sudo reboot

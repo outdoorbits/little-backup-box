@@ -23,5 +23,5 @@ sudo apt-key add key-366150CE.pub.txt
 sudo apt update
 sudo apt install comitup -y
 sudo systemctl disable systemd-resolved
-sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old 
+sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
 sudo reboot

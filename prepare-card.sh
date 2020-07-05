@@ -18,9 +18,9 @@
 #######################################################################
 
 if [ -z "$1" ] && [ -z "$2" ]; then
-    echo "ERROR: Specify image file and device name"
-    echo "E.g.: $0 /path/to/foo.img /dev/sdb"
-    exit 1
+	echo "ERROR: Specify image file and device name"
+	echo "E.g.: $0 /path/to/foo.img /dev/sdb"
+	exit 1
 fi
 
 echo "Writing the image file..."
