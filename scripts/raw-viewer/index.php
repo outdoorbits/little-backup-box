@@ -11,7 +11,7 @@ include('config.php');
 	<link rel="icon" href="../favicon.png">
 	<link rel="stylesheet" href="../css/lit.css">
 	<link href="../css/featherlight.min.css" type="text/css" rel="stylesheet" />
-	<link href="https://fonts.googleapis.com/css2?family=Nunito" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Barlow" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		div.gallery img {

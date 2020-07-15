@@ -7,11 +7,14 @@
 	<title>Little Backup Box</title>
 	<link rel="shortcut icon" href="favicon.png" />
 	<link rel="stylesheet" href="css/lit.css">
-	<link href="https://fonts.googleapis.com/css2?family=Nunito" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Barlow" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		button {
-			width: 15em;
+			width: 100%;
+		}
+		.btn {
+			width: 100%;
 		}
 	</style>
 </head>
@@ -24,18 +27,12 @@
 	$i18n->init();
 	?>
 	<div class="c">
-		<div style="display: inline-block; text-align: left;">
-			<a href="sysinfo.php"><img src="svg/speedometer.svg" height="39px" alt="<?php echo L::sysinfo; ?>"></a>
-		</div>
-		<div style="display: inline-block; text-align: left;">
-			<a href="raw-viewer/"><img src="svg/image1.svg" height="39px" alt="<?php echo L::viewer; ?>"></a>
-		</div>
-		<div style="display: inline-block; text-align: center;">
-			<a href="edit.php"><img src="svg/burger.svg" height="39px" alt="<?php echo L::edit; ?>"></a>
-		</div>
-		<div style="display: inline-block; text-align: center;">
-			<a href="https://gumroad.com/l/little-backup-book"><img src="svg/life-ring.svg" height="39px" alt="Little Backup Book"></a>
-		</div>
+		<h1>Little Backup Box</h1>
+		<hr>
+		<a style="margin-right:0.5em;" href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull;
+		<a style="margin-right:0.5em; margin-left:0.5em;" href="raw-viewer/"><?php echo L::viewer; ?></a> &bull;
+		<a style="margin-left:0.5em;" href="edit.php"><?php echo L::edit; ?></a>
+		<hr style="margin-bottom: 2em;">
 		<p>
 			<form method="post">
 				<button class="btn primary" name="cardbackup"><?php echo L::cardbackup_b; ?></button>
