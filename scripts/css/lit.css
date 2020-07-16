@@ -33,7 +33,7 @@
 .card:focus,
 hr {
     outline: 0;
-    border: 2px dashed #fa0;
+    border: 1px dashed #fa0;
 }
 .card,
 pre {
@@ -101,10 +101,10 @@ pre {
 }
 td,
 th {
-    padding: 1em;
+    padding: 0.5em;
     text-align: left;
     color: #fff;
-    border-bottom: solid #eee;
+    border: solid #cccccc;
 }
 .btn {
     cursor: pointer;

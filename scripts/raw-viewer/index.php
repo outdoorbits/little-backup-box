@@ -67,7 +67,7 @@ include('config.php');
 	<script src="../js/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 	<div class="c">
 		<h1><?php echo L::viewer; ?></h1>
-		<hr>
+		<hr style="margin-bottom: 1.5em;">
 		<?php
 		function extract_preview_jpeg($work_dir, $prev_dir)
 		{
@@ -121,7 +121,7 @@ include('config.php');
 		echo "</form>";
 		?>
 		<div class="clearfix"></div>
-		<hr>
+		<hr style="margin-bottom: 1.5em;">
 		<form method='POST' action=''>
 			<input display: inline!important; class="btn primary" type="submit" name="refresh" value="<?php echo L::refresh_b; ?>">
 			<a class="btn" href="../index.php"><?php echo L::back_b; ?></a>

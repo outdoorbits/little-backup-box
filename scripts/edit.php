@@ -50,6 +50,7 @@
 		?>
 		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
 			<textarea name="text"><?php Read(); ?></textarea>
+			<hr style="margin-top: 2em; margin-bottom: 1.5em;">
 			<?php echo '<input class="btn primary" type="submit" name="save" value="' . L::edit_save_b . '">'; ?>
 			<a class="btn" href="index.php"><?php echo L::back_b; ?></a>
 		</form>

@@ -13,6 +13,7 @@
 		button {
 			width: 100%;
 		}
+
 		.btn {
 			width: 100%;
 		}
@@ -28,11 +29,16 @@
 	?>
 	<div class="c">
 		<h1>Little Backup Box</h1>
-		<hr>
-		<a style="margin-right:0.5em;" href="sysinfo.php"><?php echo L::sysinfo; ?></a> &bull;
-		<a style="margin-right:0.5em; margin-left:0.5em;" href="raw-viewer/"><?php echo L::viewer; ?></a> &bull;
-		<a style="margin-left:0.5em;" href="edit.php"><?php echo L::edit; ?></a>
-		<hr style="margin-bottom: 2em;">
+		<hr style="margin-bottom: 1.5em;">
+		<table>
+			<tbody>
+				<tr>
+					<td><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></td>
+					<td><a href="raw-viewer/"><?php echo L::viewer; ?></a></td>
+					<td><a href="edit.php"><?php echo L::edit; ?></a></td>
+				</tr>
+			</tbody>
+		</table>
 		<p>
 			<form method="post">
 				<button class="btn primary" name="cardbackup"><?php echo L::cardbackup_b; ?></button>
