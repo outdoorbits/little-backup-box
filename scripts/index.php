@@ -7,7 +7,6 @@
 	<title>Little Backup Box</title>
 	<link rel="shortcut icon" href="favicon.png" />
 	<link rel="stylesheet" href="css/lit.css">
-	<link href="https://fonts.googleapis.com/css2?family=Barlow" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		button {
@@ -35,7 +34,7 @@
 				<tr>
 					<td><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></td>
 					<td><a href="raw-viewer/"><?php echo L::viewer; ?></a></td>
-					<td><a href="edit.php"><?php echo L::edit; ?></a></td>
+					<td><a href="edit.php"><?php echo L::config; ?></a></td>
 				</tr>
 			</tbody>
 		</table>

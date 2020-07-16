@@ -48,44 +48,44 @@ a:hover {
     max-width: 60em;
     padding: 1em;
     margin: auto;
-    font: 1em/1.6 'Barlow';
+    font: 1em/1.6 'Barlow-Regular';
     color: #fff;
 }
 h6 {
-    font-weight: 300;
+    font-weight: 500;
     font-size: 1em;
-    font-family: 'Barlow';
+    font-family: 'Barlow-Medium';
 }
 h5 {
-    font-weight: 300;
+    font-weight: 500;
     font-size: 1em;
-    font-family: 'Barlow';
+    font-family: 'Barlow-Medium';
 }
 h3 {
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-weight: 300;
+    font-weight: 500;
     font-size: 1.1em;
-    font-family: 'Barlow';
+    font-family: 'Barlow-Medium';
 }
 h4 {
-    font-weight: 300;
+    font-weight: 500;
     font-size: 1em;
-    font-family: 'Barlow';
+    font-family: 'Barlow-Medium';
 }
 h2 {
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-weight: 300;
+    font-weight: 500;
     font-size: 1.5em;
-    font-family: 'Barlow';
+    font-family: 'Barlow-Medium';
 }
 h1 {
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 2em;
-    font-family: 'Barlow';
+    font-family: 'Barlow-Medium';
 }
 a {
     color: #fa0;
@@ -113,10 +113,28 @@ th {
     text-transform: uppercase;
     background: #fff;
     border: solid #fa0;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.7em;
     font-family: 'Barlow';
 }
 body {
     background: #000000;
+}
+@font-face {
+    font-family: 'Barlow-Light';
+    font-weight: 200;
+    font-style: normal;
+    src: url('../woff/Barlow-Light.woff2') format('woff');
+}
+@font-face {
+    font-family: 'Barlow-Regular';
+    font-weight: 300;
+    font-style: normal;
+    src: url('../woff/Barlow-Regular.woff2') format('woff');
+}
+@font-face {
+    font-family: 'Barlow-Medium';
+    font-weight: 500;
+    font-style: normal;
+    src: url('../woff/Barlow-Medium.woff2') format('woff');
 }
