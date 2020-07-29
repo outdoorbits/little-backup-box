@@ -29,15 +29,10 @@
 	<div class="c">
 		<h1>Little Backup Box</h1>
 		<hr style="margin-bottom: 1.5em;">
-		<table>
-			<tbody>
-				<tr>
-					<td><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></td>
-					<td><a href="raw-viewer/"><?php echo L::viewer; ?></a></td>
-					<td><a href="edit.php"><?php echo L::config; ?></a></td>
-				</tr>
-			</tbody>
-		</table>
+		<button class="btn" style="background: #e6f9ff; border-color: #e6f9ff;" name="sysinfo" onclick="window.location.href='sysinfo.php';"><?php echo L::sysinfo; ?></button>
+		<button class="btn" style="background: #e6f9ff; border-color: #e6f9ff;" name="viewer" onclick="window.location.href='raw-viewer.php';"><?php echo L::viewer; ?></button>
+		<button class="btn" style="background: #e6f9ff; border-color: #e6f9ff;" name="config" onclick="window.location.href='config.php';"><?php echo L::config; ?></button>
+		<hr style="margin-top: 1.5em; margin-bottom: 2em;">
 		<p>
 			<form method="post">
 				<button class="btn primary" name="cardbackup"><?php echo L::cardbackup_b; ?></button>
@@ -53,14 +48,14 @@
 				<button class="btn primary" name="internalbackup"><?php echo L::internalbackup_b; ?></button>
 			</form>
 		</p>
-		<p>
+		<p style="margin-top: 1.5em;">
 			<form method="post">
-				<button class="btn" name="cancelshutdown"><?php echo L::cancel_shutdown_b; ?></button>
+				<button class="btn" style="background: #ebfaeb; border-color: #ebfaeb;" name="cancelshutdown"><?php echo L::cancel_shutdown_b; ?></button>
 			</form>
 		</p>
 		<p>
 			<form method="post">
-				<button class="btn" name="shutdown"><?php echo L::shutdown_b; ?></button>
+				<button class="btn" style="background: #ffe6e6; border-color: #ffe6e6;" name="shutdown"><?php echo L::shutdown_b; ?></button>
 			</form>
 		</p>
 

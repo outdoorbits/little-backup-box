@@ -45,7 +45,7 @@ a:hover {
     opacity: 0.6;
 }
 .c {
-    max-width: 60em;
+    max-width: 50em;
     padding: 1em;
     margin: auto;
     font: 1em/1.6 'Barlow-Regular';
@@ -104,7 +104,8 @@ th {
     padding: 0.5em;
     text-align: left;
     color: #fff;
-    border: solid #cccccc;
+    border: solid #fff;
+    border-radius: 3px;
 }
 .btn {
     cursor: pointer;
@@ -113,6 +114,7 @@ th {
     text-transform: uppercase;
     background: #fff;
     border: solid #fa0;
+    border-radius: 3px;
     font-weight: 700;
     font-size: 0.7em;
     font-family: 'Barlow';
