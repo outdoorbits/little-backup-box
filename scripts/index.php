@@ -30,7 +30,7 @@
 		<h1>Little Backup Box</h1>
 		<hr style="margin-bottom: 1.5em;">
 		<button class="btn" style="background: #e6f9ff; border-color: #e6f9ff;" name="sysinfo" onclick="window.location.href='sysinfo.php';"><?php echo L::sysinfo; ?></button>
-		<button class="btn" style="background: #e6f9ff; border-color: #e6f9ff;" name="viewer" onclick="window.location.href='raw-viewer.php';"><?php echo L::viewer; ?></button>
+		<button class="btn" style="background: #e6f9ff; border-color: #e6f9ff;" name="viewer" onclick="window.location.href='raw-viewer/';"><?php echo L::viewer; ?></button>
 		<button class="btn" style="background: #e6f9ff; border-color: #e6f9ff;" name="config" onclick="window.location.href='config.php';"><?php echo L::config; ?></button>
 		<hr style="margin-top: 1.5em; margin-bottom: 2em;">
 		<p>
