@@ -51,6 +51,12 @@ a:hover {
     font: 1em/1.6 'Barlow';
     color: #fff;
 }
+p.note {
+    border: 1px solid lightgray;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
 h3 {
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -80,11 +86,10 @@ pre {
 }
 td,
 th {
-    padding: 0.5em;
+    padding: 1em;
     text-align: left;
     color: #fff;
-    border: solid #fff;
-    border-radius: 3px;
+    border-bottom: solid #eee;
 }
 .btn {
     cursor: pointer;
