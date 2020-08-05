@@ -6,12 +6,13 @@ include('config.php');
 <html>
 
 <head>
-	<meta charset="utf-8">
 	<title>Little Backup Box</title>
-	<link rel="icon" href="../favicon.png">
-	<link rel="stylesheet" href="../css/lit.css">
-	<link href="../css/featherlight.min.css" type="text/css" rel="stylesheet" />
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../css/uikit.min.css" />
+	<script src="../js/uikit.min.js"></script>
+	<script src="../js/uikit-icons.min.js"></script>
 	<style>
 		div.gallery img {
 			width: 100%;
@@ -46,25 +47,17 @@ include('config.php');
 				width: 100%;
 			}
 		}
-
-		.clearfix:after {
-			content: "";
-			display: table;
-			clear: both;
-		}
 	</style>
 </head>
 
 <body>
-	<?php
-	// include i18n class and initialize it
-	require_once '../i18n.class.php';
-	$i18n = new i18n('../lang/{LANGUAGE}.ini', 'cache/', 'en');
-	$i18n->init();
-	?>
-	<script src="../js/jquery.min.js"></script>
-	<script src="../js/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
-	<div class="c">
+	<div class="uk-container uk-margin-top">
+		<?php
+		// include i18n class and initialize it
+		require_once '../i18n.class.php';
+		$i18n = new i18n('../lang/{LANGUAGE}.ini', 'cache/', 'en');
+		$i18n->init();
+		?>
 		<h1><?php echo L::viewer; ?></h1>
 		<hr style="margin-bottom: 1.5em;">
 		<?php
@@ -96,19 +89,21 @@ include('config.php');
 		foreach (glob(IMAGEPATH . '*.JPG') as $filename) {
 			echo '<div class="responsive">';
 			echo '<div class="gallery">';
-			echo '<a target="_blank" href="' . $filename . '" data-featherlight="image">';
+			echo '<div uk-lightbox>';
+			echo '<a href="' . $filename . '">';
 			echo '<img src="' . $filename . '" alt="' . $filename . '">';
 			echo '</a>';
+			echo '</div>';
 			echo '<div class="desc">' . basename($filename) . '</div>';
 			echo '</div>';
 			echo '</div>';
 		}
 		?>
-		<div class="clearfix"></div>
+		<div class="uk-clearfix"></div>
 		<hr style="margin-bottom: 1.5em;">
 		<form method='POST' action=''>
-			<input display: inline!important; class="btn primary" type="submit" name="refresh" value="<?php echo L::refresh_b; ?>">
-			<a class="btn" href="../index.php"><?php echo L::back_b; ?></a>
+			<input display: inline!important; class="uk-button uk-button-primary uk-margin-top" type="submit" name="refresh" value="<?php echo L::refresh_b; ?>">
+			<a class="uk-button uk-button-default uk-margin-top" href="../index.php"><?php echo L::back_b; ?></a>
 		</form>
 		<?php
 		if (isset($_POST["refresh"])) {

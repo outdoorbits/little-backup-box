@@ -5,9 +5,12 @@
 <head>
 	<meta charset="utf-8">
 	<title>Little Backup Box</title>
+	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="css/lit.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/uikit.min.css" />
+	<script src="js/uikit.min.js"></script>
+	<script src="js/uikit-icons.min.js"></script>
 	<style>
 		textarea {
 			font-size: 15px;
@@ -20,7 +23,7 @@
 </head>
 
 <body>
-	<div class="c">
+	<div class="uk-container uk-margin-top">
 		<?php
 		// include i18n class and initialize it
 		require_once 'i18n.class.php';
@@ -31,7 +34,6 @@
 		};
 		?>
 		<h1><?php echo L::config; ?></h1>
-		<hr>
 		<?php
 		function Read()
 		{
@@ -49,9 +51,8 @@
 		?>
 		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
 			<textarea name="text"><?php Read(); ?></textarea>
-			<hr style="margin-top: 2em; margin-bottom: 1.5em;">
-			<?php echo '<input class="btn primary" type="submit" name="save" value="' . L::edit_save_b . '">'; ?>
-			<a class="btn" href="index.php"><?php echo L::back_b; ?></a>
+			<?php echo '<input class="uk-button uk-button-primary uk-margin-top" type="submit" name="save" value="' . L::edit_save_b . '">'; ?>
+			<a class="uk-button uk-button-default uk-margin-top" href="index.php"><?php echo L::back_b; ?></a>
 		</form>
 	</div>
 </body>

@@ -3,11 +3,13 @@
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
-	<meta charset="utf-8">
 	<title>Little Backup Box</title>
+	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="css/lit.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/uikit.min.css" />
+	<script src="js/uikit.min.js"></script>
+	<script src="js/uikit-icons.min.js"></script>
 </head>
 
 <body>
@@ -17,7 +19,7 @@
 	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
 	$i18n->init();
 	?>
-	<div class="c">
+	<div class="uk-container uk-margin-top">
 		<h1><?php echo L::sysinfo; ?></h1>
 		<hr>
 		<h3>Devices</h3>
@@ -48,8 +50,8 @@
 			?>
 		</div>
 		<form>
-			<button class="btn primary" type="button" onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
-			<a class="btn" href="index.php"><?php echo L::back_b; ?></a>
+			<button class="uk-button uk-button-primary uk-margin-top" onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
+			<a class="uk-button uk-button-default uk-margin-top" href="index.php"><?php echo L::back_b; ?></a>
 		</form>
 	</div>
 </body>
