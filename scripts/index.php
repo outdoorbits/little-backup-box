@@ -29,16 +29,16 @@
 		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
 			<h2 class="uk-card-title">Backup</h2>
 			<form method="post">
-				<button class="uk-button uk-button-primary uk-margin-top" name="cardbackup"><?php echo L::cardbackup_b; ?></button>
-				<button class="uk-button uk-button-primary uk-margin-top" name="camerabackup"><?php echo L::camerabackup_b; ?></button>
-				<button class="uk-button uk-button-primary uk-margin-top" name="internalbackup"><?php echo L::internalbackup_b; ?></button>
+				<button class="uk-button uk-button-primary uk-margin-top" type="button" onclick="UIkit.notification({message: '<span uk-icon=\'icon: check\'></span> <?php echo L::cardbackup_m; ?>'})" name="cardbackup"><?php echo L::cardbackup_b; ?></button>
+				<button class="uk-button uk-button-primary uk-margin-top" type="button" onclick="UIkit.notification({message: '<span uk-icon=\'icon: check\'></span> <?php echo L::camerabackup_m; ?>'})" name="camerabackup"><?php echo L::camerabackup_b; ?></button>
+				<button class="uk-button uk-button-primary uk-margin-top" type="button" onclick="UIkit.notification({message: '<span uk-icon=\'icon: check\'></span> <?php echo L::internalbackup_m; ?>'})" name="internalbackup"><?php echo L::internalbackup_b; ?></button>
 			</form>
 		</div>
 		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
 			<h2 class="uk-card-title">Shutdown</h2>
 			<form method="post">
-				<button class="uk-button uk-button-secondary uk-margin-top" name="cancelshutdown"><?php echo L::cancel_shutdown_b; ?></button>
-				<button class="uk-button uk-button-danger uk-margin-top" name="shutdown"><?php echo L::shutdown_b; ?></button>
+				<button class="uk-button uk-button-secondary uk-margin-top" type="button" onclick="UIkit.notification({message: '<span uk-icon=\'icon: check\'></span> <?php echo L::cancel_shutdown_m; ?>'})" name="cancelshutdown"><?php echo L::cancel_shutdown_b; ?></button>
+				<button class="uk-button uk-button-danger uk-margin-top" type="button" onclick="UIkit.notification({message: '<span uk-icon=\'icon: check\'></span> <?php echo L::shutdown_m; ?>'})" name="shutdown"><?php echo L::shutdown_b; ?></button>
 			</form>
 		</div>
 		<?php
@@ -47,39 +47,24 @@
 			shell_exec('sudo umount /media/storage');
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
-			echo '<script language="javascript">';
-			echo 'alert("' . L::cardbackup_m . '")';
-			echo '</script>';
 		}
 		if (isset($_POST['camerabackup'])) {
 			shell_exec('sudo pkill -f camera-backup*');
 			shell_exec('sudo umount /media/storage');
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
-			echo '<script language="javascript">';
-			echo 'alert("' . L::camerabackup_m . '")';
-			echo '</script>';
 		}
 		if (isset($_POST['internalbackup'])) {
 			shell_exec('sudo pkill -f internal-backup*');
 			shell_exec('sudo umount /media/storage');
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
-			echo '<script language="javascript">';
-			echo 'alert("' . L::internalbackup_m . '")';
-			echo '</script>';
 		}
 		if (isset($_POST['shutdown'])) {
 			shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
-			echo '<script language="javascript">';
-			echo 'alert("' . L::shutdown_m . '")';
-			echo '</script>';
 		}
 		if (isset($_POST['cancelshutdown'])) {
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
-			echo '<script language="javascript">';
-			echo 'alert("' . L::cancel_shutdown_m . '")';
-			echo '</script>';
 		}
 		?>
 		<p>
