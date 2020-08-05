@@ -27,7 +27,6 @@
 			<a class="uk-button uk-button-default uk-margin-top" href="config.php"><?php echo L::config; ?></a>
 		</div>
 		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h2 class="uk-card-title">Backup</h2>
 			<form method="post">
 				<button class="uk-button uk-button-primary uk-margin-top" name="cardbackup"><?php echo L::cardbackup_b; ?></button>
 				<button class="uk-button uk-button-primary uk-margin-top" name="camerabackup"><?php echo L::camerabackup_b; ?></button>
@@ -35,7 +34,6 @@
 			</form>
 		</div>
 		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h2 class="uk-card-title">Shutdown</h2>
 			<form method="post">
 				<button class="uk-button uk-button-secondary uk-margin-top" name="cancelshutdown"><?php echo L::cancel_shutdown_b; ?></button>
 				<button class="uk-button uk-button-danger uk-margin-top" name="shutdown"><?php echo L::shutdown_b; ?></button>
@@ -48,7 +46,7 @@
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>".L::cardbackup_m."'});";
+			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::cardbackup_m . "'});";
 			echo "</script";
 		}
 		if (isset($_POST['camerabackup'])) {
@@ -57,7 +55,7 @@
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>".L::camerabackup_m."'});";
+			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::camerabackup_m . "'});";
 			echo "</script";
 		}
 		if (isset($_POST['internalbackup'])) {
@@ -66,19 +64,19 @@
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>".L::internalbackup_m."'});";
+			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::internalbackup_m . "'});";
 			echo "</script";
 		}
 		if (isset($_POST['shutdown'])) {
 			shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>".L::shutdown_m."'});";
+			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::shutdown_m . "'});";
 			echo "</script";
 		}
 		if (isset($_POST['cancelshutdown'])) {
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>".L::cancel_shutdown_m."'});";
+			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::cancel_shutdown_m . "'});";
 			echo "</script";
 		}
 		?>
