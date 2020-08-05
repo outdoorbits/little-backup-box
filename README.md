@@ -45,7 +45,7 @@ The remote control mode is enabled by default. This mode allows you to control a
 1. Point the browser to _http://127.0.0.1:8000_ (replace _127.0.0.1_ with the actual IP address of the Raspberry Pi).
 2. Start the desired action by pressing the appropriate button.
 
-<img src="img/rc.png" alt="Remote control interface" height="500" />
+<img src="img/rc.png" alt="Remote control interface" />
 
 - Press the **SYSTEM INFO** icon to access basic system information, such as a list of storage devices and memory usage.
 - To view JPEG files on the backup storage device, click the  **RAW VIEWER** icon.
