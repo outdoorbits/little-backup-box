@@ -83,10 +83,10 @@
 			echo "</script";
 		}
 		if (isset($_POST['shutdown'])) {
-			shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
 			echo "<script>";
 			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::shutdown_m . "'});";
 			echo "</script";
+			shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
 		}
 		if (isset($_POST['cancelshutdown'])) {
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');

@@ -24,8 +24,10 @@ until [ ! -z "$ip" ]; do
   ip=$(hostname -I | cut -d' ' -f1)
 done
 
-a="$ip"
-echo "$ip"
-oled r
-oled +a "$a"
-sudo oled s
+if [ $DISP = true ]; then
+  a="$ip"
+  echo "$ip"
+  oled r
+  oled +a "$a"
+  sudo oled s
+fi

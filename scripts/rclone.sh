@@ -21,5 +21,5 @@ CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
 source "$CONFIG"
 
-rclone sync /media/storage "$RCLONE_REMOTE:$RCLONE_BUCKET"
-shutdown -h now
+ip=$(hostname -I | cut -d' ' -f1)
+nohup rclone rcd --rc-web-gui --rc-user $RCLONE_USER --rc-pass $RCLONE_PASSWORD --rc-addr $ip:5572 --rc-serve &
