@@ -3,29 +3,18 @@
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
-	<meta charset="utf-8">
 	<title>Little Backup Box IP Address</title>
-	<link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.1/dist/terminal.min.css" />
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style>
-		#content {
-			margin: 0px auto;
-			text-align: center;
-		}
-
-		img {
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-			margin-top: 1%;
-			margin-bottom: 1%;
-		}
-	</style>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.6/dist/css/uikit.min.css" />
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.5.6/dist/js/uikit.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.5.6/dist/js/uikit-icons.min.js"></script>
 </head>
 
 <body>
-	<div id="content">
-		<div style="margin-top: 1.9em; font-size: 2em;">
+	<div class="uk-container uk-margin-small-top">
+		<div class="uk-card uk-card-primary uk-card-body uk-text-center">
+			<h1 class="uk-card-title uk-heading-line uk-text-center"><span>IP address</span></h1>
 			<?php
 			if (isset($_GET["ip"])) {
 				echo $_GET['ip'];
