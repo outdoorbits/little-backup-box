@@ -1,6 +1,6 @@
 # Little Backup Box
 
-A collection of scripts that transform a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
+Little Backup Box is an application that transforms a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable photo backup device.
 
 <img src="https://i.imgur.com/53hS3gz.jpg" alt="" width="800"/>
 
