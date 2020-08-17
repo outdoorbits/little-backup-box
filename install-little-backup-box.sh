@@ -105,10 +105,6 @@ crontab -l | {
     cat
     echo "*/3 * * * * /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
-crontab -l | {
-    cat
-    echo "@reboot /home/"$USER"/little-backup-box/scripts/rclone.sh"
-} | crontab
 
 # Configure Samba
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
