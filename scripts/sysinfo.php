@@ -22,11 +22,19 @@
 	$i18n->init();
 	?>
 	<div class="uk-container uk-margin-top">
+		<div class="uk-card uk-card-primary uk-card-body uk-width-1-2@m">
+			<h1 class="uk-card-title uk-heading-line uk-text-center"><?php echo L::status; ?></h1>
+			<div class="uk-flex uk-flex-center">
+				<?php
+				passthru("./status.sh");
+				?>
+			</div>
+			<div class="uk-flex uk-flex-center">
+				<button class="uk-button uk-button-primary uk-margin-top" onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
+			</div>
+		</div>
 		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
 			<h1 class="uk-card-title uk-heading-line uk-text-center"><?php echo L::sysinfo; ?></h1>
-			<p><?php
-			passthru("./progress.sh");
-			?></p>
 			<?php
 			$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 			$temp = round($temp / 1000, 1);

@@ -24,6 +24,7 @@ source "$CONFIG"
 # Create  a .id random identifier file if doesn't exist
 cd "$CARD_MOUNT_POINT"
 if [ ! -f *.id ]; then
+echo "<p>Waiting...</p>"
     exit 1
 fi
 ID_FILE=$(ls *.id)
@@ -33,7 +34,9 @@ cd
 # Set the backup path
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 
+# Count files on the card and in the backup destination
+# Calculate the number of files to be transferred
 count1=$(find $CARD_MOUNT_POINT -type f | wc -l)
 count2=$(find $BACKUP_PATH -type f | wc -l)
 result=$((count1-count2))
-echo "Files to trasfer: " $result
+echo "Files to transfer: <strong>"$result"</strong>"
