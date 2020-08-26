@@ -73,18 +73,7 @@ include('config.php');
 				shell_exec('mogrify -auto-level ' . $prev_dir . basename($file));
 			}
 		}
-
-		if (!file_exists($prev_dir)) {
-			shell_exec('mkdir -p ' . $prev_dir);
-			extract_preview_jpeg($work_dir, $prev_dir);
-		} else {
-			extract_preview_jpeg($work_dir, $prev_dir);
-		}
-
-		if ($enable_auto_level) {
-			auto_level($prev_dir);
-		}
-
+		
 		define('IMAGEPATH', $prev_dir);
 		foreach (glob(IMAGEPATH . '*.JPG') as $filename) {
 			echo '<div class="responsive">';
@@ -102,12 +91,14 @@ include('config.php');
 		<div class="uk-clearfix"></div>
 		<hr style="margin-bottom: 1.5em;">
 		<form method='POST' action=''>
-			<input display: inline!important; class="uk-button uk-button-primary uk-margin-top" type="submit" name="refresh" value="<?php echo L::refresh_b; ?>">
+			<input class="uk-button uk-button-primary uk-margin-top" type="submit" name="refresh" value="<?php echo L::refresh_b; ?>">
 			<a class="uk-button uk-button-default uk-margin-top" href="../index.php"><?php echo L::back_b; ?></a>
 		</form>
 		<?php
 		if (isset($_POST["refresh"])) {
-			shell_exec('rm -rf ' . $prev_dir);
+			if (!file_exists($prev_dir)) {
+				shell_exec('rm -rf ' . $prev_dir);
+			}
 			shell_exec('mkdir -p ' . $prev_dir);
 			extract_preview_jpeg($work_dir, $prev_dir);
 			if ($enable_auto_level) {
