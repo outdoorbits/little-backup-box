@@ -33,7 +33,7 @@
 			Write();
 		};
 		?>
-		<h1><?php echo L::config; ?></h1>
+		<h1 class="uk-heading-line uk-text-center"><span><?php echo L::config; ?><span></h1>
 		<?php
 		function Read()
 		{

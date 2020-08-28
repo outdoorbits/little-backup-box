@@ -23,7 +23,7 @@
 	?>
 	<div class="uk-container uk-margin-top">
 		<div class="uk-card uk-card-primary uk-card-body uk-width-1-2@m">
-			<h1 class="uk-card-title uk-heading-line uk-text-center"><?php echo L::status; ?></h1>
+			<h1 class="uk-heading-line uk-text-center"><span><?php echo L::status; ?></span></h1>
 			<div class="uk-flex uk-flex-center">
 				<?php
 				passthru("./status.sh");
@@ -34,7 +34,7 @@
 			</div>
 		</div>
 		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h1 class="uk-card-title uk-heading-line uk-text-center"><?php echo L::sysinfo; ?></h1>
+			<h1 class="uk-heading-line uk-text-center"><span><?php echo L::sysinfo; ?></span></h1>
 			<?php
 			$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 			$temp = round($temp / 1000, 1);
@@ -82,7 +82,7 @@
 			<?php } ?>
 		</div>
 		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h3 class="uk-card-title uk-heading-line uk-text-center"><?php echo L::devices; ?></h3>
+			<h3 class="uk-heading-line uk-text-center"><span><?php echo L::devices; ?></span></h3>
 			<?php
 			echo '<pre>';
 			passthru("lsblk");
@@ -90,7 +90,7 @@
 			?>
 		</div>
 		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h3 class="uk-card-title uk-heading-line uk-text-center"><?php echo L::diskspace; ?></h3>
+			<h3 class="uk-heading-line uk-text-center"><span><?php echo L::diskspace; ?></span></h3>
 			<?php
 			echo '<pre>';
 			passthru("df -H");

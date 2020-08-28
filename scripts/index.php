@@ -26,7 +26,7 @@
 	?>
 	<div class="uk-container uk-margin-small-top">
 		<div class="uk-card uk-card-primary uk-card-body uk-text-center">
-			<h1 class="uk-card-title uk-heading-line uk-text-center"><span>LITTLE BACKUP BOX</span></h1>
+			<h1 class="uk-heading-line uk-text-center"><span>LITTLE BACKUP BOX</span></h1>
 			<a class="uk-button uk-button-default uk-margin-small-top" href="sysinfo.php"><?php echo L::sysinfo; ?></a>
 			<a class="uk-button uk-button-default uk-margin-small-top" href="raw-viewer/"><?php echo L::viewer; ?></a>
 			<a class="uk-button uk-button-default uk-margin-small-top" href="config.php"><?php echo L::config; ?></a>

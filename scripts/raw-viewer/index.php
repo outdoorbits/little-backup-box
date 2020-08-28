@@ -58,7 +58,7 @@ include('config.php');
 		$i18n = new i18n('../lang/{LANGUAGE}.ini', 'cache/', 'en');
 		$i18n->init();
 		?>
-		<h1><?php echo L::viewer; ?></h1>
+		<h1 class="uk-heading-line uk-text-center"><span><?php echo L::viewer; ?></span></h1>
 		<hr style="margin-bottom: 1.5em;">
 		<?php
 		function extract_preview_jpeg($work_dir, $prev_dir)

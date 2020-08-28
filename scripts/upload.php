@@ -35,7 +35,7 @@
 			}
 		}
 		?>
-		<h1 class="uk-card-title uk-heading-line uk-text-center"><span><?php echo L::upload; ?></span></h1>
+		<h1 class="uk-heading-line uk-text-center"><span><?php echo L::upload; ?></span></h1>
 		<form method='post' action='' enctype='multipart/form-data'>
 			<input class="uk-input" type="file" name="file[]" id="file" multiple>
 			<button class="uk-button uk-button-primary uk-margin-top" type='submit' role='button' name='submit'><?php echo L::upload; ?></button>
