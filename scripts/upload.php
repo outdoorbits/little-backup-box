@@ -3,33 +3,18 @@
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
-	<meta charset="utf-8">
 	<title>Little Backup Box</title>
+	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
-	<link rel="stylesheet" href="css/lit.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style>
-		#content {
-			margin: 0px auto;
-			text-align: center;
-		}
-
-		img {
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-			margin-top: 1%;
-			margin-bottom: 1%;
-		}
-
-		button {
-			width: 9em;
-		}
-	</style>
+	<link rel="stylesheet" href="css/uikit.min.css" />
+	<script src="js/uikit.min.js"></script>
+	<script src="js/uikit-icons.min.js"></script>
 </head>
 
 <body>
-	<div class="c">
+<div class="uk-container uk-margin-small-top">
+		<div class="uk-card uk-card-primary uk-card-body uk-text-center">
 		<?php
 		// include i18n class and initialize it
 		require_once 'i18n.class.php';
@@ -50,14 +35,13 @@
 			}
 		}
 		?>
-		<h1><?php echo L::upload; ?></h1>
-		<hr>
+		<h1 class="uk-card-title uk-heading-line uk-text-center"><span><?php echo L::upload; ?></span></h1>
 		<form method='post' action='' enctype='multipart/form-data'>
-			<input type="file" name="file[]" id="file" multiple>
-			<p></p>
-			<button class="btn primary" type="submit" role="button" name="submit"><?php echo L::upload; ?></button>
-			<a class="btn" href="index.php"><?php echo L::back_b; ?></a>
+			<input class="uk-input" type="file" name="file[]" id="file" multiple>
+			<button class="uk-button uk-button-primary uk-margin-top" type='submit' role='button' name='submit'><?php echo L::upload; ?></button>
+			<a class="uk-button uk-button-default uk-margin-top" href="index.php"><?php echo L::back_b; ?></a>
 		</form>
+		</div>
 	</div>
 </body>
 
