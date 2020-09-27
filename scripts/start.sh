@@ -24,7 +24,7 @@ until [ ! -z "$ip" ]; do
   ip=$(hostname -I | cut -d' ' -f1)
 done
 
-if [ $DISP = true ]; then
+if [ $DISP=true ]; then
   a="$ip"
   echo "$ip"
   oled r
