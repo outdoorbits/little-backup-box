@@ -24,7 +24,8 @@
 					fwrite($f, $_GET['ip']);
 					fclose($f);
 				} else {
-					echo file_get_contents('ip', true);
+					$ip = file_get_contents('ip', true);
+					echo "<a href='http://".$ip.":8000'>".$ip."</a>";
 				}
 				?>
 			</h1>

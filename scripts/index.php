@@ -61,7 +61,7 @@
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::cardbackup_m . "'});";
+			echo "UIkit.notification({message: '" . L::cardbackup_m . "', status: 'success'});";
 			echo "</script";
 		}
 		if (isset($_POST['camerabackup'])) {
@@ -70,7 +70,7 @@
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::camerabackup_m . "'});";
+			echo "UIkit.notification({message: '" . L::camerabackup_m . ", status: 'success''});";
 			echo "</script";
 		}
 		if (isset($_POST['internalbackup'])) {
@@ -79,19 +79,19 @@
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::internalbackup_m . "'});";
+			echo "UIkit.notification({message: '" . L::internalbackup_m . "', status: 'success'});";
 			echo "</script";
 		}
 		if (isset($_POST['shutdown'])) {
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::shutdown_m . "'});";
+			echo "UIkit.notification({message: '" . L::shutdown_m . "', status: 'danger'});";
 			echo "</script";
 			shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
 		}
 		if (isset($_POST['cancelshutdown'])) {
 			shell_exec('sudo shutdown -c > /dev/null 2>&1 & echo $!');
 			echo "<script>";
-			echo "UIkit.notification({message: '<span uk-icon=\'icon: check\'></span>" . L::cancel_shutdown_m . "'});";
+			echo "UIkit.notification({message: '" . L::cancel_shutdown_m . "', status: 'warning'});";
 			echo "</script";
 		}
 		?>
