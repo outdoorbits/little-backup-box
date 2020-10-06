@@ -25,11 +25,10 @@ source "$CONFIG"
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# Shutdown after a specified period of time (in minutes) if no device is connected.
-sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
+# # If display support is enabled, display the "Ready. Card reader" message
 if [ $DISP = true ]; then
   oled r
-  oled +a "Shutdown active"
+  oled +a "Ready"
   oled +b "Card reader..."
   sudo oled s
 fi
@@ -47,9 +46,6 @@ mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 # Set the ACT LED to blink at 1000ms to indicate that the card reader has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
-
-# Cancel shutdown
-sudo shutdown -c
 
 # If display support is enabled, notify that the card reader has been mounted
 if [ $DISP = true ]; then

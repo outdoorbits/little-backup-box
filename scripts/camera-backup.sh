@@ -24,12 +24,10 @@ source "$CONFIG"
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# Shutdown after a specified period of time (in minutes) if no device is connected.
-sudo shutdown -h $SHUTD "Shutdown is activated. To cancel: sudo shutdown -c"
-# If display support is enabled, notify that shutdown is activated
+# If display support is enabled, display the "Ready. Connect camera" message
 if [ $DISP = true ]; then
     oled r
-    oled +b "Shutdown active"
+    oled +b "Ready"
     oled +c "Connect camera"
     sudo oled s
 fi
@@ -40,9 +38,6 @@ while [ -z "${DEVICE}" ]; do
     sleep 1
     DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
 done
-
-# Cancel shutdown
-sudo shutdown -c
 
 # If display support is enabled, notify that the camera is detected
 if [ $DISP = true ]; then
