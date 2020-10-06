@@ -75,12 +75,11 @@ sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 if [ $DISP = true ]; then
   oled r
   oled +a "Backup complete"
-  oled +b "Shutdown"
+  oled +b "Power off"
   sudo oled s
 fi
-# Shutdown
-sync
-if [ $DISP = true ]; then
-  oled r
+
+# Power off
+if [ $POWER_OFF = true ]; then
+    poweroff
 fi
-shutdown -h now

@@ -82,7 +82,7 @@
 			echo "<script>";
 			echo "UIkit.notification({message: '" . L::shutdown_m . "', status: 'danger'});";
 			echo "</script";
-			shell_exec('sudo shutdown -h now > /dev/null 2>&1 & echo $!');
+			shell_exec('sudo poweroff > /dev/null 2>&1 & echo $!');
 		}
 		?>
 	</div>

@@ -62,11 +62,11 @@ gphoto2 --get-all-files --skip-existing
 if [ $DISP = true ]; then
     oled r
     oled +b "Backup complete"
-    oled +c "Shutdown"
+    oled +c "Power off"
     sudo oled s
 fi
-# Shutdown
-if [ $DISP = true ]; then
-    oled r
+
+# Power off
+if [ $POWER_OFF = true ]; then
+    poweroff
 fi
-shutdown -h now
