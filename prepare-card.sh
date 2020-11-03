@@ -17,9 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+MOUNT_POINT="/mnt/tmp"
+
 if [ -z "$1" ] && [ -z "$2" ]; then
 	echo "ERROR: Specify image file and device name"
-	echo "E.g.: $0 /path/to/foo.img /dev/sdb"
+	echo "E.g.: $0 /path/to/IMAGE.img /dev/sdb"
 	exit 1
 fi
 
@@ -27,8 +29,9 @@ echo "Writing the image file..."
 echo
 sudo dd if="$1" of="$2" bs=1M status=progress
 
-sudo mount "$2"1 /mnt
-sudo touch /mnt/ssh
+sudo mkdir -p $MOUNT_POINT
+sudo mount "$2"1 $MOUNT_POINT
+sudo touch $MOUNT_POINT/ssh
 
 echo "Enter your country code (e.g., DE): "
 read COUNTRY
@@ -48,6 +51,7 @@ network={
 	key_mgmt=WPA-PSK
 }
 EOF
-sudo mv $HOME/wpa_supplicant.conf /mnt/wpa_supplicant.conf
-sudo umount /mnt
+sudo mv $HOME/wpa_supplicant.conf $MOUNT_POINT/wpa_supplicant.conf
+sudo umount $MOUNT_POINT
+sudo rm -rf $MOUNT_POINT
 echo "All done!"
