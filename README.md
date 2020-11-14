@@ -83,7 +83,7 @@ Please report bugs and issues in the [Issues](https://github.com/dmpop/little-ba
 
 To uninstall Little Backup Box, run the following command:
 
-    curl -sSL https://is.gd/unlittlebackupbox | bash
+    curl -sSL https://raw.githubusercontent.com/dmpop/little-backup-box/main/uninstall-little-backup-box.sh | bash
 
 ## Contribute
 
