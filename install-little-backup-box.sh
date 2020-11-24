@@ -23,7 +23,7 @@ sudo apt full-upgrade -y
 sudo apt update
 
 # Install the required packages
-sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php-cli minidlna samba samba-common-bin vsftpd imagemagick
+sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php-cli minidlna samba samba-common-bin vsftpd imagemagick curl
 
 # Remove obsolete packages
 sudo apt autoremove -y
@@ -76,19 +76,19 @@ case $CHOICE in
 1)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh"
     } | crontab
     ;;
 2)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/"
     } | crontab
     ;;
 3)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/"
     } | crontab
     ;;
 esac

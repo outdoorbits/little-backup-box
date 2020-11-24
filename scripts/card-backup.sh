@@ -89,7 +89,11 @@ cd
 # Set the backup path
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 # Perform backup using rsync
-rsync -avh --info=progress2 --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
+if [ $LOG = true ]; then
+    rsync -avh --exclude "*.id" --log-file=little-backup-box.log "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
+else
+    rsync -avh --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
+fi
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
@@ -97,6 +101,17 @@ if [ $DISP = true ]; then
     oled +b "Backup complete"
     oled +c "Power off"
     sudo oled s
+fi
+
+# Check internet connection and send
+# a notification if the NOTIFY option is enabled
+check=$(wget -q --spider http://google.com/)
+if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
+    curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
+        --mail-from $MAIL_USER \
+        --mail-rcpt $MAIL_USER \
+        --user $MAIL_USER':'$MAIL_PASSWORD \
+        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nBackup complete.')
 fi
 
 # Power off

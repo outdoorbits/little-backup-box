@@ -23,8 +23,11 @@ source "$CONFIG"
 
 ping -c1 google.com &>/dev/null
 
-if [ $? -eq 0 ]; then
-    IP=$(hostname -I | cut -d' ' -f1)
-    echo "$IP"
-    curl -d ip="$IP" -G "$IP_URL"
+if [ $? -eq 0 ] || [ ! -z $SMTP_SERVER ]; then
+IP=$(hostname -I | cut -d' ' -f1)
+    curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
+        --mail-from $MAIL_USER \
+        --mail-rcpt $MAIL_USER \
+        --user $MAIL_USER':'$MAIL_PASSWORD \
+        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\n'$IP'\n')
 fi

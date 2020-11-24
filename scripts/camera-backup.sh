@@ -66,6 +66,17 @@ if [ $DISP = true ]; then
     sudo oled s
 fi
 
+# Check internet connection and send
+# a notification if the NOTIFY option is enabled
+check=$(wget -q --spider http://google.com/)
+if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
+    curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
+        --mail-from $MAIL_USER \
+        --mail-rcpt $MAIL_USER \
+        --user $MAIL_USER':'$MAIL_PASSWORD \
+        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nBackup complete.')
+fi
+
 # Power off
 if [ $POWER_OFF = true ]; then
     poweroff
