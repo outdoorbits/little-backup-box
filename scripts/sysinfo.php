@@ -97,6 +97,18 @@
 			echo '</pre>';
 			?>
 		</div>
+		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
+			<h3 class="uk-heading-line uk-text-center"><span><?php echo L::log; ?></span></h3>
+			<?php
+			if (file_exists("/root/little-backup-box.log")) {
+				echo '<pre>';
+				passthru("sudo cat /root/little-backup-box.log");
+				echo '</pre>';
+			} else {
+				echo L::log_txt;
+			}
+			?>
+		</div>
 		<button class="uk-button uk-button-primary uk-margin-top" onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
 		<a class="uk-button uk-button-default uk-margin-top" href="index.php"><?php echo L::back_b; ?></a>
 	</div>
