@@ -69,6 +69,7 @@ cd
 BACKUP_PATH="$BAK_DIR"/"$ID"
 # Perform backup using rsync
 if [ $LOG = true ]; then
+  sudo rm /root/little-backup-box.log
   rsync -avh --log-file=little-backup-box.log "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 else
   rsync -avh "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"

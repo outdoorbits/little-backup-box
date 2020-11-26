@@ -90,6 +90,7 @@ cd
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 # Perform backup using rsync
 if [ $LOG = true ]; then
+    sudo rm /root/little-backup-box.log
     rsync -avh --exclude "*.id" --log-file=little-backup-box.log "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
 else
     rsync -avh --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
