@@ -103,7 +103,7 @@ crontab -l | {
 } | crontab
 crontab -l | {
     cat
-    echo "*/3 * * * * /home/"$USER"/little-backup-box/scripts/ip.sh"
+    echo "*/30 * * * * /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
 
 # Configure Samba
