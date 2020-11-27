@@ -72,7 +72,7 @@ check=$(wget -q --spider http://google.com/)
 if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
     curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
         --mail-from $MAIL_USER \
-        --mail-rcpt $MAIL_USER \
+        --mail-rcpt $MAIL_TO \
         --user $MAIL_USER':'$MAIL_PASSWORD \
         -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nBackup complete.')
 fi
