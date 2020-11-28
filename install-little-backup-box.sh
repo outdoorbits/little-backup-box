@@ -107,7 +107,7 @@ crontab -l | {
 } | crontab
 
 # Configure Samba
-sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig-$(date +%Y%m%d%H%M)
 pw="raspberry"
 (
     echo $pw
