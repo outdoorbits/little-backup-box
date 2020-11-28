@@ -73,17 +73,24 @@ The remote control mode is enabled by default. This mode allows you to control a
 2. Insert a storage card into a card reader and plug it into the Raspberry Pi.
 3. Wait till the Raspberry Pi shuts down.
 
-## Problems, comments, ideas, updates?
-
-To discuss Little Backup Box-related topics and get the latest updates, visit the [official forum at PIXLS.US](https://discuss.pixls.us/c/hardware/little-backup-box).
-
-Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
-
 ## Uninstall Little Backup Box
 
 To uninstall Little Backup Box, run the following command:
 
     curl -sSL https://raw.githubusercontent.com/dmpop/little-backup-box/main/uninstall-little-backup-box.sh | bash
+    
+## Little Backup Book
+
+The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides step-by-step instructions on building, configuring, using, and troubleshooting a Raspberry Pi-based photo backup device running Little Backup Box. Get your copy on [Google Play Store](https://play.google.com/store/books/details?id=VvrHDwAAQBAJ) or [Gumroad](https://gumroad.com/l/little-backup-book).
+
+<img src="https://i.imgur.com/ZHBgpIf.jpg" width="200"/>
+
+By buying the book, you are supporting the Linux Backup Box project.
+## Problems, comments, ideas, updates?
+
+To discuss Little Backup Box-related topics and get the latest updates, visit the [official forum at PIXLS.US](https://discuss.pixls.us/c/hardware/little-backup-box).
+
+Please report bugs and issues in the [Issues](https://github.com/dmpop/little-backup-box/issues) section.
 
 ## Contribute
 
@@ -91,11 +98,11 @@ If you've found a bug or have a suggestion for improvement, open an issue in the
 
 To add a new feature or fix issues yourself, follow the following steps.
 
-1. Fork the project's repository repository
-2. Create a feature branch using the `git checkout -b new-feature` command
-3. Add your new feature or fix bugs and run the `git commit -am 'Add a new feature'` command to commit changes
-4. Push changes using the `git push origin new-feature` command
-5. Submit a pull request
+1. Fork the project's repository repository.
+2. Create a feature branch using the `git checkout -b new-feature` command.
+3. Add your new feature or fix bugs and run the `git commit -am 'Add a new feature'` command to commit changes.
+4. Push changes using the `git push origin new-feature` command.
+5. Submit a pull request.
 
 ## Author
 
@@ -107,14 +114,6 @@ To add a new feature or fix issues yourself, follow the following steps.
 
 <a href="https://paypal.me/dmpop" target="_blank"><img
 src="https://i.imgur.com/cERczks.png" alt="Buy Me A Coffee" width="128"></a>
-
-## Little Backup Book
-
-The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides step-by-step instructions on building, configuring, using, and troubleshooting a Raspberry Pi-based photo backup device running Little Backup Box. Get your copy on [Google Play Store](https://play.google.com/store/books/details?id=VvrHDwAAQBAJ) or [Gumroad](https://gumroad.com/l/little-backup-book).
-
-<img src="https://i.imgur.com/ZHBgpIf.jpg" width="200"/>
-
-By buying the book, you are supporting the Linux Backup Box project.
 
 ## License
 
