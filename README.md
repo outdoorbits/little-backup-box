@@ -83,7 +83,7 @@ To uninstall Little Backup Box, run the following command:
 
 The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides step-by-step instructions on building, configuring, using, and troubleshooting a Raspberry Pi-based photo backup device running Little Backup Box. Get your copy on [Google Play Store](https://play.google.com/store/books/details?id=VvrHDwAAQBAJ) or [Gumroad](https://gumroad.com/l/little-backup-book).
 
-<img src="https://i.imgur.com/ZHBgpIf.jpg" width="200"/>
+<img src="https://i.imgur.com/iti6kxS.jpg" width="200"/>
 
 By buying the book, you are supporting the Linux Backup Box project.
 ## Problems, comments, ideas, updates?
