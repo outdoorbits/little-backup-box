@@ -95,16 +95,24 @@ esac
 
 crontab -l | {
     cat
-    echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:8000"
-} | crontab
-crontab -l | {
-    cat
     echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"
 } | crontab
 crontab -l | {
     cat
     echo "@reboot /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
+
+# Create PHP server systemd unit
+sudo sh -c "echo '[Unit]' > /etc/systemd/system/webui.service"
+sudo sh -c "echo 'Description=PHP Server' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo '[Service]' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo 'ExecStart=/usr/bin/php -S 0.0.0.0:8000 -t /home/"$USER"/little-backup-box/scripts' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo 'ExecStop=/usr/bin/killall php' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo '[Install]' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/webui.service"
+sudo systemctl enable webui.service
+sudo systemctl start webui.service
 
 # Configure Samba
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig-$(date +%Y%m%d%H%M)
