@@ -102,9 +102,9 @@ crontab -l | {
     echo "@reboot /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
 
-# Create PHP server systemd unit
+# Create web UI systemd unit
 sudo sh -c "echo '[Unit]' > /etc/systemd/system/webui.service"
-sudo sh -c "echo 'Description=PHP Server' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo 'Description=web UI' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo '[Service]' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'ExecStart=/usr/bin/php -S 0.0.0.0:8000 -t /home/"$USER"/little-backup-box/scripts' >> /etc/systemd/system/webui.service"
@@ -113,6 +113,19 @@ sudo sh -c "echo '[Install]' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/webui.service"
 sudo systemctl enable webui.service
 sudo systemctl start webui.service
+
+# Create File Browser systemd unit
+curl -fsSL https://filebrowser.org/get.sh | bash
+sudo sh -c "echo '[Unit]' > /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'Description=File Browser' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo '[Service]' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'ExecStart=/usr/bin/filebrowser -a 0.0.0.0 -r /home/"$USER"/little-backup-box/scripts' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'ExecStop=/usr/bin/killall php' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo '[Install]' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/filebrowser.service"
+sudo systemctl enable filebrowser.service
+sudo systemctl start filebrowser.service
 
 # Configure Samba
 sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig-$(date +%Y%m%d%H%M)
