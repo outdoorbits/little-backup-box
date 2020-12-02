@@ -6,14 +6,15 @@ Little Backup Box is an application that transforms a Raspberry Pi (or any singl
 
 ## Little Backup Box features
 
-- Back up the contents of a storage card to an external USB storage device. Little Backup Box supports practically any USB card reader, and, by extension, any card format.
+- Back up data from one USB storage device to another. Little Backup Box supports all types of USB solid-state storage devices and all popular formats.
 - Transfer photos and RAW files directly from a camera to an external USB storage device. If your camera is supported by gPhoto2 software, it will work with Little Backup Box.
-- Use multiple cards. Little Backup Box assigns a unique ID to each card and create a separate folder for each card on the backup storage device.
-- Perform card backup fully automatically with no user interaction.
-- Start specific backup operations manually using Little Backup Box's web UI.
+- Use multiple cards and storage devices. Little Backup Box assigns a unique ID to each storage device and create a separate folder for it on the backup drive.
+- Perform backup automatically, without any user interaction.
+- Use and control Little Backup Box via a web UI.
 - Automatically generate a minimalist responsive gallery from the backed up RAW files.
-- Stream the backed up photos to any DLNA-compatible client.
-- Access the backed up content from other machines on the network.
+- Stream the backed up contents to any DLNA-compatible client.
+- Access the backed up contents from other machines on the network.
+- Manage files using a web-based file browser.
 - Push backed up contents to a cloud storage service.
 
 ## Installation
@@ -81,7 +82,7 @@ To uninstall Little Backup Box, run the following command:
     
 ## Little Backup Book
 
-The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides step-by-step instructions on building, configuring, using, and troubleshooting a Raspberry Pi-based photo backup device running Little Backup Box. Get your copy on [Google Play Store](https://play.google.com/store/books/details?id=VvrHDwAAQBAJ) or [Gumroad](https://gumroad.com/l/little-backup-book).
+The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides step-by-step instructions on building, configuring, using, and troubleshooting a Raspberry Pi-based backup device running Little Backup Box. Get your copy on [Google Play Store](https://play.google.com/store/books/details?id=VvrHDwAAQBAJ) or [Gumroad](https://gumroad.com/l/little-backup-book).
 
 <img src="https://i.imgur.com/p6p1LzJ.jpg" width="200"/>
 
