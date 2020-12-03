@@ -108,7 +108,7 @@ sudo sh -c "echo 'Description=web UI' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo '[Service]' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'ExecStart=/usr/bin/php -S 0.0.0.0:8000 -t /home/"$USER"/little-backup-box/scripts' >> /etc/systemd/system/webui.service"
-sudo sh -c "echo 'ExecStop=/usr/bin/killall php' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo 'ExecStop=/usr/bin/kill -HUP \$MAINPID' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo '[Install]' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/webui.service"
 sudo systemctl enable webui.service
@@ -121,7 +121,7 @@ sudo sh -c "echo 'Description=File Browser' >> /etc/systemd/system/filebrowser.s
 sudo sh -c "echo '[Service]' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'ExecStart=/usr/bin/filebrowser -a 0.0.0.0 -r /home/"$USER"/little-backup-box/scripts' >> /etc/systemd/system/filebrowser.service"
-sudo sh -c "echo 'ExecStop=/usr/bin/killall php' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'ExecStop=/usr/bin/kill -HUP \$MAINPID' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo '[Install]' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/filebrowser.service"
 sudo systemctl enable filebrowser.service

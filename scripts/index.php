@@ -60,7 +60,7 @@
 			shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
 			echo "UIkit.notification({message: '" . L::cardbackup_m . "', status: 'success'});";
-			echo "</script";
+			echo "</script>";
 		}
 		if (isset($_POST['camerabackup'])) {
 			shell_exec('sudo pkill -f camera-backup*');
@@ -68,7 +68,7 @@
 			shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
 			echo "UIkit.notification({message: '" . L::camerabackup_m . ", status: 'success''});";
-			echo "</script";
+			echo "</script>";
 		}
 		if (isset($_POST['internalbackup'])) {
 			shell_exec('sudo pkill -f internal-backup*');
@@ -76,12 +76,12 @@
 			shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
 			echo "<script>";
 			echo "UIkit.notification({message: '" . L::internalbackup_m . "', status: 'success'});";
-			echo "</script";
+			echo "</script>";
 		}
 		if (isset($_POST['shutdown'])) {
 			echo "<script>";
 			echo "UIkit.notification({message: '" . L::shutdown_m . "', status: 'danger'});";
-			echo "</script";
+			echo "</script>";
 			shell_exec('sudo poweroff > /dev/null 2>&1 & echo $!');
 		}
 		?>
