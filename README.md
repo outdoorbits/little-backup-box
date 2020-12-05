@@ -109,6 +109,10 @@ To add a new feature or fix issues yourself, follow the following steps.
 
 [Dmitri Popov](https://www.tokyomade.photography/)
 
+## Contributors
+
+- Kerry Staite (STL files)
+- Paul Roberts (Little Backup Box HAT)
 ### I like coffee
 
 <a href="https://paypal.me/dmpop" target="_blank">Buy me a coffee</a>, and I'll work even harder on Little Backup Box.
