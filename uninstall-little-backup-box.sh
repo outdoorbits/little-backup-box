@@ -25,7 +25,7 @@ cd
 dialog --clear \
     --title "Warning" \
     --backtitle "Uninstall Little Backup Box" \
-    --yesno "This will uninstall Little Backup Box and clear all cron jobs.\nAre you sure you want to proceed?" 7 60
+    --yesno "This will uninstall Little Backup Box.\nAre you sure you want to proceed?" 7 60
 
 response=$?
 case $response in
@@ -41,6 +41,12 @@ case $response in
     sudo mv /etc/minidlna.conf.orig /etc/minidlna.conf
     sudo mv /etc/samba/smb.conf.orig /etc/samba/smb.conf
     sudo smbpasswd -x $USER
+    sudo systemctl stop webui.service
+    sudo systemctl disable webui.service
+    sudo rm /etc/systemd/system/webui.service
+    sudo systemctl stop filebrowser.service
+    sudo systemctl disable filebrowser.service
+    sudo rm /etc/systemd/system/filebrowser.service
     sudo samba restart
     crontab -r
     sudo reboot
