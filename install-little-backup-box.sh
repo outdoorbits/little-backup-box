@@ -192,7 +192,7 @@ response=$?
 case $response in
 0)
     clear
-    sudo apt-get install -y wiringpi i2c-tools
+    sudo apt install -y wiringpi i2c-tools
     git clone https://github.com/dmpop/ssd1306_rpi.git
     cd ssd1306_rpi
     cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C
