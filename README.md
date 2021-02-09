@@ -47,9 +47,9 @@ The remote control mode is enabled by default. This mode allows you to control a
 
 <img src="img/rc.png" alt="Remote control interface" />
 
-- Press the **SYSTEM INFO** icon to access basic system information, such as a list of storage devices and memory usage.
-- To view JPEG files on the backup storage device, click the  **RAW VIEWER** icon.
-- To edit the configuration file, click the **SETTINGS** icon.
+- Use the **System info** navigation link to access basic system information, such as a list of storage devices and memory usage.
+- To edit the configuration file, use the **Settings** navigation link.
+- Use the **Upload** navigation link to switch to the upload form.
 
 ### Card backup mode
 
@@ -111,7 +111,6 @@ To add a new feature or fix issues yourself, follow the following steps.
 ## Contributors
 
 - Kerry Staite (STL files)
-- Paul Roberts (Little Backup Box HAT)
 ### I like coffee
 
 <a href="https://paypal.me/dmpop" target="_blank">Buy me a coffee</a>, and I'll work even harder on Little Backup Box.
