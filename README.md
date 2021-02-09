@@ -38,14 +38,14 @@ When prompted, reboot the Raspberry Pi.
 
 The exact steps depend on the backup mode.
 
-### Remote control mode
+### web UI
 
-The remote control mode is enabled by default. This mode allows you to control and manage Little Backup Box via a web UI. 
+The web UI allows you to control and manage Little Backup Box using any device with a browser. 
 
 1. Point the browser to _http://127.0.0.1:8000_ (replace _127.0.0.1_ with the actual IP address of the Raspberry Pi).
 2. Start the desired action by pressing the appropriate button.
 
-<img src="img/rc.png" alt="Remote control interface" />
+<img src="img/webui.png" alt="web UI" />
 
 - Use the **System info** navigation link to access basic system information, such as a list of storage devices and memory usage.
 - To edit the configuration file, use the **Settings** navigation link.

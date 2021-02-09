@@ -22,7 +22,7 @@
 	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
 	$i18n->init();
 	?>
-	<h1 class="text-center" style="margin-bottom: 1em;">LITTLE BACKUP BOX</h1>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;">LITTLE BACKUP BOX</h1>
 	<nav>
 		<ul>
 			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
