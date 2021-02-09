@@ -24,7 +24,7 @@
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
-	<div class="card" style="margin-top: 3em;">
+	<div class="card text-center" style="margin-top: 3em;">
 		<h1><?php echo L::status; ?></h1>
 		<hr>
 		<p><?php
