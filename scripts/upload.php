@@ -1,6 +1,9 @@
 <?php
 // Upload directory
-$upload_dir = getenv("HOME") . "/UPLOAD";
+$upload_dir = "/home/pi/UPLOAD";
+if (!file_exists($upload_dir)) {
+	mkdir($dir, 0777, true);
+}
 ?>
 
 <html lang="en">
