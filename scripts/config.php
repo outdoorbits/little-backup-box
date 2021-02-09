@@ -8,9 +8,7 @@
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/uikit.min.css" />
-	<script src="js/uikit.min.js"></script>
-	<script src="js/uikit-icons.min.js"></script>
+	<link rel="stylesheet" href="css/classless.css">
 	<style>
 		textarea {
 			font-size: 15px;
@@ -23,37 +21,42 @@
 </head>
 
 <body>
-	<div class="uk-container uk-margin-top">
-		<?php
-		// include i18n class and initialize it
-		require_once 'i18n.class.php';
-		$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
-		$i18n->init();
-		if ($_POST["save"]) {
-			Write();
-		};
-		?>
-		<h1 class="uk-heading-line uk-text-center"><span><?php echo L::config; ?><span></h1>
-		<?php
-		function Read()
-		{
-			$CONFIGFILE = "config.cfg";
-			echo file_get_contents($CONFIGFILE);
-		}
-		function Write()
-		{
-			$CONFIGFILE = "config.cfg";
-			$fp = fopen($CONFIGFILE, "w");
-			$data = $_POST["text"];
-			fwrite($fp, $data);
-			fclose($fp);
-		}
-		?>
-		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
-			<textarea name="text"><?php Read(); ?></textarea>
-			<?php echo '<input class="uk-button uk-button-primary uk-margin-top" type="submit" name="save" value="' . L::edit_save_b . '">'; ?>
-			<a class="uk-button uk-button-default uk-margin-top" href="index.php"><?php echo L::back_b; ?></a>
-		</form>
+	<?php
+	// include i18n class and initialize it
+	require_once 'i18n.class.php';
+	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
+	$i18n->init();
+	if (isset($_POST['save'])) {
+		Write();
+	};
+	?>
+	<nav>
+		<ul>
+			<li><a href="index.php"><?php echo L::main; ?></a></li>
+			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
+			<li><a href="raw-viewer/"><?php echo L::viewer; ?></a></li>
+		</ul>
+	</nav>
+	<h1><?php echo L::config; ?></h1>
+	<?php
+	function Read()
+	{
+		$CONFIGFILE = "config.cfg";
+		echo file_get_contents($CONFIGFILE);
+	}
+	function Write()
+	{
+		$CONFIGFILE = "config.cfg";
+		$fp = fopen($CONFIGFILE, "w");
+		$data = $_POST["text"];
+		fwrite($fp, $data);
+		fclose($fp);
+	}
+	?>
+	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+		<textarea name="text"><?php Read(); ?></textarea>
+		<?php echo '<button type="submit" name="save">' . L::edit_save_b . '</button>'; ?>
+	</form>
 	</div>
 </body>
 

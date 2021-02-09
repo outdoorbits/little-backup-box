@@ -7,11 +7,7 @@
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/uikit.min.css" />
-	<script src="js/uikit.min.js"></script>
-	<script src="js/uikit-icons.min.js"></script>
-	<script src="js/justgage.js"></script>
-	<script src="js/raphael.min.js"></script>
+	<link rel="stylesheet" href="css/classless.css">
 </head>
 
 <body>
@@ -21,96 +17,64 @@
 	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
 	$i18n->init();
 	?>
-	<div class="uk-container uk-margin-top">
-		<div class="uk-card uk-card-primary uk-card-body uk-width-1-2@m">
-			<h1 class="uk-heading-line uk-text-center"><span><?php echo L::status; ?></span></h1>
-			<div class="uk-flex uk-flex-center">
-				<?php
-				passthru("./status.sh");
-				?>
-			</div>
-			<div class="uk-flex uk-flex-center">
-				<button class="uk-button uk-button-primary uk-margin-top" onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
-			</div>
-		</div>
-		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h1 class="uk-heading-line uk-text-center"><span><?php echo L::sysinfo; ?></span></h1>
-			<?php
-			$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
-			$temp = round($temp / 1000, 1);
-			$cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
-			$mem = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
-			$mem = round($mem, 1);
-			if (isset($temp) && is_numeric($temp)) { ?>
-				<div id="tempgauge"></div>
-				<script>
-					var t = new JustGage({
-						id: "tempgauge",
-						value: <?php echo $temp; ?>,
-						min: 0,
-						max: 100,
-						title: "<?php echo L::temp; ?>",
-						label: "°C"
-					});
-				</script>
-			<?php } ?>
-			<?php if (isset($cpuusage) && is_numeric($cpuusage)) { ?>
-				<div id="cpugauge"></div>
-				<script>
-					var u = new JustGage({
-						id: "cpugauge",
-						value: <?php echo $cpuusage; ?>,
-						min: 0,
-						max: 100,
-						title: "<?php echo L::cpuload; ?>",
-						label: "%"
-					});
-				</script>
-			<?php } ?>
-			<?php if (isset($mem) && is_numeric($mem)) { ?>
-				<div id="memgauge"></div>
-				<script>
-					var u = new JustGage({
-						id: "memgauge",
-						value: <?php echo $mem; ?>,
-						min: 0,
-						max: 100,
-						title: "<?php echo L::memory; ?>",
-						label: "%"
-					});
-				</script>
-			<?php } ?>
-		</div>
-		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h3 class="uk-heading-line uk-text-center"><span><?php echo L::devices; ?></span></h3>
-			<?php
+	<nav>
+		<ul>
+			<li><a href="index.php"><?php echo L::main; ?></a></li>
+			<li><a href="raw-viewer/"><?php echo L::viewer; ?></a></li>
+			<li><a href="config.php"><?php echo L::config; ?></a></li>
+		</ul>
+	</nav>
+	<div class="card" style="margin-top: 3em;">
+		<h1><?php echo L::status; ?></h1>
+		<hr>
+		<p><?php
+			passthru("./status.sh");
+			?></p>
+		<button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
+	</div>
+	<div class="card">
+		<h1><?php echo L::sysinfo; ?></h1>
+		<hr>
+		<?php
+		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
+		$temp = round($temp / 1000, 1);
+		$cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
+		$mem = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
+		$mem = round($mem, 1);
+		if (isset($temp) && is_numeric($temp)) {
+			echo "<p>" . L::temp . ": <strong>" . $temp . "°C</strong></p>";
+		}
+		if (isset($cpuusage) && is_numeric($cpuusage)) {
+			echo "<p>" . L::cpuload . ": <strong>" . $cpuusage . "%</strong></p>";
+		}
+		if (isset($mem) && is_numeric($mem)) {
+			echo L::memory . ": <strong>" . $mem . "%</strong>";
+		}
+		?>
+		<h3><?php echo L::devices; ?></h3>
+		<?php
+		echo '<pre>';
+		passthru("lsblk");
+		echo '</pre>';
+		?>
+		<h3><?php echo L::diskspace; ?></h3>
+		<?php
+		echo '<pre>';
+		passthru("df -H");
+		echo '</pre>';
+		?>
+		<h3><?php echo L::log; ?></h3>
+		<hr>
+		<?php
+		if (file_exists("/root/little-backup-box.log")) {
 			echo '<pre>';
-			passthru("lsblk");
+			passthru("sudo cat /root/little-backup-box.log");
 			echo '</pre>';
-			?>
-		</div>
-		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h3 class="uk-heading-line uk-text-center"><span><?php echo L::diskspace; ?></span></h3>
-			<?php
-			echo '<pre>';
-			passthru("df -H");
-			echo '</pre>';
-			?>
-		</div>
-		<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-			<h3 class="uk-heading-line uk-text-center"><span><?php echo L::log; ?></span></h3>
-			<?php
-			if (file_exists("/root/little-backup-box.log")) {
-				echo '<pre>';
-				passthru("sudo cat /root/little-backup-box.log");
-				echo '</pre>';
-			} else {
-				echo L::log_txt;
-			}
-			?>
-		</div>
-		<button class="uk-button uk-button-primary uk-margin-top" onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
-		<a class="uk-button uk-button-default uk-margin-top" href="index.php"><?php echo L::back_b; ?></a>
+		} else {
+			echo "<p>" . L::log_txt . "</p>";
+		}
+		?>
+		<button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
 	</div>
 </body>
 

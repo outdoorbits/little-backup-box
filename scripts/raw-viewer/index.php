@@ -10,9 +10,7 @@ include('config.php');
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="../css/uikit.min.css" />
-	<script src="../js/uikit.min.js"></script>
-	<script src="../js/uikit-icons.min.js"></script>
+	<link rel="stylesheet" href="../css/classless.css">
 	<style>
 		div.gallery img {
 			width: 100%;
@@ -51,14 +49,20 @@ include('config.php');
 </head>
 
 <body>
-	<div class="uk-container uk-margin-top">
 		<?php
 		// include i18n class and initialize it
 		require_once '../i18n.class.php';
 		$i18n = new i18n('../lang/{LANGUAGE}.ini', 'cache/', 'en');
 		$i18n->init();
 		?>
-		<h1 class="uk-heading-line uk-text-center"><span><?php echo L::viewer; ?></span></h1>
+		<nav>
+		<ul>
+		<li><a href="../index.php"><?php echo L::main; ?></a></li>
+			<li><a href="../sysinfo.php"><?php echo L::sysinfo; ?></a></li>
+			<li><a href="../config.php"><?php echo L::config; ?></a></li>
+		</ul>
+	</nav>
+		<h1><?php echo L::viewer; ?></h1>
 		<hr style="margin-bottom: 1.5em;">
 		<?php
 		function extract_preview_jpeg($work_dir, $prev_dir)
@@ -91,7 +95,7 @@ include('config.php');
 		<div class="uk-clearfix"></div>
 		<hr style="margin-bottom: 1.5em;">
 		<form method='POST' action=''>
-			<input class="uk-button uk-button-primary uk-margin-top" type="submit" name="refresh" value="<?php echo L::refresh_b; ?>">
+			<button type="submit" name="refresh"><?php echo L::refresh_b; ?></button>
 			<a class="uk-button uk-button-default uk-margin-top" href="../index.php"><?php echo L::back_b; ?></a>
 		</form>
 		<?php
