@@ -11,7 +11,6 @@ Little Backup Box is an application that transforms a Raspberry Pi (or any singl
 - Use multiple cards and storage devices. Little Backup Box assigns a unique ID to each storage device and create a separate folder for it on the backup drive.
 - Perform backup automatically, without any user interaction.
 - Use and control Little Backup Box via a web UI.
-- Automatically generate a minimalist responsive gallery from the backed up RAW files.
 - Stream the backed up contents to any DLNA-compatible client.
 - Access the backed up contents from other machines on the network.
 - Manage files using a web-based file browser.

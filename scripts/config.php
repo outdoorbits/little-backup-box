@@ -34,7 +34,7 @@
 		<ul>
 			<li><a href="index.php"><?php echo L::main; ?></a></li>
 			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
-			<li><a href="raw-viewer/"><?php echo L::viewer; ?></a></li>
+			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
 	<h1><?php echo L::config; ?></h1>
