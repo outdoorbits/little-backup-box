@@ -32,26 +32,28 @@ if (!file_exists($upload_dir)) {
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
 		</ul>
 	</nav>
-	<?php
-	if (isset($_POST['submit'])) {
-		// count total files
-		$countfiles = count($_FILES['file']['name']);
-		// looping all files
-		for ($i = 0; $i < $countfiles; $i++) {
-			$filename = $_FILES['file']['name'][$i];
-			if (!file_exists($upload_dir)) {
-				mkdir($upload_dir, 0777, true);
+	<div class="card" style="margin-top: 3em;">
+		<?php
+		if (isset($_POST['submit'])) {
+			// count total files
+			$countfiles = count($_FILES['file']['name']);
+			// looping all files
+			for ($i = 0; $i < $countfiles; $i++) {
+				$filename = $_FILES['file']['name'][$i];
+				if (!file_exists($upload_dir)) {
+					mkdir($upload_dir, 0777, true);
+				}
+				// upload file
+				move_uploaded_file($_FILES['file']['tmp_name'][$i], $upload_dir . DIRECTORY_SEPARATOR . $filename);
 			}
-			// upload file
-			move_uploaded_file($_FILES['file']['tmp_name'][$i], $upload_dir . DIRECTORY_SEPARATOR . $filename);
 		}
-	}
-	?>
-	<h1><?php echo L::upload; ?></h1>
-	<form method='post' action='' enctype='multipart/form-data'>
-		<input type="file" name="file[]" id="file" multiple>
-		<button type='submit' role='button' name='submit'><?php echo L::upload; ?></button>
-	</form>
+		?>
+		<h1 style="margin-bottom: 1em;"><?php echo L::upload; ?></h1>
+		<form method='post' action='' enctype='multipart/form-data'>
+			<input type="file" name="file[]" id="file" multiple>
+			<button type='submit' role='button' name='submit'><?php echo L::upload; ?></button>
+		</form>
+	</div>
 </body>
 
 </html>
