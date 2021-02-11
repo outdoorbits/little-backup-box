@@ -6,9 +6,9 @@ Little Backup Box is an application that transforms a Raspberry Pi (or any singl
 
 ## Little Backup Box features
 
-- Back up data from one USB storage device to another. Little Backup Box supports all types of USB solid-state storage devices and all popular formats.
+- Back up data from one USB storage device to another. Little Backup Box supports all types of USB solid-state storage devices and all mainstream formats.
 - Transfer photos and RAW files directly from a camera to an external USB storage device. If your camera is supported by gPhoto2 software, it will work with Little Backup Box.
-- Use multiple cards and storage devices. Little Backup Box assigns a unique ID to each storage device and create a separate folder for it on the backup drive.
+- Use multiple source devices. Little Backup Box assigns a unique ID to each source device and create a separate folder for it on the backup drive.
 - Perform backup automatically, without any user interaction.
 - Use and control Little Backup Box via a web UI.
 - Stream the backed up contents to any DLNA-compatible client.
@@ -29,8 +29,6 @@ Little Backup Box supports three backup modes:
 - **Internal backup** Automatically backs up the contents of a source dive to the internal storage.
 
 During the installation, choose the desired mode from the selection dialog.
-
-<img src="img/installer.png" alt="" width="600"/>
 
 When prompted, reboot the Raspberry Pi.
 
@@ -55,10 +53,10 @@ The web UI allows you to control and manage Little Backup Box using any device w
 
 1. Boot the Raspberry Pi.
 2. Plug in a backup storage device.
-3. Plug the storage source device into the Raspberry Pi.
+3. Plug the source device into the Raspberry Pi.
 4. Wait till the Raspberry Pi shuts down.
 
-**Note:** To differentiate between different storage sources, the backup script creates a datetime-based *.id* file in the root of each source. The name of the *.id* file is also used as the destination backup folder on the storage device.
+**Note:** To differentiate between different source devices, the backup script creates a datetime-based *.id* file in the root of each source. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
 ### Camera backup mode
 

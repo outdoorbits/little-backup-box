@@ -27,8 +27,8 @@
 	</nav>
 	<form class="text-center" method="POST">
 		<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
-		<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
 		<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
+		<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
 		<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 	</form>
 	<div class="card" style="margin-top: 3em;">
