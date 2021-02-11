@@ -25,11 +25,11 @@ source "$CONFIG"
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# # If display support is enabled, display the "Ready. Card reader" message
+# # If display support is enabled, display the "Ready. Source" message
 if [ $DISP = true ]; then
   oled r
   oled +a "Ready"
-  oled +b "Card reader..."
+  oled +b "Source..."
   sudo oled s
 fi
 
@@ -40,17 +40,17 @@ while [ -z ${STORAGE} ]; do
   STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
 done
 
-# When the card reader is detected, mount it
+# When the storage device is detected, mount it
 mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 
-# Set the ACT LED to blink at 1000ms to indicate that the card reader has been mounted
+# Set the ACT LED to blink at 1000ms to indicate that the source device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-# If display support is enabled, notify that the card reader has been mounted
+# If display support is enabled, notify that the source device has been mounted
 if [ $DISP = true ]; then
   oled r
-  oled +a "Card reader OK"
+  oled +a "Source OK"
   oled +b "Working..."
   sudo oled s
 fi

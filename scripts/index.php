@@ -26,7 +26,7 @@
 		</ul>
 	</nav>
 	<form class="text-center" method="POST">
-		<button name="cardbackup"><?php echo L::cardbackup_b; ?></button>
+		<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
 		<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
 		<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
 		<button name="shutdown"><?php echo L::shutdown_b; ?></button>
@@ -37,12 +37,12 @@
 		<p><?php echo L::help_txt; ?></p>
 	</div>
 	<?php
-	if (isset($_POST['cardbackup'])) {
-		shell_exec('sudo pkill -f card-backup*');
+	if (isset($_POST['sourcebackup'])) {
+		shell_exec('sudo pkill -f source-backup*');
 		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./card-backup.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./source-backup.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
-		echo 'alert("' . L::cardbackup_m . '")';
+		echo 'alert("' . L::sourcebackup_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['camerabackup'])) {

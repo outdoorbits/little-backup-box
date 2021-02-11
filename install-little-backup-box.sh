@@ -38,10 +38,13 @@ if [ -z "$USER" ]; then
 fi
 
 # Create the required directories
-sudo mkdir -p /media/card
+sudo mkdir -p /media/source
 sudo mkdir -p /media/storage
+sudo chown -R $USER:users /media/source
 sudo chown -R $USER:users /media/storage
+sudo chmod -R 775 /media/source
 sudo chmod -R 775 /media/storage
+sudo setfacl -Rdm g:$USER:rw /media/source
 sudo setfacl -Rdm g:$USER:rw /media/storage
 
 # Configure miniDLNA
@@ -60,7 +63,7 @@ chmod +x little-backup-box/scripts/*.sh
 
 # Prompt to choose the default backup mode
 BACKTITLE="Little Backup Box"
-OPTIONS=(1 "Card backup"
+OPTIONS=(1 "Source backup"
     2 "Camera backup"
     3 "Internal backup")
 CHOICE=$(dialog --clear \
@@ -75,7 +78,7 @@ case $CHOICE in
 1)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/source-backup.sh"
     } | crontab
     ;;
 2)

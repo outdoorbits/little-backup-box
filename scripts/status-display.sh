@@ -22,20 +22,20 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 source "$CONFIG"
 
 # Set the backup path
-cd "$CARD_MOUNT_POINT"
+cd "$SOURCE_MOUNT_POINT"
 ID_FILE=$(ls *.id)
 ID="${ID_FILE%.*}"
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 
-# Count files on the card and in the backup destination
+# Count files on the source device and in the backup destination
 # Calculate the number of files to be transferred
-count1=$(find $CARD_MOUNT_POINT -type f | wc -l)
+count1=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
 count2=$(find $BACKUP_PATH -type f | wc -l)
 
 while [ true ]; do
-    # Count files on the card and in the backup destination
+    # Count files on the source device and in the backup destination
     # Calculate the number of files to be transferred
-    count1=$(find $CARD_MOUNT_POINT -type f | wc -l)
+    count1=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
     count2=$(find $BACKUP_PATH -type f | wc -l)
     result=$((count1 - count2))
     oled r

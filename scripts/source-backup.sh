@@ -50,34 +50,34 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 if [ $DISP = true ]; then
     oled r
     oled +b "Storage OK"
-    oled +c "Card reader..."
+    oled +c "Source..."
     sudo oled s
 fi
 
-# Wait for a card reader or a camera
+# Wait for a source device
 # takes first device found
-CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
-until [ ! -z "${CARD_READER[0]}" ]; do
+SRC=($(ls /dev/* | grep "$SOURCE_DEV" | cut -d"/" -f3))
+until [ ! -z "${SRC[0]}" ]; do
     sleep 1
-    CARD_READER=($(ls /dev/* | grep "$CARD_DEV" | cut -d"/" -f3))
+    SRC=($(ls /dev/* | grep "$SOURCE_DEV" | cut -d"/" -f3))
 done
 
-# If the card reader is detected, mount it and obtain its UUID
-mount /dev"/${CARD_READER[0]}" "$CARD_MOUNT_POINT"
+# If the source device is detected, mount it and obtain its UUID
+mount /dev"/${SRC[0]}" "$SOURCE_MOUNT_POINT"
 
-# Set the ACT LED to blink at 500ms to indicate that the card has been mounted
+# Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
-# If display support is enabled, notify that the card has been mounted
+# If display support is enabled, notify that the source device has been mounted
 if [ $DISP = true ]; then
     oled r
-    oled +b "Card reader OK"
+    oled +b "Source OK"
     oled +c "Working..."
     sudo oled s
 fi
 
 # Create  a .id random identifier file if doesn't exist
-cd "$CARD_MOUNT_POINT"
+cd "$SOURCE_MOUNT_POINT"
 if [ ! -f *.id ]; then
     random=$(echo $RANDOM)
     touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
@@ -97,9 +97,9 @@ BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 # Perform backup using rsync
 if [ $LOG = true ]; then
     sudo rm /root/little-backup-box.log
-    rsync -avh --exclude "*.id" --log-file=little-backup-box.log "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
+    rsync -avh --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH"
 else
-    rsync -avh --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
+    rsync -avh --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH"
 fi
 
 # Kill the progress.sh script

@@ -24,9 +24,9 @@ Little Backup Box is an application that transforms a Raspberry Pi (or any singl
 
 Little Backup Box supports three backup modes:
 
-- **Card backup** Automatically backs up the contents of a storage card to an external storage device.
+- **Source backup** Automatically backs up the contents of a source device (e.g., a storage card) to an external storage device.
 - **Camera backup** Transfers photos, RAW files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the _/home/pi/BACKUP/[CAMERA MODEL]_ directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
-- **Internal backup** Automatically backs up the contents of a storage card to the internal storage.
+- **Internal backup** Automatically backs up the contents of a source dive to the internal storage.
 
 During the installation, choose the desired mode from the selection dialog.
 
@@ -51,14 +51,14 @@ The web UI allows you to control and manage Little Backup Box using any device w
 - To edit the configuration file, use the **Settings** navigation link.
 - Use the **Upload** navigation link to switch to the upload form.
 
-### Card backup mode
+### Source backup mode
 
 1. Boot the Raspberry Pi.
 2. Plug in a backup storage device.
-3. Insert a storage card into a card reader and plug it into the Raspberry Pi.
+3. Plug the storage source device into the Raspberry Pi.
 4. Wait till the Raspberry Pi shuts down.
 
-**Note:** To differentiate between different storage cards, the backup script creates a datetime-based *.id* file in the root of each storage card. The name of the *.id* file is also used as the destination backup folder on the storage device.
+**Note:** To differentiate between different storage sources, the backup script creates a datetime-based *.id* file in the root of each source. The name of the *.id* file is also used as the destination backup folder on the storage device.
 
 ### Camera backup mode
 
@@ -70,7 +70,7 @@ The web UI allows you to control and manage Little Backup Box using any device w
 ### Internal backup mode
 
 1. Boot the Raspberry Pi.
-2. Insert a storage card into a card reader and plug it into the Raspberry Pi.
+2. Plug a storage source into the Raspberry Pi.
 3. Wait till the Raspberry Pi shuts down.
 
 ## Uninstall Little Backup Box

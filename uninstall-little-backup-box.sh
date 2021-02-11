@@ -34,7 +34,7 @@ case $response in
     sudo rm /home/$USER/oledoled.conf
     sudo rm -rf /home/$USER/little-backup-box
     sudo rm -rf /home/$USER/ssd1306_rpi
-    sudo rm -rf /media/card
+    sudo rm -rf /media/source
     sudo rm -rf /media/storage
     sudo rm -rf /home/$USER/BACKUP
     sudo rm /usr/local/bin/oled

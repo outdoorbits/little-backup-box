@@ -23,7 +23,7 @@ source "$CONFIG"
 
 BACKTITLE="Little Backup Box"
 
-OPTIONS=(1 "Card backup"
+OPTIONS=(1 "Source backup"
     2 "Camera backup"
     3 "Internal backup")
 
@@ -43,7 +43,7 @@ case $CHOICE in
 1)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/card-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/source-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 2)
