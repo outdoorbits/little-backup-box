@@ -86,6 +86,12 @@ ID_FILE=$(ls *.id)
 ID="${ID_FILE%.*}"
 cd
 
+# Run the progress.sh script
+if [ $DISP = true ]; then
+    source "${CONFIG_DIR}/status-display.sh" &
+    PID=$!
+fi
+
 # Set the backup path
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 # Perform backup using rsync
@@ -95,6 +101,9 @@ if [ $LOG = true ]; then
 else
     rsync -avh --exclude "*.id" "$CARD_MOUNT_POINT"/ "$BACKUP_PATH"
 fi
+
+# Kill the progress.sh script
+kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then

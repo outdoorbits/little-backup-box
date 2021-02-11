@@ -21,22 +21,26 @@ CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
 source "$CONFIG"
 
-# Create  a .id random identifier file if doesn't exist
+# Set the backup path
 cd "$CARD_MOUNT_POINT"
-if [ ! -f *.id ]; then
-echo "<p>Waiting...</p>"
-    exit 1
-fi
 ID_FILE=$(ls *.id)
 ID="${ID_FILE%.*}"
-cd
-
-# Set the backup path
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 
 # Count files on the card and in the backup destination
 # Calculate the number of files to be transferred
 count1=$(find $CARD_MOUNT_POINT -type f | wc -l)
 count2=$(find $BACKUP_PATH -type f | wc -l)
-result=$((count1-count2))
-echo "Files to transfer: <strong>"$result"</strong>"
+
+while [ true ]; do
+    # Count files on the card and in the backup destination
+    # Calculate the number of files to be transferred
+    count1=$(find $CARD_MOUNT_POINT -type f | wc -l)
+    count2=$(find $BACKUP_PATH -type f | wc -l)
+    result=$((count1 - count2))
+    oled r
+    oled +a "Remaining:"
+    oled +b "$result"
+    sudo oled s
+    sleep 5
+done

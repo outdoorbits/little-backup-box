@@ -28,7 +28,7 @@
 		<h1><?php echo L::status; ?></h1>
 		<hr>
 		<p><?php
-			passthru("./status.sh");
+			passthru("./status-webui.sh");
 			?></p>
 		<button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
 	</div>
