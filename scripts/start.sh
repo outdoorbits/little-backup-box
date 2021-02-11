@@ -17,6 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+CONFIG_DIR=$(dirname "$0")
+CONFIG="${CONFIG_DIR}/config.cfg"
+
+source "$CONFIG"
+
 ip=$(hostname -I | cut -d' ' -f1)
 
 until [ ! -z "$ip" ]; do
@@ -24,7 +29,7 @@ until [ ! -z "$ip" ]; do
   ip=$(hostname -I | cut -d' ' -f1)
 done
 
-if [ $DISP=true ]; then
+if [ $DISP = true ]; then
   a="$ip"
   echo "$ip"
   oled r
