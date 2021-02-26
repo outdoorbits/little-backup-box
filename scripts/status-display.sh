@@ -25,12 +25,10 @@ source "$CONFIG"
 cd "$SOURCE_MOUNT_POINT"
 ID_FILE=$(ls *.id)
 ID="${ID_FILE%.*}"
-BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
+cd
 
-# Count files on the source device and in the backup destination
-# Calculate the number of files to be transferred
-count1=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
-count2=$(find $BACKUP_PATH -type f | wc -l)
+# Set the backup path
+BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 
 while [ true ]; do
     # Count files on the source device and in the backup destination
@@ -41,6 +39,6 @@ while [ true ]; do
     oled r
     oled +a "Remaining:"
     oled +b "$result"
-    sudo oled s
+    oled s
     sleep 5
 done

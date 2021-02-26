@@ -34,5 +34,5 @@ if [ $DISP = true ]; then
   echo "$ip"
   oled r
   oled +a "$a"
-  sudo oled s
+  oled s
 fi

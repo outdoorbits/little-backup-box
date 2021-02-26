@@ -30,7 +30,7 @@ if [ $DISP = true ]; then
   oled r
   oled +a "Ready"
   oled +b "Source..."
-  sudo oled s
+  oled s
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
@@ -52,7 +52,7 @@ if [ $DISP = true ]; then
   oled r
   oled +a "Source OK"
   oled +b "Working..."
-  sudo oled s
+  oled s
 fi
 
 # Create  a .id random identifier file if doesn't exist
@@ -81,7 +81,7 @@ if [ $DISP = true ]; then
   oled r
   oled +a "Backup complete"
   oled +b "Power off"
-  sudo oled s
+  oled s
 fi
 
 # Check internet connection and send

@@ -29,7 +29,7 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Ready"
     oled +c "Connect camera"
-    sudo oled s
+    oled s
 fi
 
 # Wait for camera
@@ -44,7 +44,7 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Camera OK"
     oled +c "Working..."
-    sudo oled s
+    oled s
 fi
 
 # Obtain camera model
@@ -62,7 +62,7 @@ if [ $DISP = true ]; then
     oled r
     oled +b "Backup complete"
     oled +c "Power off"
-    sudo oled s
+    oled s
 fi
 
 # Check internet connection and send

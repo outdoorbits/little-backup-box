@@ -47,5 +47,5 @@ if [ $DISP = true ]; then
   storfree=$(df /dev/"$STORAGE_DEV" -h --output=avail | sed '1d' | tr -d ' ')
   oled r
   oled +b "Free: $storfree"
-  sudo oled s
+  oled s
 fi
