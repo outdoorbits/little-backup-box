@@ -1,8 +1,8 @@
 # Little Backup Box
 
-Little Backup Box is an application that transforms a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable backup device. While the primary purpose of Little Backup Box is to serve as a photo backup device, it's not limited to this specific usage scenario.
+Little Backup Box is a software that transforms a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable backup appliance. While the primary purpose of Little Backup Box is to serve as a photo backup device, it's not limited to this specific usage scenario.
 
-<img src="https://i.imgur.com/Owc6mJX.jpg" alt="" width="800"/>
+<img src="https://i.imgur.com/hkrDh0p.jpg" alt="" width="800"/>
 
 ## Little Backup Box features
 
@@ -10,11 +10,11 @@ Little Backup Box is an application that transforms a Raspberry Pi (or any singl
 - Transfer photos and RAW files directly from a camera to an external USB storage device. If your camera is supported by gPhoto2 software, it will work with Little Backup Box.
 - Use multiple source devices. Little Backup Box assigns a unique ID to each source device and create a separate folder for it on the backup drive.
 - Perform backup automatically, without any user interaction.
-- Use and control Little Backup Box via a web UI.
-- Stream the backed up contents to any DLNA-compatible client.
+- Manage Little Backup Box via a web UI.
+- Stream the backed up contents to DLNA-compatible clients.
 - Access the backed up contents from other machines on the network.
-- Manage files using a web-based file browser.
-- Push backed up contents to a cloud storage service.
+- Manage the backed up contents using a web-based file browser.
+- Push the backed up contents to a cloud storage service.
 
 ## Installation
 
