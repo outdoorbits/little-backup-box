@@ -16,6 +16,12 @@ Little Backup Box is a software that transforms a Raspberry Pi (or any single-bo
 - Manage the backed up contents using a web-based file browser.
 - Push the backed up contents to a cloud storage service.
 
+Little Backup Box works with the [Tomodachi](https://github.com/dmpop/tomodachi) expansion board.
+
+<img src="https://i.imgur.com/N8ZOskp.jpg" width="800"/>
+
+You can order an assembled and ready-to-use Tomodachi board via [Gumroad](https://gum.co/tomodachi).
+
 ## Installation
 
 1. Create a bootable SD card with the latest version of Raspberry Pi OS Lite for use with Little Backup Box.
