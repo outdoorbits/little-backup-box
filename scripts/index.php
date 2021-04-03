@@ -29,6 +29,7 @@
 		<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
 		<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
 		<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
+		<button name="useraction"><?php echo L::useraction_b; ?></button>
 		<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 	</form>
 	<div class="card" style="margin-top: 3em;">
@@ -59,6 +60,14 @@
 		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::internalbackup_m . '")';
+		echo "</script>";
+	}
+	if (isset($_POST['useraction'])) {
+		shell_exec('sudo pkill -f *backup*');
+		shell_exec('sudo umount /media/storage');
+		shell_exec('sudo ./user-action.sh > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::useraction_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['shutdown'])) {
