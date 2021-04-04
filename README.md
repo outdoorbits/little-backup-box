@@ -2,7 +2,7 @@
 
 Little Backup Box is a software that transforms a Raspberry Pi (or any single-board computer running a Debian-based Linux distribution) into an inexpensive, fully-automatic, pocketable backup appliance. While the primary purpose of Little Backup Box is to serve as a photo backup device, it's not limited to this specific usage scenario.
 
-<img src="https://i.imgur.com/hkrDh0p.jpg" alt="" width="800"/>
+<img src="https://i.imgur.com/RIzXZrh.jpg" alt="" width="800"/>
 
 ## Little Backup Box features
 
@@ -89,7 +89,7 @@ The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides
 
 <img src="https://i.imgur.com/p6p1LzJ.jpg" width="200"/>
 
-By buying the book, you are supporting the Linux Backup Box project.
+By buying the book, you are supporting the Little Backup Box project.
 ## Problems, comments, ideas, updates?
 
 To discuss Little Backup Box-related topics and get the latest updates, visit the [official forum at PIXLS.US](https://discuss.pixls.us/c/hardware/little-backup-box).
