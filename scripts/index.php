@@ -29,8 +29,8 @@
 		<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
 		<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
 		<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
-		<button name="useraction"><?php echo L::useraction_b; ?></button>
-		<button name="shutdown"><?php echo L::shutdown_b; ?></button>
+		<button name="custom" style="background-color: #cce6ff;"><?php echo L::custom_b; ?></button>
+		<button name="shutdown" style="background-color: #ffc7c7;"><?php echo L::shutdown_b; ?></button>
 	</form>
 	<div class="card" style="margin-top: 3em;">
 		<h2><?php echo L::help; ?></h2>
@@ -62,12 +62,11 @@
 		echo 'alert("' . L::internalbackup_m . '")';
 		echo "</script>";
 	}
-	if (isset($_POST['useraction'])) {
+	if (isset($_POST['custom'])) {
 		shell_exec('sudo pkill -f *backup*');
-		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./user-action.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./custom-action.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
-		echo 'alert("' . L::useraction_m . '")';
+		echo 'alert("' . L::custom_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['shutdown'])) {

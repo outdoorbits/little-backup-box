@@ -22,7 +22,7 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 
 source "$CONFIG"
 
-message="User action works!"
+message="Custom action works!"
 
 if [ $DISP = true ]; then
   oled r
