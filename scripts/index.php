@@ -11,6 +11,12 @@
 </head>
 
 <body>
+	<!-- Suppress form re-submit prompt on refresh -->
+	<script>
+	if (window.history.replaceState) {
+		window.history.replaceState(null, null, window.location.href);
+		}
+	</script>
 	<?php
 	// include i18n class and initialize it
 	require_once 'i18n.class.php';
@@ -29,8 +35,13 @@
 		<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
 		<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
 		<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
-		<button name="custom" style="background-color: #cce6ff;"><?php echo L::custom_b; ?></button>
 		<button name="shutdown" style="background-color: #ffc7c7;"><?php echo L::shutdown_b; ?></button>
+	</form>
+	<hr style="margin-bottom: 1em;">
+	<form class="text-center" method="POST">
+		<button name="custom1" style="background-color: #cce6ff;"><?php echo L::custom1_b; ?></button>
+		<button name="custom2" style="background-color: #cce6ff;"><?php echo L::custom2_b; ?></button>
+		<button name="custom3" style="background-color: #cce6ff;"><?php echo L::custom3_b; ?></button>
 	</form>
 	<div class="card" style="margin-top: 3em;">
 		<h2><?php echo L::help; ?></h2>
@@ -62,18 +73,32 @@
 		echo 'alert("' . L::internalbackup_m . '")';
 		echo "</script>";
 	}
-	if (isset($_POST['custom'])) {
-		shell_exec('sudo pkill -f *backup*');
-		shell_exec('sudo ./custom-action.sh > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::custom_m . '")';
-		echo "</script>";
-	}
 	if (isset($_POST['shutdown'])) {
 		echo "<script>";
 		echo 'alert("' . L::shutdown_m . '")';
 		echo "</script>";
 		shell_exec('sudo poweroff > /dev/null 2>&1 & echo $!');
+	}
+	if (isset($_POST['custom1'])) {
+		shell_exec('sudo pkill -f *backup*');
+		shell_exec('sudo ./custom1.sh > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::custom1_m . '")';
+		echo "</script>";
+	}
+	if (isset($_POST['custom2'])) {
+		shell_exec('sudo pkill -f *backup*');
+		shell_exec('sudo ./custom2.sh > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::custom2_m . '")';
+		echo "</script>";
+	}
+	if (isset($_POST['custom3'])) {
+		shell_exec('sudo pkill -f *backup*');
+		shell_exec('sudo ./custom3.sh > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::custom3_m . '")';
+		echo "</script>";
 	}
 	?>
 </body>
