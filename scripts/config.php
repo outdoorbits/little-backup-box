@@ -1,4 +1,8 @@
-<html lang="en">
+<?php
+$theme = "dark";
+?>
+
+<html lang="en" data-theme="<?php echo $theme; ?>">
 <!-- Author: Dmitri Popov, dmpop@linux.com
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
@@ -53,10 +57,12 @@
 		fclose($fp);
 	}
 	?>
-	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-		<textarea name="text"><?php Read(); ?></textarea>
-		<?php echo '<button type="submit" name="save">' . L::edit_save_b . '</button>'; ?>
-	</form>
+	<div class="card" style="margin-top: 2em;">
+		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+			<textarea name="text"><?php Read(); ?></textarea>
+			<?php echo '<button style="margin-top: 2em;" type="submit" name="save">' . L::edit_save_b . '</button>'; ?>
+		</form>
+	</div>
 	</div>
 </body>
 

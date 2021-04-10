@@ -1,4 +1,8 @@
-<html lang="en">
+<?php
+$theme = "dark";
+?>
+
+<html lang="en" data-theme="<?php echo $theme; ?>">
 <!-- Author: Dmitri Popov, dmpop@linux.com
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
@@ -13,8 +17,8 @@
 <body>
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
-	if (window.history.replaceState) {
-		window.history.replaceState(null, null, window.location.href);
+		if (window.history.replaceState) {
+			window.history.replaceState(null, null, window.location.href);
 		}
 	</script>
 	<?php
@@ -31,20 +35,22 @@
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
-	<form class="text-center" method="POST">
-		<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
-		<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
-		<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
-		<button name="shutdown" style="background-color: #ffc7c7;"><?php echo L::shutdown_b; ?></button>
-	</form>
-	<hr style="margin-bottom: 1em;">
-	<form class="text-center" method="POST">
-		<button name="custom1" style="background-color: #cce6ff;"><?php echo L::custom1_b; ?></button>
-		<button name="custom2" style="background-color: #cce6ff;"><?php echo L::custom2_b; ?></button>
-		<button name="custom3" style="background-color: #cce6ff;"><?php echo L::custom3_b; ?></button>
-	</form>
+	<div class="card">
+		<form class="text-center" style="margin-top: 1em;" method="POST">
+			<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
+			<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
+			<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
+			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
+		</form>
+		<hr style="margin-bottom: 1em;">
+		<form class="text-center" method="POST">
+			<button name="custom1"><?php echo L::custom1_b; ?></button>
+			<button name="custom2"><?php echo L::custom2_b; ?></button>
+			<button name="custom3"><?php echo L::custom3_b; ?></button>
+		</form>
+	</div>
 	<div class="card" style="margin-top: 3em;">
-		<h2><?php echo L::help; ?></h2>
+		<h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
 		<hr>
 		<p><?php echo L::help_txt; ?></p>
 	</div>
