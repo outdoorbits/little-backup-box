@@ -117,12 +117,12 @@ sudo systemctl enable webui.service
 sudo systemctl start webui.service
 
 # Create File Browser systemd unit
-curl -fsSL https://filebrowser.org/get.sh | bash
+curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
 sudo sh -c "echo '[Unit]' > /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'Description=File Browser' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo '[Service]' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/filebrowser.service"
-sudo sh -c "echo 'ExecStart=/usr/local/bin/filebrowser -a 0.0.0.0 -r /home/"$USER"/little-backup-box/scripts' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'ExecStart=/usr/local/bin/filebrowser -a 0.0.0.0 -r /media/storage' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'ExecStop=/usr/bin/kill -HUP \$MAINPID' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo '[Install]' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/filebrowser.service"
