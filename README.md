@@ -21,8 +21,6 @@ Little Backup Box works with the [Tomodachi](https://github.com/dmpop/tomodachi)
 
 <img src="https://i.imgur.com/N8ZOskp.jpg" width="800"/>
 
-You can order an assembled and ready-to-use Tomodachi board via [Gumroad](https://gum.co/tomodachi).
-
 ## Installation
 
 1. Create a bootable SD card with the latest version of Raspberry Pi OS Lite for use with Little Backup Box.
