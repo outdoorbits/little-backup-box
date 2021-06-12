@@ -84,13 +84,13 @@ case $CHOICE in
 2)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh"
     } | crontab
     ;;
 3)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh"
     } | crontab
     ;;
 esac
