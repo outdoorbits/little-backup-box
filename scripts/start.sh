@@ -19,7 +19,7 @@
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
-
+dos2unix "$CONFIG"
 source "$CONFIG"
 
 ip=$(hostname -I | cut -d' ' -f1)

@@ -19,6 +19,7 @@
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
+dos2unix "$CONFIG"
 source "$CONFIG"
 
 # Set the ACT LED to heartbeat
