@@ -201,6 +201,7 @@ case $response in
     sudo cp oled /usr/local/bin/
     sudo chown root:root /usr/local/bin/oled
     sudo chmod 755 /usr/local/bin/oled
+    sudo raspi-config nonint do_i2c 0
     cd
     crontab -l | {
         cat
@@ -208,10 +209,12 @@ case $response in
     } | crontab
     echo -e 'DISP=true # Enable OLED display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
-        --title "Enable I2C" \
+        --title "Setup finished" \
         --backtitle "$BACKTITLE" \
-        --msgbox "Almost done! Enable I2C and reboot the system." 5 50
+        --infobox "\nAll done! The system will reboot now." 5 45
+    sleep 3
     clear
+    sudo reboot
     ;;
 1)
     echo -e 'DISP=false # Enable OLED display' >>little-backup-box/scripts/config.cfg
