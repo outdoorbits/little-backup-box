@@ -83,7 +83,7 @@ if [ ! -f *.id ]; then
     random=$(echo $RANDOM)
     touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
 fi
-ID_FILE=$(ls *.id)
+ID_FILE=$(ls -t *.id | head -n1)
 ID="${ID_FILE%.*}"
 cd
 

@@ -24,7 +24,7 @@ source "$CONFIG"
 
 # Set the backup path
 cd "$SOURCE_MOUNT_POINT"
-ID_FILE=$(ls *.id)
+ID_FILE=$(ls -t *.id | head -n1)
 ID="${ID_FILE%.*}"
 cd
 
