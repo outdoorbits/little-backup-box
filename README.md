@@ -97,7 +97,7 @@ If you've found a bug or have a suggestion for improvement, open an issue in the
 
 To add a new feature or fix issues yourself, follow the following steps.
 
-1. Fork the project's repository repository.
+1. Fork the project's repository.
 2. Create a feature branch using the `git checkout -b new-feature` command.
 3. Add your new feature or fix bugs and run the `git commit -am 'Add a new feature'` command to commit changes.
 4. Push changes using the `git push origin new-feature` command.
