@@ -122,7 +122,7 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
         --mail-from $MAIL_USER \
         --mail-rcpt $MAIL_TO \
         --user $MAIL_USER':'$MAIL_PASSWORD \
-        -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Backup complete\n\nBackup complete.\n\n${RSYNC_OUTPUT}")
+        -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Backup complete\n\nBackup-result:\n\n${RSYNC_OUTPUT}")
 fi
 
 # Power off
