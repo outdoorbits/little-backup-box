@@ -34,5 +34,5 @@ if [ ! -z $SMTP_SERVER ]; then
         --mail-from $MAIL_USER \
         --mail-rcpt $MAIL_TO \
         --user $MAIL_USER':'$MAIL_PASSWORD \
-        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\n'$IP'\n')
+        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box: New IP\n\n'$IP'\n')
 fi
