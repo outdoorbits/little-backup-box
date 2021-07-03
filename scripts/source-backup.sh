@@ -22,15 +22,15 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+#Libraries
+. "${CONFIG_DIR}/lib_oled_message.sh"
+
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # If display support is enabled, display the "Ready. Connect camera" message
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Ready"
-    oled +c "Insert storage"
-    oled s
+    oled_message "Ready" "Insert storage"
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
@@ -49,9 +49,7 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Storage OK"
-    oled +c "Source..."
+    oled_message "Storage OK" "Insert source"
     oled s
 fi
 
@@ -71,10 +69,7 @@ sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the source device has been mounted
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Source OK"
-    oled +c "Working..."
-    oled s
+    oled_message "Source OK" "Working..."
 fi
 
 # Create  a .id random identifier file if doesn't exist
@@ -108,10 +103,7 @@ kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Backup complete"
-    oled +c "Power off"
-    oled s
+    oled_message "Backup complete" "Power off"
 fi
 
 # Check internet connection and send

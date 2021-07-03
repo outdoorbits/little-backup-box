@@ -22,6 +22,9 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+#Libraries
+. "${CONFIG_DIR}/lib_oled_message.sh"
+
 ip=$(hostname -I | cut -d' ' -f1)
 
 until [ ! -z "$ip" ]; do
@@ -32,7 +35,5 @@ done
 if [ $DISP = true ]; then
   a="$ip"
   echo "$ip"
-  oled r
-  oled +a "$a"
-  oled s
+  oled_message "$a"
 fi

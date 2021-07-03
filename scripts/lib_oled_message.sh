@@ -18,28 +18,52 @@
 #######################################################################
 
 function oled_message () {
+        #Parameters:
+        LineCount=$#
+        Lines=( "$@" )
 
-	#Parameters:
-	Line1=$1
-	Line2=$2
+        if [ "${LineCount}" -eq 0 ];
+        then
+                LineCount=4
+                n=0
+                while [ "$n" -lt 4 ]
+                do
+                        Lines[$n]=''
+                        n=$(expr $n + 1)
+                done
+        fi
 
-	#Config
-	FILE_OLED_OLD="/root/oled_old.txt"
+        #Config
+        FILE_OLED_OLD="/root/oled_old.txt"
+        DisplayLines=(a b c d)
 
-	#fifo display
-	if [ -z "$Line2" ] && [ -f "$FILE_OLED_OLD" ]; then
-		readarray -t OLED_OLD < "$FILE_OLED_OLD"
-		Line2=${OLED_OLD[0]}
-	fi
+        #fifo display
+        if [ -f "$FILE_OLED_OLD" ]; then
+                readarray -t OLED_OLD < "$FILE_OLED_OLD"
+        fi
 
-	#save Line1 to file
-	echo "${Line1}" > "${FILE_OLED_OLD}"
+        n=$LineCount
+        while [ "$n" -lt 4 ]
+        do
+                        Lines[$n]=${OLED_OLD[$(expr $n - $LineCount)]}
+                        n=$(expr $n + 1)
+        done
 
-	#display
-	oled r
-    	oled +b "${Line1}"
-    	oled +c "${Line2}"
-    	oled s
-
-
+        #save Lines to file
+        echo -en "${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}" > "${FILE_OLED_OLD}"
+ 
+        #display
+                oled r
+                n=0
+                while [ "${n}" -lt 4 ]
+        do
+                if [ "${n}" -lt "${LineCount}" ];
+                then
+                        oled +R $(expr $n + 1)
+                fi
+ 
+                oled +${DisplayLines[$n]} ${Lines[$n]}
+                n=$(expr $n + 1)
+        done
+                oled s
 }
