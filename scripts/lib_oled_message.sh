@@ -36,10 +36,23 @@ function oled_message () {
         #Config
         FILE_OLED_OLD="/root/oled_old.txt"
         DisplayLines=(a b c d)
+	LockFile="/root/display.lock"
+		
+		#Wait for Lockfile
+		if [ -f "${LockFile}"]; then
+			LockFileTime=$(head -n 1 ${LockFile})
+			ActualTime=$(date +%s )
+			while [ $(($ActualTime - $LockFileTime)) == 0 ]
+			do
+				sleep 0.5
+			done
+		fi
 
+		date +%s > $LockFile
+		
         #fifo display
-        if [ -f "$FILE_OLED_OLD" ]; then
-                readarray -t OLED_OLD < "$FILE_OLED_OLD"
+        if [ -f "${FILE_OLED_OLD}" ]; then
+			readarray -t OLED_OLD < "${FILE_OLED_OLD}"
         fi
 
         n=$LineCount
@@ -56,13 +69,13 @@ function oled_message () {
                 oled r
                 n=0
                 while [ "${n}" -lt 4 ]
-        do
+				do
                 if [ "${n}" -lt "${LineCount}" ];
                 then
                         oled +R $(expr $n + 1)
                 fi
  
-                oled +${DisplayLines[$n]} ${Lines[$n]}
+                oled +${DisplayLines[$n]} "${Lines[$n]}"
                 n=$(expr $n + 1)
         done
                 oled s

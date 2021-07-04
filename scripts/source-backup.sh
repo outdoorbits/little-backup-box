@@ -22,6 +22,9 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+#Config
+FILES_TO_SYNC_FILE="/root/files_to_sync.txt"
+
 #Libraries
 . "${CONFIG_DIR}/lib_oled_message.sh"
 
@@ -90,6 +93,10 @@ fi
 
 # Set the backup path
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
+
+# get number of files to copy
+rsync -avh --stats --dry-run --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' > "$FILES_TO_SYNC_FILE"
+
 # Perform backup using rsync
 if [ $LOG = true ]; then
     sudo rm /root/little-backup-box.log
