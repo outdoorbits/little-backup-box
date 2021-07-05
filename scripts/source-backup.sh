@@ -22,6 +22,9 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+#Config
+FILE_OLED_OLD="/root/oled_old.txt"
+
 #Libraries
 . "${CONFIG_DIR}/lib_oled_message.sh"
 
@@ -34,14 +37,14 @@ if [ $DISP = true ]; then
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
-STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
+STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
 while [ -z "${STORAGE}" ]; do
     sleep 1
-    STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
+    STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
 done
 
 # When the USB storage device is detected, mount it
-mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
+mount /dev/"${STORAGE_DEV}" "${STORAGE_MOUNT_POINT}"
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
@@ -82,12 +85,12 @@ ID="${ID_FILE%.*}"
 cd
 
 # Set the backup path
-BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
+BACKUP_PATH="${STORAGE_MOUNT_POINT}"/"${ID}"
 
 # Run the status-display.sh script
 if [ $DISP = true ]; then
     # get number of files to sync
-    FILES_TO_SYNC=$(rsync -avh --stats --dry-run --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+    FILES_TO_SYNC=$(rsync -avh --stats --dry-run --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
     source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${BACKUP_PATH}" &
     PID=$!
@@ -109,11 +112,6 @@ fi
 # Kill the status-display.sh script
 kill $PID
 
-# If display support is enabled, notify that the backup is complete
-if [ $DISP = true ]; then
-    oled_message "Backup complete" "Power off"
-fi
-
 # Check internet connection and send
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
@@ -127,5 +125,20 @@ fi
 
 # Power off
 if [ $POWER_OFF = true ]; then
+    umount "${STORAGE_MOUNT_POINT}"
+    umount "${SOURCE_MOUNT_POINT}"
+    
+    # If display support is enabled, notify that the backup is complete
+    if [ $DISP = true ]; then
+        oled_message "+Backup complete." "+Don't switch off" "+until the green" "+LED is off. Bye!"
+    fi
+    
+    rm "${FILE_OLED_OLD}"
+    
     poweroff
+else
+    # If display support is enabled, notify that the backup is complete
+    if [ $DISP = true ]; then
+        oled_message "+Backup complete." "-Don't unplug!" "+Power off by" "+webinferface!"
+    fi
 fi

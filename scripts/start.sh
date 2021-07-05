@@ -23,7 +23,7 @@ dos2unix "$CONFIG"
 source "$CONFIG"
 
 #Config
-        FILE_OLED_OLD="/root/oled_old.txt"
+FILE_OLED_OLD="/root/oled_old.txt"
         
 #Libraries
 . "${CONFIG_DIR}/lib_oled_message.sh"
@@ -34,8 +34,6 @@ until [ ! -z "$ip" ]; do
   sleep 1
   ip=$(hostname -I | cut -d' ' -f1)
 done
-
-rm "${FILE_OLED_OLD}"
 
 if [ $DISP = true ]; then
   oled_message "LittleBackupBox" "$ip"

@@ -80,22 +80,22 @@ function oled_message () {
 
         LINE="${Lines[$n]}"
         
-        FORCE_FORMAT="norm"
+        FORCE_FORMAT="standard"
 
         case "${LINE:0:1}" in 
             "+")
-                FORCE_FORMAT="norm"
+                FORCE_FORMAT="pos"
                 LINE=${LINE:1:16}
                 ;;
             "-")
-                FORCE_FORMAT="inv"
+                FORCE_FORMAT="neg"
                 LINE=${LINE:1:16}
                 ;;
         esac
 
-        if [ "${n}" -le "${LineCount}" ] || [ "${FORCE_FORMAT}" = "inv" ];
+        if [ "${n}" -le "${LineCount}" ] || [ "${FORCE_FORMAT}" = "neg" ];
         then
-            if [ "${FORCE_FORMAT}" != "norm" ];
+            if [ "${FORCE_FORMAT}" != "pos" ];
             then
                 oled +R $(expr $n + 1)
             fi

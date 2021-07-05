@@ -109,5 +109,14 @@ fi
 
 # Power off
 if [ $POWER_OFF = true ]; then
-  poweroff
+    umount "${STORAGE_MOUNT_POINT}"
+    
+    # If display support is enabled, notify that the backup is complete
+    if [ $DISP = true ]; then
+        oled_message "+Backup complete." "+Don't switch off" "+until the green" "+LED is off. Bye!"
+    fi
+    
+    rm "${FILE_OLED_OLD}"
+    
+    poweroff
 fi
