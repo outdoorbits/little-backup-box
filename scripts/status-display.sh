@@ -53,7 +53,6 @@ while [ true ]; do
     if [ "${FILES_TO_SYNC}" -gt "0" ];
     then
         FINISHED_PERCENT=$(expr 100 \* $FILES_SYNCED / $FILES_TO_SYNC)
-        FINISHED_PERCENT="${FINISHED_PERCENT}%"
 
         PROGRESSBAR_LENGTH=$(expr 16 \* $FILES_SYNCED / $FILES_TO_SYNC)
         PROGRESSBAR=$(for (( c=1; c <= $PROGRESSBAR_LENGTH; c++ )); do echo -n "_"; done)
@@ -62,6 +61,6 @@ while [ true ]; do
         PROGRESSBAR=""
     fi
 
-    oled_message "Backuped files:" "${FILES_SYNCED} of ${FILES_TO_SYNC}" "${FINISHED_PERCENT}" "${PROGRESSBAR}"
+    oled_message "Backuped files:" "${FILES_SYNCED} of ${FILES_TO_SYNC}" "${FINISHED_PERCENT}%" "${PROGRESSBAR}"
     sleep 2
 done
