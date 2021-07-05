@@ -98,9 +98,9 @@ BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 # Perform backup using rsync
 if [ $LOG = true ]; then
     sudo rm /root/little-backup-box.log
-    rsync -avh --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH"
+    RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 else
-    rsync -avh --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH"
+    RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 fi
 
 # Kill the progress.sh script
@@ -122,7 +122,7 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
         --mail-from $MAIL_USER \
         --mail-rcpt $MAIL_TO \
         --user $MAIL_USER':'$MAIL_PASSWORD \
-        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nBackup complete.')
+        -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Backup complete\n\nBackup log:\n\n${RSYNC_OUTPUT}")
 fi
 
 # Power off
