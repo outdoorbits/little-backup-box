@@ -2,3 +2,4 @@
 .directory 
 cache
 scripts/config.cfg
+scripts/test.sh

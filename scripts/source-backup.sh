@@ -22,15 +22,15 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+#Libraries
+. "${CONFIG_DIR}/lib_oled_message.sh"
+
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # If display support is enabled, display the "Ready. Connect camera" message
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Ready"
-    oled +c "Insert storage"
-    oled s
+    oled_message "Ready" "Insert storage"
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
@@ -49,10 +49,7 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Storage OK"
-    oled +c "Source..."
-    oled s
+    oled_message "Storage OK" "Insert source"
 fi
 
 # Wait for a source device
@@ -71,10 +68,7 @@ sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the source device has been mounted
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Source OK"
-    oled +c "Working..."
-    oled s
+    oled_message "Source OK" "Working..."
 fi
 
 # Create  a .id random identifier file if doesn't exist
@@ -87,14 +81,18 @@ ID_FILE=$(ls -t *.id | head -n1)
 ID="${ID_FILE%.*}"
 cd
 
-# Run the progress.sh script
+# Set the backup path
+BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
+
+# Run the status-display.sh script
 if [ $DISP = true ]; then
-    source "${CONFIG_DIR}/status-display.sh" &
+    # get number of files to sync
+    FILES_TO_SYNC=$(rsync -avh --stats --dry-run --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+
+    source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${BACKUP_PATH}" &
     PID=$!
 fi
 
-# Set the backup path
-BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 # Perform backup using rsync
 if [ $LOG = true ]; then
     sudo rm /root/little-backup-box.log
@@ -103,26 +101,28 @@ else
     RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 fi
 
-# Kill the progress.sh script
+#Display progress after finish
+if [ $DISP = true ]; then
+    sleep 2
+fi
+
+# Kill the status-display.sh script
 kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Backup complete"
-    oled +c "Power off"
-    oled s
+    oled_message "Backup complete" "Power off"
 fi
 
 # Check internet connection and send
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
 if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
-    curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
-        --mail-from $MAIL_USER \
-        --mail-rcpt $MAIL_TO \
-        --user $MAIL_USER':'$MAIL_PASSWORD \
-        -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Backup complete\n\nBackup log:\n\n${RSYNC_OUTPUT}")
+	curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
+		--mail-from $MAIL_USER \
+		--mail-rcpt $MAIL_TO \
+		--user $MAIL_USER':'$MAIL_PASSWORD \
+	-T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Backup complete\n\nBackup log:\n\n${RSYNC_OUTPUT}")
 fi
 
 # Power off

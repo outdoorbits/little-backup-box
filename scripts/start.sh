@@ -22,6 +22,12 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+#Config
+        FILE_OLED_OLD="/root/oled_old.txt"
+        
+#Libraries
+. "${CONFIG_DIR}/lib_oled_message.sh"
+
 ip=$(hostname -I | cut -d' ' -f1)
 
 until [ ! -z "$ip" ]; do
@@ -29,10 +35,8 @@ until [ ! -z "$ip" ]; do
   ip=$(hostname -I | cut -d' ' -f1)
 done
 
+rm "${FILE_OLED_OLD}"
+
 if [ $DISP = true ]; then
-  a="$ip"
-  echo "$ip"
-  oled r
-  oled +a "$a"
-  oled s
+  oled_message "LittleBackupBox" "$ip"
 fi

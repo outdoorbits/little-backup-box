@@ -19,17 +19,18 @@
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
+dos2unix "$CONFIG"
 source "$CONFIG"
+
+#Libraries
+. "${CONFIG_DIR}/lib_oled_message.sh"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # If display support is enabled, display the "Ready. Connect camera" message
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Ready"
-    oled +c "Connect camera"
-    oled s
+    oled_message "Ready" "Connect camera"
 fi
 
 # Wait for camera
@@ -41,10 +42,7 @@ done
 
 # If display support is enabled, notify that the camera is detected
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Camera OK"
-    oled +c "Working..."
-    oled s
+    oled_message "Camera OK" "Working..."
 fi
 
 # Obtain camera model
@@ -59,10 +57,7 @@ gphoto2 --get-all-files --skip-existing
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
-    oled r
-    oled +b "Backup complete"
-    oled +c "Power off"
-    oled s
+    oled_message "Backup complete" "Power off"
 fi
 
 # Check internet connection and send
