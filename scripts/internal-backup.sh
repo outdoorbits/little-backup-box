@@ -85,7 +85,7 @@ sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 
 #Display progress after finish
 if [ $DISP = true ]; then
-    sleep 10
+    sleep 4
 fi
 
 # Kill the status-display.sh script

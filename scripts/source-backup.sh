@@ -103,7 +103,7 @@ fi
 
 #Display progress after finish
 if [ $DISP = true ]; then
-    sleep 2
+    sleep 4
 fi
 
 # Kill the status-display.sh script

@@ -18,67 +18,94 @@
 #######################################################################
 
 function oled_message () {
-        #Parameters:
-        LineCount=$#
-        Lines=( "$@" )
 
-        if [ "${LineCount}" -eq 0 ];
-        then
-                LineCount=4
-                n=0
-                while [ "$n" -lt 4 ]
-                do
-                        Lines[$n]=''
-                        n=$(expr $n + 1)
-                done
-        fi
+# takes up to 4 arguments (lines of the display)
+# leading "-" is interpreted as "force to print inverted"
+# leading "+" is interpreted as "force to print normal"
 
-        #Config
-        FILE_OLED_OLD="/root/oled_old.txt"
-        DisplayLines=(a b c d)
-        #Config
-		LockFile="/root/display.lock"
-		
-		#Wait for Lockfile
-		if [ -f "${LockFile}" ]; then
-			LockFileTime=$(head -n 1 ${LockFile})
-			ActualTime=$(date +%s )
-			while [ $(($ActualTime - $LockFileTime)) == 0 ]
-			do
-				ActualTime=$(date +%s )
-				sleep 0.5
-			done
-		fi
+    #Arguments:
+    LineCount=$#
+    Lines=( "$@" )
 
-		date +%s > $LockFile
-		
-        #fifo display
-        if [ -f "${FILE_OLED_OLD}" ]; then
-			readarray -t OLED_OLD < "${FILE_OLED_OLD}"
-        fi
-
-        n=$LineCount
+    if [ "${LineCount}" -eq 0 ];
+    then
+        LineCount=4
+        n=0
         while [ "$n" -lt 4 ]
         do
-                        Lines[$n]=${OLED_OLD[$(expr $n - $LineCount)]}
-                        n=$(expr $n + 1)
+            Lines[$n]=''
+            n=$(expr $n + 1)
         done
+    fi
 
-        #save Lines to file
-        echo -en "${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}" > "${FILE_OLED_OLD}"
- 
-        #display
-                oled r
-                n=0
-                while [ "${n}" -lt 4 ]
-				do
-                if [ "${n}" -lt "${LineCount}" ];
-                then
-                        oled +R $(expr $n + 1)
-                fi
- 
-                oled +${DisplayLines[$n]} "${Lines[$n]}"
-                n=$(expr $n + 1)
+    #Config
+    FILE_OLED_OLD="/root/oled_old.txt"
+    LockFile="/root/display.lock"
+    DisplayLines=(a b c d)
+
+    #Wait for Lockfile
+    if [ -f "${LockFile}" ]; then
+        LockFileTime=$(head -n 1 ${LockFile})
+        ActualTime=$(date +%s )
+        while [ $(($ActualTime - $LockFileTime)) == 0 ]
+        do
+            ActualTime=$(date +%s )
+            sleep 0.5
         done
-                oled s
+    fi
+
+    date +%s > $LockFile
+
+    #fifo display
+    if [ -f "${FILE_OLED_OLD}" ]; then
+        readarray -t OLED_OLD < "${FILE_OLED_OLD}"
+    fi
+
+    n=$LineCount
+    while [ "${n}" -le 3 ]
+    do
+        Lines[$n]=${OLED_OLD[$(expr $n - $LineCount)]}
+        n=$(expr $n + 1)
+    done
+
+    #save Lines to file
+    echo -en "${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}" > "${FILE_OLED_OLD}"
+
+    #display
+    oled r
+    
+    n=0
+    while [ "${n}" -le 3 ]
+    do
+
+        LINE="${Lines[$n]}"
+        
+        FORCE_FORMAT="norm"
+
+        case "${LINE:0:1}" in 
+            "+")
+                FORCE_FORMAT="norm"
+                LINE=${LINE:1:16}
+                ;;
+            "-")
+                FORCE_FORMAT="inv"
+                LINE=${LINE:1:16}
+                ;;
+        esac
+
+        if [ "${n}" -le "${LineCount}" ] || [ "${FORCE_FORMAT}" = "inv" ];
+        then
+            if [ "${FORCE_FORMAT}" != "norm" ];
+            then
+                oled +R $(expr $n + 1)
+            fi
+        fi
+
+        oled +${DisplayLines[$n]} "${LINE}"
+
+        n=$(expr $n + 1)
+    done
+
+    oled s
 }
+
