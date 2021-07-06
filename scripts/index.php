@@ -83,7 +83,7 @@ $theme = "dark";
 		echo "<script>";
 		echo 'alert("' . L::shutdown_m . '")';
 		echo "</script>";
-		shell_exec('sudo poweroff > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./poweroff.sh');
 	}
 	if (isset($_POST['custom1'])) {
 		shell_exec('sudo pkill -f *backup*');
