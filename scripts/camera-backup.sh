@@ -72,6 +72,4 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
 fi
 
 # Power off
-if [ $POWER_OFF = true ]; then
-    poweroff
-fi
+source "${CONFIG_DIR}/poweroff.sh"

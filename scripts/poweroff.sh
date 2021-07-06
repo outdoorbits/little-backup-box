@@ -28,22 +28,31 @@ FILE_OLED_OLD="/root/oled_old.txt"
 #Libraries
 . "${CONFIG_DIR}/lib_oled_message.sh"
 
+#Arguments
+MODE="$1"
+
 # Power off
-if [ $POWER_OFF = true ]; then
+if [ "$POWER_OFF" = "true" ] || [ "$MODE" = "force" ]; then
+    # umount
     umount "${STORAGE_MOUNT_POINT}"
     umount "${SOURCE_MOUNT_POINT}"
-    
+
     # If display support is enabled, notify that the backup is complete
-    if [ $DISP = true ]; then
-        oled_message "+Backup complete." "+Don't switch off" "+until the green" "+LED is off. Bye!"
+    if [ "$DISP" = "true" ]; then
+        if [ "$MODE" = "force" ];
+        then
+            oled_message "+Power off." "+Don't switch off" "+until the green" "+LED is off. Bye!"
+        else
+            oled_message "+Backup complete." "+Don't switch off" "+until the green" "+LED is off. Bye!"
+        fi
     fi
-    
+
     rm "${FILE_OLED_OLD}"
     
     poweroff
 else
     # If display support is enabled, notify that the backup is complete
-    if [ $DISP = true ]; then
-        oled_message "+Backup complete." "-Don't unplug!" "+Power off by" "+webinferface!"
+    if [ "$DISP" = "true" ]; then
+        oled_message "+Backup complete." "-Don't unplug!" "+Do Power off by" "+webinferface!"
     fi
 fi
