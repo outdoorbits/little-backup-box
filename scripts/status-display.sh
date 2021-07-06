@@ -22,24 +22,46 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-# Set the backup path
-cd "$SOURCE_MOUNT_POINT"
-ID_FILE=$(ls -t *.id | head -n1)
-ID="${ID_FILE%.*}"
-cd
+# get arguments
+if [ -z $1 ];
+then
+    FILES_TO_SYNC=0
+else
+    FILES_TO_SYNC=$1
+fi
 
-# Set the backup path
-BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
+if [ -z $2 ];
+then
+    BACKUP_PATH="/home/pi/BACKUP"
+else
+    BACKUP_PATH=$2
+fi
+
+# Libraries
+. "${CONFIG_DIR}/lib_oled_message.sh"
+
+# Get count of files in storage before backup starts
+FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
 
 while [ true ]; do
-    # Count files on the source device and in the backup destination
+    # Count files in the backup destination
     # Calculate the number of files to be transferred
-    count1=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
-    count2=$(find $BACKUP_PATH -type f | wc -l)
-    result=$((count1 - count2))
-    oled r
-    oled +a "Remaining:"
-    oled +b "$result"
-    oled s
-    sleep 5
+
+    FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
+
+    FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
+    if [ "${FILES_TO_SYNC}" -gt "0" ];
+    then
+        FINISHED_PERCENT=$(expr 100 \* $FILES_SYNCED / $FILES_TO_SYNC)
+
+        PROGRESSBAR_LENGTH=$(expr 16 \* $FILES_SYNCED / $FILES_TO_SYNC)
+        PROGRESSBAR_16="                "
+        PROGRESSBAR=${PROGRESSBAR_16:0:$PROGRESSBAR_LENGTH}
+    else
+        FINISHED_PERCENT=""
+        PROGRESSBAR=""
+    fi
+
+    oled_message "+Backuped files:" "+${FILES_SYNCED} of ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%" "-${PROGRESSBAR}"
+    sleep 2
 done
