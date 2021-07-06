@@ -19,14 +19,13 @@
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
-dos2unix "$CONFIG"
-source "$CONFIG"
 
-#Libraries
-. "${CONFIG_DIR}/lib_oled_message.sh"
+source "$CONFIG"
 
 message="Custom action 1 works!"
 
 if [ $DISP = true ]; then
-  oled_message "$message"
+  oled r
+  oled +a "$message"
+  oled s
 fi

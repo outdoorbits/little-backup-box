@@ -22,9 +22,6 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-#Libraries
-. "${CONFIG_DIR}/lib_oled_message.sh"
-
 # Set the backup path
 cd "$SOURCE_MOUNT_POINT"
 ID_FILE=$(ls -t *.id | head -n1)
@@ -40,6 +37,9 @@ while [ true ]; do
     count1=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
     count2=$(find $BACKUP_PATH -type f | wc -l)
     result=$((count1 - count2))
-    oled_message "Remaining:" "$result"
+    oled r
+    oled +a "Remaining:"
+    oled +b "$result"
+    oled s
     sleep 5
 done

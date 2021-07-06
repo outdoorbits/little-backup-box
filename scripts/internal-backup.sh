@@ -22,15 +22,15 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-#Libraries
-. "${CONFIG_DIR}/lib_oled_message.sh"
-
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # # If display support is enabled, display the "Ready. Source" message
 if [ $DISP = true ]; then
-  oled_message "Ready" "Source..."
+  oled r
+  oled +a "Ready"
+  oled +b "Source..."
+  oled s
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
@@ -49,7 +49,10 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the source device has been mounted
 if [ $DISP = true ]; then
-  oled_message "Source OK" "Working..."
+  oled r
+  oled +a "Source OK"
+  oled +b "Working..."
+  oled s
 fi
 
 # Create  a .id random identifier file if doesn't exist
@@ -75,7 +78,10 @@ sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
-  oled_message "Backup complete" "Power off"
+  oled r
+  oled +a "Backup complete"
+  oled +b "Power off"
+  oled s
 fi
 
 # Check internet connection and send
