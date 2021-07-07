@@ -22,11 +22,11 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-#Config
+# Configuration
 FILE_OLED_OLD="/root/oled_old.txt"
 
-#Libraries
-. "${CONFIG_DIR}/lib_oled_message.sh"
+# Load LCD library
+. "${CONFIG_DIR}/lib-lcd.sh"
 
 #Arguments
 MODE="$1"
@@ -39,8 +39,7 @@ if [ "$POWER_OFF" = "true" ] || [ "$MODE" = "force" ]; then
 
     # If display support is enabled, notify that the backup is complete
     if [ "$DISP" = "true" ]; then
-        if [ "$MODE" = "force" ];
-        then
+        if [ "$MODE" = "force" ]; then
             oled_message "+Power off." "+Do not switch off" "+while the green" "+LED is on. Bye!"
         else
             oled_message "+Backup complete." "+Do not turn off" "+while the green" "+LED is on. Bye!"
@@ -48,7 +47,7 @@ if [ "$POWER_OFF" = "true" ] || [ "$MODE" = "force" ]; then
     fi
 
     rm "${FILE_OLED_OLD}"
-    
+
     poweroff
 else
     # If display support is enabled, notify that the backup is complete
