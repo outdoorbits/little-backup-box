@@ -22,8 +22,8 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-#Libraries
-. "${CONFIG_DIR}/lib_oled_message.sh"
+# Load LCD library
+. "${CONFIG_DIR}/lib-lcd.sh"
 
 message="Custom action 1 works!"
 
