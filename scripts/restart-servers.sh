@@ -22,8 +22,8 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-#Libraries
-. "${CONFIG_DIR}/lib_oled_message.sh"
+# Load LCD library
+. "${CONFIG_DIR}/lib-lcd.sh"
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)

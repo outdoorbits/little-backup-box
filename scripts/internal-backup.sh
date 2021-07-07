@@ -22,8 +22,8 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-#Libraries
-. "${CONFIG_DIR}/lib_oled_message.sh"
+# Load LCD library
+. "${CONFIG_DIR}/lib-lcd.sh"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"

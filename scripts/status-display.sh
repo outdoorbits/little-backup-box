@@ -22,7 +22,7 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-# get arguments
+# Get arguments
 if [ -z $1 ];
 then
     FILES_TO_SYNC=0
@@ -37,10 +37,10 @@ else
     BACKUP_PATH=$2
 fi
 
-# Libraries
-. "${CONFIG_DIR}/lib_oled_message.sh"
+# Load LCD library
+. "${CONFIG_DIR}/lib-lcd.sh"
 
-# Get count of files in storage before backup starts
+# Count of files in storage before backup starts
 FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
 
 while [ true ]; do
