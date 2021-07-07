@@ -41,7 +41,7 @@ if [ "$POWER_OFF" = "true" ] || [ "$MODE" = "force" ]; then
     if [ "$DISP" = "true" ]; then
         if [ "$MODE" = "force" ];
         then
-            oled_message "+Power off." "+Do not switch off" "+while the green" "+LED is on. Bye!"
+            oled_message "+Power off." "+Do not turn off" "+while the green" "+LED is on. Bye!"
         else
             oled_message "+Backup complete." "+Do not turn off" "+while the green" "+LED is on. Bye!"
         fi
