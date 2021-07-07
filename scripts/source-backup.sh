@@ -96,6 +96,8 @@ if [ $DISP = true ]; then
     PID=$!
 fi
 
+# Set the backup path
+BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 # Perform backup using rsync
 if [ $LOG = true ]; then
     sudo rm /root/little-backup-box.log
