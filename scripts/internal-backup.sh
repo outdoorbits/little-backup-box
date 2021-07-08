@@ -22,6 +22,9 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+# Load Mail library
+. "${CONFIG_DIR}/lib-mail.sh"
+
 # Load LCD library
 . "${CONFIG_DIR}/lib-lcd.sh"
 
@@ -100,11 +103,7 @@ fi
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
 if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
-	curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
-		--mail-from $MAIL_USER \
-		--mail-rcpt $MAIL_TO \
-		--user $MAIL_USER':'$MAIL_PASSWORD \
-		-T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Backup complete\n\nBackup log:\n\n${RSYNC_OUTPUT}")
+	send_email "Little Backup Box: Backup complete" "Backup log:\n\n${RSYNC_OUTPUT}"
 fi
 
 # Power off
