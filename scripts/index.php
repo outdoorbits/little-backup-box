@@ -40,6 +40,7 @@ $theme = "dark";
 			<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
 			<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
 			<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
+			<button name="iosbackup"><?php echo L::iosbackup_b; ?></button>
 			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
 		<hr style="margin-bottom: 1em;">
@@ -77,6 +78,12 @@ $theme = "dark";
 		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::internalbackup_m . '")';
+		echo "</script>";
+	}
+	if (isset($_POST['iosbackup'])) {
+		shell_exec('./ios-backup.sh > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::iosbackup_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['shutdown'])) {
