@@ -23,7 +23,7 @@ sudo apt full-upgrade -y
 sudo apt update
 
 # Install the required packages
-sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix
+sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse
 
 # Remove obsolete packages
 sudo apt autoremove -y
@@ -57,6 +57,7 @@ sudo service minidlna start
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >>little-backup-box/scripts/config.cfg
+echo -e '\nMOUNT_IOS_DIR="/home/'$USER'/iOS" # Home directory path' >>little-backup-box/scripts/config.cfg
 mkdir -p /home/$USER/BACKUP
 chown $USER:users -R /home/$USER/BACKUP
 chmod +x little-backup-box/scripts/*.sh
