@@ -54,19 +54,33 @@ CAMERA=$(gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
 STORAGE_MOUNT_POINT="$BAK_DIR/$CAMERA"
 mkdir -p "$STORAGE_MOUNT_POINT"
 
+# Run the status-display.sh script
+if [ $DISP = true ]; then
+    # get number of files to sync
+    FILES_TO_SYNC=$(gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
+
+    source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${STORAGE_MOUNT_POINT}" &
+    PID=$!
+fi
+
 # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
 cd "$STORAGE_MOUNT_POINT"
-gphoto2 --get-all-files --skip-existing
+GPHOTO_OUTPUT=$(gphoto2 --get-all-files --skip-existing --list-files)
 
-# If display support is enabled, notify that the backup is complete
+
+#Display progress after finish
 if [ $DISP = true ]; then
-    oled_message "Backup complete" "Power off"
+    sleep 4
 fi
+
+# Kill the status-display.sh script
+kill $PID
 
 # Check internet connection and send
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
-    send_email "Little Backup Box" "Backup complete."
+if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
+    send_email "Little Backup Box: Backup complete" "Type: Camera\nCamera:${CAMERA}\n\nBackup log:\n\n${GPHOTO_OUTPUT}"
 fi
 
 # Power off

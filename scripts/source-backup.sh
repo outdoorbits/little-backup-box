@@ -121,7 +121,7 @@ kill $PID
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
 if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
-	send_email "Little Backup Box: Backup complete" "Backup log:\n\n${RSYNC_OUTPUT}"
+    send_email "Little Backup Box: Backup complete" "Type: Source\nSource-ID:${ID}\n\nBackup log:\n\n${RSYNC_OUTPUT}"
 fi
 
 # Power off

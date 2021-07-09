@@ -93,7 +93,7 @@ function oled_message () {
                 ;;
         esac
 
-        if [ "${n}" -le "${LineCount}" ] || [ "${FORCE_FORMAT}" = "neg" ];
+        if [ "${n}" -lt "${LineCount}" ] || [ "${FORCE_FORMAT}" = "neg" ];
         then
             if [ "${FORCE_FORMAT}" != "pos" ];
             then

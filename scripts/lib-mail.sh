@@ -26,7 +26,7 @@ function send_email () {
     SUBJECT=$1
     TEXT_PLAIN=$2
     TEXT_HTML=$3
-
+    
     # Config
     CONFIG_DIR=$(dirname "$0")
     CONFIG="${CONFIG_DIR}/config.cfg"
@@ -37,7 +37,7 @@ function send_email () {
     TEXT=""
     
     #Mail-body
-    if [ "${MAIL_HTML}" = "true" ];
+    if [ "${MAIL_HTML}" = true ] && [ ! -z "${TEXT_HTML}" ];
     then
         TEXT="Content-Type: multipart/alternative;boundary=${BOUNDARY}\n\n$TEXT_PLAIN\n\n--${BOUNDARY}\nContent-type: text/html;charset=utf-8\n\n$TEXT_HTML\n\n--${BOUNDARY}--"
     else
