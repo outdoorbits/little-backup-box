@@ -59,6 +59,7 @@ git clone https://github.com/dmpop/little-backup-box.git
 echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >>little-backup-box/scripts/config.cfg
 echo -e '\nMOUNT_IOS_DIR="/home/'$USER'/iOS" # Home directory path' >>little-backup-box/scripts/config.cfg
 mkdir -p /home/$USER/BACKUP
+mkdir -p /home/$USER/iOS
 chown $USER:users -R /home/$USER/BACKUP
 chmod +x little-backup-box/scripts/*.sh
 

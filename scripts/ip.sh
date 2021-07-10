@@ -33,5 +33,5 @@ done
 
 if [ ! -z $SMTP_SERVER ]; then
     IP=$(hostname -I | cut -d' ' -f1)
-    send_email "Little Backup Box: IP ${IP}" "http://${IP}:8000" "<a href='http://${IP}:8000'>Little Backup Box Web-UI: http://${IP}:8000</a>"
+    send_email "Little Backup Box IP: ${IP}" "http://${IP}:8000" "Little Backup Box web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a>"
 fi
