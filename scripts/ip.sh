@@ -22,6 +22,9 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+# Load Mail library
+. "${CONFIG_DIR}/lib-mail.sh"
+
 ping -c1 google.com &>/dev/null
 while [ $? != 0 ]; do
     sleep 10
@@ -30,9 +33,5 @@ done
 
 if [ ! -z $SMTP_SERVER ]; then
     IP=$(hostname -I | cut -d' ' -f1)
-    curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
-        --mail-from $MAIL_USER \
-        --mail-rcpt $MAIL_TO \
-        --user $MAIL_USER':'$MAIL_PASSWORD \
-        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box: IP '$IP'\n\n'$IP'\n')
+    send_email "Little Backup Box: IP ${IP}" "http://${IP}:8000" "<a href='http://${IP}:8000'>Little Backup Box Web-UI: http://${IP}:8000</a>"
 fi

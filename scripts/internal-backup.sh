@@ -22,6 +22,9 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+# Load Mail library
+. "${CONFIG_DIR}/lib-mail.sh"
+
 # Load LCD library
 . "${CONFIG_DIR}/lib-lcd.sh"
 
@@ -77,9 +80,9 @@ fi
 # Perform backup using rsync
 if [ $LOG = true ]; then
   sudo rm /root/little-backup-box.log
-  rsync -avh --log-file=little-backup-box.log "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+  RSYNC_OUTPUT=$(rsync -avh --log-file=little-backup-box.log "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH")
 else
-  rsync -avh "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+  RSYNC_OUTPUT=$(rsync -avh "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH")
 fi
 sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 
@@ -91,20 +94,11 @@ fi
 # Kill the status-display.sh script
 kill $PID
 
-# If display support is enabled, notify that the backup is complete
-if [ $DISP = true ]; then
-  oled_message "Backup complete" "Power off"
-fi
-
 # Check internet connection and send
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
 if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
-	curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
-		--mail-from $MAIL_USER \
-		--mail-rcpt $MAIL_TO \
-		--user $MAIL_USER':'$MAIL_PASSWORD \
-		-T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Backup complete\n\nBackup log:\n\n${RSYNC_OUTPUT}")
+    send_email "Little Backup Box: Backup complete" "Type: Internal\nSource-ID:${ID}\n\nBackup log:\n\n${RSYNC_OUTPUT}"
 fi
 
 # Power off
