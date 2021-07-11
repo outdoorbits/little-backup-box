@@ -37,9 +37,10 @@ $theme = "dark";
 	</nav>
 	<div class="card">
 		<form class="text-center" style="margin-top: 1em;" method="POST">
-			<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
-			<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
-			<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
+			<button name="backup_storage_external"><?php echo L::backup_storage_external_b; ?></button>
+			<button name="backup_storage_internal"><?php echo L::backup_storage_internal_b; ?></button>
+			<button name="backup_camera_external"><?php echo L::backup_camera_external_b; ?></button>
+			<button name="backup_camera_internal"><?php echo L::backup_camera_internal_b; ?></button>
 			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
 		<hr style="margin-bottom: 1em;">
@@ -55,53 +56,58 @@ $theme = "dark";
 		<p><?php echo L::help_txt; ?></p>
 	</div>
 	<?php
-	if (isset($_POST['sourcebackup'])) {
-		shell_exec('sudo pkill -f source-backup*');
-		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./source-backup.sh > /dev/null 2>&1 & echo $!');
+	if (isset($_POST['backup_storage_external'])) {
+		shell_exec('sudo pkill -f backup*');
+		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh storage external > /dev/null 2>&1 & echo $!');
 		echo "<script>";
-		echo 'alert("' . L::sourcebackup_m . '")';
+		echo 'alert("' . L::backup_storage_external_m . '")';
 		echo "</script>";
 	}
-	if (isset($_POST['camerabackup'])) {
-		shell_exec('sudo pkill -f camera-backup*');
-		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
+	if (isset($_POST['backup_storage_internal'])) {
+		shell_exec('sudo pkill -f backup*');
+		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh storage internal > /dev/null 2>&1 & echo $!');
 		echo "<script>";
-		echo 'alert("' . L::camerabackup_m . '")';
+		echo 'alert("' . L::backup_storage_internal_m . '")';
 		echo "</script>";
 	}
-	if (isset($_POST['internalbackup'])) {
-		shell_exec('sudo pkill -f internal-backup*');
-		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
+	if (isset($_POST['backup_camera_external'])) {
+		shell_exec('sudo pkill -f backup*');
+		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh camera external > /dev/null 2>&1 & echo $!');
 		echo "<script>";
-		echo 'alert("' . L::internalbackup_m . '")';
+		echo 'alert("' . L::backup_camera_external_m . '")';
 		echo "</script>";
 	}
+	if (isset($_POST['backup_camera_internal'])) {
+		shell_exec('sudo pkill -f backup*');
+		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh camera internal > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::backup_camera_internal_m . '")';
+		echo "</script>";
+	}
+
 	if (isset($_POST['shutdown'])) {
 		echo "<script>";
 		echo 'alert("' . L::shutdown_m . '")';
 		echo "</script>";
-		shell_exec('sudo ./poweroff.sh force');
+		shell_exec('sudo /home/pi/little-backup-box/scripts/poweroff.sh force');
 	}
 	if (isset($_POST['custom1'])) {
-		shell_exec('sudo pkill -f *backup*');
-		shell_exec('sudo ./custom1.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo pkill -f backup*');
+		shell_exec('sudo /home/pi/little-backup-box/scripts/custom1.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::custom1_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['custom2'])) {
-		shell_exec('sudo pkill -f *backup*');
-		shell_exec('sudo ./custom2.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo pkill -f backup*');
+		shell_exec('sudo /home/pi/little-backup-box/scripts/custom2.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::custom2_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['custom3'])) {
-		shell_exec('sudo pkill -f *backup*');
-		shell_exec('sudo ./custom3.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo pkill -f backup*');
+		shell_exec('sudo /home/pi/little-backup-box/scripts/custom3.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::custom3_m . '")';
 		echo "</script>";
