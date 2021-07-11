@@ -33,7 +33,7 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # If display support is enabled, display the "Ready. Connect camera" message
 if [ $DISP = true ]; then
-    oled_message "Ready" "Connect camera"
+    lcd_message "Ready" "Connect camera"
 fi
 
 # Wait for camera
@@ -45,7 +45,7 @@ done
 
 # If display support is enabled, notify that the camera is detected
 if [ $DISP = true ]; then
-    oled_message "Camera OK" "Working..."
+    lcd_message "Camera OK" "Working..."
 fi
 
 # Obtain camera model

@@ -36,7 +36,7 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # If display support is enabled, display the "Ready. Connect camera" message
 if [ $DISP = true ]; then
-	oled_message "Connect" "iOS device"
+	lcd_message "Connect" "iOS device"
 fi
 
 # Mount iOS device
@@ -46,7 +46,7 @@ SOURCE_DIR="$MOUNT_IOS_DIR/DCIM/100APPLE"
 # Exit with a message if iOS device is not mounted
 if [ -z "$(ls -A $MOUNT_IOS_DIR)" ]; then
 	if [ $DISP = true ]; then
-		oled_message "No iOS device" "Try again"
+		lcd_message "No iOS device" "Try again"
 		exit 1
 	fi
 fi

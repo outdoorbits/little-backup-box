@@ -36,7 +36,7 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # If display support is enabled, display the "Ready. Connect camera" message
 if [ $DISP = true ]; then
-    oled_message "Ready" "Insert storage"
+    lcd_message "Ready" "Insert storage"
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
@@ -55,7 +55,7 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
-    oled_message "Storage OK" "Insert source"
+    lcd_message "Storage OK" "Insert source"
 fi
 
 # Wait for a source device
@@ -74,7 +74,7 @@ sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the source device has been mounted
 if [ $DISP = true ]; then
-    oled_message "Source OK" "Working..."
+    lcd_message "Source OK" "Working..."
 fi
 
 # Create  a .id random identifier file if doesn't exist

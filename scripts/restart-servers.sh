@@ -49,5 +49,5 @@ if [ $DISP = true ]; then
   storsize=$(df /dev/"$STORAGE_DEV" -h --output=size | sed '1d' | tr -d ' ')
   storused=$(df /dev/"$STORAGE_DEV" -h --output=pcent | sed '1d' | tr -d ' ')
   storfree=$(df /dev/"$STORAGE_DEV" -h --output=avail | sed '1d' | tr -d ' ')
-  oled_message "Free: $storfree"
+  lcd_message "Free: $storfree"
 fi

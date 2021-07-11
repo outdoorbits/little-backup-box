@@ -36,5 +36,5 @@ until [ ! -z "$ip" ]; do
 done
 
 if [ $DISP = true ]; then
-  oled_message "LittleBackupBox" "$ip"
+  lcd_message "LittleBackupBox" "$ip"
 fi

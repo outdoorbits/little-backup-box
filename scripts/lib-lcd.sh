@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-function oled_message () {
+function lcd_message () {
 
 # takes up to 4 arguments (lines of the display)
 # leading "-" is interpreted as "force to print inverted"
