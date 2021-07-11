@@ -41,7 +41,7 @@ fi
 
 # Mount iOS device
 ifuse $MOUNT_IOS_DIR -o allow_other
-SOURCE_DIR="$MOUNT_IOS_DIR/DCIM/100APPLE"
+SOURCE_DIR="$MOUNT_IOS_DIR/DCIM"
 
 # Exit with a message if iOS device is not mounted
 if [ -z "$(ls -A $MOUNT_IOS_DIR)" ]; then
@@ -55,21 +55,45 @@ fi
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
+# If display support is enabled, display the "Ready. Connect camera" message
+if [ $DISP = true ]; then
+    lcd_message "Ready" "Insert storage"
+fi
+
+# Wait for a USB storage device (e.g., a USB flash drive)
+STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
+while [ -z "${STORAGE}" ]; do
+    sleep 1
+    STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
+done
+
+# When the USB storage device is detected, mount it
+mount /dev/"${STORAGE_DEV}" "${STORAGE_MOUNT_POINT}"
+
+# Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
+sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
+sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
+
+# If display support is enabled, notify that the storage device has been mounted
+if [ $DISP = true ]; then
+    lcd_message "Storage OK" "Working..."
+fi
+
 # Run the status-display.sh script
 if [ $DISP = true ]; then
 	# Get number of files to sync
-	FILES_TO_SYNC=$(rsync -avh --stats --dry-run "$SOURCE_DIR"/ "$BAK_DIR" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+	FILES_TO_SYNC=$(rsync -avh --stats --dry-run "$SOURCE_DIR"/ "${STORAGE_MOUNT_POINT}/iOS" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
-	source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "$BAK_DIR" &
+	source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${STORAGE_MOUNT_POINT}/iOS" &
 	PID=$!
 fi
 
 # Perform backup using rsync
 if [ $LOG = true ]; then
 	sudo rm /root/little-backup-box.log
-	RSYNC_OUTPUT=$(rsync -avh --stats --log-file=little-backup-box.log "$SOURCE_DIR"/ "$BAK_DIR")
+	RSYNC_OUTPUT=$(rsync -avh --stats --log-file=little-backup-box.log "$SOURCE_DIR"/ "${STORAGE_MOUNT_POINT}/iOS")
 else
-	RSYNC_OUTPUT=$(rsync -avh --stats "$SOURCE_DIR"/ "$BAK_DIR")
+	RSYNC_OUTPUT=$(rsync -avh --stats "$SOURCE_DIR"/ "${STORAGE_MOUNT_POINT}/iOS")
 fi
 
 # Display progress after finish
