@@ -17,6 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# Dont't start as root
+if [[ $EUID -eq 0 ]]; then
+   echo "Please start this script als non-root-user, e.g. as user 'pi'" 
+   exit 1
+fi
+
 # Update source and perform the full system upgrade
 sudo apt update
 sudo apt full-upgrade -y
@@ -63,9 +69,10 @@ chmod +x little-backup-box/scripts/*.sh
 
 # Prompt to choose the default backup mode
 BACKTITLE="Little Backup Box"
-OPTIONS=(1 "Source backup"
-    2 "Camera backup"
-    3 "Internal backup")
+OPTIONS=(1 "Source backup - external storage"
+    2 "Source backup - internal storage"
+    3 "Camera backup - external storage"
+    4 "Camera backup - internal storage")
 CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
     --title "Backup Mode" \
@@ -78,19 +85,25 @@ case $CHOICE in
 1)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/source-backup.sh"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh storage external >> /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 2)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh storage internal >> /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 3)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera external >> /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
+4)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera internal >> /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 esac
