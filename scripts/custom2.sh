@@ -28,5 +28,5 @@ source "$CONFIG"
 message="Custom action 2 works!"
 
 if [ $DISP = true ]; then
-  oled_message "$message"
+  lcd_message "$message"
 fi

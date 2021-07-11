@@ -41,9 +41,9 @@ if [ "$POWER_OFF" = "true" ] || [ "$MODE" = "force" ]; then
     if [ "$DISP" = "true" ]; then
         if [ "$MODE" = "force" ];
         then
-            oled_message "+Power off." "+Do not turn off" "+while the green" "+LED is on. Bye!"
+            lcd_message "+Power off." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
         else
-            oled_message "+Backup complete." "+Do not turn off" "+while the green" "+LED is on. Bye!"
+            lcd_message "+Backup complete." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
         fi
     fi
 
@@ -53,6 +53,6 @@ if [ "$POWER_OFF" = "true" ] || [ "$MODE" = "force" ]; then
 else
     # If display support is enabled, notify that the backup is complete
     if [ "$DISP" = "true" ]; then
-        oled_message "+Backup complete." "-Do not unplug!" "+Power down via" "+web UI"
+        lcd_message "+Backup complete." "-Do not unplug!" "+Power down via" "+web UI"
     fi
 fi

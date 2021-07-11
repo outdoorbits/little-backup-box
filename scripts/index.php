@@ -41,7 +41,13 @@ $theme = "dark";
 			<button name="backup_storage_internal"><?php echo L::backup_storage_internal_b; ?></button>
 			<button name="backup_camera_external"><?php echo L::backup_camera_external_b; ?></button>
 			<button name="backup_camera_internal"><?php echo L::backup_camera_internal_b; ?></button>
-			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
+			<button name="iosbackup"><?php echo L::iosbackup_b; ?></button>
+			
+		</form>
+		<hr>
+		<form class="text-center" style="margin-top: 1em;" method="POST">
+		<button name="reboot"><?php echo L::reboot_b; ?></button>
+		<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
 		<hr style="margin-bottom: 1em;">
 		<form class="text-center" method="POST">
@@ -84,7 +90,18 @@ $theme = "dark";
 		echo 'alert("' . L::backup_camera_internal_m . '")';
 		echo "</script>";
 	}
-
+	if (isset($_POST['iosbackup'])) {
+		shell_exec('./ios-backup.sh > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::iosbackup_m . '")';
+		echo "</script>";
+	}
+	if (isset($_POST['reboot'])) {
+		echo "<script>";
+		echo 'alert("' . L::reboot_m . '")';
+		echo "</script>";
+		shell_exec('sudo reboot');
+	}
 	if (isset($_POST['shutdown'])) {
 		echo "<script>";
 		echo 'alert("' . L::shutdown_m . '")';

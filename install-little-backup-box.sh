@@ -29,7 +29,7 @@ sudo apt full-upgrade -y
 sudo apt update
 
 # Install the required packages
-sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix
+sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse
 
 # Remove obsolete packages
 sudo apt autoremove -y
@@ -62,9 +62,12 @@ sudo service minidlna start
 # Clone and configure Little Backup Box
 cd
 git clone https://github.com/dmpop/little-backup-box.git
-echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >>little-backup-box/scripts/config.cfg
+echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Internal backup directory path' >>little-backup-box/scripts/config.cfg
+echo -e '\nMOUNT_IOS_DIR="/home/'$USER'/iOS" # iOS device mount directory path' >>little-backup-box/scripts/config.cfg
 mkdir -p /home/$USER/BACKUP
+mkdir -p /home/$USER/iOS
 chown $USER:users -R /home/$USER/BACKUP
+chown $USER:users -R /home/$USER/iOS
 chmod +x little-backup-box/scripts/*.sh
 
 # Prompt to choose the default backup mode
