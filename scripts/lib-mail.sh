@@ -33,6 +33,9 @@ function send_email () {
     dos2unix "$CONFIG"
     source "$CONFIG"
 
+    # Load LOG library
+    . "${CONFIG_DIR}/lib-log.sh"
+    
     BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
     TEXT=""
     
@@ -54,4 +57,6 @@ function send_email () {
             --user $MAIL_USER':'$MAIL_PASSWORD \
             -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: ${SUBJECT}\n${TEXT}")
     fi
+    
+    log_to_file "${SUBJECT}\n${TEXT}"
 }

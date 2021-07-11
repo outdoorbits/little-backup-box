@@ -35,15 +35,19 @@ then
     DEST_MODE="internal"
 fi
 
-# overwrite logfile
-echo "Source: ${SOURCE_MODE}" > little-backup-box.log
-echo "Destination:: ${DEST_MODE}" >> little-backup-box.log
-
 # Load Mail library
 . "${CONFIG_DIR}/lib-mail.sh"
 
 # Load LCD library
 . "${CONFIG_DIR}/lib-lcd.sh"
+
+# Load LOG library
+. "${CONFIG_DIR}/lib-log.sh"
+
+
+# overwrite logfile
+log_to_file "Source: ${SOURCE_MODE}"
+log_to_file "Destination: ${DEST_MODE}"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
@@ -59,7 +63,7 @@ then
     # If display support is enabled, display the "Ready. Connect camera" message
     
     if [ $DISP = true ]; then
-        oled_message "Ready" "Insert storage"
+        lcd_message "Ready" "Insert storage"
     fi
     
     # Wait for a USB storage device (e.g., a USB flash drive)
@@ -77,7 +81,7 @@ then
     
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        oled_message "Ext.Storage OK" "Insert source"
+        lcd_message "Ext.Storage OK" "Insert source"
     fi
 else
     # internal mode
@@ -85,7 +89,7 @@ else
     
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        oled_message "Int.Storage OK" "Insert source"
+        lcd_message "Int.Storage OK" "Insert source"
     fi
 fi
 
@@ -100,7 +104,7 @@ then
     # Source=storage
     # If display support is enabled, display the "Ready. Connect source" message
     if [ $DISP = true ]; then
-        oled_message "Ready" "Insert source"
+        lcd_message "Ready" "Insert source"
     fi
     
     # Source device
@@ -125,7 +129,7 @@ then
     
     # If display support is enabled, notify that the source device has been mounted
     if [ $DISP = true ]; then
-        oled_message "Source OK" "Working..."
+        lcd_message "Source OK" "Working..."
     fi
     
     # Create  a .id random identifier file if doesn't exist
@@ -147,7 +151,7 @@ else
     # Source=camera
     # If display support is enabled, display the "Ready. Connect camera" message
     if [ $DISP = true ]; then
-        oled_message "Ready" "Connect camera"
+        lcd_message "Ready" "Connect camera"
     fi
 
     # Wait for camera
@@ -159,7 +163,7 @@ else
 
     # If display support is enabled, notify that the camera is detected
     if [ $DISP = true ]; then
-        oled_message "Camera OK" "Working..."
+        lcd_message "Camera OK" "Working..."
     fi
 
     # Obtain camera model

@@ -12,9 +12,16 @@ $theme = "dark";
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/classless.css">
+	<script>
+        function refreshIFrame() {
+            var x = document.getElementById("logscreen");
+            x.contentWindow.location.reload();
+            var t = setTimeout(refreshIFrame, 2000);
+        }
+    </script>
 </head>
 
-<body>
+<body onload="refreshIFrame()">
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
 		if (window.history.replaceState) {
@@ -55,6 +62,11 @@ $theme = "dark";
 			<button name="custom2"><?php echo L::custom2_b; ?></button>
 			<button name="custom3"><?php echo L::custom3_b; ?></button>
 		</form>
+	</div>
+	<div class="card" style="margin-top: 3em;">
+		<h2 style="margin-top: 0em;"><?php echo L::logscreen; ?></h2>
+		<hr>
+		<iframe id="logscreen" src="tmp/little-backup-box.log"  width="100%" height="200" style="background: #FFFFFF;"></iframe>
 	</div>
 	<div class="card" style="margin-top: 3em;">
 		<h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
