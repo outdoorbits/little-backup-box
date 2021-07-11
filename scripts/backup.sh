@@ -194,7 +194,7 @@ if [ $DISP = true ]; then
     PID=$!
 fi
 
-# Perform backup using rsync
+# Perform backup using source-specific method
 if [ "${SOURCE_MODE}" = "storage" ];
 then
     # Source=storage

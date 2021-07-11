@@ -64,28 +64,28 @@ $theme = "dark";
 	<?php
 	if (isset($_POST['backup_storage_external'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh storage external > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./backup.sh storage external > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_storage_external_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['backup_storage_internal'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh storage internal > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./backup.sh storage internal > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_storage_internal_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['backup_camera_external'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh camera external > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./backup.sh camera external > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_camera_external_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['backup_camera_internal'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh camera internal > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./backup.sh camera internal > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_camera_internal_m . '")';
 		echo "</script>";
