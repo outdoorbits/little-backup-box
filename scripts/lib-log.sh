@@ -32,6 +32,5 @@ function log_to_file () {
 #     source "$CONFIG"
 
     LOGFILE="${CONFIG_DIR}/tmp/little-backup-box.log"
-    mkdir -p "${CONFIG_DIR}/tmp"
     sed -i "1s/^/$MESSAGE\n/" "${LOGFILE}"
 }

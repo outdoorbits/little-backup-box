@@ -17,25 +17,34 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+########################################################################################
 # To extend, just use the elif-section-examples
+########################################################################################
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-# get arguments: SOURCE_MODE DEST_MODE
-SOURCE_MODE="storage"
-if [ "${1}" = "camera" ];
-then
-    SOURCE_MODE="camera"
+##################################################################### < Manage arguments
+################### To integrate a new method, just add the methods argument to the list
+####################################below, look at the examples, mind the spaces arround
+
+# Methods for  source
+if [[ " storage camera " =~ " ${1} " ]]; then
+    SOURCE_MODE="${1}"
+else
+    SOURCE_MODE="storage"
 fi
 
-DEST_MODE="external"
-if [ "${2}" = "internal" ];
-then
-    DEST_MODE="internal"
+# Methods for destination
+if [[ " internal external " =~ " ${2} " ]]; then
+    DEST_MODE="${2}"
+else
+    DEST_MODE="external"
 fi
+
+##################################################################### Manage arguments >
 
 # Load Mail library
 . "${CONFIG_DIR}/lib-mail.sh"
@@ -58,8 +67,9 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 umount "${STORAGE_MOUNT_POINT}" || /bin/true
 umount "${SOURCE_MOUNT_POINT}" || /bin/true
 
-################################################################## Manage storage device
+################################################################ < Manage storage device
 ########### To integrate a new method, just add a new elif-section, look at the examples
+
 if [ "${DEST_MODE}" = "external" ];
 then
     # external mode
@@ -84,7 +94,7 @@ then
     
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Ext.Storage OK" "Insert source"
+        lcd_message "Ext.Storage OK"
     fi
 
 # elif [ "${DEST_MODE}" = "YourNewStorageMethod" ];
@@ -102,15 +112,17 @@ else
     
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Int.Storage OK" "Insert source"
+        lcd_message "Int.Storage OK"
     fi
 fi
+
+############################################################### Manage storage device >
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-################################################################## Manage source device
+################################################################ < Manage source device
 ########## To integrate a new method, just add a new elif-section, look at the examples
 if [ "${SOURCE_MODE}" = "storage" ];
 then
@@ -200,14 +212,18 @@ else
     SOURCE_IDENTIFIER="Camera: ${CAMERA}"
 fi
 
+################################################################ Manage source device >
 
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
-####################################################### Run the status-display.sh script
-########### To integrate a new method, just add a new elif-section, look at the examples
+
 if [ $DISP = true ]; then
     # get number of files to sync
+    
+########################################################## < get number of files to sync
+########### To integrate a new method, just add a new elif-section, look at the examples
+
     if [ "${SOURCE_MODE}" = "storage" ];
     then
         # Source=storage
@@ -225,12 +241,15 @@ if [ $DISP = true ]; then
         cd
     fi
     
+########################################################## get number of files to sync >
+    
     source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${BACKUP_PATH}" &
     PID=$!
 fi
 
-############################################ Perform backup using source-specific method
+########################################## < Perform backup using source-specific method
 ########### To integrate a new method, just add a new elif-section, look at the examples
+
 if [ "${SOURCE_MODE}" = "storage" ];
 then
     # Source=storage
@@ -260,6 +279,9 @@ else
     fi
     cd
 fi
+
+########################################## Perform backup using source-specific method >
+
 
 #Display progress after finish
 if [ $DISP = true ]; then
