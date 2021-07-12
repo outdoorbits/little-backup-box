@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# Dont't start as root
+# Don't start as root
 if [[ $EUID -eq 0 ]]; then
    echo "Please start this script als non-root-user, e.g. as user 'pi'" 
    exit 1

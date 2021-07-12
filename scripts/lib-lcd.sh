@@ -26,7 +26,19 @@ function lcd_message () {
     #Arguments:
     LineCount=$#
     Lines=( "$@" )
+    
+    # Load LOG library
+    . "${CONFIG_DIR}/lib-log.sh"
 
+    # log
+    n=$LineCount
+    while [ "${n}" -gt 0 ]
+    do
+        log_to_file "${Lines[$n]}"
+        n=$(expr $n - 1)
+    done
+    
+    # clear screen
     if [ "${LineCount}" -eq 0 ];
     then
         LineCount=4
