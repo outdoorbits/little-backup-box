@@ -17,6 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# To extend, just use the elif-section-examples
+
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
@@ -56,7 +58,8 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 umount "${STORAGE_MOUNT_POINT}" || /bin/true
 umount "${SOURCE_MOUNT_POINT}" || /bin/true
 
-# Storage device
+################################################################## Manage storage device
+########### To integrate a new method, just add a new elif-section, look at the examples
 if [ "${DEST_MODE}" = "external" ];
 then
     # external mode
@@ -83,6 +86,16 @@ then
     if [ $DISP = true ]; then
         lcd_message "Ext.Storage OK" "Insert source"
     fi
+
+# elif [ "${DEST_MODE}" = "YourNewStorageMethod" ];
+# then
+#     if [ $DISP = true ]; then
+#         lcd_message "Ready" "Insert NewStorageType"
+#         ...
+#         # do not forget to set
+#         STORAGE_PATH
+#     fi
+
 else
     # internal mode
     STORAGE_PATH="${BAK_DIR}"
@@ -97,8 +110,8 @@ fi
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-# Wait for a source device
-# takes first device found
+################################################################## Manage source device
+########## To integrate a new method, just add a new elif-section, look at the examples
 if [ "${SOURCE_MODE}" = "storage" ];
 then
     # Source=storage
@@ -147,6 +160,18 @@ then
     
     # SOURCE_IDENTIFIER
     SOURCE_IDENTIFIER="Source-ID: ${ID}"
+    
+# elif [ "${SOURCE_MODE}" = "YourNewSourceMethod" ];
+# then
+#     if [ $DISP = true ]; then
+#         lcd_message "Ready" "Insert NewSourceType"
+#         ...
+#         # do not forget to set
+#         BACKUP_PATH
+#         and
+#         SOURCE_IDENTIFIER
+#     fi
+
 else
     # Source=camera
     # If display support is enabled, display the "Ready. Connect camera" message
@@ -179,13 +204,19 @@ fi
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
-# Run the status-display.sh script
+####################################################### Run the status-display.sh script
+########### To integrate a new method, just add a new elif-section, look at the examples
 if [ $DISP = true ]; then
     # get number of files to sync
     if [ "${SOURCE_MODE}" = "storage" ];
     then
         # Source=storage
         FILES_TO_SYNC=$(rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_MOUNT_POINT}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+    
+#     elif [ "${SOURCE_MODE}" = "YourNewSourceMethod" ];
+#     then
+#         FILES_TO_SYNC=...
+    
     else
         # Source=camera
         mkdir -p "${BACKUP_PATH}"
@@ -198,7 +229,8 @@ if [ $DISP = true ]; then
     PID=$!
 fi
 
-# Perform backup using source-specific method
+############################################ Perform backup using source-specific method
+########### To integrate a new method, just add a new elif-section, look at the examples
 if [ "${SOURCE_MODE}" = "storage" ];
 then
     # Source=storage
@@ -207,6 +239,15 @@ then
     else
         SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
     fi
+
+#     elif [ "${SOURCE_MODE}" = "YourNewSourceMethod" ];
+#     then
+#     if [ $LOG = true ]; then
+#         SYNC_OUTPUT=$(...)
+#     else
+#         SYNC_OUTPUT=$(...)
+#     fi
+
 else
     # Source=camera
     # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
