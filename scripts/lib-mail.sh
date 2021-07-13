@@ -23,9 +23,9 @@ function send_email () {
 # sendmail "$Subject" "$Text_plain" "$Text_HTML (optional)"
 
     # Arguments
-    SUBJECT=$1
-    TEXT_PLAIN=$2
-    TEXT_HTML=$3
+    SUBJECT="${1}"
+    TEXT_PLAIN="${2}"
+    TEXT_HTML="${3}"
     
     # Config
     CONFIG_DIR=$(dirname "$0")
@@ -58,5 +58,5 @@ function send_email () {
             -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: ${SUBJECT}\n${TEXT}")
     fi
     
-    log_to_file "${SUBJECT}\n${TEXT}"
+    log_to_file "Mail:\n${SUBJECT}\n${TEXT}"
 }

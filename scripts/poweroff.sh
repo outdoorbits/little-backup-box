@@ -47,7 +47,7 @@ if [ "$POWER_OFF" = "true" ] || [ "$MODE" = "force" ]; then
         fi
     fi
 
-    rm "${FILE_OLED_OLD}"
+    echo "" > "${FILE_OLED_OLD}"
     rm "${FILE_LOG}"
 
     poweroff

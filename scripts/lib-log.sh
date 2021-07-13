@@ -36,8 +36,8 @@ function log_to_file () {
    if [ ! -f "${LOGFILE}" ];
     then
         mkdir -p "${CONFIG_DIR}/tmp"
-        echo "-----------" > "${LOGFILE}"
+        echo "" > "${LOGFILE}"
     fi
     
-    sed -i "1s/^/$MESSAGE\n/" "${LOGFILE}"
+    echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${LOGFILE})" > "${LOGFILE}"
 }

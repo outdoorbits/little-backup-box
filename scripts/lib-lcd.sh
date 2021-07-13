@@ -30,26 +30,6 @@ function lcd_message () {
     # Load LOG library
     . "${CONFIG_DIR}/lib-log.sh"
 
-    # log
-    n=$LineCount
-    while [ "${n}" -gt 0 ]
-    do
-        log_to_file "${Lines[$n]}"
-        n=$(expr $n - 1)
-    done
-    
-    # clear screen
-    if [ "${LineCount}" -eq 0 ];
-    then
-        LineCount=4
-        n=0
-        while [ "$n" -lt 4 ]
-        do
-            Lines[$n]=''
-            n=$(expr $n + 1)
-        done
-    fi
-
     #Config
     FILE_OLED_OLD="/root/oled_old.txt"
     LockFile="/root/display.lock"
@@ -84,9 +64,11 @@ function lcd_message () {
     echo -en "${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}" > "${FILE_OLED_OLD}"
 
     #display
-    oled r
     
+    LogLines=""
     n=0
+    
+    oled r
     while [ "${n}" -le 3 ]
     do
 
@@ -114,10 +96,22 @@ function lcd_message () {
         fi
 
         oled +${DisplayLines[$n]} "${LINE}"
+        
 
+        if [ ! -z "${LogLines}" ];
+        then
+            LogLines="${LogLines}\n"
+        fi
+        LogLines="${LogLines}${LINE}"
+        
         n=$(expr $n + 1)
     done
-
     oled s
+    
+    # log
+    if [ ! -z "${LogLines}" ];
+    then
+        log_to_file "${LogLines}"
+    fi
 }
 
