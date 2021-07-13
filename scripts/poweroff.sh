@@ -25,6 +25,7 @@ source "$CONFIG"
 # Configuration
 FILE_OLED_OLD="/root/oled_old.txt"
 FILE_LOG="/home/pi/little-backup-box/scripts/tmp/little-backup-box.log"
+FSCK_LOG="/home/pi/little-backup-box/scripts/tmp/fsck.log"
 # Load LCD library
 . "${CONFIG_DIR}/lib-lcd.sh"
 
@@ -49,6 +50,7 @@ if [ "$POWER_OFF" = "true" ] || [ "$MODE" = "force" ]; then
 
     rm "${FILE_OLED_OLD}"
     rm "${FILE_LOG}"
+    rm "${FSCK_LOG}"
 
     poweroff
 else
