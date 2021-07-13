@@ -46,8 +46,20 @@ function lcd_message () {
         done
     fi
 
-    date +%s > $LockFile
+    date +%s > "${LockFile}"
 
+    # clear screen
+    if [ "${LineCount}" -eq 0 ];
+    then
+        LineCount=4
+        n=0
+        while [ "$n" -lt 4 ]
+        do
+            Lines[$n]=''
+            n=$(expr $n + 1)
+        done
+    fi
+    
     #fifo display
     if [ -f "${FILE_OLED_OLD}" ]; then
         readarray -t OLED_OLD < "${FILE_OLED_OLD}"
