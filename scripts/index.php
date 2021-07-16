@@ -39,7 +39,7 @@ $theme = "dark";
 		<ul>
 			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
-<!--			<li><a href="rescue.php"><?php echo L::rescue; ?></a></li>-->
+			<li><a href="rescue.php"><?php echo L::rescue; ?></a></li>
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
@@ -75,6 +75,9 @@ $theme = "dark";
 		<p><?php echo L::help_txt; ?></p>
 	</div>
 	<?php
+	exec ("mkdir -p /home/pi/little-backup-box/scripts/tmp");
+	exec ("echo '' > /home/pi/little-backup-box/scripts/tmp/little-backup-box.log}");
+	
 	if (isset($_POST['backup_storage_external'])) {
 		shell_exec('sudo pkill -f backup*');
 		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh storage external > /dev/null 2>&1 & echo $!');
