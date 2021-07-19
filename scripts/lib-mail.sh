@@ -28,13 +28,13 @@ function send_email () {
     TEXT_HTML="${3}"
 
     # Config
-    CONFIG_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-    CONFIG="${CONFIG_DIR}/config.cfg"
+    WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+    CONFIG="${WORKING_DIR}/config.cfg"
     dos2unix "$CONFIG"
     source "$CONFIG"
 
     # Load LOG library
-    . "${CONFIG_DIR}/lib-log.sh"
+    . "${WORKING_DIR}/lib-log.sh"
 
     BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
     TEXT=""

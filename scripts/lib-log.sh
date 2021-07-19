@@ -26,16 +26,16 @@ function log_to_file () {
     MESSAGE=$1
 
     # Config
-    CONFIG_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-#     CONFIG="${CONFIG_DIR}/config.cfg"
+    WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+#     CONFIG="${WORKING_DIR}/config.cfg"
 #     dos2unix "$CONFIG"
 #     source "$CONFIG"
 
-    LOGFILE="${CONFIG_DIR}/tmp/little-backup-box.log"
+    LOGFILE="${WORKING_DIR}/tmp/little-backup-box.log"
 
    if [ ! -f "${LOGFILE}" ];
     then
-        mkdir -p "${CONFIG_DIR}/tmp"
+        mkdir -p "${WORKING_DIR}/tmp"
         echo "" > "${LOGFILE}"
     fi
 

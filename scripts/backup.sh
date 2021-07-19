@@ -23,8 +23,8 @@
 # To extend, just use the elif-section-examples
 ###############################################
 
-CONFIG_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-CONFIG="${CONFIG_DIR}/config.cfg"
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
@@ -53,13 +53,13 @@ fi
 # END
 
 # Load Mail library
-. "${CONFIG_DIR}/lib-mail.sh"
+. "${WORKING_DIR}/lib-mail.sh"
 
 # Load LCD library
-. "${CONFIG_DIR}/lib-lcd.sh"
+. "${WORKING_DIR}/lib-lcd.sh"
 
 # Load Log library
-. "${CONFIG_DIR}/lib-log.sh"
+. "${WORKING_DIR}/lib-log.sh"
 
 # Overwrite logfile
 log_to_file "Source: ${SOURCE_MODE}"
@@ -256,7 +256,7 @@ if [ $DISP = true ]; then
 
     # END
 
-    source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${BACKUP_PATH}" &
+    source "${WORKING_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${BACKUP_PATH}" &
     PID=$!
 fi
 
@@ -315,4 +315,4 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
 fi
 
 # Power off
-source "${CONFIG_DIR}/poweroff.sh"
+source "${WORKING_DIR}/poweroff.sh"

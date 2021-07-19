@@ -26,9 +26,9 @@ function lcd_message () {
     #Arguments:
     LineCount=$#
     Lines=( "$@" )
-    
+
     # Load LOG library
-    . "${CONFIG_DIR}/lib-log.sh"
+    . "${WORKING_DIR}/lib-log.sh"
 
     #Config
     FILE_OLED_OLD="/root/oled_old.txt"
@@ -59,7 +59,7 @@ function lcd_message () {
             n=$(expr $n + 1)
         done
     fi
-    
+
     #fifo display
     if [ -f "${FILE_OLED_OLD}" ]; then
         readarray -t OLED_OLD < "${FILE_OLED_OLD}"
@@ -76,19 +76,19 @@ function lcd_message () {
     echo -en "${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}" > "${FILE_OLED_OLD}"
 
     #display
-    
+
     LogLines=""
     n=0
-    
+
     oled r
     while [ "${n}" -le 3 ]
     do
 
         LINE="${Lines[$n]}"
-        
+
         FORCE_FORMAT="standard"
 
-        case "${LINE:0:1}" in 
+        case "${LINE:0:1}" in
             "+")
                 FORCE_FORMAT="pos"
                 LINE=${LINE:1:16}
@@ -108,18 +108,18 @@ function lcd_message () {
         fi
 
         oled +${DisplayLines[$n]} "${LINE}"
-        
+
 
         if [ ! -z "${LogLines}" ];
         then
             LogLines="${LogLines}\n"
         fi
         LogLines="${LogLines}${LINE}"
-        
+
         n=$(expr $n + 1)
     done
     oled s
-    
+
     # log
     if [ ! -z "${LogLines}" ];
     then

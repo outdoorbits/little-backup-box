@@ -17,8 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-CONFIG="${CONFIG_DIR}/config.cfg"
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
@@ -27,7 +27,7 @@ FILE_OLED_OLD="/root/oled_old.txt"
 FILE_LOG="/home/pi/little-backup-box/scripts/tmp/little-backup-box.log"
 FSCK_LOG="/home/pi/little-backup-box/scripts/tmp/fsck.log"
 # Load LCD library
-. "${CONFIG_DIR}/lib-lcd.sh"
+. "${WORKING_DIR}/lib-lcd.sh"
 
 #Arguments
 MODE="$1"

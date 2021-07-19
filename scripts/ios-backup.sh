@@ -17,8 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-CONFIG="${CONFIG_DIR}/config.cfg"
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
 sudo dos2unix "$CONFIG"
 source "$CONFIG"
 
@@ -26,10 +26,10 @@ source "$CONFIG"
 FILE_OLED_OLD="/root/oled_old.txt"
 
 # Load Mail library
-. "${CONFIG_DIR}/lib-mail.sh"
+. "${WORKING_DIR}/lib-mail.sh"
 
 # Load LCD library
-. "${CONFIG_DIR}/lib-lcd.sh"
+. "${WORKING_DIR}/lib-lcd.sh"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
@@ -84,7 +84,7 @@ if [ $DISP = true ]; then
 	# Get number of files to sync
 	FILES_TO_SYNC=$(rsync -avh --stats --dry-run "$SOURCE_DIR"/ "${STORAGE_MOUNT_POINT}/iOS" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
-	source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${STORAGE_MOUNT_POINT}/iOS" &
+	source "${WORKING_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${STORAGE_MOUNT_POINT}/iOS" &
 	PID=$!
 fi
 
@@ -114,4 +114,4 @@ fi
 sudo umount $MOUNT_IOS_DIR
 
 # Power off
-source "${CONFIG_DIR}/poweroff.sh"
+source "${WORKING_DIR}/poweroff.sh"
