@@ -23,7 +23,7 @@ if [[ $EUID -eq 0 ]]; then
     exit 1
 fi
 
-CONFIG_DIR=$(dirname "$0")
+CONFIG_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${CONFIG_DIR}/config.cfg"
 source "$CONFIG"
 

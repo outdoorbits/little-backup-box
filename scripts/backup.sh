@@ -23,7 +23,7 @@
 # To extend, just use the elif-section-examples
 ###############################################
 
-CONFIG_DIR=$(dirname "$0")
+CONFIG_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
@@ -264,7 +264,7 @@ fi
 # RUN BACKUP #
 ##############
 
-# START 
+# START
 
 # To define a new method, add an elif block (example below)
 

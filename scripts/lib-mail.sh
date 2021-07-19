@@ -26,19 +26,19 @@ function send_email () {
     SUBJECT="${1}"
     TEXT_PLAIN="${2}"
     TEXT_HTML="${3}"
-    
+
     # Config
-    CONFIG_DIR=$(dirname "$0")
+    CONFIG_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
     CONFIG="${CONFIG_DIR}/config.cfg"
     dos2unix "$CONFIG"
     source "$CONFIG"
 
     # Load LOG library
     . "${CONFIG_DIR}/lib-log.sh"
-    
+
     BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
     TEXT=""
-    
+
     #Mail-body
     if [ "${MAIL_HTML}" = true ] && [ ! -z "${TEXT_HTML}" ];
     then
@@ -46,7 +46,7 @@ function send_email () {
     else
         TEXT="\n\n$TEXT_PLAIN\n\n"
     fi
-    
+
     # Check internet connection and send
     # a notification if the NOTIFY option is enabled
     check=$(wget -q --spider http://google.com/)
@@ -57,6 +57,6 @@ function send_email () {
             --user $MAIL_USER':'$MAIL_PASSWORD \
             -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: ${SUBJECT}\n${TEXT}")
     fi
-    
+
     log_to_file "Mail:\n${SUBJECT}\n${TEXT}"
 }
