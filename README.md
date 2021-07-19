@@ -23,15 +23,14 @@ Little Backup Box is a software that transforms a Raspberry Pi (or any single-bo
 2. Make sure that your Raspberry Pi is connected to the internet.
 3. Run the following command on the Raspberry Pi: `curl -sSL https://raw.githubusercontent.com/dmpop/little-backup-box/main/install-little-backup-box.sh | bash`
 
-Little Backup Box supports three backup modes:
+Little Backup Box supports four backup modes:
 
-- **Source backup** Automatically backs up the contents of a source device (e.g., a storage card) to an external storage device.
-- **Camera backup** Transfers photos, RAW files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the _/home/pi/BACKUP/[CAMERA MODEL]_ directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
-- **Internal backup** Automatically backs up the contents of a source dive to the internal storage.
+- **Source to external** Automatically backs up the contents of a source device (e.g., a storage card) to an external storage device.
+- **Source to internal** Automatically backs up the contents of a source device to the internal system storage.
+- **Camera to external** Transfers photos, RAW files, and videos from the connected camera to an external storage device.
+- **Camera to internal** Transfers photos, RAW files, and videos from the connected camera. The transferred files are saved in the _/home/pi/BACKUP/[CAMERA MODEL]_ directory on the system storage device. **Important** Make sure that the camera is set to the MTP USB connection mode.
 
 During the installation, choose the desired mode from the selection dialog.
-
-When prompted, reboot the Raspberry Pi.
 
 ## Usage
 
@@ -65,12 +64,6 @@ The web UI allows you to control and manage Little Backup Box using any device w
 2. Connect the camera to the Raspberry Pi.
 3. Turn the camera on.
 4. Wait till the Raspberry Pi shuts down.
-
-### Internal backup mode
-
-1. Boot the Raspberry Pi.
-2. Plug a storage source into the Raspberry Pi.
-3. Wait till the Raspberry Pi shuts down.
 
 ## Uninstall Little Backup Box
 

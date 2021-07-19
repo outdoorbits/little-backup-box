@@ -80,7 +80,7 @@ CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
     --title "Backup Mode" \
     --menu "Select the default backup mode:" \
-    15 40 3 \
+    15 45 4 \
     "${OPTIONS[@]}" \
     2>&1 >/dev/tty)
 clear
