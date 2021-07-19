@@ -19,7 +19,7 @@
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
-   echo "Please start this script als non-root-user, e.g. as user 'pi'" 
+   echo "Run the script as a regular user" 
    exit 1
 fi
 
@@ -72,10 +72,10 @@ chmod +x little-backup-box/scripts/*.sh
 
 # Prompt to choose the default backup mode
 BACKTITLE="Little Backup Box"
-OPTIONS=(1 "Source backup - external storage"
-    2 "Source backup - internal storage"
-    3 "Camera backup - external storage"
-    4 "Camera backup - internal storage")
+OPTIONS=(1 "Source -> external storage"
+    2 "Source -> internal storage"
+    3 "Camera -> external storage"
+    4 "Camera -> internal storage")
 CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
     --title "Backup Mode" \

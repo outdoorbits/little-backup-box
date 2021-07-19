@@ -13,12 +13,12 @@ $theme = "dark";
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/classless.css">
 	<script>
-        function refreshIFrame() {
-            var x = document.getElementById("logscreen");
-            x.contentWindow.location.reload();
-            var t = setTimeout(refreshIFrame, 2000);
-        }
-    </script>
+		function refreshIFrame() {
+			var x = document.getElementById("logscreen");
+			x.contentWindow.location.reload();
+			var t = setTimeout(refreshIFrame, 2000);
+		}
+	</script>
 </head>
 
 <body onload="refreshIFrame()">
@@ -39,7 +39,7 @@ $theme = "dark";
 		<ul>
 			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
-			<li><a href="rescue.php"><?php echo L::rescue; ?></a></li>
+			<li><a href="repair.php"><?php echo L::repair; ?></a></li>
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
@@ -50,12 +50,12 @@ $theme = "dark";
 			<button name="backup_camera_external"><?php echo L::backup_camera_external_b; ?></button>
 			<button name="backup_camera_internal"><?php echo L::backup_camera_internal_b; ?></button>
 			<button name="iosbackup"><?php echo L::iosbackup_b; ?></button>
-			
+
 		</form>
 		<hr>
 		<form class="text-center" style="margin-top: 1em;" method="POST">
-		<button name="reboot"><?php echo L::reboot_b; ?></button>
-		<button name="shutdown"><?php echo L::shutdown_b; ?></button>
+			<button name="reboot"><?php echo L::reboot_b; ?></button>
+			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
 		<hr style="margin-bottom: 1em;">
 		<form class="text-center" method="POST">
@@ -67,7 +67,7 @@ $theme = "dark";
 	<div class="card" style="margin-top: 3em;">
 		<h2 style="margin-top: 0em;"><?php echo L::logscreen; ?></h2>
 		<hr>
-		<iframe id="logscreen" src="tmp/little-backup-box.log"  width="100%" height="200" style="background: #FFFFFF;"></iframe>
+		<iframe id="logscreen" src="tmp/little-backup-box.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
 	</div>
 	<div class="card" style="margin-top: 3em;">
 		<h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
@@ -75,9 +75,9 @@ $theme = "dark";
 		<p><?php echo L::help_txt; ?></p>
 	</div>
 	<?php
-	exec ("mkdir -p /home/pi/little-backup-box/scripts/tmp");
-	exec ("echo '' > /home/pi/little-backup-box/scripts/tmp/little-backup-box.log}");
-	
+	exec("mkdir -p /home/pi/little-backup-box/scripts/tmp");
+	exec("echo '' > /home/pi/little-backup-box/scripts/tmp/little-backup-box.log}");
+
 	if (isset($_POST['backup_storage_external'])) {
 		shell_exec('sudo pkill -f backup*');
 		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh storage external > /dev/null 2>&1 & echo $!');

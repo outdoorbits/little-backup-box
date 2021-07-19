@@ -41,7 +41,7 @@ fi
 
 # Mount iOS device
 ifuse $MOUNT_IOS_DIR -o allow_other
-SOURCE_DIR="$MOUNT_IOS_DIR/DCIM/100APPLE"
+SOURCE_DIR="$MOUNT_IOS_DIR/DCIM"
 
 # Exit with a message if iOS device is not mounted
 if [ -z "$(ls -A $MOUNT_IOS_DIR)" ]; then

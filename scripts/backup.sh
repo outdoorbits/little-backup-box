@@ -17,34 +17,40 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-########################################################################################
+###############################################
+# The commented examples in the script provide
+# instructions on adding custom backup jobs
 # To extend, just use the elif-section-examples
-########################################################################################
+###############################################
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-##################################################################### < Manage arguments
-################### To integrate a new method, just add the methods argument to the list
-####################################below, look at the examples, mind the spaces arround
+#####################################
+# SOURCE AND DESTINATION DEFINTIONS #
+#####################################
 
-# Methods for  source
+# START
+
+# To add a new definition, specify the desired arguments to the list
+
+# Source definition
 if [[ " storage camera " =~ " ${1} " ]]; then
     SOURCE_MODE="${1}"
 else
     SOURCE_MODE="storage"
 fi
 
-# Methods for destination
+# Destination definition
 if [[ " internal external " =~ " ${2} " ]]; then
     DEST_MODE="${2}"
 else
     DEST_MODE="external"
 fi
 
-##################################################################### Manage arguments >
+# END
 
 # Load Mail library
 . "${CONFIG_DIR}/lib-mail.sh"
@@ -52,111 +58,117 @@ fi
 # Load LCD library
 . "${CONFIG_DIR}/lib-lcd.sh"
 
-# Load LOG library
+# Load Log library
 . "${CONFIG_DIR}/lib-log.sh"
 
-
-# overwrite logfile
+# Overwrite logfile
 log_to_file "Source: ${SOURCE_MODE}"
 log_to_file "Destination: ${DEST_MODE}"
 
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# umount devices
+# Unmount devices
 umount "${STORAGE_MOUNT_POINT}" || /bin/true
 umount "${SOURCE_MOUNT_POINT}" || /bin/true
 
-################################################################ < Manage storage device
-########### To integrate a new method, just add a new elif-section, look at the examples
+#########################
+# MANAGE STORAGE DEVICE #
+#########################
 
-if [ "${DEST_MODE}" = "external" ];
-then
-    # external mode
-    # If display support is enabled, display the "Ready. Connect camera" message
-    
+# START
+
+# To define a new method, add an elif block (example below)
+
+if [ "${DEST_MODE}" = "external" ]; then
+    # External mode
+    # If display support is enabled, display the specified message
+
     if [ $DISP = true ]; then
         lcd_message "Ready" "Insert storage"
     fi
-    
+
     # Wait for a USB storage device (e.g., a USB flash drive)
     STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
-    
+
     while [ -z "${STORAGE}" ]; do
         sleep 1
         STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
     done
-    
+
     # When the USB storage device is detected, mount it
     mount "/dev/${STORAGE_DEV}" "${STORAGE_MOUNT_POINT}"
-    
+
     STORAGE_PATH="${STORAGE_MOUNT_POINT}"
-    
+
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Ext.Storage OK"
+        lcd_message "Ext.storage OK"
     fi
 
-# elif [ "${DEST_MODE}" = "YourNewStorageMethod" ];
+# elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ];
 # then
 #     if [ $DISP = true ]; then
-#         lcd_message "Ready" "Insert NewStorageType"
+#         lcd_message "Ready" "Insert NEW_STORAGE_TYPE"
 #         ...
-#         # do not forget to set
+#         # Set storage path
 #         STORAGE_PATH
 #     fi
 
 else
-    # internal mode
+    # Internal mode
     STORAGE_PATH="${BAK_DIR}"
-    
+
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Int.Storage OK"
+        lcd_message "Int.storage OK"
     fi
 fi
 
-############################################################### Manage storage device >
+# END
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-################################################################ < Manage source device
-########## To integrate a new method, just add a new elif-section, look at the examples
-if [ "${SOURCE_MODE}" = "storage" ];
-then
-    # Source=storage
-    # If display support is enabled, display the "Ready. Connect source" message
+########################
+# MANAGE SOURCE DEVICE #
+########################
+
+# START
+
+# To define a new method, add an elif block (example below)
+
+if [ "${SOURCE_MODE}" = "storage" ]; then
+    # Source storage
+    # If display support is enabled, display the specified message
     if [ $DISP = true ]; then
         lcd_message "Ready" "Insert source"
     fi
-    
+
     # Source device
-    if [ "${SOURCE_MODE}" = "storage" ];
-    then
-        if [ "${DEST_MODE}" = "external" ];
-        then
+    if [ "${SOURCE_MODE}" = "storage" ]; then
+        if [ "${DEST_MODE}" = "external" ]; then
             SOURCE_DEVICE="${SOURCE_DEV}" # the second integrated device
         else
             SOURCE_DEVICE="${STORAGE_DEV}" # the first integrated device
         fi
     fi
-    
+
     SRC=($(ls /dev/* | grep "${SOURCE_DEVICE}" | cut -d"/" -f3))
     until [ ! -z "${SRC[0]}" ]; do
         sleep 1
         SRC=($(ls /dev/* | grep "$SOURCE_DEVICE" | cut -d"/" -f3))
     done
-    
+
     # If the source device is detected, mount it and obtain its UUID
     mount /dev"/${SRC[0]}" "${SOURCE_MOUNT_POINT}"
-    
+
     # If display support is enabled, notify that the source device has been mounted
     if [ $DISP = true ]; then
         lcd_message "Source OK" "Working..."
     fi
-    
+
     # Create  a .id random identifier file if doesn't exist
     cd "${SOURCE_MOUNT_POINT}"
     if [ ! -f *.id ]; then
@@ -166,27 +178,26 @@ then
     ID_FILE=$(ls -t *.id | head -n1)
     ID="${ID_FILE%.*}"
     cd
-    
+
     # Set the backup path
     BACKUP_PATH="${STORAGE_PATH}"/"${ID}"
-    
+
     # SOURCE_IDENTIFIER
-    SOURCE_IDENTIFIER="Source-ID: ${ID}"
-    
-# elif [ "${SOURCE_MODE}" = "YourNewSourceMethod" ];
+    SOURCE_IDENTIFIER="Source ID: ${ID}"
+
+# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
 # then
 #     if [ $DISP = true ]; then
-#         lcd_message "Ready" "Insert NewSourceType"
+#         lcd_message "Ready" "Insert NEW_SOURCE_TYPE"
 #         ...
-#         # do not forget to set
+#         # Specify backup path and source identifier
 #         BACKUP_PATH
-#         and
 #         SOURCE_IDENTIFIER
 #     fi
 
 else
-    # Source=camera
-    # If display support is enabled, display the "Ready. Connect camera" message
+    # Source camera
+    # If display support is enabled, display the specified message
     if [ $DISP = true ]; then
         lcd_message "Ready" "Connect camera"
     fi
@@ -207,51 +218,57 @@ else
     # Create the target directory with the camera model as its name
     CAMERA=$(gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
     BACKUP_PATH="${STORAGE_PATH}/${CAMERA}"
-    
+
     # SOURCE_IDENTIFIER
     SOURCE_IDENTIFIER="Camera: ${CAMERA}"
 fi
 
-################################################################ Manage source device >
+# END
 
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
-
 if [ $DISP = true ]; then
-    # get number of files to sync
-    
-########################################################## < get number of files to sync
-########### To integrate a new method, just add a new elif-section, look at the examples
 
-    if [ "${SOURCE_MODE}" = "storage" ];
-    then
-        # Source=storage
+    ########################################
+    # CALCULATE NUMBER OF FILES TO BACK UP #
+    ########################################
+
+    # START
+
+    # To define a new method, add an elif block (example below)
+
+    if [ "${SOURCE_MODE}" = "storage" ]; then
+        # Source storage
         FILES_TO_SYNC=$(rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_MOUNT_POINT}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
-    
-#     elif [ "${SOURCE_MODE}" = "YourNewSourceMethod" ];
-#     then
-#         FILES_TO_SYNC=...
-    
+
+        #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
+        #     then
+        #         FILES_TO_SYNC=...
+
     else
-        # Source=camera
+        # Source camera
         mkdir -p "${BACKUP_PATH}"
         cd "${BACKUP_PATH}"
         FILES_TO_SYNC=$(gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
         cd
     fi
-    
-########################################################## get number of files to sync >
-    
+
+    # END
+
     source "${CONFIG_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${BACKUP_PATH}" &
     PID=$!
 fi
 
-########################################## < Perform backup using source-specific method
-########### To integrate a new method, just add a new elif-section, look at the examples
+##############
+# RUN BACKUP #
+##############
 
-if [ "${SOURCE_MODE}" = "storage" ];
-then
+# START 
+
+# To define a new method, add an elif block (example below)
+
+if [ "${SOURCE_MODE}" = "storage" ]; then
     # Source=storage
     if [ $LOG = true ]; then
         SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
@@ -259,7 +276,7 @@ then
         SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
     fi
 
-#     elif [ "${SOURCE_MODE}" = "YourNewSourceMethod" ];
+#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
 #     then
 #     if [ $LOG = true ]; then
 #         SYNC_OUTPUT=$(...)
@@ -268,7 +285,7 @@ then
 #     fi
 
 else
-    # Source=camera
+    # Source camera
     # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
     mkdir -p "${BACKUP_PATH}"
     cd "${BACKUP_PATH}"
@@ -280,10 +297,9 @@ else
     cd
 fi
 
-########################################## Perform backup using source-specific method >
+# END
 
-
-#Display progress after finish
+# Display progress after finish
 if [ $DISP = true ]; then
     sleep 4
 fi
