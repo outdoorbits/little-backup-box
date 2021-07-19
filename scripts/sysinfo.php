@@ -29,17 +29,8 @@ $theme = "dark";
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
-	<div class="card text-center" style="margin-top: 3em;">
-		<h1 style="margin-top: 0em;"><?php echo L::status; ?></h1>
-		<hr>
-		<p><?php
-			passthru("./status-webui.sh");
-			?></p>
-		<button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
-	</div>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo; ?></h1>
 	<div class="card" style="margin-top: 3em;">
-		<h1  style="margin-top: 0em;" class="text-center"><?php echo L::sysinfo; ?></h1>
-		<hr>
 		<?php
 		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 		$temp = round($temp / 1000, 1);

@@ -42,7 +42,7 @@ $theme = "dark";
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
-	<h1><?php echo L::config; ?></h1>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config; ?></h1>
 	<?php
 	function Read()
 	{
