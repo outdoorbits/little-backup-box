@@ -25,6 +25,7 @@ $theme = "dark";
 		<ul>
 			<li><a href="index.php"><?php echo L::main; ?></a></li>
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
+			<li><a href="repair.php"><?php echo L::repair; ?></a></li>
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>

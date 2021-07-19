@@ -4,9 +4,6 @@ $theme = "dark";
 $LogFile = "/home/pi/little-backup-box/scripts/tmp/fsck.log";
 ?>
 
-<!--In developement
-lists all devices ls /dev/sd* and adds fsck-Button-->
-
 <html lang="en" data-theme="<?php echo $theme; ?>">
 <!-- Author: Dmitri Popov, dmpop@linux.com
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
@@ -44,11 +41,6 @@ lists all devices ls /dev/sd* and adds fsck-Button-->
                         <li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
                 </ul>
         </nav>
-        <div class="card" style="margin-top: 3em;">
-                <h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
-                <hr>
-                <p><?php echo L::repair_txt; ?></p>
-        </div>
         <div class="card">
                 <form class="text-center" style="margin-top: 1em;" method="POST">
                         <?php
@@ -62,12 +54,15 @@ lists all devices ls /dev/sd* and adds fsck-Button-->
                         }
                         ?>
                 </form>
-
-                <hr style="margin-bottom: 1em;">
+        </div>
+        <div class="card" style="margin-top: 3em;">
+                <h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
+                <hr>
+                <p><?php echo L::repair_txt; ?></p>
         </div>
 
         <div class="card" style="margin-top: 3em;">
-                <h2 style="margin-top: 0em;"><?php echo L::logscreen; ?></h2>
+                <h2 style="margin-top: 0em;"><?php echo L::logmonitor; ?></h2>
                 <hr>
                 <iframe id="logscreen" src="tmp/fsck.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
         </div>
@@ -81,7 +76,7 @@ lists all devices ls /dev/sd* and adds fsck-Button-->
                 $device = $_POST['fsck_check'];
 
                 echo "<script>";
-                echo 'alert("' . L::fsck_check_m . $device . '")';
+                echo 'alert("' . $device . L::fsck_check_m . '")';
                 echo "</script>";
 
                 $command = "sudo umount /dev/${device}";
@@ -97,7 +92,7 @@ lists all devices ls /dev/sd* and adds fsck-Button-->
                 $device = $_POST['fsck_autorepair'];
 
                 echo "<script>";
-                echo 'alert("' . L::fsck_autorepair_m . $device . '")';
+                echo 'alert("' . $device . L::fsck_autorepair_m  . '")';
                 echo "</script>";
 
                 $command = "sudo umount /dev/${device}";
