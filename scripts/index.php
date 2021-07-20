@@ -70,9 +70,10 @@ $theme = "dark";
 		<iframe id="logmonitor" src="tmp/little-backup-box.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
 	</div>
 	<div class="card" style="margin-top: 3em;">
-		<h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
-		<hr>
-		<p><?php echo L::help_txt; ?></p>
+		<details>
+			<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::help; ?></summary>
+			<p><?php echo L::help_txt; ?></p>
+		</details>
 	</div>
 	<?php
 	exec("mkdir -p /home/pi/little-backup-box/scripts/tmp");
