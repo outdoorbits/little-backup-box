@@ -17,8 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(dirname "$0")
-CONFIG="${CONFIG_DIR}/config.cfg"
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
@@ -38,7 +38,7 @@ else
 fi
 
 # Load LCD library
-. "${CONFIG_DIR}/lib-lcd.sh"
+. "${WORKING_DIR}/lib-lcd.sh"
 
 # Count of files in storage before backup starts
 FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
