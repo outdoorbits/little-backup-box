@@ -22,9 +22,6 @@ CONFIG="${CONFIG_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-# Configuration
-FILE_OLED_OLD="/root/oled_old.txt"
-        
 # Load LCD library
 . "${CONFIG_DIR}/lib-lcd.sh"
 
