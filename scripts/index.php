@@ -76,39 +76,39 @@ $theme = "dark";
 		</details>
 	</div>
 	<?php
-	exec("mkdir -p /home/pi/little-backup-box/scripts/tmp");
-	exec("echo '' > /home/pi/little-backup-box/scripts/tmp/little-backup-box.log}");
+	exec("mkdir -p tmp");
+	exec("echo '' > tmp/little-backup-box.log}");
 
 	if (isset($_POST['backup_storage_external'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh storage external > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./backup.sh storage external > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_storage_external_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['backup_storage_internal'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh storage internal > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./backup.sh storage internal > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_storage_internal_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['backup_camera_external'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh camera external > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./backup.sh camera external > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_camera_external_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['backup_camera_internal'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/backup.sh camera internal > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./backup.sh camera internal > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_camera_internal_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['iosbackup'])) {
-		shell_exec('/home/pi/little-backup-box/scripts/ios-backup.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('./ios-backup.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::iosbackup_m . '")';
 		echo "</script>";
@@ -123,25 +123,25 @@ $theme = "dark";
 		echo "<script>";
 		echo 'alert("' . L::shutdown_m . '")';
 		echo "</script>";
-		shell_exec('sudo /home/pi/little-backup-box/scripts/poweroff.sh force');
+		shell_exec('sudo ./poweroff.sh force');
 	}
 	if (isset($_POST['custom1'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/custom1.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./custom1.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::custom1_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['custom2'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/custom2.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./custom2.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::custom2_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['custom3'])) {
 		shell_exec('sudo pkill -f backup*');
-		shell_exec('sudo /home/pi/little-backup-box/scripts/custom3.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo .//custom3.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::custom3_m . '")';
 		echo "</script>";

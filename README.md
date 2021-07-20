@@ -28,7 +28,7 @@ Little Backup Box supports four backup modes:
 - **Source to external** Automatically backs up the contents of a source device (e.g., a storage card) to an external storage device.
 - **Source to internal** Automatically backs up the contents of a source device to the internal system storage.
 - **Camera to external** Transfers photos, RAW files, and videos from the connected camera to an external storage device.
-- **Camera to internal** Transfers photos, RAW files, and videos from the connected camera. The transferred files are saved in the _/home/pi/BACKUP/[CAMERA MODEL]_ directory on the system storage device. **Important** Make sure that the camera is set to the MTP USB connection mode.
+- **Camera to internal** Transfers photos, RAW files, and videos from the connected camera. The transferred files are saved in the _/home/$USER/BACKUP/[CAMERA MODEL]_ directory on the system storage device. **Important** Make sure that the camera is set to the MTP USB connection mode.
 
 During the installation, choose the desired mode from the selection dialog.
 
