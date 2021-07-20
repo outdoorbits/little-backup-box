@@ -1,3 +1,5 @@
 .DS_Store
-.directory 
+.directory
+*.log
 cache
+tmp
