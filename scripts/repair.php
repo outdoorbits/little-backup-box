@@ -1,7 +1,7 @@
 <?php
 $theme = "dark";
 
-$LogFile = "/home/pi/little-backup-box/scripts/tmp/fsck.log";
+$LogFile = "fsck.log";
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -43,16 +43,17 @@ $LogFile = "/home/pi/little-backup-box/scripts/tmp/fsck.log";
         </nav>
         <div class="card">
                 <form class="text-center" style="margin-top: 1em;" method="POST">
-                        <?php
-                        exec("ls /dev/sd* | xargs -n 1 basename", $devices);
-                        foreach ($devices as $n => $device) {
-                                if ($n > 0) {
-                                        echo "<hr style='margin-bottom: 1em;'>";
+                        <label for="partition">Select partition:</label>
+                        <select name="partition">
+                                <?php
+                                exec("ls /dev/sd* | xargs -n 1 basename", $devices);
+                                foreach ($devices as $n => $device) {
+                                        echo "<option value='$device'>$device</option>";
                                 }
-                                echo ("<button name='fsck_check' value='" . $device . "'>" . L::fsck_check_b . " " . $device . "</button>");
-                                echo ("<button name='fsck_autorepair' value='" . $device . "'>" . L::fsck_autorepair_b . " " . $device . "</button>");
-                        }
-                        ?>
+                                echo "</select>";
+                                echo ("<button name='fsck_check'>" . L::fsck_check_b . "</button>");
+                                echo ("<button name='fsck_autorepair'>" . L::fsck_autorepair_b . "</button>");
+                                ?>
                 </form>
         </div>
         <div class="card" style="margin-top: 3em;">
@@ -64,16 +65,15 @@ $LogFile = "/home/pi/little-backup-box/scripts/tmp/fsck.log";
         <div class="card" style="margin-top: 3em;">
                 <h2 style="margin-top: 0em;"><?php echo L::logmonitor; ?></h2>
                 <hr>
-                <iframe id="logscreen" src="tmp/fsck.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
+                <iframe id="logscreen" src="./fsck.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
         </div>
 
         <?php
-        exec("mkdir -p /home/pi/little-backup-box/scripts/tmp");
         exec("echo '' > ${LogFile}");
 
         if (isset($_POST['fsck_check'])) {
 
-                $device = $_POST['fsck_check'];
+                $device = $_POST['partition'];
 
                 echo "<script>";
                 echo 'alert("' . $device . L::fsck_check_m . '")';
@@ -89,7 +89,7 @@ $LogFile = "/home/pi/little-backup-box/scripts/tmp/fsck.log";
         }
         if (isset($_POST['fsck_autorepair'])) {
 
-                $device = $_POST['fsck_autorepair'];
+                $device = $_POST['partition'];
 
                 echo "<script>";
                 echo 'alert("' . $device . L::fsck_autorepair_m  . '")';
