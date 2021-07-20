@@ -32,7 +32,7 @@ fi
 
 if [ -z $2 ];
 then
-    BACKUP_PATH="/home/pi/BACKUP"
+    BACKUP_PATH="$BAK_DIR"
 else
     BACKUP_PATH=$2
 fi

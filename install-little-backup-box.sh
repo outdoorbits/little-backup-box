@@ -166,7 +166,7 @@ sudo sh -c "echo 'panic action = /usr/share/samba/panic-action %d' >> /etc/samba
 sudo sh -c "echo '### Authentication ###' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'security = user' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'map to guest = Bad User' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'guest account = pi' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'guest account = $USER' >> /etc/samba/smb.conf"
 sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
 sudo sh -c "echo '[little-backup-box]' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'comment = Little Backup Box /media/storage' >> /etc/samba/smb.conf"
