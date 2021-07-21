@@ -88,25 +88,25 @@ case $CHOICE in
 1)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh storage external >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh storage external > /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 2)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh storage internal >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh storage internal > /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 3)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera external >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera external > /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 4)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera internal >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera internal > /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 esac
