@@ -37,7 +37,7 @@ source "$CONFIG"
 # To add a new definition, specify the desired arguments to the list
 
 # Source definition
-if [[ " storage camera " =~ " ${1} " ]]; then
+if [[ " storage camera ios " =~ " ${1} " ]]; then
     SOURCE_MODE="${1}"
 else
     SOURCE_MODE="storage"
@@ -115,7 +115,7 @@ if [ "${DEST_MODE}" = "external" ]; then
 #         STORAGE_PATH
 #     fi
 
-else
+elif [ "${DEST_MODE}" = "internal" ]; then
     # Internal mode
     STORAGE_PATH="${BAK_DIR}"
 
@@ -123,6 +123,10 @@ else
     if [ $DISP = true ]; then
         lcd_message "Int.storage OK"
     fi
+else
+    # no defined mode selected
+    lcd_message "No valid" "destination" "mode defined"
+    exit 1
 fi
 
 # END
@@ -179,23 +183,59 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     ID="${ID_FILE%.*}"
     cd
 
-    # Set the backup path
-    BACKUP_PATH="${STORAGE_PATH}"/"${ID}"
+    # Set SOURCE_PATH
+    SOURCE_PATH="${SOURCE_MOUNT_POINT}"
 
-    # SOURCE_IDENTIFIER
+    # Set BACKUP_PATH
+    BACKUP_PATH="${STORAGE_PATH}/${ID}"
+
+    # Set SOURCE_IDENTIFIER
     SOURCE_IDENTIFIER="Source ID: ${ID}"
 
-# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
-# then
+elif [ "${SOURCE_MODE}" = "ios" ]; then
+    if [ $DISP = true ]; then
+        lcd_message "Ready" "Connect" "iOS device"
+    fi
+
+    # Mount iOS device
+    ifuse $MOUNT_IOS_DIR -o allow_other
+    SOURCE_PATH="${MOUNT_IOS_DIR}/DCIM"
+
+    # Exit with a message if iOS device is not mounted
+    if [ -z "$(ls -A $MOUNT_IOS_DIR)" ]; then
+        if [ $DISP = true ]; then
+            lcd_message "No iOS device" "Try again"
+            exit 1
+        fi
+    fi
+
+   # Create  a .id random identifier file if doesn't exist
+    cd "${MOUNT_IOS_DIR}"
+    if [ ! -f *.id ]; then
+        random=$(echo $RANDOM)
+        touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
+    fi
+    ID_FILE=$(ls -t *.id | head -n1)
+    ID="${ID_FILE%.*}"
+    cd
+
+    # Set BACKUP_PATH
+    BACKUP_PATH="${STORAGE_PATH}/iOS"
+
+    # Set SOURCE_IDENTIFIER
+    SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
+
+
+# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 #     if [ $DISP = true ]; then
 #         lcd_message "Ready" "Insert NEW_SOURCE_TYPE"
 #         ...
 #         # Specify backup path and source identifier
+#         SOURCE_PATH
 #         BACKUP_PATH
 #         SOURCE_IDENTIFIER
-#     fi
 
-else
+elif [ "${SOURCE_MODE}" = "camera" ]; then
     # Source camera
     # If display support is enabled, display the specified message
     if [ $DISP = true ]; then
@@ -217,10 +257,20 @@ else
     # Obtain camera model
     # Create the target directory with the camera model as its name
     CAMERA=$(gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
+
+    #Set SOURCE_PATH
+    # not used
+
+    # Set BACKUP_PATH
     BACKUP_PATH="${STORAGE_PATH}/${CAMERA}"
 
-    # SOURCE_IDENTIFIER
+    # Set SOURCE_IDENTIFIER
     SOURCE_IDENTIFIER="Camera: ${CAMERA}"
+
+else
+    # no defined mode selected
+    lcd_message "No valid" "source" "mode defined"
+    exit 1
 fi
 
 # END
@@ -240,18 +290,22 @@ if [ $DISP = true ]; then
 
     if [ "${SOURCE_MODE}" = "storage" ]; then
         # Source storage
-        FILES_TO_SYNC=$(rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_MOUNT_POINT}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+        FILES_TO_SYNC=$(rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
         #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
         #     then
         #         FILES_TO_SYNC=...
 
-    else
+    elif [ "${SOURCE_MODE}" = "camera" ]; then
         # Source camera
         mkdir -p "${BACKUP_PATH}"
         cd "${BACKUP_PATH}"
         FILES_TO_SYNC=$(gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
         cd
+    else
+        # no defined mode selected
+        lcd_message "No valid" "source" "mode defined"
+        exit 1
     fi
 
     # END
@@ -271,9 +325,9 @@ fi
 if [ "${SOURCE_MODE}" = "storage" ]; then
     # Source=storage
     if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
+        SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_PATH"/ "$BACKUP_PATH")
     else
-        SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
+        SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
     fi
 
 #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
@@ -282,9 +336,8 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
 #         SYNC_OUTPUT=$(...)
 #     else
 #         SYNC_OUTPUT=$(...)
-#     fi
 
-else
+elif [ "${SOURCE_MODE}" = "camera" ]; then
     # Source camera
     # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
     mkdir -p "${BACKUP_PATH}"
@@ -295,6 +348,10 @@ else
         SYNC_OUTPUT=$(gphoto2 --get-all-files --skip-existing --list-files)
     fi
     cd
+else
+        # no defined mode selected
+        lcd_message "No valid" "source" "mode defined"
+        exit 1
 fi
 
 # END

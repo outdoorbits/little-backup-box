@@ -19,7 +19,7 @@
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
-   echo "Run the script as a regular user" 
+   echo "Run the script as a regular user"
    exit 1
 fi
 
@@ -75,12 +75,14 @@ BACKTITLE="Little Backup Box"
 OPTIONS=(1 "Source -> external storage"
     2 "Source -> internal storage"
     3 "Camera -> external storage"
-    4 "Camera -> internal storage")
+    4 "Camera -> internal storage"
+    5 "iOS -> external storage"
+    6 "iOS -> internal storage")
 CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
     --title "Backup Mode" \
     --menu "Select the default backup mode:" \
-    15 45 4 \
+    15 45 6 \
     "${OPTIONS[@]}" \
     2>&1 >/dev/tty)
 clear
@@ -107,6 +109,18 @@ case $CHOICE in
     crontab -l | {
         cat
         echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera internal > /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
+5)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh ios internal > /home/"$USER"/little-backup-box.log 2>&1"
+    } | crontab
+    ;;
+6)
+    crontab -l | {
+        cat
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh ios internal > /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 esac
