@@ -210,7 +210,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     fi
 
    # Create  a .id random identifier file if doesn't exist
-    cd "${MOUNT_IOS_DIR}"
+    cd "${SOURCE_PATH}"
     if [ ! -f *.id ]; then
         random=$(echo $RANDOM)
         touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
@@ -220,7 +220,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     cd
 
     # Set BACKUP_PATH
-    BACKUP_PATH="${STORAGE_PATH}/iOS"
+    BACKUP_PATH="${STORAGE_PATH}/iOS/${ID}"
 
     # Set SOURCE_IDENTIFIER
     SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
