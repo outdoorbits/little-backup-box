@@ -76,7 +76,7 @@ case $CHOICE in
 5)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh ios internal > /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh ios external > /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 6)
