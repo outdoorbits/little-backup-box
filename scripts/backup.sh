@@ -288,7 +288,7 @@ if [ $DISP = true ]; then
 
     # To define a new method, add an elif block (example below)
 
-    if [ "${SOURCE_MODE}" = "storage" ]; then
+    if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
         # Source storage
         FILES_TO_SYNC=$(rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
@@ -322,8 +322,9 @@ fi
 
 # To define a new method, add an elif block (example below)
 
-if [ "${SOURCE_MODE}" = "storage" ]; then
-    # Source=storage
+if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
+    # If source is storage or ios
+    mkdir -p "${BACKUP_PATH}"
     if [ $LOG = true ]; then
         SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_PATH"/ "$BACKUP_PATH")
     else
@@ -338,7 +339,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
 #         SYNC_OUTPUT=$(...)
 
 elif [ "${SOURCE_MODE}" = "camera" ]; then
-    # Source camera
+    # If source is camera
     # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
     mkdir -p "${BACKUP_PATH}"
     cd "${BACKUP_PATH}"
