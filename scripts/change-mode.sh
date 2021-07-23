@@ -40,7 +40,7 @@ CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
     --title "Backup Mode" \
     --menu "Select the desired backup mode:" \
-    15 45 6 \
+    15 50 6 \
     "${OPTIONS[@]}" \
     2>&1 >/dev/tty)
 
