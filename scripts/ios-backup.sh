@@ -47,8 +47,11 @@ SOURCE_DIR="$MOUNT_IOS_DIR/DCIM"
 if [ -z "$(ls -A $MOUNT_IOS_DIR)" ]; then
 	if [ $DISP = true ]; then
 		lcd_message "No iOS device" "Try again"
-		exit 1
 	fi
+	# Set the ACT LED to blink at 50ms to indicate that the iOS device failed to mount
+	sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
+	sudo sh -c "echo 50 > /sys/class/leds/led0/delay_on"
+	exit 1
 fi
 
 # Set the ACT LED to blink at 1000ms to indicate that the iOS device has been mounted
@@ -57,14 +60,14 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, display the "Ready. Connect camera" message
 if [ $DISP = true ]; then
-    lcd_message "Ready" "Insert storage"
+	lcd_message "Ready" "Insert storage"
 fi
 
 # Wait for a USB storage device (e.g., a USB flash drive)
 STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
 while [ -z "${STORAGE}" ]; do
-    sleep 1
-    STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
+	sleep 1
+	STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
 done
 
 # When the USB storage device is detected, mount it
@@ -76,7 +79,7 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
-    lcd_message "Storage OK" "Working..."
+	lcd_message "Storage OK" "Working..."
 fi
 
 # Run the status-display.sh script
