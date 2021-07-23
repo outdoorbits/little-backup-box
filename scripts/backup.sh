@@ -85,7 +85,7 @@ if [ "${DEST_MODE}" = "external" ]; then
     # If display support is enabled, display the specified message
 
     if [ $DISP = true ]; then
-        lcd_message "Ready" "Insert storage"
+        lcd_message "Ready" "Insert storage" "" ""
     fi
 
     # Wait for a USB storage device (e.g., a USB flash drive)
@@ -103,7 +103,7 @@ if [ "${DEST_MODE}" = "external" ]; then
 
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Ext.storage OK"
+        lcd_message "Ext. storage OK" "" "" ""
     fi
 
 # elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ];
@@ -121,11 +121,11 @@ elif [ "${DEST_MODE}" = "internal" ]; then
 
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Int.storage OK"
+        lcd_message "Int. storage OK" "" "" ""
     fi
 else
     # no defined mode selected
-    lcd_message "No valid" "destination" "mode defined"
+    lcd_message "No valid" "destination" "mode defined" ""
     exit 1
 fi
 
@@ -147,7 +147,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     # Source storage
     # If display support is enabled, display the specified message
     if [ $DISP = true ]; then
-        lcd_message "Ready" "Insert source"
+        lcd_message "Ready" "Insert source" "" ""
     fi
 
     # Source device
@@ -170,7 +170,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
 
     # If display support is enabled, notify that the source device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Source OK" "Working..."
+        lcd_message "Source OK" "Working..." "" ""
     fi
 
     # Create  a .id random identifier file if doesn't exist
@@ -194,7 +194,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
 
 elif [ "${SOURCE_MODE}" = "ios" ]; then
     if [ $DISP = true ]; then
-        lcd_message "Ready" "Connect" "iOS device"
+        lcd_message "Ready" "Connect" "iOS device" ""
     fi
 
     # Mount iOS device
@@ -204,7 +204,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     # Exit with a message if iOS device is not mounted
     if [ -z "$(ls -A $MOUNT_IOS_DIR)" ]; then
         if [ $DISP = true ]; then
-            lcd_message "No iOS device" "Try again"
+            lcd_message "No iOS device" "Try again" "" ""
             exit 1
         fi
     fi
@@ -239,7 +239,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     # Source camera
     # If display support is enabled, display the specified message
     if [ $DISP = true ]; then
-        lcd_message "Ready" "Connect camera"
+        lcd_message "Ready" "Connect camera" "" ""
     fi
 
     # Wait for camera
@@ -251,7 +251,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 
     # If display support is enabled, notify that the camera is detected
     if [ $DISP = true ]; then
-        lcd_message "Camera OK" "Working..."
+        lcd_message "Camera OK" "Working..." "" ""
     fi
 
     # Obtain camera model
@@ -269,7 +269,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 
 else
     # no defined mode selected
-    lcd_message "No valid" "source" "mode defined"
+    lcd_message "No valid" "source" "mode defined" ""
     exit 1
 fi
 
@@ -304,7 +304,7 @@ if [ $DISP = true ]; then
         cd
     else
         # no defined mode selected
-        lcd_message "No valid" "source" "mode defined"
+        lcd_message "No valid" "source" "mode defined" ""
         exit 1
     fi
 
@@ -351,7 +351,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     cd
 else
         # no defined mode selected
-        lcd_message "No valid" "source" "mode defined"
+        lcd_message "No valid" "source" "mode defined" ""
         exit 1
 fi
 

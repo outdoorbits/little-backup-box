@@ -17,27 +17,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-function log_to_file () {
+function log_to_file() {
 
-# Takes one argument:
-# log_to_file "Log-message"
+    # Takes one argument:
+    # log_to_file "Log message"
 
     # Arguments
     MESSAGE=$1
 
-    # Config
+    # Specify the working directory
     WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-#     CONFIG="${WORKING_DIR}/config.cfg"
-#     dos2unix "$CONFIG"
-#     source "$CONFIG"
 
     LOGFILE="${WORKING_DIR}/tmp/little-backup-box.log"
 
-   if [ ! -f "${LOGFILE}" ];
-    then
+    if [ ! -f "${LOGFILE}" ]; then
         mkdir -p "${WORKING_DIR}/tmp"
-        echo "" > "${LOGFILE}"
+        echo "" >"${LOGFILE}"
     fi
 
-    echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${LOGFILE})" > "${LOGFILE}"
+    echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${LOGFILE})" >"${LOGFILE}"
 }
