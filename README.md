@@ -29,6 +29,8 @@ Little Backup Box supports four backup modes:
 - **Source to internal** Automatically backs up the contents of a source device to the internal system storage.
 - **Camera to external** Transfers photos, RAW files, and videos from the connected camera to an external storage device.
 - **Camera to internal** Transfers photos, RAW files, and videos from the connected camera. The transferred files are saved in the _/home/$USER/BACKUP/[CAMERA MODEL]_ directory on the system storage device. **Important** Make sure that the camera is set to the MTP USB connection mode.
+- **iOS to external** Transfers photos and RAW files from the connected iOS device to an external storage device.
+- **iOS to internal** Transfers photos and RAW files from the connected iOS device to the internal system storage.
 
 During the installation, choose the desired mode from the selection dialog.
 
@@ -52,7 +54,7 @@ The web UI allows you to control and manage Little Backup Box using any device w
 ### Source backup mode
 
 1. Boot the Raspberry Pi.
-2. Plug in a backup storage device.
+2. Plug in a backup storage device (skip this step if the internal storage is used as the backup destination).
 3. Plug the source device into the Raspberry Pi.
 4. Wait till the Raspberry Pi shuts down.
 
@@ -61,8 +63,16 @@ The web UI allows you to control and manage Little Backup Box using any device w
 ### Camera backup mode
 
 1. Boot the Raspberry Pi.
-2. Connect the camera to the Raspberry Pi.
-3. Turn the camera on.
+2. Plug in a backup storage device (skip this step if the internal storage is used as the backup destination).
+3. Connect the camera to the Raspberry Pi.
+4. Turn the camera on.
+5. Wait till the Raspberry Pi shuts down.
+
+### iOS device backup mode
+
+1. Boot the Raspberry Pi.
+2. Connect the iOS device to the Raspberry Pi.
+3. Plug in a backup storage device (skip this step if the internal storage is used as the backup destination).
 4. Wait till the Raspberry Pi shuts down.
 
 ## Uninstall Little Backup Box
