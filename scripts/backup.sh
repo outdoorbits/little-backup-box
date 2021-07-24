@@ -197,19 +197,22 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
         lcd_message "Ready" "Connect" "iOS device" ""
     fi
 
-    # Mount iOS device
+    # Try to mount the iOS device
     ifuse $MOUNT_IOS_DIR -o allow_other
+
+    # Waiting for the iOS device to be mounted
+    until [ ! -z "$(ls -A $MOUNT_IOS_DIR)" ]; do
+        if [ $DISP = true ]; then
+            lcd_message "No iOS device" "Waiting..." "" ""
+            sleep 10
+            ifuse $MOUNT_IOS_DIR -o allow_other
+        fi
+    done
+
+    # Mount iOS device
     SOURCE_PATH="${MOUNT_IOS_DIR}/DCIM"
 
-    # Exit with a message if iOS device is not mounted
-    if [ -z "$(ls -A $MOUNT_IOS_DIR)" ]; then
-        if [ $DISP = true ]; then
-            lcd_message "No iOS device" "Try again" "" ""
-            exit 1
-        fi
-    fi
-
-   # Create  a .id random identifier file if doesn't exist
+    # Create  a .id random identifier file if doesn't exist
     cd "${SOURCE_PATH}"
     if [ ! -f *.id ]; then
         random=$(echo $RANDOM)
@@ -224,7 +227,6 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
 
     # Set SOURCE_IDENTIFIER
     SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
-
 
 # elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 #     if [ $DISP = true ]; then
@@ -350,9 +352,9 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     fi
     cd
 else
-        # no defined mode selected
-        lcd_message "No valid" "source" "mode defined" ""
-        exit 1
+    # no defined mode selected
+    lcd_message "No valid" "source" "mode defined" ""
+    exit 1
 fi
 
 # END
