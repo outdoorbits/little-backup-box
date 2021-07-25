@@ -19,6 +19,9 @@ $theme = "dark";
 			var t = setTimeout(refreshIFrame, 2000);
 		}
 	</script>
+	<style>
+		button { width: 15em; }
+		</style>
 </head>
 
 <body onload="refreshIFrame()">
@@ -47,21 +50,23 @@ $theme = "dark";
 		<form class="text-center" style="margin-top: 1em;" method="POST">
 			<button name="backup_storage_external"><?php echo L::backup_storage_external_b; ?></button>
 			<button name="backup_storage_internal"><?php echo L::backup_storage_internal_b; ?></button>
+			<hr style="margin-top: 1em; margin-bottom: 1em;">
 			<button name="backup_camera_external"><?php echo L::backup_camera_external_b; ?></button>
 			<button name="backup_camera_internal"><?php echo L::backup_camera_internal_b; ?></button>
+			<hr style="margin-top: 1em; margin-bottom: 1em;">
 			<button name="backup_ios_external"><?php echo L::backup_ios_external_b; ?></button>
 			<button name="backup_ios_internal"><?php echo L::backup_ios_internal_b; ?></button>
 		</form>
-		<hr>
-		<form class="text-center" style="margin-top: 1em;" method="POST">
-			<button name="reboot"><?php echo L::reboot_b; ?></button>
-			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
-		</form>
-		<hr style="margin-bottom: 1em;">
+		<hr style="margin-top: 1em; margin-bottom: 1em;">
 		<form class="text-center" method="POST">
 			<button name="custom1"><?php echo L::custom1_b; ?></button>
 			<button name="custom2"><?php echo L::custom2_b; ?></button>
 			<button name="custom3"><?php echo L::custom3_b; ?></button>
+		</form>
+		<hr style="margin-top: 1em; margin-bottom: 1em;">
+		<form class="text-center" method="POST">
+			<button name="reboot"><?php echo L::reboot_b; ?></button>
+			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
 	</div>
 	<div class="card" style="margin-top: 3em;">
