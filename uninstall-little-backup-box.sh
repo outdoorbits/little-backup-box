@@ -30,7 +30,6 @@ dialog --clear \
 response=$?
 case $response in
 0)
-    sudo rm /home/$USER/little-backup-box.log
     sudo rm /home/$USER/oledoled.conf
     sudo rm -rf /home/$USER/little-backup-box
     sudo rm -rf /home/$USER/ssd1306_rpi

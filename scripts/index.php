@@ -82,7 +82,7 @@ $theme = "dark";
 	</div>
 	<?php
 	exec("mkdir -p tmp");
-	exec("echo '' > tmp/little-backup-box.log}");
+	exec("echo '' > tmp/little-backup-box.log");
 
 	if (isset($_POST['backup_storage_external'])) {
 		shell_exec('sudo pkill -f backup*');
