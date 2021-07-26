@@ -134,6 +134,9 @@ crontab -l | {
     echo "@reboot /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
 
+# configure php for file-upload
+sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(upload_max_filesize\s*=\s*\).*\$/\1128M/" {} \;
+
 # Create web UI systemd unit
 sudo sh -c "echo '[Unit]' > /etc/systemd/system/webui.service"
 sudo sh -c "echo 'Description=web UI' >> /etc/systemd/system/webui.service"
