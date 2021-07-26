@@ -4,6 +4,28 @@ $upload_dir = "/home/pi/UPLOAD";
 if (!file_exists($upload_dir)) {
 	mkdir($upload_dir, 0777, true);
 }
+
+function filesize_human_readable ($Bytes) {
+	$Bytes_hr	= "";
+
+	if ($Bytes >= pow(1024,4)) {
+		$Bytes_hr	= round ($Bytes/pow(1024,4),1) . " TB";
+	}
+	elseif ($Bytes >= pow(1024,3)) {
+		$Bytes_hr	= round ($Bytes/pow(1024,3),1) . " GB";
+	}
+	elseif ($Bytes >= pow(1024,2)) {
+		$Bytes_hr	= round ($Bytes/pow(1024,2),1) . " MB";
+	}
+	elseif ($Bytes >= 1024) {
+		$Bytes_hr	= round ($Bytes/1024,1) . " kB";
+	}
+	else {
+		$Bytes_hr	= $Bytes . " B";
+	}
+
+	return($Bytes_hr);
+}
 ?>
 
 <html lang="en">
@@ -43,12 +65,14 @@ if (!file_exists($upload_dir)) {
 			// looping all files
 			for ($i = 0; $i < $countfiles; $i++) {
 				$filename = $_FILES['file']['name'][$i];
+				$filesize = $_FILES['file']['size'][$i];
+				$fileerror = $_FILES['file']['error'][$i];
 				if (!file_exists($upload_dir)) {
 					mkdir($upload_dir, 0777, true);
 				}
 				// upload file
 				move_uploaded_file($_FILES['file']['tmp_name'][$i], $upload_dir . DIRECTORY_SEPARATOR . $filename);
-				echo "<li>" . $filename . "</li>";
+				echo "<li>" . $filename . " " . filesize_human_readable($filesize) . " " . ($fileerror==0?"o.k.":"Error " . $fileerror) . "</li>";
 			}
 			echo "</ol>";
 		}
