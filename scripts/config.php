@@ -47,16 +47,17 @@ $theme = "dark";
 	<?php
 	function Read()
 	{
-		$CONFIGFILE = "config.cfg";
-		echo file_get_contents($CONFIGFILE);
+		${CONFIGFILE} = "config.cfg";
+		echo file_get_contents(${CONFIGFILE});
 	}
 	function Write()
 	{
-		$CONFIGFILE = "config.cfg";
-		$fp = fopen($CONFIGFILE, "w");
+		${CONFIGFILE} = "config.cfg";
+		$fp = fopen(${CONFIGFILE}, "w");
 		$data = $_POST["text"];
 		fwrite($fp, $data);
 		fclose($fp);
+		exec ("dos2linux ./${CONFIGFILE}");
 	}
 	?>
 	<div class="card" style="margin-top: 2em;">
