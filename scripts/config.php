@@ -39,6 +39,7 @@ $theme = "dark";
 			<li><a href="index.php"><?php echo L::main; ?></a></li>
 			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
 			<li><a href="repair.php"><?php echo L::repair; ?></a></li>
+			<li><a href="<?php echo ("http://".str_replace(":".$_SERVER['SERVER_PORT'],":8080",$_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
@@ -46,16 +47,17 @@ $theme = "dark";
 	<?php
 	function Read()
 	{
-		$CONFIGFILE = "config.cfg";
-		echo file_get_contents($CONFIGFILE);
+		${CONFIGFILE} = "config.cfg";
+		echo file_get_contents(${CONFIGFILE});
 	}
 	function Write()
 	{
-		$CONFIGFILE = "config.cfg";
-		$fp = fopen($CONFIGFILE, "w");
+		${CONFIGFILE} = "config.cfg";
+		$fp = fopen(${CONFIGFILE}, "w");
 		$data = $_POST["text"];
 		fwrite($fp, $data);
 		fclose($fp);
+		exec ("dos2linux ./${CONFIGFILE}");
 	}
 	?>
 	<div class="card" style="margin-top: 2em;">

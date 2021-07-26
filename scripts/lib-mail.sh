@@ -30,7 +30,6 @@ function send_email () {
     # Config
     WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
     CONFIG="${WORKING_DIR}/config.cfg"
-    dos2unix "$CONFIG"
     source "$CONFIG"
 
     # Load LOG library

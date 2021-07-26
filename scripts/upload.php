@@ -30,7 +30,8 @@ if (!file_exists($upload_dir)) {
 			<li><a href="index.php"><?php echo L::main; ?></a></li>
 			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
-		</ul>
+			<li><a href="<?php echo ("http://".str_replace(":".$_SERVER['SERVER_PORT'],":8080",$_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
+			</ul>
 	</nav>
 	<div class="card" style="margin-top: 3em;">
 		<?php
