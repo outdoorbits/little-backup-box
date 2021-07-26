@@ -2,7 +2,7 @@
 // Upload directory
 $upload_dir = "/home/pi/UPLOAD";
 if (!file_exists($upload_dir)) {
-	mkdir($dir, 0777, true);
+	mkdir($upload_dir, 0777, true);
 }
 ?>
 
@@ -37,6 +37,8 @@ if (!file_exists($upload_dir)) {
 		if (isset($_POST['submit'])) {
 			// count total files
 			$countfiles = count($_FILES['file']['name']);
+			echo "Files uploaded: " . $countfiles . "<br>";
+			echo "<ol>";
 			// looping all files
 			for ($i = 0; $i < $countfiles; $i++) {
 				$filename = $_FILES['file']['name'][$i];
@@ -45,7 +47,9 @@ if (!file_exists($upload_dir)) {
 				}
 				// upload file
 				move_uploaded_file($_FILES['file']['tmp_name'][$i], $upload_dir . DIRECTORY_SEPARATOR . $filename);
+				echo "<li>" . $filename . "</li>";
 			}
+			echo "</ol>";
 		}
 		?>
 		<h1 style="margin-bottom: 1em;"><?php echo L::upload; ?></h1>
