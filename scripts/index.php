@@ -43,6 +43,7 @@ $theme = "dark";
 			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
 			<li><a href="repair.php"><?php echo L::repair; ?></a></li>
+			<li><a href="<?php echo ("http://".str_replace(":".$_SERVER['SERVER_PORT'],":8080",$_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
