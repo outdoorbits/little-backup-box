@@ -135,6 +135,7 @@ crontab -l | {
 } | crontab
 
 # configure php for file-upload
+sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(post_max_size\s*=\s*\).*\$/\1128M/" {} \;
 sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(upload_max_filesize\s*=\s*\).*\$/\1128M/" {} \;
 
 # Create web UI systemd unit
