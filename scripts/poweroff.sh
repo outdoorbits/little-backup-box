@@ -56,9 +56,9 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
         fi
     fi
 
-    echo "" >"${FILE_OLED_OLD}"
-    rm "${FILE_LOG}"
-    rm "${FSCK_LOG}"
+    echo "" > "${FILE_OLED_OLD}"
+    echo "" > "${FILE_LOG}"
+    echo "" > "${FSCK_LOG}"
 
     if [ "${ACTION}" = "poweroff" ]; then
         poweroff
