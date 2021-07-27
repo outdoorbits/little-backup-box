@@ -26,7 +26,6 @@ source "$CONFIG"
 FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 FILE_LOG="${WORKING_DIR}/tmp/little-backup-box.log"
 FSCK_LOG="${WORKING_DIR}/tmp/fsck.log"
-SYNC_LOG="${WORKING_DIR}/tmp/sync.log"
 
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
@@ -60,7 +59,6 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     echo "" >"${FILE_OLED_OLD}"
     rm "${FILE_LOG}"
     rm "${FSCK_LOG}"
-    rm "${SYNC_LOG}"
 
     if [ "${ACTION}" = "poweroff" ]; then
         poweroff
