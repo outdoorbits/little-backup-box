@@ -71,9 +71,12 @@ $theme = "dark";
 		</form>
 	</div>
 	<div class="card" style="margin-top: 3em;">
-		<h2 style="margin-top: 0em;"><?php echo L::logmonitor; ?></h2>
+		<h2 style="margin-top: 0em;">
+			<?php echo L::logmonitor; ?>
+			<button name="refresh" onclick="window.location.reload();" class="float-right" ><?php echo L::refresh; ?></button>
+		</h2>
 		<hr>
-		<iframe id="logmonitor" src="tmp/little-backup-box.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
+		<iframe id="logmonitor" src="/tmp/little-backup-box.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
 	</div>
 	<div class="card" style="margin-top: 3em;">
 		<details>
@@ -83,7 +86,6 @@ $theme = "dark";
 	</div>
 	<?php
 	exec("mkdir -p tmp");
-	exec("echo '' > tmp/little-backup-box.log");
 
 	if (isset($_POST['backup_storage_external'])) {
 		shell_exec('sudo pkill -f backup*');
@@ -131,13 +133,13 @@ $theme = "dark";
 		echo "<script>";
 		echo 'alert("' . L::reboot_m . '")';
 		echo "</script>";
-		shell_exec('sudo reboot');
+		shell_exec('sudo ./poweroff.sh reboot force');
 	}
 	if (isset($_POST['shutdown'])) {
 		echo "<script>";
 		echo 'alert("' . L::shutdown_m . '")';
 		echo "</script>";
-		shell_exec('sudo ./poweroff.sh force');
+		shell_exec('sudo ./poweroff.sh poweroff force');
 	}
 	if (isset($_POST['custom1'])) {
 		shell_exec('sudo pkill -f backup*');

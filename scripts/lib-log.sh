@@ -17,6 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# library expects from calling script:
+# - source config.cfg
+
 function log_to_file() {
 
     # Takes one argument:
@@ -24,9 +27,6 @@ function log_to_file() {
 
     # Arguments
     MESSAGE=$1
-
-    # Specify the working directory
-    WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
     LOGFILE="${WORKING_DIR}/tmp/little-backup-box.log"
 

@@ -17,6 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# library expects from calling script:
+# - source config.cfg
+# - source lib-log.sh
+
 function send_email () {
 
 # Takes up to 3 arguments:
@@ -26,14 +30,6 @@ function send_email () {
     SUBJECT="${1}"
     TEXT_PLAIN="${2}"
     TEXT_HTML="${3}"
-
-    # Config
-    WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-    CONFIG="${WORKING_DIR}/config.cfg"
-    source "$CONFIG"
-
-    # Load LOG library
-    . "${WORKING_DIR}/lib-log.sh"
 
     BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
     TEXT=""

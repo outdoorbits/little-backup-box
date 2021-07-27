@@ -1,5 +1,7 @@
 <?php
 $theme = "dark";
+
+$WORKING_DIR=dirname(__FILE__);
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -63,9 +65,9 @@ $theme = "dark";
 		<h3 class="text-center"><?php echo L::log; ?></h3>
 		<hr>
 		<?php
-		if (file_exists("/root/little-backup-box.log")) {
+		if (file_exists("$WORKING_DIR/tmp/little-backup-box.log")) {
 			echo '<pre>';
-			passthru("sudo cat /root/little-backup-box.log");
+			passthru("sudo cat $WORKING_DIR/tmp/sync.log");
 			echo '</pre>';
 		} else {
 			echo "<p>" . L::log_txt . "</p>";
