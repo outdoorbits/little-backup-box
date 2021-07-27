@@ -26,7 +26,6 @@ source "$CONFIG"
 FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 FILE_LOG="${WORKING_DIR}/tmp/little-backup-box.log"
 FSCK_LOG="${WORKING_DIR}/tmp/fsck.log"
-SYNC_LOG="${WORKING_DIR}/tmp/sync.log"
 
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
@@ -46,32 +45,26 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     # If display support is enabled, notify that the backup is complete
     if [ "$DISP" = "true" ]; then
 
-        if [ "${FORCE}" = "force" ];
-        then
-			    if [ "${ACTION}" = "poweroff" ];
-				then
-					lcd_message "+Power off." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
-				elif  [ "${ACTION}" = "reboot" ];
-				then
-					lcd_message "+Reboot." "+Do not unplug" "+I'm back soon!" "+Bye!"
-				fi
+        if [ "${FORCE}" = "force" ]; then
+            if [ "${ACTION}" = "poweroff" ]; then
+                lcd_message "+Power off." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
+            elif [ "${ACTION}" = "reboot" ]; then
+                lcd_message "+Reboot." "+Do not unplug" "+I'm back soon!" "+Bye!"
+            fi
         else
             lcd_message "+Backup complete." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
         fi
     fi
 
-    echo "" > "${FILE_OLED_OLD}"
+    echo "" >"${FILE_OLED_OLD}"
     rm "${FILE_LOG}"
     rm "${FSCK_LOG}"
-    rm "${SYNC_LOG}"
 
-    if [ "${ACTION}" = "poweroff" ];
-    then
-		poweroff
-	elif  [ "${ACTION}" = "reboot" ];
-	then
-		reboot
-	fi
+    if [ "${ACTION}" = "poweroff" ]; then
+        poweroff
+    elif [ "${ACTION}" = "reboot" ]; then
+        reboot
+    fi
 
 else
     # If display support is enabled, notify that the backup is complete

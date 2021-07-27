@@ -28,7 +28,7 @@ $WORKING_DIR=dirname(__FILE__);
 			<li><a href="index.php"><?php echo L::main; ?></a></li>
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
 			<li><a href="repair.php"><?php echo L::repair; ?></a></li>
-			<li><a href="<?php echo ("http://".str_replace(":".$_SERVER['SERVER_PORT'],":8080",$_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
+			<li><a href="<?php echo ("http://" . str_replace(":" . $_SERVER['SERVER_PORT'], ":8080", $_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
@@ -62,6 +62,7 @@ $WORKING_DIR=dirname(__FILE__);
 		passthru("df -H");
 		echo '</pre>';
 		?>
+		<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button></div>
 		<h3 class="text-center"><?php echo L::log; ?></h3>
 		<hr>
 		<?php
@@ -73,7 +74,15 @@ $WORKING_DIR=dirname(__FILE__);
 			echo "<p>" . L::log_txt . "</p>";
 		}
 		?>
-		<button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
+		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+			<?php echo '<div class="text-center"><button style="margin-top: 2em;" type="delete" name="delete">D' . L::delete_log_b . '</button></div>'; ?>
+		</form>
+		<?php
+		if (isset($_POST['delete'])) {
+			unlink("$WORKING_DIR/little-backup-box.log");
+			header('Location: '.$_SERVER['PHP_SELF'], true, 303);
+		};
+		?>
 	</div>
 </body>
 

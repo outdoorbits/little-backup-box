@@ -134,7 +134,8 @@ crontab -l | {
     echo "@reboot /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
 
-# configure php for file-upload
+
+# Change php.ini defaults
 sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(max_file_uploads\s*=\s*\).*\$/\1100/" {} \;
 sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(post_max_size\s*=\s*\).*\$/\10/" {} \;
 sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(upload_max_filesize\s*=\s*\).*\$/\1256M/" {} \;
