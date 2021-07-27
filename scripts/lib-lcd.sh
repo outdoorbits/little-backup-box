@@ -17,6 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# library expects from calling script:
+# - source config.cfg
+# - source lib-log.sh
+
 function lcd_message () {
 
 # takes up to 4 arguments (lines of the display)
@@ -27,12 +31,9 @@ function lcd_message () {
     LineCount=$#
     Lines=( "$@" )
 
-    # Load LOG library
-    . "${WORKING_DIR}/lib-log.sh"
-
     #Config
-    FILE_OLED_OLD="/root/oled_old.txt"
-    LockFile="/root/display.lock"
+    FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
+    LockFile="${WORKING_DIR}/tmp/display.lock"
     DisplayLines=(a b c d)
 
     #Wait for Lockfile

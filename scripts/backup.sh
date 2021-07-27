@@ -27,6 +27,9 @@ WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
+# Config
+LogFileSync="${WORKING_DIR}/tmp/sync.log"
+
 #####################################
 # SOURCE AND DESTINATION DEFINTIONS #
 #####################################
@@ -51,16 +54,16 @@ fi
 
 # END
 
+# Load Log library
+. "${WORKING_DIR}/lib-log.sh"
+
 # Load Mail library
 . "${WORKING_DIR}/lib-mail.sh"
 
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
-# Load Log library
-. "${WORKING_DIR}/lib-log.sh"
-
-# Overwrite logfile
+# log
 log_to_file "Source: ${SOURCE_MODE}"
 log_to_file "Destination: ${DEST_MODE}"
 
@@ -327,7 +330,7 @@ if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
     # If source is storage or ios
     mkdir -p "${BACKUP_PATH}"
     if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_PATH"/ "$BACKUP_PATH")
+        SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
     else
         SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
     fi
@@ -345,7 +348,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     mkdir -p "${BACKUP_PATH}"
     cd "${BACKUP_PATH}"
     if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(gphoto2 --get-all-files --skip-existing --list-files --debug-logfile little-backup-box.log)
+        SYNC_OUTPUT=$(gphoto2 --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")
     else
         SYNC_OUTPUT=$(gphoto2 --get-all-files --skip-existing --list-files)
     fi

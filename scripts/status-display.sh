@@ -17,9 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-CONFIG="${WORKING_DIR}/config.cfg"
-source "$CONFIG"
+
+# library expects from calling script:
+# - source config.cfg
+# - source lib-log.sh
+# - source lib-lcd.sh
 
 # Get arguments
 if [ -z $1 ];

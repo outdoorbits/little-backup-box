@@ -1,7 +1,8 @@
 <?php
 $theme = "dark";
 
-$LogFile = "fsck.log";
+$WORKING_DIR=dirname(__FILE__);
+$LogFileFsck = "$WORKING_DIR/tmp/fsck.log";
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -66,7 +67,7 @@ $LogFile = "fsck.log";
         <div class="card" style="margin-top: 3em;">
                 <h2 style="margin-top: 0em;"><?php echo L::logmonitor; ?></h2>
                 <hr>
-                <iframe id="logscreen" src="./fsck.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
+                <iframe id="logscreen" src="./tmp/fsck.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
         </div>
 
         <?php
@@ -85,8 +86,8 @@ $LogFile = "fsck.log";
                 exec("${command} >> \"${LogFile}\"");
 
                 $command = "sudo fsck /dev/${device}";
-                exec("echo \"\\n${command}:\\n\" >> \"$LogFile\"");
-                exec("${command} >> $LogFile");
+                exec("echo \"\\n${command}:\\n\" >> \"$LogFileFsck\"");
+                exec("${command} >> $LogFileFsck");
         }
         if (isset($_POST['fsck_autorepair'])) {
 
@@ -101,8 +102,8 @@ $LogFile = "fsck.log";
                 exec("${command} >> ${LogFile}");
 
                 $command = "sudo fsck -a /dev/${device}";
-                exec("echo \"\n${command}:\\n\" >> \"$LogFile\"");
-                exec("${command} >> $LogFile");
+                exec("echo \"\n${command}:\\n\" >> \"$LogFileFsck\"");
+                exec("${command} >> $LogFileFsck");
         }
         ?>
 </body>
