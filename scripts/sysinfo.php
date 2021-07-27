@@ -75,7 +75,7 @@ $WORKING_DIR=dirname(__FILE__);
 		}
 		?>
 		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-			<?php echo '<div class="text-center"><button style="margin-top: 2em;" type="delete" name="delete">D' . L::delete_log_b . '</button></div>'; ?>
+			<?php echo '<div class="text-center"><button style="margin-top: 2em;" type="delete" name="delete">' . L::delete_log_b . '</button></div>'; ?>
 		</form>
 		<?php
 		if (isset($_POST['delete'])) {
