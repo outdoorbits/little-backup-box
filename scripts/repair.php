@@ -71,7 +71,6 @@ $LogFileFsck = "$WORKING_DIR/tmp/fsck.log";
         </div>
 
         <?php
-        exec("echo '' > ${LogFile}");
 
         if (isset($_POST['fsck_check'])) {
 
@@ -82,12 +81,11 @@ $LogFileFsck = "$WORKING_DIR/tmp/fsck.log";
                 echo "</script>";
 
                 $command = "sudo umount /dev/${device}";
-                exec("echo \"${command}:\\n\" > \"${LogFile}\"");
-                exec("${command} >> \"${LogFile}\"");
+                $MSG="${command}:\\n" . shell_exec("${command}");
 
                 $command = "sudo fsck /dev/${device}";
-                exec("echo \"\\n${command}:\\n\" >> \"$LogFileFsck\"");
-                exec("${command} >> $LogFileFsck");
+                $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
+                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
         }
         if (isset($_POST['fsck_autorepair'])) {
 
@@ -98,12 +96,11 @@ $LogFileFsck = "$WORKING_DIR/tmp/fsck.log";
                 echo "</script>";
 
                 $command = "sudo umount /dev/${device}";
-                exec("echo \"${command}:\\n\" > \"${LogFile}\"");
-                exec("${command} >> ${LogFile}");
+                $MSG="${command}:\\n" . shell_exec("${command}");
 
                 $command = "sudo fsck -a /dev/${device}";
-                exec("echo \"\n${command}:\\n\" >> \"$LogFileFsck\"");
-                exec("${command} >> $LogFileFsck");
+                $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
+                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
         }
         ?>
 </body>
