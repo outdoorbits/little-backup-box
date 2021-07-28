@@ -49,21 +49,21 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
             if [ "${ACTION}" = "poweroff" ]; then
                 lcd_message "+Power off." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
             elif [ "${ACTION}" = "reboot" ]; then
-                lcd_message "+Reboot." "+Do not unplug" "+I'm back soon!" "+Bye!"
+                lcd_message "+Rebooting..." "+Do not unplug!" "" ""
             fi
         else
             lcd_message "+Backup complete." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
         fi
     fi
 
-    echo "" > "${FILE_OLED_OLD}"
-    echo "" > "${FILE_LOG}"
-    echo "" > "${FSCK_LOG}"
+    echo "" >"${FILE_OLED_OLD}"
+    echo "" >"${FILE_LOG}"
+    echo "" >"${FSCK_LOG}"
 
-    if [ "${ACTION}" = "poweroff" ]; then
-        poweroff
-    elif [ "${ACTION}" = "reboot" ]; then
+    if [ "${ACTION}" = "reboot" ]; then
         reboot
+    else
+        poweroff
     fi
 
 else
