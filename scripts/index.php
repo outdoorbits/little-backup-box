@@ -73,7 +73,7 @@ $theme = "dark";
 	<div class="card" style="margin-top: 3em;">
 		<h2 style="margin-top: 0em;">
 			<?php echo L::logmonitor; ?>
-			<button name="refresh" onclick="window.location.reload();" class="float-right" ><?php echo L::refresh; ?></button>
+			<button name="refresh" onclick="window.location.reload();" class="float-right" ><?php echo L::refresh_b; ?></button>
 		</h2>
 		<hr>
 		<iframe id="logmonitor" src="/tmp/little-backup-box.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
