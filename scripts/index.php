@@ -12,6 +12,12 @@ $theme = "dark";
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/classless.css">
+	<style>
+		button {
+			width: 15em;
+		}
+	</style>
+	<!-- Refresh the log monitor iframe every 2 seconds -->
 	<script>
 		function refreshIFrame() {
 			var x = document.getElementById("logmonitor");
@@ -19,9 +25,6 @@ $theme = "dark";
 			var t = setTimeout(refreshIFrame, 2000);
 		}
 	</script>
-	<style>
-		button { width: 15em; }
-		</style>
 </head>
 
 <body onload="refreshIFrame()">
@@ -43,7 +46,7 @@ $theme = "dark";
 			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
 			<li><a href="repair.php"><?php echo L::repair; ?></a></li>
-			<li><a href="<?php echo ("http://".str_replace(":".$_SERVER['SERVER_PORT'],":8080",$_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
+			<li><a href="<?php echo ("http://" . str_replace(":" . $_SERVER['SERVER_PORT'], ":8080", $_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
 			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
 		</ul>
 	</nav>
@@ -73,10 +76,10 @@ $theme = "dark";
 	<div class="card" style="margin-top: 3em;">
 		<h2 style="margin-top: 0em;">
 			<?php echo L::logmonitor; ?>
-			<button name="refresh" onclick="window.location.reload();" class="float-right" ><?php echo L::refresh_b; ?></button>
 		</h2>
 		<hr>
 		<iframe id="logmonitor" src="/tmp/little-backup-box.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
+		<div class="text-center" style="margin-top: 0.5em;"><button name="refresh" onclick="window.location.reload();"><?php echo L::refresh_b; ?></button></div>
 	</div>
 	<div class="card" style="margin-top: 3em;">
 		<details>
