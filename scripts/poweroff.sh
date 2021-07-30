@@ -40,8 +40,8 @@ FORCE="${2}"
 # Power off
 if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     # umount
-    umount "${STORAGE_MOUNT_POINT}"
-    umount "${SOURCE_MOUNT_POINT}"
+    sudo umount "${STORAGE_MOUNT_POINT}"
+    sudo umount "${SOURCE_MOUNT_POINT}"
 
     # If display support is enabled, notify that the backup is complete
     if [ "$DISP" = "true" ]; then
@@ -62,9 +62,9 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     echo "" >"${FSCK_LOG}"
 
     if [ "${ACTION}" = "poweroff" ]; then
-        poweroff
+        sudo poweroff
     elif [ "${ACTION}" = "reboot" ]; then
-        reboot
+        sudo reboot
     fi
 
 else

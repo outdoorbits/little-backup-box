@@ -71,8 +71,8 @@ log_to_file "Destination: ${DEST_MODE}"
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 # Unmount devices
-umount "${STORAGE_MOUNT_POINT}" || /bin/true
-umount "${SOURCE_MOUNT_POINT}" || /bin/true
+sudo umount "${STORAGE_MOUNT_POINT}" || /bin/true
+sudo umount "${SOURCE_MOUNT_POINT}" || /bin/true
 
 #########################
 # MANAGE STORAGE DEVICE #
@@ -99,7 +99,7 @@ if [ "${DEST_MODE}" = "external" ]; then
     done
 
     # When the USB storage device is detected, mount it
-    mount "/dev/${STORAGE_DEV}" "${STORAGE_MOUNT_POINT}"
+    sudo mount "/dev/${STORAGE_DEV}" "${STORAGE_MOUNT_POINT}"
 
     STORAGE_PATH="${STORAGE_MOUNT_POINT}"
 
@@ -168,7 +168,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     done
 
     # If the source device is detected, mount it and obtain its UUID
-    mount /dev"/${SRC[0]}" "${SOURCE_MOUNT_POINT}"
+    sudo mount /dev"/${SRC[0]}" "${SOURCE_MOUNT_POINT}"
 
     # If display support is enabled, notify that the source device has been mounted
     if [ $DISP = true ]; then
@@ -207,7 +207,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
         if [ $DISP = true ]; then
             lcd_message "No iOS device" "Waiting..." "" ""
             sleep 10
-            ifuse $MOUNT_IOS_DIR -o allow_other
+            sudo ifuse $MOUNT_IOS_DIR -o allow_other
         fi
     done
 
@@ -218,7 +218,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     cd "${SOURCE_PATH}"
     if [ ! -f *.id ]; then
         random=$(echo $RANDOM)
-        touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
+        sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
     fi
     ID_FILE=$(ls -t *.id | head -n1)
     ID="${ID_FILE%.*}"
@@ -247,10 +247,10 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     fi
 
     # Wait for camera
-    DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
+    DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
     while [ -z "${DEVICE}" ]; do
         sleep 1
-        DEVICE=$(gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
+        DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
     done
 
     # If display support is enabled, notify that the camera is detected
@@ -260,7 +260,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 
     # Obtain camera model
     # Create the target directory with the camera model as its name
-    CAMERA=$(gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
+    CAMERA=$(sudo gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
 
     #Set SOURCE_PATH
     # not used
@@ -294,7 +294,7 @@ if [ $DISP = true ]; then
 
     if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
         # Source storage
-        FILES_TO_SYNC=$(rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+        FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
         #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
         #     then
@@ -304,7 +304,7 @@ if [ $DISP = true ]; then
         # Source camera
         mkdir -p "${BACKUP_PATH}"
         cd "${BACKUP_PATH}"
-        FILES_TO_SYNC=$(gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
+        FILES_TO_SYNC=$(sudo gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
         cd
     else
         # no defined mode selected
@@ -328,11 +328,11 @@ fi
 
 if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
     # If source is storage or ios
-    mkdir -p "${BACKUP_PATH}"
+    sudo mkdir -p "${BACKUP_PATH}"
     if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
     else
-        SYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
     fi
 
 #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
@@ -345,12 +345,12 @@ if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
 elif [ "${SOURCE_MODE}" = "camera" ]; then
     # If source is camera
     # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
-    mkdir -p "${BACKUP_PATH}"
+    sudo mkdir -p "${BACKUP_PATH}"
     cd "${BACKUP_PATH}"
     if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(gphoto2 --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")
+        SYNC_OUTPUT=$(sudo gphoto2 --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")
     else
-        SYNC_OUTPUT=$(gphoto2 --get-all-files --skip-existing --list-files)
+        SYNC_OUTPUT=$(sudo gphoto2 --get-all-files --skip-existing --list-files)
     fi
     cd
 else
@@ -377,4 +377,4 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
 fi
 
 # Power off
-source "${WORKING_DIR}/poweroff.sh poweroff"
+source "${WORKING_DIR}/poweroff.sh" poweroff
