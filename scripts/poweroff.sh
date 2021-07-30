@@ -27,14 +27,15 @@ FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 FILE_LOG="${WORKING_DIR}/tmp/little-backup-box.log"
 FSCK_LOG="${WORKING_DIR}/tmp/fsck.log"
 
+# Load Log library
+. "${WORKING_DIR}/lib-log.sh"
+
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
 #Arguments
 ACTION="${1}"
 FORCE="${2}"
-
-echo "ACTION=$ACTION FORCE=$FORCE"
 
 # Power off
 if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
@@ -60,10 +61,10 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     echo "" >"${FILE_LOG}"
     echo "" >"${FSCK_LOG}"
 
-    if [ "${ACTION}" = "reboot" ]; then
-        reboot
-    else
+    if [ "${ACTION}" = "poweroff" ]; then
         poweroff
+    elif [ "${ACTION}" = "reboot" ]; then
+        reboot
     fi
 
 else

@@ -1,7 +1,7 @@
 <?php
 $theme = "dark";
-
 $WORKING_DIR=dirname(__FILE__);
+$LogFile="${WORKING_DIR}/tmp/sync.log"
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -25,11 +25,7 @@ $WORKING_DIR=dirname(__FILE__);
 	?>
 	<nav>
 		<ul>
-			<li><a href="index.php"><?php echo L::main; ?></a></li>
-			<li><a href="config.php"><?php echo L::config; ?></a></li>
-			<li><a href="repair.php"><?php echo L::repair; ?></a></li>
-			<li><a href="<?php echo ("http://" . str_replace(":" . $_SERVER['SERVER_PORT'], ":8080", $_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
-			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
+			<?php include "${WORKING_DIR}/sub-menue.php"; ?>
 		</ul>
 	</nav>
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo; ?></h1>
@@ -66,9 +62,9 @@ $WORKING_DIR=dirname(__FILE__);
 		<h3 class="text-center"><?php echo L::log; ?></h3>
 		<hr>
 		<?php
-		if (file_exists("$WORKING_DIR/tmp/sync.log")) {
+		if (file_exists("${LogFile}")) {
 			echo '<pre>';
-			passthru("sudo cat $WORKING_DIR/tmp/sync.log");
+			passthru("sudo cat ${LogFile}");
 			echo '</pre>';
 		} else {
 			echo "<p>" . L::log_txt . "</p>";
@@ -79,7 +75,7 @@ $WORKING_DIR=dirname(__FILE__);
 		</form>
 		<?php
 		if (isset($_POST['delete'])) {
-			unlink("$WORKING_DIR/tmp/sync.log");
+			unlink("${LogFile}");
 			sleep(3);
 			header('Location: '.$_SERVER['PHP_SELF'], true, 303);
 		};

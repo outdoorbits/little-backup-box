@@ -377,4 +377,4 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
 fi
 
 # Power off
-source "${WORKING_DIR}/poweroff.sh"
+source "${WORKING_DIR}/poweroff.sh poweroff"

@@ -1,5 +1,6 @@
 <?php
 $theme = "dark";
+$WORKING_DIR=dirname(__FILE__);
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -36,11 +37,7 @@ $theme = "dark";
 	?>
 	<nav>
 		<ul>
-			<li><a href="index.php"><?php echo L::main; ?></a></li>
-			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
-			<li><a href="repair.php"><?php echo L::repair; ?></a></li>
-			<li><a href="<?php echo ("http://".str_replace(":".$_SERVER['SERVER_PORT'],":8080",$_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
-			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
+			<?php include "${WORKING_DIR}/sub-menue.php"; ?>
 		</ul>
 	</nav>
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config; ?></h1>
