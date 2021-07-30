@@ -67,7 +67,6 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
         </div>
 
         <?php
-        exec("echo '' > ${LogFileFsck}");
 
         if (isset($_POST['fsck_check'])) {
 
