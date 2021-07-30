@@ -67,6 +67,17 @@ fi
 log_to_file "Source: ${SOURCE_MODE}"
 log_to_file "Destination: ${DEST_MODE}"
 
+
+function get_storage_spaces() {
+    local device=$1
+
+    local storsize=$(df /dev/"$STORAGE_DEV" -h --output=size | sed '1d' | tr -d ' ')
+    local storused=$(df /dev/"$STORAGE_DEV" -h --output=pcent | sed '1d' | tr -d ' ')
+    local storfree=$(df /dev/"$STORAGE_DEV" -h --output=avail | sed '1d' | tr -d ' ')
+
+    echo "${storsize}|${storused}|${storfree}"
+}
+
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
@@ -105,7 +116,14 @@ if [ "${DEST_MODE}" = "external" ]; then
 
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Ext. storage OK" "" "" ""
+        ret="$(get_storage_spaces ${STORAGE_DEV})"
+        IFS="|"
+        set -- $ret
+        STOR_SIZE="Size: $1"
+        STOR_FREE="free: $3"
+
+        lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
+        sleep 4
     fi
 
 # elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ];
@@ -172,14 +190,20 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
 
     # If display support is enabled, notify that the source device has been mounted
     if [ $DISP = true ]; then
-        lcd_message "Source OK" "Working..." "" ""
+        ret="$(get_storage_spaces ${SRC[0]})"
+        IFS="|"
+        set -- $ret
+        STOR_SIZE="Size: $1"
+        STOR_USED="used: $2"
+        lcd_message "Source OK" "Working..." "${STOR_SIZE}" "${STOR_USED}"
+        sleep 4
     fi
 
     # Create  a .id random identifier file if doesn't exist
     cd "${SOURCE_MOUNT_POINT}"
     if [ ! -f *.id ]; then
         random=$(echo $RANDOM)
-        touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
+        sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
     fi
     ID_FILE=$(ls -t *.id | head -n1)
     ID="${ID_FILE%.*}"
@@ -302,7 +326,7 @@ if [ $DISP = true ]; then
 
     elif [ "${SOURCE_MODE}" = "camera" ]; then
         # Source camera
-        mkdir -p "${BACKUP_PATH}"
+        sudo mkdir -p "${BACKUP_PATH}"
         cd "${BACKUP_PATH}"
         FILES_TO_SYNC=$(sudo gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
         cd
@@ -363,7 +387,7 @@ fi
 
 # Display progress after finish
 if [ $DISP = true ]; then
-    sleep 4
+    sleep 8
 fi
 
 # Kill the status-display.sh script
