@@ -66,7 +66,7 @@ $WORKING_DIR=dirname(__FILE__);
 		<h3 class="text-center"><?php echo L::log; ?></h3>
 		<hr>
 		<?php
-		if (file_exists("$WORKING_DIR/tmp/little-backup-box.log")) {
+		if (file_exists("$WORKING_DIR/tmp/sync.log")) {
 			echo '<pre>';
 			passthru("sudo cat $WORKING_DIR/tmp/sync.log");
 			echo '</pre>';
@@ -79,7 +79,8 @@ $WORKING_DIR=dirname(__FILE__);
 		</form>
 		<?php
 		if (isset($_POST['delete'])) {
-			unlink("$WORKING_DIR/little-backup-box.log");
+			unlink("$WORKING_DIR/tmp/sync.log");
+			sleep(3);
 			header('Location: '.$_SERVER['PHP_SELF'], true, 303);
 		};
 		?>
