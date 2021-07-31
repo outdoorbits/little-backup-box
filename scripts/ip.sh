@@ -23,6 +23,7 @@ source "$CONFIG"
 
 # Config
 IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
+FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
@@ -42,7 +43,9 @@ done
 IP=$(hostname -I | cut -d' ' -f1)
 
 if [ $DISP = true ]; then
-    lcd_message "$IP"
+    if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
+        lcd_message "$IP"
+    fi
 fi
 
 UPTIME=$(awk '{print int($1)}' /proc/uptime)
