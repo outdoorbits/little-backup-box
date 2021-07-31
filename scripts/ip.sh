@@ -66,7 +66,7 @@ Little Backup Box MiniDLNA: http://${IP}:8200"
 Little Backup Box web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
 Little Backup Box Upload: <a href='http://${IP}:8000/upload.php'>http://${IP}:8000/upload.php</a><br>
 Little Backup Box Files: <a href='http://${IP}:8080'>http://${IP}:8080</a><br>
-Little Backup Box MiniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
+Little Backup Box miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
 
     if [ -f "${WORKING_DIR}/../../mejiro/index.php" ]; then
         TEXT_PLAIN="${TEXT_PLAIN}

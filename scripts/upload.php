@@ -1,5 +1,5 @@
 <?php
-
+$theme = "dark";
 $WORKING_DIR=dirname(__FILE__);
 
 // Upload directory
@@ -31,7 +31,7 @@ function filesize_human_readable ($Bytes) {
 }
 ?>
 
-<html lang="en">
+<html lang="en" data-theme="dark">
 <!-- Author: Dmitri Popov, dmpop@linux.com
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
@@ -52,7 +52,7 @@ function filesize_human_readable ($Bytes) {
 	?>
 	<nav>
 		<ul>
-			<?php include "${WORKING_DIR}/sub-menue.php"; ?>
+			<?php include "${WORKING_DIR}/menu.php"; ?>
         </ul>
 	</nav>
 	<div class="card" style="margin-top: 3em;">
