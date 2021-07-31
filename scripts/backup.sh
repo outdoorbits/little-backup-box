@@ -372,9 +372,9 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     sudo mkdir -p "${BACKUP_PATH}"
     cd "${BACKUP_PATH}"
     if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(sudo gphoto2 --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")
+        SYNC_OUTPUT=$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")
     else
-        SYNC_OUTPUT=$(sudo gphoto2 --get-all-files --skip-existing --list-files)
+        SYNC_OUTPUT=$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files)
     fi
     cd
 else
