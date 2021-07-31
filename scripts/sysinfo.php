@@ -25,7 +25,7 @@ $LogFile="${WORKING_DIR}/tmp/sync.log"
 	?>
 	<nav>
 		<ul>
-			<?php include "${WORKING_DIR}/menu.php"; ?>
+			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 		</ul>
 	</nav>
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo; ?></h1>

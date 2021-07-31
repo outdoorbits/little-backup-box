@@ -36,7 +36,7 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
         <h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::repair; ?></h1>
         <nav>
                 <ul>
-                    <?php include "${WORKING_DIR}/menu.php"; ?>
+                    <?php include "${WORKING_DIR}/sub-menu.php"; ?>
                 </ul>
         </nav>
         <div class="card">

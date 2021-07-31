@@ -44,7 +44,7 @@ $WORKING_DIR=dirname(__FILE__);
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;">LITTLE BACKUP BOX</h1>
 	<nav>
 		<ul>
-			<?php include "${WORKING_DIR}/menu.php"; ?>
+			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 		</ul>
 	</nav>
 	<div class="card">

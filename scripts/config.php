@@ -37,7 +37,7 @@ $WORKING_DIR=dirname(__FILE__);
 	?>
 	<nav>
 		<ul>
-			<?php include "${WORKING_DIR}/menu.php"; ?>
+			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 		</ul>
 	</nav>
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config; ?></h1>

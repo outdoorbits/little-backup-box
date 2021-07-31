@@ -52,7 +52,7 @@ function filesize_human_readable ($Bytes) {
 	?>
 	<nav>
 		<ul>
-			<?php include "${WORKING_DIR}/menu.php"; ?>
+			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
         </ul>
 	</nav>
 	<div class="card" style="margin-top: 3em;">
