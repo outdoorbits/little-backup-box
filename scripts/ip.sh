@@ -42,7 +42,7 @@ done
 IP=$(hostname -I | cut -d' ' -f1)
 
 if [ $DISP = true ]; then
-    lcd_message "$ip"
+    lcd_message "$IP"
 fi
 
 UPTIME=$(awk '{print int($1)}' /proc/uptime)
