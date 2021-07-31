@@ -30,14 +30,32 @@ function send_email () {
     SUBJECT="${1}"
     TEXT_PLAIN="${2}"
     TEXT_HTML="${3}"
-
     BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
     TEXT=""
 
     #Mail-body
-    if [ "${MAIL_HTML}" = true ] && [ ! -z "${TEXT_HTML}" ];
+    if [ ${MAIL_HTML} = true ] && [ ! -z "${TEXT_HTML}" ];
     then
-        TEXT="Content-Type: multipart/alternative;boundary=${BOUNDARY}\n\n$TEXT_PLAIN\n\n--${BOUNDARY}\nContent-type: text/html;charset=utf-8\n\n$TEXT_HTML\n\n--${BOUNDARY}--"
+        TEXT="Content-Type: multipart/alternative; boundary=${BOUNDARY}
+
+${TEXT_PLAIN}
+
+--${BOUNDARY}
+Content-Type: text/plain; charset='utf-8'
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+${TEXT_PLAIN}
+
+--${BOUNDARY}
+Content-Type: text/html; charset='utf-8'
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+${TEXT_HTML}
+
+--${BOUNDARY}--"
+
     else
         TEXT="\n\n$TEXT_PLAIN\n\n"
     fi

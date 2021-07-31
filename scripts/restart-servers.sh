@@ -43,10 +43,4 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 sudo minidlnad -R
 sudo service minidlna restart
 
-# If display support is enabled, display storage space info
-if [ $DISP = true ]; then
-  storsize=$(df /dev/"$STORAGE_DEV" -h --output=size | sed '1d' | tr -d ' ')
-  storused=$(df /dev/"$STORAGE_DEV" -h --output=pcent | sed '1d' | tr -d ' ')
-  storfree=$(df /dev/"$STORAGE_DEV" -h --output=avail | sed '1d' | tr -d ' ')
-  lcd_message "Free: $storfree"
-fi
+

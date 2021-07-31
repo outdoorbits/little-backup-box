@@ -81,7 +81,7 @@ function lcd_message () {
     LogLines=""
     n=0
 
-    oled r
+    sudo oled r
     while [ "${n}" -le 3 ]
     do
 
@@ -104,11 +104,11 @@ function lcd_message () {
         then
             if [ "${FORCE_FORMAT}" != "pos" ];
             then
-                oled +R $(expr $n + 1)
+                sudo oled +R $(expr $n + 1)
             fi
         fi
 
-        oled +${DisplayLines[$n]} "${LINE}"
+        sudo oled +${DisplayLines[$n]} "${LINE}"
 
 
         if [ ! -z "${LogLines}" ];
@@ -119,7 +119,7 @@ function lcd_message () {
 
         n=$(expr $n + 1)
     done
-    oled s
+    sudo oled s
 
     # log
     if [ ! -z "${LogLines}" ];

@@ -113,4 +113,4 @@ dialog --clear \
     --msgbox "All done! Press OK to reboot Little Backup Box." 15 30
 clear
 
-sudo reboot
+sudo "${WORKING_DIR}/poweroff.sh reboot force"

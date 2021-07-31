@@ -25,13 +25,13 @@ source "$CONFIG"
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
-ip=$(hostname -I | cut -d' ' -f1)
+IP=$(hostname -I | cut -d' ' -f1)
 
-until [ ! -z "$ip" ]; do
+until [ ! -z "$IP" ]; do
   sleep 1
-  ip=$(hostname -I | cut -d' ' -f1)
+  IP=$(hostname -I | cut -d' ' -f1)
 done
 
 if [ $DISP = true ]; then
-  lcd_message "LittleBackupBox" "$ip"
+  lcd_message "LittleBackupBox" "${IP}"
 fi

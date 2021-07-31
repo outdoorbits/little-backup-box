@@ -21,8 +21,18 @@ WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
+# Config
+IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
+FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
+
+# Load Log library
+. "${WORKING_DIR}/lib-log.sh"
+
 # Load Mail library
 . "${WORKING_DIR}/lib-mail.sh"
+
+# Load LCD library
+. "${WORKING_DIR}/lib-lcd.sh"
 
 ping -c1 google.com &>/dev/null
 while [ $? != 0 ]; do
@@ -30,7 +40,41 @@ while [ $? != 0 ]; do
     ping -c1 google.com &>/dev/null
 done
 
-if [ ! -z $SMTP_SERVER ]; then
-    IP=$(hostname -I | cut -d' ' -f1)
-    send_email "Little Backup Box IP: ${IP}" "http://${IP}:8000" "Little Backup Box web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a>"
+IP=$(hostname -I | cut -d' ' -f1)
+
+if [ $DISP = true ]; then
+    if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
+        lcd_message "$IP"
+    fi
+fi
+
+UPTIME=$(awk '{print int($1)}' /proc/uptime)
+
+if [ $UPTIME -lt "80" ]  && [ -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
+    rm "${IP_MAIL_SENT_MARKERFILE}"
+fi
+
+if [ ! -z $SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
+
+TEXT_PLAIN="
+Little Backup Box web UI: http://${IP}:8000
+Little Backup Box Upload: http://${IP}:8000/upload.php
+Little Backup Box Files: http://${IP}:8080
+Little Backup Box MiniDLNA: http://${IP}:8200"
+
+    TEXT_HTML="
+Little Backup Box web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
+Little Backup Box Upload: <a href='http://${IP}:8000/upload.php'>http://${IP}:8000/upload.php</a><br>
+Little Backup Box Files: <a href='http://${IP}:8080'>http://${IP}:8080</a><br>
+Little Backup Box miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
+
+    if [ -f "${WORKING_DIR}/../../mejiro/index.php" ]; then
+        TEXT_PLAIN="${TEXT_PLAIN}
+Little Backup Box mejiro: http://${IP}:8081"
+        TEXT_HTML="${TEXT_HTML}
+Little Backup Box mejiro: <a href='http://${IP}:8081'>http://${IP}:8081</a><br>"
+    fi
+
+    send_email "Little Backup Box IP: ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
+    touch "${IP_MAIL_SENT_MARKERFILE}"
 fi

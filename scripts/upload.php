@@ -1,4 +1,7 @@
 <?php
+$theme = "dark";
+$WORKING_DIR=dirname(__FILE__);
+
 // Upload directory
 $upload_dir = "/home/pi/UPLOAD";
 if (!file_exists($upload_dir)) {
@@ -28,7 +31,7 @@ function filesize_human_readable ($Bytes) {
 }
 ?>
 
-<html lang="en">
+<html lang="en" data-theme="dark">
 <!-- Author: Dmitri Popov, dmpop@linux.com
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
@@ -49,11 +52,8 @@ function filesize_human_readable ($Bytes) {
 	?>
 	<nav>
 		<ul>
-			<li><a href="index.php"><?php echo L::main; ?></a></li>
-			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
-			<li><a href="config.php"><?php echo L::config; ?></a></li>
-			<li><a href="<?php echo ("http://".str_replace(":".$_SERVER['SERVER_PORT'],":8080",$_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
-			</ul>
+			<?php include "${WORKING_DIR}/menu.php"; ?>
+        </ul>
 	</nav>
 	<div class="card" style="margin-top: 3em;">
 		<?php

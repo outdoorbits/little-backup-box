@@ -2,7 +2,7 @@
 $theme = "dark";
 
 $WORKING_DIR=dirname(__FILE__);
-$LogFileFsck = "$WORKING_DIR/tmp/fsck.log";
+$LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -36,11 +36,7 @@ $LogFileFsck = "$WORKING_DIR/tmp/fsck.log";
         <h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::repair; ?></h1>
         <nav>
                 <ul>
-                        <li><a href="index.php"><?php echo L::main; ?></a></li>
-                        <li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
-                        <li><a href="config.php"><?php echo L::config; ?></a></li>
-						<li><a href="<?php echo ("http://".str_replace(":".$_SERVER['SERVER_PORT'],":8080",$_SERVER['HTTP_HOST'])); ?>"><?php echo L::filebrowser; ?></a></li>
-                        <li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
+                    <?php include "${WORKING_DIR}/menu.php"; ?>
                 </ul>
         </nav>
         <div class="card">
@@ -85,7 +81,7 @@ $LogFileFsck = "$WORKING_DIR/tmp/fsck.log";
 
                 $command = "sudo fsck /dev/${device}";
                 $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
-                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
+                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
         }
         if (isset($_POST['fsck_autorepair'])) {
 
@@ -100,7 +96,7 @@ $LogFileFsck = "$WORKING_DIR/tmp/fsck.log";
 
                 $command = "sudo fsck -a /dev/${device}";
                 $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
-                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
+                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
         }
         ?>
 </body>
