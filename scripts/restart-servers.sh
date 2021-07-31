@@ -38,9 +38,29 @@ mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
+function get_storage_spaces() {
+  local device=$1
+
+  local storsize=$(df /dev/"$STORAGE_DEV" -h --output=size | sed '1d' | tr -d ' ')
+  local storused=$(df /dev/"$STORAGE_DEV" -h --output=pcent | sed '1d' | tr -d ' ')
+  local storfree=$(df /dev/"$STORAGE_DEV" -h --output=avail | sed '1d' | tr -d ' ')
+
+  echo "${storsize}|${storused}|${storfree}"
+}
+
+# If display support is enabled, notify that the storage device has been mounted
+if [ $DISP = true ]; then
+  ret="$(get_storage_spaces ${STORAGE_DEV})"
+  IFS="|"
+  set -- $ret
+  STOR_SIZE="Size: $1"
+  STOR_FREE="free: $3"
+
+  lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
+  sleep 4
+fi
+
 # Reload minidlna
 
 sudo minidlnad -R
 sudo service minidlna restart
-
-
