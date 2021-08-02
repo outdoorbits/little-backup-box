@@ -26,6 +26,8 @@ source "$CONFIG"
 FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 FILE_LOG="${WORKING_DIR}/tmp/little-backup-box.log"
 FSCK_LOG="${WORKING_DIR}/tmp/fsck.log"
+IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
+
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
@@ -57,9 +59,10 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
         fi
     fi
 
-    echo "" >"${FILE_OLED_OLD}"
-    echo "" >"${FILE_LOG}"
-    echo "" >"${FSCK_LOG}"
+    sudo echo "" >"${FILE_OLED_OLD}"
+    sudo echo "" >"${FILE_LOG}"
+    sudo echo "" >"${FSCK_LOG}"
+    sudo rm "${IP_MAIL_SENT_MARKERFILE}"
 
     if [ "${ACTION}" = "poweroff" ]; then
         sudo poweroff

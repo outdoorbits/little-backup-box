@@ -137,7 +137,7 @@ if [ "${DEST_MODE}" = "external" ]; then
 
 elif [ "${DEST_MODE}" = "internal" ]; then
     # Internal mode
-    STORAGE_PATH="${BAK_DIR}"
+    STORAGE_PATH="${INTERAL_BACKUP_DIR}"
 
     # If display support is enabled, notify that the storage device has been mounted
     if [ $DISP = true ]; then

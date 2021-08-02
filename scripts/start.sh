@@ -19,19 +19,58 @@
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${WORKING_DIR}/config.cfg"
+
+# Check and complete config.cfg
 dos2unix "$CONFIG"
+
+CONFIG_STANDARDS=( \
+'STORAGE_DEV="sda1" # Name of the storage device'
+'STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device' \
+'SOURCE_DEV="sdb1" # Name of the source device' \
+'SOURCE_MOUNT_POINT="/media/source" # Mount point of the source device' \
+'INTERAL_BACKUP_DIR="/media/internal"' \
+'IOS_MOUNT_POINT="/media/iOS"' \
+'POWER_OFF=false # Set to false to disable automatic power off after backup' \
+'LOG=false # Set to true to enable logging' \
+'NOTIFY=false # Set to true to enable email notifications' \
+'SMTP_SERVER=""   # Mail settings (specify to receive notifications)' \
+'SMTP_PORT=""     # If the mail settings are specified, Little Backup Box' \
+'MAIL_USER=""     # sends an email with the devices IP address even when' \
+'MAIL_PASSWORD="" # $NOTIFY is set to false' \
+'MAIL_TO=""' \
+'MAIL_HTML=true # Set to false to disable HTML-mails' \
+'DISP=false' \
+)
+
+for CONFIG_STANDARD in "${CONFIG_STANDARDS[@]}"
+do
+        IFS="="
+        set -- $CONFIG_STANDARD
+        VAR=$1
+        VAL=$2
+    if ! grep -q "${VAR}" "${CONFIG}"; then
+        echo "${VAR}=${VAL}" >> "${CONFIG}"
+    fi
+done
+
+# Load config.cfg
 source "$CONFIG"
+
+# Load Log library
+. "${WORKING_DIR}/lib-log.sh"
 
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
-IP=$(hostname -I | cut -d' ' -f1)
-
-until [ ! -z "$IP" ]; do
-  sleep 1
-  IP=$(hostname -I | cut -d' ' -f1)
-done
-
+# Display IP
 if [ $DISP = true ]; then
-  lcd_message "LittleBackupBox" "${IP}"
+    IP=$(hostname -I | cut -d' ' -f1)
+
+    until [ ! -z "$IP" ]; do
+    sleep 1
+    IP=$(hostname -I | cut -d' ' -f1)
+    done
+
+    lcd_message "LittleBackupBox" "${IP}"
 fi
+

@@ -32,8 +32,8 @@ function log_to_file() {
 
     if [ ! -f "${LOGFILE}" ]; then
         mkdir -p "${WORKING_DIR}/tmp"
-        echo "" >"${LOGFILE}"
+        sudo echo "" >"${LOGFILE}"
     fi
 
-    echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${LOGFILE})" >"${LOGFILE}"
+    sudo echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${LOGFILE})" >"${LOGFILE}"
 }

@@ -19,20 +19,48 @@
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
-    echo "Run the script as a regular user"
-    exit 1
+   echo "Run the script as a regular user"
+   exit 1
 fi
 
-WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-CONFIG="${WORKING_DIR}/config.cfg"
-source "$CONFIG"
+WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts"
 
-# Choose display-setup, default backup mode, set crontab
-source "${WORKING_DIR}/sub-select-mode.sh"
+# Update source and perform the full system upgrade
+sudo apt update
+sudo apt full-upgrade -y
+sudo apt update
 
-# Finished
-clear
-echo "Alle done! Rebooting..."
+# Install the required packages
+sudo apt install -y php-cli php-gd php-common php-imagick
+
+# Remove obsolete packages
+sudo apt autoremove -y
+
+# Read user
+USER="$(whoami)"
+if [ -z "$USER" ]; then
+    USER="pi"
+fi
+
+cd
+
+git clone https://github.com/dmpop/mejiro.git
+
+sed -i 's/^$protect = .*/$protect = false; \/\/ Enable password protection/' "${WORKING_DIR}/../../mejiro/config.php"
+
+# Create Link to media
+cd
+sudo ln -s /media "mejiro/photos"
+
+# Crontab
+crontab -l | {
+    cat
+    echo "@reboot cd && cd mejiro && sudo php -S 0.0.0.0:8081"
+} | crontab
+
+#Finish
+echo "All done. Rebooting ..."
+
 sleep 2
 
-# #sudo "${WORKING_DIR}/poweroff.sh reboot force"
+sudo reboot

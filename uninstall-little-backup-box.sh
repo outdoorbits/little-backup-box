@@ -17,9 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# Read user
+USER="$(whoami)"
 if [ -z "$USER" ]; then
     USER="pi"
 fi
+
 cp little-backup-box/scripts/config.cfg $HOME/config.cfg.bak
 cd
 dialog --clear \
@@ -28,6 +31,9 @@ dialog --clear \
     --yesno "This will uninstall Little Backup Box.\nAre you sure you want to proceed?" 7 60
 
 response=$?
+
+clear
+
 case $response in
 0)
     sudo rm /home/$USER/oledoled.conf

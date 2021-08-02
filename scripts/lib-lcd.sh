@@ -47,7 +47,7 @@ function lcd_message () {
         done
     fi
 
-    date +%s > "${LockFile}"
+    sudo date +%s > "${LockFile}"
 
     # clear screen
     if [ "${LineCount}" -eq 0 ];
@@ -74,7 +74,7 @@ function lcd_message () {
     done
 
     #save Lines to file
-    echo -en "${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}" > "${FILE_OLED_OLD}"
+    sudo echo -en "${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}" > "${FILE_OLED_OLD}"
 
     #display
 

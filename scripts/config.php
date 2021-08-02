@@ -55,6 +55,7 @@ $WORKING_DIR=dirname(__FILE__);
 		fwrite($fp, $data);
 		fclose($fp);
 		exec ("dos2linux ./${CONFIGFILE}");
+		echo '<div class="card" style="margin-top: 2em;">config.cfg written successfully</div>';
 	}
 	?>
 	<div class="card" style="margin-top: 2em;">

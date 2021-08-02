@@ -23,6 +23,9 @@ if [[ $EUID -eq 0 ]]; then
    exit 1
 fi
 
+WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts"
+CONFIG="${WORKING_DIR}/config.cfg"
+
 # Update source and perform the full system upgrade
 sudo apt update
 sudo apt full-upgrade -y
@@ -38,102 +41,63 @@ sudo apt autoremove -y
 curl https://rclone.org/install.sh | sudo bash
 
 # Read user
-USER="$1"
+USER="$(whoami)"
 if [ -z "$USER" ]; then
     USER="pi"
 fi
 
 # Create the required directories
-sudo mkdir -p /media/source
-sudo mkdir -p /media/storage
-sudo chown -R $USER:users /media/source
-sudo chown -R $USER:users /media/storage
-sudo chmod -R 775 /media/source
-sudo chmod -R 775 /media/storage
-sudo setfacl -Rdm g:$USER:rw /media/source
-sudo setfacl -Rdm g:$USER:rw /media/storage
+SOURCE_MOUNT_POINT="/media/source"
+STORAGE_MOUNT_POINT="/media/storage"
+INTERAL_BACKUP_DIR="/media/internal"
+IOS_MOUNT_POINT="/media/iOS"
+
+sudo mkdir -p "${SOURCE_MOUNT_POINT}"
+sudo mkdir -p "${STORAGE_MOUNT_POINT}"
+sudo mkdir -p "${INTERAL_BACKUP_DIR}"
+sudo mkdir -p "${IOS_MOUNT_POINT}"
+
+sudo chown -R $USER:users "${SOURCE_MOUNT_POINT}"
+sudo chown -R $USER:users "${STORAGE_MOUNT_POINT}"
+sudo chown -R $USER:users "${INTERAL_BACKUP_DIR}"
+sudo chown -R $USER:users "${IOS_MOUNT_POINT}"
+
+sudo chmod -R 775 "${SOURCE_MOUNT_POINT}"
+sudo chmod -R 775 "${STORAGE_MOUNT_POINT}"
+sudo chmod -R 775 "${INTERAL_BACKUP_DIR}"
+sudo chmod -R 775 "${IOS_MOUNT_POINT}"
+
+sudo setfacl -Rdm g:$USER:rw "${SOURCE_MOUNT_POINT}"
+sudo setfacl -Rdm g:$USER:rw "${STORAGE_MOUNT_POINT}"
+sudo setfacl -Rdm g:$USER:rw "${INTERAL_BACKUP_DIR}"
+sudo setfacl -Rdm g:$USER:rw "${IOS_MOUNT_POINT}"
+
+#hostname
+# sudo hostname -b little-backup-box
 
 # Configure miniDLNA
 sudo cp /etc/minidlna.conf /etc/minidlna.conf.orig
-sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir=/media/storage'|' /etc/minidlna.conf
-sudo sh -c "echo 'media_dir=/home/$USER/BACKUP' >> /etc/minidlna.conf"
+sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir="${STORAGE_MOUNT_POINT}"'|' /etc/minidlna.conf
+sudo sed -i 's/^#friendly_name=.*/friendly_name=little-backup-box/' /etc/minidlna.conf
+sudo sh -c "echo 'media_dir=${INTERAL_BACKUP_DIR}' >> /etc/minidlna.conf"
 sudo service minidlna start
 
 # Clone and configure Little Backup Box
 cd
 git clone https://github.com/dmpop/little-backup-box.git
-echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Internal backup directory path' >>little-backup-box/scripts/config.cfg
-echo -e '\nMOUNT_IOS_DIR="/home/'$USER'/iOS" # iOS device mount directory path' >>little-backup-box/scripts/config.cfg
-mkdir -p /home/$USER/BACKUP
-mkdir -p /home/$USER/iOS
-chown $USER:users -R /home/$USER/BACKUP
-chown $USER:users -R /home/$USER/iOS
-chmod +x little-backup-box/scripts/*.sh
 
-# Prompt to choose the default backup mode
-BACKTITLE="Little Backup Box"
-OPTIONS=(1 "Source -> external storage"
-    2 "Source -> internal storage"
-    3 "Camera -> external storage"
-    4 "Camera -> internal storage"
-    5 "iOS -> external storage"
-    6 "iOS -> internal storage")
-CHOICE=$(dialog --clear \
-    --backtitle "$BACKTITLE" \
-    --title "Backup Mode" \
-    --menu "Select the default backup mode:" \
-    15 50 6 \
-    "${OPTIONS[@]}" \
-    2>&1 >/dev/tty)
-clear
-case $CHOICE in
-1)
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh storage external >/dev/null 2>&1"
-    } | crontab
-    ;;
-2)
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh storage internal >/dev/null 2>&11"
-    } | crontab
-    ;;
-3)
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera external >/dev/null 2>&1"
-    } | crontab
-    ;;
-4)
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh camera internal >/dev/null 2>&1"
-    } | crontab
-    ;;
-5)
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh ios external >/dev/null 2>&1"
-    } | crontab
-    ;;
-6)
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/backup.sh ios internal >/dev/null 2>&1"
-    } | crontab
-    ;;
-esac
+if [ -f "${WORKING_DIR}/config.cfg" ]; then
+    mv "${WORKING_DIR}/config.cfg" "${WORKING_DIR}/config.cfg.bak"
+fi
 
-crontab -l | {
-    cat
-    echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"
-} | crontab
-crontab -l | {
-    cat
-    echo "*/1 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
-} | crontab
+echo -e 'SOURCE_MOUNT_POINT="'${SOURCE_MOUNT_POINT}'" # Mount point of the source device' >> "${CONFIG}"
+echo -e 'STORAGE_MOUNT_POINT="'${STORAGE_MOUNT_POINT}'" # Mount point of the storage device' >> "${CONFIG}"
+echo -e 'INTERAL_BACKUP_DIR="'${INTERAL_BACKUP_DIR}'" # Internal backup directory path' >> "${CONFIG}"
+echo -e 'IOS_MOUNT_POINT="'${IOS_MOUNT_POINT}'" # Mount point of the iOS device' >> "${CONFIG}"
+chmod +x ${WORKING_DIR}/*.sh
 
+# Choose display-setup, default backup mode, set crontab
+source "${WORKING_DIR}/sub-select-mode.sh"
 
 # Change php.ini defaults
 sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(max_file_uploads\s*=\s*\).*\$/\1100/" {} \;
@@ -145,7 +109,7 @@ sudo sh -c "echo '[Unit]' > /etc/systemd/system/webui.service"
 sudo sh -c "echo 'Description=web UI' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo '[Service]' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/webui.service"
-sudo sh -c "echo 'ExecStart=/usr/bin/php -S 0.0.0.0:8000 -t /home/"$USER"/little-backup-box/scripts' >> /etc/systemd/system/webui.service"
+sudo sh -c "echo 'ExecStart=/usr/bin/php -S 0.0.0.0:8000 -t ${WORKING_DIR}' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'ExecStop=/usr/bin/kill -HUP \$MAINPID' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo '[Install]' >> /etc/systemd/system/webui.service"
 sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/webui.service"
@@ -158,7 +122,7 @@ sudo sh -c "echo '[Unit]' > /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'Description=File Browser' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo '[Service]' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/filebrowser.service"
-sudo sh -c "echo 'ExecStart=/usr/local/bin/filebrowser -a 0.0.0.0 -r /media/storage' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'ExecStart=/usr/local/bin/filebrowser -a 0.0.0.0 -r /media' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'ExecStop=/usr/bin/kill -HUP \$MAINPID' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo '[Install]' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/filebrowser.service"
@@ -172,47 +136,47 @@ pw="raspberry"
     echo $pw
     echo $pw
 ) | sudo smbpasswd -s -a "$USER"
+sudo sh -c "echo '' >> /etc/samba/smb.conf"
 sudo sh -c "echo '### Global Settings ###' > /etc/samba/smb.conf"
 sudo sh -c "echo '[global]' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'workgroup = WORKGROUP' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'wide links = yes' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'unix extensions = no' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'dns proxy = no' >> /etc/samba/smb.conf"
+sudo sh -c "echo '' >> /etc/samba/smb.conf"
 sudo sh -c "echo '### Debugging/Accounting ###' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'log file = /var/log/samba/log.%m' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'max log size = 1000' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'syslog = 0' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'panic action = /usr/share/samba/panic-action %d' >> /etc/samba/smb.conf"
+sudo sh -c "echo '' >> /etc/samba/smb.conf"
 sudo sh -c "echo '### Authentication ###' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'security = user' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'map to guest = Bad User' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'guest account = $USER' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'guest account = root' >> /etc/samba/smb.conf"
+sudo sh -c "echo '' >> /etc/samba/smb.conf"
 sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
-sudo sh -c "echo '[little-backup-box]' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'comment = Little Backup Box /media/storage' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'path = /media/storage' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'force user = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'force group = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'admin users = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
 
-sudo sh -c "echo '[internal-backup]' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'comment = Little Backup Box internal backup' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'path = /home/$USER/BACKUP' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'force user = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'force group = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'admin users = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
+DIRECTORIES=("${SOURCE_MOUNT_POINT}" "${STORAGE_MOUNT_POINT}" "${INTERAL_BACKUP_DIR}" "${IOS_MOUNT_POINT}")
+for DIRECTORY in "${DIRECTORIES[@]}"
+do
+    PATHNAME=$(basename ${DIRECTORY})
+
+    sudo sh -c "echo '' >> /etc/samba/smb.conf"
+    sudo sh -c "echo '[${PATHNAME}]' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'comment = Little Backup Box ${PATHNAME}' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'path = ${DIRECTORY}' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'force user = root' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'force group = root' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'admin users = $USER' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
+done
+
 sudo samba restart
 cd
 
@@ -220,56 +184,9 @@ cd
 sudo sh -c "echo 'write_enable=YES' >> /etc/vsftpd.conf"
 sudo service vsftpd restart
 
-# Enable OLED screen support
-dialog --clear \
-    --title "Enable OLED support" \
-    --backtitle "$BACKTITLE" \
-    --yesno "Enable support for a 128x64 OLED display?" 7 60
+# Finished
+clear
+echo "Alle done! Rebooting..."
+sleep 2
 
-response=$?
-case $response in
-0)
-    clear
-    sudo apt install -y wiringpi i2c-tools
-    git clone https://github.com/dmpop/ssd1306_rpi.git
-    cd ssd1306_rpi
-    cc -o oled oled.c fontx.c -lwiringPi -lpthread -DI2C
-    sudo cp oled /usr/local/bin/
-    sudo chown root:root /usr/local/bin/oled
-    sudo chmod 755 /usr/local/bin/oled
-    sudo raspi-config nonint do_i2c 0
-    cd
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"
-    } | crontab
-    echo -e 'DISP=true # Enable OLED display' >>little-backup-box/scripts/config.cfg
-    dialog --clear \
-        --title "Setup finished" \
-        --backtitle "$BACKTITLE" \
-        --infobox "\nAll done! The system will reboot now." 5 45
-    sleep 3
-    clear
-    sudo reboot
-    ;;
-1)
-    echo -e 'DISP=false # Enable OLED display' >>little-backup-box/scripts/config.cfg
-    dialog --clear \
-        --title "Setup finished" \
-        --backtitle "$BACKTITLE" \
-        --infobox "\nAll done! The system will reboot now." 5 45
-    sleep 3
-    clear
-    sudo reboot
-    ;;
-255)
-    echo -e 'DISP=false" # Enable OLED display' >>little-backup-box/scripts/config.cfg
-    dialog --clear \
-        --title "Setup finished" \
-        --backtitle "$BACKTITLE" \
-        --infobox "\nAll done! The system will reboot now." 5 45
-    sleep 3
-    clear
-    sudo reboot
-    ;;
-esac
+sudo "${WORKING_DIR}/poweroff.sh" reboot force

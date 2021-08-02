@@ -51,7 +51,7 @@ fi
 UPTIME=$(awk '{print int($1)}' /proc/uptime)
 
 if [ $UPTIME -lt "80" ]  && [ -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
-    rm "${IP_MAIL_SENT_MARKERFILE}"
+    sudo rm "${IP_MAIL_SENT_MARKERFILE}"
 fi
 
 if [ ! -z $SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then

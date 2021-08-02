@@ -23,6 +23,10 @@
 # - source lib-log.sh
 # - source lib-lcd.sh
 
+# Arguments:
+# 1. Number of Files to sync
+# 2. (optional) backup-destination-path
+
 # Get arguments
 if [ -z $1 ];
 then
@@ -33,7 +37,7 @@ fi
 
 if [ -z $2 ];
 then
-    BACKUP_PATH="$BAK_DIR"
+    BACKUP_PATH="${INTERAL_BACKUP_DIR}"
 else
     BACKUP_PATH=$2
 fi
@@ -59,7 +63,7 @@ while [ true ]; do
         PROGRESSBAR_16="                "
         PROGRESSBAR=${PROGRESSBAR_16:0:$PROGRESSBAR_LENGTH}
     else
-        FINISHED_PERCENT=""
+        FINISHED_PERCENT="?"
         PROGRESSBAR=""
     fi
 
