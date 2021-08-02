@@ -125,11 +125,6 @@ crontab -l | {
 
 crontab -l | {
     cat
-    echo "@reboot cd ${WORKING_DIR} && sudo php -S 0.0.0.0:80"
-} | crontab
-
-crontab -l | {
-    cat
     echo "@reboot sudo ${WORKING_DIR}/restart-servers.sh"
 } | crontab
 

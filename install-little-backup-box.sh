@@ -105,16 +105,20 @@ sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(post_max_size\s*=\s*\).*\
 sudo find /etc/php/ -name "php.ini" -exec sed -i "s/^\(upload_max_filesize\s*=\s*\).*\$/\1256M/" {} \;
 
 # Create web UI systemd unit
-sudo sh -c "echo '[Unit]' > /etc/systemd/system/webui.service"
-sudo sh -c "echo 'Description=web UI' >> /etc/systemd/system/webui.service"
-sudo sh -c "echo '[Service]' >> /etc/systemd/system/webui.service"
-sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/webui.service"
-sudo sh -c "echo 'ExecStart=/usr/bin/php -S 0.0.0.0:8000 -t ${WORKING_DIR}' >> /etc/systemd/system/webui.service"
-sudo sh -c "echo 'ExecStop=/usr/bin/kill -HUP \$MAINPID' >> /etc/systemd/system/webui.service"
-sudo sh -c "echo '[Install]' >> /etc/systemd/system/webui.service"
-sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/webui.service"
-sudo systemctl enable webui.service
-sudo systemctl start webui.service
+PORTS=("80" "8000")
+for PORT in "${PORTS[@]}"
+do
+    sudo sh -c "echo '[Unit]' > /etc/systemd/system/webui${PORT}.service"
+    sudo sh -c "echo 'Description=web UI Port ${PORT}' >> /etc/systemd/system/webui${PORT}.service"
+    sudo sh -c "echo '[Service]' >> /etc/systemd/system/webui${PORT}.service"
+    sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/webui${PORT}.service"
+    sudo sh -c "echo 'ExecStart=/usr/bin/php -S 0.0.0.0:${PORT} -t ${WORKING_DIR}' >> /etc/systemd/system/webui${PORT}.service"
+    sudo sh -c "echo 'ExecStop=/usr/bin/kill -HUP \$MAINPID' >> /etc/systemd/system/webui${PORT}.service"
+    sudo sh -c "echo '[Install]' >> /etc/systemd/system/webui${PORT}.service"
+    sudo sh -c "echo 'WantedBy=multi-user.target' >> /etc/systemd/system/webui${PORT}.service"
+    sudo systemctl enable webui${PORT}.service
+    sudo systemctl start webui${PORT}.service
+done
 
 # Create File Browser systemd unit
 curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
