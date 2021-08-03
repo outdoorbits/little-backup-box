@@ -46,7 +46,7 @@ else
 fi
 
 # Destination definition
-if [[ " internal external " =~ " ${2} " ]]; then
+if [[ " internal external server " =~ " ${2} " ]]; then
     DEST_MODE="${2}"
 else
     DEST_MODE="external"
@@ -126,8 +126,10 @@ if [ "${DEST_MODE}" = "external" ]; then
         sleep 4
     fi
 
-# elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ];
-# then
+    elif [ "${DEST_MODE}" = "server" ]; then
+        STORAGE_PATH="rsync://${RSYNC_USER}@${RSYNC_SERVER}:${RSYNC_PORT}${RSYNC_PATH}"
+
+# elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
 #     if [ $DISP = true ]; then
 #         lcd_message "Ready" "Insert NEW_STORAGE_TYPE"
 #         ...
@@ -318,11 +320,11 @@ if [ $DISP = true ]; then
 
     if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
         # Source storage
-        FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+        FILES_TO_SYNC=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
-        #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
-        #     then
-        #         FILES_TO_SYNC=...
+#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
+#     then
+#         FILES_TO_SYNC=...
 
     elif [ "${SOURCE_MODE}" = "camera" ]; then
         # Source camera
@@ -337,8 +339,7 @@ if [ $DISP = true ]; then
     fi
 
     # END
-
-    source "${WORKING_DIR}/status-display.sh" "${FILES_TO_SYNC}" "${BACKUP_PATH}" &
+    source "${WORKING_DIR}/status-display.sh" &
     PID=$!
 fi
 
@@ -352,11 +353,21 @@ fi
 
 if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
     # If source is storage or ios
-    sudo mkdir -p "${BACKUP_PATH}"
-    if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
+
+    if [ ${DEST_MODE} = "server" ]; then
+        SERVER_PATH=${BACKUP_PATH#"$STORAGE_PATH"}
+        if [ $LOG = true ]; then
+            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        else
+            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        fi
     else
-        SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        sudo mkdir -p "${BACKUP_PATH}"
+        if [ $LOG = true ]; then
+            SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        else
+            SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        fi
     fi
 
 #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];

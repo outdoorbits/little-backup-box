@@ -40,6 +40,11 @@ CONFIG_STANDARDS=( \
 'MAIL_TO=""' \
 'MAIL_HTML=true # Set to false to disable HTML-mails' \
 'DISP=false' \
+'RSYNC_USER="little-backup-box" # Username' \
+'RSYNC_PASSWORD="" # Password' \
+'RSYNC_SERVER="" # Server (Domain)' \
+'RSYNC_PORT="873" # Server-Port' \
+'RSYNC_PATH="little-backup-box" # Path at server' \
 )
 
 for CONFIG_STANDARD in "${CONFIG_STANDARDS[@]}"

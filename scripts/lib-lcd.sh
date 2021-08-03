@@ -38,7 +38,7 @@ function lcd_message () {
 
     #Wait for Lockfile
     if [ -f "${LockFile}" ]; then
-        LockFileTime=$(head -n 1 ${LockFile})
+        LockFileTime=$(sudo head -n 1 ${LockFile})
         ActualTime=$(date +%s )
         while [ $(($ActualTime - $LockFileTime)) == 0 ]
         do

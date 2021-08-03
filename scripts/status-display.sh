@@ -18,43 +18,39 @@
 #######################################################################
 
 
-# library expects from calling script:
+# sub expects from calling script:
 # - source config.cfg
 # - source lib-log.sh
 # - source lib-lcd.sh
 
 # Arguments:
-# 1. Number of Files to sync
-# 2. (optional) backup-destination-path
-
-# Get arguments
-if [ -z $1 ];
-then
-    FILES_TO_SYNC=0
-else
-    FILES_TO_SYNC=$1
-fi
-
-if [ -z $2 ];
-then
-    BACKUP_PATH="${INTERAL_BACKUP_DIR}"
-else
-    BACKUP_PATH=$2
-fi
+# Uses from main-script:
+# $FILES_TO_SYNC
+# $BACKUP_PATH
+# $DEST_MODE
 
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
 # Count of files in storage before backup starts
-FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
+if [ ${DEST_MODE} = "server" ]; then
+    FILES_TO_TRANSFER_START=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+else
+    FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
+fi
 
 while [ true ]; do
     # Count files in the backup destination
     # Calculate the number of files to be transferred
 
-    FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
+    if [ ${DEST_MODE} = "server" ]; then
+        FILES_TO_TRANSFER=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+        FILES_SYNCED=$(expr $FILES_TO_TRANSFER_START - $FILES_TO_TRANSFER)
+    else
+        FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
+        FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
+    fi
 
-    FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
     if [ "${FILES_TO_SYNC}" -gt "0" ];
     then
         FINISHED_PERCENT=$(expr 100 \* $FILES_SYNCED / $FILES_TO_SYNC)
@@ -69,4 +65,5 @@ while [ true ]; do
 
     lcd_message "+Backup status:" "+${FILES_SYNCED} of ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%" "-${PROGRESSBAR}"
     sleep 2
+
 done
