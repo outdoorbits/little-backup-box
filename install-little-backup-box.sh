@@ -131,7 +131,7 @@ crontab -l | {
 } | crontab
 crontab -l | {
     cat
-    echo "*/1 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
+    echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
 
 
