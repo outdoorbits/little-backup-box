@@ -53,10 +53,13 @@ do
         set -- $CONFIG_STANDARD
         VAR=$1
         VAL=$2
+
     if ! grep -q "${VAR}" "${CONFIG}"; then
         echo "${VAR}=${VAL}" >> "${CONFIG}"
     fi
 done
+
+unset IFS
 
 # Load config.cfg
 source "$CONFIG"

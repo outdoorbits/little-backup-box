@@ -28,6 +28,12 @@ FILE_LOG="${WORKING_DIR}/tmp/little-backup-box.log"
 FSCK_LOG="${WORKING_DIR}/tmp/fsck.log"
 IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 
+# Arguments
+# optional string SYNC_ERROR from main-script
+
+if [[ ! -v SYNC_ERROR ]]; then
+    MOUNTED_DEVICES=()
+fi
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
@@ -55,6 +61,11 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
         lcd_message "+Backup complete." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
     fi
 
+    if [ ! -z "${SYNC_ERROR}" ]; then
+        sleep 2
+        lcd_message "${SYNC_ERROR}"
+    fi
+
     sudo echo "" >"${FILE_OLED_OLD}"
     sudo echo "" >"${FILE_LOG}"
     sudo echo "" >"${FSCK_LOG}"
@@ -69,4 +80,9 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
 else
     # notify that the backup is complete
     lcd_message "+Backup complete." "-Do not unplug!" "+Power down via" "+web UI"
+
+    if [ ! -z "${SYNC_ERROR}" ]; then
+        sleep 2
+        lcd_message "${SYNC_ERROR}"
+    fi
 fi

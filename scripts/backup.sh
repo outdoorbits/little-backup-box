@@ -30,6 +30,8 @@ source "$CONFIG"
 # Config
 LogFileSync="${WORKING_DIR}/tmp/sync.log"
 
+MOUNTED_DEVICES=()
+
 #####################################
 # SOURCE AND DESTINATION DEFINTIONS #
 #####################################
@@ -113,6 +115,8 @@ if [ "${DEST_MODE}" = "external" ]; then
     # When the USB storage device is detected, mount it
     sudo mount "/dev/${STORAGE_DEV}" "${STORAGE_MOUNT_POINT}"
 
+    MOUNTED_DEVICES+=("${STORAGE_DEV}")
+
     STORAGE_PATH="${STORAGE_MOUNT_POINT}"
 
     # notify that the storage device has been mounted
@@ -121,6 +125,8 @@ if [ "${DEST_MODE}" = "external" ]; then
     set -- $ret
     STOR_SIZE="Size: $1"
     STOR_FREE="free: $3"
+
+    unset IFS
 
     lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
 
@@ -164,6 +170,7 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 # To define a new method, add an elif block (example below)
 
 if [ "${SOURCE_MODE}" = "storage" ]; then
+
     # Source storage
     # If display support is enabled, display the specified message
     lcd_message "Ready" "Insert source" "" ""
@@ -186,12 +193,17 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     # If the source device is detected, mount it and obtain its UUID
     sudo mount /dev"/${SRC[0]}" "${SOURCE_MOUNT_POINT}"
 
+    MOUNTED_DEVICES+=("${SRC[0]}")
+
     # notify that the source device has been mounted
     ret="$(get_storage_spaces ${SRC[0]})"
     IFS="|"
     set -- $ret
     STOR_SIZE="Size: $1"
     STOR_USED="used: $2"
+
+    unset IFS
+
     lcd_message "Source OK" "Working..." "${STOR_SIZE}" "${STOR_USED}"
     if [ $DISP = true ]; then
         sleep 2
@@ -308,7 +320,6 @@ fi
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
-
 ########################################
 # CALCULATE NUMBER OF FILES TO BACK UP #
 ########################################
@@ -341,7 +352,6 @@ fi
 source "${WORKING_DIR}/status-display.sh" &
 PID=$!
 
-
 ##############
 # RUN BACKUP #
 ##############
@@ -356,9 +366,9 @@ if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
     if [ ${DEST_MODE} = "server" ]; then
         SERVER_PATH=${BACKUP_PATH#"$STORAGE_PATH"}
         if [ $LOG = true ]; then
-            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
+            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
         else
-            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
         fi
     else
         sudo mkdir -p "${BACKUP_PATH}"
@@ -403,11 +413,29 @@ fi
 # Kill the status-display.sh script
 kill $PID
 
+# Check for lost devices
+SYNC_ERROR=""
+for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"
+do
+    if ! lsblk | grep -q ${MOUNTED_DEVICE}; then
+        SYNC_ERROR="Err.Lost device!"
+    fi
+done
+
 # Check internet connection and send
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
 if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
-    send_email "Little Backup Box: Backup complete" "Type: ${SOURCE_MODE} to ${DEST_MODE}\n${SOURCE_IDENTIFIER}\n\nBackup log:\n\n${SYNC_OUTPUT}"
+
+    if [ ! -z "${SYNC_ERROR}" ]; then
+        SUBJ_MSG="${SYNC_ERROR}"
+        BODY_MSG="${SYNC_ERROR}\n\n"
+    else
+        SUBJ_MSG="complete"
+        BODY_MSG=""
+    fi
+
+    send_email "Little Backup Box: Backup ${SUBJ_MSG}" "${BODY_MSG}Type: ${SOURCE_MODE} to ${DEST_MODE}\n${SOURCE_IDENTIFIER}\n\nBackup log:\n\n${SYNC_OUTPUT}"
 fi
 
 # Power off

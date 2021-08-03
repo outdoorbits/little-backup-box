@@ -31,6 +31,7 @@ function send_email () {
     TEXT_PLAIN="${2}"
     TEXT_HTML="${3}"
     BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
+
     TEXT=""
 
     #Mail-body
