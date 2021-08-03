@@ -26,6 +26,5 @@ source "$CONFIG"
 
 message="Custom action 1 works!"
 
-if [ $DISP = true ]; then
-  lcd_message "$message"
-fi
+lcd_message "$message"
+

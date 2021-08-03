@@ -45,18 +45,14 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     sudo umount "${STORAGE_MOUNT_POINT}"
     sudo umount "${SOURCE_MOUNT_POINT}"
 
-    # If display support is enabled, notify that the backup is complete
-    if [ "$DISP" = "true" ]; then
-
-        if [ "${FORCE}" = "force" ]; then
-            if [ "${ACTION}" = "poweroff" ]; then
-                lcd_message "+Power off." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
-            elif [ "${ACTION}" = "reboot" ]; then
-                lcd_message "+Rebooting..." "+Do not unplug!" "" ""
-            fi
-        else
-            lcd_message "+Backup complete." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
+    if [ "${FORCE}" = "force" ]; then
+        if [ "${ACTION}" = "poweroff" ]; then
+            lcd_message "+Power off." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
+        elif [ "${ACTION}" = "reboot" ]; then
+            lcd_message "+Rebooting..." "+Do not unplug!" "" ""
         fi
+    else
+        lcd_message "+Backup complete." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
     fi
 
     sudo echo "" >"${FILE_OLED_OLD}"
@@ -71,8 +67,6 @@ if [ "$POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     fi
 
 else
-    # If display support is enabled, notify that the backup is complete
-    if [ "$DISP" = "true" ]; then
-        lcd_message "+Backup complete." "-Do not unplug!" "+Power down via" "+web UI"
-    fi
+    # notify that the backup is complete
+    lcd_message "+Backup complete." "-Do not unplug!" "+Power down via" "+web UI"
 fi

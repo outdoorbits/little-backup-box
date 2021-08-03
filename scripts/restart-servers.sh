@@ -48,17 +48,15 @@ function get_storage_spaces() {
   echo "${storsize}|${storused}|${storfree}"
 }
 
-# If display support is enabled, notify that the storage device has been mounted
-if [ $DISP = true ]; then
-  ret="$(get_storage_spaces ${STORAGE_DEV})"
-  IFS="|"
-  set -- $ret
-  STOR_SIZE="Size: $1"
-  STOR_FREE="free: $3"
+# notify that the storage device has been mounted
+ret="$(get_storage_spaces ${STORAGE_DEV})"
+IFS="|"
+set -- $ret
+STOR_SIZE="Size: $1"
+STOR_FREE="free: $3"
 
-  lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
-  sleep 4
-fi
+lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
+sleep 4
 
 # Reload minidlna
 

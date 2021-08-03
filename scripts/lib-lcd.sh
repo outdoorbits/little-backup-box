@@ -40,7 +40,7 @@ function lcd_message () {
     if [ -f "${LockFile}" ]; then
         LockFileTime=$(sudo head -n 1 ${LockFile})
         ActualTime=$(date +%s )
-        while [ $(($ActualTime - $LockFileTime)) == 0 ]
+        while [ $(expr $ActualTime - $LockFileTime) -lt 1 ]
         do
             ActualTime=$(date +%s )
             sleep 0.5
@@ -81,7 +81,10 @@ function lcd_message () {
     LogLines=""
     n=0
 
-    sudo oled r
+    if [ $DISP = true ]; then
+        sudo oled r
+    fi
+
     while [ "${n}" -le 3 ]
     do
 
@@ -104,12 +107,15 @@ function lcd_message () {
         then
             if [ "${FORCE_FORMAT}" != "pos" ];
             then
-                sudo oled +R $(expr $n + 1)
+                if [ $DISP = true ]; then
+                    sudo oled +R $(expr $n + 1)
+                fi
             fi
         fi
 
-        sudo oled +${DisplayLines[$n]} "${LINE}"
-
+        if [ $DISP = true ]; then
+            sudo oled +${DisplayLines[$n]} "${LINE}"
+        fi
 
         if [ ! -z "${LogLines}" ];
         then
@@ -119,7 +125,10 @@ function lcd_message () {
 
         n=$(expr $n + 1)
     done
-    sudo oled s
+
+    if [ $DISP = true ]; then
+        sudo oled s
+    fi
 
     # log
     if [ ! -z "${LogLines}" ];

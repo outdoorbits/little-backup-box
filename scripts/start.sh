@@ -68,14 +68,13 @@ source "$CONFIG"
 . "${WORKING_DIR}/lib-lcd.sh"
 
 # Display IP
-if [ $DISP = true ]; then
-    IP=$(hostname -I | cut -d' ' -f1)
+IP=$(hostname -I | cut -d' ' -f1)
 
-    until [ ! -z "$IP" ]; do
-    sleep 1
-    IP=$(hostname -I | cut -d' ' -f1)
-    done
+until [ ! -z "$IP" ]; do
+sleep 1
+IP=$(hostname -I | cut -d' ' -f1)
+done
 
-    lcd_message "LittleBackupBox" "${IP}"
-fi
+lcd_message "LittleBackupBox" "${IP}"
+
 

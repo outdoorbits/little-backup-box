@@ -39,7 +39,7 @@ LogFileSync="${WORKING_DIR}/tmp/sync.log"
 # To add a new definition, specify the desired arguments to the list
 
 # Source definition
-if [[ " storage camera ios " =~ " ${1} " ]]; then
+if [[ " storage camera ios internal " =~ " ${1} " ]]; then
     SOURCE_MODE="${1}"
 else
     SOURCE_MODE="storage"
@@ -52,7 +52,10 @@ else
     DEST_MODE="external"
 fi
 
-# END
+if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
+    lcd_message "Invalid" "mode" "combination" ""
+    exit 1
+fi
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
@@ -97,9 +100,7 @@ if [ "${DEST_MODE}" = "external" ]; then
     # External mode
     # If display support is enabled, display the specified message
 
-    if [ $DISP = true ]; then
-        lcd_message "Ready" "Insert storage" "" ""
-    fi
+    lcd_message "Ready" "Insert storage" "" ""
 
     # Wait for a USB storage device (e.g., a USB flash drive)
     STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
@@ -114,15 +115,16 @@ if [ "${DEST_MODE}" = "external" ]; then
 
     STORAGE_PATH="${STORAGE_MOUNT_POINT}"
 
-    # If display support is enabled, notify that the storage device has been mounted
-    if [ $DISP = true ]; then
-        ret="$(get_storage_spaces ${STORAGE_DEV})"
-        IFS="|"
-        set -- $ret
-        STOR_SIZE="Size: $1"
-        STOR_FREE="free: $3"
+    # notify that the storage device has been mounted
+    ret="$(get_storage_spaces ${STORAGE_DEV})"
+    IFS="|"
+    set -- $ret
+    STOR_SIZE="Size: $1"
+    STOR_FREE="free: $3"
 
-        lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
+    lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
+
+    if [ $DISP = true ]; then
         sleep 4
     fi
 
@@ -130,21 +132,17 @@ if [ "${DEST_MODE}" = "external" ]; then
         STORAGE_PATH="rsync://${RSYNC_USER}@${RSYNC_SERVER}:${RSYNC_PORT}${RSYNC_PATH}"
 
 # elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
-#     if [ $DISP = true ]; then
 #         lcd_message "Ready" "Insert NEW_STORAGE_TYPE"
 #         ...
 #         # Set storage path
 #         STORAGE_PATH
-#     fi
 
 elif [ "${DEST_MODE}" = "internal" ]; then
     # Internal mode
     STORAGE_PATH="${INTERAL_BACKUP_DIR}"
 
     # If display support is enabled, notify that the storage device has been mounted
-    if [ $DISP = true ]; then
-        lcd_message "Int. storage OK" "" "" ""
-    fi
+    lcd_message "Int. storage OK" "" "" ""
 else
     # no defined mode selected
     lcd_message "No valid" "destination" "mode defined" ""
@@ -168,9 +166,7 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 if [ "${SOURCE_MODE}" = "storage" ]; then
     # Source storage
     # If display support is enabled, display the specified message
-    if [ $DISP = true ]; then
-        lcd_message "Ready" "Insert source" "" ""
-    fi
+    lcd_message "Ready" "Insert source" "" ""
 
     # Source device
     if [ "${SOURCE_MODE}" = "storage" ]; then
@@ -190,15 +186,15 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     # If the source device is detected, mount it and obtain its UUID
     sudo mount /dev"/${SRC[0]}" "${SOURCE_MOUNT_POINT}"
 
-    # If display support is enabled, notify that the source device has been mounted
+    # notify that the source device has been mounted
+    ret="$(get_storage_spaces ${SRC[0]})"
+    IFS="|"
+    set -- $ret
+    STOR_SIZE="Size: $1"
+    STOR_USED="used: $2"
+    lcd_message "Source OK" "Working..." "${STOR_SIZE}" "${STOR_USED}"
     if [ $DISP = true ]; then
-        ret="$(get_storage_spaces ${SRC[0]})"
-        IFS="|"
-        set -- $ret
-        STOR_SIZE="Size: $1"
-        STOR_USED="used: $2"
-        lcd_message "Source OK" "Working..." "${STOR_SIZE}" "${STOR_USED}"
-        sleep 4
+        sleep 2
     fi
 
     # Create  a .id random identifier file if doesn't exist
@@ -221,20 +217,16 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     SOURCE_IDENTIFIER="Source ID: ${ID}"
 
 elif [ "${SOURCE_MODE}" = "ios" ]; then
-    if [ $DISP = true ]; then
-        lcd_message "Ready" "Connect" "iOS device" ""
-    fi
+    lcd_message "Ready" "Connect" "iOS device" ""
 
     # Try to mount the iOS device
     ifuse $MOUNT_IOS_DIR -o allow_other
 
     # Waiting for the iOS device to be mounted
     until [ ! -z "$(ls -A $MOUNT_IOS_DIR)" ]; do
-        if [ $DISP = true ]; then
-            lcd_message "No iOS device" "Waiting..." "" ""
-            sleep 10
-            sudo ifuse $MOUNT_IOS_DIR -o allow_other
-        fi
+        lcd_message "No iOS device" "Waiting..." "" ""
+        sleep 10
+        sudo ifuse $MOUNT_IOS_DIR -o allow_other
     done
 
     # Mount iOS device
@@ -256,8 +248,20 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     # Set SOURCE_IDENTIFIER
     SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
 
+elif [ "${SOURCE_MODE}" = "internal" ]; then
+        lcd_message "Int. storage OK" "" "" ""
+
+        # Set SOURCE_PATH
+        SOURCE_PATH=${INTERAL_BACKUP_DIR}
+
+        # Set BACKUP_PATH
+        BACKUP_PATH="${STORAGE_PATH}/internal"
+
+        # Set SOURCE_IDENTIFIER
+        SOURCE_IDENTIFIER="Internal memory"
+
 # elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
-#     if [ $DISP = true ]; then
+#
 #         lcd_message "Ready" "Insert NEW_SOURCE_TYPE"
 #         ...
 #         # Specify backup path and source identifier
@@ -268,9 +272,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
 elif [ "${SOURCE_MODE}" = "camera" ]; then
     # Source camera
     # If display support is enabled, display the specified message
-    if [ $DISP = true ]; then
-        lcd_message "Ready" "Connect camera" "" ""
-    fi
+    lcd_message "Ready" "Connect camera" "" ""
 
     # Wait for camera
     DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
@@ -280,9 +282,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     done
 
     # If display support is enabled, notify that the camera is detected
-    if [ $DISP = true ]; then
-        lcd_message "Camera OK" "Working..." "" ""
-    fi
+    lcd_message "Camera OK" "Working..." "" ""
 
     # Obtain camera model
     # Create the target directory with the camera model as its name
@@ -299,7 +299,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 
 else
     # no defined mode selected
-    lcd_message "No valid" "source" "mode defined" ""
+    lcd_message "No valid" "source" "mode defined" "1"
     exit 1
 fi
 
@@ -308,40 +308,39 @@ fi
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
-if [ $DISP = true ]; then
 
-    ########################################
-    # CALCULATE NUMBER OF FILES TO BACK UP #
-    ########################################
+########################################
+# CALCULATE NUMBER OF FILES TO BACK UP #
+########################################
 
-    # START
+# START
 
-    # To define a new method, add an elif block (example below)
+# To define a new method, add an elif block (example below)
 
-    if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
-        # Source storage
-        FILES_TO_SYNC=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
+    # Source storage
+    FILES_TO_SYNC=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
 #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
 #     then
 #         FILES_TO_SYNC=...
 
-    elif [ "${SOURCE_MODE}" = "camera" ]; then
-        # Source camera
-        sudo mkdir -p "${BACKUP_PATH}"
-        cd "${BACKUP_PATH}"
-        FILES_TO_SYNC=$(sudo gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
-        cd
-    else
-        # no defined mode selected
-        lcd_message "No valid" "source" "mode defined" ""
-        exit 1
-    fi
-
-    # END
-    source "${WORKING_DIR}/status-display.sh" &
-    PID=$!
+elif [ "${SOURCE_MODE}" = "camera" ]; then
+    # Source camera
+    sudo mkdir -p "${BACKUP_PATH}"
+    cd "${BACKUP_PATH}"
+    FILES_TO_SYNC=$(sudo gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
+    cd
+else
+    # no defined mode selected
+    lcd_message "No valid" "source" "mode defined" "2"
+    exit 1
 fi
+
+# END
+source "${WORKING_DIR}/status-display.sh" &
+PID=$!
+
 
 ##############
 # RUN BACKUP #
@@ -351,7 +350,7 @@ fi
 
 # To define a new method, add an elif block (example below)
 
-if [[ " storage ios " =~ " ${SOURCE_MODE} " ]]; then
+if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
     # If source is storage or ios
 
     if [ ${DEST_MODE} = "server" ]; then
@@ -390,7 +389,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     cd
 else
     # no defined mode selected
-    lcd_message "No valid" "source" "mode defined" ""
+    lcd_message "No valid" "source" "mode defined" "3"
     exit 1
 fi
 
@@ -398,7 +397,7 @@ fi
 
 # Display progress after finish
 if [ $DISP = true ]; then
-    sleep 8
+    sleep 6
 fi
 
 # Kill the status-display.sh script

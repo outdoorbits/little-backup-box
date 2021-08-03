@@ -61,6 +61,7 @@ $WORKING_DIR=dirname(__FILE__);
 		<hr style="margin-top: 1em; margin-bottom: 1em;">
 		<form class="text-center" method="POST">
 			<button name="backup_storage_server"><?php echo L::backup_storage_server_b; ?></button>
+			<button name="backup_internal_server"><?php echo L::backup_internal_server_b; ?></button>
 		</form><hr style="margin-top: 1em; margin-bottom: 1em;">
 		<form class="text-center" method="POST">
 			<button name="custom1"><?php echo L::custom1_b; ?></button>
@@ -135,6 +136,13 @@ $WORKING_DIR=dirname(__FILE__);
 	if (isset($_POST['backup_storage_server'])) {
 		shell_exec('sudo pkill -f backup*');
 		shell_exec('sudo ./backup.sh storage server > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::backup_storage_server_m . '")';
+		echo "</script>";
+	}
+	if (isset($_POST['backup_internal_server'])) {
+		shell_exec('sudo pkill -f backup*');
+		shell_exec('sudo ./backup.sh internal server > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_storage_server_m . '")';
 		echo "</script>";
