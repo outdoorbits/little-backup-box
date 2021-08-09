@@ -24,9 +24,8 @@ CONFIG="${WORKING_DIR}/config.cfg"
 dos2unix "$CONFIG"
 
 CONFIG_STANDARDS=( \
-'STORAGE_DEV="sda1" # Name of the storage device'
+'STORAGE_DEV_MASK="sd" # Beginning of the name of storage devices'
 'STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device' \
-'SOURCE_DEV="sdb1" # Name of the source device' \
 'SOURCE_MOUNT_POINT="/media/source" # Mount point of the source device' \
 'INTERAL_BACKUP_DIR="/media/internal"' \
 'IOS_MOUNT_POINT="/media/iOS"' \

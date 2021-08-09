@@ -31,6 +31,8 @@ source "$CONFIG"
 LogFileSync="${WORKING_DIR}/tmp/sync.log"
 
 MOUNTED_DEVICES=()
+UUID_USB_1=""
+UUID_USB_2=""
 
 #####################################
 # SOURCE AND DESTINATION DEFINTIONS #
@@ -68,17 +70,20 @@ fi
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
+#load DEVICES library
+. "${WORKING_DIR}/lib-devices.sh"
+
 # log
 log_to_file "Source: ${SOURCE_MODE}"
 log_to_file "Destination: ${DEST_MODE}"
 
 
 function get_storage_spaces() {
-    local device=$1
+    local DEVICE=$1
 
-    local storsize=$(df /dev/"$STORAGE_DEV" -h --output=size | sed '1d' | tr -d ' ')
-    local storused=$(df /dev/"$STORAGE_DEV" -h --output=pcent | sed '1d' | tr -d ' ')
-    local storfree=$(df /dev/"$STORAGE_DEV" -h --output=avail | sed '1d' | tr -d ' ')
+    local storsize=$(df "${DEVICE}" -h --output=size | sed '1d' | tr -d ' ')
+    local storused=$(df "${DEVICE}" -h --output=pcent | sed '1d' | tr -d ' ')
+    local storfree=$(df "${DEVICE}" -h --output=avail | sed '1d' | tr -d ' ')
 
     echo "${storsize}|${storused}|${storfree}"
 }
@@ -105,22 +110,13 @@ if [ "${DEST_MODE}" = "external" ]; then
     lcd_message "Ready" "Insert storage" "" ""
 
     # Wait for a USB storage device (e.g., a USB flash drive)
-    STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
-
-    while [ -z "${STORAGE}" ]; do
-        sleep 1
-        STORAGE=$(ls /dev/* | grep "${STORAGE_DEV}" | cut -d"/" -f3)
-    done
-
-    # When the USB storage device is detected, mount it
-    sudo mount "/dev/${STORAGE_DEV}" "${STORAGE_MOUNT_POINT}"
-
-    MOUNTED_DEVICES+=("${STORAGE_DEV}")
+    UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
+    MOUNTED_DEVICES+=("${UUID_USB_1}")
 
     STORAGE_PATH="${STORAGE_MOUNT_POINT}"
 
     # notify that the storage device has been mounted
-    ret="$(get_storage_spaces ${STORAGE_DEV})"
+    ret="$(get_storage_spaces ${STORAGE_MOUNT_POINT})"
     IFS="|"
     set -- $ret
     STOR_SIZE="Size: $1"
@@ -178,25 +174,20 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     # Source device
     if [ "${SOURCE_MODE}" = "storage" ]; then
         if [ "${DEST_MODE}" = "external" ]; then
-            SOURCE_DEVICE="${SOURCE_DEV}" # the second integrated device
+            UUID_USB_2=$(mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}")
+            MOUNTED_DEVICES+=("${UUID_USB_2}")
+            # Set SOURCE_PATH
+            SOURCE_PATH="${SOURCE_MOUNT_POINT}"
         else
-            SOURCE_DEVICE="${STORAGE_DEV}" # the first integrated device
+            UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
+            MOUNTED_DEVICES+=("${UUID_USB_1}")
+            # Set SOURCE_PATH
+            SOURCE_PATH="${STORAGE_MOUNT_POINT}"
         fi
     fi
 
-    SRC=($(ls /dev/* | grep "${SOURCE_DEVICE}" | cut -d"/" -f3))
-    until [ ! -z "${SRC[0]}" ]; do
-        sleep 1
-        SRC=($(ls /dev/* | grep "$SOURCE_DEVICE" | cut -d"/" -f3))
-    done
-
-    # If the source device is detected, mount it and obtain its UUID
-    sudo mount /dev"/${SRC[0]}" "${SOURCE_MOUNT_POINT}"
-
-    MOUNTED_DEVICES+=("${SRC[0]}")
-
     # notify that the source device has been mounted
-    ret="$(get_storage_spaces ${SRC[0]})"
+    ret="$(get_storage_spaces ${SOURCE_PATH})"
     IFS="|"
     set -- $ret
     STOR_SIZE="Size: $1"
@@ -210,7 +201,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     fi
 
     # Create  a .id random identifier file if doesn't exist
-    cd "${SOURCE_MOUNT_POINT}"
+    cd "${SOURCE_PATH}"
     if [ ! -f *.id ]; then
         random=$(echo $RANDOM)
         sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
@@ -218,9 +209,6 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     ID_FILE=$(ls -t *.id | head -n1)
     ID="${ID_FILE%.*}"
     cd
-
-    # Set SOURCE_PATH
-    SOURCE_PATH="${SOURCE_MOUNT_POINT}"
 
     # Set BACKUP_PATH
     BACKUP_PATH="${STORAGE_PATH}/${ID}"
@@ -232,13 +220,13 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     lcd_message "Ready" "Connect" "iOS device" ""
 
     # Try to mount the iOS device
-    ifuse $MOUNT_IOS_DIR -o allow_other
+    ifuse ${IOS_MOUNT_POINT} -o allow_other
 
     # Waiting for the iOS device to be mounted
-    until [ ! -z "$(ls -A $MOUNT_IOS_DIR)" ]; do
+    until [ ! -z "$(ls -A ${IOS_MOUNT_POINT})" ]; do
         lcd_message "No iOS device" "Waiting..." "" ""
         sleep 10
-        sudo ifuse $MOUNT_IOS_DIR -o allow_other
+        sudo ifuse ${IOS_MOUNT_POINT} -o allow_other
     done
 
     # Mount iOS device
@@ -312,7 +300,6 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 else
     # no defined mode selected
     lcd_message "No valid" "source" "mode defined" "1"
-    exit 1
 fi
 
 # END
@@ -417,7 +404,7 @@ kill $PID
 SYNC_ERROR=""
 for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"
 do
-    if ! lsblk | grep -q ${MOUNTED_DEVICE}; then
+    if [ -z "$(device_mounted ${MOUNTED_DEVICE})" ]; then
         SYNC_ERROR="Err.Lost device!"
     fi
 done

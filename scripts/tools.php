@@ -33,17 +33,33 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
         $i18n->init();
         ?>
 
-        <h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::repair; ?></h1>
+        <h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::tools; ?></h1>
         <nav>
                 <ul>
                     <?php include "${WORKING_DIR}/sub-menu.php"; ?>
                 </ul>
         </nav>
+
         <div class="card">
+            <h1><?php echo L::mount_header; ?></h1>
                 <form class="text-center" style="margin-top: 1em;" method="POST">
-                        <label for="partition">Select partition:</label>
+                    <?php
+                        $button = trim(shell_exec("./mounthelper.sh check usb_1"))==""?"<button name='mount_usb_1'>" . L::mount_b . " USB 1</button>":"<button name='umount_usb_1'>" . L::umount_b . " USB 1</button>";
+                        echo ($button);
+                        $button = trim(shell_exec("./mounthelper.sh check usb_2"))==""?"<button name='mount_usb_2'>" . L::mount_b . " USB 2</button>":"<button name='umount_usb_2'>" . L::umount_b . " USB 2</button>";
+                        echo ($button);
+
+                    ?>
+                </form>
+        </div>
+
+        <div class="card">
+            <h1><?php echo L::repair; ?></h1>
+                <form class="text-center" style="margin-top: 1em;" method="POST">
+                        <label for="partition"><?php echo L::select_partition ?></label>
                         <select name="partition">
                                 <?php
+                                unset ($devices);
                                 exec("ls /dev/sd* | xargs -n 1 basename", $devices);
                                 foreach ($devices as $n => $device) {
                                         echo "<option value='$device'>$device</option>";
@@ -67,7 +83,34 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
         </div>
 
         <?php
-
+        if (isset($_POST['mount_usb_1'])) {
+                $MSG = shell_exec("./mounthelper.sh mount usb_1");
+                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                echo "<script>";
+                echo "window.location = window.location.href;";
+                echo "</script>";
+        }
+        if (isset($_POST['umount_usb_1'])) {
+                $MSG = shell_exec("./mounthelper.sh umount usb_1");
+                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                echo "<script>";
+                echo "window.location = window.location.href;";
+                echo "</script>";
+        }
+        if (isset($_POST['mount_usb_2'])) {
+                $MSG = shell_exec("./mounthelper.sh mount usb_2");
+                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                echo "<script>";
+                echo "window.location = window.location.href;";
+                echo "</script>";
+        }
+        if (isset($_POST['umount_usb_2'])) {
+                $MSG = shell_exec("./mounthelper.sh umount usb_2");
+                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                echo "<script>";
+                echo "window.location = window.location.href;";
+                echo "</script>";
+        }
         if (isset($_POST['fsck_check'])) {
 
                 $device = $_POST['partition'];

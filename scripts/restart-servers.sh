@@ -21,18 +21,17 @@ WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
+# Load Log library
+. "${WORKING_DIR}/lib-log.sh"
+
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
-# Wait for a USB storage device (e.g., a USB flash drive)
-STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-while [ -z "${STORAGE}" ]; do
-  sleep 1
-  STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-done
+#load DEVICES library
+. "${WORKING_DIR}/lib-devices.sh"
 
-# When the USB storage device is detected, mount it
-mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
+# Wait for a USB storage device (USB 1) (e.g., a USB flash drive)
+mount_device "usb_1" true "$(device_mounted usb_1)" "$(device_mounted usb_2)"
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
