@@ -117,8 +117,10 @@ if [ "${DEST_MODE}" = "external" ]; then
 
     # notify that the storage device has been mounted
     ret="$(get_storage_spaces ${STORAGE_MOUNT_POINT})"
+
     IFS="|"
     set -- $ret
+
     STOR_SIZE="Size: $1"
     STOR_FREE="free: $3"
 

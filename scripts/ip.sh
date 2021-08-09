@@ -62,6 +62,7 @@ Little Backup Box Upload: http://${IP}:8000/upload.php
 Little Backup Box Files: http://${IP}:8080
 Little Backup Box MiniDLNA: http://${IP}:8200"
 
+
     TEXT_HTML="
 Little Backup Box web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
 Little Backup Box Upload: <a href='http://${IP}:8000/upload.php'>http://${IP}:8000/upload.php</a><br>
@@ -74,6 +75,14 @@ Little Backup Box mejiro: http://${IP}:8081"
         TEXT_HTML="${TEXT_HTML}
 Little Backup Box mejiro: <a href='http://${IP}:8081'>http://${IP}:8081</a><br>"
     fi
+
+TEXT_PLAIN="${TEXT_PLAIN}
+
+Little Backup Box Samba: Copy 'smb://${IP}' into your filebrowser"
+
+TEXT_HTML="${TEXT_HTML}
+<br>
+Little Backup Box Samba: Copy '<a href='smb://${IP}'>smb://${IP}</a>' into your filebrowser<br>"
 
     send_email "Little Backup Box IP: ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
     touch "${IP_MAIL_SENT_MARKERFILE}"
