@@ -62,7 +62,7 @@ function mount_device () {
         while [ ${RETRY_TO_MOUNT} = true ];
         do
             unset USB_DEVICES
-            readarray USB_DEVICES <<< "$(sudo blkid | grep "^/dev/${STORAGE_DEV_MASK}" | awk '{print $1" "$2}')"
+            readarray USB_DEVICES <<< "$(sudo blkid | grep "^/dev/${STORAGE_DEV_MASK}")"
 
             # USB 1
             if [ "${MOUNT_DEVICE}" = "usb_1" ] && [ -z "${UUID_USB_1}" ]; then
@@ -71,12 +71,11 @@ function mount_device () {
                     USB_DEVICE_LUM=$(echo ${USB_DEVICE} | awk '{print $1}')
                     USB_DEVICE_LUM=${USB_DEVICE_LUM//\:}
 
-                    USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{print $2}' | awk -F[\"] '{print $2}')
-                    USB_DEVICE_UUID=${USB_DEVICE_UUID//[$'\t\r\n ']}
+                    USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID" | cut -d'"' -f 2)
 
                     if [ -z "${UUID_USB_1}" ] && [ ! "${USB_DEVICE_UUID}" = "${UUID_USB_2}" ]; then
                         UUID_USB_1=${USB_DEVICE_UUID}
-                        log_to_file "UUID_USB_1=${UUID_USB_1} (${USB_DEVICE_LUM})"
+                        log_to_file "UUID_USB_1=${UUID_USB_1} (${USB_DEVICE_LUM}) prepared to mount"
 
                     fi
                 done
@@ -97,12 +96,11 @@ function mount_device () {
                     USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM//[0-9]}
                     USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM_ALPHA//\:}
 
-                    USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{print $2}' | awk -F[\"] '{print $2}')
-                    USB_DEVICE_UUID=${USB_DEVICE_UUID//[$'\t\r\n ']}
+                    USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID" | cut -d'"' -f 2)
 
                     if [ -z "${UUID_USB_2}" ] && [ ! "${USB_DEVICE_UUID}" = "${UUID_USB_1}" ] && [ ! "${USB_DEVICE_LUM_ALPHA}" = "${USB_1_LUM_ALPHA}" ]; then
                         UUID_USB_2=${USB_DEVICE_UUID}
-                        log_to_file "UUID_USB_2=${UUID_USB_2}"
+                        log_to_file "UUID_USB_2=${UUID_USB_2} prepared to mount"
                     fi
                 done
             fi
@@ -187,6 +185,8 @@ function device_mounted () {
         RESULT=$(sudo lsblk -o +UUID | grep "${SEARCH_FOR}" | awk '{print $8}')
     fi
 
+    log_to_file "mounted ${SEARCH_FOR}? ${RESULT}"
+
     echo ${RESULT}
 }
 
@@ -216,6 +216,8 @@ function umount_device () {
             RESULT=$(sudo umount "${UMOUNT}")
         fi
     fi
+
+    log_to_file "umount ${DEVICE}? ${RESULT}"
 
     echo ${RESULT}
 }

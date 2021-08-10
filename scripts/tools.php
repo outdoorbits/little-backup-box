@@ -53,60 +53,65 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
                 </form>
         </div>
 
-        <div class="card">
+        <div class="card" style="margin-top: 3em;>
             <h1><?php echo L::repair; ?></h1>
                 <form class="text-center" style="margin-top: 1em;" method="POST">
                         <label for="partition"><?php echo L::select_partition ?></label>
                         <select name="partition">
-                                <?php
-                                unset ($devices);
-                                exec("ls /dev/sd* | xargs -n 1 basename", $devices);
-                                foreach ($devices as $n => $device) {
-                                        echo "<option value='$device'>$device</option>";
-                                }
-                                echo "</select>";
-                                echo ("<button name='fsck_check'>" . L::fsck_check_b . "</button>");
-                                echo ("<button name='fsck_autorepair'>" . L::fsck_autorepair_b . "</button>");
-                                ?>
+                            <?php
+                            unset ($devices);
+                            exec("ls /dev/sd* | xargs -n 1 basename", $devices);
+                            foreach ($devices as $n => $device) {
+                                    echo "<option value='$device'>$device</option>";
+                            }
+                            echo "</select>";
+                            echo ("<button name='fsck_check'>" . L::fsck_check_b . "</button>");
+                            echo ("<button name='fsck_autorepair'>" . L::fsck_autorepair_b . "</button>");
+                            ?>
                 </form>
-        </div>
-        <div class="card" style="margin-top: 3em;">
-                <h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
-                <hr>
-                <p><?php echo L::repair_txt; ?></p>
         </div>
 
         <div class="card" style="margin-top: 3em;">
-                <h2 style="margin-top: 0em;"><?php echo L::logmonitor; ?></h2>
-                <hr>
-                <iframe id="logscreen" src="./tmp/fsck.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
+            <h2 style="margin-top: 0em;"><?php echo L::logmonitor; ?></h2>
+            <hr>
+            <iframe id="logscreen" src="./tmp/fsck.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
+        </div>
+
+        <div class="card" style="margin-top: 3em;">
+            <h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
+            <hr>
+            <p><?php echo L::repair_txt; ?></p>
         </div>
 
         <?php
         if (isset($_POST['mount_usb_1'])) {
-                $MSG = shell_exec("./mounthelper.sh mount usb_1");
-                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                $command = "./mounthelper.sh mount usb_1";
+                $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
+                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
                 echo "<script>";
                 echo "window.location = window.location.href;";
                 echo "</script>";
         }
         if (isset($_POST['umount_usb_1'])) {
-                $MSG = shell_exec("./mounthelper.sh umount usb_1");
-                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                $command = "./mounthelper.sh umount usb_1";
+                $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
+                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
                 echo "<script>";
                 echo "window.location = window.location.href;";
                 echo "</script>";
         }
         if (isset($_POST['mount_usb_2'])) {
-                $MSG = shell_exec("./mounthelper.sh mount usb_2");
-                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                $command = "./mounthelper.sh mount usb_2";
+                $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
+                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
                 echo "<script>";
                 echo "window.location = window.location.href;";
                 echo "</script>";
         }
         if (isset($_POST['umount_usb_2'])) {
-                $MSG = shell_exec("./mounthelper.sh umount usb_2");
-                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                $command = "./mounthelper.sh umount usb_2";
+                $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
+                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
                 echo "<script>";
                 echo "window.location = window.location.href;";
                 echo "</script>";
@@ -124,7 +129,7 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
 
                 $command = "sudo fsck /dev/${device}";
                 $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
-                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
         }
         if (isset($_POST['fsck_autorepair'])) {
 
@@ -139,7 +144,7 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
 
                 $command = "sudo fsck -a /dev/${device}";
                 $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
-                exec ("echo -e \"${MSG}\" > \"${LogFileFsck}\"");
+                exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
         }
         ?>
 </body>
