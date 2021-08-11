@@ -92,6 +92,7 @@ function mount_device () {
 
                 for USB_DEVICE in "${USB_DEVICES[@]}"
                 do
+
                     USB_DEVICE_LUM=$(echo ${USB_DEVICE} | awk '{print $1}')
                     USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM//[0-9]}
                     USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM_ALPHA//\:}
@@ -127,15 +128,17 @@ function mount_device () {
         # (re-) mount all known USB-devices
         if [ ! -z "${UUID_USB_1}" ]; then
             if [ -z "$(device_mounted usb_1)" ]; then
-                sudo mount --uuid ${UUID_USB_1} "${STORAGE_MOUNT_POINT}"
-                log_to_file "mounted USB_1"
+                sleep 1 # wait for stabilisation after plug in
+                RET=$(sudo mount --uuid ${UUID_USB_1} "${STORAGE_MOUNT_POINT}")
+                log_to_file "mounted USB_1 ${UUID_USB_1} > ${STORAGE_MOUNT_POINT}"
             fi
         fi
 
         if [ ! -z "${UUID_USB_2}" ]; then
             if [ -z "$(device_mounted usb_2)" ]; then
-                sudo mount --uuid ${UUID_USB_2} "${SOURCE_MOUNT_POINT}"
-                log_to_file "mounted USB_2"
+                sleep 1 # wait for stabilisation after plug in
+                RET=$(sudo mount --uuid ${UUID_USB_2} "${SOURCE_MOUNT_POINT}")
+                log_to_file "mounted USB_2 ${UUID_USB_2} > ${SOURCE_MOUNT_POINT}"
             fi
         fi
 
@@ -185,7 +188,7 @@ function device_mounted () {
         RESULT=$(sudo lsblk -o +UUID | grep "${SEARCH_FOR}" | awk '{print $8}')
     fi
 
-    log_to_file "mounted ${SEARCH_FOR}? ${RESULT}"
+    log_to_file "mounted '${SEARCH_FOR}'? '${RESULT}'"
 
     echo ${RESULT}
 }
@@ -217,7 +220,7 @@ function umount_device () {
         fi
     fi
 
-    log_to_file "umount ${DEVICE}? ${RESULT}"
+    log_to_file "umount '${DEVICE}'? '${RESULT}'"
 
     echo ${RESULT}
 }

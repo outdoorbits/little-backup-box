@@ -129,7 +129,7 @@ if [ "${DEST_MODE}" = "external" ]; then
     lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
 
     if [ $DISP = true ]; then
-        sleep 4
+        sleep 2
     fi
 
     elif [ "${DEST_MODE}" = "server" ]; then
@@ -178,11 +178,13 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
         if [ "${DEST_MODE}" = "external" ]; then
             UUID_USB_2=$(mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}")
             MOUNTED_DEVICES+=("${UUID_USB_2}")
+
             # Set SOURCE_PATH
             SOURCE_PATH="${SOURCE_MOUNT_POINT}"
         else
             UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
             MOUNTED_DEVICES+=("${UUID_USB_1}")
+
             # Set SOURCE_PATH
             SOURCE_PATH="${STORAGE_MOUNT_POINT}"
         fi
@@ -396,7 +398,7 @@ fi
 
 # Display progress after finish
 if [ $DISP = true ]; then
-    sleep 6
+    sleep 5
 fi
 
 # Kill the status-display.sh script
@@ -406,8 +408,10 @@ kill $PID
 SYNC_ERROR=""
 for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"
 do
-    if [ -z "$(device_mounted ${MOUNTED_DEVICE})" ]; then
+    RESULT_DEVICE_MOUNTED=$(device_mounted ${MOUNTED_DEVICE})
+    if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
         SYNC_ERROR="Err.Lost device!"
+        log_to_file "Lost device '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'"
     fi
 done
 
@@ -428,4 +432,10 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
 fi
 
 # Power off
-source "${WORKING_DIR}/poweroff.sh" poweroff
+if [ -z "${SYNC_ERROR}" ]; then
+    MESSAGE="Backup complete."
+else
+    MESSAGE="${SYNC_ERROR}"
+fi
+
+source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE}"

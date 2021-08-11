@@ -41,7 +41,7 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
         </nav>
 
         <div class="card">
-            <h1><?php echo L::mount_header; ?></h1>
+            <h2><?php echo L::mount_header; ?></h2>
                 <form class="text-center" style="margin-top: 1em;" method="POST">
                     <?php
                         $button = trim(shell_exec("./mounthelper.sh check usb_1"))==""?"<button name='mount_usb_1'>" . L::mount_b . " USB 1</button>":"<button name='umount_usb_1'>" . L::umount_b . " USB 1</button>";
@@ -53,8 +53,8 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
                 </form>
         </div>
 
-        <div class="card" style="margin-top: 3em;>
-            <h1><?php echo L::repair; ?></h1>
+        <div class="card" style="margin-top: 3em;">
+            <h2><?php echo L::repair; ?></h2>
                 <form class="text-center" style="margin-top: 1em;" method="POST">
                         <label for="partition"><?php echo L::select_partition ?></label>
                         <select name="partition">
@@ -78,9 +78,10 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
         </div>
 
         <div class="card" style="margin-top: 3em;">
-            <h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
-            <hr>
-            <p><?php echo L::repair_txt; ?></p>
+            <details>
+                <summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::help; ?></summary>
+                <p><?php echo L::repair_txt; ?></p>
+            </details>
         </div>
 
         <?php
