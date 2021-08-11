@@ -23,9 +23,6 @@ if [[ $EUID -eq 0 ]]; then
    exit 1
 fi
 
-WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts"
-CONFIG="${WORKING_DIR}/config.cfg"
-
 # Update source and perform the full system upgrade
 sudo apt update
 sudo apt full-upgrade -y
@@ -72,9 +69,6 @@ sudo setfacl -Rdm g:$USER:rw "${STORAGE_MOUNT_POINT}"
 sudo setfacl -Rdm g:$USER:rw "${INTERAL_BACKUP_DIR}"
 sudo setfacl -Rdm g:$USER:rw "${IOS_MOUNT_POINT}"
 
-#hostname
-# sudo hostname -b little-backup-box
-
 # Configure miniDLNA
 sudo cp /etc/minidlna.conf /etc/minidlna.conf.orig
 sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir="${STORAGE_MOUNT_POINT}"'|' /etc/minidlna.conf
@@ -85,6 +79,10 @@ sudo service minidlna start
 # Clone and configure Little Backup Box
 cd
 git clone https://github.com/dmpop/little-backup-box.git
+cd little-backup-box
+
+WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts"
+CONFIG="${WORKING_DIR}/config.cfg"
 
 if [ -f "${WORKING_DIR}/config.cfg" ]; then
     mv "${WORKING_DIR}/config.cfg" "${WORKING_DIR}/config.cfg.bak"
