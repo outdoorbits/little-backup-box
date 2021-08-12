@@ -408,7 +408,7 @@ kill $PID
 SYNC_ERROR=""
 for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"
 do
-    RESULT_DEVICE_MOUNTED=$(device_mounted ${MOUNTED_DEVICE})
+    RESULT_DEVICE_MOUNTED=$(device_mounted "${MOUNTED_DEVICE}")
     if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
         SYNC_ERROR="Err.Lost device!"
         log_to_file "Lost device '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'"
