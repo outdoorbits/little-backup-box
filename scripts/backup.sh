@@ -230,7 +230,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     until [ ! -z "$(ls -A $MOUNT_IOS_DIR)" ]; do
         if [ $DISP = true ]; then
             lcd_message "No iOS device" "Waiting..." "" ""
-            sleep 10
+            sleep 5
             sudo ifuse $MOUNT_IOS_DIR -o allow_other
         fi
     done
