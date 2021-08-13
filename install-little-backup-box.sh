@@ -127,8 +127,9 @@ sudo systemctl start webui.service
 curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
 sudo sh -c "echo '[Unit]' > /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'Description=File Browser' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'After=network.target' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo '[Service]' >> /etc/systemd/system/filebrowser.service"
-sudo sh -c "echo 'Restart=always' >> /etc/systemd/system/filebrowser.service"
+sudo sh -c "echo 'Type=simple' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'ExecStart=/usr/local/bin/filebrowser -a 0.0.0.0 -r /media' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo 'ExecStop=/usr/bin/kill -HUP \$MAINPID' >> /etc/systemd/system/filebrowser.service"
 sudo sh -c "echo '[Install]' >> /etc/systemd/system/filebrowser.service"
