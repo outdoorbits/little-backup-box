@@ -20,7 +20,7 @@
 sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
 sudo apt install -y comitup
 sudo echo "ap_name: little-backup-box-<nn>" >> "/etc/comitup.conf"
-sudo echo "web_service: webui.service" >> "/etc/comitup.conf"
+sudo echo "web_service: webui80.service" >> "/etc/comitup.conf"
 echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
 sleep 2
 sudo reboot
