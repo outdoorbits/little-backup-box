@@ -234,7 +234,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     done
 
     # Mount iOS device
-    SOURCE_PATH="${MOUNT_IOS_DIR}/DCIM"
+    SOURCE_PATH="${IOS_MOUNT_POINT}/DCIM"
 
     # Create  a .id random identifier file if doesn't exist
     cd "${SOURCE_PATH}"
