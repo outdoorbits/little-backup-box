@@ -41,7 +41,8 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
         </nav>
 
         <div class="card">
-            <h2><?php echo L::mount_header; ?></h2>
+            <h3 class="text-center" style="margin-top: 0em;"><?php echo L::mount_header; ?></h3>
+            <hr>
                 <form class="text-center" style="margin-top: 1em;" method="POST">
                     <?php
                         $button = trim(shell_exec("./mounthelper.sh check usb_1"))==""?"<button name='mount_usb_1'>" . L::mount_b . " USB 1</button>":"<button name='umount_usb_1'>" . L::umount_b . " USB 1</button>";
@@ -54,7 +55,8 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
         </div>
 
         <div class="card" style="margin-top: 3em;">
-            <h2><?php echo L::repair; ?></h2>
+            <h3 class="text-center" style="margin-top: 0em;"><?php echo L::repair; ?></h3>
+            <hr>
                 <form class="text-center" style="margin-top: 1em;" method="POST">
                         <label for="partition"><?php echo L::select_partition ?></label>
                         <select name="partition">
