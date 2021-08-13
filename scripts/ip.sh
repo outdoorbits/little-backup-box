@@ -60,7 +60,7 @@ TEXT_PLAIN="
 Little Backup Box web UI: http://${IP}:8000
 Little Backup Box Upload: http://${IP}:8000/upload.php
 Little Backup Box Files: http://${IP}:8080
-Little Backup Box MiniDLNA: http://${IP}:8200"
+Little Backup Box miniDLNA: http://${IP}:8200"
 
 
     TEXT_HTML="
