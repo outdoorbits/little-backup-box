@@ -45,9 +45,9 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
             <hr>
                 <form class="text-center" style="margin-top: 1em;" method="POST">
                     <?php
-                        $button = trim(shell_exec("./mounthelper.sh check usb_1"))==""?"<button name='mount_usb_1'>" . L::mount_b . " USB 1</button>":"<button name='umount_usb_1'>" . L::umount_b . " USB 1</button>";
+                        $button = trim(shell_exec("./mount-storage.sh check usb_1"))==""?"<button name='mount_usb_1'>" . L::mount_b . " USB 1</button>":"<button name='umount_usb_1'>" . L::umount_b . " USB 1</button>";
                         echo ($button);
-                        $button = trim(shell_exec("./mounthelper.sh check usb_2"))==""?"<button name='mount_usb_2'>" . L::mount_b . " USB 2</button>":"<button name='umount_usb_2'>" . L::umount_b . " USB 2</button>";
+                        $button = trim(shell_exec("./mount-storage.sh check usb_2"))==""?"<button name='mount_usb_2'>" . L::mount_b . " USB 2</button>":"<button name='umount_usb_2'>" . L::umount_b . " USB 2</button>";
                         echo ($button);
 
                     ?>
@@ -88,7 +88,7 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
 
         <?php
         if (isset($_POST['mount_usb_1'])) {
-                $command = "./mounthelper.sh mount usb_1";
+                $command = "./mount-storage.sh mount usb_1";
                 $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
                 exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
                 echo "<script>";
@@ -96,7 +96,7 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
                 echo "</script>";
         }
         if (isset($_POST['umount_usb_1'])) {
-                $command = "./mounthelper.sh umount usb_1";
+                $command = "./mount-storage.sh umount usb_1";
                 $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
                 exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
                 echo "<script>";
@@ -104,7 +104,7 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
                 echo "</script>";
         }
         if (isset($_POST['mount_usb_2'])) {
-                $command = "./mounthelper.sh mount usb_2";
+                $command = "./mount-storage.sh mount usb_2";
                 $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
                 exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
                 echo "<script>";
@@ -112,7 +112,7 @@ $LogFileFsck = "${WORKING_DIR}/tmp/fsck.log";
                 echo "</script>";
         }
         if (isset($_POST['umount_usb_2'])) {
-                $command = "./mounthelper.sh umount usb_2";
+                $command = "./mount-storage.sh umount usb_2";
                 $MSG="${MSG}\\n${command}:\\n" . shell_exec("${command}") . "---\\n" . shell_exec ("cat \"${LogFileFsck}\"");
                 exec ("echo \"${MSG}\" > \"${LogFileFsck}\"");
                 echo "<script>";
