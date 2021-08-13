@@ -50,7 +50,7 @@ else
 fi
 
 # Destination definition
-if [[ " internal external server " =~ " ${2} " ]]; then
+if [[ " internal external " =~ " ${2} " ]]; then
     DEST_MODE="${2}"
 else
     DEST_MODE="external"
@@ -131,9 +131,6 @@ if [ "${DEST_MODE}" = "external" ]; then
     if [ $DISP = true ]; then
         sleep 2
     fi
-
-    elif [ "${DEST_MODE}" = "server" ]; then
-        STORAGE_PATH="rsync://${RSYNC_USER}@${RSYNC_SERVER}:${RSYNC_PORT}${RSYNC_PATH}"
 
 # elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
 #         lcd_message "Ready" "Insert NEW_STORAGE_TYPE"
@@ -354,20 +351,11 @@ PID=$!
 if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
     # If source is storage or ios
 
-    if [ ${DEST_MODE} = "server" ]; then
-        SERVER_PATH=${BACKUP_PATH#"$STORAGE_PATH"}
-        if [ $LOG = true ]; then
-            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
-        else
-            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
-        fi
+    sudo mkdir -p "${BACKUP_PATH}"
+    if [ $LOG = true ]; then
+        SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
     else
-        sudo mkdir -p "${BACKUP_PATH}"
-        if [ $LOG = true ]; then
-            SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
-        else
-            SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
-        fi
+        SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
     fi
 
 #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];

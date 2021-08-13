@@ -48,6 +48,7 @@ $WORKING_DIR=dirname(__FILE__);
 		</ul>
 	</nav>
 	<div class="card">
+
 		<form class="text-center" style="margin-top: 1em;" method="POST">
 			<button name="backup_storage_external"><?php echo L::backup_storage_external_b; ?></button>
 			<button name="backup_storage_internal"><?php echo L::backup_storage_internal_b; ?></button>
@@ -58,21 +59,22 @@ $WORKING_DIR=dirname(__FILE__);
 			<button name="backup_ios_external"><?php echo L::backup_ios_external_b; ?></button>
 			<button name="backup_ios_internal"><?php echo L::backup_ios_internal_b; ?></button>
 		</form>
+
 		<hr style="margin-top: 1em; margin-bottom: 1em;">
-		<form class="text-center" method="POST">
-			<button name="backup_storage_server"><?php echo L::backup_storage_server_b; ?></button>
-			<button name="backup_internal_server"><?php echo L::backup_internal_server_b; ?></button>
-		</form><hr style="margin-top: 1em; margin-bottom: 1em;">
+
 		<form class="text-center" method="POST">
 			<button name="custom1"><?php echo L::custom1_b; ?></button>
 			<button name="custom2"><?php echo L::custom2_b; ?></button>
 			<button name="custom3"><?php echo L::custom3_b; ?></button>
 		</form>
+
 		<hr style="margin-top: 1em; margin-bottom: 1em;">
+
 		<form class="text-center" method="POST">
 			<button name="reboot"><?php echo L::reboot_b; ?></button>
 			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
+
 	</div>
 	<div class="card" style="margin-top: 3em;">
 		<h2 style="margin-top: 0em;">
@@ -131,20 +133,6 @@ $WORKING_DIR=dirname(__FILE__);
 		exec('sudo ./backup.sh ios internal > /dev/null 2>&1 & echo $!');
 		echo "<script>";
 		echo 'alert("' . L::backup_ios_internal_m . '")';
-		echo "</script>";
-	}
-	if (isset($_POST['backup_storage_server'])) {
-		exec('sudo pkill -f backup*');
-		exec('sudo ./backup.sh storage server > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::backup_storage_server_m . '")';
-		echo "</script>";
-	}
-	if (isset($_POST['backup_internal_server'])) {
-		exec('sudo pkill -f backup*');
-		exec('sudo ./backup.sh internal server > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::backup_storage_server_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['reboot'])) {

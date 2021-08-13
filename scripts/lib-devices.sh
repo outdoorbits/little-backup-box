@@ -71,7 +71,7 @@ function mount_device () {
                 do
                     USB_DEVICE_LUM=$(echo ${USB_DEVICE} | awk '{print $1}' | sed 's/[^0-9a-z\/]*//g')
 
-                    USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID=" | cut -d'"' -f 2) #################XXX
+                    USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID=" | cut -d'"' -f 2)
 
                     if [ -z "${USB_DEVICE_UUID}" ]; then
                         DEVICE_IDENT="${USB_DEVICE_LUM}"
@@ -81,7 +81,7 @@ function mount_device () {
 
                     if [ -z "${DEVICE_IDENT_1}" ] && [ ! "${DEVICE_IDENT}" = "${DEVICE_IDENT_2}" ]; then
                         DEVICE_IDENT_1=${DEVICE_IDENT}
-                        log_to_file "DEVICE_IDENT_1=${DEVICE_IDENT_1} (${USB_DEVICE_LUM}) prepared to mount"
+                        log_to_file "DEVICE_IDENT_1='${DEVICE_IDENT_1}' ('${USB_DEVICE_LUM}') prepared to mount"
 
                     fi
                 done
@@ -91,7 +91,7 @@ function mount_device () {
             if [ "${MOUNT_DEVICE}" = "usb_2" ] && [ -z "${DEVICE_IDENT_2}" ]; then
                 #get USB_1_LUM_ALPHA to prevent mounting another partition on the same drive
                 if [ ! -z "${DEVICE_IDENT_1}" ]; then
-                    USB_1_LUM="$(sudo blkid | grep "'${DEVICE_IDENT_1/ --uuid/}'" | awk '{print $1}' | sed 's/[^0-9a-z\/]*//g'))"
+                    USB_1_LUM="$(sudo blkid | grep "'${DEVICE_IDENT_1/--uuid/}'" | awk '{print $1}' | sed 's/[^0-9a-z\/]*//g'))"
                     USB_1_LUM_ALPHA=${USB_1_LUM//[0-9]}
                 fi
 
@@ -101,7 +101,7 @@ function mount_device () {
                     USB_DEVICE_LUM=$(echo ${USB_DEVICE} | awk '{print $1}' | sed 's/[^0-9a-z\/]*//g')
                     USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM//[0-9]}
 
-                    USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID=" | cut -d'"' -f 2) #################XXX
+                    USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID=" | cut -d'"' -f 2)
 
                     if [ -z "${USB_DEVICE_UUID}" ]; then
                         DEVICE_IDENT="${USB_DEVICE_LUM}"
@@ -111,7 +111,7 @@ function mount_device () {
 
                     if [ -z "${DEVICE_IDENT_2}" ] && [ ! "${DEVICE_IDENT_1}" = "${DEVICE_IDENT}" ] && [ ! "${USB_DEVICE_LUM_ALPHA}" = "${USB_1_LUM_ALPHA}" ]; then
                         DEVICE_IDENT_2=${DEVICE_IDENT}
-                        log_to_file "DEVICE_IDENT_2=${DEVICE_IDENT_2} prepared to mount"
+                        log_to_file "DEVICE_IDENT_2='${DEVICE_IDENT_2}' prepared to mount"
                     fi
                 done
             fi
@@ -140,7 +140,7 @@ function mount_device () {
             if [ -z "$(device_mounted usb_1)" ]; then
                 sleep 1 # wait for stabilisation after plug in
                 RET=$(sudo mount ${DEVICE_IDENT_1} "${STORAGE_MOUNT_POINT}")
-                log_to_file "mounted USB_1 ${DEVICE_IDENT_1} > ${STORAGE_MOUNT_POINT}: '${RET}'"
+                log_to_file "mounted USB_1 '${DEVICE_IDENT_1}' > '${STORAGE_MOUNT_POINT}': '${RET}'"
             fi
         fi
 
@@ -149,7 +149,7 @@ function mount_device () {
             if [ -z "$(device_mounted usb_2)" ]; then
                 sleep 1 # wait for stabilisation after plug in
                 RET=$(sudo mount ${DEVICE_IDENT_2} "${SOURCE_MOUNT_POINT}")
-                log_to_file "mounted USB_2 ${DEVICE_IDENT_2} > ${SOURCE_MOUNT_POINT}: '${RET}'"
+                log_to_file "mounted USB_2 '${DEVICE_IDENT_2}' > '${SOURCE_MOUNT_POINT}': '${RET}'"
             fi
         fi
 
@@ -224,7 +224,7 @@ function device_mounted () {
             fi
 
             if grep -q "^${USB_DEVICE_LUM}" "/proc/mounts"; then
-                RESULT=${DEVICE_IDENT}
+                RESULT="${DEVICE_IDENT}"
             fi
         fi
     fi
