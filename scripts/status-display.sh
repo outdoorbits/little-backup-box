@@ -33,23 +33,15 @@
 . "${WORKING_DIR}/lib-lcd.sh"
 
 # Count of files in storage before backup starts
-if [ ${DEST_MODE} = "server" ]; then
-    FILES_TO_TRANSFER_START=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
-else
-    FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
-fi
+FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
+
 
 while [ true ]; do
     # Count files in the backup destination
     # Calculate the number of files to be transferred
 
-    if [ ${DEST_MODE} = "server" ]; then
-        FILES_TO_TRANSFER=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
-        FILES_SYNCED=$(expr $FILES_TO_TRANSFER_START - $FILES_TO_TRANSFER)
-    else
-        FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
-        FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
-    fi
+    FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
+    FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
 
     if [ "${FILES_TO_SYNC}" -gt "0" ];
     then
