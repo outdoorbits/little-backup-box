@@ -77,11 +77,11 @@ Mejiro: <a href='http://${IP}:8081'>http://${IP}:8081</a><br>"
 
     TEXT_PLAIN="${TEXT_PLAIN}
 
-Samba: Open 'smb://${IP}' into a file manager"
+Samba: open 'smb://${IP}' into a file manager"
 
     TEXT_HTML="${TEXT_HTML}
 <br>
-Samba: Open '<a href='smb://${IP}'>smb://${IP}</a>' into a file manager<br>"
+Samba: open '<a href='smb://${IP}'>smb://${IP}</a>' into a file manager<br>"
 
     send_email "Little Backup Box Info: ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
     touch "${IP_MAIL_SENT_MARKERFILE}"
