@@ -84,25 +84,9 @@ cd little-backup-box
 WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts"
 CONFIG="${WORKING_DIR}/config.cfg"
 
-if [ -f "${WORKING_DIR}/config.cfg" ]; then
-    mv "${WORKING_DIR}/config.cfg" "${WORKING_DIR}/config.cfg.bak"
-fi
-
-# remove mount points from config.cfg
-sed -i '/SOURCE_MOUNT_POINT/d' "${CONFIG}"
-sed -i '/STORAGE_MOUNT_POINT/d' "${CONFIG}"
-sed -i '/INTERAL_BACKUP_DIR/d' "${CONFIG}"
-sed -i '/IOS_MOUNT_POINT/d' "${CONFIG}"
-
-# add mount points to config.cfg
-echo -e 'SOURCE_MOUNT_POINT="'${SOURCE_MOUNT_POINT}'" # Mount point of the source device' >>"${CONFIG}"
-echo -e 'STORAGE_MOUNT_POINT="'${STORAGE_MOUNT_POINT}'" # Mount point of the storage device' >>"${CONFIG}"
-echo -e 'INTERAL_BACKUP_DIR="'${INTERAL_BACKUP_DIR}'" # Internal backup directory path' >>"${CONFIG}"
-echo -e 'IOS_MOUNT_POINT="'${IOS_MOUNT_POINT}'" # Mount point of the iOS device' >>"${CONFIG}"
-
 chmod +x ${WORKING_DIR}/*.sh
 
-# Choose display-setup, default backup mode, set crontab
+# Enable LCD, select default backup mode, add cron jobs
 source "${WORKING_DIR}/sub-select-mode.sh"
 
 # Change php.ini defaults
