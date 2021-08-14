@@ -59,7 +59,7 @@ crontab -l | {
 } | crontab
 
 #Finish
-echo "All done. Rebooting ..."
+echo "All done. Rebooting..."
 
 sleep 2
 

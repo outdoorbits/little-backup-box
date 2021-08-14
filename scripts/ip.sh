@@ -50,40 +50,39 @@ fi
 
 UPTIME=$(awk '{print int($1)}' /proc/uptime)
 
-if [ $UPTIME -lt "80" ]  && [ -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
+if [ $UPTIME -lt "80" ] && [ -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
     sudo rm "${IP_MAIL_SENT_MARKERFILE}"
 fi
 
 if [ ! -z $SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
 
-TEXT_PLAIN="
-Little Backup Box web UI: http://${IP}:8000
-Little Backup Box Upload: http://${IP}:8000/upload.php
-Little Backup Box Files: http://${IP}:8080
-Little Backup Box miniDLNA: http://${IP}:8200"
-
+    TEXT_PLAIN="
+web UI: http://${IP}:8000
+Upload: http://${IP}:8000/upload.php
+Files: http://${IP}:8080
+miniDLNA: http://${IP}:8200"
 
     TEXT_HTML="
-Little Backup Box web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
-Little Backup Box Upload: <a href='http://${IP}:8000/upload.php'>http://${IP}:8000/upload.php</a><br>
-Little Backup Box Files: <a href='http://${IP}:8080'>http://${IP}:8080</a><br>
-Little Backup Box miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
+web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
+Upload: <a href='http://${IP}:8000/upload.php'>http://${IP}:8000/upload.php</a><br>
+Files: <a href='http://${IP}:8080'>http://${IP}:8080</a><br>
+miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
 
     if [ -f "${WORKING_DIR}/../../mejiro/index.php" ]; then
         TEXT_PLAIN="${TEXT_PLAIN}
-Little Backup Box mejiro: http://${IP}:8081"
+Mejiro: http://${IP}:8081"
         TEXT_HTML="${TEXT_HTML}
-Little Backup Box mejiro: <a href='http://${IP}:8081'>http://${IP}:8081</a><br>"
+Mejiro: <a href='http://${IP}:8081'>http://${IP}:8081</a><br>"
     fi
 
-TEXT_PLAIN="${TEXT_PLAIN}
+    TEXT_PLAIN="${TEXT_PLAIN}
 
-Little Backup Box Samba: Copy 'smb://${IP}' into your filebrowser"
+Samba: Open 'smb://${IP}' into a file manager"
 
-TEXT_HTML="${TEXT_HTML}
+    TEXT_HTML="${TEXT_HTML}
 <br>
-Little Backup Box Samba: Copy '<a href='smb://${IP}'>smb://${IP}</a>' into your filebrowser<br>"
+Samba: Open '<a href='smb://${IP}'>smb://${IP}</a>' into a file manager<br>"
 
-    send_email "Little Backup Box IP: ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
+    send_email "Little Backup Box Info: ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
     touch "${IP_MAIL_SENT_MARKERFILE}"
 fi

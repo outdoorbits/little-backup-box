@@ -197,6 +197,5 @@ sudo service vsftpd restart
 # Finished
 clear
 echo "Alle done! Rebooting..."
-sleep 2
-
+sleep 3
 sudo "${WORKING_DIR}/poweroff.sh" reboot force
