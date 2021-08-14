@@ -21,18 +21,18 @@
 # - source config.cfg
 # - source lib-log.sh
 
-function mount_device () {
-# mounts the device, if WAIT_FOR_MOUNT=true, waits until the device is available
-# returns uuid ("ios" for iOS) or false (if not mounted), "na" for not available
-# checks and remounts all by UUID_USBX given devices
+function mount_device() {
+    # mounts the device, if WAIT_FOR_MOUNT=true, waits until the device is available
+    # returns uuid ("ios" for iOS) or false (if not mounted), "na" for not available
+    # checks and remounts all by UUID_USBX given devices
 
-# Takes up to 2 arguments
-# DEVICE: one of ("usb_1" "usb_2" "ios")
-# WAIT_FOR_MOUNT: true or false
-# [ DEVICE = "usb_2" ]: DEVICE_IDENT_1 of mounted usb_1
+    # Takes up to 2 arguments
+    # DEVICE: one of ("usb_1" "usb_2" "ios")
+    # WAIT_FOR_MOUNT: true or false
+    # [ DEVICE = "usb_2" ]: DEVICE_IDENT_1 of mounted usb_1
 
-# call for USB: mount_device MOUNT_DEVICE WAIT_FOR_MOUNT DEVICE_IDENT_1 DEVICE_IDENT_2 # example: mount_device usb_1 true "" ""
-# call for
+    # call for USB: mount_device MOUNT_DEVICE WAIT_FOR_MOUNT DEVICE_IDENT_1 DEVICE_IDENT_2 # example: mount_device usb_1 true "" ""
+    # call for
 
     # Arguments
     MOUNT_DEVICE="${1}"
@@ -55,20 +55,18 @@ function mount_device () {
     local USB_1_LUM_ALPHA=""
     local RETRY_TO_MOUNT=true
 
-    # USB-Storage-devices
+    # USB storage devices
     if [ "${MOUNT_DEVICE}" = "usb_1" ] || [ "${MOUNT_DEVICE}" = "usb_2" ]; then
         # [ -z DEVICE_IDENT_1 ]: check for mountable devices and mount first one
         # check for mountable devices and mount the other (not DEVICE_IDENT_1)
 
-        while [ ${RETRY_TO_MOUNT} = true ];
-        do
+        while [ ${RETRY_TO_MOUNT} = true ]; do
             unset USB_DEVICES
-            readarray USB_DEVICES <<< "$(sudo blkid | grep "^/dev/${STORAGE_DEV_MASK}")"
+            readarray USB_DEVICES <<<"$(sudo blkid | grep "^/dev/${STORAGE_DEV_MASK}")"
 
             # USB 1
             if [ "${MOUNT_DEVICE}" = "usb_1" ] && [ -z "${DEVICE_IDENT_1}" ]; then
-                for USB_DEVICE in "${USB_DEVICES[@]}"
-                do
+                for USB_DEVICE in "${USB_DEVICES[@]}"; do
                     USB_DEVICE_LUM=$(echo ${USB_DEVICE} | awk '{print $1}' | sed 's/[^0-9a-z\/]*//g')
 
                     USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID=" | cut -d'"' -f 2)
@@ -92,14 +90,13 @@ function mount_device () {
                 #get USB_1_LUM_ALPHA to prevent mounting another partition on the same drive
                 if [ ! -z "${DEVICE_IDENT_1}" ]; then
                     USB_1_LUM="$(sudo blkid | grep "'${DEVICE_IDENT_1/--uuid/}'" | awk '{print $1}' | sed 's/[^0-9a-z\/]*//g'))"
-                    USB_1_LUM_ALPHA=${USB_1_LUM//[0-9]}
+                    USB_1_LUM_ALPHA=${USB_1_LUM//[0-9]/}
                 fi
 
-                for USB_DEVICE in "${USB_DEVICES[@]}"
-                do
+                for USB_DEVICE in "${USB_DEVICES[@]}"; do
 
                     USB_DEVICE_LUM=$(echo ${USB_DEVICE} | awk '{print $1}' | sed 's/[^0-9a-z\/]*//g')
-                    USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM//[0-9]}
+                    USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM//[0-9]/}
 
                     USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID=" | cut -d'"' -f 2)
 
@@ -116,7 +113,7 @@ function mount_device () {
                 done
             fi
 
-            # Job done?
+            # Check if mount is done
             if [ "${MOUNT_DEVICE}" = "usb_1" ] && [ ! -z "${DEVICE_IDENT_1}" ]; then
                 RETRY_TO_MOUNT=false
             fi
@@ -125,7 +122,7 @@ function mount_device () {
                 RETRY_TO_MOUNT=false
             fi
 
-            # retry? (if job is not done)
+            # Retry if mount is not done
             if [ ${WAIT_FOR_MOUNT} = false ]; then
                 RETRY_TO_MOUNT=false
             fi
@@ -135,10 +132,10 @@ function mount_device () {
             fi
         done
 
-        # (re-) mount all known USB-devices
+        # Mount all known USB devices
         if [ ! -z "${DEVICE_IDENT_1}" ]; then
             if [ -z "$(device_mounted usb_1)" ]; then
-                sleep 1 # wait for stabilisation after plug in
+                sleep 1
                 RET=$(sudo mount ${DEVICE_IDENT_1} "${STORAGE_MOUNT_POINT}")
                 log_to_file "mounted USB_1 '${DEVICE_IDENT_1}' > '${STORAGE_MOUNT_POINT}': '${RET}'"
             fi
@@ -147,13 +144,13 @@ function mount_device () {
         if [ ! -z "${DEVICE_IDENT_2}" ]; then
 
             if [ -z "$(device_mounted usb_2)" ]; then
-                sleep 1 # wait for stabilisation after plug in
+                sleep 1
                 RET=$(sudo mount ${DEVICE_IDENT_2} "${SOURCE_MOUNT_POINT}")
                 log_to_file "mounted USB_2 '${DEVICE_IDENT_2}' > '${SOURCE_MOUNT_POINT}': '${RET}'"
             fi
         fi
 
-        # check finally for success
+        # Check finally for success
         if [ ! -z "${DEVICE_IDENT_1}" ]; then
             if [ -z "$(device_mounted usb_1)" ]; then SUCCESS=false; fi
         fi
@@ -175,11 +172,11 @@ function mount_device () {
     echo ${RESULT}
 }
 
-function device_mounted () {
-# returns true, if device is mounted
-# Takes 1 argument
-# SEARCH_FOR: one of ("usb_1" "usb_2") or mount-point or UUID
-# returns uuid ("ios" for iOS) or false (if not mounted), "na" for not available
+function device_mounted() {
+    # returns true, if device is mounted
+    # Takes 1 argument
+    # SEARCH_FOR: one of ("usb_1" "usb_2") or mount-point or UUID
+    # returns uuid ("ios" for iOS) or false (if not mounted), "na" for not available
 
     # Arguments
     local SEARCH_FOR=${1}
@@ -192,7 +189,6 @@ function device_mounted () {
     local USB_DEVICE=""
     local USB_DEVICE_LUM=""
     local USB_DEVICE_UUID=""
-
 
     if [ "${SEARCH_FOR}" = "usb_1" ]; then
         SEARCH_FOR="${STORAGE_MOUNT_POINT}"
@@ -234,10 +230,10 @@ function device_mounted () {
     echo ${RESULT}
 }
 
-function umount_device () {
-# Takes 1 argument
-# UMOUNT: one of ("usb_1" "usb_2") or mount-point or UUID
-# returns uuid ("ios" for iOS) or false (if not mounted), "na" for not available
+function umount_device() {
+    # Takes 1 argument
+    # UMOUNT: one of ("usb_1" "usb_2") or mount-point or UUID
+    # returns uuid ("ios" for iOS) or false (if not mounted), "na" for not available
 
     # Arguments
     local DEVICE="${1}"
@@ -265,4 +261,3 @@ function umount_device () {
 
     echo ${RESULT}
 }
-

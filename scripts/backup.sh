@@ -77,7 +77,6 @@ fi
 log_to_file "Source: ${SOURCE_MODE}"
 log_to_file "Destination: ${DEST_MODE}"
 
-
 function get_storage_space() {
     local DEVICE=$1
 
@@ -250,16 +249,16 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
 
 elif [ "${SOURCE_MODE}" = "internal" ]; then
-        lcd_message "Int. storage OK" "" "" ""
+    lcd_message "Int. storage OK" "" "" ""
 
-        # Set SOURCE_PATH
-        SOURCE_PATH=${INTERAL_BACKUP_DIR}
+    # Set SOURCE_PATH
+    SOURCE_PATH=${INTERAL_BACKUP_DIR}
 
-        # Set BACKUP_PATH
-        BACKUP_PATH="${STORAGE_PATH}/internal"
+    # Set BACKUP_PATH
+    BACKUP_PATH="${STORAGE_PATH}/internal"
 
-        # Set SOURCE_IDENTIFIER
-        SOURCE_IDENTIFIER="Internal memory"
+    # Set SOURCE_IDENTIFIER
+    SOURCE_IDENTIFIER="Internal memory"
 
 # elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 #
@@ -394,11 +393,10 @@ kill $PID
 
 # Check for lost devices
 SYNC_ERROR=""
-for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"
-do
+for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"; do
     RESULT_DEVICE_MOUNTED=$(device_mounted "${MOUNTED_DEVICE}")
     if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-        SYNC_ERROR="Err.Lost device!"
+        SYNC_ERROR="Device error!"
         log_to_file "Lost device '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'"
     fi
 done
