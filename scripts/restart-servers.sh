@@ -37,7 +37,7 @@ mount_device "usb_1" true "$(device_mounted usb_1)" "$(device_mounted usb_2)"
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-function get_storage_spaces() {
+function get_storage_space() {
   local device=$1
 
   local storsize=$(df ${STORAGE_MOUNT_POINT} -h --output=size | sed '1d' | tr -d ' ')
@@ -48,7 +48,7 @@ function get_storage_spaces() {
 }
 
 # notify that the storage device has been mounted
-ret="$(get_storage_spaces ${STORAGE_MOUNT_POINT})"
+ret="$(get_storage_space ${STORAGE_MOUNT_POINT})"
 
 IFS="|"
 set -- $ret

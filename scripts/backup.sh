@@ -78,7 +78,7 @@ log_to_file "Source: ${SOURCE_MODE}"
 log_to_file "Destination: ${DEST_MODE}"
 
 
-function get_storage_spaces() {
+function get_storage_space() {
     local DEVICE=$1
 
     local storsize=$(df "${DEVICE}" -h --output=size | sed '1d' | tr -d ' ')
@@ -116,7 +116,7 @@ if [ "${DEST_MODE}" = "external" ]; then
     STORAGE_PATH="${STORAGE_MOUNT_POINT}"
 
     # notify that the storage device has been mounted
-    ret="$(get_storage_spaces ${STORAGE_MOUNT_POINT})"
+    ret="$(get_storage_space ${STORAGE_MOUNT_POINT})"
 
     IFS="|"
     set -- $ret
@@ -188,7 +188,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     fi
 
     # notify that the source device has been mounted
-    ret="$(get_storage_spaces ${SOURCE_PATH})"
+    ret="$(get_storage_space ${SOURCE_PATH})"
     IFS="|"
     set -- $ret
     STOR_SIZE="Size: $1"
