@@ -40,6 +40,7 @@ $theme = "dark";
 			<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
 			<button name="iosbackup"><?php echo L::iosbackup_b; ?></button>
 			<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
+			<button name="reboot"><?php echo L::reboot_b; ?></button>
 			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
 		<hr style="margin-bottom: 1em;">
@@ -79,6 +80,12 @@ $theme = "dark";
 		echo "<script>";
 		echo 'alert("' . L::iosbackup_m . '")';
 		echo "</script>";
+	}
+	if (isset($_POST['reboot'])) {
+		echo "<script>";
+		echo 'alert("' . L::reboot_m . '")';
+		echo "</script>";
+		shell_exec('sudo reboot');
 	}
 	if (isset($_POST['shutdown'])) {
 		echo "<script>";
