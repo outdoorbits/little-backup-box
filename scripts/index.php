@@ -50,9 +50,10 @@ $theme = "dark";
 		</form>
 	</div>
 	<div class="card" style="margin-top: 3em;">
-		<h2 style="margin-top: 0em;"><?php echo L::help; ?></h2>
-		<hr>
-		<p><?php echo L::help_txt; ?></p>
+		<details>
+ 			<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::help; ?></summary>
+ 			<p><?php echo L::help_txt; ?></p>
+ 		</details>
 	</div>
 	<?php
 	if (isset($_POST['sourcebackup'])) {
