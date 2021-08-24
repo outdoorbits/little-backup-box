@@ -60,7 +60,7 @@ gphoto2 --get-all-files --skip-existing
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
     oled r
-    oled +b "Backup complete"
+    oled +b "Backup completed"
     oled +c "Power off"
     oled s
 fi
@@ -73,7 +73,7 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
         --mail-from $MAIL_USER \
         --mail-rcpt $MAIL_TO \
         --user $MAIL_USER':'$MAIL_PASSWORD \
-        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nBackup complete.')
+        -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nCamera backup completed.')
 fi
 
 # Power off

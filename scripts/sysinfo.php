@@ -78,7 +78,15 @@ $theme = "dark";
 			echo "<p>" . L::log_txt . "</p>";
 		}
 		?>
-		<button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
+		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+			<?php echo '<div class="text-center"><button style="margin-top: 2em;" type="delete" name="delete">' . L::delete_log_b . '</button></div>'; ?>
+		</form>
+		<?php
+		if (isset($_POST['delete'])) {
+			unlink("/root/little-backup-box.log");
+			header('Location: '.$_SERVER['PHP_SELF'], true, 303);
+		};
+		?>
 	</div>
 </body>
 

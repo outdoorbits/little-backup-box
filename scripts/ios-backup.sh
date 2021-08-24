@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Author: Dmitri Popov, dmpop@linux.com
+
+#######################################################################
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -12,10 +15,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# IMPORTANT:
-# Run the install-little-backup-box.sh script first
-# to install the required packages and configure the system.
+#######################################################################
 
 CONFIG_DIR=$(dirname "$0")
 CONFIG="${CONFIG_DIR}/config.cfg"
@@ -57,9 +57,8 @@ if [ $DISP = true ]; then
 fi
 
 
-# Mount iOS device
+# Try to mount iOS device
 ifuse $MOUNT_IOS_DIR -o allow_other
-SOURCE_DIR="$MOUNT_IOS_DIR/DCIM"
 
 # Waiting for the iOS device to be mounted
 until [ ! -z "$(ls -A $MOUNT_IOS_DIR)" ]; do
@@ -73,20 +72,21 @@ until [ ! -z "$(ls -A $MOUNT_IOS_DIR)" ]; do
   fi
 done
 
+# Define source and destination paths
+SOURCE_DIR="$MOUNT_IOS_DIR/DCIM"
+BACKUP_PATH="$STORAGE_MOUNT_POINT/IOS"
+
 # Set the ACT LED to blink at 1000ms to indicate that the iOS device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-# Set the backup path
-BACKUP_PATH="$BAK_DIR"/"$ID"
 # Perform backup using rsync
 if [ $LOG = true ]; then
-  sudo rm /root/little-backup-box.log
-  rsync -avh --log-file=little-backup-box.log "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+    sudo rm /root/little-backup-box.log
+    RSYNC_OUTPUT=$(rsync -avh --stats --log-file=little-backup-box.log "$SOURCE_DIR"/ "$BACKUP_PATH")
 else
-  rsync -avh "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
+    RSYNC_OUTPUT=$(rsync -avh --stats "$SOURCE_DIR"/ "$BACKUP_PATH")
 fi
-sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
@@ -100,11 +100,11 @@ fi
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
 if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
-  curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
-    --mail-from $MAIL_USER \
-    --mail-rcpt $MAIL_TO \
-    --user $MAIL_USER':'$MAIL_PASSWORD \
-    -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nBackup completed.')
+    curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
+        --mail-from $MAIL_USER \
+        --mail-rcpt $MAIL_TO \
+        --user $MAIL_USER':'$MAIL_PASSWORD \
+        -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: iOS backup completed\n\nBackup log:\n\n${RSYNC_OUTPUT}")
 fi
 
 # Power off

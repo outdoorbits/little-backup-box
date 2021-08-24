@@ -103,13 +103,13 @@ else
     RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 fi
 
-# Kill the progress.sh script
+# Kill the status-display.sh script
 kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
     oled r
-    oled +b "Backup complete"
+    oled +b "Backup completed"
     oled +c "Power off"
     oled s
 fi
@@ -122,7 +122,7 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
         --mail-from $MAIL_USER \
         --mail-rcpt $MAIL_TO \
         --user $MAIL_USER':'$MAIL_PASSWORD \
-        -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Backup complete\n\nBackup log:\n\n${RSYNC_OUTPUT}")
+        -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: Source backup completed\n\nBackup log:\n\n${RSYNC_OUTPUT}")
 fi
 
 # Power off
