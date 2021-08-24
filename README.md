@@ -26,8 +26,8 @@ Little Backup Box is a software that transforms a Raspberry Pi (or any single-bo
 Little Backup Box supports three backup modes:
 
 - **Source backup** Automatically backs up the contents of a source device (e.g., a storage card) to an external storage device.
-- **Camera backup** Transfers photos, RAW files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the _/home/pi/BACKUP/[CAMERA MODEL]_ directory on the system storage card. **Important** Make sure that the camera is set to the MTP USB connection mode.
-- **Internal backup** Automatically backs up the contents of a source dive to the internal storage.
+- **Camera backup** Transfers photos, RAW files, and videos from the camera connected directly to the Raspberry Pi. The transferred files are saved in the _[CAMERA MODEL]_ directory of the backup storage device. **Important** Make sure that the camera is set to the MTP USB connection mode.
+- **iOS backup** Automatically backs up the data on iOS dive to the external storage.
 
 During the installation, choose the desired mode from the selection dialog.
 
@@ -86,6 +86,7 @@ The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides
 <img src="https://i.imgur.com/p6p1LzJ.jpg" width="200"/>
 
 By buying the book, you are supporting the Little Backup Box project.
+
 ## Problems, comments, ideas, updates?
 
 To discuss Little Backup Box-related topics and get the latest updates, visit the [official forum at PIXLS.US](https://discuss.pixls.us/c/hardware/little-backup-box).
