@@ -38,7 +38,7 @@ $theme = "dark";
 	<div class="card">
 		<form class="text-center" style="margin-top: 1em;" method="POST">
 			<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
-			<button name="internalbackup"><?php echo L::internalbackup_b; ?></button>
+			<button name="iosbackup"><?php echo L::iosbackup_b; ?></button>
 			<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
 			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
@@ -71,12 +71,12 @@ $theme = "dark";
 		echo 'alert("' . L::camerabackup_m . '")';
 		echo "</script>";
 	}
-	if (isset($_POST['internalbackup'])) {
-		shell_exec('sudo pkill -f internal-backup*');
+	if (isset($_POST['iosbackup'])) {
+		shell_exec('sudo pkill -f ios-backup*');
 		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./internal-backup.sh > /dev/null 2>&1 & echo $!');
+		shell_exec('sudo ./ios-backup.sh > /dev/null 2>&1 & echo $!');
 		echo "<script>";
-		echo 'alert("' . L::internalbackup_m . '")';
+		echo 'alert("' . L::iosbackup_m . '")';
 		echo "</script>";
 	}
 	if (isset($_POST['shutdown'])) {

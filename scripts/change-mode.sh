@@ -55,7 +55,7 @@ case $CHOICE in
 3)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ios-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
     } | crontab
     ;;
 esac

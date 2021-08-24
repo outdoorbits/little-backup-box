@@ -66,11 +66,12 @@ The web UI allows you to control and manage Little Backup Box using any device w
 3. Turn the camera on.
 4. Wait till the Raspberry Pi shuts down.
 
-### Internal backup mode
+### iOS backup mode
 
 1. Boot the Raspberry Pi.
 2. Plug a storage source into the Raspberry Pi.
-3. Wait till the Raspberry Pi shuts down.
+3. Connect the iOS device.
+4. Wait till the Raspberry Pi shuts down.
 
 ## Uninstall Little Backup Box
 

@@ -25,11 +25,11 @@ source "$CONFIG"
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# # If display support is enabled, display the "Ready. Source" message
+# # If display support is enabled, display the message
 if [ $DISP = true ]; then
   oled r
   oled +a "Ready"
-  oled +b "Source..."
+  oled +b "Insert storage"
   oled s
 fi
 
@@ -43,27 +43,39 @@ done
 # When the storage device is detected, mount it
 mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
 
-# Set the ACT LED to blink at 1000ms to indicate that the source device has been mounted
+# Set the ACT LED to blink at 500ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
-sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
+sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
-# If display support is enabled, notify that the source device has been mounted
+# If display support is enabled, notify that the storage device has been mounted
 if [ $DISP = true ]; then
   oled r
-  oled +a "Source OK"
-  oled +b "Working..."
+  oled +a "Storage OK"
+  oled +b "Connect"
+  oled +c "iOS device"
   oled s
 fi
 
-# Create  a .id random identifier file if doesn't exist
-cd "$STORAGE_MOUNT_POINT"
-if [ ! -f *.id ]; then
-  random=$(echo $RANDOM)
-  touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
-fi
-ID_FILE=$(ls -t *.id | head -n1)
-ID="${ID_FILE%.*}"
-cd
+
+# Mount iOS device
+ifuse $MOUNT_IOS_DIR -o allow_other
+SOURCE_DIR="$MOUNT_IOS_DIR/DCIM"
+
+# Waiting for the iOS device to be mounted
+until [ ! -z "$(ls -A $MOUNT_IOS_DIR)" ]; do
+  if [ $DISP = true ]; then
+    oled r
+    oled +a "No iOS device"
+    oled +b "Waiting..."
+    oled s
+    sleep 5
+    ifuse $MOUNT_IOS_DIR -o allow_other
+  fi
+done
+
+# Set the ACT LED to blink at 1000ms to indicate that the iOS device has been mounted
+sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
+sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # Set the backup path
 BACKUP_PATH="$BAK_DIR"/"$ID"
@@ -79,7 +91,7 @@ sudo touch "$STORAGE_MOUNT_POINT"/ "$BACKUP_PATH"
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
   oled r
-  oled +a "Backup complete"
+  oled +a "Backup completed"
   oled +b "Power off"
   oled s
 fi
@@ -92,7 +104,7 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
     --mail-from $MAIL_USER \
     --mail-rcpt $MAIL_TO \
     --user $MAIL_USER':'$MAIL_PASSWORD \
-    -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nBackup complete.')
+    -T <(echo -e 'From: '$MAIL_USER'\nTo: '$MAIL_TO'\nSubject: Little Backup Box\n\nBackup completed.')
 fi
 
 # Power off

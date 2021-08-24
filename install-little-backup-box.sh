@@ -23,7 +23,7 @@ sudo apt full-upgrade -y
 sudo apt update
 
 # Install the required packages
-sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix
+sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g gphoto2 libimage-exiftool-perl dialog php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse
 
 # Remove obsolete packages
 sudo apt autoremove -y
@@ -56,7 +56,7 @@ sudo service minidlna start
 # Clone and configure Little Backup Box
 cd
 git clone https://github.com/dmpop/little-backup-box.git
-echo -e '\nBAK_DIR="/home/'$USER'/BACKUP" # Home directory path' >>little-backup-box/scripts/config.cfg
+echo -e '\nMOUNT_IOS_DIR="/home/'$USER'/iOS" # iOS device mount directory path' >>little-backup-box/scripts/config.cfg
 mkdir -p /home/$USER/BACKUP
 chown $USER:users -R /home/$USER/BACKUP
 chmod +x little-backup-box/scripts/*.sh
@@ -65,7 +65,7 @@ chmod +x little-backup-box/scripts/*.sh
 BACKTITLE="Little Backup Box"
 OPTIONS=(1 "Source backup"
     2 "Camera backup"
-    3 "Internal backup")
+    3 "iOS backup")
 CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
     --title "Backup Mode" \
@@ -90,7 +90,7 @@ case $CHOICE in
 3)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/internal-backup.sh"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ios-backup.sh"
     } | crontab
     ;;
 esac
@@ -165,18 +165,6 @@ sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
 
-sudo sh -c "echo '[internal-backup]' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'comment = Little Backup Box internal backup' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'path = /home/$USER/BACKUP' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'force user = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'force group = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'admin users = $USER' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'guest ok = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
 sudo samba restart
 cd
 
@@ -184,11 +172,11 @@ cd
 sudo sh -c "echo 'write_enable=YES' >> /etc/vsftpd.conf"
 sudo service vsftpd restart
 
-# Enable OLED screen support
+# Enable LCD screen support
 dialog --clear \
-    --title "Enable OLED support" \
+    --title "Enable LCD support" \
     --backtitle "$BACKTITLE" \
-    --yesno "Enable support for a 128x64 OLED display?" 7 60
+    --yesno "Enable support for a 128x64 LCD display?" 7 60
 
 response=$?
 case $response in
@@ -207,7 +195,7 @@ case $response in
         cat
         echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"
     } | crontab
-    echo -e 'DISP=true # Enable OLED display' >>little-backup-box/scripts/config.cfg
+    echo -e 'DISP=true # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
         --title "Setup finished" \
         --backtitle "$BACKTITLE" \
@@ -217,7 +205,7 @@ case $response in
     sudo reboot
     ;;
 1)
-    echo -e 'DISP=false # Enable OLED display' >>little-backup-box/scripts/config.cfg
+    echo -e 'DISP=false # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
         --title "Setup finished" \
         --backtitle "$BACKTITLE" \
@@ -227,7 +215,7 @@ case $response in
     sudo reboot
     ;;
 255)
-    echo -e 'DISP=false" # Enable OLED display' >>little-backup-box/scripts/config.cfg
+    echo -e 'DISP=false" # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
         --title "Setup finished" \
         --backtitle "$BACKTITLE" \
