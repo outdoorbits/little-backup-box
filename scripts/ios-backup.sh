@@ -58,22 +58,22 @@ fi
 
 
 # Try to mount iOS device
-ifuse $MOUNT_IOS_DIR -o allow_other
+ifuse $IOS_MOUNT_POINT -o allow_other
 
 # Waiting for the iOS device to be mounted
-until [ ! -z "$(ls -A $MOUNT_IOS_DIR)" ]; do
+until [ ! -z "$(ls -A $IOS_MOUNT_POINT)" ]; do
   if [ $DISP = true ]; then
     oled r
     oled +a "No iOS device"
     oled +b "Waiting..."
     oled s
     sleep 5
-    ifuse $MOUNT_IOS_DIR -o allow_other
+    ifuse $IOS_MOUNT_POINT -o allow_other
   fi
 done
 
 # Define source and destination paths
-SOURCE_DIR="$MOUNT_IOS_DIR/DCIM"
+SOURCE_DIR="$IOS_MOUNT_POINT/DCIM"
 BACKUP_PATH="$STORAGE_MOUNT_POINT/IOS"
 
 # Set the ACT LED to blink at 1000ms to indicate that the iOS device has been mounted

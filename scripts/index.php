@@ -38,8 +38,8 @@ $theme = "dark";
 	<div class="card">
 		<form class="text-center" style="margin-top: 1em;" method="POST">
 			<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
-			<button name="iosbackup"><?php echo L::iosbackup_b; ?></button>
 			<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
+			<button name="iosbackup"><?php echo L::iosbackup_b; ?></button>
 			<button name="reboot"><?php echo L::reboot_b; ?></button>
 			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
 		</form>
@@ -85,7 +85,7 @@ $theme = "dark";
 		echo "<script>";
 		echo 'alert("' . L::reboot_m . '")';
 		echo "</script>";
-		shell_exec('sudo reboot');
+		shell_exec('sudo reboot > /dev/null 2>&1 & echo $!');
 	}
 	if (isset($_POST['shutdown'])) {
 		echo "<script>";

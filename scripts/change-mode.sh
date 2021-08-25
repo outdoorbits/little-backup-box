@@ -25,7 +25,7 @@ BACKTITLE="Little Backup Box"
 
 OPTIONS=(1 "Source backup"
     2 "Camera backup"
-    3 "Internal backup")
+    3 "iOS backup")
 
 CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
