@@ -23,44 +23,9 @@ if [[ $EUID -eq 0 ]]; then
    exit 1
 fi
 
-CONFIG_DIR=$(dirname "$0")
-CONFIG="${CONFIG_DIR}/config.cfg"
-dos2unix "$CONFIG"
-source "$CONFIG"
-
-# Update source and perform the full system upgrade
-sudo apt update
-sudo apt full-upgrade -y
-sudo apt update
-
-# Install the required packages
-sudo apt install -y php-cli php-gd php-common php-imagick
-
-# Remove obsolete packages
-sudo apt autoremove -y
-
-# Read user
-USER="$(whoami)"
-if [ -z "$USER" ]; then
-    USER="pi"
-fi
-
-cd
-git clone https://github.com/dmpop/mejiro.git
-
-# Create Link to media
-cd
-sudo ln -s /media "mejiro/photos"
-
-# Crontab
-crontab -l | {
-    cat
-    echo "@reboot cd && cd mejiro && sudo php -S 0.0.0.0:8081"
-} | crontab
-
-#Finish
-echo "All done. Rebooting..."
-
+sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
+sudo apt install -y comitup
+sudo bash -c 'echo "ap_name: little-backup-box-<nn>" >> "/etc/comitup.conf"'
+echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
 sleep 3
-
 sudo reboot
