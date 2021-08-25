@@ -27,17 +27,15 @@ while [ $? != 0 ]; do
     sleep 10
     ping -c1 google.com &>/dev/null
 done
+IP=$(hostname -I | cut -d' ' -f1)
 
 if [ $DISP = true ]; then
-  a="$ip"
-  echo "$ip"
   oled r
-  oled +a "$a"
+  oled +a "$IP"
   oled s
 fi
 
 if [ ! -z $SMTP_SERVER ]; then
-    IP=$(hostname -I | cut -d' ' -f1)
     curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
         --mail-from $MAIL_USER \
         --mail-rcpt $MAIL_TO \

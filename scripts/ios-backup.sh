@@ -71,6 +71,9 @@ until [ ! -z "$(ls -A $IOS_MOUNT_POINT)" ]; do
     sleep 5
   fi
   ifuse $IOS_MOUNT_POINT -o allow_other
+  oled r
+  oled +b "Working ..."
+  oled s
 done
 
 # Define source and destination paths
@@ -81,12 +84,6 @@ BACKUP_PATH="$STORAGE_MOUNT_POINT/iOS"
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
-# Run the status-display script
-if [ $DISP = true ]; then
-    source "${CONFIG_DIR}/status-display.sh" &
-    PID=$!
-fi
-
 # Perform backup using rsync
 if [ $LOG = true ]; then
     sudo rm /root/little-backup-box.log
@@ -95,8 +92,6 @@ else
     RSYNC_OUTPUT=$(rsync -avh --stats "$SOURCE_DIR"/ "$BACKUP_PATH")
 fi
 
-# Kill the status-display.sh script
-kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
