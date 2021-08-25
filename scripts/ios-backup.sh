@@ -72,6 +72,7 @@ until [ ! -z "$(ls -A $IOS_MOUNT_POINT)" ]; do
   fi
   ifuse $IOS_MOUNT_POINT -o allow_other
   oled r
+  oled +a "iOS OK"
   oled +b "Working ..."
   oled s
 done
@@ -89,11 +90,6 @@ ID_FILE=$(ls -t *.id | head -n1)
 ID="${ID_FILE%.*}"
 cd
 
-# Run the status-display script
-if [ $DISP = true ]; then
-    source "${CONFIG_DIR}/status-display.sh" &
-    PID=$!
-fi
 
 mkdir -p "$STORAGE_MOUNT_POINT/$ID"
 BACKUP_PATH="$STORAGE_MOUNT_POINT/$ID"
@@ -109,10 +105,6 @@ if [ $LOG = true ]; then
 else
     RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_DIR"/ "$BACKUP_PATH")
 fi
-
-# Kill the status-display.sh script
-kill $PID
-
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then

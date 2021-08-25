@@ -87,12 +87,6 @@ ID_FILE=$(ls -t *.id | head -n1)
 ID="${ID_FILE%.*}"
 cd
 
-# Run the status-display script
-if [ $DISP = true ]; then
-    source "${CONFIG_DIR}/status-display.sh" &
-    PID=$!
-fi
-
 # Set the backup path
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 
@@ -103,9 +97,6 @@ if [ $LOG = true ]; then
 else
     RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 fi
-
-# Kill the status-display.sh script
-kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
