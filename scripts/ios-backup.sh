@@ -42,7 +42,6 @@ done
 
 # When the storage device is detected, mount it
 mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
-mkdir -p "$STORAGE_MOUNT_POINT/iOS"
 
 # Set the ACT LED to blink at 500ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"

@@ -77,6 +77,7 @@ $theme = "dark";
 		<?php
 		if (isset($_POST['delete'])) {
 			unlink("/root/little-backup-box.log");
+			sleep (3);
 			header('Location: '.$_SERVER['PHP_SELF'], true, 303);
 		};
 		?>
