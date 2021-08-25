@@ -42,6 +42,7 @@ done
 
 # When the storage device is detected, mount it
 mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
+mkdir -p "$STORAGE_MOUNT_POINT/iOS"
 
 # Set the ACT LED to blink at 500ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
@@ -65,20 +66,26 @@ until [ ! -z "$(ls -A $IOS_MOUNT_POINT)" ]; do
   if [ $DISP = true ]; then
     oled r
     oled +a "No iOS device"
-    oled +b "Waiting..."
+    oled +b "Waiting ..."
     oled s
     sleep 5
-    ifuse $IOS_MOUNT_POINT -o allow_other
   fi
+  ifuse $IOS_MOUNT_POINT -o allow_other
 done
 
 # Define source and destination paths
 SOURCE_DIR="$IOS_MOUNT_POINT/DCIM"
-BACKUP_PATH="$STORAGE_MOUNT_POINT/IOS"
+BACKUP_PATH="$STORAGE_MOUNT_POINT/iOS"
 
 # Set the ACT LED to blink at 1000ms to indicate that the iOS device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
+
+# Run the status-display script
+if [ $DISP = true ]; then
+    source "${CONFIG_DIR}/status-display.sh" &
+    PID=$!
+fi
 
 # Perform backup using rsync
 if [ $LOG = true ]; then
@@ -87,6 +94,9 @@ if [ $LOG = true ]; then
 else
     RSYNC_OUTPUT=$(rsync -avh --stats "$SOURCE_DIR"/ "$BACKUP_PATH")
 fi
+
+# Kill the status-display.sh script
+kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then

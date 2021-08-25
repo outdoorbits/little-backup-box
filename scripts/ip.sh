@@ -28,6 +28,14 @@ while [ $? != 0 ]; do
     ping -c1 google.com &>/dev/null
 done
 
+if [ $DISP = true ]; then
+  a="$ip"
+  echo "$ip"
+  oled r
+  oled +a "$a"
+  oled s
+fi
+
 if [ ! -z $SMTP_SERVER ]; then
     IP=$(hostname -I | cut -d' ' -f1)
     curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \

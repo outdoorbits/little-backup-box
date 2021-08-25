@@ -87,7 +87,7 @@ ID_FILE=$(ls -t *.id | head -n1)
 ID="${ID_FILE%.*}"
 cd
 
-# Run the progress.sh script
+# Run the status-display script
 if [ $DISP = true ]; then
     source "${CONFIG_DIR}/status-display.sh" &
     PID=$!
@@ -95,6 +95,7 @@ fi
 
 # Set the backup path
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
+
 # Perform backup using rsync
 if [ $LOG = true ]; then
     sudo rm /root/little-backup-box.log
