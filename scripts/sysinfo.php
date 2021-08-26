@@ -30,7 +30,6 @@ $theme = "dark";
 	</nav>
 	<div class="card" style="margin-top: 3em;">
 		<h1  style="margin-top: 0em;" class="text-center"><?php echo L::sysinfo; ?></h1>
-		<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button></div>
 		<hr>
 		<?php
 		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
@@ -60,6 +59,7 @@ $theme = "dark";
 		passthru("df -H");
 		echo '</pre>';
 		?>
+		<div class="text-center" style="margin-top: 2em;"><button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button></div>
 		<h3 class="text-center"><?php echo L::log; ?></h3>
 		<hr>
 		<?php
