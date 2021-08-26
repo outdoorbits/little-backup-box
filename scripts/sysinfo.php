@@ -12,6 +12,14 @@ $theme = "dark";
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/classless.css">
+	<!-- Refresh the log iframe every 5 seconds -->
+	<script>
+		function refreshIFrame() {
+			var x = document.getElementById("log");
+			x.contentWindow.location.reload();
+			var t = setTimeout(refreshIFrame, 5000);
+		}
+	</script>
 </head>
 
 <body>
@@ -64,9 +72,7 @@ $theme = "dark";
 		<hr>
 		<?php
 		if (file_exists("/root/little-backup-box.log")) {
-			echo '<pre>';
-			passthru("sudo cat /root/little-backup-box.log");
-			echo '</pre>';
+			echo '<iframe id="log" src="/root/little-backup-box.log" width="100%" height="200" style="background: #ffffff;"></iframe>';
 		} else {
 			echo "<p>" . L::log_txt . "</p>";
 		}
