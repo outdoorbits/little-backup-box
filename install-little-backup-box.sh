@@ -197,30 +197,24 @@ case $response in
     } | crontab
     echo -e 'DISP=true # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
-        --title "Setup finished" \
-        --backtitle "$BACKTITLE" \
-        --infobox "\nAll done! The system will reboot now." 5 45
-    sleep 3
+        --title "Reboot" \
+        --infobox "All done! Press OK to reboot the system." 5 45
     clear
     sudo reboot
     ;;
 1)
     echo -e 'DISP=false # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
-        --title "Setup finished" \
-        --backtitle "$BACKTITLE" \
-        --infobox "\nAll done! The system will reboot now." 5 45
-    sleep 3
+        --title "Reboot" \
+        --infobox "All done! Press OK to reboot the system." 5 45
     clear
     sudo reboot
     ;;
 255)
     echo -e 'DISP=false" # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
-        --title "Setup finished" \
-        --backtitle "$BACKTITLE" \
-        --infobox "\nAll done! The system will reboot now." 5 45
-    sleep 3
+        --title "Reboot" \
+        --infobox "All done! Press OK to reboot the system." 5 45
     clear
     sudo reboot
     ;;
