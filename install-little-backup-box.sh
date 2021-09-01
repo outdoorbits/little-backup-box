@@ -57,8 +57,8 @@ sudo service minidlna start
 cd
 git clone https://github.com/dmpop/little-backup-box.git
 echo -e '\nIOS_MOUNT_POINT="/home/'$USER'/iOS" # iOS device mount directory path' >>little-backup-box/scripts/config.cfg
-mkdir -p /home/$USER/BACKUP
-chown $USER:users -R /home/$USER/BACKUP
+mkdir -p /home/$USER/iOS
+chown $USER:users -R /home/$USER/iOS
 chmod +x little-backup-box/scripts/*.sh
 
 # Prompt to choose the default backup mode
@@ -101,7 +101,7 @@ crontab -l | {
 } | crontab
 crontab -l | {
     cat
-    echo "@reboot /home/"$USER"/little-backup-box/scripts/ip.sh"
+    echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
 
 # Create web UI systemd unit
@@ -191,10 +191,6 @@ case $response in
     sudo chmod 755 /usr/local/bin/oled
     sudo raspi-config nonint do_i2c 0
     cd
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"
-    } | crontab
     echo -e 'DISP=true # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
         --title "Reboot" \

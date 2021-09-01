@@ -37,11 +37,16 @@ $theme = "dark";
 	</nav>
 	<div class="card">
 		<form class="text-center" style="margin-top: 1em;" method="POST">
-			<button name="sourcebackup"><?php echo L::sourcebackup_b; ?></button>
-			<button name="camerabackup"><?php echo L::camerabackup_b; ?></button>
-			<button name="iosbackup"><?php echo L::iosbackup_b; ?></button>
-			<button name="reboot"><?php echo L::reboot_b; ?></button>
-			<button name="shutdown"><?php echo L::shutdown_b; ?></button>
+			<select style="margin-bottom: 1.5em; margin-top: 0.5em;" name="backupsel">
+				<option value="sourcebackup"><?php echo L::sourcebackup_b; ?></option>
+				<option value="camerabackup"><?php echo L::camerabackup_b; ?></option>
+				<option value="iosbackup"><?php echo L::iosbackup_b; ?></option>
+			</select>
+			<button style="margin-bottom: 1.5em;" type="submit" name="start">Start</button>
+			<div>
+				<button name="reboot"><?php echo L::reboot_b; ?></button>
+				<button name="shutdown"><?php echo L::shutdown_b; ?></button>
+			</div>
 		</form>
 		<hr style="margin-bottom: 1em;">
 		<form class="text-center" method="POST">
@@ -52,35 +57,39 @@ $theme = "dark";
 	</div>
 	<div class="card" style="margin-top: 3em;">
 		<details>
- 			<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::help; ?></summary>
- 			<p><?php echo L::help_txt; ?></p>
- 		</details>
+			<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::help; ?></summary>
+			<p><?php echo L::help_txt; ?></p>
+		</details>
 	</div>
 	<?php
-	if (isset($_POST['sourcebackup'])) {
-		shell_exec('sudo pkill -f source-backup*');
-		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./source-backup.sh > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::sourcebackup_m . '")';
-		echo "</script>";
+	if (isset($_POST['start'])) {
+		switch ($_POST['backupsel']) {
+			case "sourcebackup":
+				shell_exec('sudo pkill -f source-backup*');
+				shell_exec('sudo umount /media/storage');
+				shell_exec('sudo ./source-backup.sh > /dev/null 2>&1 & echo $!');
+				echo "<script>";
+				echo 'alert("' . L::sourcebackup_m . '")';
+				echo "</script>";
+				break;
+			case "camerabackup":
+				shell_exec('sudo pkill -f camera-backup*');
+				shell_exec('sudo umount /media/storage');
+				shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
+				echo "<script>";
+				echo 'alert("' . L::camerabackup_m . '")';
+				echo "</script>";
+				break;
+			case "iosbackup":
+				shell_exec('sudo pkill -f ios-backup*');
+				shell_exec('sudo umount /media/storage');
+				shell_exec('sudo ./ios-backup.sh > /dev/null 2>&1 & echo $!');
+				echo "<script>";
+				echo 'alert("' . L::iosbackup_m . '")';
+				echo "</script>";
+		}
 	}
-	if (isset($_POST['camerabackup'])) {
-		shell_exec('sudo pkill -f camera-backup*');
-		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./camera-backup.sh > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::camerabackup_m . '")';
-		echo "</script>";
-	}
-	if (isset($_POST['iosbackup'])) {
-		shell_exec('sudo pkill -f ios-backup*');
-		shell_exec('sudo umount /media/storage');
-		shell_exec('sudo ./ios-backup.sh > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::iosbackup_m . '")';
-		echo "</script>";
-	}
+
 	if (isset($_POST['reboot'])) {
 		echo "<script>";
 		echo 'alert("' . L::reboot_m . '")';
