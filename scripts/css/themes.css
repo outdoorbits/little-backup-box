@@ -1,0 +1,173 @@
+
+/*@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');*/
+/* for medium */
+@import url('https://fonts.googleapis.com/css2?family=Lora&family=Archivo&display=swap');
+
+/* for milligram */
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic');
+
+/* for Sepia */
+@import url('https://fonts.cdnfonts.com/css/libertinus-serif');
+@import url('https://fonts.cdnfonts.com/css/libertinus-sans');
+
+html[data-theme='dark'] {
+	/* foreground   | background color */
+	--cfg:   #cecbc4; --cbg:    #252220;
+	--cdark: #999;    --clight: #333;
+	--cmed:  #566;
+	--clink: #1ad;
+	--cemph: #0b9;
+}
+
+@media (prefers-color-scheme: dark) {
+	html[data-theme='light'] {
+		/* foreground   | background color */
+		--cfg:   #cecbc4; --cbg:    #252220;
+		--cdark: #999;    --clight: #333;
+		--cmed:  #566;
+		--clink: #1ad;
+		--cemph: #0b9;
+	}	
+}
+
+
+
+html[data-theme='sepia']{
+	--rem: 14pt;
+	--width: 48rem;
+	--font-p: 1em/1.6 'Libertinus Serif', Times, serif;
+	--font-h: 1em/1.6 'Libertinus Sans', Helvetica, sans;
+	--font-c: 85%/1.4 monospace;
+	--ornament: "∞ ∞ ∞"; 
+	/*--ornament: "❦ ❦ ❦"; "☙ ❧";*/
+	/* foreground   | background color */
+	--cfg:    #433;   --cbg: #fefbf4;
+	--cdark: #6c605c; --clight: #f3efea;
+	--cmed: #a8928e;
+	--clink: #bd0000;
+	--cemph: #a35403;
+}
+
+
+
+html[data-theme='milligram']{
+	--navpos: fixed;
+	--rem: 11pt;
+	--width: 800px;
+	--font-p: 300 1em/1.6 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+	--font-h: 300 1em/1.3 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+	--font-c: 86%/1.4 monospace;
+	--ornament: "‹‹‹ ›››";
+	--border: 1px solid var(--cmed);
+	/* foreground   | background color */
+	--cfg:   #606c76; --cbg: #fff;
+	--cdark: #6c605c; --clight: #f4f5f6;
+	--cmed: #d1d1d1;
+	--clink: #9b4dca;
+	--cemph: #9b4dca;
+}
+
+html[data-theme='pure']{
+	--navpos: absolute;
+	--width: 768px;
+	--rem: 18px;
+	--font-p: 1em/1.6 Helvetica,Arial,sans-serif;
+	--font-h: 1em/1.6 Helvetica,Arial,sans-serif;
+	--font-c: 86%/1.4 monospace;
+	--ornament: "‹‹‹ ›››";
+	--border: 1px solid var(--cmed);
+	/* foreground   | background color */
+	--cfg:   #777;    --cbg: #fff;
+	--cdark: #777; --clight: #f8f8ff;
+	--cmed: #e6e6e6;
+	--clink: #3b8bba;
+	--cemph: #1f8dd6;
+}
+
+html[data-theme='sakura']{
+	--navpos: absolute;
+	--width: 684px;
+	--rem:  18px;
+	--font-p: 1em/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+	--font-h: 1em/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+	--font-c: 1em/1.4 monospace;
+	--ornament: "";
+	--border: 1px solid var(--cmed);
+	/* foreground   | background color */
+	--cfg:   #4a4a4a; --cbg: #f9f9f9;
+	--cdark: #4a4a4a; --clight: #f1f1f1;
+	--cmed: #f1f1f1;
+	--clink: #1d7484;
+	--cemph: #982c61;
+}
+
+html[data-theme='skeleton']{
+	--navpos: absolute;
+	--rem: 15px;
+	--width: 800px;
+	--font-p: 1em/1.6 "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	--font-h: 1em/1.6 "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	--font-c: .9em/1.4 monospace;
+	--ornament: "───────";
+	--border: 1px solid var(--cmed);
+	/* foreground   | background color */
+	--cfg:   #222;    --cbg:    #fff;
+	--cdark: #4a4a4a; --clight: #f1f1f1;
+	--cmed: #e1e1e1;
+	--clink: #1eaedb;
+	--cemph: #0fa0ce;
+}
+
+html[data-theme='bootstrap']{
+	--rem: 16px;
+	--navpos: absolute;
+	--width: 960px;
+	--font-p: 1em/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+	--font-h: 1em/1.6 "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	--font-c: .9em/1.4 SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+	--ornament: "";
+	--border: 1px solid var(--cmed);
+	/* foreground   | background color */
+	--cfg:  #212529;    --cbg:    #fff;
+	--cdark: #343a40; --clight: #f8f9fa;
+	--cmed: #6c757d;
+	--clink: #0d6efd;
+	--cemph: #7952b3;
+}
+
+
+
+html[data-theme='medium']{
+	--rem: 19px;
+	--navpos: absolute;
+	--width: 720px;
+	--font-p: 1em/1.6 'Lora', serif;
+	--font-h: .9em/1.4 'Archivo', sans !important;
+	--font-c: .9em/1.4 Consolas,"Liberation Mono","Courier New",monospace;
+	--ornament: "";
+	--border: 1px solid var(--cmed);
+	/* foreground   | background color */
+	--cfg:  #292929;    --cbg:    #fff;
+	--cdark: #343a40; --clight: #fafafa;
+	--cmed: #757575;
+	--clink: #1a8917;
+	--cemph: #1a8917;
+}
+
+
+html[data-theme='tufte']{
+	--rem: 15px;
+	--navpos: absolute;
+	--width: 800px;
+	--font-p: 1.4rem/2 et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+	--font-h: 1.4rem/1.5 et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+	--font-c: .9em/1.4 Consolas,"Liberation Mono","Courier New",monospace;
+	--ornament: "";
+	--border: 1px solid var(--cmed);
+	/* foreground   | background color */
+	--cfg:   #111;    --cbg:    #fffff8;
+	--cdark: #111;    --clight: #fffff8;
+	--cmed: #b4d5fe;
+	--clink: #111;
+	--cemph: #111;
+}

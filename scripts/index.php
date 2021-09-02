@@ -12,6 +12,7 @@ $theme = "dark";
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/classless.css">
+	<link rel="stylesheet" href="css/themes.css">
 </head>
 
 <body>
@@ -55,12 +56,10 @@ $theme = "dark";
 			<button name="custom3"><?php echo L::custom3_b; ?></button>
 		</form>
 	</div>
-	<div class="card" style="margin-top: 3em;">
-		<details>
-			<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::help; ?></summary>
-			<p><?php echo L::help_txt; ?></p>
-		</details>
-	</div>
+	<details style="margin-top: 3em;">
+		<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::help; ?></summary>
+		<p><?php echo L::help_txt; ?></p>
+	</details>
 	<?php
 	if (isset($_POST['start'])) {
 		switch ($_POST['backupsel']) {
