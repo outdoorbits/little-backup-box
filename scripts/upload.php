@@ -1,12 +1,13 @@
 <?php
+$theme = "dark";
 // Upload directory
-$upload_dir = "/home/pi/UPLOAD";
+$upload_dir = "../../UPLOAD";
 if (!file_exists($upload_dir)) {
-	mkdir($dir, 0777, true);
+	mkdir($upload_dir, 0777, true);
 }
 ?>
 
-<html lang="en">
+<html lang="en" data-theme="<?php echo $theme; ?>">
 <!-- Author: Dmitri Popov, dmpop@linux.com
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
@@ -33,7 +34,7 @@ if (!file_exists($upload_dir)) {
 			<li><a href="config.php"><?php echo L::config; ?></a></li>
 		</ul>
 	</nav>
-	<div class="card" style="margin-top: 3em;">
+	<div class="card text-center" style="margin-top: 3em;">
 		<?php
 		if (isset($_POST['submit'])) {
 			// count total files
@@ -41,15 +42,18 @@ if (!file_exists($upload_dir)) {
 			// looping all files
 			for ($i = 0; $i < $countfiles; $i++) {
 				$filename = $_FILES['file']['name'][$i];
+				$filesize = $_FILES['file']['size'][$i];
+				$fileerror = $_FILES['file']['error'][$i];
 				if (!file_exists($upload_dir)) {
 					mkdir($upload_dir, 0777, true);
 				}
-				// upload file
+				// Upload files
 				move_uploaded_file($_FILES['file']['tmp_name'][$i], $upload_dir . DIRECTORY_SEPARATOR . $filename);
+				echo "<li><code>" . $filename . "</code>" . ($fileerror==0?" <span style='color: green;'>uploaded</span>":" <span style='color: red;'>upload failed</span> " . $fileerror) . "</li>";
 			}
 		}
 		?>
-		<h1 style="margin-bottom: 1em;"><?php echo L::upload; ?></h1>
+		<h1 style="margin-bottom: 1em; margin-top: 0em;"><?php echo L::upload; ?></h1>
 		<form method='post' action='' enctype='multipart/form-data'>
 			<input type="file" name="file[]" id="file" multiple>
 			<button type='submit' role='button' name='submit'><?php echo L::upload; ?></button>
