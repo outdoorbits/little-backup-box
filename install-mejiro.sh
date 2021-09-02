@@ -19,8 +19,8 @@
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
-   echo "Run the script as a regular user"
-   exit 1
+    echo "Run the script as a regular user"
+    exit 1
 fi
 
 CONFIG_DIR=$(dirname "$0")
@@ -48,19 +48,19 @@ fi
 cd
 git clone https://github.com/dmpop/mejiro.git
 
-# Create Link to media
+# Create symlink
 cd
 sudo ln -s /media "mejiro/photos"
 
-# Crontab
+# Add a cronjob
 crontab -l | {
     cat
     echo "@reboot cd && cd mejiro && sudo php -S 0.0.0.0:8081"
 } | crontab
 
-#Finish
-echo "All done. Rebooting..."
-
-sleep 3
-
+# Reboot
+dialog --clear \
+    --title "Reboot" \
+    --infobox "All done! Press OK to reboot the system." 5 45
+clear
 sudo reboot
