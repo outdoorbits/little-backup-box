@@ -70,8 +70,7 @@ until [ ! -z "$(ls -A $IOS_MOUNT_POINT)" ]; do
   fi
   ifuse $IOS_MOUNT_POINT -o allow_other
   oled r
-  oled +a "iOS OK"
-  oled +b "Working ..."
+  oled +b "iOS OK"
   oled s
 done
 
@@ -91,6 +90,12 @@ cd
 mkdir -p "$STORAGE_MOUNT_POINT/$ID"
 BACKUP_PATH="$STORAGE_MOUNT_POINT/$ID"
 
+# Run the progress.sh script
+if [ $DISP = true ]; then
+    source ${WORKING_DIR}/progress.sh "${BACKUP_PATH}" &
+    PID=$!
+fi
+
 # Set the ACT LED to blink at 1000ms to indicate that the iOS device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
@@ -102,6 +107,9 @@ if [ $LOG = true ]; then
 else
   RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_DIR"/ "$BACKUP_PATH")
 fi
+
+# Kill the progress.sh script
+kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then

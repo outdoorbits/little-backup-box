@@ -51,12 +51,21 @@ fi
 # Obtain camera model
 # Create the target directory with the camera model as its name
 CAMERA=$(gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
-BACKUP_MOUNT_POINT="$STORAGE_MOUNT_POINT/$CAMERA"
-mkdir -p "$BACKUP_MOUNT_POINT"
+BACKUP_PATH="$STORAGE_MOUNT_POINT/$CAMERA"
+mkdir -p "$BACKUP_PATH"
 
-# Switch to BACKUP_MOUNT_POINT and transfer files from the camera
-cd "$BACKUP_MOUNT_POINT"
+# Run the progress.sh script
+if [ $DISP = true ]; then
+    source ${WORKING_DIR}/progress.sh "${BACKUP_PATH}" &
+    PID=$!
+fi
+
+# Switch to BACKUP_PATH and transfer files from the camera
+cd "$BACKUP_PATH"
 gphoto2 --get-all-files --skip-existing
+
+# Kill the progress.sh script
+kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then

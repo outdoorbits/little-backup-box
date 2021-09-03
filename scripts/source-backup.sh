@@ -55,15 +55,15 @@ if [ $DISP = true ]; then
     oled s
 fi
 
-# Wait for a source device
-# takes first device found
+# Wait for a source device and
+# pick first found device
 SRC=($(ls /dev/* | grep "$SOURCE_DEV" | cut -d"/" -f3))
 until [ ! -z "${SRC[0]}" ]; do
     sleep 1
     SRC=($(ls /dev/* | grep "$SOURCE_DEV" | cut -d"/" -f3))
 done
 
-# If the source device is detected, mount it and obtain its UUID
+# If the source device is detected, mount it
 mount /dev"/${SRC[0]}" "$SOURCE_MOUNT_POINT"
 
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
@@ -73,7 +73,6 @@ sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 if [ $DISP = true ]; then
     oled r
     oled +b "Source OK"
-    oled +c "Working..."
     oled s
 fi
 
@@ -90,6 +89,12 @@ cd
 # Set the backup path
 BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 
+# Run the progress.sh script
+if [ $DISP = true ]; then
+    source ${WORKING_DIR}/progress.sh "${BACKUP_PATH}" &
+    PID=$!
+fi
+
 # Perform backup using rsync
 if [ $LOG = true ]; then
     sudo rm /var/log/little-backup-box.log
@@ -97,6 +102,9 @@ if [ $LOG = true ]; then
 else
     RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 fi
+
+# Kill the progress.sh script
+kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
