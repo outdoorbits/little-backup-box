@@ -25,7 +25,7 @@ source "$CONFIG"
 # Set the ACT LED to heartbeat
 sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# If display support is enabled, display the "Ready. Connect camera" message
+# If display support is enabled, display the "Ready. Insert storage" message
 if [ $DISP = true ]; then
     oled r
     oled +b "Ready"
