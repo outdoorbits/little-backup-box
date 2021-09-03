@@ -30,7 +30,7 @@ $theme = "dark";
 		</ul>
 	</nav>
 	<div class="card" style="margin-top: 3em;">
-		<h1  style="margin-top: 0em;" class="text-center"><?php echo L::sysinfo; ?></h1>
+		<h1 style="margin-top: 0em;" class="text-center"><?php echo L::sysinfo; ?></h1>
 		<hr>
 		<?php
 		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
@@ -64,9 +64,9 @@ $theme = "dark";
 		<h3 class="text-center"><?php echo L::log; ?></h3>
 		<hr>
 		<?php
-		if (file_exists("/root/little-backup-box.log")) {
+		if (file_exists("/var/log/little-backup-box.log")) {
 			echo '<pre>';
-			passthru("sudo tail -n 15 /root/little-backup-box.log");
+			passthru("sudo tail -n 15 /var/log/little-backup-box.log");
 			echo '</pre>';
 		} else {
 			echo "<p>" . L::log_txt . "</p>";
@@ -77,9 +77,9 @@ $theme = "dark";
 		</form>
 		<?php
 		if (isset($_POST['delete'])) {
-			unlink("/root/little-backup-box.log");
-			sleep (3);
-			header('Location: '.$_SERVER['PHP_SELF'], true, 303);
+			unlink("/var/log/little-backup-box.log");
+			sleep(3);
+			header('Location: ' . $_SERVER['PHP_SELF'], true, 303);
 		};
 		?>
 	</div>

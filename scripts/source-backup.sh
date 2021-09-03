@@ -92,8 +92,8 @@ BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 
 # Perform backup using rsync
 if [ $LOG = true ]; then
-    sudo rm /root/little-backup-box.log
-    RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
+    sudo rm /var/log/little-backup-box.log
+    RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=/var/log/little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 else
     RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 fi

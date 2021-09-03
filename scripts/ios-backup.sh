@@ -56,7 +56,6 @@ if [ $DISP = true ]; then
   oled s
 fi
 
-
 # Try to mount iOS device
 ifuse $IOS_MOUNT_POINT -o allow_other
 
@@ -89,7 +88,6 @@ ID_FILE=$(ls -t *.id | head -n1)
 ID="${ID_FILE%.*}"
 cd
 
-
 mkdir -p "$STORAGE_MOUNT_POINT/$ID"
 BACKUP_PATH="$STORAGE_MOUNT_POINT/$ID"
 
@@ -99,10 +97,10 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # Perform backup using rsync
 if [ $LOG = true ]; then
-    sudo rm /root/little-backup-box.log
-    RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=little-backup-box.log "$SOURCE_DIR"/ "$BACKUP_PATH")
+  sudo rm /var/log/little-backup-box.log
+  RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=/var/log/little-backup-box.log "$SOURCE_DIR"/ "$BACKUP_PATH")
 else
-    RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_DIR"/ "$BACKUP_PATH")
+  RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_DIR"/ "$BACKUP_PATH")
 fi
 
 # If display support is enabled, notify that the backup is complete
@@ -117,11 +115,11 @@ fi
 # a notification if the NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
 if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
-    curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
-        --mail-from $MAIL_USER \
-        --mail-rcpt $MAIL_TO \
-        --user $MAIL_USER':'$MAIL_PASSWORD \
-        -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: iOS backup completed\n\nBackup log:\n\n${RSYNC_OUTPUT}")
+  curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
+    --mail-from $MAIL_USER \
+    --mail-rcpt $MAIL_TO \
+    --user $MAIL_USER':'$MAIL_PASSWORD \
+    -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: Little Backup Box: iOS backup completed\n\nBackup log:\n\n${RSYNC_OUTPUT}")
 fi
 
 # Power off
