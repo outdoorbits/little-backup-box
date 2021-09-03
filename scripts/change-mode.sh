@@ -43,19 +43,19 @@ case $CHOICE in
 1)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/source-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/source-backup.sh"
     } | crontab
     ;;
 2)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/camera-backup.sh"
     } | crontab
     ;;
 3)
     crontab -l | {
         cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ios-backup.sh >> /home/"$USER"/little-backup-box.log 2>&1"
+        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ios-backup.sh"
     } | crontab
     ;;
 esac
@@ -70,7 +70,7 @@ crontab -l | {
 } | crontab
 crontab -l | {
     cat
-    echo "*/3 * * * * sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
+    echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
 
 if [ $DISP = true ]; then
