@@ -22,12 +22,13 @@ CONFIG="${WORKING_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
-# Get backup path from the parameter passed from
-# the backup script that sources progress.sh
-BACKUP_PATH=$1
+# Get source and backup paths from the parameters
+# passed from the backup script
+SOURCE_PATH=$1
+BACKUP_PATH=$2
 
 # Count files on the source device
-source_count=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
+source_count=$(find $SOURCE_PATH -type f | wc -l)
 
 while [ true ]; do
     # Count files in the backup destination

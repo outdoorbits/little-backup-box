@@ -57,10 +57,10 @@ if [ $DISP = true ]; then
 fi
 
 # Try to mount iOS device
-ifuse $IOS_MOUNT_POINT -o allow_other
+ifuse $SOURCE_MOUNT_POINT -o allow_other
 
 # Waiting for the iOS device to be mounted
-until [ ! -z "$(ls -A $IOS_MOUNT_POINT)" ]; do
+until [ ! -z "$(ls -A $SOURCE_MOUNT_POINT)" ]; do
   if [ $DISP = true ]; then
     oled r
     oled +a "No iOS device"
@@ -68,17 +68,14 @@ until [ ! -z "$(ls -A $IOS_MOUNT_POINT)" ]; do
     oled s
     sleep 5
   fi
-  ifuse $IOS_MOUNT_POINT -o allow_other
-  oled r
-  oled +b "iOS OK"
-  oled s
+  ifuse $SOURCE_MOUNT_POINT -o allow_other
 done
 
 # Define source and destination paths
-SOURCE_DIR="$IOS_MOUNT_POINT/DCIM"
+SOURCE_PATH="$SOURCE_MOUNT_POINT/DCIM"
 
 # Create  a .id random identifier file if doesn't exist
-cd "$IOS_MOUNT_POINT"
+cd "$SOURCE_MOUNT_POINT"
 if [ ! -f *.id ]; then
   random=$(echo $RANDOM)
   sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
@@ -92,7 +89,7 @@ BACKUP_PATH="$STORAGE_MOUNT_POINT/$ID"
 
 # Run the progress.sh script
 if [ $DISP = true ]; then
-    source ${WORKING_DIR}/progress.sh "${BACKUP_PATH}" &
+    source ${WORKING_DIR}/progress.sh "${SOURCE_PATH}" "${BACKUP_PATH}" &
     PID=$!
 fi
 
@@ -103,9 +100,9 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 # Perform backup using rsync
 if [ $LOG = true ]; then
   sudo rm /var/log/little-backup-box.log
-  RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=/var/log/little-backup-box.log "$SOURCE_DIR"/ "$BACKUP_PATH")
+  RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=/var/log/little-backup-box.log "$SOURCE_PATH"/ "$BACKUP_PATH")
 else
-  RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_DIR"/ "$BACKUP_PATH")
+  RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
 fi
 
 # Kill the progress.sh script

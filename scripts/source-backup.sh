@@ -91,7 +91,7 @@ BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
 
 # Run the progress.sh script
 if [ $DISP = true ]; then
-    source ${WORKING_DIR}/progress.sh "${BACKUP_PATH}" &
+    source ${WORKING_DIR}/progress.sh "${SOURCE_MOUNT_POINT}" "${BACKUP_PATH}" &
     PID=$!
 fi
 

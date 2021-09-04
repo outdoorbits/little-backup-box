@@ -56,16 +56,14 @@ mkdir -p "$BACKUP_PATH"
 
 # Run the progress.sh script
 if [ $DISP = true ]; then
-    source ${WORKING_DIR}/progress.sh "${BACKUP_PATH}" &
-    PID=$!
+    oled r
+    oled +a "Working ..."
+    oled s
 fi
 
 # Switch to BACKUP_PATH and transfer files from the camera
 cd "$BACKUP_PATH"
 gphoto2 --get-all-files --skip-existing
-
-# Kill the progress.sh script
-kill $PID
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then

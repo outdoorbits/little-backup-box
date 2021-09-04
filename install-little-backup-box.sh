@@ -56,9 +56,6 @@ sudo service minidlna start
 # Clone and configure Little Backup Box
 cd
 git clone https://github.com/dmpop/little-backup-box.git
-echo -e '\nIOS_MOUNT_POINT="/home/'$USER'/iOS" # iOS device mount directory path' >>little-backup-box/scripts/config.cfg
-mkdir -p /home/$USER/iOS
-chown $USER:users -R /home/$USER/iOS
 chmod +x little-backup-box/scripts/*.sh
 
 # Prompt to choose the default backup mode
