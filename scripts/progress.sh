@@ -17,8 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(dirname "$0")
-CONFIG="${CONFIG_DIR}/config.cfg"
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
@@ -26,15 +26,19 @@ source "$CONFIG"
 # the backup script that sources progress.sh
 BACKUP_PATH=$1
 
+# Count files on the source device
+source_count=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
+
 while [ true ]; do
-    # Count files on the source device and in the backup destination
+    # Count files in the backup destination
     # Calculate the number of files to be transferred
-    source_count=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
     storage_count=$(find $BACKUP_PATH -type f | wc -l)
     result=$(expr $source_count - $storage_count)
     oled r
-    oled +a "Remaining files:"
-    oled +c "$result"
+    oled +a "Total:"
+    oled +b $source_count
+    oled +c "Remaining files:"
+    oled +d "$result"
     oled s
-    sleep 5
+    sleep 3
 done
