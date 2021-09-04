@@ -53,8 +53,8 @@ The web UI allows you to control and manage Little Backup Box using any device w
 ### Source backup mode
 
 1. Boot the Raspberry Pi.
-2. Plug in a backup storage device.
-3. Plug the source device into the Raspberry Pi.
+2. Connect in a backup storage device.
+3. Connect the source device.
 4. Wait till the Raspberry Pi shuts down.
 
 **Note:** To differentiate between different source devices, the backup script creates a datetime-based *.id* file in the root of each source. The name of the *.id* file is also used as the destination backup folder on the storage device.
@@ -62,14 +62,15 @@ The web UI allows you to control and manage Little Backup Box using any device w
 ### Camera backup mode
 
 1. Boot the Raspberry Pi.
-2. Connect the camera to the Raspberry Pi.
-3. Turn the camera on.
-4. Wait till the Raspberry Pi shuts down.
+2. Connect a backup storage device.
+3. Connect the camera.
+4. Turn the camera on.
+5. Wait till the Raspberry Pi shuts down.
 
 ### iOS backup mode
 
 1. Boot the Raspberry Pi.
-2. Plug a storage source into the Raspberry Pi.
+2. Connect a storage device.
 3. Connect the iOS device.
 4. Wait till the Raspberry Pi shuts down.
 
