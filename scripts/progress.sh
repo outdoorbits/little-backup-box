@@ -35,10 +35,9 @@ while [ true ]; do
     storage_count=$(find $BACKUP_PATH -type f | wc -l)
     result=$(expr $source_count - $storage_count)
     oled r
-    oled +a "Total:"
-    oled +b $source_count
-    oled +c "Remaining files:"
-    oled +d "$result"
+    oled +a "Total: $source_count"
+    oled +b "---"
+    oled +c "Remains: $result"
     oled s
     sleep 3
 done

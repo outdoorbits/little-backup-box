@@ -65,12 +65,13 @@ chmod +x little-backup-box/scripts/*.sh
 BACKTITLE="Little Backup Box"
 OPTIONS=(1 "Source backup"
     2 "Camera backup"
-    3 "iOS backup")
+    3 "iOS backup"
+    4 "None")
 CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
     --title "Backup Mode" \
     --menu "Select the default backup mode:" \
-    15 40 3 \
+    12 45 25 \
     "${OPTIONS[@]}" \
     2>&1 >/dev/tty)
 clear
@@ -92,6 +93,9 @@ case $CHOICE in
         cat
         echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ios-backup.sh"
     } | crontab
+    ;;
+    4)
+    :
     ;;
 esac
 
@@ -135,7 +139,7 @@ sudo systemctl enable filebrowser.service
 sudo systemctl start filebrowser.service
 
 # Configure Samba
-sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig-$(date +%Y%m%d%H%M)
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
 pw="raspberry"
 (
     echo $pw
@@ -199,7 +203,7 @@ case $response in
     echo -e 'DISP=true # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
         --title "Reboot" \
-        --infobox "All done! Press OK to reboot the system." 5 45
+        --msgbox "All done! Press OK to reboot the system." 5 45
     clear
     sudo reboot
     ;;
@@ -207,7 +211,7 @@ case $response in
     echo -e 'DISP=false # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
         --title "Reboot" \
-        --infobox "All done! Press OK to reboot the system." 5 45
+        --msgbox "All done! Press OK to reboot the system." 5 45
     clear
     sudo reboot
     ;;
@@ -215,7 +219,7 @@ case $response in
     echo -e 'DISP=false" # Enable LCD display' >>little-backup-box/scripts/config.cfg
     dialog --clear \
         --title "Reboot" \
-        --infobox "All done! Press OK to reboot the system." 5 45
+        --msgbox "All done! Press OK to reboot the system." 5 45
     clear
     sudo reboot
     ;;
