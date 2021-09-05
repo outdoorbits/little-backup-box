@@ -35,7 +35,7 @@ if [ $DISP = true ]; then
   oled s
 fi
 
-if [ ! -z $SMTP_SERVER ]; then
+if [ ! -z $SMTP_SERVER ] && [ $NOTIFY = true ]; then
     curl --url 'smtps://'$SMTP_SERVER':'$SMTP_PORT --ssl-reqd \
         --mail-from $MAIL_USER \
         --mail-rcpt $MAIL_TO \
