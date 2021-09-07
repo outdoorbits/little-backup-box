@@ -110,8 +110,9 @@ To add a new feature or fix issues yourself, follow the following steps.
 
 [Dmitri Popov](https://www.tokyoma.de/)
 
-## Contributors
+## Special thanks
 
+- Stefan Saam (numerous improvements and fixes)
 - Kerry Staite (STL files)
 ### I like coffee
 
