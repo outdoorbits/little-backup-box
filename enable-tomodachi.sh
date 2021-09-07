@@ -17,17 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# Don't start as root
-if [[ $EUID -eq 0 ]]; then
-   echo "Run the script as a regular user"
-   exit 1
-fi
-
-sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
-sudo apt install -y comitup
-sudo bash -c 'echo "ap_name: little-backup-box-<nn>" >> "/etc/comitup.conf"'
+sudo bash -c 'echo "enable_uart=1" >> "/boot/config.txt"'
+sudo bash -c 'echo "dtparam=act_led_gpio=11" >> "/boot/config.txt"'
 dialog --clear \
    --title "Reboot" \
-   --msgbox "All done! After reboot, connect to the little-backup-box-<nn> network and open http://10.41.0.1/" 7 70
+   --msgbox "All done! Press OK to reboot the system." 5 45
 clear
 sudo reboot
