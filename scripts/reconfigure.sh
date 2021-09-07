@@ -17,30 +17,35 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# Don't start as root
+if [[ $EUID -eq 0 ]]; then
+   echo "Run the script as a regular user"
+   exit 1
+fi
+
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${WORKING_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
+crontab -r
+
 BACKTITLE="Little Backup Box"
 
-# Set the default backup mode
+# Prompt to choose the default backup mode
+BACKTITLE="Little Backup Box"
 OPTIONS=(1 "Source backup"
     2 "Camera backup"
-    3 "iOS backup")
-
+    3 "iOS backup"
+    4 "None")
 CHOICE=$(dialog --clear \
     --backtitle "$BACKTITLE" \
     --title "Backup Mode" \
-    --menu "Select the desired backup mode:" \
-    15 40 3 \
+    --menu "Select the default backup mode:" \
+    12 45 25 \
     "${OPTIONS[@]}" \
     2>&1 >/dev/tty)
-
 clear
-
-crontab -r
-
 case $CHOICE in
 1)
     crontab -l | {
@@ -60,12 +65,11 @@ case $CHOICE in
         echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ios-backup.sh"
     } | crontab
     ;;
+    4)
+    :
+    ;;
 esac
 
-crontab -l | {
-    cat
-    echo "@reboot cd /home/"$USER"/little-backup-box/scripts && sudo php -S 0.0.0.0:80"
-} | crontab
 crontab -l | {
     cat
     echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/restart-servers.sh"
@@ -74,13 +78,6 @@ crontab -l | {
     cat
     echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/ip.sh"
 } | crontab
-
-if [ $DISP = true ]; then
-    crontab -l | {
-        cat
-        echo "@reboot sudo /home/"$USER"/little-backup-box/scripts/start.sh"
-    } | crontab
-fi
 
 # Enable LCD screen support
 dialog --clear \

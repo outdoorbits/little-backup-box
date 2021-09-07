@@ -17,6 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# Don't start as root
+if [[ $EUID -eq 0 ]]; then
+   echo "Run the script as a regular user"
+   exit 1
+fi
+
 # Update source and perform the full system upgrade
 sudo apt update
 sudo apt full-upgrade -y
@@ -58,7 +64,7 @@ cd
 git clone https://github.com/dmpop/little-backup-box.git
 chmod +x little-backup-box/scripts/*.sh
 
-# Prompt to choose the default backup mode
+# Choose the default backup mode
 BACKTITLE="Little Backup Box"
 OPTIONS=(1 "Source backup"
     2 "Camera backup"
