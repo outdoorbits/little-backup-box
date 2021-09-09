@@ -40,5 +40,6 @@ while [ true ]; do
     oled +b "---"
     oled +c "Remains: $result"
     oled s
+    echo -e "Total: $source_count\nRemains: $result" >/tmp/progress
     sleep 3
 done

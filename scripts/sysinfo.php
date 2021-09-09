@@ -7,6 +7,7 @@ $theme = "dark";
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
+	<meta http-equiv="refresh" content="3">
 	<title>Little Backup Box</title>
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
@@ -60,10 +61,15 @@ $theme = "dark";
 		passthru("df -H");
 		echo '</pre>';
 		?>
-		<div class="text-center" style="margin-top: 2em;"><button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button></div>
 		<h3 class="text-center"><?php echo L::log; ?></h3>
 		<hr>
 		<?php
+		if (file_exists("/tmp/progress")) {
+			echo '<pre>';
+			passthru("cat /tmp/progress");
+			echo '</pre>';
+			echo '<hr>';
+		}
 		if (file_exists("/var/log/little-backup-box.log")) {
 			echo '<pre>';
 			passthru("sudo tail -n 15 /var/log/little-backup-box.log");

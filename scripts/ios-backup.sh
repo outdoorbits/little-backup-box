@@ -107,6 +107,7 @@ fi
 
 # Kill the progress.sh script
 kill $PID
+rm /tmp/progress
 
 # If display support is enabled, notify that the backup is complete
 if [ $DISP = true ]; then
