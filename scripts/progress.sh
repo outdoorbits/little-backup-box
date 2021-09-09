@@ -40,6 +40,6 @@ while [ true ]; do
     oled +b "---"
     oled +c "Remains: $result"
     oled s
-    echo -e "Total: $source_count\nRemains: $result" >/tmp/progress
+    echo -e "Transferred $storage_count of $source_count. Remains: $result\nProgress: <progress id='file' max='$source_count' value='$storage_count'></progress>" >/tmp/progress
     sleep 3
 done
