@@ -96,12 +96,8 @@ if [ $DISP = true ]; then
 fi
 
 # Perform backup using rsync
-if [ $LOG = true ]; then
-    sudo rm /var/log/little-backup-box.log
-    RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=/var/log/little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
-else
-    RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
-fi
+sudo rm /var/log/little-backup-box.log
+RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=/var/log/little-backup-box.log "$SOURCE_MOUNT_POINT"/ "$BACKUP_PATH")
 
 # Kill the progress.sh script
 kill $PID

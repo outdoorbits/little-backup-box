@@ -31,6 +31,25 @@ $theme = "dark";
 		</ul>
 	</nav>
 	<div class="card" style="margin-top: 3em;">
+		<h1 style="margin-top: 0em;" class="text-center"><?php echo L::log; ?></h1>
+		<hr>
+		<?php
+		if (file_exists("/tmp/progress")) {
+			echo '<pre>';
+			passthru("cat /tmp/progress");
+			echo '</pre>';
+			echo '<hr>';
+		}
+		if (file_exists("/var/log/little-backup-box.log")) {
+			echo '<pre>';
+			passthru("sudo tail -n 15 /var/log/little-backup-box.log");
+			echo '</pre>';
+		} else {
+			echo "<p>" . L::log_txt . "</p>";
+		}
+		?>
+	</div>
+	<div class="card" style="margin-top: 3em;">
 		<h1 style="margin-top: 0em;" class="text-center"><?php echo L::sysinfo; ?></h1>
 		<hr>
 		<?php
@@ -60,33 +79,6 @@ $theme = "dark";
 		echo '<pre>';
 		passthru("df -H");
 		echo '</pre>';
-		?>
-		<h3 class="text-center"><?php echo L::log; ?></h3>
-		<hr>
-		<?php
-		if (file_exists("/tmp/progress")) {
-			echo '<pre>';
-			passthru("cat /tmp/progress");
-			echo '</pre>';
-			echo '<hr>';
-		}
-		if (file_exists("/var/log/little-backup-box.log")) {
-			echo '<pre>';
-			passthru("sudo tail -n 15 /var/log/little-backup-box.log");
-			echo '</pre>';
-		} else {
-			echo "<p>" . L::log_txt . "</p>";
-		}
-		?>
-		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-			<?php echo '<div class="text-center"><button style="margin-top: 2em;" type="delete" name="delete">' . L::delete_log_b . '</button></div>'; ?>
-		</form>
-		<?php
-		if (isset($_POST['delete'])) {
-			unlink("/var/log/little-backup-box.log");
-			sleep(3);
-			header('Location: ' . $_SERVER['PHP_SELF'], true, 303);
-		};
 		?>
 	</div>
 </body>

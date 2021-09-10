@@ -89,8 +89,8 @@ BACKUP_PATH="$STORAGE_MOUNT_POINT/$ID"
 
 # Run the progress.sh script
 if [ $DISP = true ]; then
-    source ${WORKING_DIR}/progress.sh "${SOURCE_PATH}" "${BACKUP_PATH}" &
-    PID=$!
+  source ${WORKING_DIR}/progress.sh "${SOURCE_PATH}" "${BACKUP_PATH}" &
+  PID=$!
 fi
 
 # Set the ACT LED to blink at 1000ms to indicate that the iOS device has been mounted
@@ -98,12 +98,8 @@ sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 # Perform backup using rsync
-if [ $LOG = true ]; then
-  sudo rm /var/log/little-backup-box.log
-  RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=/var/log/little-backup-box.log "$SOURCE_PATH"/ "$BACKUP_PATH")
-else
-  RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
-fi
+sudo rm /var/log/little-backup-box.log
+RSYNC_OUTPUT=$(rsync -avh --stats --exclude "*.id" --log-file=/var/log/little-backup-box.log "$SOURCE_PATH"/ "$BACKUP_PATH")
 
 # Kill the progress.sh script
 kill $PID
