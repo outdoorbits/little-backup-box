@@ -35,10 +35,18 @@ while [ true ]; do
     # Calculate the number of files to be transferred
     storage_count=$(find $BACKUP_PATH -type f | wc -l)
     result=$(expr $source_count - $storage_count)
+    if [ "$result" -gt 0 ]; then
+        bar_lengh=$(expr 16 \* $result / $source_count)
+        bar_16="                "
+        progress_bar=${bar_16:0:$bar_lengh}
+    else
+        progress_bar=""
+    fi
     oled r
     oled +a "Total: $source_count"
-    oled +b "---"
-    oled +c "Remains: $result"
+    oled +b "Remains: $result"
+    oled +R 4
+    oled +d "$progress_bar"
     oled s
     echo -e "Transferred $storage_count of $source_count. Remains: $result\nProgress: <progress id='file' max='$source_count' value='$storage_count'></progress>" >/tmp/progress
     sleep 3
