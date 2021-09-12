@@ -38,14 +38,18 @@ $theme = "dark";
 			echo '<pre>';
 			passthru("cat /tmp/progress");
 			echo '</pre>';
-			echo '<hr>';
+		} else {
+			echo '<pre>';
+			echo "<p>" . L::progress_txt . "</p>";
+			echo '</pre>';
 		}
+		echo '<hr style="margin-bottom: 1.5em;">';
 		if (file_exists("/var/log/little-backup-box.log")) {
 			echo '<pre>';
 			passthru("sudo tail -n 15 /var/log/little-backup-box.log");
 			echo '</pre>';
 		} else {
-			echo "<p>" . L::log_txt . "</p>";
+			echo "<pre>" . L::log_txt . "</pre>";
 		}
 		?>
 	</div>
