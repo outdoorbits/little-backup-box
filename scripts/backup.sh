@@ -43,11 +43,18 @@ UUID_USB_2=""
 # To add a new definition, specify the desired arguments to the list
 
 # Source definition
-# " storage camera ios internal "
-SOURCE_MODE="storage"
+if [[ " storage camera ios internal " =~ " ${1} " ]]; then
+    SOURCE_MODE="${1}"
+else
+    SOURCE_MODE="storage"
+fi
 
-# " internal external server "
-DEST_MODE="server"
+# Destination definition
+if [[ " internal external " =~ " ${2} " ]]; then
+    DEST_MODE="${2}"
+else
+    DEST_MODE="external"
+fi
 
 
 if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
@@ -129,22 +136,22 @@ if [ "${DEST_MODE}" = "external" ]; then
     elif [ "${DEST_MODE}" = "server" ]; then
         STORAGE_PATH="rsync://${RSYNC_USER}@${RSYNC_SERVER}:${RSYNC_PORT}${RSYNC_PATH}"
 
-# elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
-#         lcd_message "Ready" "Insert NEW_STORAGE_TYPE"
-#         ...
-#         # Set storage path
-#         STORAGE_PATH
+    # elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
+    #         lcd_message "Ready" "Insert NEW_STORAGE_TYPE"
+    #         ...
+    #         # Set storage path
+    #         STORAGE_PATH
 
-elif [ "${DEST_MODE}" = "internal" ]; then
-    # Internal mode
-    STORAGE_PATH="${INTERAL_BACKUP_DIR}"
+    elif [ "${DEST_MODE}" = "internal" ]; then
+        # Internal mode
+        STORAGE_PATH="${INTERAL_BACKUP_DIR}"
 
-    # If display support is enabled, notify that the storage device has been mounted
-    lcd_message "Int. storage OK" "" "" ""
-else
-    # no defined mode selected
-    lcd_message "No valid" "destination" "mode defined" ""
-    exit 1
+        # If display support is enabled, notify that the storage device has been mounted
+        lcd_message "Int. storage OK" "" "" ""
+    else
+        # no defined mode selected
+        lcd_message "No valid" "destination" "mode defined" ""
+        exit 1
 fi
 
 # END
@@ -250,7 +257,7 @@ elif [ "${SOURCE_MODE}" = "internal" ]; then
         lcd_message "Int. storage OK" "" "" ""
 
         # Set SOURCE_PATH
-        SOURCE_PATH=${INTERAL_BACKUP_DIR}
+        SOURCE_PATH="${INTERAL_BACKUP_DIR}"
 
         # Set BACKUP_PATH
         BACKUP_PATH="${STORAGE_PATH}/internal"
@@ -334,7 +341,7 @@ else
 fi
 
 # END
-source "${WORKING_DIR}/custom1_status-display.sh" &
+source "${WORKING_DIR}/status-display.sh" &
 PID=$!
 
 ##############
@@ -349,11 +356,10 @@ if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
     # If source is storage or ios
 
     if [ ${DEST_MODE} = "server" ]; then
-        SERVER_PATH=${BACKUP_PATH#"$STORAGE_PATH"}
         if [ $LOG = true ]; then
-            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
+            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${RSYNC_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
         else
-            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
+            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${RSYNC_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
         fi
     else
         sudo mkdir -p "${BACKUP_PATH}"
