@@ -92,6 +92,7 @@ git clone https://github.com/stefans73/little-backup-box.git
 cd little-backup-box
 
 # make scripts executable
+chmod +x ${WORKING_DIR}/../*.sh
 chmod +x ${WORKING_DIR}/*.sh
 
 # Enable LCD, select default backup mode, add cron jobs
