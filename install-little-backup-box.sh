@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com
+# Author: Stefan Saam, stefan@saams.de
+# Original author: Dmitri Popov, dmpop@linux.com
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
@@ -87,7 +88,7 @@ sudo service minidlna start
 
 # Clone and configure Little Backup Box
 cd
-git clone https://github.com/dmpop/little-backup-box.git
+git clone https://github.com/stefans73/little-backup-box.git
 cd little-backup-box
 
 # make scripts executable
