@@ -1,34 +1,34 @@
 ## Setup a RSYNC-Server
-
+<br>
 ## Install rsync
-sudo apt install rsync -y
-
+sudo apt install rsync -y<br>
+<br>
 ## Config-Files
 # /etc/rsyncd.conf
-nano /etc/rsyncd.conf
-
+nano /etc/rsyncd.conf<br>
+<br>
 /etc/rsyncd.conf:
-#global (global settings)
-log file = /var/log/rsync.log
-timeout = 300
-
+#global (global settings)<br>
+log file = /var/log/rsync.log<br>
+timeout = 300<br>
+<br>
 #profiles
 [USERNAME]
-path = /ABSOLUTE/PATH/AT/YOUR/SERVER
-comment = USERNAME
-max connections = 2
-hosts allow = *
-#hosts deny = *
-use chroot = yes
-list = true
-uid = USER-ID-NUMBER
-gid = GROUP-ID-NUMBER
-read only = false
-auth users = USERNAME
-secrets file = /etc/rsyncd.secrets
-
+path = /ABSOLUTE/PATH/AT/YOUR/SERVER<br>
+comment = USERNAME<br>
+max connections = 2<br>
+hosts allow = *<br>
+#hosts deny = *<br>
+use chroot = yes<br>
+list = true<br>
+uid = USER-ID-NUMBER<br>
+gid = GROUP-ID-NUMBER<br>
+read only = false<br>
+auth users = USERNAME<br>
+secrets file = /etc/rsyncd.secrets<br>
+<br>
 # /etc/rsyncd.secrets
-nano /etc/rsyncd.secrets
-
-/etc/rsyncd.secrets:
-USERNAME:PASSWORD
+nano /etc/rsyncd.secrets<br>
+<br>
+/etc/rsyncd.secrets:<br>
+USERNAME:PASSWORD<br>
