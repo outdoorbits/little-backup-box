@@ -1,10 +1,10 @@
-## Setup a RSYNC-Server
+## Setup a RSYNC-Server<br>
 <br>
-## Install rsync
+## Install rsync<br>
 sudo apt install rsync -y<br>
 <br>
-## Config-Files
-# /etc/rsyncd.conf
+## Config-Files<br>
+# /etc/rsyncd.conf<br>
 nano /etc/rsyncd.conf<br>
 <br>
 /etc/rsyncd.conf:
@@ -12,7 +12,7 @@ nano /etc/rsyncd.conf<br>
 log file = /var/log/rsync.log<br>
 timeout = 300<br>
 <br>
-#profiles
+#profiles<br>
 [USERNAME]<br>
 path = /ABSOLUTE/PATH/AT/YOUR/SERVER<br>
 comment = USERNAME<br>
@@ -27,7 +27,7 @@ read only = false<br>
 auth users = USERNAME<br>
 secrets file = /etc/rsyncd.secrets<br>
 <br>
-# /etc/rsyncd.secrets
+# /etc/rsyncd.secrets<br>
 nano /etc/rsyncd.secrets<br>
 <br>
 /etc/rsyncd.secrets:<br>
