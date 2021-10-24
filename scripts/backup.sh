@@ -43,18 +43,12 @@ UUID_USB_2=""
 # To add a new definition, specify the desired arguments to the list
 
 # Source definition
-if [[ " storage camera ios internal " =~ " ${1} " ]]; then
-    SOURCE_MODE="${1}"
-else
-    SOURCE_MODE="storage"
-fi
+# " storage camera ios internal "
+SOURCE_MODE="storage"
 
-# Destination definition
-if [[ " internal external " =~ " ${2} " ]]; then
-    DEST_MODE="${2}"
-else
-    DEST_MODE="external"
-fi
+# " internal external server "
+DEST_MODE="server"
+
 
 if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
     lcd_message "Invalid" "mode" "combination" ""
@@ -77,7 +71,8 @@ fi
 log_to_file "Source: ${SOURCE_MODE}"
 log_to_file "Destination: ${DEST_MODE}"
 
-function get_storage_space() {
+
+function get_storage_spaces() {
     local DEVICE=$1
 
     local storsize=$(df "${DEVICE}" -h --output=size | sed '1d' | tr -d ' ')
@@ -115,7 +110,7 @@ if [ "${DEST_MODE}" = "external" ]; then
     STORAGE_PATH="${STORAGE_MOUNT_POINT}"
 
     # notify that the storage device has been mounted
-    ret="$(get_storage_space ${STORAGE_MOUNT_POINT})"
+    ret="$(get_storage_spaces ${STORAGE_MOUNT_POINT})"
 
     IFS="|"
     set -- $ret
@@ -130,6 +125,9 @@ if [ "${DEST_MODE}" = "external" ]; then
     if [ $DISP = true ]; then
         sleep 2
     fi
+
+    elif [ "${DEST_MODE}" = "server" ]; then
+        STORAGE_PATH="rsync://${RSYNC_USER}@${RSYNC_SERVER}:${RSYNC_PORT}${RSYNC_PATH}"
 
 # elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
 #         lcd_message "Ready" "Insert NEW_STORAGE_TYPE"
@@ -187,7 +185,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     fi
 
     # notify that the source device has been mounted
-    ret="$(get_storage_space ${SOURCE_PATH})"
+    ret="$(get_storage_spaces ${SOURCE_PATH})"
     IFS="|"
     set -- $ret
     STOR_SIZE="Size: $1"
@@ -230,7 +228,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     done
 
     # Mount iOS device
-    SOURCE_PATH="${IOS_MOUNT_POINT}/DCIM"
+    SOURCE_PATH="${MOUNT_IOS_DIR}/DCIM"
 
     # Create  a .id random identifier file if doesn't exist
     cd "${SOURCE_PATH}"
@@ -249,16 +247,16 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
 
 elif [ "${SOURCE_MODE}" = "internal" ]; then
-    lcd_message "Int. storage OK" "" "" ""
+        lcd_message "Int. storage OK" "" "" ""
 
-    # Set SOURCE_PATH
-    SOURCE_PATH=${INTERAL_BACKUP_DIR}
+        # Set SOURCE_PATH
+        SOURCE_PATH=${INTERAL_BACKUP_DIR}
 
-    # Set BACKUP_PATH
-    BACKUP_PATH="${STORAGE_PATH}/internal"
+        # Set BACKUP_PATH
+        BACKUP_PATH="${STORAGE_PATH}/internal"
 
-    # Set SOURCE_IDENTIFIER
-    SOURCE_IDENTIFIER="Internal memory"
+        # Set SOURCE_IDENTIFIER
+        SOURCE_IDENTIFIER="Internal memory"
 
 # elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 #
@@ -317,7 +315,7 @@ sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
 if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
     # Source storage
-    FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+    FILES_TO_SYNC=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 
 #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
 #     then
@@ -336,7 +334,7 @@ else
 fi
 
 # END
-source "${WORKING_DIR}/status-display.sh" &
+source "${WORKING_DIR}/custom1_status-display.sh" &
 PID=$!
 
 ##############
@@ -350,11 +348,20 @@ PID=$!
 if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
     # If source is storage or ios
 
-    sudo mkdir -p "${BACKUP_PATH}"
-    if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
+    if [ ${DEST_MODE} = "server" ]; then
+        SERVER_PATH=${BACKUP_PATH#"$STORAGE_PATH"}
+        if [ $LOG = true ]; then
+            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
+        else
+            SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${SERVER_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
+        fi
     else
-        SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        sudo mkdir -p "${BACKUP_PATH}"
+        if [ $LOG = true ]; then
+            SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        else
+            SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+        fi
     fi
 
 #     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
@@ -393,10 +400,11 @@ kill $PID
 
 # Check for lost devices
 SYNC_ERROR=""
-for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"; do
+for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"
+do
     RESULT_DEVICE_MOUNTED=$(device_mounted "${MOUNTED_DEVICE}")
     if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-        SYNC_ERROR="Device error!"
+        SYNC_ERROR="Err.Lost device!"
         log_to_file "Lost device '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'"
     fi
 done
