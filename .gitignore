@@ -1,3 +1,4 @@
 .DS_Store
 .directory 
 cache
+scripts/config.cfg
