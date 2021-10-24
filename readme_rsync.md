@@ -13,7 +13,7 @@ log file = /var/log/rsync.log<br>
 timeout = 300<br>
 <br>
 #profiles
-[USERNAME]
+[USERNAME]<br>
 path = /ABSOLUTE/PATH/AT/YOUR/SERVER<br>
 comment = USERNAME<br>
 max connections = 2<br>
