@@ -21,7 +21,7 @@ Little Backup Box is a software that transforms a Raspberry Pi (or any single-bo
 
 1. Create a bootable SD card with the latest version of Raspberry Pi OS Lite for use with Little Backup Box.
 2. Make sure that your Raspberry Pi is connected to the internet.
-3. Run the following command on the Raspberry Pi: `curl -sSL https://raw.githubusercontent.com/dmpop/little-backup-box/main/install-little-backup-box.sh | bash`
+3. Run the following command on the Raspberry Pi: `curl -sSL https://raw.githubusercontent.com/stefans73/little-backup-box/main/install-little-backup-box.sh | bash`
 
 Little Backup Box supports three backup modes:
 
