@@ -42,7 +42,7 @@ done
 
 IP=$(hostname -I | cut -d' ' -f1)
 
-if [ $DISP = true ]; then
+if [ $DISP = true ] && [ $DISP_IP_REPEAT = true ]; then
     if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
         lcd_message "$IP"
     fi
