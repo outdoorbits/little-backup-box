@@ -17,37 +17,51 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(dirname "$0")
-CONFIG="${CONFIG_DIR}/config.cfg"
-dos2unix "$CONFIG"
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
+# Load Log library
+. "${WORKING_DIR}/lib-log.sh"
+
 # Load LCD library
-. "${CONFIG_DIR}/lib-lcd.sh"
+. "${WORKING_DIR}/lib-lcd.sh"
 
-# Wait for a USB storage device (e.g., a USB flash drive)
-STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-while [ -z "${STORAGE}" ]; do
-  sleep 1
-  STORAGE=$(ls /dev/* | grep "$STORAGE_DEV" | cut -d"/" -f3)
-done
+#load DEVICES library
+. "${WORKING_DIR}/lib-devices.sh"
 
-# When the USB storage device is detected, mount it
-mount /dev/"$STORAGE_DEV" "$STORAGE_MOUNT_POINT"
+# Wait for a USB storage device (USB 1) (e.g., a USB flash drive)
+mount_device "usb_1" true "$(device_mounted usb_1)" "$(device_mounted usb_2)"
 
 # Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
 sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
+function get_storage_space() {
+  local device=$1
+
+  local storsize=$(df ${STORAGE_MOUNT_POINT} -h --output=size | sed '1d' | tr -d ' ')
+  local storused=$(df ${STORAGE_MOUNT_POINT} -h --output=pcent | sed '1d' | tr -d ' ')
+  local storfree=$(df ${STORAGE_MOUNT_POINT} -h --output=avail | sed '1d' | tr -d ' ')
+
+  echo "${storsize}|${storused}|${storfree}"
+}
+
+# notify that the storage device has been mounted
+ret="$(get_storage_space ${STORAGE_MOUNT_POINT})"
+
+IFS="|"
+set -- $ret
+
+STOR_SIZE="Size: $1"
+STOR_FREE="free: $3"
+
+unset IFS
+
+lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
+sleep 4
+
 # Reload minidlna
 
 sudo minidlnad -R
 sudo service minidlna restart
-
-# If display support is enabled, display storage space info
-if [ $DISP = true ]; then
-  storsize=$(df /dev/"$STORAGE_DEV" -h --output=size | sed '1d' | tr -d ' ')
-  storused=$(df /dev/"$STORAGE_DEV" -h --output=pcent | sed '1d' | tr -d ' ')
-  storfree=$(df /dev/"$STORAGE_DEV" -h --output=avail | sed '1d' | tr -d ' ')
-  lcd_message "Free: $storfree"
-fi

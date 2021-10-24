@@ -17,6 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# library expects from calling script:
+# - source config.cfg
+# - source lib-log.sh
+
 function lcd_message () {
 
 # takes up to 4 arguments (lines of the display)
@@ -27,6 +31,25 @@ function lcd_message () {
     LineCount=$#
     Lines=( "$@" )
 
+    #Config
+    FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
+    LockFile="${WORKING_DIR}/tmp/display.lock"
+    DisplayLines=(a b c d)
+
+    #Wait for Lockfile
+    if [ -f "${LockFile}" ]; then
+        LockFileTime=$(sudo head -n 1 ${LockFile})
+        ActualTime=$(date +%s )
+        while [ $(expr $ActualTime - $LockFileTime) -lt 1 ]
+        do
+            ActualTime=$(date +%s )
+            sleep 0.5
+        done
+    fi
+
+    bash -c "sudo date +%s > '${LockFile}'"
+
+    # clear screen
     if [ "${LineCount}" -eq 0 ];
     then
         LineCount=4
@@ -37,24 +60,6 @@ function lcd_message () {
             n=$(expr $n + 1)
         done
     fi
-
-    #Config
-    FILE_OLED_OLD="/root/oled_old.txt"
-    LockFile="/root/display.lock"
-    DisplayLines=(a b c d)
-
-    #Wait for Lockfile
-    if [ -f "${LockFile}" ]; then
-        LockFileTime=$(head -n 1 ${LockFile})
-        ActualTime=$(date +%s )
-        while [ $(($ActualTime - $LockFileTime)) == 0 ]
-        do
-            ActualTime=$(date +%s )
-            sleep 0.5
-        done
-    fi
-
-    date +%s > $LockFile
 
     #fifo display
     if [ -f "${FILE_OLED_OLD}" ]; then
@@ -69,20 +74,25 @@ function lcd_message () {
     done
 
     #save Lines to file
-    echo -en "${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}" > "${FILE_OLED_OLD}"
+    sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}' > '${FILE_OLED_OLD}'"
 
     #display
-    oled r
-    
+
+    LogLines=""
     n=0
+
+    if [ $DISP = true ]; then
+        sudo oled r
+    fi
+
     while [ "${n}" -le 3 ]
     do
 
         LINE="${Lines[$n]}"
-        
+
         FORCE_FORMAT="standard"
 
-        case "${LINE:0:1}" in 
+        case "${LINE:0:1}" in
             "+")
                 FORCE_FORMAT="pos"
                 LINE=${LINE:1:16}
@@ -97,15 +107,33 @@ function lcd_message () {
         then
             if [ "${FORCE_FORMAT}" != "pos" ];
             then
-                oled +R $(expr $n + 1)
+                if [ $DISP = true ]; then
+                    sudo oled +R $(expr $n + 1)
+                fi
             fi
         fi
 
-        oled +${DisplayLines[$n]} "${LINE}"
+        if [ $DISP = true ]; then
+            sudo oled +${DisplayLines[$n]} "${LINE}"
+        fi
+
+        if [ ! -z "${LogLines}" ];
+        then
+            LogLines="${LogLines}\n"
+        fi
+        LogLines="${LogLines}${LINE}"
 
         n=$(expr $n + 1)
     done
 
-    oled s
+    if [ $DISP = true ]; then
+        sudo oled s
+    fi
+
+    # log
+    if [ ! -z "${LogLines}" ];
+    then
+        log_to_file "${LogLines}"
+    fi
 }
 

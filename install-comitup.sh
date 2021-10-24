@@ -17,27 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(dirname "$0")
-CONFIG="${CONFIG_DIR}/config.cfg"
-dos2unix "$CONFIG"
-source "$CONFIG"
-
-# Check for .id file
-cd "$SOURCE_MOUNT_POINT"
-if [ ! -f *.id ]; then
-echo "<p>Waiting...</p>"
-    exit 1
-fi
-ID_FILE=$(ls -t *.id | head -n1)
-ID="${ID_FILE%.*}"
-cd
-
-# Set the backup path
-BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
-
-# Count files on the source device and in the backup destination
-# Calculate the number of files to be transferred
-count1=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
-count2=$(find $BACKUP_PATH -type f | wc -l)
-result=$((count1-count2))
-echo "Files to transfer: <strong>"$result"</strong>"
+sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
+sudo apt install -y comitup
+sudo bash -c 'echo "ap_name: little-backup-box-<nn>" >> "/etc/comitup.conf"'
+sudo bash -c 'echo "web_service: webui80.service" >> "/etc/comitup.conf"'
+sudo systemctl disable webui80.service
+echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
+sleep 2
+sudo reboot

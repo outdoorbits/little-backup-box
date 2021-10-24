@@ -1,5 +1,6 @@
 <?php
 $theme = "dark";
+$WORKING_DIR=dirname(__FILE__);
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -36,25 +37,25 @@ $theme = "dark";
 	?>
 	<nav>
 		<ul>
-			<li><a href="index.php"><?php echo L::main; ?></a></li>
-			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
-			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
+			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 		</ul>
 	</nav>
-	<h1><?php echo L::config; ?></h1>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config; ?></h1>
 	<?php
 	function Read()
 	{
-		$CONFIGFILE = "config.cfg";
-		echo file_get_contents($CONFIGFILE);
+		${CONFIGFILE} = "config.cfg";
+		echo file_get_contents(${CONFIGFILE});
 	}
 	function Write()
 	{
-		$CONFIGFILE = "config.cfg";
-		$fp = fopen($CONFIGFILE, "w");
+		${CONFIGFILE} = "config.cfg";
+		$fp = fopen(${CONFIGFILE}, "w");
 		$data = $_POST["text"];
 		fwrite($fp, $data);
 		fclose($fp);
+		exec ("dos2linux ./${CONFIGFILE}");
+		echo '<div class="card" style="margin-top: 2em;">config.cfg written successfully</div>';
 	}
 	?>
 	<div class="card" style="margin-top: 2em;">

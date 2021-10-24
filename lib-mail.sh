@@ -17,33 +17,50 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# library expects from calling script:
+# - source config.cfg
+# - source lib-log.sh
+
 function send_email () {
 
 # Takes up to 3 arguments:
 # sendmail "$Subject" "$Text_plain" "$Text_HTML (optional)"
 
     # Arguments
-    SUBJECT=$1
-    TEXT_PLAIN=$2
-    TEXT_HTML=$3
-    
-    # Config
-    CONFIG_DIR=$(dirname "$0")
-    CONFIG="${CONFIG_DIR}/config.cfg"
-    dos2unix "$CONFIG"
-    source "$CONFIG"
-
+    SUBJECT="${1}"
+    TEXT_PLAIN="${2}"
+    TEXT_HTML="${3}"
     BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
+
     TEXT=""
-    
+
     #Mail-body
-    if [ "${MAIL_HTML}" = true ] && [ ! -z "${TEXT_HTML}" ];
+    if [ ${MAIL_HTML} = true ] && [ ! -z "${TEXT_HTML}" ];
     then
-        TEXT="Content-Type: multipart/alternative;boundary=${BOUNDARY}\n\n$TEXT_PLAIN\n\n--${BOUNDARY}\nContent-type: text/html;charset=utf-8\n\n$TEXT_HTML\n\n--${BOUNDARY}--"
+        TEXT="Content-Type: multipart/alternative; boundary=${BOUNDARY}
+
+${TEXT_PLAIN}
+
+--${BOUNDARY}
+Content-Type: text/plain; charset='utf-8'
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+${TEXT_PLAIN}
+
+--${BOUNDARY}
+Content-Type: text/html; charset='utf-8'
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+${TEXT_HTML}
+
+--${BOUNDARY}--"
+
     else
         TEXT="\n\n$TEXT_PLAIN\n\n"
     fi
-    
+
     # Check internet connection and send
     # a notification if the NOTIFY option is enabled
     check=$(wget -q --spider http://google.com/)
@@ -54,4 +71,6 @@ function send_email () {
             --user $MAIL_USER':'$MAIL_PASSWORD \
             -T <(echo -e "From: ${MAIL_USER}\nTo: ${MAIL_TO}\nSubject: ${SUBJECT}\n${TEXT}")
     fi
+
+    log_to_file "Mail:\n${SUBJECT}\n${TEXT}"
 }

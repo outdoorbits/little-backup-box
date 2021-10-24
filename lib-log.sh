@@ -17,24 +17,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(dirname "$0")
-CONFIG="${CONFIG_DIR}/config.cfg"
-dos2unix "$CONFIG"
-source "$CONFIG"
+# library expects from calling script:
+# - source config.cfg
 
-# Configuration
-FILE_OLED_OLD="/root/oled_old.txt"
-        
-# Load LCD library
-. "${CONFIG_DIR}/lib-lcd.sh"
+function log_to_file() {
 
-ip=$(hostname -I | cut -d' ' -f1)
+    # Takes one argument:
+    # log_to_file "Log message"
 
-until [ ! -z "$ip" ]; do
-  sleep 1
-  ip=$(hostname -I | cut -d' ' -f1)
-done
+    # Arguments
+    MESSAGE=$1
 
-if [ $DISP = true ]; then
-  lcd_message "LittleBackupBox" "$ip"
-fi
+    LOGFILE="${WORKING_DIR}/tmp/little-backup-box.log"
+
+    if [ ! -f "${LOGFILE}" ]; then
+        mkdir -p "${WORKING_DIR}/tmp"
+        sudo echo "" >"${LOGFILE}"
+    fi
+
+    sudo echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${LOGFILE})" >"${LOGFILE}"
+}

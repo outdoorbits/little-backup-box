@@ -1,5 +1,7 @@
 <?php
 $theme = "dark";
+$WORKING_DIR=dirname(__FILE__);
+$LogFile="${WORKING_DIR}/tmp/sync.log"
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -23,22 +25,11 @@ $theme = "dark";
 	?>
 	<nav>
 		<ul>
-			<li><a href="index.php"><?php echo L::main; ?></a></li>
-			<li><a href="config.php"><?php echo L::config; ?></a></li>
-			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
+			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 		</ul>
 	</nav>
-	<div class="card text-center" style="margin-top: 3em;">
-		<h1 style="margin-top: 0em;"><?php echo L::status; ?></h1>
-		<hr>
-		<p><?php
-			passthru("./status-webui.sh");
-			?></p>
-		<button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
-	</div>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo; ?></h1>
 	<div class="card" style="margin-top: 3em;">
-		<h1  style="margin-top: 0em;" class="text-center"><?php echo L::sysinfo; ?></h1>
-		<hr>
 		<?php
 		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 		$temp = round($temp / 1000, 1);
@@ -67,18 +58,28 @@ $theme = "dark";
 		passthru("df -H");
 		echo '</pre>';
 		?>
+		<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button></div>
 		<h3 class="text-center"><?php echo L::log; ?></h3>
 		<hr>
 		<?php
-		if (file_exists("/root/little-backup-box.log")) {
+		if (file_exists("${LogFile}")) {
 			echo '<pre>';
-			passthru("sudo cat /root/little-backup-box.log");
+			passthru("sudo cat ${LogFile}");
 			echo '</pre>';
 		} else {
 			echo "<p>" . L::log_txt . "</p>";
 		}
 		?>
-		<button onClick="history.go(0)" role="button"><?php echo L::refresh_b; ?></button>
+		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+			<?php echo '<div class="text-center"><button style="margin-top: 2em;" type="delete" name="delete">' . L::delete_log_b . '</button></div>'; ?>
+		</form>
+		<?php
+		if (isset($_POST['delete'])) {
+			unlink("${LogFile}");
+			sleep(3);
+			header('Location: '.$_SERVER['PHP_SELF'], true, 303);
+		};
+		?>
 	</div>
 </body>
 

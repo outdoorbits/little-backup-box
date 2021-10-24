@@ -17,41 +17,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-MOUNT_POINT="/mnt/tmp"
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
+source "$CONFIG"
 
-if [ -z "$1" ] && [ -z "$2" ]; then
-	echo "ERROR: Specify image file and device name"
-	echo "E.g.: $0 /path/to/IMAGE.img /dev/sdb"
-	exit 1
-fi
+# Load LCD library
+. "${WORKING_DIR}/lib-lcd.sh"
 
-echo "Writing the image file..."
-echo
-sudo dd if="$1" of="$2" bs=1M status=progress
+message="Custom action 1 works!"
 
-sudo mkdir -p $MOUNT_POINT
-sudo mount "$2"1 $MOUNT_POINT
-sudo touch $MOUNT_POINT/ssh
+lcd_message "$message"
 
-echo "Enter your country code (e.g., DE): "
-read COUNTRY
-echo "Enter the name of the wireless network: "
-read SSID
-echo "Enter the wireless network password: "
-read -s PASS
-cat >$HOME/wpa_supplicant.conf <<EOF
-country=$COUNTRY
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
-
-network={
-	ssid="$SSID"
-	psk="$PASS"
-	proto=RSN
-	key_mgmt=WPA-PSK
-}
-EOF
-sudo mv $HOME/wpa_supplicant.conf $MOUNT_POINT/wpa_supplicant.conf
-sudo umount $MOUNT_POINT
-sudo rm -rf $MOUNT_POINT
-echo "All done!"

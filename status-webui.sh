@@ -17,21 +17,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(dirname "$0")
-CONFIG="${CONFIG_DIR}/config.cfg"
-dos2unix "$CONFIG"
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
-# Load Mail library
-. "${CONFIG_DIR}/lib-mail.sh"
-
-ping -c1 google.com &>/dev/null
-while [ $? != 0 ]; do
-    sleep 10
-    ping -c1 google.com &>/dev/null
-done
-
-if [ ! -z $SMTP_SERVER ]; then
-    IP=$(hostname -I | cut -d' ' -f1)
-    send_email "Little Backup Box IP: ${IP}" "http://${IP}:8000" "Little Backup Box web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a>"
+# Check for .id file
+cd "$SOURCE_MOUNT_POINT"
+if [ ! -f *.id ]; then
+echo "<p>Waiting...</p>"
+    exit 1
 fi
+ID_FILE=$(ls -t *.id | head -n1)
+ID="${ID_FILE%.*}"
+cd
+
+# Set the backup path
+BACKUP_PATH="$STORAGE_MOUNT_POINT"/"$ID"
+
+# Count files on the source device and in the backup destination
+# Calculate the number of files to be transferred
+count1=$(find $SOURCE_MOUNT_POINT -type f | wc -l)
+count2=$(find $BACKUP_PATH -type f | wc -l)
+result=$((count1-count2))
+echo "Files to transfer: <strong>"$result"</strong>"

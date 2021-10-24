@@ -17,16 +17,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-CONFIG_DIR=$(dirname "$0")
-CONFIG="${CONFIG_DIR}/config.cfg"
-dos2unix "$CONFIG"
+# Don't start as root
+if [[ $EUID -eq 0 ]]; then
+    echo "Run the script as a regular user"
+    exit 1
+fi
+
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
-# Load LCD library
-. "${CONFIG_DIR}/lib-lcd.sh"
+# Choose display-setup, default backup mode, set crontab
+source "${WORKING_DIR}/sub-select-mode.sh"
 
-message="Custom action 2 works!"
+# Finished
+clear
+echo "Alle done! Rebooting..."
+sleep 2
 
-if [ $DISP = true ]; then
-  lcd_message "$message"
-fi
+sudo "${WORKING_DIR}/poweroff.sh" "reboot" "force"
