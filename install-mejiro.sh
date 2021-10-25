@@ -52,6 +52,9 @@ sed -i 's/^$protect = .*/$protect = false; \/\/ Enable password protection/' "${
 cd
 sudo ln -s /media "mejiro/photos"
 
+# Create tims-directory
+sudo mkdir mejiro/photos/tims
+
 # Crontab
 crontab -l | {
     cat

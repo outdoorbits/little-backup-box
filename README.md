@@ -1,3 +1,5 @@
+<h1>NOT FINALLY TESTED YET, NOT FOR PRODUCTIVE USE!</h1>
+
 # Little Backup Box
 
 This fork is done because I need a solution for some special problems about xqd-cards. Please have a look at <a href="https://github.com/dmpop/little-backup-box">https://github.com/dmpop/little-backup-box</a>.
