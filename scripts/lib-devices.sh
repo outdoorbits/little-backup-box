@@ -29,10 +29,8 @@ function mount_device() {
     # Takes up to 2 arguments
     # DEVICE: one of ("usb_1" "usb_2" "ios")
     # WAIT_FOR_MOUNT: true or false
-    # [ DEVICE = "usb_2" ]: DEVICE_IDENT_1 of mounted usb_1
 
     # call for USB: mount_device MOUNT_DEVICE WAIT_FOR_MOUNT DEVICE_IDENT_1 DEVICE_IDENT_2 # example: mount_device usb_1 true "" ""
-    # call for
 
     # Arguments
     MOUNT_DEVICE="${1}"

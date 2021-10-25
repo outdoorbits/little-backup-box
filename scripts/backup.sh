@@ -50,7 +50,7 @@ else
 fi
 
 # Destination definition
-if [[ " internal external " =~ " ${2} " ]]; then
+if [[ " internal external server " =~ " ${2} " ]]; then
     DEST_MODE="${2}"
 else
     DEST_MODE="external"
@@ -361,69 +361,105 @@ PID=$!
 
 # START
 
-# To define a new method, add an elif block (example below)
+# In case of SYNC_ERROR retry
+TRIES_MAX=3
+TRIES_DONE=0
+SYNC_ERROR="-" # not empty!
 
-if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
-    # If source is storage or ios
+while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; do
 
-	if [ ${DEST_MODE} = "server" ]; then
-	if [ $LOG = true ]; then
-		SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${RSYNC_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
-	else
-		SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${RSYNC_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
+	TRIES_DONE=$((TRIES_DONE+1))
+
+	# Messages about retries
+	if [ "${TRIES_DONE}" -gt "1" ]; then
+		if [ $LOG = true ]; then
+			log_to_file "Try Backup: ${TRIES_DONE} of ${TRIES_MAX}"
+			lcd_message "Try Backup" "${TRIES_DONE}" "of" "${TRIES_MAX}"
+		fi
 	fi
-else
-	sudo mkdir -p "${BACKUP_PATH}"
-	if [ $LOG = true ]; then
-		SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
-	else
-		SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+
+	# Remount devices if "Err.Lost device!"
+	if [ "${SYNC_ERROR}" == "Err.Lost device!" ]; then
+		if [ "${UUID_USB_1}" -ne "" ]; then
+			RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_1}")
+			if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
+				mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}"
+			fi
+		fi
+
+		if [ "${UUID_USB_2}" -ne "" ]; then
+			RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_2}")
+			if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
+				mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}"
+			fi
+		fi
 	fi
-fi
 
-#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
-#     then
-#     if [ $LOG = true ]; then
-#         SYNC_OUTPUT=$(...)
-#     else
-#         SYNC_OUTPUT=$(...)
+	# To define a new method, add an elif block (example below)
 
-elif [ "${SOURCE_MODE}" = "camera" ]; then
-    # If source is camera
-    # Switch to STORAGE_MOUNT_POINT and transfer files from the camera
-    sudo mkdir -p "${BACKUP_PATH}"
-    cd "${BACKUP_PATH}"
-    if [ $LOG = true ]; then
-        SYNC_OUTPUT=$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")
-    else
-        SYNC_OUTPUT=$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files)
-    fi
-    cd
-else
-    # no defined mode selected
-    lcd_message "No valid" "source" "mode defined" "3"
-    exit 1
-fi
+	if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
+		# If source is storage or ios
 
-# END
+		if [ ${DEST_MODE} = "server" ]; then
+		if [ $LOG = true ]; then
+			SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${RSYNC_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
+		else
+			SYNC_OUTPUT=$(sudo sshpass -p "${RSYNC_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${RSYNC_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH") || true
+		fi
+	else
+		sudo mkdir -p "${BACKUP_PATH}"
+		if [ $LOG = true ]; then
+			SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")
+		else
+			SYNC_OUTPUT=$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")
+		fi
+	fi
 
-# Display progress after finish
-if [ $DISP = true ]; then
-    sleep 5
-fi
+	#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
+	#     then
+	#     if [ $LOG = true ]; then
+	#         SYNC_OUTPUT=$(...)
+	#     else
+	#         SYNC_OUTPUT=$(...)
 
-# Kill the status-display.sh script
-kill $PID
+	elif [ "${SOURCE_MODE}" = "camera" ]; then
+		# If source is camera
+		# Switch to STORAGE_MOUNT_POINT and transfer files from the camera
+		sudo mkdir -p "${BACKUP_PATH}"
+		cd "${BACKUP_PATH}"
+		if [ $LOG = true ]; then
+			SYNC_OUTPUT=$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")
+		else
+			SYNC_OUTPUT=$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files)
+		fi
+		cd
+	else
+		# no defined mode selected
+		lcd_message "No valid" "source" "mode defined" "3"
+		exit 1
+	fi
 
-# Check for lost devices
-SYNC_ERROR=""
-for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"; do
-    RESULT_DEVICE_MOUNTED=$(device_mounted "${MOUNTED_DEVICE}")
-    if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-        SYNC_ERROR="Err.Lost device!"
-        log_to_file "Lost device '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'"
-    fi
-done
+	# END
+
+	# Display progress after finish
+	if [ $DISP = true ]; then
+		sleep 5
+	fi
+
+	# Kill the status-display.sh script
+	kill $PID
+
+	# Check for lost devices
+	SYNC_ERROR=""
+	for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"; do
+		RESULT_DEVICE_MOUNTED=$(device_mounted "${MOUNTED_DEVICE}")
+		if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
+			SYNC_ERROR="Err.Lost device!"
+			log_to_file "Lost device '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'"
+		fi
+	done
+
+done # retry
 
 # Check internet connection and send
 # a notification if the NOTIFY option is enabled
@@ -438,7 +474,7 @@ if [ $NOTIFY = true ] || [ ! -z "$check" ]; then
         BODY_MSG=""
     fi
 
-    send_email "Little Backup Box: Backup ${SUBJ_MSG}" "${BODY_MSG}Type: ${SOURCE_MODE} to ${DEST_MODE}\n${SOURCE_IDENTIFIER}\n\nBackup log:\n\n${SYNC_OUTPUT}"
+    send_email "Little Backup Box: Backup ${SUBJ_MSG}" "${BODY_MSG}Type: ${SOURCE_MODE} to ${DEST_MODE}\n${SOURCE_IDENTIFIER}\n\nBackup log:\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} try/tries needed."
 fi
 
 # Power off

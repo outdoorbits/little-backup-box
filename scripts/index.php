@@ -58,14 +58,9 @@ $WORKING_DIR=dirname(__FILE__);
 			<hr style="margin-top: 1em; margin-bottom: 1em;">
 			<button name="backup_ios_external"><?php echo L::backup_ios_external_b; ?></button>
 			<button name="backup_ios_internal"><?php echo L::backup_ios_internal_b; ?></button>
-		</form>
-
-		<hr style="margin-top: 1em; margin-bottom: 1em;">
-
-		<form class="text-center" method="POST">
-			<button name="custom1"><?php echo L::custom1_b; ?></button>
-			<button name="custom2"><?php echo L::custom2_b; ?></button>
-			<button name="custom3"><?php echo L::custom3_b; ?></button>
+			<hr style="margin-top: 1em; margin-bottom: 1em;">
+			<button name="backup_external_server"><?php echo L::backup_external_server_b; ?></button>
+			<button name="backup_internal_server"><?php echo L::backup_internal_server_b; ?></button>
 		</form>
 
 		<hr style="margin-top: 1em; margin-bottom: 1em;">
@@ -135,6 +130,20 @@ $WORKING_DIR=dirname(__FILE__);
 		echo 'alert("' . L::backup_ios_internal_m . '")';
 		echo "</script>";
 	}
+	if (isset($_POST['backup_external_server'])) {
+		exec('sudo pkill -f backup*');
+		exec('sudo ./backup.sh storage server > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::backup_external_server_m . '")';
+		echo "</script>";
+	}
+	if (isset($_POST['backup_internal_server'])) {
+		exec('sudo pkill -f backup*');
+		exec('sudo ./backup.sh internal server > /dev/null 2>&1 & echo $!');
+		echo "<script>";
+		echo 'alert("' . L::backup_internal_server_m . '")';
+		echo "</script>";
+	}
 	if (isset($_POST['reboot'])) {
 		echo "<script>";
 		echo 'alert("' . L::reboot_m . '")';
@@ -146,27 +155,6 @@ $WORKING_DIR=dirname(__FILE__);
 		echo 'alert("' . L::shutdown_m . '")';
 		echo "</script>";
 		exec('sudo ./poweroff.sh poweroff force');
-	}
-	if (isset($_POST['custom1'])) {
-		exec('sudo pkill -f backup*');
-		exec('sudo ./custom1.sh > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::custom1_m . '")';
-		echo "</script>";
-	}
-	if (isset($_POST['custom2'])) {
-		exec('sudo pkill -f backup*');
-		exec('sudo ./custom2.sh > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::custom2_m . '")';
-		echo "</script>";
-	}
-	if (isset($_POST['custom3'])) {
-		exec('sudo pkill -f backup*');
-		exec('sudo .//custom3.sh > /dev/null 2>&1 & echo $!');
-		echo "<script>";
-		echo 'alert("' . L::custom3_m . '")';
-		echo "</script>";
 	}
 	?>
 </body>
