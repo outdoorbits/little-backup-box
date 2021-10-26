@@ -1,8 +1,8 @@
 <h1>Keep in mind!</h1>
-This fork is under heavy construction. Under the surface it is very diffrent to its parent.<br>
+This fork is under heavy construction. Under the surface it is very different to its parent.<br>
 <b>Please test your Installation carefully before productive use!</b>
 <br>
-This are the main diffrences:<br>
+This are the main differences:<br>
 <ul>
 <li>Mounting devices is managed by UUIDs. If a device disconnects*1, it can be automatically reconnected.</li>
 <li>Some tools are added (check device, repair device)</li>
