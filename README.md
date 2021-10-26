@@ -1,4 +1,17 @@
-<h1>NOT FINALLY TESTED YET, CHECK FUNCTION BEFORE PRODUCTIVE USE!</h1>
+<h1>Keep in mind!</h1>
+This fork is under heavy construction. Under the surface it is very diffrent to its parent.<br>
+<b>Please test your Installation carefully before productive use!</b>
+<br>
+This are the main diffrences:<br>
+<ul>
+<li>Mounting devices is managed by UUIDs. If a device disconnects*1, it can be automatically reconnected.</li>
+<li>Some tools are added (check device, repair device)</li>
+<li>Installation of components (comitup, mejiro) is automated</li>
+<li>This fork is enabled to sync to your rsync-server</li>
+</ul>
+*1 Maybe because of power-failures sometimes the connection to a device is disrupted. After reconnecting, it gets a new drive-identifier (e.g. sda becomes sdb) while the drives UUID is still the same.<br>
+<br>
+... a lot of stuff! Let me know about problems. Good point to start will be Dmitri Popovs manual, really worth to buy: <a href="https://dmpop.gumroad.com/l/little-backup-book">https://dmpop.gumroad.com/l/little-backup-book</a>
 
 # Little Backup Box
 
