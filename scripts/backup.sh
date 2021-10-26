@@ -389,14 +389,15 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 
 	# Remount devices if "Err.Lost device!"
 	if [ "${SYNC_ERROR}" == "Err.Lost device!" ]; then
-		if [ "${UUID_USB_1}" -ne "" ]; then
+
+		if [ "${UUID_USB_1}" != "" ]; then
 			RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_1}")
 			if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
 				mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}"
 			fi
 		fi
 
-		if [ "${UUID_USB_2}" -ne "" ]; then
+		if [ "${UUID_USB_2}" != "" ]; then
 			RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_2}")
 			if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
 				mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}"
