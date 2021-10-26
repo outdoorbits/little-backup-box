@@ -24,6 +24,9 @@ if [[ $EUID -eq 0 ]]; then
     exit 1
 fi
 
+# Definitions
+BACKTITLE="Little Backup Box"
+
 # define WORKING_DIR
 WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts"
 if [[ ! "${WORKING_DIR}" =~ "little-backup-box" ]]; then
@@ -188,26 +191,50 @@ sudo sh -c "echo 'write_enable=YES' >> /etc/vsftpd.conf"
 sudo service vsftpd restart
 
 # install mejiro
-read -p "Do you wish to install mejiro (y/n)?" -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-	echo "Installing mejiro ..."
+dialog --clear \
+    --title "mejiro" \
+    --backtitle "$BACKTITLE" \
+    --yesno "Install mejiro?" 7 60
+
+CHOICE=$?
+
+clear
+
+case $CHOICE in
+0)
+    echo "Installing mejiro ..."
 	source "${WORKING_DIR}/../install-mejiro.sh";
-else
-	echo "You can install mejiro later by script install-mejiro.sh"
-fi
+    ;;
+1)
+    echo "You can install mejiro later by script install-mejiro.sh"
+    ;;
+255)
+    echo "You can install mejiro later by script install-mejiro.sh"
+    ;;
+esac
 
 # install comitup
-read -p "Do you wish to install comitup (y/n)?" -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-	echo "Installing comitup ..."
+dialog --clear \
+    --title "comitup" \
+    --backtitle "$BACKTITLE" \
+    --yesno "Install comitup?" 7 60
+
+CHOICE=$?
+
+clear
+
+case $CHOICE in
+0)
+    echo "Installing comitup ..."
 	source "${WORKING_DIR}/../install-comitup.sh";
-else
-	echo "You can install comitup later by script install-comitup.sh"
-fi
+    ;;
+1)
+    echo "You can install comitup later by script install-comitup.sh"
+    ;;
+255)
+    echo "You can install comitup later by script install-comitup.sh"
+    ;;
+esac
 
 # Finished
 clear

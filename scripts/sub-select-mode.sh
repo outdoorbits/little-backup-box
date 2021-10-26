@@ -51,7 +51,7 @@ case $CHOICE in
     echo -e 'DISP=false # Enable OLED display' >> "${WORKING_DIR}/config.cfg"
     ;;
 255)
-    echo -e 'DISP=false" # Enable OLED display' >> "${WORKING_DIR}/config.cfg"
+    echo -e 'DISP=false # Enable OLED display' >> "${WORKING_DIR}/config.cfg"
     ;;
 esac
 
