@@ -44,7 +44,7 @@ fi
 
 cd
 
-git clone https://github.com/dmpop/mejiro.git
+git clone https://github.com/stefans73/mejiro.git
 
 sed -i 's/^$protect = .*/$protect = false; \/\/ Enable password protection/' "${WORKING_DIR}/../../mejiro/config.php"
 
