@@ -115,7 +115,7 @@ if [ "${DEST_MODE}" = "external" ]; then
     STORAGE_PATH="${STORAGE_MOUNT_POINT}"
 
     # notify that the storage device has been mounted
-    ret="$(get_storage_spaces ${STORAGE_MOUNT_POINT})"
+    ret="$(get_storage_spaces ${STORAGE_PATH})"
 
     IFS="|"
     set -- $ret
@@ -135,8 +135,18 @@ elif [ "${DEST_MODE}" = "internal" ]; then
     # Internal mode
     STORAGE_PATH="${INTERAL_BACKUP_DIR}"
 
+    ret="$(get_storage_spaces ${STORAGE_PATH})"
+
+    IFS="|"
+    set -- $ret
+
+    STOR_SIZE="Size: $1"
+    STOR_FREE="free: $3"
+
+    unset IFS
+
     # If display support is enabled, notify that the storage device has been mounted
-    lcd_message "Int. storage OK" "" "" ""
+    lcd_message "Int. storage OK" "${STOR_SIZE}" "${STOR_FREE}" ""
 
 	if [ $DISP = true ]; then
         sleep 2
@@ -341,9 +351,8 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     # Source camera
     sudo mkdir -p "${BACKUP_PATH}"
     cd "${BACKUP_PATH}"
-    FILES_TO_SYNC=$(sudo gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){print $(i+2)}}' | sed s/,//g)
+    FILES_TO_SYNC=$(sudo gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){SUM+=$(i+2);}} END {print SUM}')
     cd
-
 
 else
     # no defined mode selected

@@ -6,7 +6,7 @@ This fork is done because I need a solution for some special problems about xqd-
 
 ## Installation of this fork
 
-1. Create a bootable SD card with the latest version of Raspberry Pi OS Lite for use with Little Backup Box.
+1. Create a bootable SD card with the latest version of Raspberry Pi OS Lite for use with Little Backup Box. KEEP standard-language settings en_GB.UTF-8.
 2. Make sure that your Raspberry Pi is connected to the internet.
 3. Run the following command on the Raspberry Pi: `curl -sSL https://raw.githubusercontent.com/stefans73/little-backup-box/main/install-little-backup-box.sh | bash`
 
