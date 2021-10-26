@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com; Stefan Saam stefan@saams.de
+# Author: Dmitri Popov, dmpop@linux.com; Stefan Saam github@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify

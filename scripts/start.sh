@@ -39,6 +39,7 @@ CONFIG_STANDARDS=( \
 'MAIL_TO=""' \
 'MAIL_HTML=true # Set to false to disable HTML-mails' \
 'DISP=false' \
+'DISP_IP_REPEAT=false' \
 )
 
 for CONFIG_STANDARD in "${CONFIG_STANDARDS[@]}"

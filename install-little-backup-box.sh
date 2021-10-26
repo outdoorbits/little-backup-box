@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Stefan Saam, stefan@saams.de
+# Author: Stefan Saam, github@saams.de
 # Original author: Dmitri Popov, dmpop@linux.com
 
 #######################################################################

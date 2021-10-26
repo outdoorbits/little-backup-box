@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Stefan Saam stefan@saams.de
+# Author: Stefan Saam github@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
