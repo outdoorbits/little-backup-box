@@ -187,6 +187,28 @@ cd
 sudo sh -c "echo 'write_enable=YES' >> /etc/vsftpd.conf"
 sudo service vsftpd restart
 
+# install mejiro
+read -p "Do you wish to install mejiro (y/n)?" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+	echo "Installing mejiro ..."
+	source "${WORKING_DIR}/../install-mejiro.sh";
+else
+	echo "You can install mejiro later by script install-mejiro.sh"
+fi
+
+# install comitup
+read -p "Do you wish to install comitup (y/n)?" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+	echo "Installing comitup ..."
+	source "${WORKING_DIR}/../install-comitup.sh";
+else
+	echo "You can install comitup later by script install-comitup.sh"
+fi
+
 # Finished
 clear
 echo "Alle done! Rebooting..."

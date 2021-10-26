@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com
+# Author: Stefan Saam, stefan@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
@@ -23,5 +23,4 @@ sudo bash -c 'echo "ap_name: little-backup-box-<nn>" >> "/etc/comitup.conf"'
 sudo bash -c 'echo "web_service: webui80.service" >> "/etc/comitup.conf"'
 sudo systemctl disable webui80.service
 echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
-sleep 2
-sudo reboot
+echo "comitup ist available after reboot."

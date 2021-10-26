@@ -62,8 +62,4 @@ crontab -l | {
 } | crontab
 
 #Finish
-echo "All done. Rebooting..."
-
-sleep 2
-
-sudo reboot
+echo "mejiro ist available after reboot."
