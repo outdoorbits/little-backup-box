@@ -320,10 +320,6 @@ else
     lcd_message "No valid" "source" "mode defined" "1"
 fi
 
-echo "SOURCE_PATH=${SOURCE_PATH}"
-echo "BACKUP_PATH=${BACKUP_PATH}"
-echo "SOURCE_IDENTIFIER=${SOURCE_IDENTIFIER}"
-
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
 sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
@@ -435,8 +431,11 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	elif [ "${SOURCE_MODE}" = "camera" ]; then
 		# If source is camera
 		# Switch to STORAGE_MOUNT_POINT and transfer files from the camera
+
 		sudo mkdir -p "${BACKUP_PATH}"
 		cd "${BACKUP_PATH}"
+
+		# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
 		if [ $LOG = true ]; then
 			SYNC_OUTPUT=$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")
 		else
