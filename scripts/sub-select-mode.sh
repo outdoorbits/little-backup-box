@@ -21,6 +21,7 @@
 # - $WORKING_DIR
 
 # Definitions
+CONFIG="${WORKING_DIR}/config.cfg"
 BACKTITLE="Little Backup Box"
 DISP=false
 
@@ -76,45 +77,39 @@ clear
 # remove all from crontab
 crontab -r
 
-# write new crontab
+# write new default-backup-method
+BACKUP_DEFAULT_SOURCE="none"
+BACKUP_DEFAULT_TARGET="none"
+
 case $CHOICE in
 1)
-    crontab -l | {
-        cat
-        echo "@reboot sudo ${WORKING_DIR}/backup.sh storage external >/dev/null 2>&1"
-    } | crontab
-    ;;
+		BACKUP_DEFAULT_SOURCE="storage"
+		BACKUP_DEFAULT_TARGET="external"
+	;;
 2)
-    crontab -l | {
-        cat
-        echo "@reboot sudo ${WORKING_DIR}/backup.sh storage internal >/dev/null 2>&11"
-    } | crontab
-    ;;
+		BACKUP_DEFAULT_SOURCE="storage"
+		BACKUP_DEFAULT_TARGET="internal"
+	;;
 3)
-    crontab -l | {
-        cat
-        echo "@reboot sudo ${WORKING_DIR}/backup.sh camera external >/dev/null 2>&1"
-    } | crontab
-    ;;
+		BACKUP_DEFAULT_SOURCE="camera"
+		BACKUP_DEFAULT_TARGET="external"
+	;;
 4)
-    crontab -l | {
-        cat
-        echo "@reboot sudo ${WORKING_DIR}/backup.sh camera internal >/dev/null 2>&1"
-    } | crontab
-    ;;
+		BACKUP_DEFAULT_SOURCE="camera"
+		BACKUP_DEFAULT_TARGET="internal"
+	;;
 5)
-    crontab -l | {
-        cat
-        echo "@reboot sudo ${WORKING_DIR}/backup.sh ios external >/dev/null 2>&1"
-    } | crontab
-    ;;
+		BACKUP_DEFAULT_SOURCE="ios"
+		BACKUP_DEFAULT_TARGET="external"
+	;;
 6)
-    crontab -l | {
-        cat
-        echo "@reboot sudo ${WORKING_DIR}/backup.sh ios internal >/dev/null 2>&1"
-    } | crontab
-    ;;
+		BACKUP_DEFAULT_SOURCE="ios"
+		BACKUP_DEFAULT_TARGET="internal"
+	;;
 esac
+
+echo "BACKUP_DEFAULT_SOURCE=\"${BACKUP_DEFAULT_SOURCE}\"" >> "${CONFIG}"
+echo "BACKUP_DEFAULT_TARGET=\"${BACKUP_DEFAULT_TARGET}\"" >> "${CONFIG}"
 
 # # clear
 

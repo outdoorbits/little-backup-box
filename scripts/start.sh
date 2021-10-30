@@ -19,45 +19,25 @@
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${WORKING_DIR}/config.cfg"
+CONFIG_STANDARDS="${WORKING_DIR}/config-standards.cfg"
 
 # Check and complete config.cfg
 dos2unix "$CONFIG"
 
-CONFIG_STANDARDS=( \
-'STORAGE_DEV_MASK="sd" # Beginning of the name of storage devices'
-'STORAGE_MOUNT_POINT="/media/storage" # Mount point of the storage device' \
-'SOURCE_MOUNT_POINT="/media/source" # Mount point of the source device' \
-'INTERAL_BACKUP_DIR="/media/internal"' \
-'IOS_MOUNT_POINT="/media/iOS"' \
-'POWER_OFF=false # Set to false to disable automatic power off after backup' \
-'LOG=false # Set to true to enable logging' \
-'NOTIFY=false # Set to true to enable email notifications' \
-'SMTP_SERVER=""   # Mail settings (specify to receive notifications)' \
-'SMTP_PORT=""     # If the mail settings are specified, Little Backup Box' \
-'MAIL_USER=""     # sends an email with the devices IP address even when' \
-'MAIL_PASSWORD="" # $NOTIFY is set to false' \
-'MAIL_TO=""' \
-'MAIL_HTML=true   # Set to false to disable HTML-mails' \
-'RSYNC_USER=""     # Username' \
-'RSYNC_PASSWORD="" # Password' \
-'RSYNC_SERVER=""   # Server (Domain)' \
-'RSYNC_PORT="873"  # Server-Port' \
-'RSYNC_PATH=""     # Path at server (/PATH_TO_SYNC_AT_SERVER)' \
-'DISP=false' \
-'DISP_IP_REPEAT=true # display IP repeatedly' \
-)
-
-for CONFIG_STANDARD in "${CONFIG_STANDARDS[@]}"
+# add missing config-parameters to config-file
+while read CONFIG_STANDARD;
 do
-        IFS="="
-        set -- $CONFIG_STANDARD
-        VAR=$1
-        VAL=$2
+	IFS="="
+	set -- $CONFIG_STANDARD
+	VAR=$1
+	VAL=$2
 
-    if ! grep -q "${VAR}" "${CONFIG}"; then
-        echo "${VAR}=${VAL}" >> "${CONFIG}"
-    fi
-done
+	if [ ! -z "${VAR}" ]; then
+		if ! grep -q "${VAR}" "${CONFIG}"; then
+			echo "${VAR}=${VAL}" >> "${CONFIG}"
+		fi
+	fi
+done < "${CONFIG_STANDARDS}"
 
 unset IFS
 
@@ -80,4 +60,8 @@ done
 
 lcd_message "LittleBackupBox" "${IP}"
 
+# Start default-backup
+if [ "${BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${BACKUP_DEFAULT_TARGET}" != "none" ]; then
+	. "${WORKING_DIR}/backup.sh" "${BACKUP_DEFAULT_SOURCE}" "${BACKUP_DEFAULT_TARGET}"
+fi
 
