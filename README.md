@@ -79,14 +79,6 @@ The web UI allows you to control and manage Little Backup Box using any device w
 To uninstall Little Backup Box, run the following command:
 
     curl -sSL https://raw.githubusercontent.com/dmpop/little-backup-box/main/uninstall-little-backup-box.sh | bash
-    
-## Little Backup Book
-
-The [Little Backup Book](https://gumroad.com/l/little-backup-book) book provides step-by-step instructions on building, configuring, using, and troubleshooting a Raspberry Pi-based backup device running Little Backup Box. Get your copy on [Google Play Store](https://play.google.com/store/books/details?id=VvrHDwAAQBAJ) or [Gumroad](https://gumroad.com/l/little-backup-book).
-
-<img src="https://i.imgur.com/p6p1LzJ.jpg" width="200"/>
-
-By buying the book, you are supporting the Little Backup Box project.
 
 ## Problems, comments, ideas, updates?
 
@@ -114,12 +106,6 @@ To add a new feature or fix issues yourself, follow the following steps.
 
 - Stefan Saam (numerous improvements and fixes)
 - Kerry Staite (STL files)
-### I like coffee
-
-<a href="https://paypal.me/dmpop" target="_blank">Buy me a coffee</a>, and I'll work even harder on Little Backup Box.
-
-<a href="https://paypal.me/dmpop" target="_blank"><img
-src="https://i.imgur.com/cERczks.png" alt="Buy Me A Coffee" width="128"></a>
 
 ## License
 
