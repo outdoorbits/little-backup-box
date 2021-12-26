@@ -4,7 +4,7 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 <h1>NEWS</h1>
 <ul>
 	<li>2021/12/21: Add language support for French, Spanisch and German: <b>Caution: The translations were carried out by machine and could cause unpleasant feelings in native speakers. Help is particularly welcome here. Technically, working on the language files is extremely easy. Would you help?</b></li>
-	<li>2021/12/13: There is a [one-click-update-function](https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update)<br></li>
+	<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">one-click-update-function</a></li>
 	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
 </ul>
 <br>
@@ -44,11 +44,11 @@ or to save the error-messages during installation to disk: <br>
 <code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code></li>
 </ol>
 <h2>Update</h2>
-To update you can perform a webUI-based one-click update. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update>wiki</a>.
+To update you can perform a webUI-based one-click update. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
 
 <h2>Contribute</h2>
 <ul>
-	<li>If you've found a bug or have a suggestion for improvement, open an issue in the [Issues](https://github.com/outdoorbits/little-backup-box/issues) section.</li>
+	<li>If you've found a bug or have a suggestion for improvement, open an issue in the <a href="https://github.com/outdoorbits/little-backup-box/issues">Issues section</a>.</li>
 	<li>If you could spend a bit of time and add a new language - great, just tell me, it's easy!</li>
 	<li>To add a new feature or fix issues yourself, follow the following steps.</li>
 </ul>
@@ -62,7 +62,7 @@ To update you can perform a webUI-based one-click update. Just follow the instru
 </ol>
 
 <h2>Authors</h2>
-Stefan Saam, founder is [Dmitri Popov](https://www.tokyoma.de/)
+Stefan Saam, founder is <a href="https://www.tokyoma.de/">Dmitri Popov</a>
 
 <h2>Contributors</h2>
 <ul>
@@ -72,4 +72,4 @@ Stefan Saam, founder is [Dmitri Popov](https://www.tokyoma.de/)
 
 <h2>License</h2>
 
-The [GNU General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.en.html)
+The <a href="http://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License version 3</a>
