@@ -56,7 +56,7 @@ source "$CONFIG"
 
 
 # Hello
-lcd_message "LittleBackupBox" "" "" ""
+lcd_message "Little Backup Box" "" "" ""
 
 # Display IP
 IP=$(hostname -I | cut -d' ' -f1)

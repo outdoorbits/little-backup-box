@@ -97,8 +97,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		--title "mejiro" \
 		--backtitle "$BACKTITLE" \
 		--yesno "Install mejiro?" \
-		7 60\
-		2>&1 >/dev/tty
+		7 60
 
 	CHOICE_MEJIRO=$?
 
@@ -114,8 +113,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		--title "comitup" \
 		--backtitle "$BACKTITLE" \
 		--yesno "Install comitup?" \
-		7 60 \
-		2>&1 >/dev/tty
+		7 60
 
 	CHOICE_COMITUP=$?
 
