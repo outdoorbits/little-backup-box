@@ -44,7 +44,7 @@ or to save the error-messages during installation to disk: <br>
 <code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code></li>
 </ol>
 <h2>Update</h2>
-To update you can perform a webUI-based one-click update. Just follow the instructions at the [wiki](https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update).
+To update you can perform a webUI-based one-click update. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update>wiki</a>.
 
 <h2>Contribute</h2>
 <ul>
