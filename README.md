@@ -10,19 +10,21 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 <br>
 <img src="https://github.com/outdoorbits/little-backup-box/wiki/images/webui.png">
 <h1>Keep in mind!</h1>
-This fork is still under construction. Under the surface it is very different to its parent.<br>
+Little Backup Box is still under construction.<br>
 <b>Please test your Installation carefully before productive use!</b><br>
 Final tests offered minor bugs (fixed), it looks good for the moment! Tell me, if you find problems!<br>
 <br>
-These are the main differences:<br>
+There are some major developement-steps:<br>
 <ul>
-<li>Mounting devices is managed by UUIDs. If a device disconnects*1, it can be automatically reconnected. The process becomes much more robust.</li>
-<li>Some tools are added (check device, repair device)</li>
-<li>Installation of components (comitup, mejiro) is automated</li>
-<li>It has a full powered webserver now, ssl as standard</li>
-<li>Setup is formular-based</li>
-<li>Web interface and Samba-Server can be configured for password-protection</li>
-<li>This fork is enabled to sync to your rsync-server</li>
+	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
+	<li>Mounting devices is managed by UUIDs. If a device disconnects*1, it can be automatically reconnected. The process becomes much more robust.</li>
+	<li>Some tools are added (check device, repair device)</li>
+	<li>Installation of components (comitup, mejiro) is automated</li>
+	<li>It has a full powered webserver now, ssl as standard</li>
+	<li>Setup is form-based</li>
+	<li>Setup can be ex- and imported as zip-file.</li>
+	<li>Web interface and Samba-Server can be configured for password-protection</li>
+	<li>sync to your rsync-server is possible</li>
 </ul>
 *1 Maybe because of power-failures sometimes the connection to a device is disrupted. After reconnecting, it gets a new drive-identifier (e.g. sda becomes sdb) while the drives UUID is still the same.<br>
 <br>
@@ -30,21 +32,18 @@ These are the main differences:<br>
 <br>
 As there is no manual available anymore, I started to edit the github-wiki <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not really extensive yet, but maybe you can contribute?
 
-# Little Backup Box
+## Installation
 
-This fork is done because I need a solution for some special problems about xqd-cards. Please have a look at <a href="https://github.com/dmpop/little-backup-box">https://github.com/dmpop/little-backup-box</a>.
-
-## Installation of this fork
-
-1. Create a bootable SD card with the latest version of Raspberry Pi OS Lite for use with Little Backup Box.
-2. Add an empty (text-)file "ssh" to the new boot-partition to enable ssh.
-3. Do not change any more settings.
-4. Make sure that your Raspberry Pi is connected to the internet.
-5. Run the following command on the Raspberry Pi:<br>
+<ol>
+	<li>Create a bootable SD card with the latest version of Raspberry Pi OS Lite (32 or 64 bit) for use with Little Backup Box.</li>
+	<li>Add an empty (text-)file "ssh" to the new boot-partition to enable ssh.</li>
+	<li>Do not change any more settings (language!).</li>
+	<li>Make sure that your Raspberry Pi is connected to the internet.</li>
+	<li>Run the following command on the Raspberry Pi:<br></li>
 `curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash` <br>
 or to save the error-messages during installation to disk: <br>
-`curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log` <br>
-
+`curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log`</li>
+</ol>
 ## Update
 To update you can perform a webUI-based one-click update. Just follow the instructions at the [wiki](https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update).
 
@@ -60,13 +59,14 @@ To add a new feature or fix issues yourself, follow the following steps.
 4. Push changes using the `git push origin new-feature` command.
 5. Submit a pull request.
 
-## Author
-Author of this fork is Stefan Saam, founder is [Dmitri Popov](https://www.tokyoma.de/)
+## Authors
+Stefan Saam, founder is [Dmitri Popov](https://www.tokyoma.de/)
 
 ## Contributors
-- Dmitri Popov
-- Stefan Saam (major improvements)
-- Kerry Staite (STL files)
+<ul>
+	<li>Dmitri Popov</li>
+	<li>Kerry Staite (STL files)</li>
+</ul>
 
 ## License
 

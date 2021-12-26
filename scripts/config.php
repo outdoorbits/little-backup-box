@@ -58,11 +58,7 @@
 			}
 		}
 	?>
-	<nav>
-		<ul>
-			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-		</ul>
-	</nav>
+	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config_config; ?></h1>
 	<?php
 

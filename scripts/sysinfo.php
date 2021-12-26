@@ -37,11 +37,7 @@
 	if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
 	$i18n->init();
 	?>
-	<nav>
-		<ul>
-			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-		</ul>
-	</nav>
+	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo_sysinfo; ?></h1>
 	<div class="card" style="margin-top: 3em;">
 		<?php

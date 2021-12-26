@@ -47,12 +47,9 @@
 		if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
 		$i18n->init();
 	?>
+	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;">LITTLE BACKUP BOX</h1>
-	<nav>
-		<ul>
-			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-		</ul>
-	</nav>
+
 	<div class="card">
 
 		<form class="text-center" style="margin-top: 1em;" method="POST">

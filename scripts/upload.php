@@ -58,11 +58,8 @@ function filesize_human_readable ($Bytes) {
 	if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
 	$i18n->init();
 	?>
-	<nav>
-		<ul>
-			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-        </ul>
-	</nav>
+	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo l::upload_upload; ?></h1>
 	<div class="card" style="margin-top: 3em;">
 		<?php
 		if (isset($_POST['submit'])) {
