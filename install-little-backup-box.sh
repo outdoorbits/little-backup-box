@@ -117,7 +117,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		7 60 \
 		2>&1 >/dev/tty
 
-	$CHOICE_COMITUP=$?
+	CHOICE_COMITUP=$?
 
 	clear
 fi
