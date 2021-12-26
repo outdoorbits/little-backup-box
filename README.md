@@ -14,7 +14,7 @@ Little Backup Box is still under construction.<br>
 <b>Please test your Installation carefully before productive use!</b><br>
 Final tests offered minor bugs (fixed), it looks good for the moment! Tell me, if you find problems!<br>
 <br>
-There are some major developement-steps:<br>
+<h2>Some major developement-steps:</h2>
 <ul>
 	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
 	<li>Mounting devices is managed by UUIDs. If a device disconnects*1, it can be automatically reconnected. The process becomes much more robust.</li>
@@ -32,8 +32,7 @@ There are some major developement-steps:<br>
 <br>
 As there is no manual available anymore, I started to edit the github-wiki <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not really extensive yet, but maybe you can contribute?
 
-## Installation
-
+<h2>Installation</h2>
 <ol>
 	<li>Create a bootable SD card with the latest version of Raspberry Pi OS Lite (32 or 64 bit) for use with Little Backup Box.</li>
 	<li>Add an empty (text-)file "ssh" to the new boot-partition to enable ssh.</li>
@@ -44,30 +43,33 @@ As there is no manual available anymore, I started to edit the github-wiki <a hr
 or to save the error-messages during installation to disk: <br>
 `curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log`</li>
 </ol>
-## Update
+<h2>Update</h2>
 To update you can perform a webUI-based one-click update. Just follow the instructions at the [wiki](https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update).
 
-## Contribute
+<h2>Contribute</h2>
+<ul>
+	<li>If you've found a bug or have a suggestion for improvement, open an issue in the [Issues](https://github.com/outdoorbits/little-backup-box/issues) section.</li>
+	<li>If you could spend a bit of time and add a new language - great, just tell me, it's easy!</li>
+	<li>To add a new feature or fix issues yourself, follow the following steps.</li>
+</ul>
 
-If you've found a bug or have a suggestion for improvement, open an issue in the [Issues](https://github.com/outdoorbits/little-backup-box/issues) section.
+<ol>
+	<li>Fork the project's repository.</li>
+	<li>Create a feature branch using the `git checkout -b new-feature` command.</li>
+	<li>Add your new feature or fix bugs and run the `git commit -am 'Add a new feature'` command to commit changes.</li>
+	<li>Push changes using the `git push origin new-feature` command.</li>
+	<li>Submit a pull request.</li>
+</ol>
 
-To add a new feature or fix issues yourself, follow the following steps.
-
-1. Fork the project's repository.
-2. Create a feature branch using the `git checkout -b new-feature` command.
-3. Add your new feature or fix bugs and run the `git commit -am 'Add a new feature'` command to commit changes.
-4. Push changes using the `git push origin new-feature` command.
-5. Submit a pull request.
-
-## Authors
+<h2>Authors</h2>
 Stefan Saam, founder is [Dmitri Popov](https://www.tokyoma.de/)
 
-## Contributors
+<h2>Contributors</h2>
 <ul>
 	<li>Dmitri Popov</li>
 	<li>Kerry Staite (STL files)</li>
 </ul>
 
-## License
+<h2>License</h2>
 
 The [GNU General Public License version 3](http://www.gnu.org/licenses/gpl-3.0.en.html)
