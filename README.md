@@ -56,10 +56,10 @@ To update you can perform a webUI-based one-click update. Just follow the instru
 
 <ol>
 	<li>Fork the project's repository.</li>
-	<li>Create a feature branch using the `git checkout -b new-feature` command.</li>
-	<li>Add your new feature or fix bugs and run the `git commit -am 'Add a new feature'` command to commit changes.</li>
-	<li>Push changes using the `git push origin new-feature` command.</li>
-	<li>Submit a pull request.</li>
+	<li>Create a feature branch using the <code>git checkout -b new-feature</code> command.</li>
+	<li>Add your new feature or fix bugs and run the <code>git commit -am 'Add a new feature'</code> command to commit changes.</li>
+	<li>Push changes using the <code>git push origin new-feature</code> command.</li>
+	<li>Submit a pull request (in your fork at github.com).</li>
 </ol>
 
 <h2>Authors</h2>
