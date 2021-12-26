@@ -1,6 +1,6 @@
 <h1>Little Backup Box</h1>
-<br>
-<br>
+Dmitri Popov has entrusted me with the further maintenance of Little Backup Box today. Thank you Dima for this great project. I very much hope you stay connected to the project!<br>
+26.12.2021<br>
 <h1>NEWS</h1>
 <ul>
 	<li>2021/12/21: Add language support for French, Spanisch and German: <b>Caution: The translations were carried out by machine and could cause unpleasant feelings in native speakers. Help is particularly welcome here. Technically, working on the language files is extremely easy. Would you help?</b></li>
