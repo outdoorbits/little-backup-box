@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com
+# Author: Stefan Saam, github@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,21 @@
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${WORKING_DIR}/config.cfg"
-dos2unix "$CONFIG"
 source "$CONFIG"
 
-message="Custom action 3 works!"
+# Takes one arguments
+MODE=${1} # "mount", "umount" or "check"
 
-if [ $DISP = true ]; then
-  oled r
-  oled +a "$message"
-  oled s
+# Load Log library
+. "${WORKING_DIR}/lib-log.sh"
+
+# Load Systeminfo library
+. "${WORKING_DIR}/lib-systeminfo.sh"
+
+if [ "${MODE}" = "abnormal_conditions" ]; then
+	get_abnormal_system_conditions
+#elif [ "${MODE}" = "check" ]; then
+#	...
 fi
+
+exit 0

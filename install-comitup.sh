@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com
+# Author: Stefan Saam, stefan@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
@@ -17,17 +17,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# Don't start as root
-if [[ $EUID -eq 0 ]]; then
-   echo "Run the script as a regular user"
-   exit 1
+if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf.old" ]; then
+	sudo rm /etc/wpa_supplicant/wpa_supplicant.conf.old
+fi
+if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf" ]; then
+	sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
 fi
 
-sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
 sudo apt install -y comitup
-sudo bash -c 'echo "ap_name: little-backup-box-<nn>" >> "/etc/comitup.conf"'
-dialog --clear \
-   --title "Reboot" \
-   --msgbox "All done! After reboot, connect to the little-backup-box-<nn> network and open http://10.41.0.1/" 7 70
-clear
-sudo reboot
+
+echo "ap_name: little-backup-box-<nnnn>" | sudo tee "/etc/comitup.conf"
+echo "web_service: apache2.service" | sudo tee -a "/etc/comitup.conf"
+echo "external_callback: /var/www/little-backup-box/handle_port_80.sh" | sudo tee -a "/etc/comitup.conf"
+
+echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
+echo "comitup ist available after reboot."

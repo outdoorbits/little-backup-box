@@ -1,19 +1,25 @@
 <?php
-$theme = "dark";
+	$WORKING_DIR=dirname(__FILE__);
+	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+	$config_standard = parse_ini_file("$WORKING_DIR/config-standards.cfg", false);
+	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
+
+	$theme = $config["conf_THEME"];
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+
+	include($WORKING_DIR . "/sub-popup.php");
 ?>
 
-<html lang="en" data-theme="<?php echo $theme; ?>">
-<!-- Author: Dmitri Popov, dmpop@linux.com
+<html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
+<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
-	<meta charset="utf-8">
 	<title>Little Backup Box</title>
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/classless.css">
-	<link rel="stylesheet" href="css/themes.css">
 	<style>
 		textarea {
 			font-size: 15px;
@@ -25,46 +31,451 @@ $theme = "dark";
 	</style>
 </head>
 
-<body>
+<body <?php echo $background; ?>>
 	<?php
-	// include i18n class and initialize it
-	require_once 'i18n.class.php';
-	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
-	$i18n->init();
-	if (isset($_POST['save'])) {
-		Write();
-	};
+		// include i18n class and initialize it
+		require_once 'i18n.class.php';
+
+		$i18n = new i18n('lang/{LANGUAGE}.json', 'cache/', 'en');
+		if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
+		$i18n->init();
+
+		// write new config
+		if (isset($_POST['save'])) {
+			write_config();
+		};
+
+		// Upload settings
+		if (isset($_POST['upload_settings'])) {
+			upload_settings();
+		};
+
+		// read (new) config
+		$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+		foreach($config_standard as $key => $value) {
+			if (! isset($config[$key]) ) {
+				$config[$key]	= $value;
+			}
+		}
 	?>
 	<nav>
 		<ul>
-			<li><a href="index.php"><?php echo L::main; ?></a></li>
-			<li><a href="sysinfo.php"><?php echo L::sysinfo; ?></a></li>
-			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
+			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 		</ul>
 	</nav>
-	<h1><?php echo L::config; ?></h1>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config_config; ?></h1>
 	<?php
-	function Read()
-	{
-		$CONFIGFILE = "config.cfg";
-		echo file_get_contents($CONFIGFILE);
+
+	function check_new_password($title, $pwd_1, $pwd_2) {
+		$pwd_valid = false;
+			if ($pwd_1 !== $pwd_2) {
+				popup($title . "\n" . L::config_alert_password_not_identical, true);
+			} elseif (strlen($pwd_1) < 5) {
+				popup($title . "\n" . L::config_alert_password_too_short, true);
+			} elseif (strpos("_" . $pwd_1,"\\") or strpos("_" . $pwd_1,"\"")) {
+				popup($title . "\n" . L::config_alert_password_characters_not_allowed, true);
+			} else {
+				$pwd_valid=true;
+			}
+
+		return($pwd_valid);
 	}
-	function Write()
+
+	function write_config()
 	{
+		extract ($_POST);
+
+		list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
+		$conf_POWER_OFF				= isset($conf_POWER_OFF)?"true":"false";
+		$conf_NOTIFY				= isset($conf_NOTIFY)?"true":"false";
+		$conf_MAIL_HTML				= isset($conf_MAIL_HTML)?"true":"false";
+		$conf_DISP					= isset($conf_DISP)?"true":"false";
+		$conf_conf_DISP_IP_REPEAT	= isset($conf_conf_DISP_IP_REPEAT)?"true":"false";
+		$conf_LOG_SYNC				= isset($conf_LOG_SYNC)?"true":"false";
+		$conf_POPUP_MESSAGES		= isset($conf_POPUP_MESSAGES)?"true":"false";
+
+		$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
+
+		if ($conf_MAIL_conf_PASSWORD != "") {
+			if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_conf_PASSWORD, $conf_MAIL_conf_PASSWORD)) {
+				$conf_MAIL_conf_PASSWORD	= "";
+			}
+		}
+
+		if ($conf_RSYNC_conf_PASSWORD != "") {
+			if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_conf_PASSWORD, $conf_RSYNC_conf_PASSWORD)) {
+				$conf_RSYNC_conf_PASSWORD	= "";
+			}
+		}
+
+		if (isset($conf_PASSWORD_REMOVE)) {
+			$conf_PASSWORD_LINE="conf_PASSWORD=\"\"";
+			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh remove");
+			popup($title . "\n" . L::config_alert_password_change_after_reboot,true);
+		} elseif ($conf_PASSWORD_1 != "") {
+			if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
+				$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_1\"";
+				exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh set \"" . $conf_PASSWORD_1 . "\"");
+				popup($title . "\n" . L::config_alert_password_change_after_reboot,true);
+			}
+		}
+
 		$CONFIGFILE = "config.cfg";
-		$fp = fopen($CONFIGFILE, "w");
-		$data = $_POST["text"];
-		fwrite($fp, $data);
-		fclose($fp);
+		$config_file_handle = fopen($CONFIGFILE, "w");
+
+		$config_file_content = <<<CONFIGDATA
+conf_LANGUAGE="$conf_LANGUAGE"
+conf_BACKUP_DEFAULT_SOURCE="$conf_BACKUP_DEFAULT_SOURCE"
+conf_BACKUP_DEFAULT_TARGET="$conf_BACKUP_DEFAULT_TARGET"
+conf_POWER_OFF=$conf_POWER_OFF
+conf_NOTIFY=$conf_NOTIFY
+conf_MAIL_HTML=$conf_MAIL_HTML
+conf_DISP=$conf_DISP
+conf_conf_DISP_IP_REPEAT=$conf_conf_DISP_IP_REPEAT
+conf_THEME=$conf_THEME
+conf_BACKGROUND_IMAGE=$conf_BACKGROUND_IMAGE
+conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
+conf_LOGLEVEL=$conf_LOGLEVEL
+conf_LOG_SYNC=$conf_LOG_SYNC
+conf_SMTP_SERVER="$conf_SMTP_SERVER"
+conf_SMTP_PORT="$conf_SMTP_PORT"
+conf_MAIL_USER="$conf_MAIL_USER"
+conf_MAIL_conf_PASSWORD="$conf_MAIL_conf_PASSWORD"
+conf_MAIL_TO="$conf_MAIL_TO"
+conf_RSYNC_SERVER="$conf_RSYNC_SERVER"
+conf_RSYNC_PORT="$conf_RSYNC_PORT"
+conf_RSYNC_USER="$conf_RSYNC_USER"
+conf_RSYNC_conf_PASSWORD="$conf_RSYNC_conf_PASSWORD"
+conf_RSYNC_PATH="$conf_RSYNC_PATH"
+$conf_PASSWORD_LINE
+CONFIGDATA;
+
+		fwrite($config_file_handle, $config_file_content);
+		fclose($config_file_handle);
+		exec ("dos2unix './" . $CONFIGFILE . "'");
+		echo '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
 	}
-	?>
-	<div class="card" style="margin-top: 2em;">
-		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-			<textarea name="text"><?php Read(); ?></textarea>
-			<?php echo '<button style="margin-top: 2em;" type="submit" name="save">' . L::edit_save_b . '</button>'; ?>
-		</form>
-	</div>
-	</div>
+
+function upload_settings() {
+	global $WORKING_DIR, $config, $constants;
+
+	if($_FILES["settings_file"]["name"]) {
+		$filename = $_FILES["settings_file"]["name"];
+		$source = $_FILES["settings_file"]["tmp_name"];
+		$type = $_FILES["settings_file"]["type"];
+		$name = explode(".", $filename);
+		$accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
+		foreach($accepted_types as $mime_type) {
+			if($mime_type == $type) {
+				$okay = true;
+				break;
+			}
+		}
+		$continue = strtolower($name[1]) == 'zip' ? true : false;
+		if(!$continue) {
+			popup(L::config_alert_settings_upload_not_zip,$config["conf_POPUP_MESSAGES"]);
+		}
+		/* PHP current path */
+		$filenoext = basename ($filename, '.zip');
+		$filenoext = basename ($filenoext, '.ZIP');
+
+		$targetdir = $constants["const_WEB_ROOT_LBB"].'/tmp/unzip/';
+		$targetzip = $targetdir . $filename;
+		/* create directory if not exists' */
+		@mkdir($targetdir, 0777);
+
+		/* here it is really happening */
+
+		if(move_uploaded_file($source, $targetzip)) {
+			$zip = new ZipArchive();
+			$file_opened = $zip->open($targetzip);  // open the zip file to extract
+			if ($file_opened === true) {
+				$zip->extractTo($targetdir); // place in the directory with same name
+				$zip->close();
+
+				unlink($targetzip);
+				$Files_Copied="";
+
+				if (file_exists($targetdir."config.cfg")) {
+					@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
+					if (rename($targetdir."config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {$Files_Copied="\n* 'config.cfg'";}
+				}
+				if (file_exists($targetdir."rclone.conf")) {
+					@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
+					if (rename($targetdir."rclone.conf",$constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* 'rclone.cfg'";}
+				}
+				popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
+
+				$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+				if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
+					exec("sudo " . $WORKING_DIR . "/password.sh set \"" . $config["conf_PASSWORD"] . "\"");
+				} else {
+					exec("sudo " . $WORKING_DIR . "/password.sh remove");
+				}
+				popup(L::config_alert_password_change_after_reboot,true);
+			}
+
+		} else {
+			popup(L::config_alert_settings_upload_problem,$config["conf_POPUP_MESSAGES"]);
+		}
+
+		exec("sudo rm -R ".$targetdir);
+	}
+}
+?>
+
+
+	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+
+		<div class="card" style="margin-top: 2em;">
+			<?php echo '<button style="margin-top: 2em;" type="submit" name="save">' . L::config_save_button . '</button>'; ?>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_lang_section; ?></summary>
+
+				<h3><?php echo L::config_lang_header; ?></h3>
+					<label for="conf_LANGUAGE"><?php echo L::config_lang_label; ?></label><br>
+						<select name="conf_LANGUAGE" id="conf_LANGUAGE">
+						<?php
+							echo "<option value='' " . ($config["conf_LANGUAGE"] == ""?"selected":"") . ">" . L::config_lang_browser_detect . "</option>";
+							$languages=array();
+							exec ("find '" . $WORKING_DIR . "/lang'/*.json -type f ",$languages);
+							foreach($languages as $language) {
+								$language = basename($language, ".json");
+								echo "<option value='" . $language . "' " . ($config["conf_LANGUAGE"] == $language?"selected":"") . ">" . $language . "</option>";
+							}
+						?>
+					</select>
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_backup_section; ?></summary>
+
+				<h3><?php echo L::config_backup_header; ?></h3>
+					<label for="BACKUP_MODE"><?php echo L::config_backup_label; ?></label><br>
+
+					<select name="BACKUP_MODE" id="BACKUP_MODE">
+						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?"selected":""; ?>><?php echo L::config_backup_none; ?></option>
+						<option value="storage external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage external"?"selected":""; ?>><?php echo L::config_backup_storage_external; ?></option>
+						<option value="storage internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage internal"?"selected":""; ?>><?php echo L::config_backup_storage_internal; ?></option>
+						<option value="camera external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera external"?"selected":""; ?>><?php echo L::config_backup_camera_external; ?></option>
+						<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?"selected":""; ?>><?php echo L::config_backup_camera_internal; ?></option>
+						<option value="ios external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios external"?"selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
+						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?"selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
+					</select>
+
+				<h3><?php echo L::config_backup_power_off_header; ?></h3>
+					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
+					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" size="6" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_behavior_section; ?></summary>
+
+				<h3><?php echo L::config_behavior_notify_header; ?></h3>
+					<label for="conf_NOTIFY"><?php echo L::config_behavior_notify_label; ?></label><br>
+					<input type="checkbox" id="conf_NOTIFY" name="conf_NOTIFY"<?php echo $config['conf_NOTIFY']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_mail_html_header; ?></h3>
+					<label for="conf_MAIL_HTML"><?php echo L::config_behavior_mail_html_label; ?></label><br>
+					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_display_header; ?></h3>
+					<label for="conf_DISP"><?php echo L::config_behavior_display_label; ?></label><br>
+					<input type="checkbox" id="conf_DISP" name="conf_DISP" size="6" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_disp_ip_header; ?></h3>
+					<label for="conf_conf_DISP_IP_REPEAT"><?php echo L::config_behavior_disp_ip_label; ?></label><br>
+					<input type="checkbox" id="conf_conf_DISP_IP_REPEAT" name="conf_conf_DISP_IP_REPEAT" <?php echo $config['conf_conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_loglevel_header; ?></h3>
+					<p><?php echo L::config_behavior_loglevel_text . $WORKING_DIR; ?>/tmp/little-backup-box.log")</p>
+					<label for="conf_LOGLEVEL"><?php echo L::config_behavior_loglevel_label; ?></label><br>
+					<select name="conf_LOGLEVEL" id="conf_LOGLEVEL">
+						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?"selected":""; ?>>1, minimum</option>
+						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?"selected":""; ?>>2, medium</option>
+						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?"selected":""; ?>>3, maximum</option>
+					</select>
+
+				<h3><?php echo L::config_behavior_log_sync_protokoll_header; ?></h3>
+					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
+					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
+
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_view_section; ?></summary>
+
+				<h3><?php echo L::config_view_theme_header; ?></h3>
+					<label for="conf_THEME"><?php echo L::config_view_theme_label; ?></label><br>
+						<select name="conf_THEME" id="conf_THEME">
+						<option value="light" <?php echo $config["conf_THEME"] == "light"?"selected":""; ?>><?php echo L::config_view_theme_light; ?></option>
+						<option value="dark" <?php echo $config["conf_THEME"] == "dark"?"selected":""; ?>><?php echo L::config_view_theme_dark; ?></option>
+						<option value="sepia" <?php echo $config["conf_THEME"] == "sepia"?"selected":""; ?>><?php echo L::config_view_theme_sepia; ?></option>
+					</select>
+
+				<h3><?php echo L::config_view_bg_image_header; ?></h3>
+					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo $WORKING_DIR . "/img/backgrounds" ;?>&quot;.</label><br>
+						<select name="conf_BACKGROUND_IMAGE" id="conf_BACKGROUND_IMAGE">
+						<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?"selected":""; ?>>none</option>
+						<?php
+							$bg_images=array();
+							exec ("find '" . $WORKING_DIR . "/img/backgrounds' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
+							foreach($bg_images as $bg_image) {
+								$bg_image = basename($bg_image);
+								echo "<option value='" . $bg_image . "' " . ($config["conf_BACKGROUND_IMAGE"] == $bg_image?"selected":"") . ">" . $bg_image . "</option>";
+							}
+						?>
+					</select>
+
+				<h3><?php echo L::config_view_popup_header; ?></h3>
+					<label for="conf_POPUP_MESSAGES"><?php echo L::config_view_popup_label; ?></label><br>
+					<input type="checkbox" id="conf_POPUP_MESSAGES" name="conf_POPUP_MESSAGES" <?php echo $config['conf_POPUP_MESSAGES']=="1"?"checked":""; ?>>
+
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_mail_section; ?></summary>
+
+				<h3><?php echo L::config_mail_smtp_header; ?></h3>
+					<label for="conf_SMTP_SERVER"><?php echo L::config_mail_smtp_label; ?></label><br>
+					<input type="text" id="conf_SMTP_SERVER" name="conf_SMTP_SERVER" size="6" value="<?php echo $config['conf_SMTP_SERVER']; ?>">
+
+				<h3><?php echo L::config_mail_port_header; ?></h3>
+					<label for="conf_SMTP_PORT"><?php echo L::config_mail_port_label . " " . $config_standard["conf_SMTP_PORT"]; ?>)</label><br>
+					<input type="text" id="conf_SMTP_PORT" name="conf_SMTP_PORT" size="20" value="<?php echo $config['conf_SMTP_PORT']; ?>">
+
+				<h3><?php echo L::config_mail_user_header; ?></h3>
+					<label for="conf_MAIL_USER"><?php echo L::config_mail_user_label; ?></label><br>
+					<input type="text" id="conf_MAIL_USER" name="conf_MAIL_USER" size="20" value="<?php echo $config['conf_MAIL_USER']; ?>">
+
+				<h3><?php echo L::config_mail_password_header; ?></h3>
+					<label for="conf_MAIL_conf_PASSWORD"><?php echo L::config_mail_password_label; ?></label><br>
+					<input type="password" id="conf_MAIL_conf_PASSWORD" name="conf_MAIL_conf_PASSWORD" size="20" value="<?php echo $config['conf_MAIL_conf_PASSWORD']; ?>">
+
+				<h3><?php echo L::config_mail_recipient_header; ?></h3>
+					<label for="conf_MAIL_TO"><?php echo L::config_mail_recipient_label; ?></label><br>
+					<input type="text" id="conf_MAIL_TO" name="conf_MAIL_TO" size="20" value="<?php echo $config['conf_MAIL_TO']; ?>">
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_rsync_section; ?></summary>
+
+				<h3><?php echo L::config_rsync_server_header; ?></h3>
+					<label for="conf_RSYNC_SERVER"><?php echo L::config_rsync_server_label; ?></label><br>
+					<input type="text" id="conf_RSYNC_SERVER" name="conf_RSYNC_SERVER" size="6" value="<?php echo $config['conf_RSYNC_SERVER']; ?>">
+
+				<h3><?php echo L::config_rsync_port_header; ?></h3>
+					<label for="conf_RSYNC_PORT"><?php echo L::config_rsync_port_label . " " . $config_standard["conf_RSYNC_PORT"]; ?>)</label><br>
+					<input type="text" id="conf_RSYNC_PORT" name="conf_RSYNC_PORT" size="20" value="<?php echo $config['conf_RSYNC_PORT']; ?>">
+
+				<h3><?php echo L::config_rsync_user_header; ?></h3>
+					<label for="conf_RSYNC_USER"><?php echo L::config_rsync_user_label; ?></label><br>
+					<input type="text" id="conf_RSYNC_USER" name="conf_RSYNC_USER" size="20" value="<?php echo $config['conf_RSYNC_USER']; ?>">
+
+				<h3><?php echo L::config_rsync_password_header; ?></h3>
+					<label for="conf_RSYNC_conf_PASSWORD"><?php echo L::config_rsync_password_label; ?></label><br>
+					<input type="password" id="conf_RSYNC_conf_PASSWORD" name="conf_RSYNC_conf_PASSWORD" size="20" value="<?php echo $config['conf_RSYNC_conf_PASSWORD']; ?>">
+
+				<h3><?php echo L::config_rsync_path_header; ?></h3>
+					<label for="conf_RSYNC_PATH"><?php echo L::config_rsync_path_label1 .  $config_standard['conf_RSYNC_PATH'] . L::config_rsync_path_label2; ?></label><br>
+					<input type="text" id="conf_RSYNC_PATH" name="conf_RSYNC_PATH" size="20" value="<?php echo $config['conf_RSYNC_PATH']; ?>">
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_password_section; ?></summary>
+
+				<h3><?php echo L::config_password_header; ?></h3>
+					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
+					<label for="conf_PASSWORD_1"><?php echo L::config_password_label1; ?></label><br>
+					<input type="password" id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
+					<label for="conf_PASSWORD_2"><?php echo L::config_password_label2; ?></label><br>
+					<input type="password" id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">
+
+					<?php
+						if ($config['conf_PASSWORD'] != "") {
+							echo "<h3>" . L::config_password_remove_header . "</h3>";
+							echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label ."</label><br>";
+							echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">";
+						}
+					?>
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<?php echo '<button style="margin-top: 2em;" type="submit" name="save">' . L::config_save_button . '</button>'; ?>
+		</div>
+	</form>
+
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_cloud_section; ?></summary>
+
+				<h3><?php echo L::config_cloud_header; ?></h3>
+					<p>
+						Depending on your cloud-service, your configuration can expire. Maybe you have to repeat this step always before cloud-access.<br>
+						<?php
+							if (empty($config['conf_PASSWORD'])) {
+								echo L::config_username . ": 'lbb', " . L::config_password . ": 'lbb'";
+							}
+							else {
+								echo L::config_username . ": 'lbb', " . L::config_password_as_set_in . " '" . L::config_password_section . "'";
+							}
+						?>
+
+					</p>
+					<?php
+						if (strpos($_SERVER['SERVER_PORT'], "443") !== false) {
+							$rclone_link="https://" . $_SERVER['SERVER_ADDR'] . ":8443";
+						} else {
+							$rclone_link="http://" . $_SERVER['SERVER_ADDR'] . ":81";
+						}
+					?>
+					<a href="<?php echo $rclone_link; ?>" target="_blank"><?php echo L::config_cloud_rclone_gui; ?></a>
+
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_save_settings_section; ?></summary>
+					<h3><?php echo L::config_save_settings_download_header; ?></h3>
+						<p><?php echo L::config_save_settings_download_text; ?></p>
+						<a href="download-settings.php"><?php echo L::config_save_settings_download_link_text; ?></a>
+
+					<h3><?php echo L::config_save_settings_upload_header; ?></h3>
+						<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
+							<label for="settings_file"><?php echo L::config_save_settings_upload_label; ?></label>
+							<input type="file" name="settings_file" id="settings_file">
+							<button style="margin-top: 2em;" type="submit" name="upload_settings"><?php echo L::config_save_settings_upload_button; ?></button>
+						</form>
+
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_update_section; ?></summary>
+				<?php echo L::config_update_text; ?>
+			</details>
+		</div>
+
+
 </body>
 
 </html>

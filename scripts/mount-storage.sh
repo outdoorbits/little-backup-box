@@ -18,14 +18,26 @@
 #######################################################################
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
-dos2unix "$CONFIG"
 source "$CONFIG"
 
-message="Custom action 1 works!"
+# Takes two arguments
+MODE=${1} # "mount", "umount" or "check"
+DEVICE=${2} # "usb_1" or "usb_2"
 
-if [ $DISP = true ]; then
-  oled r
-  oled +a "$message"
-  oled s
+# Load Log library
+. "${WORKING_DIR}/lib-log.sh"
+
+# Load Device library
+. "${WORKING_DIR}/lib-devices.sh"
+
+if [ "${MODE}" = "mount" ]; then
+	mount_device "${DEVICE}" false "$(device_mounted usb_1)" "$(device_mounted usb_2)"
+elif [ "${MODE}" = "check" ]; then
+	echo "$(device_mounted ${DEVICE})"
+elif [ "${MODE}" = "umount" ]; then
+	umount_device "${DEVICE}"
 fi
+
+exit 0

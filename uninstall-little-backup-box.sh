@@ -17,10 +17,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# Read user
+USER="$(whoami)"
 if [ -z "$USER" ]; then
     USER="pi"
 fi
-cp little-backup-box/scripts/config.cfg $HOME/config.cfg.bak
+
+cp /var/www/little-backup-box/config.cfg $HOME/config.cfg.bak
+
 cd
 dialog --clear \
     --title "Warning" \
@@ -28,28 +32,29 @@ dialog --clear \
     --yesno "This will uninstall Little Backup Box.\nAre you sure you want to proceed?" 7 60
 
 response=$?
+
+clear
+
 case $response in
 0)
-    sudo rm /var/log/little-backup-box.log
-    sudo rm /home/$USER/oledoled.conf
     sudo rm -rf /home/$USER/little-backup-box
-    sudo rm -rf /home/$USER/ssd1306_rpi
-    sudo rm -rf /media/source
-    sudo rm -rf /media/storage
-    sudo rm -rf /home/$USER/BACKUP
-    sudo rm /usr/local/bin/oled
+
     sudo mv /etc/minidlna.conf.orig /etc/minidlna.conf
+
+    sudo rm /etc/samba/smb.conf
+    sudo rm /etc/samba/login.conf
     sudo mv /etc/samba/smb.conf.orig /etc/samba/smb.conf
-    sudo smbpasswd -x $USER
-    sudo systemctl stop webui.service
-    sudo systemctl disable webui.service
-    sudo rm /etc/systemd/system/webui.service
+    sudo smbpasswd -x lbb
+	sudo samba restart
+
+    sudo service apache2 stop
+
     sudo systemctl stop filebrowser.service
     sudo systemctl disable filebrowser.service
     sudo rm /etc/systemd/system/filebrowser.service
-    sudo samba restart
+
     crontab -r
-    sudo reboot
+#     sudo reboot
     ;;
 1)
     exit 1

@@ -1,5 +1,9 @@
 <?php
-$theme = "dark";
+	$WORKING_DIR=dirname(__FILE__);
+	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+
+	$theme = $config["conf_THEME"];
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -7,84 +11,77 @@ $theme = "dark";
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
-	<meta http-equiv="refresh" content="3">
 	<title>Little Backup Box</title>
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/classless.css">
-	<link rel="stylesheet" href="css/themes.css">
+
+	<script src="js/refresh_iframe.js"></script>
+
 </head>
 
-<body>
+<body onload="refreshIFrame()" <?php echo $background; ?>>
+
+	<!-- Suppress form re-submit prompt on refresh -->
+	<script>
+		if (window.history.replaceState) {
+			window.history.replaceState(null, null, window.location.href);
+		}
+	</script>
+
 	<?php
 	// include i18n class and initialize it
 	require_once 'i18n.class.php';
-	$i18n = new i18n('lang/{LANGUAGE}.ini', 'cache/', 'en');
+	$i18n = new i18n('lang/{LANGUAGE}.json', 'cache/', 'en');
+	if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
 	$i18n->init();
 	?>
 	<nav>
 		<ul>
-			<li><a href="index.php"><?php echo L::main; ?></a></li>
-			<li><a href="config.php"><?php echo L::config; ?></a></li>
-			<li class="float-right"><a href="upload.php"><?php echo L::upload; ?></a></li>
+			<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 		</ul>
 	</nav>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo_sysinfo; ?></h1>
 	<div class="card" style="margin-top: 3em;">
-		<h1 style="margin-top: 0em;" class="text-center"><?php echo L::log; ?></h1>
-		<hr>
-		<?php
-		if (file_exists("/tmp/progress")) {
-			echo '<pre>';
-			passthru("cat /tmp/progress");
-			echo '</pre>';
-		} else {
-			echo '<pre>';
-			echo "<p>" . L::progress_txt . "</p>";
-			echo '</pre>';
-		}
-		echo '<hr style="margin-bottom: 1.5em;">';
-		if (file_exists("/var/log/little-backup-box.log")) {
-			echo '<pre>';
-			passthru("sudo tail -n 15 /var/log/little-backup-box.log");
-			echo '</pre>';
-		} else {
-			echo "<pre>" . L::log_txt . "</pre>";
-		}
-		?>
-	</div>
-	<div class="card" style="margin-top: 3em;">
-		<h1 style="margin-top: 0em;" class="text-center"><?php echo L::sysinfo; ?></h1>
-		<hr>
 		<?php
 		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 		$temp = round($temp / 1000, 1);
 		$cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
 		$mem = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
 		$mem = round($mem, 1);
+		$abnormal_conditions = shell_exec("${WORKING_DIR}/system_conditions.sh 'abnormal_conditions'");
+
 		if (isset($temp) && is_numeric($temp)) {
-			echo "<p>" . L::temp . ": <strong>" . $temp . "°C</strong></p>";
+			echo "<p>" . L::sysinfo_temp . ": <strong>" . $temp . "°C</strong></p>";
 		}
 		if (isset($cpuusage) && is_numeric($cpuusage)) {
-			echo "<p>" . L::cpuload . ": <strong>" . $cpuusage . "%</strong></p>";
+			echo "<p>" . L::sysinfo_cpuload . ": <strong>" . $cpuusage . "%</strong></p>";
 		}
 		if (isset($mem) && is_numeric($mem)) {
-			echo L::memory . ": <strong>" . $mem . "%</strong>";
+			echo L::sysinfo_memory . ": <strong>" . $mem . "%</strong>";
 		}
+		echo ("<p>Conditions: <strong>" . $abnormal_conditions . "</strong></p>");
+
 		?>
-		<h3><?php echo L::devices; ?></h3>
+		<h3><?php echo L::sysinfo_devices; ?></h3>
 		<?php
 		echo '<pre>';
 		passthru("lsblk");
 		echo '</pre>';
 		?>
-		<h3><?php echo L::diskspace; ?></h3>
+		<h3><?php echo L::sysinfo_diskspace; ?></h3>
 		<?php
-		echo '<pre>';
-		passthru("df -H");
-		echo '</pre>';
+			echo '<pre>';
+			passthru("df -H");
+			echo '</pre>';
 		?>
+		<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::log_refresh_button); ?></button></div>
+
 	</div>
+
+	<?php include "sub-logmonitor.php"; ?>
+		
 </body>
 
 </html>

@@ -26,6 +26,15 @@ class i18n {
     protected $cachePath = './langcache/';
 
     /**
+     * Enable region variants
+     * Allow region variants such as "en-us", "en-gb" etc. If set to false, "en" will be provided.
+     * Defaults to false for backward compatibility.
+     *
+     * @var bool
+     */
+    protected $isLangVariantEnabled = false;
+
+    /**
      * Fallback language
      * This is the language which is used when there is no language file for all other user languages. It has the lowest priority.
      * Remember to create a language file for the fallback!!
@@ -77,7 +86,9 @@ class i18n {
      * 1. Forced language
      * 2. Language in $_GET['lang']
      * 3. Language in $_SESSION['lang']
-     * 4. Fallback language
+     * 4. HTTP_ACCEPT_LANGUAGE
+     * 5. Language in $_COOKIE['lang']
+     * 6. Fallback language
      *
      * @var array
      */
@@ -187,6 +198,10 @@ class i18n {
         return $this->cachePath;
     }
 
+    public function getLangVariantEnabled() {
+        return $this->isLangVariantEnabled;
+    }
+
     public function getFallbackLang() {
         return $this->fallbackLang;
     }
@@ -199,6 +214,11 @@ class i18n {
     public function setCachePath($cachePath) {
         $this->fail_after_init();
         $this->cachePath = $cachePath;
+    }
+
+    public function setLangVariantEnabled($isLangVariantEnabled) {
+        $this->fail_after_init();
+        $this->isLangVariantEnabled = $isLangVariantEnabled;
     }
 
     public function setFallbackLang($fallbackLang) {
@@ -241,7 +261,8 @@ class i18n {
      * 2. Language in $_GET['lang']
      * 3. Language in $_SESSION['lang']
      * 4. HTTP_ACCEPT_LANGUAGE
-     * 5. Fallback language
+     * 5. Language in $_COOKIE['lang']
+     * 6. Fallback language
      * Note: duplicate values are deleted.
      *
      * @return array with the user languages sorted by priority.
@@ -267,8 +288,19 @@ class i18n {
         // 4th highest priority: HTTP_ACCEPT_LANGUAGE
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
             foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $part) {
-                $userLangs[] = strtolower(substr($part, 0, 2));
+                $userLang = strtolower(explode(';q=', $part)[0]);
+
+                // Trim language variant section if not configured to allow
+                if (!$this->isLangVariantEnabled)
+                    $userLang = explode('-', $userLang)[0];
+                
+                $userLangs[] = $userLang;
             }
+        }
+
+        // 5th highest priority: COOKIE
+        if (isset($_COOKIE['lang'])) {
+          $userLangs[] = $_COOKIE['lang'];
         }
 
         // Lowest priority: fallback
@@ -281,7 +313,7 @@ class i18n {
         $userLangs2 = array();
         foreach ($userLangs as $key => $value) {
             // only allow a-z, A-Z and 0-9 and _ and -
-            if (preg_match('/^[a-zA-Z0-9_-]*$/', $value) === 1)
+            if (preg_match('/^[a-zA-Z0-9_-]+$/', $value) === 1)
                 $userLangs2[$key] = $value;
         }
 

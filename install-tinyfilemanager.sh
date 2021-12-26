@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
+# Author: Stefan Saam, github@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
@@ -35,12 +35,12 @@ if [[ ! "${INSTALLER_DIR}" =~ "little-backup-box" ]]; then
     INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/little-backup-box"
 fi
 
-WEB_ROOT_MEJIRO="/var/www/mejiro"
+WEB_ROOT_TINYFILEMANAGER="/var/www/tinyfilemanager"
 
-sudo mkdir -p "${WEB_ROOT_MEJIRO}"
+sudo mkdir -p "${WEB_ROOT_TINYFILEMANAGER}"
 
 if [ "${SCRIPT_MODE}" = "update" ]; then
-	sudo rm -R ${WEB_ROOT_MEJIRO}/*
+	sudo rm -R ${WEB_ROOT_TINYFILEMANAGER}/*
 fi
 
 # Update source and perform the full system upgrade
@@ -49,28 +49,33 @@ sudo apt full-upgrade -y
 sudo apt update
 
 # Install the required packages
-sudo apt install -y php-cli php-gd php-common php-imagick
+sudo apt install -y zip php-zip php-mbstring
 
 # Remove obsolete packages
 sudo apt autoremove -y
 
 # get files
-sudo rm ./mejiro -R
-git clone https://github.com/outdoorbits/mejiro.git
+sudo rm ./tinyfilemanager -R
+git clone https://github.com/prasathmani/tinyfilemanager.git
 
 # move files in place
-sudo cp -R ./mejiro/* ${WEB_ROOT_MEJIRO}
+sudo cp -R ./tinyfilemanager/*.php ${WEB_ROOT_TINYFILEMANAGER}
+sudo cp -R ./tinyfilemanager/*.json ${WEB_ROOT_TINYFILEMANAGER}
 
-sudo sed -i 's/^$protect = .*/$protect = false; \/\/ Enable password protection/' "${WEB_ROOT_MEJIRO}/config.php"
+sudo mv "${WEB_ROOT_TINYFILEMANAGER}/tinyfilemanager.php" "${WEB_ROOT_TINYFILEMANAGER}/index.php"
+sudo cp "${WEB_ROOT_TINYFILEMANAGER}/config-sample.php" "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+
+sudo ln -s "/media" "${WEB_ROOT_TINYFILEMANAGER}/media"
+
+# setup
+sudo sed -i 's/^$use_auth = .*/$use_auth = false;/' "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+sudo sed -i 's/^$root_path = .*/$root_path = "\/var\/www\/tinyfilemanager\/media";/' "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+sudo sed -i 's/^$root_url = .*/$root_url = "files\/media";/' "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+sudo sed -i 's/^$max_upload_size_bytes = .*/$max_upload_size_bytes = 1048576000;/' "${WEB_ROOT_TINYFILEMANAGER}/config.php"
 
 # change owner and make scripts executable
-sudo chown www-data:www-data "${WEB_ROOT_MEJIRO}" -R
-sudo chmod +x ${WEB_ROOT_MEJIRO}/*.sh
-sudo chmod +x ${WEB_ROOT_MEJIRO}/*.php
-
-# Create Link to media
-cd
-sudo ln -s /media "${WEB_ROOT_MEJIRO}/photos"
+sudo chown www-data:www-data "${WEB_ROOT_TINYFILEMANAGER}" -R
+sudo chmod +x ${WEB_ROOT_TINYFILEMANAGER}/*.php
 
 #Finish
-echo "mejiro ist available after reboot."
+echo "tinyfilemanager ist available after reboot."
