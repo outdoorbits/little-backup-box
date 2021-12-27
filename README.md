@@ -4,7 +4,7 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 
 <h1>NEWS</h1>
 <ul>
-	<li>2021/12-27: Add power-off after idle time. Configuration in "Settings"</li>
+	<li>2021/12-27: Add power-off after idle time. Configuration in &quot;Settings&quot;.</li>
 	<li>2021/12/21: Add language support for French, Spanisch and German: <b>Caution: The translations were carried out by machine and could cause unpleasant feelings in native speakers. Help is particularly welcome here. Technically, working on the language files is extremely easy. Would you help?</b></li>
 	<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">one-click-update-function</a></li>
 	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
@@ -19,6 +19,7 @@ Final tests offered minor bugs (fixed), it looks good for the moment! Tell me, i
 <h2>Some major developement-steps:</h2>
 <ul>
 	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
+	<li>Power-off after idle time. Configuration in &quot;Settings&quot;.</li>
 	<li>Mounting devices is managed by UUIDs. If a device disconnects*1, it can be automatically reconnected. The process becomes much more robust.</li>
 	<li>Some tools are added (check device, repair device)</li>
 	<li>Installation of components (comitup, mejiro) is automated</li>
