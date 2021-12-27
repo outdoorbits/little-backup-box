@@ -288,7 +288,7 @@ crontab -l | {
 
 crontab -l | {
     cat
-    echo "*/1 * * * * sudo ${const_WEB_ROOT_LBB}/ip.sh"
+    echo "*/1 * * * * sudo ${const_WEB_ROOT_LBB}/cron-ip.sh"
 } | crontab
 
 crontab -l | {

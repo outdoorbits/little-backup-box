@@ -3,7 +3,7 @@
   "right_arrow": " &rarr; ",
   "log": {
     "logmonitor": "Protokollmonitor",
-    "refresh_button": "Aktualisierung",
+    "refresh_button": "aktualisieren",
     "delete_button": "Logdatei löschen"
   },
   "mainmenue": {
