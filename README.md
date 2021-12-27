@@ -41,10 +41,12 @@ As there is no manual available anymore, I started to edit the github-wiki <a hr
 	<li>Add an empty (text-)file "ssh" to the new boot-partition to enable ssh.</li>
 	<li>Do not change any more settings (language!).</li>
 	<li>Make sure that your Raspberry Pi is connected to the internet.</li>
-	<li>Run the following command on the Raspberry Pi:<br>
-<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash</code><br>
-or to save the error-messages during installation to disk: <br>
-<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code></li>
+	<li>
+		Run the following command on the Raspberry Pi:<br>
+		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash</code><br>
+		or to save the error-messages during installation to disk: <br>
+		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code>
+	</li>
 </ol>
 <h2>Update</h2>
 To update you can perform a webUI-based one-click update. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
