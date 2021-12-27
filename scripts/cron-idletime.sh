@@ -29,14 +29,17 @@ if [ "$conf_POWER_OFF_IDLE_TIME" -gt "0" ]; then
 
 	IDLE_SEC_to_POWER_OFF=$(($conf_POWER_OFF_IDLE_TIME * 60))
 
-	LogfileAgeSek=`expr $(date +%s) - $(stat -c '%Y' "${const_LOGFILE}")`
-	ApacheLogfileAgeSek=`expr $(date +%s) - $(stat -c '%Y' "${APACHE_ACCESS_LOGFILE}")`
+	UpTimeSec=$(awk '{print $1}' /proc/uptime)
+	UpTimeSec=${UpTimeSec%.*}
+	LogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${const_LOGFILE}")`
+	ApacheLogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${APACHE_ACCESS_LOGFILE}")`
 
 	echo "IDLE_SEC_to_POWER_OFF=$IDLE_SEC_to_POWER_OFF"
-	echo "LogfileAgeSek=$LogfileAgeSek"
-	echo "ApacheLogfileAgeSek=$ApacheLogfileAgeSek"
+	echo "UpTimeSec=$UpTimeSec"
+	echo "LogfileAgeSec=$LogfileAgeSec"
+	echo "ApacheLogfileAgeSec=$ApacheLogfileAgeSec"
 
-	if [ "$LogfileAgeSek" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$ApacheLogfileAgeSek" -ge "$IDLE_SEC_to_POWER_OFF" ]; then
+	if [ "$UpTimeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$LogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$ApacheLogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ]; then
 		source "${WORKING_DIR}/poweroff.sh" "poweroff" "force" "Idle time reached"
 	fi
 fi
