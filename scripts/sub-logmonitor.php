@@ -1,5 +1,3 @@
-<?php $LogFile="${WORKING_DIR}/tmp/little-backup-box.log"; ?>
-
 <div class="card" style="margin-top: 3em;">
 	<h2 style="margin-top: 0em;"><?php echo L::log_logmonitor; ?></h2>
 	<hr>
@@ -15,8 +13,8 @@
 </div>
 <?php
 	if (isset($_POST['delete'])) {
-		unlink("$LogFile");
-		$LogFileHandle = fopen("$LogFile", 'w') or die('Error opening file: '+"$LogFile");
+		unlink($constants["const_LOGFILE"]);
+		$LogFileHandle = fopen($constants["const_LOGFILE"], 'w') or die('Error opening file: ' . $constants["const_LOGFILE"]);
 		fwrite($LogFileHandle,"");
 		fclose("$LogFileHandle");
 	};

@@ -1,6 +1,7 @@
 {
   "help": "Help",
   "right_arrow": " &rarr; ",
+  "minutes_long": "minutes",
   "log": {
     "logmonitor": "Log monitor",
     "refresh_button": "Refresh",
@@ -84,6 +85,9 @@
     "behavior_loglevel_label": "Select the Log-Level:",
     "behavior_log_sync_protokoll_header": "Log sync-protocol",
     "behavior_log_sync_protokoll_label": "Log sync-details?",
+    "behavior_power_off_idle_time_header": "Power down after idle-time",
+    "behavior_power_off_idle_time_label": "Select the idle time after which the system should be stopped.",
+    "behavior_power_off_idle_time_none": "never",
     "view_section": "View",
     "view_theme_header": "Theme",
     "view_theme_label": "Select a color theme:",

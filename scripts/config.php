@@ -133,6 +133,7 @@ conf_BACKGROUND_IMAGE=$conf_BACKGROUND_IMAGE
 conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
 conf_LOGLEVEL=$conf_LOGLEVEL
 conf_LOG_SYNC=$conf_LOG_SYNC
+conf_POWER_OFF_IDLE_TIME=$conf_POWER_OFF_IDLE_TIME
 conf_SMTP_SERVER="$conf_SMTP_SERVER"
 conf_SMTP_PORT="$conf_SMTP_PORT"
 conf_MAIL_USER="$conf_MAIL_USER"
@@ -235,12 +236,12 @@ function upload_settings() {
 					<label for="conf_LANGUAGE"><?php echo L::config_lang_label; ?></label><br>
 						<select name="conf_LANGUAGE" id="conf_LANGUAGE">
 						<?php
-							echo "<option value='' " . ($config["conf_LANGUAGE"] == ""?"selected":"") . ">" . L::config_lang_browser_detect . "</option>";
+							echo "<option value='' " . ($config["conf_LANGUAGE"] == ""?" selected":"") . ">" . L::config_lang_browser_detect . "</option>";
 							$languages=array();
 							exec ("find '" . $WORKING_DIR . "/lang'/*.json -type f ",$languages);
 							foreach($languages as $language) {
 								$language = basename($language, ".json");
-								echo "<option value='" . $language . "' " . ($config["conf_LANGUAGE"] == $language?"selected":"") . ">" . $language . "</option>";
+								echo "<option value='" . $language . "' " . ($config["conf_LANGUAGE"] == $language?" selected":"") . ">" . $language . "</option>";
 							}
 						?>
 					</select>
@@ -255,13 +256,13 @@ function upload_settings() {
 					<label for="BACKUP_MODE"><?php echo L::config_backup_label; ?></label><br>
 
 					<select name="BACKUP_MODE" id="BACKUP_MODE">
-						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?"selected":""; ?>><?php echo L::config_backup_none; ?></option>
-						<option value="storage external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage external"?"selected":""; ?>><?php echo L::config_backup_storage_external; ?></option>
-						<option value="storage internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage internal"?"selected":""; ?>><?php echo L::config_backup_storage_internal; ?></option>
-						<option value="camera external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera external"?"selected":""; ?>><?php echo L::config_backup_camera_external; ?></option>
-						<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?"selected":""; ?>><?php echo L::config_backup_camera_internal; ?></option>
-						<option value="ios external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios external"?"selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
-						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?"selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
+						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
+						<option value="storage external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage external"?" selected":""; ?>><?php echo L::config_backup_storage_external; ?></option>
+						<option value="storage internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage internal"?" selected":""; ?>><?php echo L::config_backup_storage_internal; ?></option>
+						<option value="camera external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera external"?" selected":""; ?>><?php echo L::config_backup_camera_external; ?></option>
+						<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::config_backup_camera_internal; ?></option>
+						<option value="ios external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios external"?" selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
+						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?" selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
 					</select>
 
 				<h3><?php echo L::config_backup_power_off_header; ?></h3>
@@ -291,17 +292,29 @@ function upload_settings() {
 					<input type="checkbox" id="conf_conf_DISP_IP_REPEAT" name="conf_conf_DISP_IP_REPEAT" <?php echo $config['conf_conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
 
 				<h3><?php echo L::config_behavior_loglevel_header; ?></h3>
-					<p><?php echo L::config_behavior_loglevel_text . $WORKING_DIR; ?>/tmp/little-backup-box.log")</p>
+					<p><?php echo L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
 					<label for="conf_LOGLEVEL"><?php echo L::config_behavior_loglevel_label; ?></label><br>
 					<select name="conf_LOGLEVEL" id="conf_LOGLEVEL">
-						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?"selected":""; ?>>1, minimum</option>
-						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?"selected":""; ?>>2, medium</option>
-						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?"selected":""; ?>>3, maximum</option>
+						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, minimum</option>
+						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, medium</option>
+						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, maximum</option>
 					</select>
 
 				<h3><?php echo L::config_behavior_log_sync_protokoll_header; ?></h3>
 					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
 					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_power_off_idle_time_header; ?></h3>
+					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_behavior_power_off_idle_time_label; ?></label><br>
+					<select name="conf_POWER_OFF_IDLE_TIME" id="conf_POWER_OFF_IDLE_TIME">
+						<?php
+							$IDLE_TIME_OPTIONS=array(0,5,10,15,20,25,30);
+							foreach($IDLE_TIME_OPTIONS as $IDLE_TIME_OPTION) {
+								echo "<option value=\"" . $IDLE_TIME_OPTION ."\"". ($config["conf_POWER_OFF_IDLE_TIME"]==$IDLE_TIME_OPTION?" selected":"") . ">" . ($IDLE_TIME_OPTION=="0"?L::config_behavior_power_off_idle_time_none:$IDLE_TIME_OPTION . " " . L::minutes_long) ."</option>";
+							}
+						?>
+
+					</select>
 
 			</details>
 		</div>
@@ -313,21 +326,21 @@ function upload_settings() {
 				<h3><?php echo L::config_view_theme_header; ?></h3>
 					<label for="conf_THEME"><?php echo L::config_view_theme_label; ?></label><br>
 						<select name="conf_THEME" id="conf_THEME">
-						<option value="light" <?php echo $config["conf_THEME"] == "light"?"selected":""; ?>><?php echo L::config_view_theme_light; ?></option>
-						<option value="dark" <?php echo $config["conf_THEME"] == "dark"?"selected":""; ?>><?php echo L::config_view_theme_dark; ?></option>
-						<option value="sepia" <?php echo $config["conf_THEME"] == "sepia"?"selected":""; ?>><?php echo L::config_view_theme_sepia; ?></option>
+						<option value="light" <?php echo $config["conf_THEME"] == "light"?" selected":""; ?>><?php echo L::config_view_theme_light; ?></option>
+						<option value="dark" <?php echo $config["conf_THEME"] == "dark"?" selected":""; ?>><?php echo L::config_view_theme_dark; ?></option>
+						<option value="sepia" <?php echo $config["conf_THEME"] == "sepia"?" selected":""; ?>><?php echo L::config_view_theme_sepia; ?></option>
 					</select>
 
 				<h3><?php echo L::config_view_bg_image_header; ?></h3>
 					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo $WORKING_DIR . "/img/backgrounds" ;?>&quot;.</label><br>
 						<select name="conf_BACKGROUND_IMAGE" id="conf_BACKGROUND_IMAGE">
-						<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?"selected":""; ?>>none</option>
+						<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
 						<?php
 							$bg_images=array();
 							exec ("find '" . $WORKING_DIR . "/img/backgrounds' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
 							foreach($bg_images as $bg_image) {
 								$bg_image = basename($bg_image);
-								echo "<option value='" . $bg_image . "' " . ($config["conf_BACKGROUND_IMAGE"] == $bg_image?"selected":"") . ">" . $bg_image . "</option>";
+								echo "<option value='" . $bg_image . "' " . ($config["conf_BACKGROUND_IMAGE"] == $bg_image?" selected":"") . ">" . $bg_image . "</option>";
 							}
 						?>
 					</select>

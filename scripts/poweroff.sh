@@ -18,13 +18,13 @@
 #######################################################################
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
 dos2unix "$CONFIG"
 source "$CONFIG"
 
 # Configuration
 FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
-FILE_LOG="${WORKING_DIR}/tmp/little-backup-box.log"
 IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 
 # Load Log library
@@ -62,7 +62,7 @@ if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
 
     # cleanup
     echo "" | sudo tee "${FILE_OLED_OLD}"
-    echo "" | sudo tee "${FILE_LOG}"
+    echo "" | sudo tee "${const_LOGFILE}"
     sudo rm "${IP_MAIL_SENT_MARKERFILE}"
 
     if [ "${ACTION}" = "poweroff" ]; then

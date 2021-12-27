@@ -138,7 +138,10 @@
     "message_settings_saved": "config.cfg a été écrit avec succès.",
     "alert_password_global": "Mot de passe global",
     "alert_password_mail_header": "Mot de passe de messagerie",
-    "alert_password_rsync_header": "rsync-le mot de passe"
+    "alert_password_rsync_header": "rsync-le mot de passe",
+    "behavior_power_off_idle_time_header": "Mise hors tension après une période d'inactivité",
+    "behavior_power_off_idle_time_label": "Sélectionnez le temps d'inactivité après lequel le système doit être arrêté.",
+    "behavior_power_off_idle_time_none": "Certainement pas"
   },
   "tools": {
     "tools": "Outils",
@@ -161,5 +164,6 @@
     "header": "Little Backup Box Updater",
     "warning": "NE PAS ARRÊTER ou recharger pendant la course !",
     "return_link": "Retour à Little Backup Box - NE CLIQUEZ PAS AVANT LA FIN DE LA MISE À JOUR !"
-  }
+  },
+  "minutes_long": "minutes"
 }

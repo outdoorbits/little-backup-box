@@ -19,6 +19,7 @@
 
 # library expects from calling script:
 # - source config.cfg
+# - source constants.sh
 
 function log_message() {
 
@@ -32,14 +33,12 @@ function log_message() {
 
     if [ ! -z "$(log_level_reached ${LEVEL})" ]; then
 
-		LOGFILE="${WORKING_DIR}/tmp/little-backup-box.log"
-
-		if [ ! -f "${LOGFILE}" ]; then
+		if [ ! -f "${const_LOGFILE}" ]; then
 			mkdir -p "${WORKING_DIR}/tmp"
-			sudo echo "" >"${LOGFILE}"
+			sudo echo "" >"${const_LOGFILE}"
 		fi
 
-		echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${LOGFILE})" | sudo tee "${LOGFILE}" > /dev/null 2>&1
+		echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${const_LOGFILE})" | sudo tee "${const_LOGFILE}" > /dev/null 2>&1
 
 	fi
 }

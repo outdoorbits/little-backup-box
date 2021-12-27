@@ -291,6 +291,11 @@ crontab -l | {
     echo "*/1 * * * * sudo ${const_WEB_ROOT_LBB}/ip.sh"
 } | crontab
 
+crontab -l | {
+    cat
+    echo "*/1 * * * * sudo ${const_WEB_ROOT_LBB}/cron-idletime.sh"
+} | crontab
+
 # tinyfilemanager
 source "${INSTALLER_DIR}/install-tinyfilemanager.sh"
 
