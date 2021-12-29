@@ -62,7 +62,7 @@ function lcd_message () {
 	date +%s.%N | tee "${LockFile}" > /dev/null 2>&1
 
 	# clear screen
-	if [ "${LineCount}" -eq 0 ];
+	if [ "${LineCount}" -eq "0" ];
 	then
 		LineCount=4
 		n=0
@@ -127,8 +127,7 @@ function lcd_message () {
 		# get LINE into Lines-Array
 		Lines[$n]=${LINE}
 
-		if [ ! -z "${LogLines}" ];
-		then
+		if [ ! -z "${LogLines}" ]; then
 			LogLines="${LogLines}\n"
 		fi
 		LogLines="${LogLines}${LINE}"

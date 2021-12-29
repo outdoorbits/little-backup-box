@@ -102,7 +102,7 @@ Files: http://${IP}:8000/files
 ${MEJIRO_HTTP_PLAIN}miniDLNA: http://${IP}:8200"
 
 	TEXT_HTML="
-<b>https (secure, certificate not trusted, please confirm)</b><br>
+<b>https (secure, certificate can not be verified, please confirm to trust it)</b><br>
 web UI: <a href='https://${IP}'>https://${IP}</a><br>
 Upload: <a href='https://${IP}/upload.php'>https://${IP}/upload.php</a><br>
 Files: <a href='https://${IP}/files'>http://${IP}/files</a><br>

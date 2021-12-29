@@ -1,6 +1,0 @@
-Start-Config: Default-Backup-Methode von crontab auf config.cfg ändern
-
-Setting: Formular erstellen, Werte aus config.cfg lesen
-
-Test:
-Neuinstallation & change-mode.sh: Default-Methode funktioniert?

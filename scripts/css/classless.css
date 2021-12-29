@@ -567,6 +567,11 @@ button, select {
 	border: .1rem solid var(--clink);
 }
 
+div.backupsection {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+
 fieldset {
 	border-radius: 0rem;
 	border: .1rem solid var(--cmed);
@@ -586,30 +591,6 @@ button[disabled] {
 	border-color: var(--cmed);
 }
 
-button.usb {
-	color: var(--cusb);
-	border-color: var(--cusb);
-}
-
-button.camera {
-	color: var(--ccamera);
-	border-color: var(--ccamera);
-}
-
-button.ios {
-	color: var(--cios);
-	border-color: var(--cios);
-}
-
-button.cloud {
-	color: var(--ccloud);
-	border-color: var(--ccloud);
-}
-
-button.danger {
-	color: var(--cdanger);
-	border-color: var(--cdanger);
-}
 /* 4. Bootstrap Compatibile Classes
 –––––––––––––––––––––––––––––––––––––––––––––––––––––– */
 

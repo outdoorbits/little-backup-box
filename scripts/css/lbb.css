@@ -1,0 +1,128 @@
+/* Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de */
+/* License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt */
+
+html[data-theme='light'], :root {
+	--width: 50rem;
+	--navpos: absolute;
+	/* fixed | absolute */
+	--clight: #f4f5f6;
+	--cdark: #888;
+	--cmed: #d1d1d1;
+	--clink: #07c;
+	--cemph: #088;
+	--cfg: #433;
+	--cbg: #fff;
+	--cusb: #0F0;
+	--ccamera: #fca503;
+	--cios: #f700ff;
+	--ccloud: #00d0ff;
+	--cdanger: #f00;
+	--ornament: "‹‹‹ ›››";
+	--font-p: 13pt 'Barlow', Arial, sans-serif;
+	--font-h: 13pt 'Barlow', Arial, sans-serif;
+	--font-c: 12pt monospace;
+}
+
+html[data-theme='dark'] {
+	--clight: #333;
+	--cdark: #999;
+	--cmed: #566;
+	--clink: #1ad;
+	--cemph: #0b9;
+	--cbg: #252220;
+	--cfg: #cecbc4;
+}
+
+html[data-theme='sepia'] {
+	--clight: #f3efea;
+	--cdark: #6c605c;
+	--cmed: #a8928e;
+	--clink: #bd0000;
+	--cemph: #a35403;
+	--cbg: #fefbf4;
+	--cfg: #433;
+	--ornament: "❦ ❦ ❦";
+	--font-p: 13pt 'Barlow', Arial, sans-serif;
+	--font-h: 13pt 'Barlow', Arial, sans-serif;
+	--font-c: 12pt monospace;
+}
+
+html, body {
+    min-height: 100% !important;
+    height: 100%;
+	background-color: var(--cbg);
+	background-size: cover;
+	background-repeat: repeat-y;
+	background-attachment: fixed;
+}
+
+body {
+	margin: 0 auto;
+	max-width: 50rem;
+	padding: 2rem 0.6rem 0rem;
+	overflow-x: hidden;
+	font: var(--font-p);
+	color: var(--cfg);
+	line-height: 1.5em;
+}
+
+.navbar {
+	margin: 0 auto !important;
+	float: none !important;
+}
+
+button.usb {
+	color: var(--cusb);
+	border-color: var(--cusb);
+	width: 15em;
+}
+
+button.camera {
+	color: var(--ccamera);
+	border-color: var(--ccamera);
+	width: 15em;
+}
+
+button.ios {
+	color: var(--cios);
+	border-color: var(--cios);
+	width: 15em;
+}
+
+button.cloud {
+	color: var(--ccloud);
+	border-color: var(--ccloud);
+	width: 15em;
+}
+
+button.danger {
+	color: var(--cdanger);
+	border-color: var(--cdanger);
+	width: 15em;
+}
+
+.card {
+	background-color: transparent;
+}
+
+/* navbar */
+
+.fa-1x {
+font-size: 1.5rem;
+}
+.navbar-toggler.toggler-example {
+cursor: pointer;
+}
+.dark-blue-text {
+color: #0A38F5;
+}
+.dark-pink-text {
+color: #AC003A;
+}
+.dark-amber-text {
+color: #ff6f00;
+}
+.dark-teal-text {
+color: #004d40;
+}
+

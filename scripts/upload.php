@@ -1,3 +1,5 @@
+<!doctype html>
+
 <?php
 $WORKING_DIR=dirname(__FILE__);
 $config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
@@ -43,22 +45,13 @@ function filesize_human_readable ($Bytes) {
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
-	<title>Little Backup Box</title>
-	<meta charset="utf-8">
-	<link rel="shortcut icon" href="favicon.png" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/classless.css">
+	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 </head>
 
 <body <?php echo $background; ?>>
-	<?php
-	// include i18n class and initialize it
-	require_once 'i18n.class.php';
-	$i18n = new i18n('lang/{LANGUAGE}.json', 'cache/', 'en');
-	if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
-	$i18n->init();
-	?>
+	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo l::upload_upload; ?></h1>
 	<div class="card" style="margin-top: 3em;">
 		<?php

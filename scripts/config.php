@@ -15,31 +15,14 @@
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
-	<title>Little Backup Box</title>
-	<meta charset="utf-8">
-	<link rel="shortcut icon" href="favicon.png" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/classless.css">
-	<style>
-		textarea {
-			font-size: 15px;
-			width: 100%;
-			height: 55%;
-			line-height: 1.9;
-			margin-top: 2em;
-		}
-	</style>
+	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 </head>
 
 <body <?php echo $background; ?>>
+	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
+	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+
 	<?php
-		// include i18n class and initialize it
-		require_once 'i18n.class.php';
-
-		$i18n = new i18n('lang/{LANGUAGE}.json', 'cache/', 'en');
-		if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
-		$i18n->init();
-
 		// write new config
 		if (isset($_POST['save'])) {
 			write_config();
@@ -58,7 +41,7 @@
 			}
 		}
 	?>
-	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config_config; ?></h1>
 	<?php
 

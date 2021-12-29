@@ -1,3 +1,5 @@
+<!doctype html>
+
 <?php
 	$WORKING_DIR=dirname(__FILE__);
 	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
@@ -17,22 +19,14 @@
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
-	<title>Little Backup Box</title>
-	<meta charset="utf-8">
-	<link rel="shortcut icon" href="favicon.png" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/classless.css">
-	<style>
-		button {
-			width: 15em;
-		}
-	</style>
-
+	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 	<script src="js/refresh_iframe.js"></script>
-
 </head>
 
 <body onload="refreshIFrame()" <?php echo $background; ?>>
+	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
+	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
 		if (window.history.replaceState) {
@@ -40,43 +34,39 @@
 		}
 	</script>
 
-	<?php
-		// include i18n class and initialize it
-		require_once 'i18n.class.php';
-		$i18n = new i18n('lang/{LANGUAGE}.json', 'cache/', 'en');
-		if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
-		$i18n->init();
-	?>
-	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;">LITTLE BACKUP BOX</h1>
 
 	<div class="card">
 
 		<form class="text-center" style="margin-top: 1em;" method="POST">
-			<button name="backup_storage_external" class="usb"><?php echo L::main_source_button . L::right_arrow . L::main_external_button; ?></button>
-			<button name="backup_storage_internal" class="usb"><?php echo L::main_source_button . L::right_arrow . L::main_internal_button; ?></button>
-			<hr style="margin-top: 1em; margin-bottom: 1em;">
-			<button name="backup_camera_external" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_external_button; ?></button>
-			<button name="backup_camera_internal" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_internal_button; ?></button>
-			<hr style="margin-top: 1em; margin-bottom: 1em;">
-			<button name="backup_ios_external" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_external_button; ?></button>
-			<button name="backup_ios_internal" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_internal_button; ?></button>
-
+			<div class='backupsection'>
+				<button name="backup_storage_external" class="usb"><?php echo L::main_source_button . L::right_arrow . L::main_external_button; ?></button>
+				<button name="backup_storage_internal" class="usb"><?php echo L::main_source_button . L::right_arrow . L::main_internal_button; ?></button>
+			</div>
+			<div class='backupsection'>
+				<button name="backup_camera_external" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_external_button; ?></button>
+				<button name="backup_camera_internal" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_internal_button; ?></button>
+			</div>
+			<div class='backupsection'>
+				<button name="backup_ios_external" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_external_button; ?></button>
+				<button name="backup_ios_internal" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_internal_button; ?></button>
+			</div>
 			<?php
 				if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_conf_PASSWORD"]=="" or $config["conf_RSYNC_PATH"]=="")) {
-					echo "<hr style='margin-top: 1em; margin-bottom: 1em;'>";
-					echo "<button name=\"backup_external_server\" class=\"cloud\">" . L::main_external_button . L::right_arrow . L::main_rsync_button ."</button>";
-					echo "<button name=\"backup_internal_server\" class=\"cloud\">" . L::main_internal_button . L::right_arrow . L::main_rsync_button ."</button>";
+					echo "<div class='backupsection'>";
+						echo "<button name=\"backup_external_server\" class=\"cloud\">" . L::main_external_button . L::right_arrow . L::main_rsync_button ."</button>";
+						echo "<button name=\"backup_internal_server\" class=\"cloud\">" . L::main_internal_button . L::right_arrow . L::main_rsync_button ."</button>";
+					echo "</div>";
 				}
 			?>
 
 			<?php
 
 				foreach($CloudServices as $CloudService) {
-					echo "<hr style=\"margin-top: 1em; margin-bottom: 1em;\">";
-
-					echo "<button name=\"backup_external_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_external_button . L::right_arrow ." " . $CloudService . "</button>";
-					echo "<button name=\"backup_internal_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_internal_button . L::right_arrow ." " . $CloudService . "</button>";
+					echo "<div class='backupsection'>";
+						echo "<button name=\"backup_external_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_external_button . L::right_arrow ." " . $CloudService . "</button>";
+						echo "<button name=\"backup_internal_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_internal_button . L::right_arrow ." " . $CloudService . "</button>";
+					echo "</div>";
 				}
 			?>
 
