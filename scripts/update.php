@@ -12,6 +12,7 @@ $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgr
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
 	<head>
+		<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 		<script src="js/refresh_iframe.js"></script>
 	</head>
 	<body <?php echo $background; ?>>
