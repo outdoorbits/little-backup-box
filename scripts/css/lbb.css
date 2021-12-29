@@ -55,7 +55,7 @@ html, body {
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
-	background-repeat: repeat-y;
+	background-repeat: repeat;
 	background-attachment: fixed;
 	background-repeat: repeat-y;
 }
