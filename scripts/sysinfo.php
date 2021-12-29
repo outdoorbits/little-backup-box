@@ -14,6 +14,7 @@
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
+	<script src="js/refresh_iframe.js"></script>
 </head>
 
 <body onload="refreshIFrame()" <?php echo $background; ?>>
