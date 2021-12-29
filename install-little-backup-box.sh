@@ -170,6 +170,8 @@ curl https://rclone.org/install.sh | sudo bash
 USER="www-data"
 
 # Create the required media-directories
+echo "Creating the required media-directories"
+
 sudo mkdir -p "${const_MEDIA_DIR}"
 
 sudo mkdir -p "${const_SOURCE_MOUNT_POINT}"
