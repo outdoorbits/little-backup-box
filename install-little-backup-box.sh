@@ -174,6 +174,12 @@ echo "Creating the required media-directories"
 
 sudo mkdir -p "${const_MEDIA_DIR}"
 
+sudo umount "${const_SOURCE_MOUNT_POINT}" > /dev/null 2>&1
+sudo umount "${const_STORAGE_MOUNT_POINT}" > /dev/null 2>&1
+sudo umount "${const_INTERAL_BACKUP_DIR}" > /dev/null 2>&1
+sudo umount "${const_IOS_MOUNT_POINT}" > /dev/null 2>&1
+sudo umount "${const_CLOUD_MOUNT_POINT}" > /dev/null 2>&1
+
 sudo mkdir -p "${const_SOURCE_MOUNT_POINT}"
 sudo mkdir -p "${const_STORAGE_MOUNT_POINT}"
 sudo mkdir -p "${const_INTERAL_BACKUP_DIR}"
