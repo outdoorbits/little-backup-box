@@ -16,22 +16,7 @@ html, body {
 	background-repeat: repeat-y;
 }
 
-body {
-	margin: 0 auto;
-	max-width: var(--width);
-	padding: 2rem 0.6rem 0rem;
-	overflow-x: hidden;
-	font: var(--font-p);
-	color: var(--cfg);
-	line-height: 1.5em;
-}
-
-.navbar {
-	margin: 0 auto !important;
-	float: none !important;
-}
-
-button.usb {
+Button.usb {
 	color: var(--cusb);
 	border-color: var(--cusb);
 	width: 15em;
@@ -70,24 +55,4 @@ div.backupsection {
 	padding-bottom: 0.5rem;
 }
 
-/* navbar */
-
-.fa-1x {
-font-size: 1.5rem;
-}
-.navbar-toggler.toggler-example {
-cursor: pointer;
-}
-.dark-blue-text {
-color: #0A38F5;
-}
-.dark-pink-text {
-color: #AC003A;
-}
-.dark-amber-text {
-color: #ff6f00;
-}
-.dark-teal-text {
-color: #004d40;
-}
 
