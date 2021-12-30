@@ -28,18 +28,19 @@ APACHE_ACCESS_LOGFILE="/var/log/apache2/lbb-access.log"
 if [ "$conf_POWER_OFF_IDLE_TIME" -gt "0" ]; then
 
 	IDLE_SEC_to_POWER_OFF=$(($conf_POWER_OFF_IDLE_TIME * 60))
-
+	if [ -f "$const_UPDATE_LOCKFILE" ]; then UPDATE_ACTIVE=true; else UPDATE_ACTIVE=false; fi
 	UpTimeSec=$(awk '{print $1}' /proc/uptime)
 	UpTimeSec=${UpTimeSec%.*}
 	LogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${const_LOGFILE}")`
 	ApacheLogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${APACHE_ACCESS_LOGFILE}")`
 
+	echo "UPDATE_ACTIVE=$UPDATE_ACTIVE"
 	echo "IDLE_SEC_to_POWER_OFF=$IDLE_SEC_to_POWER_OFF"
 	echo "UpTimeSec=$UpTimeSec"
 	echo "LogfileAgeSec=$LogfileAgeSec"
 	echo "ApacheLogfileAgeSec=$ApacheLogfileAgeSec"
 
-	if [ "$UpTimeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$LogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$ApacheLogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ]; then
+	if [ $UPDATE_ACTIVE = false ] && [ "$UpTimeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$LogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$ApacheLogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ]; then
 		source "${WORKING_DIR}/poweroff.sh" "poweroff" "force" "Idle time reached"
 	fi
 fi

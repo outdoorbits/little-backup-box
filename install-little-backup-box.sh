@@ -146,6 +146,8 @@ source "${INSTALLER_DIR}/scripts/constants.sh"
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "keep config..."
 	yes | sudo cp -f "${const_WEB_ROOT_LBB}/config.cfg" "${INSTALLER_DIR}/scripts/"
+	yes | sudo cp -f "${const_UPDATE_LOCKFILE}" "${INSTALLER_DIR}/scripts/"
+
 	sudo rm -R ${const_WEB_ROOT_LBB}/*
 fi
 

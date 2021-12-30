@@ -20,6 +20,7 @@
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 CONFIG="${WORKING_DIR}/config.cfg"
 CONFIG_STANDARDS="${WORKING_DIR}/config-standards.cfg"
+CONSTANTS="${WORKING_DIR}/constants.sh"
 
 # Check and complete config.cfg
 dos2unix "$CONFIG"
@@ -45,8 +46,14 @@ done < "${CONFIG_STANDARDS}"
 
 unset IFS
 
+# load constants
+source "$CONSTANTS"
+
 # Load config.cfg
 source "$CONFIG"
+
+# wipe lockfile
+sudo rm "$const_UPDATE_LOCKFILE" > /dev/null 2>&1
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
