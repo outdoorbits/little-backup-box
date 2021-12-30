@@ -15,7 +15,7 @@ sub expects from calling script:
 	$scriptname=basename($_SERVER["SCRIPT_FILENAME"]);
 ?>
 
- <nav class="navbar navbar-expand-lg <?php echo $nav_theme_class; ?>">
+ <nav class="navbar navbar-expand-sm <?php echo $nav_theme_class; ?>">
   <div class="container-fluid">
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>

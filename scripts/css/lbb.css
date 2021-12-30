@@ -1,51 +1,9 @@
-/* Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de */
+/* Author: Stefan Saam, github@saams.de */
 /* License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt */
 
-html[data-theme='light'], :root {
-	--width: 50rem;
-	--navpos: absolute;
-	/* fixed | absolute */
-	--clight: #f4f5f6;
-	--cdark: #888;
-	--cmed: #d1d1d1;
-	--clink: #07c;
-	--cemph: #088;
-	--cfg: #433;
-	--cbg: #fff;
-	--cusb: #0F0;
-	--ccamera: #fca503;
-	--cios: #f700ff;
-	--ccloud: #00d0ff;
-	--cdanger: #f00;
-	--ornament: "‹‹‹ ›››";
-	--font-p: 13pt 'Barlow', Arial, sans-serif;
-	--font-h: 13pt 'Barlow', Arial, sans-serif;
-	--font-c: 12pt monospace;
-}
+@import url("classless-header.css");
+@import url("classless-select.css");
 
-html[data-theme='dark'] {
-	--clight: #333;
-	--cdark: #999;
-	--cmed: #566;
-	--clink: #1ad;
-	--cemph: #0b9;
-	--cbg: #252220;
-	--cfg: #cecbc4;
-}
-
-html[data-theme='sepia'] {
-	--clight: #f3efea;
-	--cdark: #6c605c;
-	--cmed: #a8928e;
-	--clink: #bd0000;
-	--cemph: #a35403;
-	--cbg: #fefbf4;
-	--cfg: #433;
-	--ornament: "❦ ❦ ❦";
-	--font-p: 13pt 'Barlow', Arial, sans-serif;
-	--font-h: 13pt 'Barlow', Arial, sans-serif;
-	--font-c: 12pt monospace;
-}
 
 html, body {
     min-height: 100% !important;
@@ -62,7 +20,7 @@ html, body {
 
 body {
 	margin: 0 auto;
-	max-width: 50rem;
+	max-width: var(--width);
 	padding: 2rem 0.6rem 0rem;
 	overflow-x: hidden;
 	font: var(--font-p);
@@ -107,6 +65,11 @@ button.danger {
 
 .card {
 	background-color: transparent;
+}
+
+div.backupsection {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
 }
 
 /* navbar */
