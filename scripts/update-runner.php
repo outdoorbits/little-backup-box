@@ -16,6 +16,8 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 	<body>
 
 		<?php
+			ob_implicit_flush(true);
+			ob_end_flush();
 
 			$cmd = "cd ~pi; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | sudo -u pi bash";
 
