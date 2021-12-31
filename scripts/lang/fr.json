@@ -165,5 +165,63 @@
     "warning": "NE PAS ARRÊTER ou recharger pendant la course !",
     "return_link": "Retour à Little Backup Box - NE CLIQUEZ PAS AVANT LA FIN DE LA MISE À JOUR !"
   },
-  "minutes_long": "minutes"
+  "minutes_long": "minutes",
+  "box": {
+    "backup": {
+      "ext_storage_ok": "Poste stockage ok",
+      "insert_source_1": "Prêt",
+      "insert_storage_1": "Prêt",
+      "insert_source_2": "Insérer la source",
+      "insert_storage_2": "Insérer le stockage",
+      "int_storage_ok": "Int. stockage ok",
+      "invalid_mode_combination_1": "Invalide",
+      "invalid_mode_combination_2": "mode",
+      "invalid_mode_combination_3": "combinaison",
+      "no_valid_destination_mode_1": "Non valide",
+      "no_valid_destination_mode_2": "destination",
+      "no_valid_destination_mode_3": "mode défini",
+      "no_valid_source_mode_1": "Non valide",
+      "no_valid_source_mode_2": "source",
+      "no_valid_source_mode_3": "mode défini",
+      "storage_free": " libérer",
+      "storage_size": "taille",
+      "storage_used": "utilisée",
+      "waiting_for_cloud_1": "Prêt",
+      "waiting_for_cloud_2": "En attente de Cloud",
+      "camera_ok": "Appareil photo ok",
+      "complete": "Sauvegarde terminée",
+      "connect_camera_1": "Prêt",
+      "connect_camera_2": "Connecter la caméra",
+      "connect_ios_1": "Prêt",
+      "connect_ios_2": "relier",
+      "connect_ios_3": "Appareil iOS",
+      "error_cooling_1": "Erreur!",
+      "error_cooling_2": "Refroidissement",
+      "error_cooling_3": "Soupçon de",
+      "error_cooling_4": "surchauffe",
+      "files_missing": "Fichiers manquants !",
+      "lost_device": "Err.Périphérique perdu !",
+      "no_ios_waiting_1": "Pas d'appareil iOS",
+      "no_ios_waiting_2": "En attendant",
+      "of": "de",
+      "source_ok": "Source ok",
+      "try_backup": "Essayez la sauvegarde",
+      "working": "Travail",
+      "status": "État de la sauvegarde"
+    },
+    "cronip": {
+      "offline": "hors ligne",
+      "online": "en ligne"
+    },
+    "poweroff": {
+      "do_not_unplug": "Ne pas débrancher",
+      "power_down_via_gui_1": "Mise hors tension via",
+      "power_down_via_gui_2": "web UI",
+      "poweroff": "Éteindre",
+      "rebooting": "Redémarrage",
+      "while_act_led_on_1": "tandis que l'ACT",
+      "while_act_led_on_2": "La LED est allumée. Au revoir!"
+    }
+  },
+  "seconds_short": "s"
 }

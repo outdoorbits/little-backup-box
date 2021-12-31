@@ -73,7 +73,7 @@ else
 fi
 
 if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
-		lcd_message "Invalid" "mode" "combination"
+		lcd_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')"
 		exit 1
 	fi
 
@@ -94,6 +94,9 @@ if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
 
 #load Systeminfo library
 . "${WORKING_DIR}/lib-systeminfo.sh"
+
+#load language library
+. "${WORKING_DIR}/lib-language.sh"
 
 # log
 log_message "Source: ${SOURCE_MODE}"
@@ -125,7 +128,7 @@ function calculate_files_to_sync() {
 
 	else
 		# no defined mode selected
-		lcd_message "+No valid" "+source" "+mode defined" "+2"
+		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+2"
 		exit 1
 	fi
 
@@ -154,7 +157,7 @@ if [ "${DEST_MODE}" = "external" ]; then
     # External mode
     # If display support is enabled, display the specified message
 
-    lcd_message "Ready" "Insert storage"
+    lcd_message "$(l 'box_backup_insert_storage_1')" "$(l 'box_backup_insert_storage_2')"
 
     # Wait for a USB storage device (e.g., a USB flash drive)
     UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
@@ -168,12 +171,12 @@ if [ "${DEST_MODE}" = "external" ]; then
     IFS="|"
     set -- $ret
 
-    STOR_SIZE="Size: $1"
-    STOR_FREE="free: $3"
+    STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+    STOR_FREE="$(l 'box_backup_storage_free'): $3"
 
     unset IFS
 
-    lcd_message "Ext. storage OK" "${STOR_SIZE}" "${STOR_FREE}"
+    lcd_message "$(l 'box_backup_ext_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}"
 
 	if [ $conf_DISP = true ]; then
 		sleep 2
@@ -188,13 +191,13 @@ elif [ "${DEST_MODE}" = "internal" ]; then
     IFS="|"
     set -- $ret
 
-    STOR_SIZE="Size: $1"
-    STOR_FREE="free: $3"
+    STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+    STOR_FREE="$(l 'box_backup_storage_free'): $3"
 
     unset IFS
 
     # If display support is enabled, notify that the storage device has been mounted
-    lcd_message "Int. storage OK" "${STOR_SIZE}" "${STOR_FREE}"
+    lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}"
 
 	if [ $conf_DISP = true ]; then
         sleep 2
@@ -204,21 +207,21 @@ elif [ "${DEST_MODE}" = "server" ]; then
         STORAGE_PATH="rsync://${conf_RSYNC_USER}@${conf_RSYNC_SERVER}:${conf_RSYNC_PORT}${conf_RSYNC_PATH}"
 
 elif [ "${DEST_MODE}" = "cloud" ]; then
-        lcd_message "+Ready" "+Waiting for Cloud" "+${CLOUDSERVICE}"
+        lcd_message "+$(l 'box_backup_waiting_for_cloud_1')" "+$(l 'box_backup_waiting_for_cloud_2')" "+${CLOUDSERVICE}"
 
         STORAGE_PATH="${const_CLOUD_MOUNT_POINT}/little-backup-box"
 
         mount_cloud "${CLOUDSERVICE}" "${const_CLOUD_MOUNT_POINT}"
 
 # elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
-#         lcd_message "+Ready" "+Insert NEW_STORAGE_TYPE"
+#         lcd_message "+$(l 'box_backup__1')" "+$(l 'box_backup__2')"
 #         ...
 #         # Set storage path
 #         STORAGE_PATH
 
 else
     # no defined mode selected
-    lcd_message "No valid" "destination" "mode defined"
+    lcd_message "$(l 'box_backup_no_valid_destination_mode_1')" "$(l 'box_backup_no_valid_destination_mode_2')" "$(l 'box_backup_no_valid_destination_mode_3')"
     exit 1
 fi
 
@@ -240,7 +243,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
 
     # Source storage
     # If display support is enabled, display the specified message
-    lcd_message "Ready" "Insert source"
+    lcd_message "$(l 'box_backup_insert_source_1')" "$(l 'box_backup_insert_source_2')"
 
     # Source device
     if [ "${SOURCE_MODE}" = "storage" ]; then
@@ -263,12 +266,12 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     ret="$(get_storage_spaces ${SOURCE_PATH})"
     IFS="|"
     set -- $ret
-    STOR_SIZE="Size: $1"
-    STOR_USED="used: $2"
+    STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+    STOR_USED="$(l 'box_backup_storage_used'): $2"
 
     unset IFS
 
-    lcd_message "Source OK" "Working..." "${STOR_SIZE}" "${STOR_USED}"
+    lcd_message "$(l 'box_backup_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}"
     if [ $conf_DISP = true ]; then
         sleep 2
     fi
@@ -290,14 +293,14 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
     SOURCE_IDENTIFIER="Source ID: ${ID}"
 
 elif [ "${SOURCE_MODE}" = "ios" ]; then
-    lcd_message "Ready" "Connect" "iOS device"
+    lcd_message "$(l 'box_backup_connect_ios_1')" "$(l 'box_backup_connect_ios_2')" "$(l 'box_backup_connect_ios_3')"
 
     # Try to mount the iOS device
     ifuse ${const_IOS_MOUNT_POINT} -o allow_other
 
     # Waiting for the iOS device to be mounted
     until [ ! -z "$(ls -A ${const_IOS_MOUNT_POINT})" ]; do
-        lcd_message "No iOS device" "Waiting..."
+        lcd_message "$(l 'box_backup_no_ios_waiting_1')" "$(l 'box_backup_no_ios_waiting_2')..."
         sleep 10
         sudo ifuse ${const_IOS_MOUNT_POINT} -o allow_other
     done
@@ -322,7 +325,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
     SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
 
 elif [ "${SOURCE_MODE}" = "internal" ]; then
-    lcd_message "Int. storage OK"
+    lcd_message "$(l 'box_backup_int_storage_ok')"
 
     # Set SOURCE_PATH
     SOURCE_PATH="${const_INTERAL_BACKUP_DIR}"
@@ -345,7 +348,7 @@ elif [ "${SOURCE_MODE}" = "internal" ]; then
 elif [ "${SOURCE_MODE}" = "camera" ]; then
     # Source camera
     # If display support is enabled, display the specified message
-    lcd_message "Ready" "Connect camera"
+    lcd_message "$(l 'box_backup_connect_camera_1')" "$(l 'box_backup_connect_camera_2')"
 
     # Wait for camera
     DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
@@ -355,7 +358,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
     done
 
     # If display support is enabled, notify that the camera is detected
-    lcd_message "Camera OK" "Working..."
+    lcd_message "$(l 'box_backup_camera_ok')" "$(l 'box_backup_working')..."
 
     # Obtain camera model
     # Create the target directory with the camera model as its name
@@ -372,7 +375,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 
 else
     # no defined mode selected
-    lcd_message "+No valid" "+source" "+mode defined" "+1"
+    lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "+1"
 fi
 
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
@@ -399,7 +402,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	SYNC_OUTPUT="${SYNC_OUTPUT}---- Try ${TRIES_DONE} ----\n"
 
 	if [ "${TRIES_DONE}" -gt "1" ]; then
-		lcd_message "Try Backup ${TRIES_DONE} of ${TRIES_MAX}"
+		lcd_message "$(l 'box_backup_try_backup') ${TRIES_DONE} $(l 'box_backup_of') ${TRIES_MAX}"
 		sleep 5 # time to stabilize the system after device-lost
 	fi
 
@@ -506,7 +509,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		cd
 	else
 		# no defined mode selected
-		lcd_message "+No valid" "+source" "+mode defined" "+3"
+		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+3"
 		exit 1
 	fi
 
@@ -558,7 +561,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}; SYNC_TIME: ${SYNC_TIME}" 3
 
 	if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
-			lcd_message "Error!" "Cooling ${SYNC_TIME_OVERHEATING_WAIT_SEC} s ..." "Suspicion of" "overheating."
+			lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')"
 			sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
 	fi
 
@@ -582,9 +585,11 @@ fi
 
 # Power off
 if [ -z "${SYNC_ERROR}" ]; then
-    MESSAGE="Backup complete."
+    MESSAGE="$(l 'box_backup_complete')."
 else
-    MESSAGE="${SYNC_ERROR}"
+    MESSAGE=""
+    if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]]; then MESSAGE="$(l 'box_backup_lost_device') "; fi
+    if [[ "${SYNC_ERROR}" =~ "Files missing!" ]]; then MESSAGE="${MESSAGE}$(l 'box_backup_files_missing')"; fi
 fi
 
 source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE}"

@@ -165,5 +165,63 @@
     "warning": "NICHT STOPPEN oder nachladen während des Updates!",
     "return_link": "Zurück zur Little Backup Box - NICHT KLICKEN, BEVOR DAS UPDATE ABGESCHLOSSEN IST!"
   },
-  "minutes_long": "Minuten"
+  "minutes_long": "Minuten",
+  "box": {
+    "backup": {
+      "ext_storage_ok": "Ext. Speicher o.k.",
+      "insert_source_1": "Bereit",
+      "insert_storage_1": "Bereit",
+      "insert_source_2": "Quelle verbinden",
+      "insert_storage_2": "Speicher verbinden",
+      "int_storage_ok": "Int. Speicher o.k.",
+      "invalid_mode_combination_1": "Ungültige",
+      "invalid_mode_combination_2": "Modus-",
+      "invalid_mode_combination_3": "Kombination",
+      "no_valid_destination_mode_1": "Kein gültiger",
+      "no_valid_destination_mode_2": "Ziel-",
+      "no_valid_destination_mode_3": "Modus definiert",
+      "no_valid_source_mode_1": "Kein gültiger",
+      "no_valid_source_mode_2": "Quell-",
+      "no_valid_source_mode_3": "Modus definiert",
+      "storage_free": "frei",
+      "storage_size": "Größe",
+      "storage_used": "genutzt",
+      "waiting_for_cloud_1": "Bereit",
+      "waiting_for_cloud_2": "Warten auf Cloud",
+      "camera_ok": "Kamera o.k.",
+      "complete": "Sicherung komplett",
+      "connect_camera_1": "Bereit",
+      "connect_camera_2": "Kamera verbinden",
+      "connect_ios_1": "Bereit",
+      "connect_ios_2": "anschließen",
+      "connect_ios_3": "iOS-Gerät",
+      "error_cooling_1": "Fehler!",
+      "error_cooling_2": "Kühlung",
+      "error_cooling_3": "Verdacht auf",
+      "error_cooling_4": "Überhitzung",
+      "files_missing": "Dateien fehlen!",
+      "lost_device": "Fehler. Gerät verloren!",
+      "no_ios_waiting_1": "Kein iOS-Gerät",
+      "no_ios_waiting_2": "warte",
+      "of": "von",
+      "source_ok": "Quelle o.k.",
+      "try_backup": "Backup Versuch",
+      "working": "arbeite",
+      "status": "Sicherungsstatus"
+    },
+    "cronip": {
+      "offline": "offline",
+      "online": "online"
+    },
+    "poweroff": {
+      "do_not_unplug": "Nicht ausstecken",
+      "power_down_via_gui_1": "Ausschalten über",
+      "power_down_via_gui_2": "web UI",
+      "poweroff": "Ausschalten",
+      "rebooting": "Neustart",
+      "while_act_led_on_1": "während die ACT",
+      "while_act_led_on_2": "LED leuchtet. Tschüss!"
+    }
+  },
+  "seconds_short": "s"
 }

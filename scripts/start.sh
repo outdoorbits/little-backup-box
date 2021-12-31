@@ -25,6 +25,9 @@ CONSTANTS="${WORKING_DIR}/constants.sh"
 # Check and complete config.cfg
 dos2unix "$CONFIG"
 
+#load language library
+. "${WORKING_DIR}/lib-language.sh"
+
 # delete IP_MAIL_SENT_MARKERFILE
 IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 sudo rm "${IP_MAIL_SENT_MARKERFILE}"
@@ -78,9 +81,9 @@ INTERNET_DISCONNECTED=$?
 
 if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
 	if [ "${INTERNET_DISCONNECTED}" = "0" ]; then
-		lcd_message "IP (internet):" "${IP}"
+		lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
 	else
-		lcd_message "IP (offline):" "${IP}"
+		lcd_message "IP ($(l 'box_cronip_offline')):" "${IP}"
 	fi
 fi
 

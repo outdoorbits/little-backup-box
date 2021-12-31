@@ -165,5 +165,63 @@
     "warning": "¡NO PARE ni recargue mientras está funcionando!",
     "return_link": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE TERMINE LA ACTUALIZACIÓN!"
   },
-  "minutes_long": "minutos"
+  "minutes_long": "minutos",
+  "box": {
+    "backup": {
+      "ext_storage_ok": "Ext. almacenamiento o.k.",
+      "insert_storage_1": "Listo",
+      "insert_source_1": "Listo",
+      "insert_source_2": "Insertar fuente",
+      "insert_storage_2": "Insertar almacenamiento",
+      "int_storage_ok": "En t. almacenamiento o.k.",
+      "invalid_mode_combination_1": "Inválido",
+      "invalid_mode_combination_2": "modo",
+      "invalid_mode_combination_3": "combinación",
+      "no_valid_destination_mode_1": "No válido",
+      "no_valid_destination_mode_2": "destino",
+      "no_valid_destination_mode_3": "modo definido",
+      "no_valid_source_mode_1": "No válido",
+      "no_valid_source_mode_2": "fuente",
+      "no_valid_source_mode_3": "modo definido",
+      "storage_free": "libre",
+      "storage_size": "talla",
+      "storage_used": "usado",
+      "waiting_for_cloud_1": "Listo",
+      "waiting_for_cloud_2": "Esperando la nube",
+      "camera_ok": "Cámara bien",
+      "complete": "Copia de seguridad completa",
+      "connect_camera_1": "Listo",
+      "connect_camera_2": "Conectar la camara",
+      "connect_ios_1": "Listo",
+      "connect_ios_2": "conectar",
+      "connect_ios_3": "Dispositivo iOS",
+      "error_cooling_1": "¡Error!",
+      "error_cooling_2": "Enfriamiento",
+      "error_cooling_3": "Sospecha de",
+      "error_cooling_4": "calentamiento excesivo",
+      "files_missing": "¡Faltan archivos!",
+      "lost_device": "Err. Dispositivo perdido!",
+      "no_ios_waiting_1": "Sin dispositivo iOS",
+      "no_ios_waiting_2": "Espera",
+      "of": "de",
+      "source_ok": "Fuente o.k.",
+      "try_backup": "Prueba una copia de seguridad",
+      "working": "Laboral",
+      "status": "Estado de la copia de seguridad"
+    },
+    "cronip": {
+      "offline": "desconectado",
+      "online": "en línea"
+    },
+    "poweroff": {
+      "do_not_unplug": "No desconecte",
+      "power_down_via_gui_1": "Apagar a través de",
+      "power_down_via_gui_2": "web UI",
+      "poweroff": "Apagado",
+      "rebooting": "Reiniciando",
+      "while_act_led_on_1": "mientras que el ACT",
+      "while_act_led_on_2": "El LED está encendido. ¡Chau!"
+    }
+  },
+  "seconds_short": "s"
 }

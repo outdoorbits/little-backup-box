@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com
+# Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+###############################################
+# The commented examples in the script provide
+# instructions on adding custom backup jobs
+# To extend, just use the elif-section-examples
+###############################################
+
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
@@ -25,24 +31,32 @@ source "$CONFIG"
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 
+# Load Mail library
+. "${WORKING_DIR}/lib-mail.sh"
+
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
 #load DEVICES library
 . "${WORKING_DIR}/lib-devices.sh"
 
-## start minidlna
-sudo minidlnad -R
-sudo service minidlna start
+#load CLOUDS library
+. "${WORKING_DIR}/lib-clouds.sh"
 
-##start rclone web-gui
-if [ ! -f "${const_RCLONE_CONFIG_FILE}" ]; then
-	sudo touch "${const_RCLONE_CONFIG_FILE}"
-fi
-sudo chmod 777 "${const_RCLONE_CONFIG_FILE}"
+#load Systeminfo library
+. "${WORKING_DIR}/lib-systeminfo.sh"
 
-if [ -z "${conf_PASSWORD}" ]; then
-	sudo rclone rcd --rc-web-gui --rc-web-gui-no-open-browser --rc-addr :5572 --config "${const_RCLONE_CONFIG_FILE}" --rc-user lbb --rc-pass "lbb" &
-else
-	sudo rclone rcd --rc-web-gui --rc-web-gui-no-open-browser --rc-addr :5572 --config "${const_RCLONE_CONFIG_FILE}" --rc-user lbb --rc-pass "${conf_PASSWORD}" &
-fi
+#load language library
+. "${WORKING_DIR}/lib-language.sh"
+
+# log
+log_message "Source: ${SOURCE_MODE}"
+log_message "Destination: ${DEST_MODE} ${CLOUDSERVICE}"
+
+FILES_TO_SYNC=85
+SYNC_START_TIME=$(date +%s)
+BACKUP_PATH=/tmp
+DEST_MODE="storage"
+
+source "${WORKING_DIR}/status-display.sh" &
+

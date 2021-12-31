@@ -33,6 +33,9 @@ IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
+#load language library
+. "${WORKING_DIR}/lib-language.sh"
+
 #Arguments
 ACTION="${1}"
 FORCE="${2}"
@@ -48,15 +51,15 @@ if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
 
     if [ "${ACTION}" = "poweroff" ]; then
         if [ -z "${MESSAGE}" ]; then
-            lcd_message "+Power off." "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
+            lcd_message "+$(l 'box_poweroff_poweroff')" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
         else
-            lcd_message "+${MESSAGE}" "+Do not unplug" "+while the ACT" "+LED is on. Bye!"
+            lcd_message "+${MESSAGE}" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
         fi
     elif [ "${ACTION}" = "reboot" ]; then
         if [ -z "${MESSAGE}" ]; then
-            lcd_message "+Rebooting..." "+Do not unplug!" "+" "+"
+            lcd_message "+$(l 'box_poweroff_rebooting')..." "+$(l 'box_poweroff_do_not_unplug')!" "+" "+"
         else
-            lcd_message "+${MESSAGE}" "+Rebooting..." "+Do not unplug!" "+"
+            lcd_message "+${MESSAGE}" "+$(l 'box_poweroff_rebooting')..." "+$(l 'box_poweroff_do_not_unplug')!" "+"
         fi
     fi
 
@@ -74,8 +77,8 @@ if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
 else
     # notify the backup status
     if [ -z "${MESSAGE}" ]; then
-            lcd_message "+Backup complete." "+Do not unplug!" "+Power down via" "+web UI"
+            lcd_message "+$(l 'box_backup_complete')." "+$(l 'box_poweroff_do_not_unplug')!" "+$(l 'box_poweroff_power_down_via_gui_1')" "+$(l 'box_poweroff_power_down_via_gui_2')"
         else
-            lcd_message "+${MESSAGE}" "+Do not unplug!" "+Power down via" "+web UI"
+            lcd_message "+${MESSAGE}" "+$(l 'box_poweroff_do_not_unplug')!" "+$(l 'box_poweroff_power_down_via_gui_1')" "+$(l 'box_poweroff_power_down_via_gui_2')"
         fi
 fi

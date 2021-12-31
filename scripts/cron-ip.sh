@@ -34,6 +34,9 @@ FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
+#load language library
+. "${WORKING_DIR}/lib-language.sh"
+
 ping -c1 google.com &>/dev/null
 INTERNET_DISCONNECTED=$?
 
@@ -42,9 +45,9 @@ IP=$(hostname -I | cut -d' ' -f1)
 if [ $conf_conf_DISP_IP_REPEAT = true ]; then
 	if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
 		if [ "${INTERNET_DISCONNECTED}" = "0" ]; then
-			lcd_message "IP (internet):" "${IP}"
+			lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
 		else
-			lcd_message "IP (offline):" "${IP}"
+			lcd_message "IP ($(l 'box_cronip_offline')):" "${IP}"
 		fi
 	fi
 fi
@@ -68,7 +71,7 @@ IP=$(hostname -I | cut -d' ' -f1)
 
 if [ $conf_DISP = true ] && [ $conf_conf_DISP_IP_REPEAT = true ]; then
 	if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
-		lcd_message "IP (internet):" "${IP}"
+		lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
 	fi
 fi
 
