@@ -130,8 +130,6 @@ $(l 'box_cronip_mail_open_samba') 'smb://${IP}'"
 		TEXT_HTML="${TEXT_HTML}
 <br>
 $(l 'box_cronip_mail_open_samba'): '<a href='smb://${IP}'>smb://${IP}</a>'<br>"
-	echo "XXXXXXXXXXXXXXX $(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
-
 	send_email "$(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
 	touch "${IP_MAIL_SENT_MARKERFILE}"
 fi

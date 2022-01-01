@@ -224,7 +224,7 @@
       "online": "online",
       "mail": {
         "desription_http": "http (unsicher)",
-        "desription_https": "https (sicher, Zertifikat kann nicht verifiziert werden, bitte bestätigen)",
+        "desription_https": "https (sicher, Zertifikat kann nicht automatisch verifiziert werden, bitte bestätigen)",
         "info": "Little Backup Box Info",
         "main": "web GUI",
         "open_samba": "Im Dateimanager öffnen (Samba / Windows)"
@@ -234,10 +234,11 @@
       "do_not_unplug": "Nicht ausstecken",
       "power_down_via_gui_1": "Ausschalten über",
       "power_down_via_gui_2": "web UI",
-      "poweroff": "Ausschalten",
+      "poweroff": "Herunterfahren",
       "rebooting": "Neustart",
       "while_act_led_on_1": "während die ACT",
-      "while_act_led_on_2": "LED leuchtet. Tschüss!"
+      "while_act_led_on_2": "LED leuchtet. Tschüss!",
+      "idle_time_reached": "Leerlaufzeit erreicht"
     }
   },
   "seconds_short": "s"

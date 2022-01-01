@@ -224,7 +224,7 @@
       "online": "en línea",
       "mail": {
         "desription_http": "http (inseguro)",
-        "desription_https": "https (seguro, el certificado no se puede verificar, confirme para confiar en él)",
+        "desription_https": "https (seguro, el certificado no se puede verificar automáticamente, confirme)",
         "info": "Little Backup Box Información",
         "main": "web GUI",
         "open_samba": "Abrir en el administrador de archivos (Samba / Windows)"
@@ -237,7 +237,8 @@
       "poweroff": "Apagado",
       "rebooting": "Reiniciando",
       "while_act_led_on_1": "mientras que el ACT",
-      "while_act_led_on_2": "El LED está encendido. ¡Chau!"
+      "while_act_led_on_2": "El LED está encendido. ¡Chau!",
+      "idle_time_reached": "Tiempo de inactividad alcanzado"
     }
   },
   "seconds_short": "s"

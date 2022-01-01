@@ -291,7 +291,7 @@ function upload_settings() {
 					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_behavior_power_off_idle_time_label; ?></label><br>
 					<select name="conf_POWER_OFF_IDLE_TIME" id="conf_POWER_OFF_IDLE_TIME">
 						<?php
-							$IDLE_TIME_OPTIONS=array(0,5,10,15,20,25,30);
+							$IDLE_TIME_OPTIONS=array(0,2,5,10,15,20,30);
 							foreach($IDLE_TIME_OPTIONS as $IDLE_TIME_OPTION) {
 								echo "<option value=\"" . $IDLE_TIME_OPTION ."\"". ($config["conf_POWER_OFF_IDLE_TIME"]==$IDLE_TIME_OPTION?" selected":"") . ">" . ($IDLE_TIME_OPTION=="0"?L::config_behavior_power_off_idle_time_none:$IDLE_TIME_OPTION . " " . L::minutes_long) ."</option>";
 							}

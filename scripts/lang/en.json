@@ -66,14 +66,15 @@
       "while_act_led_on_2": "LED is on. Bye!",
       "rebooting": "Rebooting",
       "power_down_via_gui_1": "Power down via",
-      "power_down_via_gui_2": "web UI"
+      "power_down_via_gui_2": "web UI",
+      "idle_time_reached": "Idle time reached"
     },
     "cronip": {
       "online": "online",
       "offline": "offline",
       "mail": {
         "main": "web GUI",
-        "desription_https": "https (secure, certificate can not be verified, please confirm to trust it)",
+        "desription_https": "https (secure, certificate cannot be verified automatically, please confirm)",
         "desription_http": "http (insecure)",
         "open_samba": "Open in file manager (Samba / Windows)",
         "info": "Little Backup Box Info"

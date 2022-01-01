@@ -41,6 +41,6 @@ if [ "$conf_POWER_OFF_IDLE_TIME" -gt "0" ]; then
 	echo "ApacheLogfileAgeSec=$ApacheLogfileAgeSec"
 
 	if [ $UPDATE_ACTIVE = false ] && [ "$UpTimeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$LogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$ApacheLogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ]; then
-		source "${WORKING_DIR}/poweroff.sh" "poweroff" "force" "Idle time reached"
+		source "${WORKING_DIR}/poweroff.sh" "poweroff" "force" "$(l 'box_poweroff_idle_time_reached')"
 	fi
 fi
