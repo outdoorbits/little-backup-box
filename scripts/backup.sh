@@ -399,7 +399,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		SYNC_OUTPUT="${SYNC_OUTPUT}\n\n"
 	fi
 
-	SYNC_OUTPUT="${SYNC_OUTPUT}---- Try ${TRIES_DONE} ----\n"
+	SYNC_OUTPUT="${SYNC_OUTPUT}---- $(l 'box_backup_try') ${TRIES_DONE} ----\n"
 
 	if [ "${TRIES_DONE}" -gt "1" ]; then
 		lcd_message "$(l 'box_backup_try_backup') ${TRIES_DONE} $(l 'box_backup_of') ${TRIES_MAX}"
@@ -567,23 +567,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 
 done # retry
 
-# Check internet connection and send
-# a notification if the conf_NOTIFY option is enabled
-check=$(wget -q --spider http://google.com/)
-if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
-
-    if [ ! -z "${SYNC_ERROR}" ]; then
-        SUBJ_MSG="${SYNC_ERROR}"
-        BODY_MSG="${SYNC_ERROR}\n\n"
-    else
-        SUBJ_MSG="complete"
-        BODY_MSG=""
-    fi
-
-    send_email "Little Backup Box: Backup ${SUBJ_MSG}" "${BODY_MSG}Type: ${SOURCE_MODE} to ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\nBackup log:\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} try/tries needed."
-fi
-
-# Power off
+# prepare message for mail and power off
 if [ -z "${SYNC_ERROR}" ]; then
     MESSAGE="$(l 'box_backup_complete')."
 else
@@ -592,4 +576,21 @@ else
     if [[ "${SYNC_ERROR}" =~ "Files missing!" ]]; then MESSAGE="${MESSAGE}$(l 'box_backup_files_missing')"; fi
 fi
 
+# Check internet connection and send
+# a notification if the conf_NOTIFY option is enabled
+check=$(wget -q --spider http://google.com/)
+if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
+
+    if [ ! -z "${MESSAGE}" ]; then
+        SUBJ_MSG="${MESSAGE}"
+        BODY_MSG="${MESSAGE}\n\n"
+    else
+        SUBJ_MSG="$(l 'box_backup_complete')"
+        BODY_MSG=""
+    fi
+
+    send_email "Little Backup Box: $(l 'box_backup_mail_backup') ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): ${SOURCE_MODE} $(l 'box_backup_mail_to') ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+fi
+
+# Power off
 source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE}"

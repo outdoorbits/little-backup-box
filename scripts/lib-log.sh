@@ -35,7 +35,7 @@ function log_message() {
 
 		if [ ! -f "${const_LOGFILE}" ]; then
 			mkdir -p "${WORKING_DIR}/tmp"
-			sudo echo "" >"${const_LOGFILE}"
+			touch "${const_LOGFILE}"
 		fi
 
 		echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${const_LOGFILE})" | sudo tee "${const_LOGFILE}" > /dev/null 2>&1

@@ -18,6 +18,9 @@
 #######################################################################
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+source "${WORKING_DIR}/constants.sh"
+
 CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
@@ -79,42 +82,42 @@ UPTIME=$(awk '{print int($1)}' /proc/uptime)
 
 # Mail
 if [ ! -z $conf_SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
-MEJIRO_HTTP_PLAIN=""
-MEJIRO_HTTPS_PLAIN=""
-MEJIRO_HTTP_HTML=""
-MEJIRO_HTTPS_HTML=""
+	MEJIRO_HTTP_PLAIN=""
+	MEJIRO_HTTPS_PLAIN=""
+	MEJIRO_HTTP_HTML=""
+	MEJIRO_HTTPS_HTML=""
 
-if [ -f "${WORKING_DIR}/../mejiro/index.php" ]; then
-	MEJIRO_HTTP_PLAIN="Mejiro: http://${IP}:8000/mejiro\n"
-	MEJIRO_HTTPS_PLAIN="Mejiro: https://${IP}/mejiro\n"
-	MEJIRO_HTTP_HTML="Mejiro: <a href='http://${IP}:8000/mejiro/'>http://${IP}:8000/mejiro/</a><br>\n"
-	MEJIRO_HTTPS_HTML="Mejiro: <a href='https://${IP}/mejiro/'>http://${IP}/mejiro/</a><br>\n"
-fi
+	if [ -f "${WORKING_DIR}/../mejiro/index.php" ]; then
+		MEJIRO_HTTP_PLAIN="Mejiro: http://${IP}:8000/mejiro\n"
+		MEJIRO_HTTPS_PLAIN="Mejiro: https://${IP}/mejiro\n"
+		MEJIRO_HTTP_HTML="Mejiro: <a href='http://${IP}:8000/mejiro/'>http://${IP}:8000/mejiro/</a><br>\n"
+		MEJIRO_HTTPS_HTML="Mejiro: <a href='https://${IP}/mejiro/'>http://${IP}/mejiro/</a><br>\n"
+	fi
 
 	TEXT_PLAIN="
-https (secure, certificate not trusted, please confirm)
-web UI: https://${IP}
-Upload: https://${IP}/upload.php
-Files: https://${IP}/files
+$(l 'box_mail_desription_https'):
+$(l 'box_cronip_mail_main'): https://${IP}
+$(l 'mainmenue_upload'): https://${IP}/upload.php
+$(l 'mainmenue_filebrowser'): https://${IP}/files
 ${MEJIRO_HTTPS_PLAIN}
 
-http (insecure):
-web UI: http://${IP}:8000
-Upload: http://${IP}:8000/upload.php
-Files: http://${IP}:8000/files
+$(l 'box_cronip_mail_desription_http'):
+$(l 'box_cronip_mail_main'): http://${IP}:8000
+$(l 'mainmenue_upload'): http://${IP}:8000/upload.php
+$(l 'mainmenue_filebrowser'): http://${IP}:8000/files
 ${MEJIRO_HTTP_PLAIN}miniDLNA: http://${IP}:8200"
 
 	TEXT_HTML="
-<b>https (secure, certificate can not be verified, please confirm to trust it)</b><br>
-web UI: <a href='https://${IP}'>https://${IP}</a><br>
-Upload: <a href='https://${IP}/upload.php'>https://${IP}/upload.php</a><br>
-Files: <a href='https://${IP}/files'>http://${IP}/files</a><br>
+<b>$(l 'box_cronip_mail_desription_https'):</b><br>
+$(l 'box_cronip_mail_main'): <a href='https://${IP}'>https://${IP}</a><br>
+$(l 'mainmenue_upload'): <a href='https://${IP}/upload.php'>https://${IP}/upload.php</a><br>
+$(l 'mainmenue_filebrowser'): <a href='https://${IP}/files'>http://${IP}/files</a><br>
 ${MEJIRO_HTTPS_HTML}
 <br>
-<b>http (insecure):</b><br>
-web UI: <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
-Upload: <a href='http://${IP}:8000/upload.php'>http://${IP}:8000/upload.php</a><br>
-Files: <a href='http://${IP}:8000/files'>http://${IP}:8000/files</a><br>
+<b>$(l 'box_cronip_mail_desription_http'):</b><br>
+$(l 'box_cronip_mail_main'): <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
+$(l 'mainmenue_upload'): <a href='http://${IP}:8000/upload.php'>http://${IP}:8000/upload.php</a><br>
+$(l 'mainmenue_filebrowser'): <a href='http://${IP}:8000/files'>http://${IP}:8000/files</a><br>
 ${MEJIRO_HTTP_HTML}
 miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
 
@@ -122,12 +125,13 @@ miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
 
 	TEXT_PLAIN="${TEXT_PLAIN}
 
-Samba: open 'smb://${IP}' into a file manager"
+$(l 'box_cronip_mail_open_samba') 'smb://${IP}'"
 
-	TEXT_HTML="${TEXT_HTML}
+		TEXT_HTML="${TEXT_HTML}
 <br>
-Samba: open '<a href='smb://${IP}'>smb://${IP}</a>' into a file manager<br>"
+$(l 'box_cronip_mail_open_samba'): '<a href='smb://${IP}'>smb://${IP}</a>'<br>"
+	echo "XXXXXXXXXXXXXXX $(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
 
-	send_email "Little Backup Box Info: ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
+	send_email "$(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
 	touch "${IP_MAIL_SENT_MARKERFILE}"
 fi

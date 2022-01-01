@@ -31,7 +31,9 @@
     "cloudservice": "service cloud",
     "reboot_m": "Little Backup Box redémarre. Actualisez cette page dans quelques instants.",
     "shutdown_m": "Little Backup Box est éteint. Vous pouvez fermer cette page.",
-    "help_txt": "<p class='text-center'>Veuillez lire le <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p >"
+    "help_txt": "<p class='text-center'>Veuillez lire le <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p >",
+    "stopbackup_button": "ARRÊTER la sauvegarde",
+    "stopbackup_m": "Arrêt de la sauvegarde."
   },
   "sysinfo": {
     "sysinfo": "Information système",
@@ -207,11 +209,26 @@
       "source_ok": "Source ok",
       "try_backup": "Essayez la sauvegarde",
       "working": "Travail",
-      "status": "État de la sauvegarde"
+      "status": "État de la sauvegarde",
+      "mail": {
+        "backup": "Sauvegarde",
+        "backup_type": "Taper",
+        "log": "Journal de sauvegarde",
+        "to": "à",
+        "tries_needed": "essai/essais nécessaires"
+      },
+      "try": "essayer"
     },
     "cronip": {
       "offline": "hors ligne",
-      "online": "en ligne"
+      "online": "en ligne",
+      "mail": {
+        "desription_http": "http (non sécurisé)",
+        "desription_https": "https (sécurisé, le certificat ne peut pas être vérifié, veuillez confirmer pour lui faire confiance)",
+        "info": "Little Backup Box Info",
+        "main": "web GUI",
+        "open_samba": "Ouvrir dans le gestionnaire de fichiers (Samba / Windows)"
+      }
     },
     "poweroff": {
       "do_not_unplug": "Ne pas débrancher",

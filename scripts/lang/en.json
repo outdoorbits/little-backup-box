@@ -42,6 +42,7 @@
       "camera_ok": "Camera o.k.",
       "try_backup": "Try backup",
       "of": "of",
+      "try": "try",
       "error_cooling_1": "Error!",
       "error_cooling_2": "Cooling",
       "error_cooling_3": "Suspicion of",
@@ -49,7 +50,14 @@
       "complete": "Backup complete",
       "lost_device": "Err.Lost device!",
       "files_missing": "Files missing!",
-      "status": "Backup status"
+      "status": "Backup status",
+      "mail": {
+        "backup": "Backup",
+        "backup_type": "Type",
+        "to": "to",
+        "log": "Backup log",
+        "tries_needed": "try/tries needed"
+      }
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -62,7 +70,14 @@
     },
     "cronip": {
       "online": "online",
-      "offline": "offline"
+      "offline": "offline",
+      "mail": {
+        "main": "web GUI",
+        "desription_https": "https (secure, certificate can not be verified, please confirm to trust it)",
+        "desription_http": "http (insecure)",
+        "open_samba": "Open in file manager (Samba / Windows)",
+        "info": "Little Backup Box Info"
+      }
     }
   },
   "mainmenue": {
@@ -88,6 +103,8 @@
     "backup_to": "to",
     "backup_initiated": "initiated",
     "cloudservice": "cloudservice",
+    "stopbackup_button": "STOP backup",
+    "stopbackup_m": "Stopping backup.",
     "reboot_m": "Little Backup Box reboots. Refresh this page in a few moments.",
     "shutdown_m": "Little Backup Box is powered off. You can close this page.",
     "help_txt": "<p class='text-center'>Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p>"
