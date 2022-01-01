@@ -236,8 +236,8 @@
       "power_down_via_gui_2": "web UI",
       "poweroff": "Herunterfahren",
       "rebooting": "Neustart",
-      "while_act_led_on_1": "während die ACT",
-      "while_act_led_on_2": "LED leuchtet. Tschüss!",
+      "while_act_led_on_1": "so lange die grüne",
+      "while_act_led_on_2": "LED leuchtet. Bye!",
       "idle_time_reached": "Leerlaufzeit erreicht"
     }
   },

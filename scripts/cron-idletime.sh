@@ -23,6 +23,9 @@ source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
+#load language library
+. "${WORKING_DIR}/lib-language.sh"
+
 APACHE_ACCESS_LOGFILE="/var/log/apache2/lbb-access.log"
 
 if [ "$conf_POWER_OFF_IDLE_TIME" -gt "0" ]; then

@@ -12,10 +12,13 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 </ul>
 <br>
 <img src="https://github.com/outdoorbits/little-backup-box/wiki/images/webui.png" align="center">
-<h1>Keep in mind!</h1>
+<h2>Developement status</h2>
 Little Backup Box is still under construction.<br>
 <b>Please test your Installation carefully before productive use!</b><br>
-Final tests offered minor bugs (fixed), it looks good for the moment! Tell me, if you find problems!<br>
+Final tests offered minor bugs (fixed), it looks good for the moment!<br>
+Little Backup Box has undergone massive development over the past few months. At the moment, no further major innovations are planned. Instead, the focus should now be on finding and correcting any errors and making the system even more reliable.<br>
+Hence the request: Test, test, test!<br>
+Please give feedback on problems or translation errors but also on the successful use, if possible with details of your equipment.<br>
 <br>
 <h2>Some major developement-steps:</h2>
 <ul>
