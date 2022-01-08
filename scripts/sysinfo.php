@@ -50,18 +50,41 @@
 		echo ("<p>Conditions: <strong>" . $abnormal_conditions . "</strong></p>");
 
 		?>
+
 		<h3><?php echo L::sysinfo_devices; ?></h3>
-		<?php
-		echo '<pre>';
-		passthru("lsblk");
-		echo '</pre>';
-		?>
-		<h3><?php echo L::sysinfo_diskspace; ?></h3>
-		<?php
+			<?php
 			echo '<pre>';
-			passthru("df -H");
+			passthru("lsblk");
 			echo '</pre>';
-		?>
+			?>
+
+		<h3><?php echo L::sysinfo_diskspace; ?></h3>
+			<?php
+				echo '<pre>';
+				passthru("df -H");
+				echo '</pre>';
+			?>
+
+		<h3><?php echo L::sysinfo_camera; ?></h3>
+			<?php
+				echo '<pre>';
+					exec("sudo gphoto2 --summary | grep 'Model' | cut -d: -f2 | tr -d '[:space:]'",$DEVICES);
+					if (count($DEVICES)) {
+						echo "<ul>";
+							foreach ($DEVICES as $DEVICE) {
+								echo "<li>$DEVICE</li>";
+							}
+						echo "<ul>";
+					}
+					else
+					{
+						echo "-";
+					}
+				echo '</pre>';
+			?>
+
+
+
 		<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::log_refresh_button); ?></button></div>
 
 	</div>

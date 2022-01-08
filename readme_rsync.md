@@ -27,3 +27,7 @@
 /etc/rsyncd.secrets:
 
 	USERNAME:conf_PASSWORD
+
+/etc/rsyncd.secrets needs permissions 600.
+
+	chmod 600 /etc/rsyncd.secrets

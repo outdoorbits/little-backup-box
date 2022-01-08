@@ -25,6 +25,7 @@
 # - source lib-language.sh
 
 # - WORKING_DIR
+# - RSYNC_CONNECTION
 
 # Uses from main-script:
 # $FILES_TO_SYNC
@@ -43,8 +44,8 @@ TIME_RUN=0
 . "${WORKING_DIR}/lib-language.sh"
 
 # Count of files in storage before backup starts
-if [ "${DEST_MODE}" = "server" ]; then
-    FILES_TO_TRANSFER_START=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+if [ "${DEST_MODE}" = "rsyncserver" ]; then
+    FILES_TO_TRANSFER_START=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 else
     FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
 fi
@@ -53,8 +54,8 @@ while [ true ]; do
     # Count files in the backup destination
     # Calculate the number of files to be transferred
 
-    if [ "${DEST_MODE}" = "server" ]; then
-        FILES_TO_TRANSFER=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+    if [ "${DEST_MODE}" = "rsyncserver" ]; then
+        FILES_TO_TRANSFER=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
         FILES_SYNCED=$(expr $FILES_TO_TRANSFER_START - $FILES_TO_TRANSFER)
     else
         FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
@@ -82,6 +83,12 @@ while [ true ]; do
 	TIME_SPACER_LENGTH=$(echo "${LineLength} - ${#FINISHED_PERCENT} - 1 - ${#TIME_LEFT_FORMAT}" | bc)
 	TIME_SPACER=$(printf %${TIME_SPACER_LENGTH}s)
     lcd_message "+$(l 'box_backup_status'):" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%${TIME_SPACER}${TIME_LEFT_FORMAT}" "-${PROGRESSBAR}"
-    sleep 2
+
+    # display-frequency depends on destination, slower for cloud-storage
+    INTERVAL_SEC=4
+    if [[ " external internal " =~ " ${DEST_MODE} " ]]; then
+		INTERVAL_SEC=2
+	fi
+    sleep "${INTERVAL_SEC}"
 
 done

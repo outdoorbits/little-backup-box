@@ -52,7 +52,7 @@
 				<button name="backup_ios_internal" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_internal_button; ?></button>
 			</div>
 			<?php
-				if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_conf_PASSWORD"]=="" or $config["conf_RSYNC_PATH"]=="")) {
+				if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_conf_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
 					echo "<div class='backupsection'>";
 						echo "<button name=\"backup_external_server\" class=\"cloud\">" . L::main_external_button . L::right_arrow . L::main_rsync_button ."</button>";
 						echo "<button name=\"backup_internal_server\" class=\"cloud\">" . L::main_internal_button . L::right_arrow . L::main_rsync_button ."</button>";
@@ -126,12 +126,12 @@
 	}
 	if (isset($_POST['backup_external_server'])) {
 		exec("sudo pkill -f backup*");
-		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/backup.sh storage server > /dev/null 2>&1 & echo $!");
+		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/backup.sh storage rsyncserver > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_external_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_internal_server'])) {
 		exec("sudo pkill -f backup*");
-		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/backup.sh internal server > /dev/null 2>&1 & echo $!");
+		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/backup.sh internal rsyncserver > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_internal_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	foreach (['external','internal'] as $Source) {

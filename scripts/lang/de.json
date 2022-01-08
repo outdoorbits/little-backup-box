@@ -13,8 +13,7 @@
     "tools": "Tools",
     "filebrowser": "Dateien",
     "minidlna": "MiniDLNA",
-    "mejiro": "Mejiro",
-    "upload": "Hochladen"
+    "mejiro": "Mejiro"
   },
   "main": {
     "source_button": "Quelle",
@@ -41,7 +40,8 @@
     "cpuload": "CPU-Last",
     "memory": "Speicher",
     "devices": "Geräte",
-    "diskspace": "Festplattenplatz"
+    "diskspace": "Festplattenplatz",
+    "camera": "Kamera / Smartphone"
   },
   "config": {
     "config": "Einstellungen",
@@ -73,8 +73,6 @@
     "behavior_loglevel_header": "Log-Level",
     "behavior_loglevel_text": "Systemereignisse protokollieren (in Log Monitor)?<br>(Logfile:",
     "behavior_loglevel_label": "Wählen Sie das Log-Level:",
-    "behavior_log_sync_protokoll_header": "Log-Sync-Protokoll",
-    "behavior_log_sync_protokoll_label": "Sync-Details protokollieren?",
     "view_section": "Ansicht",
     "view_theme_header": "Farbschema",
     "view_theme_label": "Wählen Sie ein Farbthema aus:",
@@ -105,9 +103,6 @@
     "rsync_user_label": "Benutzername für den rsync-Server",
     "rsync_password_header": "Passwort",
     "rsync_password_label": "Passwort für den rsync-Server",
-    "rsync_path_header": "rsync-Pfad",
-    "rsync_path_label1": "Modul und Pfad auf dem rsync-Server, z.B. '/little-backup-box' (Standard:",
-    "rsync_path_label2": ").<br>Es besteht aus &quot;/&quot;, dem Modulnamen (in rsyncd.conf definiert in [eckigen Klammern]) und möglicherweise einem Pfad unterhalb des Moduls. Dieser Pfad muss vorhanden sein. Z.B. für das Modul [kleine-backup-box] &quot;/kleine-backup-box&quot; oder &quot;/little-backup-box/my_trip&quot;. Stellen Sie im letzten Fall sicher, dass der Pfad &quot;my_trip&quot; existiert. Vergleichen Sie <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'>readme_rsync.md</a>.",
     "password_section": "Globales Passwort",
     "password_header": "Neues globales Passwort",
     "password_label1": "Das Passwort zum Schutz Ihrer Little-Backup-Box. Wird für das Webinterface, Filebrowser, ssh und Samba-Windows-Shares verwendet. Der Benutzername ist in allen Fällen lbb. Für Linux-Benutzer &quot;pi&quot; das Passwort ist auch gesetzt.",
@@ -143,7 +138,16 @@
     "alert_password_rsync_header": "rsync-",
     "behavior_power_off_idle_time_header": "Herunterfahren bei Inaktivität?",
     "behavior_power_off_idle_time_label": "Wählen Sie die Leerlaufzeit aus, nach der das System gestoppt werden soll.",
-    "behavior_power_off_idle_time_none": "niemals"
+    "behavior_power_off_idle_time_none": "niemals",
+    "backup_target_basedir_cloud_header": "Basisordner auf dem Cloud-Server (Ziel)",
+    "backup_target_basedir_cloud_label": "Die Sicherung auf dem Cloud-Server wird unterhalb dieses Verzeichnisses durchgeführt.",
+    "rsync_module_header": "rsync-Modul",
+    "rsync_module_label1": "Modulname auf dem rsync-Server, z.B. 'little-backup-box' (Standard:",
+    "rsync_module_label2": ").<br>Der Modulname ist serverseitig in rsyncd.conf definiert und in [eckige Klammern] gesetzt. Beachten Sie auch <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'>readme_rsync.md</a>.",
+    "backup_log_sync_protokoll_header": "Log-Sync-Protokoll",
+    "backup_log_sync_protokoll_label": "Sync-Details protokollieren?",
+    "backup_camera_folder_mask_header": "Zu sichernde Verzeichnisse auf Smartphones und Kameras",
+    "backup_camera_folder_mask_label": "Auf der Seite &quot;System&quot; steht unter \"Kamera/Smartphone\" die Bezeichnung eines angeschlossenen Gerätes, im Beispiel \"Kamera1\". &quot;*&quot; (ohne weitere Zusätze) kann als Joker für alle Geräte eingesetzt werden.<br>\nVerzeichnisse können entweder komplett eingetragen werden, oder auf einen signifikanten Teil reduziert werden. &quot;DCIM&quot; würde alle Verzeichnisse finden, die diese Zeichenkette enthalten. &quot;/store_00010001/DCIM&quot; trifft nur auf dieses Verzeichnisuns seine Unterverzeichnisse zu.<br>\nUm für ein Gerät Ordner zu definieren, gehen Sie nach diesem Muster vor:<br>\n\"Kamera1:Verzeichnis1;Kamera1:Verzeichnis2;Kamera2:Verzeichnis3\"<br>\nDie jeweiligen Einträge müssen immer durch &quot;;&quot; voneinander getrennt sein. Gerät und Verzeichnis werden durch &quot;:&quot; getrennt. Zusätzliche Leerzeichen sind nicht zulässig."
   },
   "tools": {
     "tools": "Werkzeug",
@@ -158,9 +162,6 @@
     "help_text": "<h2> Reparatur </h2>\n  <p class = 'text-center'> <mark> Verwenden Sie es nicht, wenn Sie nicht wissen, was Sie tun. Es könnte Ihren Speicher beschädigen! </mark> </p>\n  <h3> Verfahren: </h3>\n  <ol>\n  <li> Überprüfen Sie Ihre Stromversorgung. Eine Unterbrechung der Stromversorgung kann den Speicher irreparabel beschädigen. </li>\n  <li> Stellen Sie sicher, dass kein Backup-Auftrag ausgeführt wird. </li>\n  <li> Klicken Sie auf keine Schaltflächen, bis alle Prüf- und Reparaturvorgänge abgeschlossen sind. Starten Sie keine Prozesse! </li>\n  <li> Führen Sie zuerst die Dateisystemprüfung durch. </li>\n  <li> Wenn Sie Fehler im Protokoll sehen, führen Sie die Dateisystemreparatur durch. </li>\n  <li> Wenn der Reparaturvorgang abgeschlossen ist, schalten Sie den Computer aus und trennen Sie die Speichergeräte vor dem Booten. </li>\n  </ol>",
     "fsck_check_m": "Prüfung eingeleitet",
     "fsck_autorepair_m": "Reparatur eingeleitet"
-  },
-  "upload": {
-    "upload": "Hochladen"
   },
   "update": {
     "header": "Little Backup Box Updater",

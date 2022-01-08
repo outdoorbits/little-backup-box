@@ -84,4 +84,3 @@ function cloud_mounted() {
 	echo ${RESULT}
 }
 
-

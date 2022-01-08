@@ -52,9 +52,9 @@ DESTIN_ARG="${2}"
 
 # Source definition
 if [[ " storage camera ios internal " =~ " ${SOURCE_ARG} " ]]; then
-    SOURCE_MODE="${SOURCE_ARG}"
+	SOURCE_MODE="${SOURCE_ARG}"
 else
-    SOURCE_MODE="storage"
+	SOURCE_MODE="storage"
 fi
 
 # Destination definition
@@ -65,7 +65,7 @@ if [[ "${DESTIN_ARG}" =~ ^cloud_.* ]]; then
 		DEST_MODE=""
 	fi
 else
-	if [[ " internal external server " =~ " ${DESTIN_ARG} " ]]; then
+	if [[ " internal external rsyncserver " =~ " ${DESTIN_ARG} " ]]; then
 		DEST_MODE="${DESTIN_ARG}"
 	else
 		DEST_MODE="external"
@@ -109,10 +109,10 @@ function calculate_files_to_sync() {
 
 	if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
 		# Source storage ios internal
-		if [ ${DEST_MODE} = "server" ]; then
-			FILES_TO_SYNC=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+		if [ ${DEST_MODE} = "rsyncserver" ]; then
+			FILES_TO_SYNC=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 		else
-			FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+			FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 		fi
 
 	#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
@@ -123,7 +123,13 @@ function calculate_files_to_sync() {
 		# Source camera
 		sudo mkdir -p "${BACKUP_PATH}"
 		cd "${BACKUP_PATH}"
-		FILES_TO_SYNC=$(sudo gphoto2 --list-files | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){SUM+=$(i+2);}} END {print SUM}')
+		FILES_TO_SYNC=0
+
+		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
+		do
+			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + $(sudo gphoto2 --list-files --folder "${Camera_Sync_Folder}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){SUM+=$(i+2);}} END {print SUM}') ))
+		done
+
 		cd
 
 	else
@@ -154,64 +160,65 @@ umount_device "usb_2"
 # To define a new method, add an elif block (example below)
 
 if [ "${DEST_MODE}" = "external" ]; then
-    # External mode
-    # If display support is enabled, display the specified message
+	# External mode
+	# If display support is enabled, display the specified message
 
-    lcd_message "$(l 'box_backup_insert_storage_1')" "$(l 'box_backup_insert_storage_2')"
+	lcd_message "$(l 'box_backup_insert_storage_1')" "$(l 'box_backup_insert_storage_2')"
 
-    # Wait for a USB storage device (e.g., a USB flash drive)
-    UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
-    MOUNTED_DEVICES+=("${UUID_USB_1}")
+	# Wait for a USB storage device (e.g., a USB flash drive)
+	UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
+	MOUNTED_DEVICES+=("${UUID_USB_1}")
 
-    STORAGE_PATH="${const_STORAGE_MOUNT_POINT}"
+	STORAGE_PATH="${const_STORAGE_MOUNT_POINT}"
 
-    # notify that the storage device has been mounted
-    ret="$(get_storage_spaces ${STORAGE_PATH})"
+	# notify that the storage device has been mounted
+	ret="$(get_storage_spaces ${STORAGE_PATH})"
 
-    IFS="|"
-    set -- $ret
+	IFS="|"
+	set -- $ret
 
-    STOR_SIZE="$(l 'box_backup_storage_size'): $1"
-    STOR_FREE="$(l 'box_backup_storage_free'): $3"
+	STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+	STOR_FREE="$(l 'box_backup_storage_free'): $3"
 
-    unset IFS
+	unset IFS
 
-    lcd_message "$(l 'box_backup_ext_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}"
+	lcd_message "$(l 'box_backup_ext_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}"
 
 	if [ $conf_DISP = true ]; then
 		sleep 2
 	fi
 
 elif [ "${DEST_MODE}" = "internal" ]; then
-    # Internal mode
-    STORAGE_PATH="${const_INTERAL_BACKUP_DIR}"
+	# Internal mode
+	STORAGE_PATH="${const_INTERAL_BACKUP_DIR}"
 
-    ret="$(get_storage_spaces ${STORAGE_PATH})"
+	ret="$(get_storage_spaces ${STORAGE_PATH})"
 
-    IFS="|"
-    set -- $ret
+	IFS="|"
+	set -- $ret
 
-    STOR_SIZE="$(l 'box_backup_storage_size'): $1"
-    STOR_FREE="$(l 'box_backup_storage_free'): $3"
+	STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+	STOR_FREE="$(l 'box_backup_storage_free'): $3"
 
-    unset IFS
+	unset IFS
 
-    # If display support is enabled, notify that the storage device has been mounted
-    lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}"
+	# If display support is enabled, notify that the storage device has been mounted
+	lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}"
 
 	if [ $conf_DISP = true ]; then
-        sleep 2
-    fi
+		sleep 2
+	fi
 
-elif [ "${DEST_MODE}" = "server" ]; then
-        STORAGE_PATH="rsync://${conf_RSYNC_USER}@${conf_RSYNC_SERVER}:${conf_RSYNC_PORT}${conf_RSYNC_PATH}"
+elif [ "${DEST_MODE}" = "rsyncserver" ]; then
+		RSYNC_CONNECTION="rsync://${conf_RSYNC_USER}@${conf_RSYNC_SERVER}:${conf_RSYNC_PORT}/${conf_RSYNC_SERVER_MODULE}"
+		STORAGE_PATH="${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
 
 elif [ "${DEST_MODE}" = "cloud" ]; then
-        lcd_message "+$(l 'box_backup_waiting_for_cloud_1')" "+$(l 'box_backup_waiting_for_cloud_2')" "+${CLOUDSERVICE}"
+		lcd_message "+$(l 'box_backup_waiting_for_cloud_1')" "+$(l 'box_backup_waiting_for_cloud_2')" "+${CLOUDSERVICE}"
 
-        STORAGE_PATH="${const_CLOUD_MOUNT_POINT}/little-backup-box"
+		STORAGE_PATH="${const_CLOUD_MOUNT_POINT}/${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
 
-        mount_cloud "${CLOUDSERVICE}" "${const_CLOUD_MOUNT_POINT}"
+		mount_cloud "${CLOUDSERVICE}" "${const_CLOUD_MOUNT_POINT}"
 
 # elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
 #         lcd_message "+$(l 'box_backup__1')" "+$(l 'box_backup__2')"
@@ -220,9 +227,9 @@ elif [ "${DEST_MODE}" = "cloud" ]; then
 #         STORAGE_PATH
 
 else
-    # no defined mode selected
-    lcd_message "$(l 'box_backup_no_valid_destination_mode_1')" "$(l 'box_backup_no_valid_destination_mode_2')" "$(l 'box_backup_no_valid_destination_mode_3')"
-    exit 1
+	# no defined mode selected
+	lcd_message "$(l 'box_backup_no_valid_destination_mode_1')" "$(l 'box_backup_no_valid_destination_mode_2')" "$(l 'box_backup_no_valid_destination_mode_3')"
+	exit 1
 fi
 
 # END
@@ -241,100 +248,100 @@ sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
 if [ "${SOURCE_MODE}" = "storage" ]; then
 
-    # Source storage
-    # If display support is enabled, display the specified message
-    lcd_message "$(l 'box_backup_insert_source_1')" "$(l 'box_backup_insert_source_2')"
+	# Source storage
+	# If display support is enabled, display the specified message
+	lcd_message "$(l 'box_backup_insert_source_1')" "$(l 'box_backup_insert_source_2')"
 
-    # Source device
-    if [ "${SOURCE_MODE}" = "storage" ]; then
-        if [ "${DEST_MODE}" = "external" ]; then
-            UUID_USB_2=$(mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}")
-            MOUNTED_DEVICES+=("${UUID_USB_2}")
+	# Source device
+	if [ "${SOURCE_MODE}" = "storage" ]; then
+		if [ "${DEST_MODE}" = "external" ]; then
+			UUID_USB_2=$(mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}")
+			MOUNTED_DEVICES+=("${UUID_USB_2}")
 
-            # Set SOURCE_PATH
-            SOURCE_PATH="${const_SOURCE_MOUNT_POINT}"
-        else
-            UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
-            MOUNTED_DEVICES+=("${UUID_USB_1}")
+			# Set SOURCE_PATH
+			SOURCE_PATH="${const_SOURCE_MOUNT_POINT}"
+		else
+			UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
+			MOUNTED_DEVICES+=("${UUID_USB_1}")
 
-            # Set SOURCE_PATH
-            SOURCE_PATH="${const_STORAGE_MOUNT_POINT}"
-        fi
-    fi
+			# Set SOURCE_PATH
+			SOURCE_PATH="${const_STORAGE_MOUNT_POINT}"
+		fi
+	fi
 
-    # notify that the source device has been mounted
-    ret="$(get_storage_spaces ${SOURCE_PATH})"
-    IFS="|"
-    set -- $ret
-    STOR_SIZE="$(l 'box_backup_storage_size'): $1"
-    STOR_USED="$(l 'box_backup_storage_used'): $2"
+	# notify that the source device has been mounted
+	ret="$(get_storage_spaces ${SOURCE_PATH})"
+	IFS="|"
+	set -- $ret
+	STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+	STOR_USED="$(l 'box_backup_storage_used'): $2"
 
-    unset IFS
+	unset IFS
 
-    lcd_message "$(l 'box_backup_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}"
-    if [ $conf_DISP = true ]; then
-        sleep 2
-    fi
+	lcd_message "$(l 'box_backup_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}"
+	if [ $conf_DISP = true ]; then
+		sleep 2
+	fi
 
-    # Create  a .id random identifier file if doesn't exist
-    cd "${SOURCE_PATH}"
-    if [ ! -f *.id ]; then
-        random=$(echo $RANDOM)
-        sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
-    fi
-    ID_FILE=$(ls -t *.id | head -n1)
-    ID="${ID_FILE%.*}"
-    cd
+	# Create  a .id random identifier file if doesn't exist
+	cd "${SOURCE_PATH}"
+	if [ ! -f *.id ]; then
+		random=$(echo $RANDOM)
+		sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
+	fi
+	ID_FILE=$(ls -t *.id | head -n1)
+	ID="${ID_FILE%.*}"
+	cd
 
-    # Set BACKUP_PATH
-    BACKUP_PATH="${STORAGE_PATH}/${ID}"
+	# Set BACKUP_PATH
+	BACKUP_PATH="${STORAGE_PATH}/${ID}"
 
-    # Set SOURCE_IDENTIFIER
-    SOURCE_IDENTIFIER="Source ID: ${ID}"
+	# Set SOURCE_IDENTIFIER
+	SOURCE_IDENTIFIER="Source ID: ${ID}"
 
 elif [ "${SOURCE_MODE}" = "ios" ]; then
-    lcd_message "$(l 'box_backup_connect_ios_1')" "$(l 'box_backup_connect_ios_2')" "$(l 'box_backup_connect_ios_3')"
+	lcd_message "$(l 'box_backup_connect_ios_1')" "$(l 'box_backup_connect_ios_2')" "$(l 'box_backup_connect_ios_3')"
 
-    # Try to mount the iOS device
-    ifuse ${const_IOS_MOUNT_POINT} -o allow_other
+	# Try to mount the iOS device
+	ifuse ${const_IOS_MOUNT_POINT} -o allow_other
 
-    # Waiting for the iOS device to be mounted
-    until [ ! -z "$(ls -A ${const_IOS_MOUNT_POINT})" ]; do
-        lcd_message "$(l 'box_backup_no_ios_waiting_1')" "$(l 'box_backup_no_ios_waiting_2')..."
-        sleep 10
-        sudo ifuse ${const_IOS_MOUNT_POINT} -o allow_other
-    done
+	# Waiting for the iOS device to be mounted
+	until [ ! -z "$(ls -A ${const_IOS_MOUNT_POINT})" ]; do
+		lcd_message "$(l 'box_backup_no_ios_waiting_1')" "$(l 'box_backup_no_ios_waiting_2')..."
+		sleep 10
+		sudo ifuse ${const_IOS_MOUNT_POINT} -o allow_other
+	done
 
-    # Mount iOS device
-    SOURCE_PATH="${const_IOS_MOUNT_POINT}/DCIM"
+	# Mount iOS device
+	SOURCE_PATH="${const_IOS_MOUNT_POINT}/DCIM"
 
-    # Create  a .id random identifier file if doesn't exist
-    cd "${SOURCE_PATH}"
-    if [ ! -f *.id ]; then
-        random=$(echo $RANDOM)
-        sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
-    fi
-    ID_FILE=$(ls -t *.id | head -n1)
-    ID="${ID_FILE%.*}"
-    cd
+	# Create  a .id random identifier file if doesn't exist
+	cd "${SOURCE_PATH}"
+	if [ ! -f *.id ]; then
+		random=$(echo $RANDOM)
+		sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
+	fi
+	ID_FILE=$(ls -t *.id | head -n1)
+	ID="${ID_FILE%.*}"
+	cd
 
-    # Set BACKUP_PATH
-    BACKUP_PATH="${STORAGE_PATH}/iOS/${ID}"
+	# Set BACKUP_PATH
+	BACKUP_PATH="${STORAGE_PATH}/iOS/${ID}"
 
-    # Set SOURCE_IDENTIFIER
-    SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
+	# Set SOURCE_IDENTIFIER
+	SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
 
 elif [ "${SOURCE_MODE}" = "internal" ]; then
-    lcd_message "$(l 'box_backup_int_storage_ok')"
+	lcd_message "$(l 'box_backup_int_storage_ok')"
 
-    # Set SOURCE_PATH
-    SOURCE_PATH="${const_INTERAL_BACKUP_DIR}"
+	# Set SOURCE_PATH
+	SOURCE_PATH="${const_INTERAL_BACKUP_DIR}"
 
-    # Set BACKUP_PATH
-    BACKUP_PATH="${STORAGE_PATH}/internal"
+	# Set BACKUP_PATH
+	BACKUP_PATH="${STORAGE_PATH}/internal"
 
-    # Set SOURCE_IDENTIFIER
-    SOURCE_IDENTIFIER="Internal memory"
+	# Set SOURCE_IDENTIFIER
+	SOURCE_IDENTIFIER="Internal memory"
 
 # elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 #
@@ -346,36 +353,86 @@ elif [ "${SOURCE_MODE}" = "internal" ]; then
 #         SOURCE_IDENTIFIER
 
 elif [ "${SOURCE_MODE}" = "camera" ]; then
-    # Source camera
-    # If display support is enabled, display the specified message
-    lcd_message "$(l 'box_backup_connect_camera_1')" "$(l 'box_backup_connect_camera_2')"
+	# Source camera
+	# If display support is enabled, display the specified message
+	lcd_message "$(l 'box_backup_connect_camera_1')" "$(l 'box_backup_connect_camera_2')"
 
-    # Wait for camera
-    DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
-    while [ -z "${DEVICE}" ]; do
-        sleep 1
-        DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
-    done
+	# Wait for camera
+	DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
+	while [ -z "${DEVICE}" ]; do
+		sleep 1
+		DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
+	done
 
-    # If display support is enabled, notify that the camera is detected
-    lcd_message "$(l 'box_backup_camera_ok')" "$(l 'box_backup_working')..."
+	# If display support is enabled, notify that the camera is detected
+	lcd_message "$(l 'box_backup_camera_ok')" "$(l 'box_backup_working')..."
 
-    # Obtain camera model
-    # Create the target directory with the camera model as its name
-    CAMERA=$(sudo gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
+	# Obtain camera model
+	# Create the target directory with the camera model as its name
+	CAMERA=$(sudo gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
 
-    #Set SOURCE_PATH
-    # not used
+	log_message "Camera: ${CAMERA}" 1
 
-    # Set BACKUP_PATH
-    BACKUP_PATH="${STORAGE_PATH}/${CAMERA}"
+	#Set SOURCE_PATH
+	# not used
 
-    # Set SOURCE_IDENTIFIER
-    SOURCE_IDENTIFIER="Camera: ${CAMERA}"
+	# Set BACKUP_PATH
+	BACKUP_PATH="${STORAGE_PATH}/${CAMERA}"
+
+	# Set SOURCE_IDENTIFIER
+	SOURCE_IDENTIFIER="Camera: ${CAMERA}"
+
+	# XXX Define source-folders
+	Camera_Search_Folders=()
+	if [ ! -z "${conf_BACKUP_CAMERA_FOLDER_MASK}" ]; then
+		IFS=";"
+			read -a Camera_Masks <<< "${conf_BACKUP_CAMERA_FOLDER_MASK}"
+		unset IFS
+
+		for Camera_Mask in "${Camera_Masks[@]}"
+		do
+			MaskSetCamera="$(cut -d':' -f1 <<< "${Camera_Mask}")"
+			MaskSetFolder="$(cut -d':' -f2 <<< "${Camera_Mask}")"
+
+			if [ "${MaskSetCamera}" = "${CAMERA}" ] || [ "${MaskSetCamera}" = "*" ]; then
+				if [ ! -z "${MaskSetFolder}" ]; then
+					Camera_Search_Folders+=("$MaskSetFolder")
+				fi
+			fi
+		done
+	fi
+
+	Camera_Folders=( $(sudo gphoto2 --list-folders | cut -d"'" -f2 | grep "^/") )
+
+	Camera_Sync_Folders=()
+	for Camera_Folder in "${Camera_Folders[@]}"
+	do
+		for Camera_Search_Folder in "${Camera_Search_Folders[@]}"
+		do
+			if [[ "${Camera_Folder}" =~ "${Camera_Search_Folder}" ]]; then
+
+				known=false
+				for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
+				do
+					if [[ ${Camera_Folder} = ${Camera_Sync_Folder}* ]]; then
+						known=true
+					fi
+				done
+
+				if [ $known = false ]; then
+					Camera_Sync_Folders+=("${Camera_Folder}")
+				fi
+			fi
+		done
+	done
+
+	if [ ${#Camera_Sync_Folders[@]} -eq 0 ]; then
+		Camera_Sync_Folders=("/")
+	fi
 
 else
-    # no defined mode selected
-    lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "+1"
+	# no defined mode selected
+	lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "+1"
 fi
 
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
@@ -453,28 +510,27 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
 		# If source is storage or ios
 
-		if [ ${DEST_MODE} = "server" ]; then
-
-			# to server
+		if [ ${DEST_MODE} = "rsyncserver" ]; then
+			# to rsyncserver
 			if [ $conf_LOG_SYNC = true ]; then
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${conf_RSYNC_PATH} && rsync" --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")\n"
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --mkpath --no-perms --stats --exclude "*.id" --exclude "*tims/" --log-file="${LogFileSync}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/")\n"
 				SYNC_RETURN_CODE=$?
 				log_pick_file "${LogFileSync}"
 			else
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --rsync-path="mkdir -p ${conf_RSYNC_PATH} && rsync" --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")\n"
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --mkpath --no-perms --stats --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/")\n"
 				SYNC_RETURN_CODE=$?
 			fi
 
 		else
-			# not to server
+			# not to rsyncserver
 			sudo mkdir -p "${BACKUP_PATH}"
 
 			if [ $conf_LOG_SYNC = true ]; then
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" --log-file="${LogFileSync}" "$SOURCE_PATH"/ "$BACKUP_PATH")\n"
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --log-file="${LogFileSync}" "${SOURCE_PATH}"/ "${BACKUP_PATH}")\n"
 				SYNC_RETURN_CODE=$?
 				log_pick_file "${LogFileSync}"
 			else
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" "$SOURCE_PATH"/ "$BACKUP_PATH")\n"
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}"/ "${BACKUP_PATH}")\n"
 				SYNC_RETURN_CODE=$?
 			fi
 
@@ -498,14 +554,18 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		cd "${BACKUP_PATH}"
 
 		# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
-		if [ $conf_LOG_SYNC = true ]; then
-			SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files --debug-logfile "${LogFileSync}")\n"
-			SYNC_RETURN_CODE=$?
-			log_pick_file "${LogFileSync}"
-		else
-			SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --skip-existing --list-files)\n"
-			SYNC_RETURN_CODE=$?
-		fi
+		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
+		do
+			if [ $conf_LOG_SYNC = true ]; then
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}"  --skip-existing --list-files --debug-logfile "${LogFileSync}")\n"
+				SYNC_RETURN_CODE=$?
+				log_pick_file "${LogFileSync}"
+			else
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}" --skip-existing --list-files)\n"
+				SYNC_RETURN_CODE=$?
+			fi
+		done
+
 		cd
 	else
 		# no defined mode selected
@@ -567,13 +627,18 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 
 done # retry
 
+# umount (try, state unknown)
+umount_device "usb_1"
+umount_device "usb_2"
+sudo umount "${const_CLOUD_MOUNT_POINT}" > /dev/null 2>&1
+
 # prepare message for mail and power off
 if [ -z "${SYNC_ERROR}" ]; then
-    MESSAGE="$(l 'box_backup_complete')."
+	MESSAGE="$(l 'box_backup_complete')."
 else
-    MESSAGE=""
-    if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]]; then MESSAGE="$(l 'box_backup_lost_device') "; fi
-    if [[ "${SYNC_ERROR}" =~ "Files missing!" ]]; then MESSAGE="${MESSAGE}$(l 'box_backup_files_missing')"; fi
+	MESSAGE=""
+	if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]]; then MESSAGE="$(l 'box_backup_lost_device') "; fi
+	if [[ "${SYNC_ERROR}" =~ "Files missing!" ]]; then MESSAGE="${MESSAGE}$(l 'box_backup_files_missing')"; fi
 fi
 
 # Check internet connection and send
@@ -581,15 +646,15 @@ fi
 check=$(wget -q --spider http://google.com/)
 if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
 
-    if [ ! -z "${MESSAGE}" ]; then
-        SUBJ_MSG="${MESSAGE}"
-        BODY_MSG="${MESSAGE}\n\n"
-    else
-        SUBJ_MSG="$(l 'box_backup_complete')"
-        BODY_MSG=""
-    fi
+	if [ ! -z "${MESSAGE}" ]; then
+		SUBJ_MSG="${MESSAGE}"
+		BODY_MSG="${MESSAGE}\n\n"
+	else
+		SUBJ_MSG="$(l 'box_backup_complete')"
+		BODY_MSG=""
+	fi
 
-    send_email "Little Backup Box: $(l 'box_backup_mail_backup') ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): ${SOURCE_MODE} $(l 'box_backup_mail_to') ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+	send_email "Little Backup Box: $(l 'box_backup_mail_backup') ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): ${SOURCE_MODE} $(l 'box_backup_mail_to') ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 fi
 
 # Power off

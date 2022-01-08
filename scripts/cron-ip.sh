@@ -97,26 +97,22 @@ if [ ! -z $conf_SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
 	TEXT_PLAIN="
 $(l 'box_mail_desription_https'):
 $(l 'box_cronip_mail_main'): https://${IP}
-$(l 'mainmenue_upload'): https://${IP}/upload.php
 $(l 'mainmenue_filebrowser'): https://${IP}/files
 ${MEJIRO_HTTPS_PLAIN}
 
 $(l 'box_cronip_mail_desription_http'):
 $(l 'box_cronip_mail_main'): http://${IP}:8000
-$(l 'mainmenue_upload'): http://${IP}:8000/upload.php
 $(l 'mainmenue_filebrowser'): http://${IP}:8000/files
 ${MEJIRO_HTTP_PLAIN}miniDLNA: http://${IP}:8200"
 
 	TEXT_HTML="
 <b>$(l 'box_cronip_mail_desription_https'):</b><br>
 $(l 'box_cronip_mail_main'): <a href='https://${IP}'>https://${IP}</a><br>
-$(l 'mainmenue_upload'): <a href='https://${IP}/upload.php'>https://${IP}/upload.php</a><br>
 $(l 'mainmenue_filebrowser'): <a href='https://${IP}/files'>http://${IP}/files</a><br>
 ${MEJIRO_HTTPS_HTML}
 <br>
 <b>$(l 'box_cronip_mail_desription_http'):</b><br>
 $(l 'box_cronip_mail_main'): <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
-$(l 'mainmenue_upload'): <a href='http://${IP}:8000/upload.php'>http://${IP}:8000/upload.php</a><br>
 $(l 'mainmenue_filebrowser'): <a href='http://${IP}:8000/files'>http://${IP}:8000/files</a><br>
 ${MEJIRO_HTTP_HTML}
 miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"

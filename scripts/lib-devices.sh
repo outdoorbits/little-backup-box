@@ -231,7 +231,7 @@ function device_mounted() {
 
 function umount_device() {
 	# Takes 1 argument
-	# UMOUNT: one of ("usb_1" "usb_2") or mount-point or UUID
+	# UMOUNT: one of ("usb_1" "usb_2") or mount-point
 	# returns uuid ("ios" for iOS) or false (if not mounted), "na" for not available
 
 	# Arguments

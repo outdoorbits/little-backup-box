@@ -13,8 +13,7 @@
     "tools": "Instrumentos",
     "filebrowser": "Archivos",
     "minidlna": "MiniDLNA",
-    "mejiro": "Mejiro",
-    "upload": "Subir"
+    "mejiro": "Mejiro"
   },
   "main": {
     "source_button": "fuente",
@@ -41,7 +40,8 @@
     "cpuload": "Carga de CPU",
     "memory": "Almacenamiento",
     "devices": "Dispositivos",
-    "diskspace": "Espacio del disco"
+    "diskspace": "Espacio del disco",
+    "camera": "Cámara / teléfono inteligente"
   },
   "config": {
     "config": "Ajustes",
@@ -73,8 +73,6 @@
     "behavior_loglevel_header": "Nivel de registro",
     "behavior_loglevel_text": "¿Registrar eventos del sistema (en el Monitor de registro)? <br> (Archivo de registro:",
     "behavior_loglevel_label": "Seleccione el nivel de registro:",
-    "behavior_log_sync_protokoll_header": "Protocolo de sincronización de registros",
-    "behavior_log_sync_protokoll_label": "¿Registrar detalles de sincronización?",
     "view_section": "vista",
     "view_theme_header": "Esquema de colores",
     "view_theme_label": "Seleccione un tema de color:",
@@ -105,9 +103,6 @@
     "rsync_user_label": "Nombre de usuario para el servidor rsync",
     "rsync_password_header": "Contraseña",
     "rsync_password_label": "Contraseña para el servidor rsync",
-    "rsync_path_header": "rsync-ruta",
-    "rsync_path_label1": "Módulo y ruta en el servidor rsync, p. Ej. '/ little-backup-box' (predeterminado:",
-    "rsync_path_label2": "). <br> Se compone de & quot; / & quot ;, el nombre del módulo (en rsyncd.conf definido en [corchetes]) y posiblemente una ruta debajo del módulo. Este camino debe existir. P.ej. para el módulo [little-backup-box] & quot; / little-backup-box & quot; o & quot; / little-backup-box / my_trip & quot ;. En el último caso, asegúrese de que la ruta & quot; my_trip & quot; existe. Compare <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
     "password_section": "Contraseña global",
     "password_header": "Nueva contraseña global",
     "password_label1": "La contraseña para proteger su Little-Backup-Box. Se utiliza para la interfaz web, el navegador de archivos, ssh y samba-Windows-share. El nombre de usuario en todos los casos es lbb. Para el usuario de linux & quot; pi & quot; la contraseña también está configurada.",
@@ -143,7 +138,16 @@
     "alert_password_rsync_header": "rsync-contraseña",
     "behavior_power_off_idle_time_header": "Apagar después de un tiempo de inactividad",
     "behavior_power_off_idle_time_label": "Seleccione el tiempo de inactividad después del cual se debe detener el sistema.",
-    "behavior_power_off_idle_time_none": "De ninguna manera"
+    "behavior_power_off_idle_time_none": "De ninguna manera",
+    "backup_target_basedir_cloud_header": "Carpeta base en el servidor en la nube (destino)",
+    "backup_target_basedir_cloud_label": "La sauvegarde sur le serveur cloud s'effectue sous ce répertoire.",
+    "rsync_module_header": "Módulo rsync",
+    "rsync_module_label1": "Nombre del módulo en el servidor rsync, por ejemplo, 'little-backup-box' (predeterminado:",
+    "rsync_module_label2": "). <br> El nombre del módulo se define en el lado del servidor en rsyncd.conf y se establece entre [corchetes]. También tenga en cuenta <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
+    "backup_log_sync_protokoll_header": "Protocolo de sincronización de registros",
+    "backup_log_sync_protokoll_label": "¿Registrar detalles de sincronización?",
+    "backup_camera_folder_mask_header": "Directorios para respaldar en teléfonos inteligentes y cámaras",
+    "backup_camera_folder_mask_label": "En el & quot; Sistema & quot; en \"Cámara / Smartphone\" está el nombre de un dispositivo conectado, en el ejemplo \"Cámara1\". & quot; * & quot; (sin más adiciones) se puede utilizar como comodín para todos los dispositivos. <br>\nLos directorios pueden ingresarse por completo o reducirse a una parte significativa. & quot; DCIM & quot; encontraría todos los directorios que contienen esta cadena. & quot; / store_00010001 / DCIM & quot; solo se aplica a este directorio y sus subdirectorios. <br>\nPara definir carpetas para un dispositivo, siga este patrón: <br>\n\"Cámara1: Directorio1; Cámara1: Directorio2; Cámara2: Directorio3\" <br>\nLas entradas respectivas siempre deben estar precedidas por & quot ;; & quot; estar separados unos de otros. El dispositivo y el directorio se identifican con \":\" apartado. No se permiten espacios adicionales."
   },
   "tools": {
     "tools": "Instrumentos",
@@ -158,9 +162,6 @@
     "help_text": "<h2> Reparar </h2>\n  <p class = 'text-center'> <mark> No lo use a menos que sepa lo que está haciendo. ¡Podría dañar su almacenamiento! </mark> </p>\n  <h3> Procedimiento: </h3>\n  <ol>\n  <li> Verifique su fuente de alimentación. La interrupción del suministro eléctrico puede dañar el almacenamiento sin posibilidad de reparación. </li>\n  <li> Asegúrese de que no se esté ejecutando ningún trabajo de respaldo. </li>\n  <li> No haga clic en ningún botón hasta que se hayan completado todas las operaciones de verificación y reparación. ¡No inicie ningún proceso! </li>\n  <li> Ejecute primero la verificación del sistema de archivos. </li>\n  <li> Si ve algún error en el registro, ejecute la reparación del sistema de archivos. </li>\n  <li> Cuando finalice la operación de reparación, apague la máquina y desconecte los dispositivos de almacenamiento antes de arrancar. </li>\n  </ol>",
     "fsck_check_m": "verificación iniciada",
     "fsck_autorepair_m": "reparación iniciada"
-  },
-  "upload": {
-    "upload": "Subir"
   },
   "update": {
     "header": "Little Backup Box Updater",

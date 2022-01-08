@@ -39,7 +39,6 @@ sub expects from calling script:
 				echo ("<li class=\"nav-item\"><a class=\"nav-link\" href='/mejiro' target='_blank'>" . L::mainmenue_mejiro . "</a></li>");
 			}
 		?>
-		<li class="float-right"><a class="nav-link<?php echo $scriptname=="upload.php"?" active":""; ?>" href="upload.php"><?php echo L::mainmenue_upload; ?></a></li>
       </ul>
 
     </div>
