@@ -43,8 +43,9 @@ As there is no manual available anymore, I started to edit the github-wiki <a hr
 
 <h2>Installation</h2>
 <ol>
-	<li>Create a bootable SD card with the latest version of Raspberry Pi OS Lite (32 or 64 bit) for use with Little Backup Box.</li>
-	<li>Add an empty (text-)file "ssh" to the new boot-partition to enable ssh.</li>
+	<li>Create a bootable SD card with the latest version of Raspberry Pi OS Lite (32 or 64 bit) for use with Little Backup Box.<br>
+		An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select &quot;Raspberry Pi OS (other)&quot; &gt; &quot;Raspberry Pi OS Lite (32-bit)&quot;. If you need, you can enable ssh by Raspberry Pi Imager: Shift+Ctrl+x opens an options-dialog, where you can activate ssh. Write ...</li>
+	<li>If you couldn't activate ssh in the previous step, just add an empty (text-)file "ssh" to the new boot-partition to enable ssh.</li>
 	<li>Do not change any more settings (language!).</li>
 	<li>Make sure that your Raspberry Pi is connected to the internet.</li>
 	<li>
