@@ -150,6 +150,8 @@ sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 # Unmount devices
 umount_device "usb_1"
 umount_device "usb_2"
+sudo fusermount -uz "${const_IOS_MOUNT_POINT}"
+sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}"
 
 #########################
 # MANAGE STORAGE DEVICE #
@@ -371,6 +373,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 	# Create the target directory with the camera model as its name
 	CAMERA=$(sudo gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
 
+	lcd_message "${CAMERA}"
 	log_message "Camera: ${CAMERA}" 1
 
 	#Set SOURCE_PATH
@@ -630,7 +633,8 @@ done # retry
 # umount (try, state unknown)
 umount_device "usb_1"
 umount_device "usb_2"
-sudo umount "${const_CLOUD_MOUNT_POINT}" > /dev/null 2>&1
+sudo fusermount -uz "${const_IOS_MOUNT_POINT}"
+sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}"
 
 # prepare message for mail and power off
 if [ -z "${SYNC_ERROR}" ]; then

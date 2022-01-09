@@ -218,7 +218,8 @@
         "to": "a",
         "tries_needed": "intentar/intentos necesarios"
       },
-      "try": "tratar"
+      "try": "tratar",
+      "checking_old_files": "comparando"
     },
     "cronip": {
       "offline": "desconectado",

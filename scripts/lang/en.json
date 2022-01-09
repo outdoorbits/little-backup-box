@@ -50,6 +50,7 @@
       "complete": "Backup complete",
       "lost_device": "Err.Lost device!",
       "files_missing": "Files missing!",
+      "checking_old_files": "comparing",
       "status": "Backup status",
       "mail": {
         "backup": "Backup",

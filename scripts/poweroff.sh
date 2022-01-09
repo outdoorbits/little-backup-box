@@ -33,6 +33,9 @@ IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
+#load DEVICES library
+. "${WORKING_DIR}/lib-devices.sh"
+
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
 
@@ -44,10 +47,10 @@ MESSAGE="${3}"
 # Power off
 if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     # umount
-    sudo umount "${const_STORAGE_MOUNT_POINT}"
-    sudo umount "${const_SOURCE_MOUNT_POINT}"
-    sudo umount "${const_CLOUD_MOUNT_POINT="/media/cloud"}"
-	sudo umount "${const_IOS_MOUNT_POINT="/media/iOS"}"
+    umount_device "usb_1"
+	umount_device "usb_2"
+	sudo fusermount -uz "${const_IOS_MOUNT_POINT}"
+	sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}"
 
     if [ "${ACTION}" = "poweroff" ]; then
         if [ -z "${MESSAGE}" ]; then

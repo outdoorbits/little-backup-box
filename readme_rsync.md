@@ -8,6 +8,7 @@
 	#global (global settings)
 	log file = /var/log/rsync.log
 	timeout = 300
+	max connections = 0
 	
 	#profiles
 	[MODULENAME]

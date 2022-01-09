@@ -218,7 +218,8 @@
         "to": "nach",
         "tries_needed": "Versuch(e) erforderlich"
       },
-      "try": "Versuch"
+      "try": "Versuch",
+      "checking_old_files": "abgleichen"
     },
     "cronip": {
       "offline": "offline",

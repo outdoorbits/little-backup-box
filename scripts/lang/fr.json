@@ -218,7 +218,8 @@
         "to": "à",
         "tries_needed": "essai/essais nécessaires"
       },
-      "try": "essayer"
+      "try": "essayer",
+      "checking_old_files": "comparant"
     },
     "cronip": {
       "offline": "hors ligne",

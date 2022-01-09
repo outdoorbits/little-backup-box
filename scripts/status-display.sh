@@ -45,50 +45,55 @@ TIME_RUN=0
 
 # Count of files in storage before backup starts
 if [ "${DEST_MODE}" = "rsyncserver" ]; then
-    FILES_TO_TRANSFER_START=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+	FILES_TO_TRANSFER_START=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
 else
-    FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
+	FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
 fi
 
 while [ true ]; do
-    # Count files in the backup destination
-    # Calculate the number of files to be transferred
+	# Count files in the backup destination
+	# Calculate the number of files to be transferred
 
-    if [ "${DEST_MODE}" = "rsyncserver" ]; then
-        FILES_TO_TRANSFER=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
-        FILES_SYNCED=$(expr $FILES_TO_TRANSFER_START - $FILES_TO_TRANSFER)
-    else
-        FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
-        FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
-    fi
+	if [ "${DEST_MODE}" = "rsyncserver" ]; then
+		FILES_TO_TRANSFER=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+		FILES_SYNCED=$(expr $FILES_TO_TRANSFER_START - $FILES_TO_TRANSFER)
+	else
+		FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
+		FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
+	fi
 
-    if [ "${FILES_TO_SYNC}" -gt "0" ];
-    then
-        FINISHED_PERCENT=$(expr 100 \* $FILES_SYNCED / $FILES_TO_SYNC)
+	if [ "${FILES_TO_SYNC}" -gt "0" ];
+	then
+		if [ "${FILES_SYNCED}" -gt "0" ];
+		then
+			FINISHED_PERCENT=$(expr 100 \* $FILES_SYNCED / $FILES_TO_SYNC)
 
-        PROGRESSBAR_LENGTH=$(expr $LineLength \* $FILES_SYNCED / $FILES_TO_SYNC)
-        PROGRESSBAR=$(printf %${PROGRESSBAR_LENGTH}s | tr " " ">")
-    else
-        FINISHED_PERCENT="?"
-        PROGRESSBAR=""
-    fi
+			PROGRESSBAR_LENGTH=$(expr $LineLength \* $FILES_SYNCED / $FILES_TO_SYNC)
+			PROGRESSBAR=$(printf %${PROGRESSBAR_LENGTH}s | tr " " ">")
+		else
+			PROGRESSBAR="$(l 'box_backup_checking_old_files')..."
+		fi
+	else
+		FINISHED_PERCENT="?"
+		PROGRESSBAR=""
+	fi
 
-    if [ "${FILES_SYNCED}" -gt "0" ]; then
+	if [ "${FILES_SYNCED}" -gt "0" ]; then
 		TIME_RUN=$(echo "$(date +%s) - ${SYNC_START_TIME}" | bc)
 		TIME_LEFT=$(echo "${TIME_RUN} * ( ${FILES_TO_SYNC} - ${FILES_SYNCED} ) / ${FILES_SYNCED}" | bc)
-		TIME_LEFT_FORMAT=$(date -d@${TIME_LEFT} -u +%H:%M:%S)
+		TIME_LEFT_FORMATED=$(date -d@${TIME_LEFT} -u +%H:%M:%S)
 	else
-		TIME_LEFT_FORMAT=""
+		TIME_LEFT_FORMATED=""
 	fi
-	TIME_SPACER_LENGTH=$(echo "${LineLength} - ${#FINISHED_PERCENT} - 1 - ${#TIME_LEFT_FORMAT}" | bc)
+	TIME_SPACER_LENGTH=$(echo "${LineLength} - ${#FINISHED_PERCENT} - 1 - ${#TIME_LEFT_FORMATED}" | bc)
 	TIME_SPACER=$(printf %${TIME_SPACER_LENGTH}s)
-    lcd_message "+$(l 'box_backup_status'):" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%${TIME_SPACER}${TIME_LEFT_FORMAT}" "-${PROGRESSBAR}"
+	lcd_message "+$(l 'box_backup_status'):" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%${TIME_SPACER}${TIME_LEFT_FORMATED}" "-${PROGRESSBAR}"
 
-    # display-frequency depends on destination, slower for cloud-storage
-    INTERVAL_SEC=4
-    if [[ " external internal " =~ " ${DEST_MODE} " ]]; then
+	# display-frequency depends on destination, slower for cloud-storage
+	INTERVAL_SEC=4
+	if [[ " external internal " =~ " ${DEST_MODE} " ]]; then
 		INTERVAL_SEC=2
 	fi
-    sleep "${INTERVAL_SEC}"
+	sleep "${INTERVAL_SEC}"
 
 done
