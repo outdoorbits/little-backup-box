@@ -71,7 +71,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	<?php
 	if (isset($_POST['mount_usb_1'])) {
 			$command = "./mount-storage.sh mount usb_1";
-			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
+			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}");
 			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
@@ -79,7 +79,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	}
 	if (isset($_POST['umount_usb_1'])) {
 			$command = "./mount-storage.sh umount usb_1";
-			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
+			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}");
 			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
@@ -87,7 +87,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	}
 	if (isset($_POST['mount_usb_2'])) {
 			$command = "./mount-storage.sh mount usb_2";
-			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
+			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}");
 			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
@@ -95,7 +95,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	}
 	if (isset($_POST['umount_usb_2'])) {
 			$command = "./mount-storage.sh umount usb_2";
-			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
+			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}");
 			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
@@ -112,7 +112,7 @@ include($WORKING_DIR . "/sub-popup.php");
 			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 
 			$command = "sudo fsck /dev/${device}";
-			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
+			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}");
 			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 	}
 	if (isset($_POST['fsck_autorepair'])) {
@@ -126,10 +126,10 @@ include($WORKING_DIR . "/sub-popup.php");
 			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 
 			$command = "sudo fsck -a /dev/${device}";
-			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
+			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}");
 			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 	}
-echo ("XXX ${LogFile}");
+
 	?>
 </body>
 
