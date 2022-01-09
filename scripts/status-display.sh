@@ -82,6 +82,10 @@ while [ true ]; do
 		TIME_RUN=$(echo "$(date +%s) - ${SYNC_START_TIME}" | bc)
 		TIME_LEFT=$(echo "${TIME_RUN} * ( ${FILES_TO_SYNC} - ${FILES_SYNCED} ) / ${FILES_SYNCED}" | bc)
 		TIME_LEFT_FORMATED=$(date -d@${TIME_LEFT} -u +%H:%M:%S)
+		DAYS_LEFT=$((TIME_LEFT/86400))
+		if [ "${DAYS_LEFT}" -gt "0" ]; then
+			TIME_LEFT_FORMATED="${DAYS_LEFT}d ${TIME_LEFT_FORMATED}"
+		fi
 	else
 		TIME_LEFT_FORMATED=""
 	fi
