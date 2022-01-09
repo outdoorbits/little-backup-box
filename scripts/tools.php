@@ -59,6 +59,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	</div>
 
 	<?php include "sub-logmonitor.php"; ?>
+	<?php include "lib-log-helper.php"; ?>
 
 	<div class="card" style="margin-top: 3em;">
 		<details>
@@ -71,7 +72,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	if (isset($_POST['mount_usb_1'])) {
 			$command = "./mount-storage.sh mount usb_1";
 			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
-			exec ("echo \"${MSG}\" > \"${LogFile}\"");
+			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
 			echo "</script>";
@@ -79,7 +80,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	if (isset($_POST['umount_usb_1'])) {
 			$command = "./mount-storage.sh umount usb_1";
 			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
-			exec ("echo \"${MSG}\" > \"${LogFile}\"");
+			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
 			echo "</script>";
@@ -87,7 +88,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	if (isset($_POST['mount_usb_2'])) {
 			$command = "./mount-storage.sh mount usb_2";
 			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
-			exec ("echo \"${MSG}\" > \"${LogFile}\"");
+			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
 			echo "</script>";
@@ -95,7 +96,7 @@ include($WORKING_DIR . "/sub-popup.php");
 	if (isset($_POST['umount_usb_2'])) {
 			$command = "./mount-storage.sh umount usb_2";
 			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
-			exec ("echo \"${MSG}\" > \"${LogFile}\"");
+			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
 			echo "</script>";
@@ -105,29 +106,30 @@ include($WORKING_DIR . "/sub-popup.php");
 			$device = $_POST['partition'];
 
 			popup($device . l::tools_fsck_check_m,$config["conf_POPUP_MESSAGES"]);
-			echo "</script>";
 
 			$command = "sudo umount /dev/${device}";
 			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}");
+			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 
 			$command = "sudo fsck /dev/${device}";
 			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
-			exec ("echo \"${MSG}\" > \"${LogFile}\"");
+			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 	}
 	if (isset($_POST['fsck_autorepair'])) {
 
 			$device = $_POST['partition'];
 
 			popup($device . l::tools_fsck_autorepair_m,$config["conf_POPUP_MESSAGES"]);
-			echo "</script>";
 
 			$command = "sudo umount /dev/${device}";
 			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}");
+			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 
 			$command = "sudo fsck -a /dev/${device}";
 			$MSG=date("H:i:s") . "\n> ${command}:\\n" . shell_exec("${command}") . "\\n" . shell_exec ("cat \"${LogFile}\"");
-			exec ("echo \"${MSG}\" > \"${LogFile}\"");
+			exec ("./lib-log-helper.sh \"log_message\" \"${MSG}\" \"\" \"1\"");
 	}
+echo ("XXX ${LogFile}");
 	?>
 </body>
 

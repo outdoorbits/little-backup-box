@@ -61,13 +61,13 @@ EOF
 
 	# Linux
 	echo "pi:${conf_PASSWORD}" | sudo chpasswd
-	echo "lbb:${conf_PASSWORD}" | sudo chpasswd
+	echo "${USER}:${conf_PASSWORD}" | sudo chpasswd
 
 	# Samba
 	echo -e "${conf_PASSWORD}\n${conf_PASSWORD}" | sudo smbpasswd -a -s "${USER}" # change/create smb-password
 
 		cat <<EOF | sudo tee "/etc/samba/login.conf"
-#		valid users = ${USER}
+		valid users = ${USER}
 		guest ok = no
 EOF
 

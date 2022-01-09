@@ -76,11 +76,12 @@ function log_level_reached() {
 
 function log_pick_file() {
 	local FILENAME="${1}"
+	local LEVEL="${2}"
 
 	if [ -f "${FILENAME}" ]; then
-		log_message "${FILENAME}: >>>>>\n$(cat ${FILENAME})\n<<<<<"
+		log_message "${FILENAME}: >>>>>\n$(cat ${FILENAME})\n<<<<<" "${LEVEL}"
 	else
-		log_message "${FILENAME}: >>>>>\nFile not found.\n<<<<<"
+		log_message "${FILENAME}: >>>>>\nFile not found.\n<<<<<" "${LEVEL}"
 	fi
 
 	rm "${FILENAME}"

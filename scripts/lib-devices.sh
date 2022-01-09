@@ -152,7 +152,7 @@ function mount_device() {
 				sudo rm -R "${MOUNT_POINT}"/*  > /dev/null 2>&1
 
 				sleep 1
-				RET=$(sudo mount ${DEVICE_IDENT_THIS} "${MOUNT_POINT}" -o umask=0 2>&1)
+				RET=$(sudo mount ${DEVICE_IDENT_THIS} "${MOUNT_POINT}" -o noacl 2>&1)
 				log_message "mounted ${MOUNT_DEVICE} '${DEVICE_IDENT_THIS}' at '${MOUNT_POINT}': Msg.='${RET}'" 2
 			else
 				log_message "${MOUNT_DEVICE} already mounted, nothing to do." 3
