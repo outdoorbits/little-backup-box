@@ -20,6 +20,7 @@
 
 # sub expects from calling script:
 # - source config.cfg
+# - source constants.sh
 # - source lib-log.sh
 # - source lib-lcd.sh
 # - source lib-language.sh

@@ -18,9 +18,9 @@
 #######################################################################
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
-CONFIG_STANDARDS="${WORKING_DIR}/config-standards.cfg"
-CONSTANTS="${WORKING_DIR}/constants.sh"
+source "$CONFIG"
 
 # Check and complete config.cfg
 dos2unix "$CONFIG"
@@ -31,6 +31,9 @@ dos2unix "$CONFIG"
 # delete IP_MAIL_SENT_MARKERFILE
 IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 sudo rm "${IP_MAIL_SENT_MARKERFILE}"
+
+echo "" | sudo tee "${FILE_OLED_OLD}"
+echo "Little Backup Box" | sudo tee "${const_LOGFILE}"
 
 # add missing config-parameters to config-file
 while read CONFIG_STANDARD;
@@ -48,9 +51,6 @@ do
 done < "${CONFIG_STANDARDS}"
 
 unset IFS
-
-# load constants
-source "$CONSTANTS"
 
 # Load config.cfg
 source "$CONFIG"

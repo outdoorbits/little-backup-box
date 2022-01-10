@@ -20,6 +20,7 @@
 # library expects from calling script:
 # - WORKING_DIR
 # - source config.cfg
+# - source constants.sh
 # - source lib-log.sh
 
 # Definitions
@@ -36,30 +37,26 @@ function lcd_message () {
 	LineCount=$#
 	Lines=( "$@" )
 
-	#Config
-	FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
-	LockFile="${WORKING_DIR}/tmp/display.lock"
-
 	#Wait for Lockfile
-	if [ -f "${LockFile}" ]; then
+	if [ -f "${const_DISPLAY_LOCKFILE}" ]; then
 
-		LockFileTime=$(sudo head -n 1 ${LockFile})
+		DispayLockFileTime=$(sudo head -n 1 ${const_DISPLAY_LOCKFILE})
 		ActualTime=$(date +%s.%N )
 
-		TimeDiff=$(echo "${ActualTime} - ${LockFileTime}" | bc)
+		TimeDiff=$(echo "${ActualTime} - ${DispayLockFileTime}" | bc)
 
 		while (( $(echo "${TimeDiff} < 2.0" | bc -l) ))
 		do
-			LockFileTime=$(sudo head -n 1 ${LockFile})
+			DispayLockFileTime=$(sudo head -n 1 ${const_DISPLAY_LOCKFILE})
 			ActualTime=$(date +%s.%N )
 
-			TimeDiff=$(echo "${ActualTime} - ${LockFileTime}" | bc)
+			TimeDiff=$(echo "${ActualTime} - ${DispayLockFileTime}" | bc)
 
 			sleep 1
 		done
 	fi
 
-	date +%s.%N | tee "${LockFile}" > /dev/null 2>&1
+	date +%s.%N | tee "${const_DISPLAY_LOCKFILE}" > /dev/null 2>&1
 
 	# clear screen
 	if [ "${LineCount}" -eq "0" ];
@@ -74,8 +71,8 @@ function lcd_message () {
 	fi
 
 	#fifo display
-	if [ -f "${FILE_OLED_OLD}" ]; then
-		readarray -t OLED_OLD < "${FILE_OLED_OLD}"
+	if [ -f "${const_DISPLAY_CONTENT_OLD_FILE}" ]; then
+		readarray -t OLED_OLD < "${const_DISPLAY_CONTENT_OLD_FILE}"
 	fi
 
 	n=$LineCount
@@ -86,7 +83,7 @@ function lcd_message () {
 	done
 
 	#save Lines to file
-	sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}' > '${FILE_OLED_OLD}'"
+	sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}' > '${const_DISPLAY_CONTENT_OLD_FILE}'"
 
 	#display
 	LogLines=""

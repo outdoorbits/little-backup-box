@@ -72,18 +72,30 @@ include($WORKING_DIR . "/sub-popup.php");
 	if (isset($_POST['mount_usb_1'])) {
 			$command = "./mount-storage.sh mount usb_1";
 			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			echo "<script>";
+				echo "window.location = window.location.href;";
+			echo "</script>";
 	}
 	if (isset($_POST['umount_usb_1'])) {
 			$command = "./mount-storage.sh umount usb_1";
 			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			echo "<script>";
+				echo "window.location = window.location.href;";
+			echo "</script>";
 	}
 	if (isset($_POST['mount_usb_2'])) {
 			$command = "./mount-storage.sh mount usb_2";
 			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			echo "<script>";
+				echo "window.location = window.location.href;";
+			echo "</script>";
 	}
 	if (isset($_POST['umount_usb_2'])) {
 			$command = "./mount-storage.sh umount usb_2";
 			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			echo "<script>";
+				echo "window.location = window.location.href;";
+			echo "</script>";
 	}
 	if (isset($_POST['fsck_check'])) {
 
