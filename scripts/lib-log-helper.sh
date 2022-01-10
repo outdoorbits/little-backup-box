@@ -33,7 +33,7 @@ LOGLEVEL="${4}"
 if [ "${JOB}" = "log_message" ]; then
 	log_message "${MESSAGE}" "${LOGLEVEL}"
 elif [ "${JOB}" = "log_exec" ]; then
-	log_exec "${COMMAND}" "${MESSAGE}" "{$LOGLEVEL}"
+	log_exec "${MESSAGE}" "${COMMAND}" "${LOGLEVEL}"
 elif [ "${JOB}" = "log_exec" ]; then
 	log_pick_file "${COMMAND}"
 fi

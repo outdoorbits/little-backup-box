@@ -385,7 +385,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 	# Set SOURCE_IDENTIFIER
 	SOURCE_IDENTIFIER="Camera: ${CAMERA}"
 
-	# XXX Define source-folders
+	# Define source-folders
 	Camera_Search_Folders=()
 	if [ ! -z "${conf_BACKUP_CAMERA_FOLDER_MASK}" ]; then
 		IFS=";"

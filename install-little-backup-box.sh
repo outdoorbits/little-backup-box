@@ -190,7 +190,7 @@ sudo mkdir -p "${const_CLOUD_MOUNT_POINT}"
 
 sudo chown -R ${USER}:${USER} "${const_MEDIA_DIR}"
 sudo chmod -R 777 "${const_MEDIA_DIR}"
-sudo setfacl -Rdm g:$USER:rw "${const_MEDIA_DIR}"
+sudo setfacl -Rdm g:${USER}:rw "${const_MEDIA_DIR}"
 
 # Configure miniDLNA
 echo "Configure miniDLNA"
