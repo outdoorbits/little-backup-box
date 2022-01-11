@@ -37,12 +37,13 @@
 
 		$cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
 
-		$mem_ram = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
-		$mem_ram = round($mem_ram, 1);
+		$mem_ram_frac = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
+		$mem_ram_all = shell_exec("free | grep Mem | awk '{print $2 / 1024}'");
+		$mem_ram = round($mem_ram_frac, 1) . " % * " . round($mem_ram_all) . " MB";
 
 		$mem_swap_frac = shell_exec("free | grep Swap | awk '{print $3/$2 * 100.0}'");
 		$mem_swap_all = shell_exec("free | grep Swap | awk '{print $2 / 1024}'");
-		$mem_swap = round($mem_swap_frac, 1) . " % / " . round($mem_swap_all) . " MB";
+		$mem_swap = round($mem_swap_frac, 1) . " % * " . round($mem_swap_all) . " MB";
 
 		$abnormal_conditions = shell_exec("${WORKING_DIR}/system_conditions.sh 'abnormal_conditions'");
 
@@ -54,13 +55,11 @@
 				echo "<p>" . L::sysinfo_cpuload . ": <strong>" . $cpuusage . "%</strong></p>";
 			}
 
-			if (isset($mem_ram) && is_numeric($mem_ram)) {
-				echo "<p>" . L::sysinfo_memory_ram . ": <strong>" . $mem_ram . "%</strong></p>";
-			}
+			echo "<p>" . L::sysinfo_memory_ram . ": <strong>" . $mem_ram . "</strong></p>";
 
 			echo "<p>" . L::sysinfo_memory_swap . ": <strong>" . $mem_swap . "</strong></p>";
 
-			echo ("<p>" . L::sysinfo_conditions . ": <strong>" . $abnormal_conditions . "</strong></p>");
+			echo "<p>" . L::sysinfo_conditions . ": <strong>" . $abnormal_conditions . "</strong></p>";
 
 		?>
 	</div>
