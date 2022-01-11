@@ -69,6 +69,7 @@ if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     # cleanup
     echo "" | sudo tee "${FILE_OLED_OLD}"
     echo "" | sudo tee "${const_LOGFILE}"
+    echo "" | sudo tee "${const_LOGFILE_SYNC}"
     sudo rm "${IP_MAIL_SENT_MARKERFILE}" > /dev/null 2>&1
 
     if [ "${ACTION}" = "poweroff" ]; then

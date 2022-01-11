@@ -34,6 +34,7 @@ sudo rm "${IP_MAIL_SENT_MARKERFILE}"
 
 echo "" | sudo tee "${FILE_OLED_OLD}"
 echo "Little Backup Box" | sudo tee "${const_LOGFILE}"
+echo "" | sudo tee "${const_LOGFILE_SYNC}"
 
 # add missing config-parameters to config-file
 while read CONFIG_STANDARD;

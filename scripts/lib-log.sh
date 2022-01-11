@@ -78,9 +78,9 @@ function log_pick_file() {
 	local LEVEL="${2}"
 
 	if [ -f "${FILENAME}" ]; then
-		log_message "${FILENAME}: >>>>>\n$(cat ${FILENAME})\n<<<<<" "${LEVEL}"
+		log_message "${FILENAME}:\n>>>>>\n$(cat ${FILENAME})\n<<<<<" "${LEVEL}"
 	else
-		log_message "${FILENAME}: >>>>>\nFile not found.\n<<<<<" "${LEVEL}"
+		log_message "${FILENAME}:\n>>>>>\nFile not found.\n<<<<<" "${LEVEL}"
 	fi
 
 	rm "${FILENAME}"

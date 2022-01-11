@@ -29,8 +29,6 @@ CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
 # Config
-LogFileSync="${WORKING_DIR}/tmp/sync.log"
-
 MOUNTED_DEVICES=()
 UUID_USB_1=""
 UUID_USB_2=""
@@ -127,7 +125,7 @@ function calculate_files_to_sync() {
 
 		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
 		do
-			FILES_IN_FOLDER=$(sudo gphoto2 --list-files --folder "${Camera_Sync_Folder}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder"){SUM+=$(i+2);}} END {print SUM}')
+			FILES_IN_FOLDER=$(sudo gphoto2 --list-files --folder "${Camera_Sync_Folder}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
 			if [ -z "${FILES_IN_FOLDER}" ]; then
 				FILES_IN_FOLDER=0
 			fi
@@ -522,9 +520,9 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		if [ ${DEST_MODE} = "rsyncserver" ]; then
 			# to rsyncserver
 			if [ $conf_LOG_SYNC = true ]; then
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --mkpath --no-perms --stats --exclude "*.id" --exclude "*tims/" --log-file="${LogFileSync}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/")\n"
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --mkpath --no-perms --stats --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/")\n"
 				SYNC_RETURN_CODE=$?
-				log_pick_file "${LogFileSync}"
+				log_pick_file "${const_LOGFILE_SYNC}"
 			else
 				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --mkpath --no-perms --stats --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/")\n"
 				SYNC_RETURN_CODE=$?
@@ -535,9 +533,9 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 			sudo mkdir -p "${BACKUP_PATH}"
 
 			if [ $conf_LOG_SYNC = true ]; then
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --log-file="${LogFileSync}" "${SOURCE_PATH}"/ "${BACKUP_PATH}")\n"
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}")\n"
 				SYNC_RETURN_CODE=$?
-				log_pick_file "${LogFileSync}"
+				log_pick_file "${const_LOGFILE_SYNC}"
 			else
 				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}"/ "${BACKUP_PATH}")\n"
 				SYNC_RETURN_CODE=$?
@@ -550,7 +548,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	#     if [ $conf_LOG_SYNC = true ]; then
 	#         SYNC_OUTPUT="${SYNC_OUTPUT}$(...)\n"
 	#         SYNC_RETURN_CODE=$?
-	#         log_pick_file "${LogFileSync}"
+	#         log_pick_file "${const_LOGFILE_SYNC}"
 	#     else
 	#         SYNC_OUTPUT="${SYNC_OUTPUT}$(...)\n"
 	#         SYNC_RETURN_CODE=$?
@@ -566,9 +564,9 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
 		do
 			if [ $conf_LOG_SYNC = true ]; then
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}"  --skip-existing --list-files --debug-logfile "${LogFileSync}")\n"
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}"  --skip-existing --list-files --debug --debug-logfile "${const_LOGFILE_SYNC}")\n"
 				SYNC_RETURN_CODE=$?
-				log_pick_file "${LogFileSync}"
+				log_pick_file "${const_LOGFILE_SYNC}"
 			else
 				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}" --skip-existing --list-files)\n"
 				SYNC_RETURN_CODE=$?
