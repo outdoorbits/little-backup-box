@@ -38,10 +38,12 @@
     "sysinfo": "Información del sistema",
     "temp": "Temperatura",
     "cpuload": "Carga de CPU",
-    "memory": "Almacenamiento",
     "devices": "Dispositivos",
     "diskspace": "Espacio del disco",
-    "camera": "Cámara / teléfono inteligente"
+    "camera": "Cámara / teléfono inteligente",
+    "conditions": "Condiciones",
+    "memory_ram": "RAM usado",
+    "memory_swap": "SWAP usado"
   },
   "config": {
     "config": "Ajustes",
@@ -243,5 +245,16 @@
       "idle_time_reached": "Tiempo de inactividad alcanzado"
     }
   },
-  "seconds_short": "s"
+  "seconds_short": "s",
+  "sysconditions": {
+    "arm_frq_capped_cur": "La frecuencia de ARM está actualmente limitada.",
+    "arm_frq_capped_prev": "La frecuencia ARM se ha limitado previamente.",
+    "cpu_throttled_cur": "La CPU está acelerada actualmente.",
+    "cpu_throttled_prev": "La CPU ha sido acelerada previamente.",
+    "normal": "No se han detectado condiciones anormales.",
+    "temperature_limit_cur": "Actualmente en el límite de temperatura suave.",
+    "temperature_limit_prev": "Anteriormente en el límite de temperatura suave.",
+    "under_voltage_cur": "El voltaje es actualmente demasiado bajo.",
+    "under_voltage_prev": "Antes de eso, la tensión era demasiado baja."
+  }
 }

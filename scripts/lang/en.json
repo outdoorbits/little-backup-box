@@ -114,10 +114,23 @@
     "sysinfo": "System info",
     "temp": "Temperature",
     "cpuload": "CPU Load",
-    "memory": "Storage",
+    "conditions": "Conditions",
     "devices": "Devices",
     "diskspace": "Disk space",
-    "camera": "Camera / smartphone"
+    "camera": "Camera / smartphone",
+    "memory_ram": "RAM used",
+    "memory_swap": "SWAP used"
+  },
+  "sysconditions": {
+    "under_voltage_cur": "The voltage is currently too low.",
+    "under_voltage_prev": "Power has previously been to low.",
+    "arm_frq_capped_cur": "ARM frequency is currently capped.",
+    "arm_frq_capped_prev": "ARM frequency has previously been capped.",
+    "cpu_throttled_cur": "CPU is currently throttled.",
+    "cpu_throttled_prev": "CPU has previously been throttled.",
+    "temperature_limit_cur": "Currently at soft temperature limit.",
+    "temperature_limit_prev": "Previously at soft temperature limit.",
+    "normal": "No abnormal conditions have been detected."
   },
   "config": {
     "alert_password_mail_header": "Mail-password",

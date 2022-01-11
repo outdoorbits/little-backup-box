@@ -18,8 +18,7 @@
 #######################################################################
 
 # library expects from calling script:
-# nothing
-
+# lib-language library
 
 function get_abnormal_system_conditions () {
 	local STATUS=$(vcgencmd get_throttled | sed -n 's|^throttled=\(.*\)|\1|p')
@@ -27,31 +26,31 @@ function get_abnormal_system_conditions () {
 	if [[ ${STATUS} -ne 0 ]]; then
 
 		if [ $((${STATUS} & 0x00001)) -ne 0 ]; then
-			echo "Power is currently Under Voltage"
+			echo "$(l 'sysconditions_under_voltage_cur')"
 		elif [ $((${STATUS} & 0x10000)) -ne 0 ]; then
-			echo "Power has previously been Under Voltage"
+			echo "$(l 'sysconditions_under_voltage_prev')"
 		fi
 
 		if [ $((${STATUS} & 0x00002)) -ne 0 ]; then
-			echo "ARM Frequency is currently Capped"
+			echo "$(l 'sysconditions_arm_frq_capped_cur')"
 		elif [ $((${STATUS} & 0x20000)) -ne 0 ]; then
-			echo "ARM Frequency has previously been Capped"
+			echo "$(l 'sysconditions_arm_frq_capped_prev')"
 		fi
 
 		if [ $((${STATUS} & 0x00004)) -ne 0 ]; then
-			echo "CPU is currently Throttled"
+			echo "$(l 'sysconditions_cpu_throttled_cur')"
 		elif [ $((${STATUS} & 0x40000)) -ne 0 ]; then
-			echo "CPU has previously been Throttled"
+			echo "$(l 'sysconditions_cpu_throttled_prev')"
 		fi
 
 		if [ $((${STATUS} & 0x00008)) -ne 0 ]; then
-			echo "Currently at Soft Temperature Limit"
+			echo "$(l 'sysconditions_temperature_limit_cur')"
 		elif [ $((${STATUS} & 0x80000)) -ne 0 ]; then
-			echo "Previously at Soft Temperature Limit"
+			echo "$(l 'sysconditions_temperature_limit_prev')"
 		fi
 
 	else
-		echo "No abnormal conditions have been detected"
+		echo "$(l 'sysconditions_normal')"
 	fi
 }
 

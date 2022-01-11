@@ -29,42 +29,61 @@
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo_sysinfo; ?></h1>
-	<div class="card" style="margin-top: 3em;">
+
+	<div class="card">
 		<?php
 		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 		$temp = round($temp / 1000, 1);
+
 		$cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
-		$mem = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
-		$mem = round($mem, 1);
+
+		$mem_ram = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
+		$mem_ram = round($mem_ram, 1);
+
+		$mem_swap_frac = shell_exec("free | grep Swap | awk '{print $3/$2 * 100.0}'");
+		$mem_swap_all = shell_exec("free | grep Swap | awk '{print $2 / 1024}'");
+		$mem_swap = round($mem_swap_frac, 1) . " % / " . round($mem_swap_all) . " MB";
+
 		$abnormal_conditions = shell_exec("${WORKING_DIR}/system_conditions.sh 'abnormal_conditions'");
 
-		if (isset($temp) && is_numeric($temp)) {
-			echo "<p>" . L::sysinfo_temp . ": <strong>" . $temp . "°C</strong></p>";
-		}
-		if (isset($cpuusage) && is_numeric($cpuusage)) {
-			echo "<p>" . L::sysinfo_cpuload . ": <strong>" . $cpuusage . "%</strong></p>";
-		}
-		if (isset($mem) && is_numeric($mem)) {
-			echo L::sysinfo_memory . ": <strong>" . $mem . "%</strong>";
-		}
-		echo ("<p>Conditions: <strong>" . $abnormal_conditions . "</strong></p>");
+			if (isset($temp) && is_numeric($temp)) {
+				echo "<p>" . L::sysinfo_temp . ": <strong>" . $temp . "°C</strong></p>";
+			}
+
+			if (isset($cpuusage) && is_numeric($cpuusage)) {
+				echo "<p>" . L::sysinfo_cpuload . ": <strong>" . $cpuusage . "%</strong></p>";
+			}
+
+			if (isset($mem_ram) && is_numeric($mem_ram)) {
+				echo "<p>" . L::sysinfo_memory_ram . ": <strong>" . $mem_ram . "%</strong></p>";
+			}
+
+			echo "<p>" . L::sysinfo_memory_swap . ": <strong>" . $mem_swap . "</strong></p>";
+
+			echo ("<p>" . L::sysinfo_conditions . ": <strong>" . $abnormal_conditions . "</strong></p>");
 
 		?>
+	</div>
 
+	<div class="card">
 		<h3><?php echo L::sysinfo_devices; ?></h3>
 			<?php
 			echo '<pre>';
 			passthru("lsblk");
 			echo '</pre>';
 			?>
+	</div>
 
+	<div class="card">
 		<h3><?php echo L::sysinfo_diskspace; ?></h3>
 			<?php
 				echo '<pre>';
 				passthru("df -H");
 				echo '</pre>';
 			?>
+	</div>
 
+	<div class="card">
 		<h3><?php echo L::sysinfo_camera; ?></h3>
 			<?php
 				echo '<pre>';
@@ -82,12 +101,9 @@
 					}
 				echo '</pre>';
 			?>
-
-
-
-		<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::log_refresh_button); ?></button></div>
-
 	</div>
+
+	<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::log_refresh_button); ?></button></div>
 
 	<?php include "sub-logmonitor.php"; ?>
 		

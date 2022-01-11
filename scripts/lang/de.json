@@ -38,10 +38,12 @@
     "sysinfo": "Systeminformationen",
     "temp": "Temperatur",
     "cpuload": "CPU-Last",
-    "memory": "Speicher",
     "devices": "Geräte",
     "diskspace": "Festplattenplatz",
-    "camera": "Kamera / Smartphone"
+    "camera": "Kamera / Smartphone",
+    "conditions": "Bedingungen",
+    "memory_ram": "RAM belegt",
+    "memory_swap": "SWAP belegt"
   },
   "config": {
     "config": "Einstellungen",
@@ -243,5 +245,16 @@
       "idle_time_reached": "Leerlaufzeit erreicht"
     }
   },
-  "seconds_short": "s"
+  "seconds_short": "s",
+  "sysconditions": {
+    "arm_frq_capped_cur": "Die ARM-Frequenz ist derzeit begrenzt.",
+    "arm_frq_capped_prev": "Die ARM-Frequenz wurde zuvor begrenzt.",
+    "cpu_throttled_cur": "CPU ist derzeit gedrosselt.",
+    "cpu_throttled_prev": "CPU wurde zuvor gedrosselt.",
+    "normal": "Es wurden keine anormalen Bedingungen festgestellt.",
+    "temperature_limit_cur": "Aktuell am weichen Temperaturlimit.",
+    "temperature_limit_prev": "Zuvor an der weichen Temperaturgrenze.",
+    "under_voltage_cur": "Aktuell ist die Spannung zu niedrig.",
+    "under_voltage_prev": "Zuvor war die Spannung zu niedrig."
+  }
 }

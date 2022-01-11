@@ -38,10 +38,12 @@
     "sysinfo": "Information système",
     "temp": "Température",
     "cpuload": "Charge CPU",
-    "memory": "Stockage",
     "devices": "Dispositifs",
     "diskspace": "Espace disque",
-    "camera": "Appareil photo/smartphone"
+    "camera": "Appareil photo/smartphone",
+    "conditions": "Conditions",
+    "memory_ram": "RAM utilisé",
+    "memory_swap": "SWAP utilisé"
   },
   "config": {
     "config": "Réglages",
@@ -243,5 +245,16 @@
       "idle_time_reached": "Temps mort atteint"
     }
   },
-  "seconds_short": "s"
+  "seconds_short": "s",
+  "sysconditions": {
+    "arm_frq_capped_cur": "La fréquence ARM est actuellement plafonnée.",
+    "arm_frq_capped_prev": "La fréquence ARM a déjà été plafonnée.",
+    "cpu_throttled_cur": "Le processeur est actuellement limité.",
+    "cpu_throttled_prev": "Le processeur a déjà été limité.",
+    "normal": "Aucune condition anormale n'a été détectée.",
+    "temperature_limit_cur": "Actuellement à la limite de température douce.",
+    "temperature_limit_prev": "Auparavant à la limite de température douce.",
+    "under_voltage_cur": "La tension est actuellement trop basse.",
+    "under_voltage_prev": "Avant cela, la tension était trop faible."
+  }
 }

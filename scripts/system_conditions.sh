@@ -28,6 +28,9 @@ MODE=${1} # "mount", "umount" or "check"
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 
+#load language library
+. "${WORKING_DIR}/lib-language.sh"
+
 # Load Systeminfo library
 . "${WORKING_DIR}/lib-systeminfo.sh"
 
