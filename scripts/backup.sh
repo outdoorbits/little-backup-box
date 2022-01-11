@@ -415,6 +415,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 	Camera_Sync_Folders=()
 	for Camera_Folder in "${Camera_Folders[@]}"
 	do
+		log_message "Found folder: ${Camera_Folder}" 3
 		for Camera_Search_Folder in "${Camera_Search_Folders[@]}"
 		do
 			if [[ "${Camera_Folder}" =~ "${Camera_Search_Folder}" ]]; then
