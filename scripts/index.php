@@ -36,9 +36,8 @@
 
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;">LITTLE BACKUP BOX</h1>
 
-	<div class="card">
-
-		<form class="text-center" style="margin-top: 1em;" method="POST">
+	<form class="text-center" style="margin-top: 1em;" method="POST">
+		<div class="card">
 			<div class='backupsection'>
 				<button name="backup_storage_external" class="usb"><?php echo L::main_source_button . L::right_arrow . L::main_external_button; ?></button>
 				<button name="backup_storage_internal" class="usb"><?php echo L::main_source_button . L::right_arrow . L::main_internal_button; ?></button>
@@ -70,17 +69,20 @@
 				}
 			?>
 
-		</form>
+			<div class='backupsection'>
+				<button name="stopbackup" class="danger"><?php echo L::main_stopbackup_button; ?>
+			</div>
 
-		<hr style="margin-top: 1em; margin-bottom: 1em;">
+		</div>
 
-		<form class="text-center" method="POST">
-			<button name="stopbackup" class="danger"><?php echo L::main_stopbackup_button; ?></button><br>
+		<div class="card" style="margin-top: 3em;">
 			<button name="reboot" class="danger"><?php echo L::main_reboot_button; ?></button>
 			<button name="shutdown" class="danger"><?php echo L::main_shutdown_button; ?></button>
-		</form>
+		</div>
 
-	</div>
+	</form>
+
+
 
 	<?php include "sub-logmonitor.php"; ?>
 
