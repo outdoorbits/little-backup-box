@@ -390,53 +390,68 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 
 	# Define source-folders
 	Camera_Search_Folders=()
+	Camera_Sync_Folders=()
+
+	# split config-entry by ";"
 	if [ ! -z "${conf_BACKUP_CAMERA_FOLDER_MASK}" ]; then
 		IFS=";"
 			read -a Camera_Masks <<< "${conf_BACKUP_CAMERA_FOLDER_MASK}"
 		unset IFS
 
+		# check all entries for relevance
 		for Camera_Mask in "${Camera_Masks[@]}"
 		do
 			MaskSetCamera="$(cut -d':' -f1 <<< "${Camera_Mask}")"
 			MaskSetFolder="$(cut -d':' -f2 <<< "${Camera_Mask}")"
 
 			if [ "${MaskSetCamera}" = "${CAMERA}" ] || [ "${MaskSetCamera}" = "*" ]; then
-				if [ ! -z "${MaskSetFolder}" ]; then
+				if [ "${#MaskSetFolder}" -gt "1" ] && [[ ${MaskSetFolder:0:2} == '!/' ]]; then
+					Camera_Sync_Folders+=("${MaskSetFolder:1}")
+				elif [ ! -z "${MaskSetFolder}" ]; then
 					Camera_Search_Folders+=("$MaskSetFolder")
 				fi
 			fi
 		done
 	fi
 
-	Camera_Folders=( $(sudo gphoto2 --list-folders | cut -d"'" -f2 | grep "^/") )
-
-	Camera_Sync_Folders=()
-	for Camera_Folder in "${Camera_Folders[@]}"
-	do
-		log_message "Found folder: ${Camera_Folder}" 3
-		for Camera_Search_Folder in "${Camera_Search_Folders[@]}"
-		do
-			if [[ "${Camera_Folder}" =~ "${Camera_Search_Folder}" ]]; then
-
-				known=false
-				for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
-				do
-					if [[ ${Camera_Folder} = ${Camera_Sync_Folder}* ]]; then
-						known=true
-					fi
-				done
-
-				if [ $known = false ]; then
-					Camera_Sync_Folders+=("${Camera_Folder}")
-				fi
-			fi
-		done
-	done
-
+	# only if Camera_Search_Folders has no values yet
 	if [ ${#Camera_Sync_Folders[@]} -eq 0 ]; then
-		Camera_Sync_Folders=("/")
+		Camera_Folders=( $(sudo gphoto2 --list-folders | cut -d"'" -f2 | grep "^/") )
+
+		for Camera_Folder in "${Camera_Folders[@]}"
+		do
+			log_message "Found folder: ${Camera_Folder}" 3
+			for Camera_Search_Folder in "${Camera_Search_Folders[@]}"
+			do
+				if [[ "${Camera_Folder}" =~ "${Camera_Search_Folder}" ]]; then
+
+					known=false
+					for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
+					do
+						if [[ ${Camera_Folder} = ${Camera_Sync_Folder}* ]]; then
+							known=true
+						fi
+					done
+
+					if [ $known = false ]; then
+						Camera_Sync_Folders+=("${Camera_Folder}")
+					fi
+				fi
+			done
+		done
+
+		if [ ${#Camera_Sync_Folders[@]} -eq 0 ]; then
+			Camera_Sync_Folders=("/")
+		fi
+
 	fi
 
+	#log Camera_Search_Folders
+	log_message "Folders to sync from camera '${CAMERA}':" 1
+	for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
+	do
+		log_message " - ${Camera_Sync_Folder} (For use in setup: '${CAMERA}:!${Camera_Sync_Folder}')" 1
+	done
 else
 	# no defined mode selected
 	lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "+1"
