@@ -146,10 +146,10 @@
     "rsync_module_header": "Module rsync",
     "rsync_module_label1": "Nom du module sur le serveur rsync, par exemple 'little-backup-box' (par défaut :",
     "rsync_module_label2": "). <br> Le nom du module est défini côté serveur dans rsyncd.conf et est mis entre [crochets]. Notez également <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
-    "backup_log_sync_protokoll_header": "Protocole de synchronisation des journaux",
-    "backup_log_sync_protokoll_label": "Détails de la synchronisation du journal ?",
     "backup_camera_folder_mask_header": "Répertoires à sauvegarder sur les smartphones et les caméras",
-    "backup_camera_folder_mask_label": "Des instructions pour le comportement de sauvegarde pour certains appareils photo ou smartphones peuvent être données ici.<br>\nLes entrées ici ont la forme : <br>\n&quot;CAMERA:CHEMIN&quot; <br>\nLe nom d'une caméra connectée se trouve sur la page &quot;Système&quot; sur &quot;Appareil photo/Smartphone&quot;.<br>\nSi une instruction doit s'appliquer à toutes les caméras, &quot;*&quot; (sans autres ajouts) peut être utilisé comme joker pour tous les appareils.<br>\nLe chemin n'a pas besoin d'être spécifié en entier. Il suffit d'en utiliser une partie importante. <br>\nExemples : <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Le champ reste vide, sauvegardez tous les dossiers de toutes les caméras.)<br>\nPlus d'informations sur le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>"
+    "backup_camera_folder_mask_label": "Des instructions pour le comportement de sauvegarde pour certains appareils photo ou smartphones peuvent être données ici.<br>\nLes entrées ici ont la forme : <br>\n&quot;CAMERA:CHEMIN&quot; <br>\nLe nom d'une caméra connectée se trouve sur la page &quot;Système&quot; sur &quot;Appareil photo/Smartphone&quot;.<br>\nSi une instruction doit s'appliquer à toutes les caméras, &quot;*&quot; (sans autres ajouts) peut être utilisé comme joker pour tous les appareils.<br>\nLe chemin n'a pas besoin d'être spécifié en entier. Il suffit d'en utiliser une partie importante. <br>\nExemples : <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Le champ reste vide, sauvegardez tous les dossiers de toutes les caméras.)<br>\nPlus d'informations sur le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
+    "behavior_log_sync_protokoll_header": "Protocole de synchronisation des journaux",
+    "behavior_log_sync_protokoll_label": "Détails de la synchronisation du journal ?"
   },
   "tools": {
     "tools": "Outils",

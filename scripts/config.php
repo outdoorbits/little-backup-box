@@ -108,7 +108,6 @@ conf_BACKUP_DEFAULT_SOURCE="$conf_BACKUP_DEFAULT_SOURCE"
 conf_BACKUP_DEFAULT_TARGET="$conf_BACKUP_DEFAULT_TARGET"
 conf_BACKUP_CAMERA_FOLDER_MASK="$conf_BACKUP_CAMERA_FOLDER_MASK"
 conf_BACKUP_TARGET_BASEDIR_CLOUD="$conf_BACKUP_TARGET_BASEDIR_CLOUD"
-conf_LOG_SYNC=$conf_LOG_SYNC
 conf_POWER_OFF=$conf_POWER_OFF
 conf_NOTIFY=$conf_NOTIFY
 conf_MAIL_HTML=$conf_MAIL_HTML
@@ -118,6 +117,7 @@ conf_THEME=$conf_THEME
 conf_BACKGROUND_IMAGE=$conf_BACKGROUND_IMAGE
 conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
 conf_LOGLEVEL=$conf_LOGLEVEL
+conf_LOG_SYNC=$conf_LOG_SYNC
 conf_POWER_OFF_IDLE_TIME=$conf_POWER_OFF_IDLE_TIME
 conf_SMTP_SERVER="$conf_SMTP_SERVER"
 conf_SMTP_PORT="$conf_SMTP_PORT"
@@ -258,10 +258,6 @@ function upload_settings() {
 					<label for="conf_BACKUP_TARGET_BASEDIR_CLOUD"><?php echo L::config_backup_target_basedir_cloud_label; ?></label><br>
 					<input type="text" id="conf_BACKUP_TARGET_BASEDIR_CLOUD" name="conf_BACKUP_TARGET_BASEDIR_CLOUD" size="6" value="<?php echo $config['conf_BACKUP_TARGET_BASEDIR_CLOUD']; ?>">
 
-				<h3><?php echo L::config_backup_log_sync_protokoll_header; ?></h3>
-					<label for="conf_LOG_SYNC"><?php echo L::config_backup_log_sync_protokoll_label; ?></label><br>
-					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
-
 				<h3><?php echo L::config_backup_power_off_header; ?></h3>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
 					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
@@ -292,10 +288,14 @@ function upload_settings() {
 					<p><?php echo L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
 					<label for="conf_LOGLEVEL"><?php echo L::config_behavior_loglevel_label; ?></label><br>
 					<select name="conf_LOGLEVEL" id="conf_LOGLEVEL">
-						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, minimum</option>
-						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, medium</option>
-						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, maximum</option>
+						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, <?php echo L::config_behavior_loglevel_minimum; ?></option>
+						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, <?php echo L::config_behavior_loglevel_medium; ?></option>
+						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, <?php echo L::config_behavior_loglevel_maximum; ?></option>
 					</select>
+
+				<h3><?php echo L::config_behavior_log_sync_protokoll_header; ?></h3>
+					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
+					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
 
 				<h3><?php echo L::config_behavior_power_off_idle_time_header; ?></h3>
 					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_behavior_power_off_idle_time_label; ?></label><br>

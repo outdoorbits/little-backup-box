@@ -146,10 +146,10 @@
     "rsync_module_header": "rsync-Modul",
     "rsync_module_label1": "Modulname auf dem rsync-Server, z.B. 'little-backup-box' (Standard:",
     "rsync_module_label2": ").<br>Der Modulname ist serverseitig in rsyncd.conf definiert und in [eckige Klammern] gesetzt. Beachten Sie auch <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'>readme_rsync.md</a>.",
-    "backup_log_sync_protokoll_header": "Log-Sync-Protokoll",
-    "backup_log_sync_protokoll_label": "Sync-Details protokollieren?",
     "backup_camera_folder_mask_header": "Zu sichernde Verzeichnisse auf Smartphones und Kameras",
-    "backup_camera_folder_mask_label": "Anweisungen zum Backup-Verhalten für bestimmte Kameras oder Smartphones können hier gegeben werden.<br>\nEinträge hier haben das Formular: <br>\n&quot;KAMERA:PFAD&quot; <br>\nDen Namen einer angeschlossenen Kamera finden Sie auf der Seite &quot;System&quot; unter &quot;Kamera/Smartphone&quot;.<br>\nWenn eine Anweisung für alle Kameras gelten soll, wird &quot;*&quot; (ohne weitere Zusätze) als Joker für alle Geräte nutzbar.<br>\nDer Pfad muss nicht vollständig angegeben werden. Es reicht aus, einen erheblichen Teil davon zu verwenden. <br>\nBeispiele: <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Feld bleibt leer, alle Ordner aller Kameras sichern.)<br>\nWeitere Informationen im <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>"
+    "backup_camera_folder_mask_label": "Anweisungen zum Backup-Verhalten für bestimmte Kameras oder Smartphones können hier gegeben werden.<br>\nEinträge hier haben das Formular: <br>\n&quot;KAMERA:PFAD&quot; <br>\nDen Namen einer angeschlossenen Kamera finden Sie auf der Seite &quot;System&quot; unter &quot;Kamera/Smartphone&quot;.<br>\nWenn eine Anweisung für alle Kameras gelten soll, wird &quot;*&quot; (ohne weitere Zusätze) als Joker für alle Geräte nutzbar.<br>\nDer Pfad muss nicht vollständig angegeben werden. Es reicht aus, einen erheblichen Teil davon zu verwenden. <br>\nBeispiele: <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Feld bleibt leer, alle Ordner aller Kameras sichern.)<br>\nWeitere Informationen im <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
+    "behavior_log_sync_protokoll_header": "Log-Sync-Protokoll",
+    "behavior_log_sync_protokoll_label": "Sync-Details protokollieren?"
   },
   "tools": {
     "tools": "Werkzeug",
