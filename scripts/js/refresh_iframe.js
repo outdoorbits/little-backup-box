@@ -3,7 +3,8 @@
 // needs '<body onload="refreshIFrame()">'
 // and '<iframe id="logmonitor" ...'
 function refreshIFrame() {
-	var x = document.getElementById("logmonitor");
-	x.contentWindow.location.reload();
+	var logmonitor = document.getElementById("logmonitor");
+	logmonitor.contentWindow.location.reload();
+// 	iframe.contentWindow.scrollTo( 0, 999999 );
 	var t = setTimeout(refreshIFrame, 2000);
 }
