@@ -579,9 +579,9 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
 		do
 			if [ $conf_LOG_SYNC = true ]; then
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}"  --skip-existing --list-files --debug --debug-logfile "${const_LOGFILE_SYNC}")\n"
+				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}"  --skip-existing --list-files)\n" #  with debug enabled, backup fails: --debug --debug-loglevel "data" --debug-logfile "${const_LOGFILE_SYNC}"
 				SYNC_RETURN_CODE=$?
-				log_pick_file "${const_LOGFILE_SYNC}"
+# 				log_pick_file "${const_LOGFILE_SYNC}"
 			else
 				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}" --skip-existing --list-files)\n"
 				SYNC_RETURN_CODE=$?
