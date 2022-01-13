@@ -38,7 +38,7 @@ function log_message() {
 			touch "${const_LOGFILE}"
 		fi
 
-		echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n\n$(cat ${const_LOGFILE})" | sudo tee "${const_LOGFILE}" > /dev/null 2>&1
+		echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n" | sudo tee -a "${const_LOGFILE}" > /dev/null 2>&1
 
 	fi
 }
