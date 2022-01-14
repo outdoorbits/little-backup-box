@@ -125,10 +125,15 @@ function calculate_files_to_sync() {
 
 		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
 		do
-			FILES_IN_FOLDER=$(sudo gphoto2 --list-files --folder "${Camera_Sync_Folder}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
+			GPHOTO=$(sudo gphoto2 --list-files --folder "${Camera_Sync_Folder}")
+			log_message "gphoto2 --list-files --folder \"${Camera_Sync_Folder}\":\n${GPHOTO}" 3
+
+			FILES_IN_FOLDER=$(echo "${GPHOTO}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
 			if [ -z "${FILES_IN_FOLDER}" ]; then
 				FILES_IN_FOLDER=0
 			fi
+
+			log_message "Files in folder '${Camera_Sync_Folder}': ${FILES_IN_FOLDER}"
 
 			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_IN_FOLDER} ))
 		done
@@ -144,6 +149,8 @@ function calculate_files_to_sync() {
 	if [ -z "${FILES_TO_SYNC}" ]; then
 		FILES_TO_SYNC="0"
 	fi
+
+	log_message "Files to sync: ${FILES_TO_SYNC}" 1
 
 }
 
@@ -416,6 +423,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 
 	# only if Camera_Search_Folders has no values yet
 	if [ ${#Camera_Sync_Folders[@]} -eq 0 ]; then
+		lcd_message "$(l 'box_backup_camera_scanning_folders')"
 		Camera_Folders=( $(sudo gphoto2 --list-folders | cut -d"'" -f2 | grep "^/") )
 
 		for Camera_Folder in "${Camera_Folders[@]}"

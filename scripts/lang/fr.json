@@ -224,7 +224,8 @@
         "tries_needed": "essai/essais nécessaires"
       },
       "try": "essayer",
-      "checking_old_files": "comparant"
+      "checking_old_files": "comparant",
+      "camera_scanning_folders": "Analyse des dossiers..."
     },
     "cronip": {
       "offline": "hors ligne",

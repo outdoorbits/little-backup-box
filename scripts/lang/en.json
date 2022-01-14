@@ -52,6 +52,7 @@
       "files_missing": "Files missing!",
       "checking_old_files": "comparing",
       "status": "Backup status",
+      "camera_scanning_folders": "Scanning folders ...",
       "mail": {
         "backup": "Backup",
         "backup_type": "Type",

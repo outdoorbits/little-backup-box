@@ -224,7 +224,8 @@
         "tries_needed": "Versuch(e) erforderlich"
       },
       "try": "Versuch",
-      "checking_old_files": "abgleichen"
+      "checking_old_files": "abgleichen",
+      "camera_scanning_folders": "Ordner scannen ..."
     },
     "cronip": {
       "offline": "offline",
