@@ -150,8 +150,6 @@ function calculate_files_to_sync() {
 		FILES_TO_SYNC="0"
 	fi
 
-	log_message "Files to sync: ${FILES_TO_SYNC}" 1
-
 }
 
 # Set the ACT LED to heartbeat
@@ -586,6 +584,8 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
 		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
 		do
+			log_message "Backup from camera: ${Camera_Sync_Folder}" 3
+
 			if [ $conf_LOG_SYNC = true ]; then
 				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}"  --skip-existing --list-files)\n" #  with debug enabled, backup fails: --debug --debug-loglevel "data" --debug-logfile "${const_LOGFILE_SYNC}"
 				SYNC_RETURN_CODE=$?
