@@ -3,6 +3,7 @@
 <?php
 	$WORKING_DIR=dirname(__FILE__);
 	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
@@ -15,9 +16,10 @@
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 	<script src="js/refresh_iframe.js"></script>
+	<script src="js/refresh_site.js"></script>
 </head>
 
-<body onload="refreshIFrame()" <?php echo $background; ?>>
+<body onload="refreshIFrame(); refresh_site()" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
