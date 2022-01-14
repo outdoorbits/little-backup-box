@@ -607,7 +607,6 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 
 	# END BACKUP
 
-
 	# RE-CALCULATE NUMBER OF FILES TO BACK UP
 	if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
 		calculate_files_to_sync
