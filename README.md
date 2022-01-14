@@ -55,6 +55,8 @@ As there is no manual available anymore, I started to edit the github-wiki <a hr
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code>
 	</li>
 </ol>
+<h2>Start</h2>
+If everything went well, it's done! open a browser and enter https://IP.OF.YOUR.BOX as the address.  Have fun with it!
 <h2>Update</h2>
 To update you can perform a webUI-based one-click update. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
 
