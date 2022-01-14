@@ -54,6 +54,11 @@ As there is no manual available anymore, I started to edit the github-wiki <a hr
 		or to save the error-messages during installation to disk: <br>
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code>
 	</li>
+	<li>
+		You will be asked if you want to install <a href="https://github.com/outdoorbits/mejiro">mejiro</a> and <a href="https://davesteele.github.io/comitup/">comitup</a>.<br>
+		Mejiro is an easy-to-use PHP web app for instant photo publishing.<br>
+		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
+	</li>
 </ol>
 <h2>Start</h2>
 If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.BOX as the address.  Have fun!
