@@ -126,7 +126,7 @@ function calculate_files_to_sync() {
 		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
 		do
 			GPHOTO=$(sudo gphoto2 --list-files --folder "${Camera_Sync_Folder}")
-			log_message "gphoto2 --list-files --folder \"${Camera_Sync_Folder}\":\n${GPHOTO}" 3
+			log_message "gphoto2 --list-files --folder \"${Camera_Sync_Folder}\":\nexitcode=$?\n${GPHOTO}" 3
 
 			FILES_IN_FOLDER=$(echo "${GPHOTO}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
 			if [ -z "${FILES_IN_FOLDER}" ]; then
