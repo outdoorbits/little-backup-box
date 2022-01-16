@@ -76,7 +76,7 @@
       "offline": "offline",
       "mail": {
         "main": "web GUI",
-        "desription_https": "https (secure, certificate cannot be verified automatically, please confirm)",
+        "desription_https": "https (secure, certificate cannot be verified automatically, please confirm it)",
         "desription_http": "http (insecure)",
         "open_samba": "Open in file manager (Samba / Windows)",
         "info": "Little Backup Box Info"

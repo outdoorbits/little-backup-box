@@ -433,6 +433,22 @@ if [ "${SCRIPT_MODE}" = "update" ] && [ ! -z "${conf_PASSWORD}" ]; then
 	sudo "${const_WEB_ROOT_LBB}/password.sh" set "${conf_PASSWORD}"
 fi
 
+# post-install-information
+IP=$(hostname -I | cut -d' ' -f1)
+echo ""
+echo "********************************************************************************************"
+echo "*** How to proceed:"
+echo "*** Assuming your Little Backup Box gets the same IP address again after the reboot,"
+echo "*** you can then reach the web UI as follows:"
+echo "*** "
+echo "*** https://${IP} (secure, certificate cannot be verified automatically, please confirm it)"
+echo "*** http://${IP}:8000 (insecure)"
+echo "*** "
+echo "*** Please use the settings of the web UI to optimally adapt the Little Backup Box to you."
+echo "********************************************************************************************"
+echo ""
+
+# reboot
 echo "All done! Rebooting..."
 sleep 3
 sudo "${const_WEB_ROOT_LBB}/poweroff.sh" reboot force
