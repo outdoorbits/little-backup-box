@@ -22,7 +22,7 @@ $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgr
 			<b><u><?php echo L::update_warning; ?></u></b><br>
 		</p>
 
-		<iframe id="updatemonitor" src="/update-runner.php" width="100%" height="400" style="background: #FFFFFF;"></iframe>
+		<iframe id="updatemonitor" src="/update-runner.php" width="100%" height="500" style="background: #FFFFFF;"></iframe>
 
 		<p>
 			<a href="/"><?php echo L::update_return_link; ?></a>
