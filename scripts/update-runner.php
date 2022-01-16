@@ -39,7 +39,6 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 			if (is_resource($process)) {
 				while ($s = fgets($pipes[1])) {
 					print $s;
-
 				}
 			}
 			echo '</pre>';

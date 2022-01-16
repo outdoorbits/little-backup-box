@@ -445,6 +445,11 @@ echo "*** https://${IP} (secure, certificate cannot be verified automatically, p
 echo "*** http://${IP}:8000 (insecure)"
 echo "*** "
 echo "*** Please use the settings of the web UI to optimally adapt the Little Backup Box to you."
+echo "***"
+echo "*** If you have further questions, please check the wiki first:"
+echo "*** https://github.com/outdoorbits/little-backup-box/wiki"
+echo "***"
+echo "*** We are always happy to receive your feedback!"
 echo "********************************************************************************************"
 echo ""
 
