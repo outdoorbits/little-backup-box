@@ -234,7 +234,7 @@
         "desription_http": "http (non sécurisé)",
         "desription_https": "https (sécurisé, le certificat ne peut pas être vérifié automatiquement, veuillez confirmer)",
         "info": "Little Backup Box Info",
-        "main": "web GUI",
+        "main": "web UI",
         "open_samba": "Ouvrir dans le gestionnaire de fichiers (Samba / Windows)"
       }
     },
