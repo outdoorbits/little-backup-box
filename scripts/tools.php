@@ -11,7 +11,7 @@ $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgr
 include($WORKING_DIR . "/sub-popup.php");
 ?>
 
-<html lang="en" data-theme="<?php echo $theme; ?>">
+<html lang="en" data-theme="<?= $theme; ?>">
 <!-- Author: Dmitri Popov, dmpop@linux.com
 		License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
@@ -20,30 +20,30 @@ include($WORKING_DIR . "/sub-popup.php");
 	<script src="js/refresh_iframe.js"></script>
 </head>
 
-<body onload="refreshIFrame()" <?php echo $background; ?>>
+<body onload="refreshIFrame()" <?= $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo l::tools_tools; ?></h1>
+	<h1 class="text-center tracking-wide mb-4"><?= l::tools_tools; ?></h1>
 	<div class="card">
-		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::tools_mount_header; ?></h3>
+		<h3 class="text-center mt-0"><?= l::tools_mount_header; ?></h3>
 		<hr>
-			<form class="text-center" style="margin-top: 1em;" method="POST">
+			<form class="text-center mt-4" method="POST">
 				<?php
-					$button = trim(shell_exec("./mount-storage.sh check usb_1"))==""?"<button name='mount_usb_1'>" . l::tools_mount_b . " USB 1</button>":"<button name='umount_usb_1'>" . l::tools_umount_b . " USB 1</button>";
+					$button = trim(shell_exec("./mount-storage.sh check usb_1"))==""?"<button class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4' name='mount_usb_1'>" . l::tools_mount_b . " USB 1</button>":"<button class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4' name='umount_usb_1'>" . l::tools_umount_b . " USB 1</button>";
 					echo ($button);
-					$button = trim(shell_exec("./mount-storage.sh check usb_2"))==""?"<button name='mount_usb_2'>" . l::tools_mount_b . " USB 2</button>":"<button name='umount_usb_2'>" . l::tools_umount_b . " USB 2</button>";
+					$button = trim(shell_exec("./mount-storage.sh check usb_2"))==""?"<button class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4' name='mount_usb_2'>" . l::tools_mount_b . " USB 2</button>":"<button class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4' name='umount_usb_2'>" . l::tools_umount_b . " USB 2</button>";
 					echo ($button);
 
 				?>
 			</form>
 	</div>
 
-	<div class="card" style="margin-top: 3em;">
-		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::tools_repair; ?></h3>
+	<div class="card mt-10">
+		<h3 class="text-center mt-0"><?= l::tools_repair; ?></h3>
 		<hr>
-			<form class="text-center" style="margin-top: 1em;" method="POST">
-					<label for="partition"><?php echo l::tools_select_partition ?></label>
+			<form class="text-center mt-5" method="POST">
+					<label for="partition"><?= l::tools_select_partition ?></label>
 					<select name="partition">
 						<?php
 						unset ($devices);
@@ -53,7 +53,7 @@ include($WORKING_DIR . "/sub-popup.php");
 						}
 						echo "</select>";
 						echo ("<button name='fsck_check'>" . l::tools_fsck_check_b . "</button>");
-						echo ("<button name='fsck_autorepair' class='danger'>" . l::tools_fsck_autorepair_b . "</button>");
+						echo ("<button name='fsck_autorepair' class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>" . l::tools_fsck_autorepair_b . "</button>");
 						?>
 			</form>
 	</div>
@@ -61,10 +61,10 @@ include($WORKING_DIR . "/sub-popup.php");
 	<?php include "sub-logmonitor.php"; ?>
 	<?php include "lib-log-helper.php"; ?>
 
-	<div class="card" style="margin-top: 3em;">
+	<div class="card mt-10">
 		<details>
-			<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo l::tools_help; ?></summary>
-			<p><?php echo l::tools_help_text; ?></p>
+			<summary class="uppercase tracking-wide"><?= l::tools_help; ?></summary>
+			<p><?= l::tools_help_text; ?></p>
 		</details>
 	</div>
 

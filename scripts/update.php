@@ -10,22 +10,22 @@ $theme = $config["conf_THEME"];
 $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 ?>
 
-<html lang="en" data-theme="<?php echo $theme; ?>">
+<html lang="en" data-theme="<?= $theme; ?>">
 	<head>
 		<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 	</head>
-	<body <?php echo $background; ?>>
+	<body <?= $background; ?>>
 		<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
-		<h1><?php echo L::update_header; ?></h1>
+		<h1><?= L::update_header; ?></h1>
 		<p>
-			<b><u><?php echo L::update_warning; ?></u></b><br>
+			<b><u><?= L::update_warning; ?></u></b><br>
 		</p>
 
 		<iframe id="updatemonitor" src="/update-runner.php" width="100%" height="500" style="background: #FFFFFF;"></iframe>
 
 		<p>
-			<a href="/"><?php echo L::update_return_link; ?></a>
+			<a href="/"><?= L::update_return_link; ?></a>
 		</p>
 	</body>
 </html>

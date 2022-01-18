@@ -9,7 +9,7 @@
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 ?>
 
-<html lang="en" data-theme="<?php echo $theme; ?>">
+<html lang="en" data-theme="<?= $theme; ?>">
 <!-- Author: Dmitri Popov, dmpop@linux.com
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
@@ -19,7 +19,7 @@
 	<script src="js/refresh_site.js"></script>
 </head>
 
-<body onload="refreshIFrame(); refresh_site()" <?php echo $background; ?>>
+<body onload="refreshIFrame(); refresh_site()" <?= $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
@@ -30,7 +30,7 @@
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
-	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo_sysinfo; ?></h1>
+	<h1 class="text-center mb-4 tracking-wide"><?= L::sysinfo_sysinfo; ?></h1>
 
 	<div class="card">
 		<?php
@@ -67,25 +67,30 @@
 	</div>
 
 	<div class="card">
-		<h3><?php echo L::sysinfo_devices; ?></h3>
-			<?php
-			echo '<pre>';
-			passthru("lsblk");
-			echo '</pre>';
-			?>
+		<h3><?= L::sysinfo_devices; ?></h3>
+        <div class="overflow-scroll">
+            <?php
+            echo '<pre>';
+            passthru('lsblk');
+            echo '</pre>';
+            ?>
+        </div>
 	</div>
 
 	<div class="card">
-		<h3><?php echo L::sysinfo_diskspace; ?></h3>
+		<h3><?= L::sysinfo_diskspace; ?></h3>
+        <div class='overflow-scroll'>
 			<?php
 				echo '<pre>';
 				passthru("df -H");
 				echo '</pre>';
 			?>
+        </div>
 	</div>
 
 	<div class="card">
-		<h3><?php echo L::sysinfo_camera; ?></h3>
+		<h3><?= L::sysinfo_camera; ?></h3>
+        <div class='overflow-scroll'>
 			<?php
 				echo '<pre>';
 					exec("sudo gphoto2 --summary | grep 'Model' | cut -d: -f2 | tr -d '[:space:]'",$DEVICES);
@@ -102,9 +107,10 @@
 					}
 				echo '</pre>';
 			?>
+        </div>
 	</div>
 
-	<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::log_refresh_button); ?></button></div>
+	<div class="text-center mt-4"><button onClick="history.go(0)" role="button"><?= (L::log_refresh_button); ?></button></div>
 
 	<?php include "sub-logmonitor.php"; ?>
 		

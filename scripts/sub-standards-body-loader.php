@@ -9,5 +9,3 @@
 	if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
 	$i18n->init();
 ?>
-
-<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
