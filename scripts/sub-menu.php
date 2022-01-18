@@ -20,11 +20,10 @@ sub expects from calling script:
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <div class="collapse navbar-collapse order-1 w-100" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
         <li class="nav-item"><a class="nav-link<?php echo $scriptname=="index.php"?" active":""; ?>" href="/index.php"><?php echo L::mainmenue_main; ?></a></li>
 		<li class="nav-item"><a class="nav-link<?php echo $scriptname=="sysinfo.php"?" active":""; ?>" href="/sysinfo.php"><?php echo L::mainmenue_sysinfo; ?></a></li>
-		<li class="nav-item"><a class="nav-link<?php echo $scriptname=="config.php"?" active":""; ?>" href="/config.php"><?php echo L::mainmenue_config; ?></a></li>
 		<li class="nav-item"><a class="nav-link<?php echo $scriptname=="tools.php"?" active":""; ?>" href="/tools.php"><?php echo L::mainmenue_tools; ?></a></li>
         <li class="nav-item"><a class="nav-link" href="/files" target="_blank"><?php echo L::mainmenue_filebrowser; ?></a></li>
 		<?php
@@ -39,8 +38,13 @@ sub expects from calling script:
 				echo ("<li class=\"nav-item\"><a class=\"nav-link\" href='/mejiro' target='_blank'>" . L::mainmenue_mejiro . "</a></li>");
 			}
 		?>
-      </ul>
+		</ul>
+	</div>
 
+    <div class="navbar-collapse collapse order-3" id="navbarSupportedContent">
+		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+			<li class="nav-item"><a class="nav-link<?php echo $scriptname=="config.php"?" active":""; ?>" href="/config.php"><?php echo L::mainmenue_config; ?></a></li>
+		</ul>
     </div>
   </div>
 </nav>
