@@ -10,7 +10,7 @@
 	include($WORKING_DIR . "/sub-popup.php");
 ?>
 
-<html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
+<html lang="<?= $config["conf_LANGUAGE"]; ?>" data-theme="<?= $theme; ?>">
 <!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
@@ -18,7 +18,7 @@
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 </head>
 
-<body <?php echo $background; ?>>
+<body <?= $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
@@ -26,14 +26,14 @@
 		// write new config
 		if (isset($_POST['save'])) {
 			write_config();
-		};
+		}
 
-		// Upload settings
+    // Upload settings
 		if (isset($_POST['upload_settings'])) {
 			upload_settings();
-		};
+		}
 
-		// read (new) config
+    // read (new) config
 		$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
 		foreach($config_standard as $key => $value) {
 			if (! isset($config[$key]) ) {
@@ -42,7 +42,7 @@
 		}
 	?>
 
-	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config_config; ?></h1>
+	<h1 class="text-center mb-4 tracking-wide"><?= L::config_config; ?></h1>
 	<?php
 
 	function check_new_password($title, $pwd_1, $pwd_2) {
@@ -207,18 +207,19 @@ function upload_settings() {
 ?>
 
 
-	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+	<form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST">
 
-		<div class="card" style="margin-top: 2em;">
-			<?php echo '<button style="margin-top: 2em;" type="submit" name="save">' . L::config_save_button . '</button>'; ?>
-		</div>
 
-		<div class="card" style="margin-top: 2em;">
+        <div class="max-w-4xl mx-auto">
+            <button class="mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="save"><?= L::config_save_button ?> </button>
+        </div>
+
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_lang_section; ?></summary>
+				<summary class="uppercase tracking-wide"><?= L::config_lang_section; ?></summary>
 
-				<h3><?php echo L::config_lang_header; ?></h3>
-					<label for="conf_LANGUAGE"><?php echo L::config_lang_label; ?></label><br>
+				<h3><?= L::config_lang_header; ?></h3>
+					<label for="conf_LANGUAGE"><?= L::config_lang_label; ?></label><br>
 						<select name="conf_LANGUAGE" id="conf_LANGUAGE">
 						<?php
 							echo "<option value='' " . ($config["conf_LANGUAGE"] == ""?" selected":"") . ">" . L::config_lang_browser_detect . "</option>";
@@ -233,72 +234,72 @@ function upload_settings() {
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_backup_section; ?></summary>
+				<summary class='uppercase tracking-wide'><?= L::config_backup_section; ?></summary>
 
-				<h3><?php echo L::config_backup_header; ?></h3>
-					<label for="BACKUP_MODE"><?php echo L::config_backup_label; ?></label><br>
+				<h3><?= L::config_backup_header; ?></h3>
+					<label for="BACKUP_MODE"><?= L::config_backup_label; ?></label><br>
 
 					<select name="BACKUP_MODE" id="BACKUP_MODE">
-						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
-						<option value="storage external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage external"?" selected":""; ?>><?php echo L::config_backup_storage_external; ?></option>
-						<option value="storage internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage internal"?" selected":""; ?>><?php echo L::config_backup_storage_internal; ?></option>
-						<option value="camera external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera external"?" selected":""; ?>><?php echo L::config_backup_camera_external; ?></option>
-						<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::config_backup_camera_internal; ?></option>
-						<option value="ios external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios external"?" selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
-						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?" selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
+						<option value="none none" <?= $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?" selected":""; ?>><?= L::config_backup_none; ?></option>
+						<option value="storage external" <?= $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage external"?" selected":""; ?>><?= L::config_backup_storage_external; ?></option>
+						<option value="storage internal" <?= $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="storage internal"?" selected":""; ?>><?= L::config_backup_storage_internal; ?></option>
+						<option value="camera external" <?= $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera external"?" selected":""; ?>><?= L::config_backup_camera_external; ?></option>
+						<option value="camera internal" <?= $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?= L::config_backup_camera_internal; ?></option>
+						<option value="ios external" <?= $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios external"?" selected":""; ?>><?= L::config_backup_ios_external; ?></option>
+						<option value="ios internal" <?= $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?" selected":""; ?>><?= L::config_backup_ios_external; ?></option>
 					</select>
 
-				<h3><?php echo L::config_backup_camera_folder_mask_header; ?></h3>
-					<label for="conf_BACKUP_CAMERA_FOLDER_MASK"><?php echo L::config_backup_camera_folder_mask_label; ?></label><br>
-					<input type="text" id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" size="6" value="<?php echo $config['conf_BACKUP_CAMERA_FOLDER_MASK']; ?>">
+				<h3><?= L::config_backup_camera_folder_mask_header; ?></h3>
+					<label for="conf_BACKUP_CAMERA_FOLDER_MASK"><?= L::config_backup_camera_folder_mask_label; ?></label><br>
+					<input type="text" id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" size="6" value="<?= $config['conf_BACKUP_CAMERA_FOLDER_MASK']; ?>">
 
-				<h3><?php echo L::config_backup_target_basedir_cloud_header; ?></h3>
-					<label for="conf_BACKUP_TARGET_BASEDIR_CLOUD"><?php echo L::config_backup_target_basedir_cloud_label; ?></label><br>
-					<input type="text" id="conf_BACKUP_TARGET_BASEDIR_CLOUD" name="conf_BACKUP_TARGET_BASEDIR_CLOUD" size="6" value="<?php echo $config['conf_BACKUP_TARGET_BASEDIR_CLOUD']; ?>">
+				<h3><?= L::config_backup_target_basedir_cloud_header; ?></h3>
+					<label for="conf_BACKUP_TARGET_BASEDIR_CLOUD"><?= L::config_backup_target_basedir_cloud_label; ?></label><br>
+					<input type="text" id="conf_BACKUP_TARGET_BASEDIR_CLOUD" name="conf_BACKUP_TARGET_BASEDIR_CLOUD" size="6" value="<?= $config['conf_BACKUP_TARGET_BASEDIR_CLOUD']; ?>">
 
-				<h3><?php echo L::config_backup_power_off_header; ?></h3>
-					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
-					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
+				<h3><?= L::config_backup_power_off_header; ?></h3>
+					<label for="conf_POWER_OFF"><?= L::config_backup_power_off_label; ?></label><br>
+					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?= $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_behavior_section; ?></summary>
+				<summary class='uppercase tracking-wide'><?= L::config_behavior_section; ?></summary>
 
-				<h3><?php echo L::config_behavior_notify_header; ?></h3>
-					<label for="conf_NOTIFY"><?php echo L::config_behavior_notify_label; ?></label><br>
-					<input type="checkbox" id="conf_NOTIFY" name="conf_NOTIFY"<?php echo $config['conf_NOTIFY']=="1"?"checked":""; ?>>
+				<h3><?= L::config_behavior_notify_header; ?></h3>
+					<label for="conf_NOTIFY"><?= L::config_behavior_notify_label; ?></label><br>
+					<input type="checkbox" id="conf_NOTIFY" name="conf_NOTIFY"<?= $config['conf_NOTIFY']=="1"?"checked":""; ?>>
 
-				<h3><?php echo L::config_behavior_mail_html_header; ?></h3>
-					<label for="conf_MAIL_HTML"><?php echo L::config_behavior_mail_html_label; ?></label><br>
-					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
+				<h3><?= L::config_behavior_mail_html_header; ?></h3>
+					<label for="conf_MAIL_HTML"><?= L::config_behavior_mail_html_label; ?></label><br>
+					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?= $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
 
-				<h3><?php echo L::config_behavior_display_header; ?></h3>
-					<label for="conf_DISP"><?php echo L::config_behavior_display_label; ?></label><br>
-					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+				<h3><?= L::config_behavior_display_header; ?></h3>
+					<label for="conf_DISP"><?= L::config_behavior_display_label; ?></label><br>
+					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?= $config['conf_DISP']=="1"?"checked":""; ?>>
 
-				<h3><?php echo L::config_behavior_disp_ip_header; ?></h3>
-					<label for="conf_conf_DISP_IP_REPEAT"><?php echo L::config_behavior_disp_ip_label; ?></label><br>
-					<input type="checkbox" id="conf_conf_DISP_IP_REPEAT" name="conf_conf_DISP_IP_REPEAT" <?php echo $config['conf_conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+				<h3><?= L::config_behavior_disp_ip_header; ?></h3>
+					<label for="conf_conf_DISP_IP_REPEAT"><?= L::config_behavior_disp_ip_label; ?></label><br>
+					<input type="checkbox" id="conf_conf_DISP_IP_REPEAT" name="conf_conf_DISP_IP_REPEAT" <?= $config['conf_conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
 
-				<h3><?php echo L::config_behavior_loglevel_header; ?></h3>
-					<p><?php echo L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
-					<label for="conf_LOGLEVEL"><?php echo L::config_behavior_loglevel_label; ?></label><br>
+				<h3><?= L::config_behavior_loglevel_header; ?></h3>
+					<p><?= L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
+					<label for="conf_LOGLEVEL"><?= L::config_behavior_loglevel_label; ?></label><br>
 					<select name="conf_LOGLEVEL" id="conf_LOGLEVEL">
-						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, <?php echo L::config_behavior_loglevel_minimum; ?></option>
-						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, <?php echo L::config_behavior_loglevel_medium; ?></option>
-						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, <?php echo L::config_behavior_loglevel_maximum; ?></option>
+						<option value="1" <?= $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, <?= L::config_behavior_loglevel_minimum; ?></option>
+						<option value="2" <?= $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, <?= L::config_behavior_loglevel_medium; ?></option>
+						<option value="3" <?= $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, <?= L::config_behavior_loglevel_maximum; ?></option>
 					</select>
 
-				<h3><?php echo L::config_behavior_log_sync_protokoll_header; ?></h3>
-					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
-					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
+				<h3><?= L::config_behavior_log_sync_protokoll_header; ?></h3>
+					<label for="conf_LOG_SYNC"><?= L::config_behavior_log_sync_protokoll_label; ?></label><br>
+					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?= $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
 
-				<h3><?php echo L::config_behavior_power_off_idle_time_header; ?></h3>
-					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_behavior_power_off_idle_time_label; ?></label><br>
+				<h3><?= L::config_behavior_power_off_idle_time_header; ?></h3>
+					<label for="conf_POWER_OFF_IDLE_TIME"><?= L::config_behavior_power_off_idle_time_label; ?></label><br>
 					<select name="conf_POWER_OFF_IDLE_TIME" id="conf_POWER_OFF_IDLE_TIME">
 						<?php
 							$IDLE_TIME_OPTIONS=array(0,2,5,10,15,20,30);
@@ -312,22 +313,23 @@ function upload_settings() {
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
+        <?php if(false): ?>
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_view_section; ?></summary>
+				<summary class='uppercase tracking-wide'><?= L::config_view_section; ?></summary>
 
-				<h3><?php echo L::config_view_theme_header; ?></h3>
-					<label for="conf_THEME"><?php echo L::config_view_theme_label; ?></label><br>
+				<h3><?= L::config_view_theme_header; ?></h3>
+					<label for="conf_THEME"><?= L::config_view_theme_label; ?></label><br>
 						<select name="conf_THEME" id="conf_THEME">
-						<option value="light" <?php echo $config["conf_THEME"] == "light"?" selected":""; ?>><?php echo L::config_view_theme_light; ?></option>
-						<option value="dark" <?php echo $config["conf_THEME"] == "dark"?" selected":""; ?>><?php echo L::config_view_theme_dark; ?></option>
-						<option value="sepia" <?php echo $config["conf_THEME"] == "sepia"?" selected":""; ?>><?php echo L::config_view_theme_sepia; ?></option>
+						<option value="light" <?= $config["conf_THEME"] == "light"?" selected":""; ?>><?= L::config_view_theme_light; ?></option>
+						<option value="dark" <?= $config["conf_THEME"] == "dark"?" selected":""; ?>><?= L::config_view_theme_dark; ?></option>
+						<option value="sepia" <?= $config["conf_THEME"] == "sepia"?" selected":""; ?>><?= L::config_view_theme_sepia; ?></option>
 					</select>
 
-				<h3><?php echo L::config_view_bg_image_header; ?></h3>
-					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo $WORKING_DIR . "/img/backgrounds" ;?>&quot;.</label><br>
+				<h3><?= L::config_view_bg_image_header; ?></h3>
+					<label for="conf_BACKGROUND_IMAGE"><?= L::config_view_bg_image_label; ?> &quot;<?= $WORKING_DIR . "/img/backgrounds" ;?>&quot;.</label><br>
 						<select name="conf_BACKGROUND_IMAGE" id="conf_BACKGROUND_IMAGE">
-						<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
+						<option value="" <?= $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
 						<?php
 							$bg_images=array();
 							exec ("find '" . $WORKING_DIR . "/img/backgrounds' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
@@ -338,74 +340,75 @@ function upload_settings() {
 						?>
 					</select>
 
-				<h3><?php echo L::config_view_popup_header; ?></h3>
-					<label for="conf_POPUP_MESSAGES"><?php echo L::config_view_popup_label; ?></label><br>
-					<input type="checkbox" id="conf_POPUP_MESSAGES" name="conf_POPUP_MESSAGES" <?php echo $config['conf_POPUP_MESSAGES']=="1"?"checked":""; ?>>
+				<h3><?= L::config_view_popup_header; ?></h3>
+					<label for="conf_POPUP_MESSAGES"><?= L::config_view_popup_label; ?></label><br>
+					<input type="checkbox" id="conf_POPUP_MESSAGES" name="conf_POPUP_MESSAGES" <?= $config['conf_POPUP_MESSAGES']=="1"?"checked":""; ?>>
 
 			</details>
 		</div>
+        <?php endif; ?>
 
-		<div class="card" style="margin-top: 2em;">
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_mail_section; ?></summary>
+				<summary class='uppercase tracking-wide'><?= L::config_mail_section; ?></summary>
 
-				<h3><?php echo L::config_mail_smtp_header; ?></h3>
-					<label for="conf_SMTP_SERVER"><?php echo L::config_mail_smtp_label; ?></label><br>
-					<input type="text" id="conf_SMTP_SERVER" name="conf_SMTP_SERVER" size="6" value="<?php echo $config['conf_SMTP_SERVER']; ?>">
+				<h3><?= L::config_mail_smtp_header; ?></h3>
+					<label for="conf_SMTP_SERVER"><?= L::config_mail_smtp_label; ?></label><br>
+					<input type="text" id="conf_SMTP_SERVER" name="conf_SMTP_SERVER" size="6" value="<?= $config['conf_SMTP_SERVER']; ?>">
 
-				<h3><?php echo L::config_mail_port_header; ?></h3>
-					<label for="conf_SMTP_PORT"><?php echo L::config_mail_port_label . " " . $config_standard["conf_SMTP_PORT"]; ?>)</label><br>
-					<input type="text" id="conf_SMTP_PORT" name="conf_SMTP_PORT" size="20" value="<?php echo $config['conf_SMTP_PORT']; ?>">
+				<h3><?= L::config_mail_port_header; ?></h3>
+					<label for="conf_SMTP_PORT"><?= L::config_mail_port_label . " " . $config_standard["conf_SMTP_PORT"]; ?>)</label><br>
+					<input type="text" id="conf_SMTP_PORT" name="conf_SMTP_PORT" size="20" value="<?= $config['conf_SMTP_PORT']; ?>">
 
-				<h3><?php echo L::config_mail_user_header; ?></h3>
-					<label for="conf_MAIL_USER"><?php echo L::config_mail_user_label; ?></label><br>
-					<input type="text" id="conf_MAIL_USER" name="conf_MAIL_USER" size="20" value="<?php echo $config['conf_MAIL_USER']; ?>">
+				<h3><?= L::config_mail_user_header; ?></h3>
+					<label for="conf_MAIL_USER"><?= L::config_mail_user_label; ?></label><br>
+					<input type="text" id="conf_MAIL_USER" name="conf_MAIL_USER" size="20" value="<?= $config['conf_MAIL_USER']; ?>">
 
-				<h3><?php echo L::config_mail_password_header; ?></h3>
-					<label for="conf_MAIL_conf_PASSWORD"><?php echo L::config_mail_password_label; ?></label><br>
-					<input type="password" id="conf_MAIL_conf_PASSWORD" name="conf_MAIL_conf_PASSWORD" size="20" value="<?php echo $config['conf_MAIL_conf_PASSWORD']; ?>">
+				<h3><?= L::config_mail_password_header; ?></h3>
+					<label for="conf_MAIL_conf_PASSWORD"><?= L::config_mail_password_label; ?></label><br>
+					<input type="password" id="conf_MAIL_conf_PASSWORD" name="conf_MAIL_conf_PASSWORD" size="20" value="<?= $config['conf_MAIL_conf_PASSWORD']; ?>">
 
-				<h3><?php echo L::config_mail_recipient_header; ?></h3>
-					<label for="conf_MAIL_TO"><?php echo L::config_mail_recipient_label; ?></label><br>
-					<input type="text" id="conf_MAIL_TO" name="conf_MAIL_TO" size="20" value="<?php echo $config['conf_MAIL_TO']; ?>">
+				<h3><?= L::config_mail_recipient_header; ?></h3>
+					<label for="conf_MAIL_TO"><?= L::config_mail_recipient_label; ?></label><br>
+					<input type="text" id="conf_MAIL_TO" name="conf_MAIL_TO" size="20" value="<?= $config['conf_MAIL_TO']; ?>">
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_rsync_section; ?></summary>
+				<summary class='uppercase tracking-wide'><?= L::config_rsync_section; ?></summary>
 
-				<h3><?php echo L::config_rsync_server_header; ?></h3>
-					<label for="conf_RSYNC_SERVER"><?php echo L::config_rsync_server_label; ?></label><br>
-					<input type="text" id="conf_RSYNC_SERVER" name="conf_RSYNC_SERVER" size="6" value="<?php echo $config['conf_RSYNC_SERVER']; ?>">
+				<h3><?= L::config_rsync_server_header; ?></h3>
+					<label for="conf_RSYNC_SERVER"><?= L::config_rsync_server_label; ?></label><br>
+					<input type="text" id="conf_RSYNC_SERVER" name="conf_RSYNC_SERVER" size="6" value="<?= $config['conf_RSYNC_SERVER']; ?>">
 
-				<h3><?php echo L::config_rsync_port_header; ?></h3>
-					<label for="conf_RSYNC_PORT"><?php echo L::config_rsync_port_label . " " . $config_standard["conf_RSYNC_PORT"]; ?>)</label><br>
-					<input type="text" id="conf_RSYNC_PORT" name="conf_RSYNC_PORT" size="20" value="<?php echo $config['conf_RSYNC_PORT']; ?>">
+				<h3><?= L::config_rsync_port_header; ?></h3>
+					<label for="conf_RSYNC_PORT"><?= L::config_rsync_port_label . " " . $config_standard["conf_RSYNC_PORT"]; ?>)</label><br>
+					<input type="text" id="conf_RSYNC_PORT" name="conf_RSYNC_PORT" size="20" value="<?= $config['conf_RSYNC_PORT']; ?>">
 
-				<h3><?php echo L::config_rsync_user_header; ?></h3>
-					<label for="conf_RSYNC_USER"><?php echo L::config_rsync_user_label; ?></label><br>
-					<input type="text" id="conf_RSYNC_USER" name="conf_RSYNC_USER" size="20" value="<?php echo $config['conf_RSYNC_USER']; ?>">
+				<h3><?= L::config_rsync_user_header; ?></h3>
+					<label for="conf_RSYNC_USER"><?= L::config_rsync_user_label; ?></label><br>
+					<input type="text" id="conf_RSYNC_USER" name="conf_RSYNC_USER" size="20" value="<?= $config['conf_RSYNC_USER']; ?>">
 
-				<h3><?php echo L::config_rsync_password_header; ?></h3>
-					<label for="conf_RSYNC_conf_PASSWORD"><?php echo L::config_rsync_password_label; ?></label><br>
-					<input type="password" id="conf_RSYNC_conf_PASSWORD" name="conf_RSYNC_conf_PASSWORD" size="20" value="<?php echo $config['conf_RSYNC_conf_PASSWORD']; ?>">
+				<h3><?= L::config_rsync_password_header; ?></h3>
+					<label for="conf_RSYNC_conf_PASSWORD"><?= L::config_rsync_password_label; ?></label><br>
+					<input type="password" id="conf_RSYNC_conf_PASSWORD" name="conf_RSYNC_conf_PASSWORD" size="20" value="<?= $config['conf_RSYNC_conf_PASSWORD']; ?>">
 
-				<h3><?php echo L::config_rsync_module_header; ?></h3>
-					<label for="conf_RSYNC_SERVER_MODULE"><?php echo L::config_rsync_module_label1 .  $config_standard['conf_RSYNC_SERVER_MODULE'] . L::config_rsync_module_label2; ?></label><br>
-					<input type="text" id="conf_RSYNC_SERVER_MODULE" name="conf_RSYNC_SERVER_MODULE" size="20" value="<?php echo $config['conf_RSYNC_SERVER_MODULE']; ?>">
+				<h3><?= L::config_rsync_module_header; ?></h3>
+					<label for="conf_RSYNC_SERVER_MODULE"><?= L::config_rsync_module_label1 .  $config_standard['conf_RSYNC_SERVER_MODULE'] . L::config_rsync_module_label2; ?></label><br>
+					<input type="text" id="conf_RSYNC_SERVER_MODULE" name="conf_RSYNC_SERVER_MODULE" size="20" value="<?= $config['conf_RSYNC_SERVER_MODULE']; ?>">
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_password_section; ?></summary>
+				<summary class='uppercase tracking-wide'><?= L::config_password_section; ?></summary>
 
-				<h3><?php echo L::config_password_header; ?></h3>
-					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
-					<label for="conf_PASSWORD_1"><?php echo L::config_password_label1; ?></label><br>
+				<h3><?= L::config_password_header; ?></h3>
+					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?= $config['conf_PASSWORD']; ?>">
+					<label for="conf_PASSWORD_1"><?= L::config_password_label1; ?></label><br>
 					<input type="password" id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
-					<label for="conf_PASSWORD_2"><?php echo L::config_password_label2; ?></label><br>
+					<label for="conf_PASSWORD_2"><?= L::config_password_label2; ?></label><br>
 					<input type="password" id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">
 
 					<?php
@@ -418,17 +421,17 @@ function upload_settings() {
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
-			<?php echo '<button style="margin-top: 2em;" type="submit" name="save">' . L::config_save_button . '</button>'; ?>
+		<div class="max-w-4xl mx-auto">
+            <button type="submit" class="mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" name="save"><?= L::config_save_button ?></button>
 		</div>
 	</form>
 
 
-		<div class="card" style="margin-top: 2em;">
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_cloud_section; ?></summary>
+				<summary class='uppercase tracking-wide'><?= L::config_cloud_section; ?></summary>
 
-				<h3><?php echo L::config_cloud_header; ?></h3>
+				<h3><?= L::config_cloud_header; ?></h3>
 					<p>
 						Depending on your cloud-service, your configuration can expire. Maybe you have to repeat this step always before cloud-access.<br>
 						<?php
@@ -448,32 +451,32 @@ function upload_settings() {
 							$rclone_link="http://" . $_SERVER['SERVER_ADDR'] . ":81";
 						}
 					?>
-					<a href="<?php echo $rclone_link; ?>" target="_blank"><?php echo L::config_cloud_rclone_gui; ?></a>
+					<a href="<?= $rclone_link; ?>" target="_blank"><?= L::config_cloud_rclone_gui; ?></a>
 
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_save_settings_section; ?></summary>
-					<h3><?php echo L::config_save_settings_download_header; ?></h3>
-						<p><?php echo L::config_save_settings_download_text; ?></p>
-						<a href="download-settings.php"><?php echo L::config_save_settings_download_link_text; ?></a>
+				<summary class='uppercase tracking-wide'><?= L::config_save_settings_section; ?></summary>
+					<h3><?= L::config_save_settings_download_header; ?></h3>
+						<p><?= L::config_save_settings_download_text; ?></p>
+						<a href="download-settings.php"><?= L::config_save_settings_download_link_text; ?></a>
 
-					<h3><?php echo L::config_save_settings_upload_header; ?></h3>
-						<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
-							<label for="settings_file"><?php echo L::config_save_settings_upload_label; ?></label>
+					<h3><?= L::config_save_settings_upload_header; ?></h3>
+						<form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
+							<label for="settings_file"><?= L::config_save_settings_upload_label; ?></label>
 							<input type="file" name="settings_file" id="settings_file">
-							<button style="margin-top: 2em;" type="submit" name="upload_settings"><?php echo L::config_save_settings_upload_button; ?></button>
+							<button style="margin-top: 2em;" type="submit" name="upload_settings"><?= L::config_save_settings_upload_button; ?></button>
 						</form>
 
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
+		<div class="card mt-5">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_update_section; ?></summary>
-				<?php echo L::config_update_text; ?>
+				<summary class='uppercase tracking-wide'><?= L::config_update_section; ?></summary>
+				<?= L::config_update_text; ?>
 			</details>
 		</div>
 

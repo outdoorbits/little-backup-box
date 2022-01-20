@@ -7,7 +7,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 ?>
 
-<html lang="en" data-theme="<?php echo $theme; ?>">
+<html lang="en" data-theme="<?= $theme; ?>">
 	<head>
 		<script language="javascript">
 			var int = self.setInterval("window.scrollBy(0,1000);", 200);
