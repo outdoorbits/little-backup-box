@@ -19,10 +19,6 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 	<img src="https://github.com/outdoorbits/little-backup-box/wiki/images/webui.png" align="center">
 	<figcaption>The web UI</figcaption>
 </figure>
-<figure>
-	<img src="https://github.com/outdoorbits/little-backup-box/wiki/images/webui-smartphone.png" align="center">
-	<figcaption>The web UI on a smartphone. Full function in pocket-size.</figcaption>
-</figure>
 <h2>Developement status</h2>
 Little Backup Box is still under construction.<br>
 <b>Please test your Installation carefully before productive use!</b><br>
