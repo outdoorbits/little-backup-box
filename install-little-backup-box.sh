@@ -138,6 +138,11 @@ cd
 
 sudo rm -R ${INSTALLER_DIR}
 git clone https://github.com/outdoorbits/little-backup-box.git
+GIT_CLONE=$?
+if [ "${GIT_CLONE}" -gt 0 ]; then
+	echo "Cloning little-backup-box from github.com failed. Please try again later."
+	exit 0
+fi
 
 # read new constants
 source "${INSTALLER_DIR}/scripts/constants.sh"
@@ -339,7 +344,8 @@ sudo a2ensite little-backup-box
 sudo systemctl reload apache2
 
 # Configure Samba
-sudo useradd --create-home -s /bin/bash "lbb" # create linux-user for samba
+sudo useradd --create-home -s /bin/bash lbb # create linux-user for samba
+sudo usermod -aG www-data lbb
 
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	yes | sudo cp -f /etc/samba/smb.conf.orig /etc/samba/smb.conf

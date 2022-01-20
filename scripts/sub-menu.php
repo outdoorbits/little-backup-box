@@ -32,6 +32,5 @@ sub expects from calling script:
 				<li class="mr-6"><a class="text-blue-500 hover:text-blue-800" href='/mejiro' target='_blank'><?= L::mainmenue_mejiro ?></a></li>
         <?php } ?>
       </ul>
-
 </nav>
 
