@@ -20,7 +20,7 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 	<figcaption>The web UI</figcaption>
 </figure>
 <figure>
-	<img src="https://github.com/outdoorbits/little-backup-box/wiki/images/webui_smartphone.png" align="center">
+	<img src="https://github.com/outdoorbits/little-backup-box/wiki/images/webuismartphone.png" align="center">
 	<figcaption>The web UI on a smartphone. Full function in pocket-size.</figcaption>
 </figure>
 <h2>Developement status</h2>
