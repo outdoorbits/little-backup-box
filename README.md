@@ -15,7 +15,10 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
 </ul>
 <br>
-<img src="https://github.com/outdoorbits/little-backup-box/wiki/images/webui.png" align="center">
+ <figure>
+	<img src="https://github.com/outdoorbits/little-backup-box/wiki/images/webui.png" align="center">
+	<figcaption>The web UI</figcaption>
+ </figure>
 <h2>Developement status</h2>
 Little Backup Box is still under construction.<br>
 <b>Please test your Installation carefully before productive use!</b><br>
