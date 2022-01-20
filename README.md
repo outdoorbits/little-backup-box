@@ -39,9 +39,10 @@ Please give feedback on problems or translation errors but also on the successfu
 </ul>
 *1 Maybe because of power-failures sometimes the connection to a device is disrupted. After reconnecting, it gets a new drive-identifier (e.g. sda becomes sdb) while the drives UUID is still the same.<br>
 <br>
-... a lot of stuff! Please let me know about problems.<br>
-<br>
-As there is no manual available anymore, I started to edit the github-wiki <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not really extensive yet, but maybe you can contribute?
+... a lot of stuff! Please let me know about problems.
+
+<h2>Please mind the wiki!</h2>
+As there is no manual available anymore, the github-wiki should replace it one day: <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not particularly detailed yet, but it can certainly help with the most common questions.
 
 <h2>Installation</h2>
 <ol>
