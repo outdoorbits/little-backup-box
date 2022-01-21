@@ -15,19 +15,16 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
 </ul>
 <br>
-<center>
-	<figure>
-		<img src="https://github.com/outdoorbits/little-backup-box/blob/main/img/webui.png" align="center">
-		<figcaption>The web UI</figcaption>
-	</figure>
-</center>
 
-<center>
-	<figure>
-		<img src="https://github.com/outdoorbits/little-backup-box/blob/main/img/webui-smartphone.png" align="center">
-		<figcaption>The web UI on a smartphone. Full function in pocket-size.</figcaption>
-	</figure>
-</center>
+<figure>
+	<img src="https://github.com/outdoorbits/little-backup-box/blob/main/img/webui.png" align="center">
+	<figcaption>The web UI</figcaption>
+</figure>
+<br>
+<figure>
+	<img src="https://github.com/outdoorbits/little-backup-box/blob/main/img/webui-smartphone.png" align="center">
+	<figcaption>The web UI on a smartphone. Full function in pocket-size.</figcaption>
+</figure>
 
 <h2>Developement status</h2>
 Little Backup Box is still under construction.<br>
@@ -81,6 +78,12 @@ If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.
 <h2>Update</h2>
 To update you can perform a webUI-based one-click update. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
 
+<h2>Known problems</h2>
+<ul>
+	<li>Samba does not show external mounts. To me it's a miracle. Any idea?</li>
+</ul>
+
+
 <h2>Contribute</h2>
 <ul>
 	<li>If you've found a bug or have a suggestion for improvement, open an issue in the <a href="https://github.com/outdoorbits/little-backup-box/issues">Issues section</a>.</li>
@@ -89,6 +92,7 @@ To update you can perform a webUI-based one-click update. Just follow the instru
 </ul>
 
 <ol>
+	<li>Open an issue to discuss your idea.</li>
 	<li>Fork the project's repository.</li>
 	<li>Create a feature branch using the <code>git checkout -b new-feature</code> command.</li>
 	<li>Add your new feature or fix bugs and run the <code>git commit -am 'Add a new feature'</code> command to commit changes.</li>
