@@ -80,7 +80,7 @@ To update you can perform a webUI-based one-click update. Just follow the instru
 
 <h2>Known problems</h2>
 <ul>
-	<li>Samba does not show external mounts. To me it's a miracle. Any idea?</li>
+	<li>Samba does not show external mounts. For me it's a miracle. Any idea?</li>
 </ul>
 
 
