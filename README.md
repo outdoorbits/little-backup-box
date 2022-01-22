@@ -17,12 +17,12 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 <br>
 
 <figure>
-	<img src="https://github.com/outdoorbits/little-backup-box/blob/main/img/webui.png" align="center">
+	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui.png" align="center">
 	<figcaption>The web UI</figcaption>
 </figure>
 <br>
 <figure>
-	<img src="https://github.com/outdoorbits/little-backup-box/blob/main/img/webui-smartphone.png" align="center">
+	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui-smartphone.png" align="center">
 	<figcaption>The web UI on a smartphone. Full function in pocket-size.</figcaption>
 </figure>
 
