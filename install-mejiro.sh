@@ -49,7 +49,7 @@ sudo apt full-upgrade -y
 sudo apt update
 
 # Install the required packages
-sudo apt install -y php-cli php-gd php-common php-imagick
+sudo apt install -y php-gd php-common
 
 # Remove obsolete packages
 sudo apt autoremove -y
