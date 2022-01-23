@@ -102,7 +102,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	CHOICE_MEJIRO=$?
 
 	clear
-elif [ ! -d "/var/www/mejiro" ]; then
+elif [ -d "/var/www/mejiro" ]; then
 		CHOICE_MEJIRO=0
 fi
 

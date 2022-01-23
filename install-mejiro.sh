@@ -58,8 +58,11 @@ sudo apt autoremove -y
 sudo rm ./mejiro -R
 git clone https://github.com/outdoorbits/mejiro.git
 
+# clear destination
+sudo rm "${WEB_ROOT_MEJIRO}/photos"
+sudo rm -R ${WEB_ROOT_MEJIRO}
+
 # move files in place
-rm -R ${WEB_ROOT_MEJIRO}
 sudo cp -R ./mejiro/* ${WEB_ROOT_MEJIRO}
 
 sudo sed -i 's/^$protect = .*/$protect = false; \/\/ Enable password protection/' "${WEB_ROOT_MEJIRO}/config.php"
