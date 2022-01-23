@@ -58,10 +58,6 @@ sudo apt autoremove -y
 sudo rm ./mejiro -R
 git clone https://github.com/outdoorbits/mejiro.git
 
-# clear destination
-sudo rm "${WEB_ROOT_MEJIRO}/photos"
-sudo rm -R ${WEB_ROOT_MEJIRO}
-
 # move files in place
 sudo cp -R ./mejiro/* ${WEB_ROOT_MEJIRO}
 
