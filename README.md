@@ -18,7 +18,7 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 </ul>
 <br>
 
-<figure>
+<figure align="center">
 	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui.png" align="center" width="90%">
 	<figcaption>The web UI</figcaption>
 </figure>
