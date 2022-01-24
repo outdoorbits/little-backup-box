@@ -2,6 +2,8 @@
 Dmitri Popov has entrusted me with the further maintenance of Little Backup Box today. Thank you Dima for this great project. I very much hope you stay connected to the project!<br>
 26.12.2021<br>
 
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb_display.jpg" align="right" width="320" height="213">
+
 <h1>NEWS</h1>
 <ul>
 	<li>2022/01/16: The <a href="https://github.com/outdoorbits/little-backup-box/wiki/02.-Hardware">Wiki</a> explains now, how to connect a LCD-display.</li>
