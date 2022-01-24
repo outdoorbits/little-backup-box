@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .card {
-    @apply max-w-4xl rounded overflow-hidden shadow-lg p-4 mx-auto;
+    @apply rounded-lg overflow-hidden shadow-md p-4 bg-white dark:bg-gray-800;
 }
 
 div.backupsection {

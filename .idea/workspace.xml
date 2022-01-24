@@ -2,11 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="68d4f8ac-b710-45d5-a83b-a88921b0e3c3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/scripts/api/Api.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/api/routes/get_reboot.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/api/routes/get_shutdown.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/api/routes/get_stopbackup.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/api/routes/get_sysinfo.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/footer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/header.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/config.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/css/input.css" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/css/input.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/css/output.css" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/css/output.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/sub-logmonitor.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sub-logmonitor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/sysinfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sysinfo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/tools.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/tools.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +31,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/_config.yml" root0="FORCE_HIGHLIGHTING" />
@@ -70,7 +84,8 @@
       <workItem from="1642495114943" duration="20000" />
       <workItem from="1642519298643" duration="6666000" />
       <workItem from="1642583835659" duration="657000" />
-      <workItem from="1642699395025" duration="3372000" />
+      <workItem from="1642699395025" duration="15338000" />
+      <workItem from="1643003815877" duration="25000" />
     </task>
     <task id="LOCAL-00001" summary="*tailwind migration">
       <created>1642524409670</created>

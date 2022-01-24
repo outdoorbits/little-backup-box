@@ -1,38 +1,11 @@
-<!doctype html>
+<?php include_once './header.php'; ?>
 
-<?php
-	$WORKING_DIR=dirname(__FILE__);
-	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
-	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
+<main class='flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 dark:bg-gray-900'>
+    <div class='container mx-auto px-6 py-8'>
 
-	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
-?>
+	<h1 class="text-gray-700 dark:text-gray-200 text-5xl font-medium"><?= L::sysinfo_sysinfo; ?></h1>
 
-<html lang="en" data-theme="<?= $theme; ?>">
-<!-- Author: Dmitri Popov, dmpop@linux.com
-         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
-
-<head>
-	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
-	<script src="js/refresh_iframe.js"></script>
-	<script src="js/refresh_site.js"></script>
-</head>
-
-<body onload="refreshIFrame(); refresh_site()" <?= $background; ?>>
-	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
-	<!-- Suppress form re-submit prompt on refresh -->
-	<script>
-		if (window.history.replaceState) {
-			window.history.replaceState(null, null, window.location.href);
-		}
-	</script>
-
-	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-
-	<h1 class="text-center mb-4 tracking-wide"><?= L::sysinfo_sysinfo; ?></h1>
-
-	<div class="card">
+	<div class="card mt-5">
 		<?php
 		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 		$temp = round($temp / 1000, 1);
@@ -66,7 +39,7 @@
 		?>
 	</div>
 
-	<div class="card">
+	<div class="card mt-5">
 		<h3><?= L::sysinfo_devices; ?></h3>
         <div class="overflow-scroll">
             <?php
@@ -77,7 +50,7 @@
         </div>
 	</div>
 
-	<div class="card">
+	<div class="card mt-5">
 		<h3><?= L::sysinfo_diskspace; ?></h3>
         <div class='overflow-scroll'>
 			<?php
@@ -88,7 +61,7 @@
         </div>
 	</div>
 
-	<div class="card">
+	<div class="card mt-5">
 		<h3><?= L::sysinfo_camera; ?></h3>
         <div class='overflow-scroll'>
 			<?php
@@ -109,11 +82,7 @@
 			?>
         </div>
 	</div>
+    </div>
+</main>
 
-	<div class="text-center mt-4"><button onClick="history.go(0)" role="button"><?= (L::log_refresh_button); ?></button></div>
-
-	<?php include "sub-logmonitor.php"; ?>
-		
-</body>
-
-</html>
+    <?php include_once './footer.php'; ?>

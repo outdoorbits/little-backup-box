@@ -1,6 +1,4 @@
-<div class="card mt-10">
-	<h2><?= L::log_logmonitor; ?></h2>
-	<hr>
+
 	<iframe id="logmonitor" src="/tmp/little-backup-box.log" width="100%" height="200" style="background: #FFFFFF;"></iframe>
 	<div class="text-center mt-2">
 		<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" name="refresh" onclick="window.location.reload();"><?= L::log_refresh_button; ?></button>
@@ -10,7 +8,6 @@
 			<button type="delete" name="delete" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-10"><?= (L::log_delete_button); ?></button>
 		</form>
 	</div>
-</div>
 <?php
 	if (isset($_POST['delete'])) {
 		unlink($constants["const_LOGFILE"]);

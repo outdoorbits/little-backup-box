@@ -1,26 +1,10 @@
-<?php
-	$WORKING_DIR=dirname(__FILE__);
-	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
-	$config_standard = parse_ini_file("$WORKING_DIR/config-standards.cfg", false);
-	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
-	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-	include($WORKING_DIR . "/sub-popup.php");
-?>
+<?php include_once './header.php'; ?>
 
-<html lang="<?= $config["conf_LANGUAGE"]; ?>" data-theme="<?= $theme; ?>">
-<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
-         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
+<main class='flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 dark:bg-gray-900'>
+    <div class='container mx-auto px-6 py-8'>
 
-<head>
-	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
-</head>
-
-<body <?= $background; ?>>
-	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
-	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
 	<?php
 		// write new config
@@ -41,8 +25,7 @@
 			}
 		}
 	?>
-
-	<h1 class="text-center mb-4 tracking-wide"><?= L::config_config; ?></h1>
+        <h1 class='text-gray-700 dark:text-gray-200 text-5xl font-medium'><?= L::config_config; ?></h1>
 	<?php
 
 	function check_new_password($title, $pwd_1, $pwd_2) {
@@ -479,8 +462,6 @@ function upload_settings() {
 				<?= L::config_update_text; ?>
 			</details>
 		</div>
-
-
-</body>
-
-</html>
+    </div>
+</main>
+<?php include_once './footer.php'; ?>
