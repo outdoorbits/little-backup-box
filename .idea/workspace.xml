@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="68d4f8ac-b710-45d5-a83b-a88921b0e3c3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/css/input.css" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/css/input.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/css/output.css" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/css/output.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/footer.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/footer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/header.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/sub-logmonitor.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sub-logmonitor.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/sysinfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sysinfo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/tailwind.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/tools.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/tools.php" afterDir="false" />
-    </list>
+    <list default="true" id="68d4f8ac-b710-45d5-a83b-a88921b0e3c3" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -87,7 +75,7 @@
       <workItem from="1642699395025" duration="15338000" />
       <workItem from="1643003815877" duration="25000" />
       <workItem from="1643003854986" duration="595000" />
-      <workItem from="1643298541096" duration="5726000" />
+      <workItem from="1643298541096" duration="6165000" />
     </task>
     <task id="LOCAL-00001" summary="*tailwind migration">
       <created>1642524409670</created>
@@ -96,14 +84,25 @@
       <option name="project" value="LOCAL" />
       <updated>1642524409670</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="*tailwind migration">
+      <created>1643304346065</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1643304346065</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <MESSAGE value="*tailwind migration" />
     <option name="LAST_COMMIT_MESSAGE" value="*tailwind migration" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
 </project>
