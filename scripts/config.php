@@ -184,27 +184,28 @@ function upload_settings() {
 			popup(L::config_alert_settings_upload_problem,$config["conf_POPUP_MESSAGES"]);
 		}
 
-		exec("sudo rm -R ".$targetdir);
-	}
+        exec("sudo rm -R " . $targetdir);
+    }
 }
-?>
+
+    ?>
 
 
-	<form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST">
+        <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST">
 
 
-        <div class="max-w-4xl mx-auto">
-            <button class="mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" name="save"><?= L::config_save_button ?> </button>
-        </div>
+            <div class="mt-5">
+                <button class="btn" type="submit" name="save"><?= L::config_save_button ?> </button>
+            </div>
 
-		<div class="card mt-5">
-			<details>
-				<summary class="uppercase tracking-wide"><?= L::config_lang_section; ?></summary>
+            <div class="card mt-5">
+                <details>
+                    <summary class="uppercase tracking-wide"><?= L::config_lang_section; ?></summary>
 
-				<h3><?= L::config_lang_header; ?></h3>
-					<label for="conf_LANGUAGE"><?= L::config_lang_label; ?></label><br>
-						<select name="conf_LANGUAGE" id="conf_LANGUAGE">
-						<?php
+                    <h3><?= L::config_lang_header; ?></h3>
+                    <label for="conf_LANGUAGE"><?= L::config_lang_label; ?></label><br>
+                    <select name="conf_LANGUAGE" id="conf_LANGUAGE">
+                        <?php
 							echo "<option value='' " . ($config["conf_LANGUAGE"] == ""?" selected":"") . ">" . L::config_lang_browser_detect . "</option>";
 							$languages=array();
 							exec ("find '" . $WORKING_DIR . "/lang'/*.json -type f ",$languages);
@@ -394,28 +395,28 @@ function upload_settings() {
 					<label for="conf_PASSWORD_2"><?= L::config_password_label2; ?></label><br>
 					<input type="password" id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">
 
-					<?php
-						if ($config['conf_PASSWORD'] != "") {
-							echo "<h3>" . L::config_password_remove_header . "</h3>";
-							echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label ."</label><br>";
-							echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">";
-						}
-					?>
-			</details>
-		</div>
+                <?php
+                if ($config['conf_PASSWORD'] != "") {
+                    echo "<h3>" . L::config_password_remove_header . "</h3>";
+                    echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label . "</label><br>";
+                    echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">";
+                }
+                ?>
+            </details>
+        </div>
 
-		<div class="max-w-4xl mx-auto">
-            <button type="submit" class="mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" name="save"><?= L::config_save_button ?></button>
-		</div>
-	</form>
+            <div class="mt-5">
+                <button type="submit" class="btn" name="save"><?= L::config_save_button ?></button>
+            </div>
+        </form>
 
 
-		<div class="card mt-5">
-			<details>
-				<summary class='uppercase tracking-wide'><?= L::config_cloud_section; ?></summary>
+        <div class="card mt-5">
+            <details>
+                <summary class='uppercase tracking-wide'><?= L::config_cloud_section; ?></summary>
 
-				<h3><?= L::config_cloud_header; ?></h3>
-					<p>
+                <h3><?= L::config_cloud_header; ?></h3>
+                <p>
 						Depending on your cloud-service, your configuration can expire. Maybe you have to repeat this step always before cloud-access.<br>
 						<?php
 							if (empty($config['conf_PASSWORD'])) {
@@ -432,35 +433,38 @@ function upload_settings() {
 							$rclone_link="https://" . $_SERVER['SERVER_ADDR'] . ":8443";
 						} else {
 							$rclone_link="http://" . $_SERVER['SERVER_ADDR'] . ":81";
-						}
-					?>
-					<a href="<?= $rclone_link; ?>" target="_blank"><?= L::config_cloud_rclone_gui; ?></a>
+                        }
+                    ?>
+                <a href="<?= $rclone_link; ?>" target="_blank"><?= L::config_cloud_rclone_gui; ?></a>
 
-			</details>
-		</div>
+            </details>
+        </div>
 
-		<div class="card mt-5">
-			<details>
-				<summary class='uppercase tracking-wide'><?= L::config_save_settings_section; ?></summary>
-					<h3><?= L::config_save_settings_download_header; ?></h3>
-						<p><?= L::config_save_settings_download_text; ?></p>
-						<a href="download-settings.php"><?= L::config_save_settings_download_link_text; ?></a>
+        <div class="card mt-5">
+            <details>
+                <summary class='uppercase tracking-wide'><?= L::config_save_settings_section; ?></summary>
+                <div class='pb-5'>
+                    <h3><?= L::config_save_settings_download_header; ?></h3>
+                    <p class="mb-2"><?= L::config_save_settings_download_text; ?></p>
+                    <a class="btn" href="download-settings.php"><?= L::config_save_settings_download_link_text; ?></a>
+                </div>
 
-					<h3><?= L::config_save_settings_upload_header; ?></h3>
-						<form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
-							<label for="settings_file"><?= L::config_save_settings_upload_label; ?></label>
-							<input type="file" name="settings_file" id="settings_file">
-							<button style="margin-top: 2em;" type="submit" name="upload_settings"><?= L::config_save_settings_upload_button; ?></button>
-						</form>
+                <h3><?= L::config_save_settings_upload_header; ?></h3>
+                <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
+                    <label for="settings_file"><?= L::config_save_settings_upload_label; ?></label>
+                    <input type="file" name="settings_file" id="settings_file">
+                    <button class="btn" type="submit"
+                            name="upload_settings"><?= L::config_save_settings_upload_button; ?></button>
+                </form>
 
-			</details>
-		</div>
+            </details>
+        </div>
 
-		<div class="card mt-5">
-			<details>
-				<summary class='uppercase tracking-wide'><?= L::config_update_section; ?></summary>
-				<?= L::config_update_text; ?>
-			</details>
+        <div class="card mt-5">
+            <details>
+                <summary class='uppercase tracking-wide'><?= L::config_update_section; ?></summary>
+                <?= L::config_update_text; ?>
+            </details>
 		</div>
     </div>
 </main>

@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="68d4f8ac-b710-45d5-a83b-a88921b0e3c3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/scripts/footer.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/header.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/config.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/css/input.css" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/css/input.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/css/output.css" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/css/output.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/footer.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/footer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/header.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/sub-logmonitor.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sub-logmonitor.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/sysinfo.php" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sysinfo.php" afterDir="false" />
@@ -41,16 +41,16 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/scripts/css/input.css" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/tailwind.config.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/sysinfo.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/_config.yml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/scripts/sub-logmonitor.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/install-comitup.sh" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/install-little-backup-box.sh" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/scripts/sysinfo.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/scripts/css/input.css" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/scripts/download-settings.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/scripts/tailwind.config.js" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/scripts/api/Api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/scripts/config.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/install-little-backup-box.sh" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/install-comitup.sh" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/api/Api.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/download-settings.php" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -86,6 +86,8 @@
       <workItem from="1642583835659" duration="657000" />
       <workItem from="1642699395025" duration="15338000" />
       <workItem from="1643003815877" duration="25000" />
+      <workItem from="1643003854986" duration="595000" />
+      <workItem from="1643298541096" duration="5726000" />
     </task>
     <task id="LOCAL-00001" summary="*tailwind migration">
       <created>1642524409670</created>

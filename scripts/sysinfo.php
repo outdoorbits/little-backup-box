@@ -1,19 +1,19 @@
 <?php include_once './header.php'; ?>
 
-<main class='flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 dark:bg-gray-900'>
+<main class='flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 dark:bg-gray-900 transition duration-500 ease-out'>
     <div class='container mx-auto px-6 py-8'>
 
-	<h1 class="text-gray-700 dark:text-gray-200 text-5xl font-medium"><?= L::sysinfo_sysinfo; ?></h1>
+        <h1 class="text-gray-700 dark:text-gray-200 text-5xl font-medium transition duration-500 ease-out"><?= L::sysinfo_sysinfo; ?></h1>
 
-	<div class="card mt-5">
-		<?php
-		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
-		$temp = round($temp / 1000, 1);
+        <div class="card mt-5">
+            <?php
+            $temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
+            $temp = round($temp / 1000, 1);
 
-		$cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
+            $cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
 
-		$mem_ram_frac = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
-		$mem_ram_all = shell_exec("free | grep Mem | awk '{print $2 / 1024}'");
+            $mem_ram_frac = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
+            $mem_ram_all = shell_exec("free | grep Mem | awk '{print $2 / 1024}'");
 		$mem_ram = round($mem_ram_frac, 1) . " % * " . round($mem_ram_all) . " MB";
 
 		$mem_swap_frac = shell_exec("free | grep Swap | awk '{print $3/$2 * 100.0}'");

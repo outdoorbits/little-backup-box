@@ -30,14 +30,17 @@
                     foreach ($devices as $n => $device) { ?>
                         <option value='<?= $device ?>'><?= $device ?></option>
                     <?php } ?>
-                    </select>
-                    <button name='fsck_check'><?= l::tools_fsck_check_b ?></button>
-                    <button name='fsck_autorepair' class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'><?= l::tools_fsck_autorepair_b ?></button>
+                </select>
+                <button name='fsck_check' class="btn"><?= l::tools_fsck_check_b ?></button>
+                <button name='fsck_autorepair'
+                        class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'><?= l::tools_fsck_autorepair_b ?></button>
             </form>
         </div>
 
-        <?php include "sub-logmonitor.php"; ?>
-        <?php include "lib-log-helper.php"; ?>
+        <div class="card mt-10">
+            <?php include 'sub-logmonitor.php'; ?>
+            <?php include 'lib-log-helper.php'; ?>
+        </div>
 
         <div class="card mt-10">
             <details>

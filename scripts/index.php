@@ -1,51 +1,54 @@
 <?php include_once './header.php'; ?>
-<form method='POST'>
-    <main class='flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 dark:bg-gray-900'>
+<form method='POST' class='overflow-x-hidden overflow-y-scroll'>
+    <main class='flex-1 bg-gray-200 dark:bg-gray-900 transition duration-500 ease-out'>
         <div class='container mx-auto px-6 py-8'>
             <h1 class='text-gray-700 dark:text-gray-200 text-5xl font-medium'><?= L::mainmenue_main; ?></h1>
 
             <div class='grid gap-3 md:grid-cols-3 grid-cols-1 mt-5'>
                 <div class='card'>
                     <button name='backup_storage_external'
-                            class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'><?= L::main_source_button . L::right_arrow . L::main_external_button; ?></button>
+                            class='btn'><?= L::main_source_button . L::right_arrow . L::main_external_button; ?></button>
                     <button name="backup_storage_internal"
-                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><?= L::main_source_button . L::right_arrow . L::main_internal_button; ?></button>
+                            class="btn"><?= L::main_source_button . L::right_arrow . L::main_internal_button; ?></button>
                     <button name="backup_internal_external"
-                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><?= L::main_internal_button . L::right_arrow . L::main_external_button; ?></button>
+                            class="btn"><?= L::main_internal_button . L::right_arrow . L::main_external_button; ?></button>
                 </div>
                 <div class='card'>
                     <button name='backup_camera_external'
-                            class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'><?= L::main_camera_button . L::right_arrow . L::main_external_button; ?></button>
+                            class='btn'><?= L::main_camera_button . L::right_arrow . L::main_external_button; ?></button>
                     <button name="backup_camera_internal"
-                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><?= L::main_camera_button . L::right_arrow . L::main_internal_button; ?></button>
+                            class="btn"><?= L::main_camera_button . L::right_arrow . L::main_internal_button; ?></button>
                 </div>
                 <div class='card'>
                     <button name='backup_ios_external'
-                            class='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'><?= L::main_ios_button . L::right_arrow . L::main_external_button; ?></button>
+                            class='btn'><?= L::main_ios_button . L::right_arrow . L::main_external_button; ?></button>
                     <button name="backup_ios_internal"
-                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><?= L::main_ios_button . L::right_arrow . L::main_internal_button; ?></button>
+                            class="btn"><?= L::main_ios_button . L::right_arrow . L::main_internal_button; ?></button>
                 </div>
                 <?php if (!($config['conf_RSYNC_SERVER'] == '' or $config['conf_RSYNC_PORT'] == '' or $config['conf_RSYNC_USER'] == '' or $config['conf_RSYNC_conf_PASSWORD'] == '' or $config['conf_RSYNC_SERVER_MODULE'] == '')) { ?>
                     <div class='card'>
                         <button name="backup_external_server"
-                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><?= L::main_external_button . L::right_arrow . L::main_rsync_button ?></button>
+                                class="btn"><?= L::main_external_button . L::right_arrow . L::main_rsync_button ?></button>
                         <button name="backup_internal_server"
-                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><?= L::main_internal_button . L::right_arrow . L::main_rsync_button ?></button>
+                                class="btn"><?= L::main_internal_button . L::right_arrow . L::main_rsync_button ?></button>
                     </div>
                 <?php } ?>
 
-                <?php foreach($CloudServices as $CloudService) { ?>
+                <?php foreach ($CloudServices as $CloudService) { ?>
 
                     <div class='card'>
-                        <button name="backup_external_cloud_<?= $CloudService ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><?= L::main_external_button . L::right_arrow .' ' . $CloudService ?></button>
-                        <button name="backup_internal_cloud_<?= $CloudService ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><?= L::main_internal_button . L::right_arrow .' ' . $CloudService ?></button>
+                        <button name="backup_external_cloud_<?= $CloudService ?>"
+                                class="btn"><?= L::main_external_button . L::right_arrow . ' ' . $CloudService ?></button>
+                        <button name="backup_internal_cloud_<?= $CloudService ?>"
+                                class="btn"><?= L::main_internal_button . L::right_arrow . ' ' . $CloudService ?></button>
                     </div>
                 <?php } ?>
             </div>
 
-            <button name='stopbackup' class='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'><?= L::main_stopbackup_button; ?></button>
+            <button name='stopbackup'
+                    class='mt-10 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'><?= L::main_stopbackup_button; ?></button>
 
-            <div class='mt-5'>
+            <div class='mt-10'>
                 <h2 class='text-gray-700 dark:text-gray-200 text-4xl font-medium'><?= L::log_logmonitor; ?></h2>
                 <div class='card mt-4'>
                     <?php include 'sub-logmonitor.php'; ?>

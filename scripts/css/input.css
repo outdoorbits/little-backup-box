@@ -3,10 +3,13 @@
 @tailwind utilities;
 
 .card {
-    @apply rounded-lg overflow-hidden shadow-md p-4 bg-white dark:bg-gray-800;
+    @apply rounded-lg overflow-hidden shadow-md p-4 bg-white dark:bg-gray-800 transition duration-500 ease-out dark:text-gray-200;
 }
 
-div.backupsection {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+input, select {
+    @apply bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 m-2;
+}
+
+.btn {
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-2 leading-normal text-base;
 }
