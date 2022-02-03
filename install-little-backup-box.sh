@@ -173,8 +173,13 @@ fi
 #Install Rclone
 curl https://rclone.org/install.sh | sudo bash
 
-# define user
-USER="www-data"
+# define users
+USER_WWW_DATA="www-data"
+USER_SAMBA="lbb"
+
+# create linux-user for samba
+sudo useradd --create-home -s /bin/bash ${USER_SAMBA}
+sudo usermod -aG ${USER_WWW_DATA} ${USER_SAMBA}
 
 # Create the required media-directories
 echo "Creating the required media-directories"
@@ -193,9 +198,10 @@ sudo mkdir -p "${const_INTERAL_BACKUP_DIR}"
 sudo mkdir -p "${const_IOS_MOUNT_POINT}"
 sudo mkdir -p "${const_CLOUD_MOUNT_POINT}"
 
-sudo chown -R ${USER}:${USER} "${const_MEDIA_DIR}"
+sudo chown -R ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_MEDIA_DIR}"
 sudo chmod -R 777 "${const_MEDIA_DIR}"
-sudo setfacl -Rdm u:${USER}:rwX,g:${USER}:rwX "${const_MEDIA_DIR}"
+sudo setfacl -Rdm u:${USER_WWW_DATA}:rwX,g:${USER_WWW_DATA}:rwX "${const_MEDIA_DIR}"
+sudo setfacl -Rdm u:${USER_SAMBA}:rwX,g:${USER_SAMBA}:rwX "${const_MEDIA_DIR}"
 
 # Configure miniDLNA
 echo "Configure miniDLNA"
@@ -344,9 +350,6 @@ sudo a2ensite little-backup-box
 sudo systemctl reload apache2
 
 # Configure Samba
-sudo useradd --create-home -s /bin/bash lbb # create linux-user for samba
-sudo usermod -aG www-data lbb
-
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	yes | sudo cp -f /etc/samba/smb.conf.orig /etc/samba/smb.conf
 else
@@ -369,7 +372,7 @@ sudo sh -c "echo '' >> /etc/samba/smb.conf"
 sudo sh -c "echo '### Authentication ###' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'security = user' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'map to guest = Bad User' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'guest account = $USER' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'guest account = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
 sudo sh -c "echo '' >> /etc/samba/smb.conf"
 sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
 
@@ -383,9 +386,9 @@ for DIRECTORY in "${DIRECTORIES[@]}"; do
     sudo sh -c "echo 'include = /etc/samba/login.conf' >> /etc/samba/smb.conf"
     sudo sh -c "echo 'path = ${DIRECTORY}' >> /etc/samba/smb.conf"
     sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'force user = $USER' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'force group = $USER' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'admin users = $USER' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'force user = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'force group = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
+    sudo sh -c "echo 'admin users = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
     sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
     sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
     sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
