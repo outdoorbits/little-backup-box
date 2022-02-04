@@ -82,7 +82,28 @@ To update you can perform a webUI-based one-click update. Just follow the instru
 
 <h2>Known problems</h2>
 <ul>
-	<li>Samba does not show external mounts. For me it's a miracle. Any idea?</li>
+	<li>
+		<u>Samba does not show external mounts.</u><br>
+		Little Backup Box mounts external storage according to the following scheme:
+		<ol>
+			<li>the uuid of the device is determined:<br>
+				lsblk -p -P -o PATH,MOUNTPOINT,UUID<br>
+				The line for the USB memory sda1 gives:<br>
+				PATH="/dev/sda1" MOUNTPOINT="" UUID="B20D-9734"<br>
+			</li>
+			<li>
+				The mount is triggered through the web interface (apache2, user www-data in sudoers). A second called bash script does the following:<br>
+				sudo mount --uuid B20D-9734 /media/storage/ -o umask=0<br>
+			</li>
+		</ol>
+		From the point of view of the Little Backup Box web UI and its scripts, the mounts are now available. However, from the point of view of Samba and from the command line (as root), they are not mounted. Even the command<br>
+		sudo mount<br>
+		gives no line for the mount.<br>
+		<br>
+		However, if I run the above mount command as user pi (member of sudoers), the mount is also available for the web UI and for samba.<br>
+		It gets even crazier when I unmount this mount via the web interface (Tools). The mount has now disappeared from the web interface, but from the command line it is retained and I still have full access.<br>
+		For me it's a miracle. Any idea?
+	</li>
 </ul>
 
 
