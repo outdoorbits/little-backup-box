@@ -96,7 +96,7 @@ To update you can perform a webUI-based one-click update. Just follow the instru
 				sudo mount --uuid B20D-9734 /media/storage/ -o umask=0<br>
 			</li>
 		</ol>
-		From the point of view of the Little Backup Box web UI and its scripts, the mounts are now available. However, from the point of view of Samba and from the command line (as root), they are not mounted. Even the command<br>
+		From the point of view of the Little Backup Box web UI and its scripts, the mounts are now available. However, from the point of view of samba and from the command line (as root), they are not mounted. Even the command<br>
 		sudo mount<br>
 		gives no line for the mount.<br>
 		<br>
