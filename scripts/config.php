@@ -247,7 +247,7 @@ function upload_settings() {
 						<option value="camera external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera external"?" selected":""; ?>><?php echo L::config_backup_camera_external; ?></option>
 						<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::config_backup_camera_internal; ?></option>
 						<option value="ios external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios external"?" selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
-						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?" selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
+						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?" selected":""; ?>><?php echo L::config_backup_ios_internal; ?></option>
 					</select>
 
 				<h3><?php echo L::config_backup_camera_folder_mask_header; ?></h3>
