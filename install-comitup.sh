@@ -24,7 +24,12 @@ if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf" ]; then
 	sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
 fi
 
-sudo apt install -y comitup
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		comitup
 
 echo "ap_name: little-backup-box-<nnnn>" | sudo tee "/etc/comitup.conf"
 echo "web_service: apache2.service" | sudo tee -a "/etc/comitup.conf"

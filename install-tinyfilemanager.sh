@@ -45,11 +45,19 @@ fi
 
 # Update source and perform the full system upgrade
 sudo apt update
-sudo apt full-upgrade -y
-sudo apt update
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Install the required packages
-sudo apt install -y zip php-zip php-mbstring
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		zip php-zip php-mbstring
 
 # Remove obsolete packages
 sudo apt autoremove -y

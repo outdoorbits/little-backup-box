@@ -61,7 +61,12 @@ if [ -d "${const_WEB_ROOT_LBB}" ]; then
 else
 	SCRIPT_MODE="install"
 	echo "Installer-script running as INSTALLER"
-	sudo apt install -y dialog
+	sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		dialog
 fi
 
 # Do all user-interactions
@@ -123,14 +128,23 @@ fi
 
 # Update source and perform the full system upgrade
 sudo apt update
-sudo apt full-upgrade -y
-sudo apt update
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Install the required packages
-sudo apt install -y acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl dialog php php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl dialog php php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc
 
 # Remove obsolete packages
-sudo apt autoremove -y
+sudo DEBIAN_FRONTEND=noninteractive \
+	apt autoremove -y
 
 # Clone Little Backup Box
 echo "Clone Little Backup Box"
@@ -228,7 +242,12 @@ sudo chown www-data:www-data "${const_WEB_ROOT_LBB}" -R
 sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 
 # Display
-sudo apt-get install -y python3-pip python3-pil i2c-tools
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		python3-pip python3-pil i2c-tools
 sudo pip3 install adafruit-circuitpython-ssd1306
 sudo raspi-config nonint do_i2c 0
 
