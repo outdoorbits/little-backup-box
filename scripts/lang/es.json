@@ -63,7 +63,7 @@
     "backup_ios_internal": "iOS al almacenamiento interno",
     "backup_power_off_header": "Apagado",
     "backup_power_off_label": "Apagar después de la copia de seguridad",
-    "behavior_section": "Comportamiento,
+    "behavior_section": "Comportamiento",
     "behavior_notify_header": "Enviar correos",
     "behavior_notify_label": "¿Intenta enviar correos electrónicos sobre enlaces reales a este Little Backup Box y sobre copias de seguridad terminadas?",
     "behavior_mail_html_header": "Enviar correos en formato HTML",
@@ -262,4 +262,3 @@
     "under_voltage_prev": "Voltaje bajo detectado previamente."
   }
 }
-# Spanish corrections added 02-03-2022 by munecito
