@@ -130,6 +130,7 @@ Stefan Saam, founder is <a href="https://www.tokyoma.de/">Dmitri Popov</a>
 <ul>
 	<li>Dmitri Popov</li>
 	<li>Kerry Staite (STL files)</li>
+	<li>munecito (Spanish corrections added)</li>
 </ul>
 
 <h2>License</h2>
