@@ -213,9 +213,9 @@
       "no_ios_waiting_2": "Espera",
       "of": "de",
       "source_ok": "Origen o.k.",
-      "try_backup": "Prueba una copia de seguridad",
+      "try_backup": "Prueba copia seguridad",
       "working": "Trabajando",
-      "status": "Estado de la copia de seguridad",
+      "status": "Estado copia seguridad",
       "mail": {
         "backup": "Respaldo",
         "backup_type": "Escribir",
