@@ -35,11 +35,11 @@
 
 		// read (new) config
 		$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
-		foreach($config_standard as $key => $value) {
-			if (! isset($config[$key]) ) {
-				$config[$key]	= $value;
-			}
-		}
+// 		foreach($config_standard as $key => $value) {
+// 			if (! isset($config[$key]) ) {
+// 				$config[$key]	= $value;
+// 			}
+// 		}
 	?>
 
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config_config; ?></h1>
