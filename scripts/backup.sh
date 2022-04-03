@@ -393,7 +393,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 	CAMERA_SERIAL=${CAMERA_SERIAL//[^a-zA-Z0-9-_\.]/_}
 
 	CAMERA_SERIAL_PATH=""
-	if [ "$[CAMERA_SERIAL]" != "" ]; then
+	if [ "${CAMERA_SERIAL}" != "" ]; then
 		CAMERA_SERIAL_PATH="_SN_${CAMERA_SERIAL}"
 	fi
 
