@@ -20,6 +20,7 @@
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
+CONFIG_STANDARDS="${WORKING_DIR}/config-standards.cfg"
 source "$CONFIG"
 
 # Check and complete config.cfg
@@ -88,8 +89,21 @@ if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
 	fi
 fi
 
-# Start default-backup
+
+# Default backup
+
+RUN_SECONDARY_BACKUP="false"
+if [ "${conf_BACKUP_DEFAULT_SOURCE2}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET2}" != "none" ]; then
+	RUN_SECONDARY_BACKUP="true"
+fi
+
+# default backup 1
 if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET}" != "none" ]; then
-	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}"
+	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" "${RUN_SECONDARY_BACKUP}"
+fi
+
+# default-backup 2
+if [ "${RUN_SECONDARY_BACKUP}" == "true" ]; then
+	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE2}" "${conf_BACKUP_DEFAULT_TARGET2}"
 fi
 

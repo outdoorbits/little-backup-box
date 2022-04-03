@@ -1,5 +1,8 @@
 <!doctype html>
 
+<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
+         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
+
 <?php
 	$WORKING_DIR=dirname(__FILE__);
 	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
@@ -10,13 +13,10 @@
 
 	include($WORKING_DIR . "/sub-popup.php");
 
-	$CloudServices=array();
-	exec("sudo rclone config show --config \"" . $constants["const_RCLONE_CONFIG_FILE"] . "\" | grep '^\[.*\]$' | sed 's/^\[//' | sed 's/\]$//'",$CloudServices);
+	include($WORKING_DIR . "/get-cloudservices.php");
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
-<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
-         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>

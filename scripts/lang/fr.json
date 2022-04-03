@@ -43,7 +43,8 @@
     "camera": "Appareil photo/smartphone",
     "conditions": "Conditions",
     "memory_ram": "RAM utilisé",
-    "memory_swap": "SWAP utilisé"
+    "memory_swap": "SWAP utilisé",
+    "camera_serial": "Numéro de série"
   },
   "config": {
     "config": "Réglages",
@@ -152,7 +153,9 @@
     "behavior_log_sync_protokoll_label": "Détails de la synchronisation du journal ?",
     "behavior_loglevel_minimum": "minimal",
     "behavior_loglevel_medium": "moyen",
-    "behavior_loglevel_maximum": "maximum"
+    "behavior_loglevel_maximum": "maximum",
+    "backup_header2": "Mode de sauvegarde secondaire par défaut",
+    "backup_label2": "Sélectionnez un mode de sauvegarde secondaire par défaut à exécuter après le principal :"
   },
   "tools": {
     "tools": "Outils",

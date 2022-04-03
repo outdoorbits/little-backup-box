@@ -1,3 +1,8 @@
+<!doctype html>
+
+<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
+         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
+
 <?php
 	$WORKING_DIR=dirname(__FILE__);
 	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
@@ -8,11 +13,11 @@
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include($WORKING_DIR . "/sub-popup.php");
+
+	include($WORKING_DIR . "/get-cloudservices.php");
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
-<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
-         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
@@ -65,6 +70,7 @@
 		extract ($_POST);
 
 		list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
+		list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
 		$conf_POWER_OFF				= isset($conf_POWER_OFF)?"true":"false";
 		$conf_NOTIFY				= isset($conf_NOTIFY)?"true":"false";
 		$conf_MAIL_HTML				= isset($conf_MAIL_HTML)?"true":"false";
@@ -106,6 +112,8 @@
 conf_LANGUAGE="$conf_LANGUAGE"
 conf_BACKUP_DEFAULT_SOURCE="$conf_BACKUP_DEFAULT_SOURCE"
 conf_BACKUP_DEFAULT_TARGET="$conf_BACKUP_DEFAULT_TARGET"
+conf_BACKUP_DEFAULT_SOURCE2="$conf_BACKUP_DEFAULT_SOURCE2"
+conf_BACKUP_DEFAULT_TARGET2="$conf_BACKUP_DEFAULT_TARGET2"
 conf_BACKUP_CAMERA_FOLDER_MASK="$conf_BACKUP_CAMERA_FOLDER_MASK"
 conf_BACKUP_TARGET_BASEDIR_CLOUD="$conf_BACKUP_TARGET_BASEDIR_CLOUD"
 conf_POWER_OFF=$conf_POWER_OFF
@@ -248,6 +256,28 @@ function upload_settings() {
 						<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::config_backup_camera_internal; ?></option>
 						<option value="ios external" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios external"?" selected":""; ?>><?php echo L::config_backup_ios_external; ?></option>
 						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?" selected":""; ?>><?php echo L::config_backup_ios_internal; ?></option>
+					</select>
+
+				<h3><?php echo L::config_backup_header2; ?></h3>
+					<label for="BACKUP_MODE_2"><?php echo L::config_backup_label2; ?></label><br>
+
+					<select name="BACKUP_MODE_2" id="BACKUP_MODE_2">
+						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
+							<?php
+								if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_conf_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
+							?>
+									<option value="internal rsyncserver" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal rsyncserver"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
+									<option value="external rsyncserver" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="external rsyncserver"?" selected":""; ?>><?php echo L::main_external_button . L::right_arrow . L::main_rsync_button; ?></option>
+							<?php
+								}
+
+								foreach($CloudServices as $CloudService) {
+							?>
+									<option value="internal cloud_<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal cloud_${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
+									<option value="external cloud_<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="external cloud_${CloudService}"?" selected":""; ?>><?php echo L::main_external_button . L::right_arrow . $CloudService; ?></option>
+							<?php
+								}
+							?>
 					</select>
 
 				<h3><?php echo L::config_backup_camera_folder_mask_header; ?></h3>

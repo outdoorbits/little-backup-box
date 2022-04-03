@@ -43,7 +43,8 @@
     "camera": "Kamera / Smartphone",
     "conditions": "Bedingungen",
     "memory_ram": "RAM belegt",
-    "memory_swap": "SWAP belegt"
+    "memory_swap": "SWAP belegt",
+    "camera_serial": "Seriennummer"
   },
   "config": {
     "config": "Einstellungen",
@@ -152,7 +153,9 @@
     "behavior_log_sync_protokoll_label": "Sync-Details protokollieren?",
     "behavior_loglevel_minimum": "minimal",
     "behavior_loglevel_medium": "mittel",
-    "behavior_loglevel_maximum": "maximal"
+    "behavior_loglevel_maximum": "maximal",
+    "backup_header2": "Standardmäßiger sekundärer Sicherungsmodus",
+    "backup_label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:"
   },
   "tools": {
     "tools": "Werkzeug",

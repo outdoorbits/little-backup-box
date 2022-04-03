@@ -30,8 +30,7 @@ source "$CONFIG"
 
 # Config
 MOUNTED_DEVICES=()
-UUID_USB_1=""
-UUID_USB_2=""
+
 
 CLOUDSERVICE=""
 
@@ -47,6 +46,11 @@ SYNC_TIME_OVERHEATING_WAIT_SEC=60
 # To add a new definition, specify the desired arguments to the list
 SOURCE_ARG="${1}"
 DESTIN_ARG="${2}"
+
+SECONDARY_BACKUP_FOLLOWING="no"
+if [ "${3}" == "true" ]; then
+	SECONDARY_BACKUP_FOLLOWING="yes"
+fi
 
 # Source definition
 if [[ " storage camera ios internal " =~ " ${SOURCE_ARG} " ]]; then
@@ -380,18 +384,27 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 	# Obtain camera model
 	# Create the target directory with the camera model as its name
 	CAMERA=$(sudo gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
+	CAMERA=${CAMERA//[^a-zA-Z0-9-_\.]/_}
 
 	lcd_message "${CAMERA}"
 	log_message "Camera: ${CAMERA}" 1
+
+	CAMERA_SERIAL=$(sudo gphoto2 --summary | grep "Serial Number" | cut -d: -f2 | tr -d '[:space:]')
+	CAMERA_SERIAL=${CAMERA_SERIAL//[^a-zA-Z0-9-_\.]/_}
+
+	CAMERA_SERIAL_PATH=""
+	if [ "$[CAMERA_SERIAL]" != "" ]; then
+		CAMERA_SERIAL_PATH="_SN_${CAMERA_SERIAL}"
+	fi
 
 	#Set SOURCE_PATH
 	# not used
 
 	# Set BACKUP_PATH
-	BACKUP_PATH="${STORAGE_PATH}/${CAMERA}"
+	BACKUP_PATH="${STORAGE_PATH}/${CAMERA}${CAMERA_SERIAL_PATH}"
 
 	# Set SOURCE_IDENTIFIER
-	SOURCE_IDENTIFIER="Camera: ${CAMERA}"
+	SOURCE_IDENTIFIER="Camera: ${CAMERA} Serial: ${CAMERA_SERIAL}"
 
 	# Define source-folders
 	Camera_Search_Folders=()
@@ -684,4 +697,7 @@ if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
 fi
 
 # Power off
-source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE}"
+if [ "${SECONDARY_BACKUP_FOLLOWING}" == "no" ]; then
+	source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE}"
+fi
+

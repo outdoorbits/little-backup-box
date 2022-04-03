@@ -312,13 +312,64 @@ fi
 echo "conf_BACKUP_DEFAULT_SOURCE=\"${conf_BACKUP_DEFAULT_SOURCE}\"" | sudo tee -a "${CONFIG}"
 echo "conf_BACKUP_DEFAULT_TARGET=\"${conf_BACKUP_DEFAULT_TARGET}\"" | sudo tee -a "${CONFIG}"
 
+# set the default SECONDARY backup mode
+if [ "${SCRIPT_MODE}" = "install" ]; then
+	## append new line to config-file
+	echo -e '' | sudo tee -a "${CONFIG}"
+
+	# write new default-backup-method
+	conf_BACKUP_DEFAULT_SOURCE2="none"
+	conf_BACKUP_DEFAULT_TARGET2="none"
+
+	case $CHOICE_BACKUP_MODE in
+	1)
+			conf_BACKUP_DEFAULT_SOURCE2="none"
+			conf_BACKUP_DEFAULT_TARGET2="none"
+		;;
+	2)
+			conf_BACKUP_DEFAULT_SOURCE2="storage"
+			conf_BACKUP_DEFAULT_TARGET2="external"
+		;;
+	3)
+			conf_BACKUP_DEFAULT_SOURCE2="storage"
+			conf_BACKUP_DEFAULT_TARGET2="internal"
+		;;
+	4)
+			conf_BACKUP_DEFAULT_SOURCE2="camera"
+			conf_BACKUP_DEFAULT_TARGET2="external"
+		;;
+	5)
+			conf_BACKUP_DEFAULT_SOURCE2="camera"
+			conf_BACKUP_DEFAULT_TARGET2="internal"
+		;;
+	6)
+			conf_BACKUP_DEFAULT_SOURCE2="ios"
+			conf_BACKUP_DEFAULT_TARGET2="external"
+		;;
+	7)
+			conf_BACKUP_DEFAULT_SOURCE2="ios"
+			conf_BACKUP_DEFAULT_TARGET2="internal"
+		;;
+	esac
+else
+	if [ -z "${conf_BACKUP_DEFAULT_SOURCE2}" ]; then
+		conf_BACKUP_DEFAULT_SOURCE2="none"
+	fi
+	if [ -z "${conf_BACKUP_DEFAULT_TARGET2}" ]; then
+		conf_BACKUP_DEFAULT_TARGET2="none"
+	fi
+fi
+
+echo "conf_BACKUP_DEFAULT_SOURCE2=\"${conf_BACKUP_DEFAULT_SOURCE2}\"" | sudo tee -a "${CONFIG}"
+echo "conf_BACKUP_DEFAULT_TARGET2=\"${conf_BACKUP_DEFAULT_TARGET2}\"" | sudo tee -a "${CONFIG}"
+
 # remove all from crontab
 crontab -r
 
 # write basic crontab
 crontab -l | {
     cat
-    echo "@reboot sudo ${const_WEB_ROOT_LBB}/start.sh"
+    echo "@reboot sudo ${const_WEB_ROOT_LBB}/autorun.sh"
 } | crontab
 
 crontab -l | {

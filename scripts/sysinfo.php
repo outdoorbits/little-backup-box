@@ -92,9 +92,21 @@
 					if (count($DEVICES)) {
 						echo "<ul>";
 							foreach ($DEVICES as $DEVICE) {
+								$DEVICE=mb_ereg_replace("([^a-zA-Z0-9-_\.])", '_', $DEVICE);
 								echo "<li>$DEVICE</li>";
 							}
+						echo "</ul>";
+					}
+
+					echo '<h3>' . L::sysinfo_camera_serial.'</h3>';
+					exec("sudo gphoto2 --summary | grep 'Serial Number' | cut -d: -f2 | tr -d '[:space:]'",$SERIALS);
+					if (count($SERIALS)) {
 						echo "<ul>";
+							foreach ($SERIALS as $SERIAL) {
+								$SERIAL=mb_ereg_replace("([^a-zA-Z0-9-_\.])", '_', $SERIAL);
+								echo "<li>$SERIAL</li>";
+							}
+						echo "</ul>";
 					}
 					else
 					{

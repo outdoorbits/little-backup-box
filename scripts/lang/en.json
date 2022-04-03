@@ -119,6 +119,7 @@
     "devices": "Devices",
     "diskspace": "Disk space",
     "camera": "Camera / smartphone",
+    "camera_serial": "Serial number",
     "memory_ram": "RAM used",
     "memory_swap": "SWAP used"
   },
@@ -153,6 +154,8 @@
     "backup_section": "Backup",
     "backup_header": "Default backup mode",
     "backup_label": "Select the default backup-mode:",
+    "backup_header2": "Default secondary backup mode",
+    "backup_label2": "Select a secondary default backup-mode to run after the primary:",
     "backup_none": "no automatic backup",
     "backup_storage_external": "Source storage to external storage",
     "backup_storage_internal": "Source storage to internal storage",

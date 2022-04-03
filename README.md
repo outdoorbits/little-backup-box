@@ -6,6 +6,7 @@ Dmitri Popov has entrusted me with the further maintenance of Little Backup Box 
 
 <h1>NEWS</h1>
 <ul>
+	<li>2022/04/03: A secondary default backup mode has been added. This allows you to configure a automatically starting network backup after a local backup.</li>
 	<li>2022/01/16: The <a href="https://github.com/outdoorbits/little-backup-box/wiki/02.-Hardware">Wiki</a> explains now, how to connect a LCD-display.</li>
 	<li>2022/01/12: Camera-backup: Paths to backup can be configured for each device.</li>
 	<li>2022/01/08: Add option to backup only specific directories from cameras or smartphones.</li>
