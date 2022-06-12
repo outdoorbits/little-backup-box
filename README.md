@@ -94,7 +94,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; We are always happy to receive your feedback<br>
 		&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;<br>
-		... using comitup, you now have to connect you computer to the wlan <i>little-backup-box-nnnn</i> to access the new IP 10.41.0.1.
+		... using comitup, you now have to connect your computer to the wlan <i>little-backup-box-nnnn</i> to access the new IP 10.41.0.1.
 		<br>
 	</li>
 </ol>
