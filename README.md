@@ -75,6 +75,26 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		Mejiro is an easy-to-use PHP web app for instant photo publishing.<br>
 		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
 	</li>
+	<li>
+		<b>Don't worry:</b> If your installation-screen scrolls down and seems to freeze at <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong.
+		comitup is installed at the end of the process and when it's comming up, it changes your network. Your ssh-session is broken and you will not get anymore information. In the background
+		the installation finishes and a few seconds later, the pi reboots. What you can't see anymore is just this:<br>
+		<br>	&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;
+		&ast;&ast;&ast; How to proceed:
+		&ast;&ast;&ast; Assuming your Little Backup Box gets the same IP address again after the reboot,
+		&ast;&ast;&ast; you can then reach the web UI as follows:
+		&ast;&ast;&ast;
+		&ast;&ast;&ast; https://10.41.0.1 (secure, certificate cannot be verified automatically, please confirm it)
+		&ast;&ast;&ast; http://10.41.0.1:8000 (insecure)
+		&ast;&ast;&ast;
+		&ast;&ast;&ast; Please use the settings of the web UI to optimally adapt the Little Backup Box for you.
+		&ast;&ast;&ast;
+		&ast;&ast;&ast; If you have further questions, please check the wiki first:
+		&ast;&ast;&ast; https://github.com/outdoorbits/little-backup-box/wiki
+		&ast;&ast;&ast;
+		&ast;&ast;&ast; We are always happy to receive your feedback!&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;
+		<br>
+	</li>
 </ol>
 <h2>Start</h2>
 If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.BOX or http://IP.OF.YOUR.BOX:8000 as the address. Have fun!
