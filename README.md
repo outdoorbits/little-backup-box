@@ -76,9 +76,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
 	</li>
 	<li>
-		<b>Don't worry:</b> If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong.
-		comitup is installed at the end of the process and when it's comming up, it changes your network. Your ssh-session is broken and you will not get anymore information. In the background
-		the installation finishes and a few seconds later, the pi reboots. What you can't see anymore is just this:<br>
+		<b>Don't worry:</b> Please note this in case you installed via wlan/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's comming up, it changes your wlan-network. Your ssh-session is broken and you will not get anymore information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is just this:<br>
 		<br>	&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; How to proceed:<br>
 		&ast;&ast;&ast; Assuming your Little Backup Box gets the same IP address again after the reboot,<br>
