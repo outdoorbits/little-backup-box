@@ -88,8 +88,10 @@ while [ true ]; do
 			TIME_LEFT_FORMATED="${DAYS_LEFT}d ${TIME_LEFT_FORMATED}"
 		fi
 	else
+		FILES_SYNCED="0"
 		TIME_LEFT_FORMATED=""
 	fi
+
 	TIME_SPACER_LENGTH=$(echo "${LineLength} - ${#FINISHED_PERCENT} - 1 - ${#TIME_LEFT_FORMATED}" | bc)
 	TIME_SPACER=$(printf %${TIME_SPACER_LENGTH}s)
 	lcd_message "+$(l 'box_backup_status'):" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%${TIME_SPACER}${TIME_LEFT_FORMATED}" "-${PROGRESSBAR}"
