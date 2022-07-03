@@ -210,8 +210,8 @@
       "error_cooling_2": "Refroidissement",
       "error_cooling_3": "Soupçon de",
       "error_cooling_4": "surchauffe",
-      "files_missing": "Fichiers manquants !",
-      "lost_device": "Err.Périphérique perdu !",
+      "files_missing": "Fichiers manquants!",
+      "lost_device": "Err.Périphérique perdu!",
       "no_ios_waiting_1": "Pas d'appareil iOS",
       "no_ios_waiting_2": "En attendant",
       "of": "de",
@@ -224,7 +224,10 @@
         "backup_type": "Taper",
         "log": "Journal de sauvegarde",
         "to": "à",
-        "tries_needed": "essai/essais nécessaires"
+        "tries_needed": "essai/essais nécessaires",
+        "backup_complete": "Terminée",
+        "files_missing": "Fichiers manquants!",
+        "lost_device": "Err.Périphérique perdu!"
       },
       "try": "essayer",
       "checking_old_files": "comparant",

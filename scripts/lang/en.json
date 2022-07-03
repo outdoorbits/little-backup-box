@@ -55,10 +55,13 @@
       "camera_scanning_folders": "Scanning folders ...",
       "mail": {
         "backup": "Backup",
+        "backup_complete": "Complete",
         "backup_type": "Type",
         "to": "to",
         "log": "Backup log",
-        "tries_needed": "try/tries needed"
+        "tries_needed": "try/tries needed",
+        "lost_device": "Err.Lost device!",
+        "files_missing": "Files missing!"
       }
     },
     "poweroff": {

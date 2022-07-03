@@ -672,12 +672,20 @@ sudo fusermount -uz "${const_IOS_MOUNT_POINT}"
 sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}"
 
 # prepare message for mail and power off
+MESSAGE_MAIL=""
+MESSAGE_LCD=""
 if [ -z "${SYNC_ERROR}" ]; then
-	MESSAGE="$(l 'box_backup_complete')."
+	MESSAGE_MAIL="$(l 'box_mail_backup_complete')."
+	MESSAGE_LCD="$(l 'box_backup_complete')."
 else
-	MESSAGE=""
-	if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]]; then MESSAGE="$(l 'box_backup_lost_device') "; fi
-	if [[ "${SYNC_ERROR}" =~ "Files missing!" ]]; then MESSAGE="${MESSAGE}$(l 'box_backup_files_missing')"; fi
+	if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]]; then
+		MESSAGE_MAIL="$(l 'box_backup_mail_lost_device') "
+		MESSAGE_LCD="$(l 'box_backup_lost_device') "
+	fi
+	if [[ "${SYNC_ERROR}" =~ "Files missing!" ]]; then
+		MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_files_missing')"
+		MESSAGE_LCD="${MESSAGE_LCD}$(l 'box_backup_files_missing')"
+	fi
 fi
 
 # Check internet connection and send
@@ -685,19 +693,19 @@ fi
 check=$(wget -q --spider http://google.com/)
 if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
 
-	if [ ! -z "${MESSAGE}" ]; then
-		SUBJ_MSG="${MESSAGE}"
-		BODY_MSG="${MESSAGE}\n\n"
+	if [ ! -z "${MESSAGE_MAIL}" ]; then
+		SUBJ_MSG="${MESSAGE_MAIL}"
+		BODY_MSG="${MESSAGE_MAIL}\n\n"
 	else
-		SUBJ_MSG="$(l 'box_backup_complete')"
+		SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
 		BODY_MSG=""
 	fi
 
-	send_email "Little Backup Box: $(l 'box_backup_mail_backup') ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): ${SOURCE_MODE} $(l 'box_backup_mail_to') ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+	send_email "Little Backup Box $(l 'box_backup_mail_backup'): ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): ${SOURCE_MODE} $(l 'box_backup_mail_to') ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 fi
 
 # Power off
 if [ "${SECONDARY_BACKUP_FOLLOWING}" == "no" ]; then
-	source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE}"
+	source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}"
 fi
 

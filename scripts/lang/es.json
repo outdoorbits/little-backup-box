@@ -224,7 +224,10 @@
         "backup_type": "Escribir",
         "log": "Registro de respaldo",
         "to": "a",
-        "tries_needed": "Intentos necesarios"
+        "tries_needed": "Intentos necesarios",
+        "backup_complete": "Completada",
+        "files_missing": "¡Faltan archivos!",
+        "lost_device": "Err. Dispositivo perdido!"
       },
       "try": "Intentar",
       "checking_old_files": "comparando",
