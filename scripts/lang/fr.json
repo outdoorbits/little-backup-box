@@ -220,12 +220,11 @@
       "working": "Travail",
       "status": "État de la sauvegarde",
       "mail": {
-        "backup": "Sauvegarde",
         "backup_type": "Taper",
         "log": "Journal de sauvegarde",
         "to": "à",
         "tries_needed": "essai/essais nécessaires",
-        "backup_complete": "Terminée",
+        "backup_complete": "Sauvegarde terminée",
         "files_missing": "Fichiers manquants!",
         "lost_device": "Err.Périphérique perdu!"
       },

@@ -220,12 +220,11 @@
       "working": "Trabajando",
       "status": "Estado copia seguridad",
       "mail": {
-        "backup": "Respaldo",
         "backup_type": "Escribir",
         "log": "Registro de respaldo",
         "to": "a",
         "tries_needed": "Intentos necesarios",
-        "backup_complete": "Completada",
+        "backup_complete": "Respaldo completada",
         "files_missing": "¡Faltan archivos!",
         "lost_device": "Err. Dispositivo perdido!"
       },

@@ -675,7 +675,7 @@ sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}"
 MESSAGE_MAIL=""
 MESSAGE_LCD=""
 if [ -z "${SYNC_ERROR}" ]; then
-	MESSAGE_MAIL="$(l 'box_mail_backup_complete')."
+	MESSAGE_MAIL="$(l 'box_backup_mail_backup_complete')."
 	MESSAGE_LCD="$(l 'box_backup_complete')."
 else
 	if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]]; then
@@ -689,7 +689,7 @@ else
 fi
 
 # Check internet connection and send
-# a notification if the conf_NOTIFY option is enabled
+# a notification by mail if the conf_NOTIFY option is enabled
 check=$(wget -q --spider http://google.com/)
 if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
 
@@ -701,7 +701,7 @@ if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
 		BODY_MSG=""
 	fi
 
-	send_email "Little Backup Box $(l 'box_backup_mail_backup'): ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): ${SOURCE_MODE} $(l 'box_backup_mail_to') ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+	send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): ${SOURCE_MODE} $(l 'box_backup_mail_to') ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 fi
 
 # Power off

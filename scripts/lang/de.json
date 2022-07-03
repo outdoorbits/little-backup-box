@@ -220,12 +220,11 @@
       "working": "arbeite",
       "status": "Sicherungsstatus",
       "mail": {
-        "backup": "Backup",
         "backup_type": "Typ",
         "log": "Backup-Log",
         "to": "nach",
         "tries_needed": "Versuch(e) erforderlich",
-        "backup_complete": "Komplett",
+        "backup_complete": "Backup komplett",
         "files_missing": "Dateien fehlen!",
         "lost_device": "Fehler. Gerät verloren!"
       },
