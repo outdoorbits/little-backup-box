@@ -218,7 +218,6 @@
       "source_ok": "Quelle o.k.",
       "try_backup": "Backup Versuch",
       "working": "arbeite",
-      "status": "Sicherungsstatus",
       "mail": {
         "backup_type": "Typ",
         "log": "Backup-Log",
@@ -230,7 +229,16 @@
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",
-      "camera_scanning_folders": "Ordner scannen ..."
+      "camera_scanning_folders": "Ordner scannen ...",
+      "primary": "Prim. Sicherung",
+      "secondary": "Sek. Backup",
+      "mode_camera": "Kamera",
+      "mode_cloud": "Cloud",
+      "mode_external": "Ext. Speicher",
+      "mode_internal": "Int. Speicher",
+      "mode_ios": "iOS",
+      "mode_rsyncserver": "rsync",
+      "mode_storage": "Speicher"
     },
     "cronip": {
       "offline": "offline",

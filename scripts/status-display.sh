@@ -34,6 +34,10 @@
 # $BACKUP_PATH
 # $DEST_MODE
 
+# Parameters
+SOURCE_MODE="${1}"
+DEST_MODE="${2}"
+
 # Definitions
 LineLength=21
 TIME_RUN=0
@@ -94,7 +98,7 @@ while [ true ]; do
 
 	TIME_SPACER_LENGTH=$(echo "${LineLength} - ${#FINISHED_PERCENT} - 1 - ${#TIME_LEFT_FORMATED}" | bc)
 	TIME_SPACER=$(printf %${TIME_SPACER_LENGTH}s)
-	lcd_message "+$(l 'box_backup_status'):" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%${TIME_SPACER}${TIME_LEFT_FORMATED}" "-${PROGRESSBAR}"
+	lcd_message "+$(l "box_backup_mode_${SOURCE_MODE}") > $(l "box_backup_mode_${DEST_MODE}"):" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%${TIME_SPACER}${TIME_LEFT_FORMATED}" "-${PROGRESSBAR}"
 
 	# display-frequency depends on destination, slower for cloud-storage
 	INTERVAL_SEC=4

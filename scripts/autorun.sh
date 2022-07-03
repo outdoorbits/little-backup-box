@@ -99,11 +99,19 @@ fi
 
 # default backup 1
 if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET}" != "none" ]; then
+	if [ "${RUN_SECONDARY_BACKUP}" == "true" ]; then
+		lcd_message "$(l 'box_backup_primary')"
+		sleep 1
+	fi
+
 	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" "${RUN_SECONDARY_BACKUP}"
 fi
 
 # default-backup 2
 if [ "${RUN_SECONDARY_BACKUP}" == "true" ]; then
+	lcd_message "$(l 'box_backup_secondary')"
+	sleep 1
+
 	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE2}" "${conf_BACKUP_DEFAULT_TARGET2}"
 fi
 

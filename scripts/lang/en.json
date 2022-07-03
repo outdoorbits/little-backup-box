@@ -10,6 +10,15 @@
   },
   "box": {
     "backup": {
+      "primary": "Primary backup",
+      "secondary": "Secondary backup",
+      "mode_storage": "Storage",
+      "mode_internal": "Int. storage",
+      "mode_external": "Ext. storage",
+      "mode_camera": "Camera",
+      "mode_ios": "iOS",
+      "mode_rsyncserver": "rsync",
+      "mode_cloud": "Cloud",
       "storage_size": "size",
       "storage_used": "used",
       "storage_free": "free",
@@ -51,7 +60,6 @@
       "lost_device": "Err.Lost device!",
       "files_missing": "Files missing!",
       "checking_old_files": "comparing",
-      "status": "Backup status",
       "camera_scanning_folders": "Scanning folders ...",
       "mail": {
         "backup_complete": "Backup complete",

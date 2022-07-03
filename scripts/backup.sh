@@ -536,7 +536,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	SYNC_START_TIME=$(date +%s)
 
 	# display
-	source "${WORKING_DIR}/status-display.sh" &
+	source "${WORKING_DIR}/status-display.sh" "${SOURCE_MODE}" "${DEST_MODE}" &
 	PID=$!
 
 ##############

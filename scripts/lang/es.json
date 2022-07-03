@@ -218,7 +218,6 @@
       "source_ok": "Origen o.k.",
       "try_backup": "Prueba copia seguridad",
       "working": "Trabajando",
-      "status": "Estado copia seguridad",
       "mail": {
         "backup_type": "Escribir",
         "log": "Registro de respaldo",
@@ -230,7 +229,16 @@
       },
       "try": "Intentar",
       "checking_old_files": "comparando",
-      "camera_scanning_folders": "Escaneando carpetas..."
+      "camera_scanning_folders": "Escaneando carpetas...",
+      "primary": "Ejecución principal",
+      "secondary": "Ejecución secundaria",
+      "mode_camera": "Cámara",
+      "mode_cloud": "Nube",
+      "mode_external": "Ext. almacenamiento",
+      "mode_internal": "Int. almacenamiento",
+      "mode_ios": "iOS",
+      "mode_rsyncserver": "rsync",
+      "mode_storage": "Almacenamiento"
     },
     "cronip": {
       "offline": "desconectado",

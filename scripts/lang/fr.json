@@ -218,7 +218,6 @@
       "source_ok": "Source ok",
       "try_backup": "Essayez la sauvegarde",
       "working": "Travail",
-      "status": "État de la sauvegarde",
       "mail": {
         "backup_type": "Taper",
         "log": "Journal de sauvegarde",
@@ -230,7 +229,16 @@
       },
       "try": "essayer",
       "checking_old_files": "comparant",
-      "camera_scanning_folders": "Analyse des dossiers..."
+      "camera_scanning_folders": "Analyse des dossiers...",
+      "primary": "Sauvegarde principale",
+      "secondary": "Sauvegarde secondaire",
+      "mode_camera": "Caméra",
+      "mode_cloud": "Cloud",
+      "mode_external": "Ext. stockage",
+      "mode_internal": "Int. Stockage",
+      "mode_ios": "iOS",
+      "mode_rsyncserver": "rsync",
+      "mode_storage": "Stockage"
     },
     "cronip": {
       "offline": "hors ligne",
