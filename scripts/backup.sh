@@ -469,7 +469,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 	log_message "Folders to sync from camera '${CAMERA}':" 1
 	for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
 	do
-		log_message " - ${Camera_Sync_Folder} - For use as pattern in Settings ('$(l 'config_backup_camera_folder_mask_header')'): '${CAMERA}:!${Camera_Sync_Folder}'" 1
+		log_message "*** - ${Camera_Sync_Folder} - For use as pattern in Settings ('$(l 'config_backup_camera_folder_mask_header')'): '${CAMERA}:!${Camera_Sync_Folder}'" 1
 	done
 else
 	# no defined mode selected
