@@ -476,6 +476,12 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 fi
 sudo service vsftpd restart
 
+# Restore password protection
+if [ "${SCRIPT_MODE}" = "update" ] && [ ! -z "${conf_PASSWORD}" ]; then
+	echo "Restore password-protection"
+	sudo "${const_WEB_ROOT_LBB}/password.sh" set "${conf_PASSWORD}"
+fi
+
 # install mejiro
 case $CHOICE_MEJIRO in
 0)
@@ -506,11 +512,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	esac
 fi
 
-# Restore password protection
-if [ "${SCRIPT_MODE}" = "update" ] && [ ! -z "${conf_PASSWORD}" ]; then
-	echo "Restore password-protection"
-	sudo "${const_WEB_ROOT_LBB}/password.sh" set "${conf_PASSWORD}"
-fi
+
 
 # post-install-information
 IP=$(hostname -I | cut -d' ' -f1)
@@ -531,6 +533,11 @@ echo "***"
 echo "*** We are always happy to receive your feedback!"
 echo "********************************************************************************************"
 echo ""
+
+# finshed
+echo "Little Backup Box: Setup finished." | tee "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
+echo "Mode=${SCRIPT_MODE}" | tee -a "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
+date | tee -a "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
 
 # reboot
 echo "All done! Rebooting..."
