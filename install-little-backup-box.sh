@@ -123,6 +123,39 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	CHOICE_COMITUP=$?
 
 	clear
+
+	if  [ "${CHOICE_COMITUP}" = "0" ]; then
+		read -r -d '' COMITUP_INSTALL_MESSAGE << EOM
+You decided to install comitup.
+
+If you are connected to your raspberry pi by wlan, your wlan-connection may break at the end of the installation.
+
+DON'T WORRY! The installation will finish seconds later and your raspberry pi will reboot. Have a look at the action-LED.
+
+What's going on?
+Your raspberry pi's wlan-configuration will be removed by comitup.
+Because comitup at this time has no access-data for your wlan yet, it can't connect to it.
+So it will start as a wlan-hotspot with ssid=little-backup-box-nnnn (nnnn is a random number).
+Please connect your mobile or your notebook to this wlan.
+
+If you want to configure comitup now, navigate to http://10.41.0.1 (http, not https!)
+
+Alternatively can reach the web UI of Little Backup Box when you are connected to its hotspot as follows:
+
+https://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)
+http://10.41.0.1:8000 (insecure)
+
+If you have further questions, please check the wiki first:
+https://github.com/outdoorbits/little-backup-box/wiki
+
+We are always happy to receive your feedback
+
+Press OK to proceed...
+EOM
+		dialog --msgbox "${COMITUP_INSTALL_MESSAGE}" 40 80
+
+		clear
+	fi
 fi
 
 

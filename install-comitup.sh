@@ -24,34 +24,6 @@ if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf" ]; then
 	sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
 fi
 
-# print installation hint
-echo "********************************************************************************************"
-echo "*** If you are connected to your raspberry pi by wlan, your wlan-connection may break now."
-echo "***"
-echo "*** DON'T WORRY! The installation will finish seconds later and your raspberry pi reboots."
-echo "***"
-echo "*** What's going on?"
-echo "*** Your raspberry pis wlan-configuration is removed by comitup now."
-echo "*** Because comitup has no access-data for your wlan yet, it can't connect to it. So it will"
-echo "*** start as a wlan-hotspot, ssid=little-backup-box-nnnn (nnnn is a random number)."
-echo "*** Please connect your mobile or your notebook to this wlan."
-echo "***"
-echo "*** If you want to configure comitup now, navigate to http://10.41.0.1 (http!)"
-echo "***"
-echo "*** You can reach the web UI of Little backup Box as follows:"
-echo "***"
-echo "*** https://10.41.0.1 (secure, certificate cannot be verified automatically, please confirm it)"
-echo "*** http://10.41.0.1:8000 (insecure)"
-echo "***"
-echo "*** Please use the settings of the web UI to optimally adapt the Little Backup Box for you."
-echo "***"
-echo "*** If you have further questions, please check the wiki first:"
-echo "*** https://github.com/outdoorbits/little-backup-box/wiki"
-echo "***"
-echo "*** We are always happy to receive your feedback"
-echo "********************************************************************************************"
-
-
 # create config
 echo "ap_name: little-backup-box-<nnnn>" | sudo tee "/etc/comitup.conf"
 echo "web_service: apache2.service" | sudo tee -a "/etc/comitup.conf"
