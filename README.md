@@ -80,7 +80,10 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		<br>	&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; How to proceed:<br>
 		&ast;&ast;&ast;<br>
-		&ast;&ast;&ast; Your raspberrys wlan-configuration has been removed by comitup now. Because comitup has no access-data for your wlan yet, it can't connect to it and will start as a wlan-hotspot, ssid=little-backup-box-nnnn (nnnn is a random number).
+		&ast;&ast;&ast; Your raspberrys wlan-configuration has been removed by comitup now. Because comitup has no<br>
+		&ast;&ast;&ast; access-data for your wlan yet, it can't connect to it and will start as a wlan-hotspot:<br>
+		&ast;&ast;&ast; ssid=little-backup-box-nnnn (nnnn is a random number).<br>
+		&ast;&ast;&ast;
 		&ast;&ast;&ast; Please connect your mobile or your notebook to this wlan.
 		&ast;&ast;&ast; If you want to configure comitup now, navigate to **http**://10.41.0.1 (http, not https!)
 		&ast;&ast;&ast; You can then reach the web UI of Little backup Box as follows:<br>
