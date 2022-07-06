@@ -150,7 +150,7 @@ http://10.41.0.1:8000 (insecure)
 If you have further questions, please check the wiki first:
 https://github.com/outdoorbits/little-backup-box/wiki
 
-We are always happy to receive your feedback
+We are always happy to receive your feedback!
 
 Press OK to proceed...
 EOM

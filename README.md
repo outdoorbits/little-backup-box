@@ -76,10 +76,11 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
 	</li>
 	<li>
-		<b>Don't worry:</b> Please note this in case you installed via wlan/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's comming up, it changes your wlan-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is just this:<br>
+		<b>Don't worry:</b> Please note this in case you installed via wlan/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's comming up, it changes your wlan-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is a short information, how to access Little Backup Box. In your setting, this would be the information you need:<br>
 		<br>	&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; How to proceed:<br>
-		&ast;&ast;&ast; Your raspberrys wlan-configuration is removed by comitup now. Because comitup has no access-data for your wlan yet, it can't connect to it and will start as a wlan-hotspot, ssid=little-backup-box-nnnn (nnnn is a random number).
+		&ast;&ast;&ast;<br>
+		&ast;&ast;&ast; Your raspberrys wlan-configuration has been removed by comitup now. Because comitup has no access-data for your wlan yet, it can't connect to it and will start as a wlan-hotspot, ssid=little-backup-box-nnnn (nnnn is a random number).
 		&ast;&ast;&ast; Please connect your mobile or your notebook to this wlan.
 		&ast;&ast;&ast; If you want to configure comitup now, navigate to **http**://10.41.0.1 (http, not https!)
 		&ast;&ast;&ast; You can then reach the web UI of Little backup Box as follows:<br>
@@ -92,7 +93,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		&ast;&ast;&ast; If you have further questions, please check the wiki first:<br>
 		&ast;&ast;&ast; https://github.com/outdoorbits/little-backup-box/wiki<br>
 		&ast;&ast;&ast;<br>
-		&ast;&ast;&ast; We are always happy to receive your feedback<br>
+		&ast;&ast;&ast; We are always happy to receive your feedback!<br>
 		&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;<br>
 		... using comitup, you now have to connect your computer to the wlan <i>little-backup-box-nnnn</i> to access the new IP 10.41.0.1.
 		<br>
