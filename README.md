@@ -85,11 +85,11 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		&ast;&ast;&ast; ssid=little-backup-box-nnnn (nnnn is a random number).<br>
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; Please connect your mobile or your notebook to this wlan.<br>
-		&ast;&ast;&ast; If you want to configure comitup now, navigate to **http**://10.41.0.1 (http, not https!)<br>
+		&ast;&ast;&ast; If you want to configure comitup now, navigate to <b>http</b>://10.41.0.1 (http, not https!)<br>
 		&ast;&ast;&ast; You can then reach the web UI of Little backup Box as follows:<br>
 		&ast;&ast;&ast;<br>
-		&ast;&ast;&ast; **https**://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)<br>
-		&ast;&ast;&ast; **http**://10.41.0.1:8000 (insecure)<br>
+		&ast;&ast;&ast; <b>https</b>://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)<br>
+		&ast;&ast;&ast; <b>http</b>://10.41.0.1:8000 (insecure)<br>
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; Please use the settings of the web UI to optimally adapt the Little Backup Box for you.<br>
 		&ast;&ast;&ast;<br>
