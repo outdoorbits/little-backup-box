@@ -84,8 +84,8 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		&ast;&ast;&ast; access-data for your wlan yet, it can't connect to it and will start as a wlan-hotspot:<br>
 		&ast;&ast;&ast; ssid=little-backup-box-nnnn (nnnn is a random number).<br>
 		&ast;&ast;&ast;<br>
-		&ast;&ast;&ast; Please connect your mobile or your notebook to this wlan.
-		&ast;&ast;&ast; If you want to configure comitup now, navigate to **http**://10.41.0.1 (http, not https!)
+		&ast;&ast;&ast; Please connect your mobile or your notebook to this wlan.<br>
+		&ast;&ast;&ast; If you want to configure comitup now, navigate to **http**://10.41.0.1 (http, not https!)<br>
 		&ast;&ast;&ast; You can then reach the web UI of Little backup Box as follows:<br>
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; **https**://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)<br>
@@ -94,7 +94,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		&ast;&ast;&ast; Please use the settings of the web UI to optimally adapt the Little Backup Box for you.<br>
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; If you have further questions, please check the wiki first:<br>
-		&ast;&ast;&ast; https://github.com/outdoorbits/little-backup-box/wiki<br>
+		&ast;&ast;&ast; https://github.com/outdoorbits/little-backup-box/wiki <br>
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; We are always happy to receive your feedback!<br>
 		&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;<br>
