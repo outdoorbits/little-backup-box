@@ -86,7 +86,9 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; Please connect your mobile or your notebook to this wlan.<br>
 		&ast;&ast;&ast; If you want to configure comitup now, navigate to <b>http</b>://10.41.0.1 (http, not https!)<br>
-		&ast;&ast;&ast; You can then reach the web UI of Little backup Box as follows:<br>
+		&ast;&ast;&ast;<br>
+		&ast;&ast;&ast; Alternatively can reach the web UI of Little Backup Box when you are connected to its<br>
+		&ast;&ast;&ast; hotspot as follows:<br>
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; <b>https</b>://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)<br>
 		&ast;&ast;&ast; <b>http</b>://10.41.0.1:8000 (insecure)<br>
