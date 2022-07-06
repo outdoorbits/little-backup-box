@@ -136,7 +136,9 @@ What's going on?
 Your raspberry pi's wlan-configuration will be removed by comitup.
 Because comitup at this time has no access-data for your wlan yet, it can't connect to it.
 So it will start as a wlan-hotspot with ssid=little-backup-box-nnnn (nnnn is a random number).
-Please connect your mobile or your notebook to this wlan.
+
+What to do?
+After the reboot, please connect your mobile or your notebook to the little-backup-box-nnnn wlan.
 
 If you want to configure comitup now, navigate to http://10.41.0.1 (http, not https!)
 
