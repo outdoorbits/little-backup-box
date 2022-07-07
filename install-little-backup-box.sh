@@ -126,35 +126,37 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 
 	if  [ "${CHOICE_COMITUP}" = "0" ]; then
 		read -r -d '' COMITUP_INSTALL_MESSAGE << EOM
-You decided to install comitup.
+\Zb\ZuYou decided to install comitup\Zn
 
-If you are connected to your raspberry pi by wlan, your wlan-connection may break at the end of the installation.
+\ZbPlease read this carefully, if your raspberry pi is connected by wlan now!\Zn
+\Zb\Z1Your wlan-connection may break at the end of the installation.
+BUT DON'T WORRY!\Zn
 
-DON'T WORRY! The installation will finish seconds later and your raspberry pi will reboot. Have a look at the action-LED.
+The installation will finish seconds later, but you won't see that progress on screen anymore. Your raspberry pi will reboot when setup is finished. Have a look at the action-LED.
 
-What's going on?
+\ZuWhat's going on?\Zn
 Your raspberry pi's wlan-configuration will be removed by comitup.
 Because comitup at this time has no access-data for your wlan yet, it can't connect to it.
-So it will start as a wlan-hotspot with ssid=little-backup-box-nnnn (nnnn is a random number).
+So it will start as a wlan-hotspot with ssid=\Zblittle-backup-box-nnnn\Zn (nnnn is a random number).
 
-What to do?
-After the reboot, please connect your mobile or your notebook to the little-backup-box-nnnn wlan.
+\ZuWhat to do?\Zn
+After the reboot, please connect your mobile or notebook to the little-backup-box-nnnn wlan.
 
-If you want to configure comitup now, navigate to http://10.41.0.1 (http, not https!)
+If you want to configure comitup now, navigate to \Zuhttp://10.41.0.1\Zn (http, not https!)
 
 Alternatively can reach the web UI of Little Backup Box when you are connected to its hotspot as follows:
 
-https://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)
-http://10.41.0.1:8000 (insecure)
+\Zuhttps://10.41.0.1\Zn (secure, certificate can't be verified automatically, please confirm it)
+\Zuhttp://10.41.0.1:8000\Zn (insecure)
 
 If you have further questions, please check the wiki first:
-https://github.com/outdoorbits/little-backup-box/wiki
+\Zuhttps://github.com/outdoorbits/little-backup-box/wiki\Zn
 
 We are always happy to receive your feedback!
 
 Press OK to proceed...
 EOM
-		dialog --msgbox "${COMITUP_INSTALL_MESSAGE}" 40 80
+		dialog --colors --msgbox "${COMITUP_INSTALL_MESSAGE}" 40 80
 
 		clear
 	fi
