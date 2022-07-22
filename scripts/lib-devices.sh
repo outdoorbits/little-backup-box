@@ -113,7 +113,7 @@ function mount_device() {
 				#Get filesystem-type
 				DEVICE_FSTYPE=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^FSTYPE=" | cut -d'"' -f 2)
 				#Check filesystem-type to be accepted
-				if [[ ! " ext2 ext3 ext4 fat vfat ntfs " =~ " ${DEVICE_FSTYPE} " ]]; then
+				if [[ ! " ext2 ext3 ext4 fat vfat exfat ntfs " =~ " ${DEVICE_FSTYPE} " ]]; then
 					DEVICE_FSTYPE=""
 				fi
 
@@ -161,7 +161,7 @@ function mount_device() {
 
 				sleep 1
 
-				if [[ " fat vfat ntfs " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
+				if [[ " fat vfat exfat ntfs " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
 					RET=$(sudo mount ${DEVICE_CHOSEN_IDENT} "${MOUNT_POINT}" -o umask=0 2>&1)
 				elif [[ " ext2 ext3 ext4 " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
 					RET=$(sudo mount ${DEVICE_CHOSEN_IDENT} "${MOUNT_POINT}" 2>&1)
