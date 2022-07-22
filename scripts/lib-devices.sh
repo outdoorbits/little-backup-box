@@ -48,7 +48,8 @@ function mount_device() {
 
 	# Definitions
 	local DEVICE_IDENT=""
-	local DEVICE_IDENT_THIS=""
+	local DEVICE_CHOSEN_IDENT=""
+	local DEVICE_CHOSEN_FSTYPE=""
 	local SUCCESS=true
 	local RESULT=""
 	local USB_DEVICES=()
@@ -64,13 +65,13 @@ function mount_device() {
 	local MOUNT_GID=$(id -g ${MOUNT_GROUP})
 
 	if [ "${MOUNT_DEVICE}" = "usb_1" ]; then
-		DEVICE_IDENT_PRESET_THIS="${DEVICE_IDENT_PRESET_1}"
-		DEVICE_IDENT_PRESET_OTHER="${DEVICE_IDENT_PRESET_2}"
+		DEVICE_PRESET_THIS_IDENT="${DEVICE_IDENT_PRESET_1}"
+		DEVICE_PRESET_OTHER_IDENT="${DEVICE_IDENT_PRESET_2}"
 		MOUNT_POINT="${const_STORAGE_MOUNT_POINT}"
 	fi
 	if [ "${MOUNT_DEVICE}" = "usb_2" ]; then
-		DEVICE_IDENT_PRESET_THIS="${DEVICE_IDENT_PRESET_2}"
-		DEVICE_IDENT_PRESET_OTHER="${DEVICE_IDENT_PRESET_1}"
+		DEVICE_PRESET_THIS_IDENT="${DEVICE_IDENT_PRESET_2}"
+		DEVICE_PRESET_OTHER_IDENT="${DEVICE_IDENT_PRESET_1}"
 		MOUNT_POINT="${const_SOURCE_MOUNT_POINT}"
 	fi
 
@@ -90,43 +91,50 @@ function mount_device() {
 
 			# log if list of devices changed
 			if [ ! "${USB_DEVICES_OLD[*]}" == "${USB_DEVICES[*]}" ]; then
-				log_exec "pre mount ${MOUNT_DEVICE}" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
+				log_exec "pre mount ${MOUNT_DEVICE} (device list changed)" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 			fi
 
 			USB_DEVICES_OLD=${USB_DEVICES[@]}
 
 			# find USB
 
-				#get LUM-Alpha (like sda for sda1) to exclude another partition on the same device
-				if [ ! -z "${DEVICE_IDENT_PRESET_OTHER}" ]; then
-					USB_DEVICE_OTHER_LUM_ALPHA="$(sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID | grep "${DEVICE_IDENT_PRESET_OTHER/--uuid\ }\"" | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^PATH=" | cut -d'"' -f 2 | sed 's/[0-9]//g')"
+			#get LUM-Alpha (like sda for sda1) to exclude another partition on the same device
+			if [ ! -z "${DEVICE_PRESET_OTHER_IDENT}" ]; then
+				USB_DEVICE_OTHER_LUM_ALPHA="$(sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID | grep "${DEVICE_PRESET_OTHER_IDENT/--uuid\ }\"" | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^PATH=" | cut -d'"' -f 2 | sed 's/[0-9]//g')"
+			fi
+
+			for USB_DEVICE in "${USB_DEVICES[@]}"; do
+
+				USB_DEVICE_LUM=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^PATH=" | cut -d'"' -f 2)
+				USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM//[0-9]/}
+
+				USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID=" | cut -d'"' -f 2)
+
+				#Get filesystem-type
+				DEVICE_FSTYPE=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^FSTYPE=" | cut -d'"' -f 2)
+				#Check filesystem-type to be accepted
+				if [[ ! " ext2 ext3 ext4 fat vfat ntfs " =~ " ${DEVICE_FSTYPE} " ]]; then
+					DEVICE_FSTYPE=""
 				fi
 
-				for USB_DEVICE in "${USB_DEVICES[@]}"; do
 
-					USB_DEVICE_LUM=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^PATH=" | cut -d'"' -f 2)
-					USB_DEVICE_LUM_ALPHA=${USB_DEVICE_LUM//[0-9]/}
+				if [ -z "${USB_DEVICE_UUID}" ]; then
+					DEVICE_IDENT="${USB_DEVICE_LUM}"
+				else
+					DEVICE_IDENT="--uuid ${USB_DEVICE_UUID}"
+				fi
 
-					USB_DEVICE_UUID=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^UUID=" | cut -d'"' -f 2)
-
-					USB_DEVICE_FSTYPE=$(echo ${USB_DEVICE} | awk '{for(i=1;i<=NF;i++) print $i}' | grep "^FSTYPE=" | cut -d'"' -f 2)
-
-					if [ -z "${USB_DEVICE_UUID}" ]; then
-						DEVICE_IDENT="${USB_DEVICE_LUM}"
-					else
-						DEVICE_IDENT="--uuid ${USB_DEVICE_UUID}"
+				if [ -z "${DEVICE_CHOSEN_IDENT}" ] && [ ! -z "${DEVICE_FSTYPE}" ] && [ "${DEVICE_PRESET_OTHER_IDENT}" != "${DEVICE_IDENT}" ] && [ "${USB_DEVICE_LUM_ALPHA}" != "${USB_DEVICE_OTHER_LUM_ALPHA}" ]; then
+					if [ -z "${DEVICE_PRESET_THIS_IDENT}" ] || [ "${DEVICE_IDENT}" = "${DEVICE_PRESET_THIS_IDENT}" ]; then
+						DEVICE_CHOSEN_IDENT="${DEVICE_IDENT}"
+						DEVICE_CHOSEN_FSTYPE="${DEVICE_FSTYPE}"
+						log_message "DEVICE_CHOSEN_IDENT='${DEVICE_CHOSEN_IDENT}' ('${USB_DEVICE_LUM}') prepared to mount at '${MOUNT_POINT}', ${DEVICE_CHOSEN_FSTYPE}"
 					fi
-
-					if [ -z "${DEVICE_IDENT_THIS}" ] && [ ! -z "${USB_DEVICE_FSTYPE}" ] && [ "${DEVICE_IDENT_PRESET_OTHER}" != "${DEVICE_IDENT}" ] && [ "${USB_DEVICE_LUM_ALPHA}" != "${USB_DEVICE_OTHER_LUM_ALPHA}" ]; then
-						if [ -z "${DEVICE_IDENT_PRESET_THIS}" ] || [ "${DEVICE_IDENT}" = "${DEVICE_IDENT_PRESET_THIS}" ]; then
-							DEVICE_IDENT_THIS=${DEVICE_IDENT}
-							log_message "DEVICE_IDENT_THIS='${DEVICE_IDENT_THIS}' ('${USB_DEVICE_LUM}') prepared to mount at '${MOUNT_POINT}'"
-						fi
-					fi
-				done
+				fi
+			done
 
 			# Check if device is identified
-			if [ ! -z "${DEVICE_IDENT_THIS}" ]; then
+			if [ ! -z "${DEVICE_CHOSEN_IDENT}" ]; then
 				# success: device to mount identified
 				RETRY_TO_MOUNT=false
 			fi
@@ -144,7 +152,7 @@ function mount_device() {
 		done
 
 		# Mount USB device
-		if [ ! -z "${DEVICE_IDENT_THIS}" ]; then
+		if [ ! -z "${DEVICE_CHOSEN_IDENT}" ]; then
 			if [ -z "$(device_mounted "${MOUNT_DEVICE}")" ]; then
 				# device not mounted
 
@@ -152,8 +160,15 @@ function mount_device() {
 				sudo rm -R "${MOUNT_POINT}"/*  > /dev/null 2>&1
 
 				sleep 1
-				RET=$(sudo mount ${DEVICE_IDENT_THIS} "${MOUNT_POINT}" -o umask=0 2>&1)
-				log_message "mounted ${MOUNT_DEVICE} '${DEVICE_IDENT_THIS}' at '${MOUNT_POINT}': Msg.='${RET}'" 2
+
+				if [[ " fat vfat ntfs " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
+					RET=$(sudo mount ${DEVICE_CHOSEN_IDENT} "${MOUNT_POINT}" -o umask=0 2>&1)
+				elif [[ " ext2 ext3 ext4 " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
+					RET=$(sudo mount ${DEVICE_CHOSEN_IDENT} "${MOUNT_POINT}" 2>&1)
+					sudo chmod 777 "${MOUNT_POINT}" -R
+				fi
+
+				log_message "mounted ${MOUNT_DEVICE} '${DEVICE_CHOSEN_IDENT}' at '${MOUNT_POINT}': Msg.='${RET}'" 2
 			else
 				log_message "${MOUNT_DEVICE} already mounted, nothing to do." 3
 			fi
@@ -166,7 +181,7 @@ function mount_device() {
 
 			# Result
 			if [ $SUCCESS ]; then
-				RESULT=${DEVICE_IDENT_THIS}
+				RESULT=${DEVICE_CHOSEN_IDENT}
 			fi
 		fi
 	fi
@@ -259,12 +274,13 @@ function umount_device() {
 	echo ${RESULT}
 }
 
-function get_storage_spaces() {
+function get_storage_properties() {
     local DEVICE=$1
 
     local storsize=$(df "${DEVICE}" -h --output=size | sed '1d' | tr -d ' ')
     local storused=$(df "${DEVICE}" -h --output=pcent | sed '1d' | tr -d ' ')
     local storfree=$(df "${DEVICE}" -h --output=avail | sed '1d' | tr -d ' ')
+    local fstype=$(df "${DEVICE}" -hT | sed '1d' | awk -F ' ' '{print $2}')
 
-    echo "${storsize}|${storused}|${storfree}"
+    echo "${storsize}|${storused}|${storfree}|${fstype}"
 }

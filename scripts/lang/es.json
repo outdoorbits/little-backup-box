@@ -238,7 +238,8 @@
       "mode_internal": "Int. almacenamiento",
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
-      "mode_storage": "Almacenamiento"
+      "mode_storage": "Almacenamiento",
+      "storage_filesystem_short": "FS"
     },
     "cronip": {
       "offline": "desconectado",

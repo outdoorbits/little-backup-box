@@ -186,17 +186,18 @@ if [ "${DEST_MODE}" = "external" ]; then
 	STORAGE_PATH="${const_STORAGE_MOUNT_POINT}"
 
 	# notify that the storage device has been mounted
-	ret="$(get_storage_spaces ${STORAGE_PATH})"
+	ret="$(get_storage_properties ${STORAGE_PATH})"
 
 	IFS="|"
 	set -- $ret
 
 	STOR_SIZE="$(l 'box_backup_storage_size'): $1"
 	STOR_FREE="$(l 'box_backup_storage_free'): $3"
+	STOR_FSTYPE="$(l 'box_backup_storage_filesystem_short'): $4"
 
 	unset IFS
 
-	lcd_message "$(l 'box_backup_ext_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}"
+	lcd_message "$(l 'box_backup_ext_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 	if [ $conf_DISP = true ]; then
 		sleep 2
@@ -206,18 +207,19 @@ elif [ "${DEST_MODE}" = "internal" ]; then
 	# Internal mode
 	STORAGE_PATH="${const_INTERAL_BACKUP_DIR}"
 
-	ret="$(get_storage_spaces ${STORAGE_PATH})"
+	ret="$(get_storage_properties ${STORAGE_PATH})"
 
 	IFS="|"
 	set -- $ret
 
 	STOR_SIZE="$(l 'box_backup_storage_size'): $1"
 	STOR_FREE="$(l 'box_backup_storage_free'): $3"
+	STOR_FSTYPE="$(l 'box_backup_storage_filesystem_short'): $4"
 
 	unset IFS
 
 	# If display support is enabled, notify that the storage device has been mounted
-	lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}"
+	lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 	if [ $conf_DISP = true ]; then
 		sleep 2
@@ -284,15 +286,16 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
 	fi
 
 	# notify that the source device has been mounted
-	ret="$(get_storage_spaces ${SOURCE_PATH})"
+	ret="$(get_storage_properties ${SOURCE_PATH})"
 	IFS="|"
 	set -- $ret
 	STOR_SIZE="$(l 'box_backup_storage_size'): $1"
 	STOR_USED="$(l 'box_backup_storage_used'): $2"
+	STOR_FSTYPE="$(l 'box_backup_storage_filesystem_short'): $4"
 
 	unset IFS
 
-	lcd_message "$(l 'box_backup_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}"
+	lcd_message "$(l 'box_backup_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED} ${STOR_FSTYPE}"
 	if [ $conf_DISP = true ]; then
 		sleep 2
 	fi

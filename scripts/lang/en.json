@@ -69,7 +69,8 @@
         "tries_needed": "try/tries needed",
         "lost_device": "Err.Lost device!",
         "files_missing": "Files missing!"
-      }
+      },
+      "storage_filesystem_short": "FS"
     },
     "poweroff": {
       "poweroff": "Power off",

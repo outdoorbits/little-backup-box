@@ -197,6 +197,7 @@
       "storage_free": "frei",
       "storage_size": "Größe",
       "storage_used": "genutzt",
+      "storage_filesystem_short": "FS",
       "waiting_for_cloud_1": "Bereit",
       "waiting_for_cloud_2": "Warten auf Cloud",
       "camera_ok": "Kamera o.k.",
