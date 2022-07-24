@@ -45,7 +45,7 @@ function lcd_message () {
 
 		TimeDiff=$(echo "${ActualTime} - ${DispayLockFileTime}" | bc)
 
-		while (( $(echo "${TimeDiff} < 2.0" | bc -l) ))
+		while (( $(echo "${TimeDiff} < 1.0" | bc -l) ))
 		do
 			DispayLockFileTime=$(sudo head -n 1 ${const_DISPLAY_LOCKFILE})
 			ActualTime=$(date +%s.%N )

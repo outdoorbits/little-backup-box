@@ -12,7 +12,7 @@ include($WORKING_DIR . "/sub-popup.php");
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
-<!-- Author: Dmitri Popov, dmpop@linux.com
+<!-- Author: Stefan Saam github@saams.de, Dmitri Popov, dmpop@linux.com
 		License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <head>

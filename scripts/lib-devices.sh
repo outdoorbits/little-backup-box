@@ -162,8 +162,10 @@ function mount_device() {
 				sleep 1
 
 				if [[ " fat vfat exfat ntfs " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
-					RET=$(sudo mount ${DEVICE_CHOSEN_IDENT} "${MOUNT_POINT}" -o umask=0 2>&1)
+					# windows-filesystems
+					RET=$(sudo mount ${DEVICE_CHOSEN_IDENT} "${MOUNT_POINT}" -o uid=${MOUNT_UID},gid=${MOUNT_GID},umask=0 2>&1)
 				elif [[ " ext2 ext3 ext4 " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
+					# linux-filesystems
 					RET=$(sudo mount ${DEVICE_CHOSEN_IDENT} "${MOUNT_POINT}" 2>&1)
 					sudo chmod 777 "${MOUNT_POINT}" -R
 				fi
@@ -265,7 +267,9 @@ function umount_device() {
 	fi
 
 	if [ ! -z "${UMOUNT}" ]; then
+		sudo service smbd stop
 		RESULT=$(sudo umount "${UMOUNT}")
+		sudo service smbd start
 	fi
 
 

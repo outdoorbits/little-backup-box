@@ -82,6 +82,8 @@ for n in range(1,5):
 
 	# Draw a filled box to clear the image.
 	draw.rectangle((x, top + y + y_shift, width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
+
+	# Write text
 	draw.text((x + 2, top + y), Line[n], font=font, fill=fg_fill)
 
 	y_shift	+= 1
