@@ -98,11 +98,19 @@ fi
 ## Promt to install mejiro
 CHOICE_MEJIRO=1
 if [ "${SCRIPT_MODE}" = "install" ]; then
+
+	read -r -d '' MEJIRO_INSTALL_QUESTION << EOM
+\Zb\ZuInstall mejiro?\Zn
+
+Mejiro is a simple image-gallery, smoothly integrated into Little-Backup-Box.
+EOM
+
 	dialog --clear \
+		--colors \
 		--title "mejiro" \
 		--backtitle "$BACKTITLE" \
-		--yesno "Install mejiro?" \
-		7 60
+		--yesno "${MEJIRO_INSTALL_QUESTION}" \
+		14 80
 
 	CHOICE_MEJIRO=$?
 
@@ -114,11 +122,22 @@ fi
 ## Prompt to install comitup
 CHOICE_COMITUP=1
 if [ "${SCRIPT_MODE}" = "install" ]; then
+
+	read -r -d '' COMITUP_INSTALL_QUESTION << EOM
+\Zb\ZuInstall comitup?\Zn
+
+Do you want zu connect your Little-Backup-Box flexible to any wifi by web-gui?
+Do you want to allow Little-Backup-Box to work as a wifi-accress-point and make you independent from other wifi-networks?
+
+Comitup can enable this capabilities.
+EOM
+
 	dialog --clear \
+		--colors \
 		--title "comitup" \
 		--backtitle "$BACKTITLE" \
-		--yesno "Install comitup?" \
-		7 60
+		--yesno "${COMITUP_INSTALL_QUESTION}" \
+		14 80
 
 	CHOICE_COMITUP=$?
 
