@@ -126,10 +126,10 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	read -r -d '' COMITUP_INSTALL_QUESTION << EOM
 \Zb\ZuInstall comitup?\Zn
 
-Do you want zu connect your Little-Backup-Box flexible to any wifi by web-gui?
-Do you want to allow Little-Backup-Box to work as a wifi-accress-point and make you independent from other wifi-networks?
+Do you want to allow Little-Backup-Box to work as a WiFi-accress-point and make yourself independent of other WiFi-networks?
+Do you want zu connect your Little-Backup-Box flexible to any WiFi, managed conveniently by web-gui?
 
-Comitup can enable this capabilities.
+Comitup provides all these capabilities.
 EOM
 
 	dialog --clear \
