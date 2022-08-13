@@ -41,6 +41,8 @@ if [ ! -f "${const_RCLONE_CONFIG_FILE}" ]; then
 fi
 sudo chmod 777 "${const_RCLONE_CONFIG_FILE}"
 
+sudo pkill -f rclone
+
 if [ -z "${conf_PASSWORD}" ]; then
 	sudo rclone rcd --rc-web-gui --rc-web-gui-no-open-browser --rc-addr :5572 --config "${const_RCLONE_CONFIG_FILE}" --rc-user lbb --rc-pass "lbb" &
 else
