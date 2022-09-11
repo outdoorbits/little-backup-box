@@ -165,6 +165,9 @@ sudo DEBIAN_FRONTEND=noninteractive \
 sudo DEBIAN_FRONTEND=noninteractive \
 	apt autoremove -y
 
+# General raspi-config settings
+sudo raspi-config nonint do_boot_wait 1 # wait for network on boot: disable
+
 # Clone Little Backup Box
 echo "Clone Little Backup Box"
 cd

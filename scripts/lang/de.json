@@ -235,8 +235,8 @@
       "secondary": "Sek. Backup",
       "mode_camera": "Kamera",
       "mode_cloud": "Cloud",
-      "mode_external": "Ext. Speicher",
-      "mode_internal": "Int. Speicher",
+      "mode_external": "Ext.Speicher",
+      "mode_internal": "Int.Speicher",
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
       "mode_storage": "Speicher"
