@@ -68,9 +68,11 @@
         "log": "Backup log",
         "tries_needed": "try/tries needed",
         "lost_device": "Err.Lost device!",
-        "files_missing": "Files missing!"
+        "files_missing": "Files missing!",
+        "exception": "Unknown error"
       },
-      "storage_filesystem_short": "FS"
+      "storage_filesystem_short": "FS",
+      "exception": "Unknown error"
     },
     "poweroff": {
       "poweroff": "Power off",

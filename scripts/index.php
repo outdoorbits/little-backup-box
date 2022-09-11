@@ -98,54 +98,54 @@
 	exec("sudo chown www-data:www-data ./tmp -R");
 
 	if (isset($_POST['backup_storage_external'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh storage external > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_source_button . " " . L::main_backup_to . " " . L::main_external_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_storage_internal'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh storage internal > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_source_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_internal_external'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh internal external > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_internal_button . " " . L::main_backup_to . " " . L::main_external_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_camera_external'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh camera external > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_camera_button . " " . L::main_backup_to . " " . L::main_external_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_camera_internal'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh camera internal > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_camera_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_ios_external'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh ios external > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_ios_button . " " . L::main_backup_to . " " . L::main_external_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_ios_internal'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh ios internal > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_ios_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_external_server'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh storage rsyncserver > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_external_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_internal_server'])) {
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh internal rsyncserver > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_internal_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	foreach (['external','internal'] as $Source) {
 		foreach ($CloudServices as $CloudService) {
 			if (isset($_POST['backup_' . $Source . '_cloud_' . $CloudService])) {
-				exec("sudo pkill -f backup*");
+				exec('sudo pkill -f "backup*"');
 				$SourceDevice=$Source === "external"?"storage":"internal";
 				exec("sudo ./backup.sh " . $SourceDevice . " cloud_" . $CloudService . " > /dev/null 2>&1 & echo $!");
 
@@ -156,7 +156,7 @@
 	if (isset($_POST['stopbackup'])) {
 		popup(L::main_stopbackup_m,$config["conf_POPUP_MESSAGES"]);
 
-		exec("sudo pkill -f backup*");
+		exec('sudo pkill -f "backup*"');
 	}
 	if (isset($_POST['reboot'])) {
 		popup(L::main_reboot_m,$config["conf_POPUP_MESSAGES"]);

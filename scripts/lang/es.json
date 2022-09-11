@@ -216,7 +216,7 @@
       "no_ios_waiting_2": "Espera",
       "of": "de",
       "source_ok": "Origen o.k.",
-      "try_backup": "Prueba copia seguridad",
+      "try_backup": "Prueba copia",
       "working": "Trabajando",
       "mail": {
         "backup_type": "Escribir",
@@ -225,7 +225,8 @@
         "tries_needed": "Intentos necesarios",
         "backup_complete": "Respaldo completada",
         "files_missing": "¡Faltan archivos!",
-        "lost_device": "Err. Dispositivo perdido!"
+        "lost_device": "Err. Dispositivo perdido!",
+        "exception": "Error desconocido"
       },
       "try": "Intentar",
       "checking_old_files": "comparando",
@@ -239,7 +240,8 @@
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
       "mode_storage": "Almacenamiento",
-      "storage_filesystem_short": "FS"
+      "storage_filesystem_short": "FS",
+      "exception": "Error desconocido"
     },
     "cronip": {
       "offline": "desconectado",

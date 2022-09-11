@@ -73,7 +73,7 @@ if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     sudo rm "${IP_MAIL_SENT_MARKERFILE}" > /dev/null 2>&1
 
     if [ "${ACTION}" = "poweroff" ]; then
-        sudo poweroff
+        sudo halt
     elif [ "${ACTION}" = "reboot" ]; then
         sudo reboot
     fi

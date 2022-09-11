@@ -212,12 +212,13 @@
       "error_cooling_3": "Verdacht auf",
       "error_cooling_4": "Überhitzung",
       "files_missing": "Dateien fehlen!",
+      "exception": "Unbek.Fehler",
       "lost_device": "Fehler. Gerät verloren!",
       "no_ios_waiting_1": "Kein iOS-Gerät",
       "no_ios_waiting_2": "warte",
       "of": "von",
       "source_ok": "Quelle o.k.",
-      "try_backup": "Backup Versuch",
+      "try_backup": "Backup Vers.",
       "working": "arbeite",
       "mail": {
         "backup_type": "Typ",
@@ -226,7 +227,8 @@
         "tries_needed": "Versuch(e) erforderlich",
         "backup_complete": "Backup komplett",
         "files_missing": "Dateien fehlen!",
-        "lost_device": "Fehler. Gerät verloren!"
+        "lost_device": "Fehler. Gerät verloren!",
+        "exception": "Unbekannter Fehler"
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",

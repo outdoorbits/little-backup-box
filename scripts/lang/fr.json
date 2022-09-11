@@ -216,7 +216,7 @@
       "no_ios_waiting_2": "En attendant",
       "of": "de",
       "source_ok": "Source ok",
-      "try_backup": "Essayez la sauvegarde",
+      "try_backup": "Essayez",
       "working": "Travail",
       "mail": {
         "backup_type": "Taper",
@@ -225,7 +225,8 @@
         "tries_needed": "essai/essais nécessaires",
         "backup_complete": "Sauvegarde terminée",
         "files_missing": "Fichiers manquants!",
-        "lost_device": "Err.Périphérique perdu!"
+        "lost_device": "Err.Périphérique perdu!",
+        "exception": "Erreur inconnue"
       },
       "try": "essayer",
       "checking_old_files": "comparant",
@@ -239,7 +240,8 @@
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
       "mode_storage": "Stockage",
-      "storage_filesystem_short": "FS"
+      "storage_filesystem_short": "FS",
+      "exception": "Erreur inconnue"
     },
     "cronip": {
       "offline": "hors ligne",

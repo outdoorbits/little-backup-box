@@ -159,8 +159,6 @@ function mount_device() {
 				# clean mountpoint
 				sudo rm -R "${MOUNT_POINT}"/*  > /dev/null 2>&1
 
-				sleep 1
-
 				if [[ " fat vfat exfat ntfs " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
 					# windows-filesystems
 					RET=$(sudo mount ${DEVICE_CHOSEN_IDENT} "${MOUNT_POINT}" -o uid=${MOUNT_UID},gid=${MOUNT_GID},umask=0 2>&1)

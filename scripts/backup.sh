@@ -325,7 +325,7 @@ elif [ "${SOURCE_MODE}" = "ios" ]; then
 	# Waiting for the iOS device to be mounted
 	until [ ! -z "$(ls -A ${const_IOS_MOUNT_POINT})" ]; do
 		lcd_message "$(l 'box_backup_no_ios_waiting_1')" "$(l 'box_backup_no_ios_waiting_2')..."
-		sleep 10
+		sleep 5
 		sudo ifuse ${const_IOS_MOUNT_POINT} -o allow_other
 	done
 
@@ -539,7 +539,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	SYNC_START_TIME=$(date +%s)
 
 	# display
-	source "${WORKING_DIR}/status-display.sh" "${SOURCE_MODE}" "${DEST_MODE}" &
+	source "${WORKING_DIR}/backup-progress.sh" "${SOURCE_MODE}" "${DEST_MODE}" &
 	PID=$!
 
 ##############
@@ -550,7 +550,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 
 	# To define a new method, add an elif block (example below)
 
-
+    SYNC_RETURN_CODE="0"
 	if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
 		# If source is storage or ios
 
@@ -637,6 +637,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
 			SYNC_ERROR="Err.Lost device!"
 			log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
+			sleep 2
 			log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 			log_message "$(get_abnormal_system_conditions)" 1
 		fi
@@ -645,16 +646,24 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	if [ "${FILES_TO_SYNC}" -gt "0" ]; then
 		SYNC_ERROR="${SYNC_ERROR} Files missing!"
 		log_message "Files missing: ${FILES_TO_SYNC} files not synced."
+		sleep 2
 		log_exec "Files missing" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
+		log_message "$(get_abnormal_system_conditions)" 1
+	fi
+
+	if [ "${SYNC_RETURN_CODE}" != "0" ]; then
+		SYNC_ERROR="${SYNC_ERROR} Exception"
+		log_message "Exception: ${SYNC_RETURN_CODE}"
+		sleep 2
 		log_message "$(get_abnormal_system_conditions)" 1
 	fi
 
 	# Keep progress on display after finish
 	if [ $conf_DISP = true ] && [ -z "${SYNC_ERROR}" ]; then
-		sleep 5
+		sleep 4
 	fi
 
-	# Kill the status-display.sh script
+	# Kill the backup-progress.sh script
 	kill $PID
 
 	# Controller- overheating-error?
@@ -685,9 +694,15 @@ else
 		MESSAGE_MAIL="$(l 'box_backup_mail_lost_device') "
 		MESSAGE_LCD="$(l 'box_backup_lost_device') "
 	fi
+
 	if [[ "${SYNC_ERROR}" =~ "Files missing!" ]]; then
-		MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_files_missing')"
-		MESSAGE_LCD="${MESSAGE_LCD}$(l 'box_backup_files_missing')"
+		MESSAGE_MAIL="${MESSAGE_MAIL} $(l 'box_backup_mail_files_missing')"
+		MESSAGE_LCD="${MESSAGE_LCD} $(l 'box_backup_files_missing')"
+	fi
+
+	if [[ "${SYNC_ERROR}" =~ "Exception" ]]; then
+		MESSAGE_MAIL="${MESSAGE_MAIL} $(l 'box_backup_mail_exception') ${SYNC_RETURN_CODE}"
+		MESSAGE_LCD="${MESSAGE_LCD} $(l 'box_backup_exception') ${SYNC_RETURN_CODE}"
 	fi
 fi
 

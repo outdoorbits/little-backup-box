@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com
+# Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+
+# Displays backup-status in intervals
 
 # sub expects from calling script:
 # - source config.cfg

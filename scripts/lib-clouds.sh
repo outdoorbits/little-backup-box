@@ -38,7 +38,7 @@ function mount_cloud() {
 			sudo umount "${MOUNTPOINT}"
 			sleep 3
 		done
-		if [ $(cloud_mounted ${CLOUDSERVICE})=false ]; then
+		if [ $(cloud_mounted ${CLOUDSERVICE}) = false ]; then
 			sudo rm -R ${MOUNTPOINT}/*
 		fi
 
