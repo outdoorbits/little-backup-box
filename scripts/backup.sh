@@ -75,9 +75,9 @@ else
 fi
 
 if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
-		lcd_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')"
-		exit 1
-	fi
+	lcd_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')"
+	exit 1
+fi
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
@@ -101,6 +101,8 @@ if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
 . "${WORKING_DIR}/lib-language.sh"
 
 # log
+lcd_message "$(l "box_backup_mode_${SOURCE_MODE}") > $(l "box_backup_mode_${DEST_MODE}")" "${CLOUDSERVICE}"
+
 log_message "Source: ${SOURCE_MODE}"
 log_message "Destination: ${DEST_MODE} ${CLOUDSERVICE}"
 
@@ -701,10 +703,14 @@ else
 	fi
 
 	if [[ "${SYNC_ERROR}" =~ "Exception" ]]; then
-		MESSAGE_MAIL="${MESSAGE_MAIL} $(l 'box_backup_mail_exception') ${SYNC_RETURN_CODE}"
-		MESSAGE_LCD="${MESSAGE_LCD} $(l 'box_backup_exception') ${SYNC_RETURN_CODE}"
+		MESSAGE_MAIL="${MESSAGE_MAIL} $(l 'box_backup_mail_exception'): ${SYNC_RETURN_CODE}"
+		MESSAGE_LCD="${MESSAGE_LCD} $(l 'box_backup_exception'): ${SYNC_RETURN_CODE}"
 	fi
 fi
+
+#remove leading spaces
+MESSAGE_MAIL="$(echo -e "${MESSAGE_MAIL}" | sed -e 's/^[[:space:]]*//')"
+MESSAGE_LCD="$(echo -e "${MESSAGE_LCD}" | sed -e 's/^[[:space:]]*//')"
 
 # Check internet connection and send
 # a notification by mail if the conf_NOTIFY option is enabled

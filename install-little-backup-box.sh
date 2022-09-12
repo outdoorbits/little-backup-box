@@ -391,7 +391,7 @@ crontab -r
 # write basic crontab
 crontab -l | {
     cat
-    echo "@reboot sudo ${const_WEB_ROOT_LBB}/autorun.sh"
+    echo "@reboot sudo ${const_WEB_ROOT_LBB}/backup-autorun.sh"
 } | crontab
 
 crontab -l | {
