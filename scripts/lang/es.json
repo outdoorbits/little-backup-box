@@ -44,7 +44,8 @@
     "conditions": "Condiciones",
     "memory_ram": "RAM usado",
     "memory_swap": "SWAP usado",
-    "camera_serial": "Número de serie"
+    "camera_serial": "Número de serie",
+    "camera_storages": "Rutas de almacenamiento"
   },
   "config": {
     "config": "Ajustes",

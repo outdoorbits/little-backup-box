@@ -88,7 +88,7 @@
 		<h3><?php echo L::sysinfo_camera; ?></h3>
 			<?php
 				echo '<pre>';
-					exec("sudo gphoto2 --summary | grep 'Model' | cut -d: -f2 | tr -d '[:space:]'",$DEVICES);
+					exec("sudo gphoto2 --summary | grep 'Model' | cut -d: -f2 | tr -d ' '",$DEVICES);
 					if (count($DEVICES)) {
 						echo "<ul>";
 							foreach ($DEVICES as $DEVICE) {
@@ -99,12 +99,26 @@
 					}
 
 					echo '<h3>' . L::sysinfo_camera_serial.'</h3>';
-					exec("sudo gphoto2 --summary | grep 'Serial Number' | cut -d: -f2 | tr -d '[:space:]'",$SERIALS);
+					exec("sudo gphoto2 --summary | grep 'Serial Number' | cut -d: -f2 | tr -d ' '",$SERIALS);
 					if (count($SERIALS)) {
 						echo "<ul>";
 							foreach ($SERIALS as $SERIAL) {
 								$SERIAL=mb_ereg_replace("([^a-zA-Z0-9-_\.])", '_', $SERIAL);
 								echo "<li>$SERIAL</li>";
+							}
+						echo "</ul>";
+					}
+					else
+					{
+						echo "-";
+					}
+
+					echo '<h3>' . L::sysinfo_camera_storages.'</h3>';
+					exec("sudo gphoto2 --storage-info | grep 'basedir' | cut -d= -f2 | tr -d ' '",$STORAGES);
+					if (count($STORAGES)) {
+						echo "<ul>";
+							foreach ($STORAGES as $STORAGE) {
+								echo "<li>$STORAGE</li>";
 							}
 						echo "</ul>";
 					}

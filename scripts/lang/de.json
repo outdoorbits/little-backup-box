@@ -44,7 +44,8 @@
     "conditions": "Bedingungen",
     "memory_ram": "RAM belegt",
     "memory_swap": "SWAP belegt",
-    "camera_serial": "Seriennummer"
+    "camera_serial": "Seriennummer",
+    "camera_storages": "Speicherpfade"
   },
   "config": {
     "config": "Einstellungen",

@@ -134,7 +134,8 @@
     "camera": "Camera / smartphone",
     "camera_serial": "Serial number",
     "memory_ram": "RAM used",
-    "memory_swap": "SWAP used"
+    "memory_swap": "SWAP used",
+    "camera_storages": "Storage paths"
   },
   "sysconditions": {
     "under_voltage_cur": "The voltage is currently too low.",
