@@ -221,6 +221,7 @@
       "source_ok": "Quelle o.k.",
       "try_backup": "Backup Vers.",
       "working": "arbeite",
+      "time_remaining": "Zeit",
       "mail": {
         "backup_type": "Typ",
         "log": "Backup-Log",
@@ -238,11 +239,11 @@
       "secondary": "Sek. Backup",
       "mode_camera": "Kamera",
       "mode_cloud": "Cloud",
-      "mode_external": "Ext.Speicher",
       "mode_internal": "Int.Speicher",
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
-      "mode_storage": "Speicher"
+      "mode_storage": "Ext. Speicher",
+      "mode_external": "Ext. Speicher"
     },
     "cronip": {
       "offline": "offline",

@@ -279,9 +279,9 @@ function umount_device() {
 function get_storage_properties() {
     local DEVICE=$1
 
-    local storsize=$(df "${DEVICE}" -h --output=size | sed '1d' | tr -d ' ')
-    local storused=$(df "${DEVICE}" -h --output=pcent | sed '1d' | tr -d ' ')
-    local storfree=$(df "${DEVICE}" -h --output=avail | sed '1d' | tr -d ' ')
+    local storsize="$(df "${DEVICE}" -h --output=size | sed '1d' | tr -d ' ')"
+    local storused="$(df "${DEVICE}" -h --output=used | sed '1d' | tr -d ' '), $(df "${DEVICE}" -h --output=pcent | sed '1d' | tr -d ' ')"
+    local storfree="$(df "${DEVICE}" -h --output=avail | sed '1d' | tr -d ' ')"
     local fstype=$(df "${DEVICE}" -hT | sed '1d' | awk -F ' ' '{print $2}')
 
     echo "${storsize}|${storused}|${storfree}|${fstype}"

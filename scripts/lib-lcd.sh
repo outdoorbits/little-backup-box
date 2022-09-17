@@ -24,12 +24,10 @@
 # - source lib-log.sh
 
 # Definitions
-LineLength=21
-
 
 function lcd_message () {
 
-# takes up to 4 arguments (lines of the display)
+# takes up to 5 arguments (lines of the display)
 # leading "-" is interpreted as "force to print inverted"
 # leading "+" is interpreted as "force to print normal"
 
@@ -61,9 +59,9 @@ function lcd_message () {
 	# clear screen
 	if [ "${LineCount}" -eq "0" ];
 	then
-		LineCount=4
+		LineCount=5
 		n=0
-		while [ "$n" -lt 4 ]
+		while [ "$n" -lt 5 ]
 		do
 			Lines[$n]=''
 			n=$(expr $n + 1)
@@ -76,22 +74,21 @@ function lcd_message () {
 	fi
 
 	n=$LineCount
-	while [ "${n}" -le 3 ]
+	while [ "${n}" -lt 5 ]
 	do
 		Lines[$n]=${OLED_OLD[$(expr $n - $LineCount)]}
 		n=$(expr $n + 1)
 	done
 
 	#save Lines to file
-	sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}' > '${const_DISPLAY_CONTENT_OLD_FILE}'"
+	sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}\n${Lines[4]}' > '${const_DISPLAY_CONTENT_OLD_FILE}'"
 
 	#display
 	LogLines=""
 	n=0
 
-	while [ "${n}" -le 3 ]
+	while [ "${n}" -lt 5 ]
 	do
-
 		LINE="${Lines[$n]}"
 
 		FORCE_FORMAT[$n]="standard"
@@ -100,11 +97,11 @@ function lcd_message () {
 		case "${LINE:0:1}" in
 			"+")
 				FORCE_FORMAT[$n]="pos"
-				LINE=${LINE:1:$LineLength}
+				LINE=${LINE:1}
 				;;
 			"-")
 				FORCE_FORMAT[$n]="neg"
-				LINE=${LINE:1:$LineLength}
+				LINE=${LINE:1}
 				;;
 		esac
 
@@ -127,6 +124,20 @@ function lcd_message () {
 		if [ ! -z "${LogLines}" ]; then
 			LogLines="${LogLines}\n"
 		fi
+
+		if [[ "${LINE}" == "PGBAR:"* ]]; then
+			PERCENT=${LINE#"PGBAR:"}
+			if [ -z "${PERCENT}" ]; then
+				PERCENT=0
+			fi
+
+			PROGRESSBAR_LENGTH=20
+			PROGRESSBAR_DONE_LENGTH=$(echo "$PROGRESSBAR_LENGTH * $PERCENT / 100" | bc)
+			PROGRESSBAR_TODO_LENGTH=$(echo "$PROGRESSBAR_LENGTH - $PROGRESSBAR_DONE_LENGTH" | bc)
+			PROGRESSBAR="$(printf %${PROGRESSBAR_DONE_LENGTH}s | tr " " ">")$(printf %${PROGRESSBAR_TODO_LENGTH}s | tr " " "_")"
+ 			LINE="${PERCENT}% ${PROGRESSBAR}"
+		fi
+
 		LogLines="${LogLines}${LINE}"
 
 		n=$(expr $n + 1)
@@ -134,9 +145,9 @@ function lcd_message () {
 
 
 
-	# output
+	# output to lcd
 	if [ $conf_DISP = true ]; then
-		sudo python3 ${WORKING_DIR}/oled.py "${FORCE_FORMAT[0]}" "${Lines[0]}" "${FORCE_FORMAT[1]}" "${Lines[1]}" "${FORCE_FORMAT[2]}" "${Lines[2]}" "${FORCE_FORMAT[3]}" "${Lines[3]}"
+		sudo python3 ${WORKING_DIR}/oled.py "${FORCE_FORMAT[0]}" "${Lines[0]}" "${FORCE_FORMAT[1]}" "${Lines[1]}" "${FORCE_FORMAT[2]}" "${Lines[2]}" "${FORCE_FORMAT[3]}" "${Lines[3]}" "${FORCE_FORMAT[4]}" "${Lines[4]}"
 	fi
 
 	# log

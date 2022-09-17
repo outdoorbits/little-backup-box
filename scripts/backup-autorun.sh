@@ -68,7 +68,7 @@ sudo rm "$const_UPDATE_LOCKFILE" > /dev/null 2>&1
 
 
 # Hello
-lcd_message "Little Backup Box" "" "" ""
+lcd_message "" "  Little" "    Backup" "              Box" ""
 
 # Display IP
 IP=$(hostname -I | cut -d' ' -f1)

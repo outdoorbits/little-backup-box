@@ -35,13 +35,13 @@
 # $SYNC_START_TIME
 # $BACKUP_PATH
 # $DEST_MODE
+# $CLOUDSERVICE
 
 # Parameters
 SOURCE_MODE="${1}"
 DEST_MODE="${2}"
 
 # Definitions
-LineLength=21
 TIME_RUN=0
 
 # Load LCD library
@@ -69,38 +69,34 @@ while [ true ]; do
 		FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
 	fi
 
-	if [ "${FILES_TO_SYNC}" -gt "0" ];
-	then
-		if [ "${FILES_SYNCED}" -gt "0" ];
-		then
-			FINISHED_PERCENT=$(expr 100 \* $FILES_SYNCED / $FILES_TO_SYNC)
-
-			PROGRESSBAR_LENGTH=$(expr $LineLength \* $FILES_SYNCED / $FILES_TO_SYNC)
-			PROGRESSBAR=$(printf %${PROGRESSBAR_LENGTH}s | tr " " ">")
+	if [ "${FILES_TO_SYNC}" -gt "0" ]; then
+		if [ "${FILES_SYNCED}" -gt "0" ]; then
+			FINISHED_PERCENT=$(echo "100 * $FILES_SYNCED / $FILES_TO_SYNC" | bc)
+			PROGRESSBAR="PGBAR:${FINISHED_PERCENT}"
 		else
 			PROGRESSBAR="$(l 'box_backup_checking_old_files')..."
 		fi
 	else
 		FINISHED_PERCENT="?"
-		PROGRESSBAR=""
+		PROGRESSBAR="PGBAR:0"
 	fi
 
 	if [ "${FILES_SYNCED}" -gt "0" ]; then
 		TIME_RUN=$(echo "$(date +%s) - ${SYNC_START_TIME}" | bc)
-		TIME_LEFT=$(echo "${TIME_RUN} * ( ${FILES_TO_SYNC} - ${FILES_SYNCED} ) / ${FILES_SYNCED}" | bc)
-		TIME_LEFT_FORMATED=$(date -d@${TIME_LEFT} -u +%H:%M:%S)
-		DAYS_LEFT=$((TIME_LEFT/86400))
+		TIME_REMAINING=$(echo "${TIME_RUN} * ( ${FILES_TO_SYNC} - ${FILES_SYNCED} ) / ${FILES_SYNCED}" | bc)
+		TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
+		DAYS_LEFT=$((TIME_REMAINING/86400))
 		if [ "${DAYS_LEFT}" -gt "0" ]; then
-			TIME_LEFT_FORMATED="${DAYS_LEFT}d ${TIME_LEFT_FORMATED}"
+			TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
 		fi
 	else
 		FILES_SYNCED="0"
-		TIME_LEFT_FORMATED=""
+		TIME_REMAINING_FORMATED="?"
 	fi
 
-	TIME_SPACER_LENGTH=$(echo "${LineLength} - ${#FINISHED_PERCENT} - 1 - ${#TIME_LEFT_FORMATED}" | bc)
-	TIME_SPACER=$(printf %${TIME_SPACER_LENGTH}s)
-	lcd_message "+$(l "box_backup_mode_${SOURCE_MODE}") > $(l "box_backup_mode_${DEST_MODE}"):" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${FINISHED_PERCENT}%${TIME_SPACER}${TIME_LEFT_FORMATED}" "-${PROGRESSBAR}"
+	DURATION="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+
+	lcd_message "+$(l "box_backup_mode_${SOURCE_MODE}")" "+ > $(l "box_backup_mode_${DEST_MODE}") ${CLOUDSERVICE}" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${DURATION}" "+PGBAR:${FINISHED_PERCENT}"
 
 	# display-frequency depends on destination, slower for cloud-storage
 	INTERVAL_SEC=4

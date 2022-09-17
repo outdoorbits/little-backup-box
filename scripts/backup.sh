@@ -75,7 +75,7 @@ else
 fi
 
 if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
-	lcd_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')"
+	lcd_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')" ""
 	exit 1
 fi
 
@@ -101,7 +101,7 @@ fi
 . "${WORKING_DIR}/lib-language.sh"
 
 # log
-lcd_message "$(l "box_backup_mode_${SOURCE_MODE}") > $(l "box_backup_mode_${DEST_MODE}")" "${CLOUDSERVICE}"
+lcd_message "$(l "box_backup_mode_${SOURCE_MODE}")" " > $(l "box_backup_mode_${DEST_MODE}")" "   ${CLOUDSERVICE}"
 
 log_message "Source: ${SOURCE_MODE}"
 log_message "Destination: ${DEST_MODE} ${CLOUDSERVICE}"
@@ -114,9 +114,9 @@ function calculate_files_to_sync() {
 	if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
 		# Source storage ios internal
 		if [ ${DEST_MODE} = "rsyncserver" ]; then
-			FILES_TO_SYNC=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+			FILES_TO_SYNC=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 		else
-			FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3)=="Number of created files:"){print $(i+4)}}' | sed s/,//g)
+			FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 		fi
 
 	#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
@@ -148,7 +148,7 @@ function calculate_files_to_sync() {
 
 	else
 		# no defined mode selected
-		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+2"
+		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "" "+2"
 		exit 1
 	fi
 
@@ -194,12 +194,13 @@ if [ "${DEST_MODE}" = "external" ]; then
 	set -- $ret
 
 	STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+	STOR_USED="$(l 'box_backup_storage_used'): $2"
 	STOR_FREE="$(l 'box_backup_storage_free'): $3"
 	STOR_FSTYPE="$(l 'box_backup_storage_filesystem_short'): $4"
 
 	unset IFS
 
-	lcd_message "$(l 'box_backup_ext_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}" "${STOR_FSTYPE}"
+	lcd_message "$(l 'box_backup_ext_storage_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 	if [ $conf_DISP = true ]; then
 		sleep 2
@@ -215,13 +216,14 @@ elif [ "${DEST_MODE}" = "internal" ]; then
 	set -- $ret
 
 	STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+	STOR_USED="$(l 'box_backup_storage_used'): $2"
 	STOR_FREE="$(l 'box_backup_storage_free'): $3"
 	STOR_FSTYPE="$(l 'box_backup_storage_filesystem_short'): $4"
 
 	unset IFS
 
 	# If display support is enabled, notify that the storage device has been mounted
-	lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_FREE}" "${STOR_FSTYPE}"
+	lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 	if [ $conf_DISP = true ]; then
 		sleep 2
@@ -232,7 +234,7 @@ elif [ "${DEST_MODE}" = "rsyncserver" ]; then
 		STORAGE_PATH="${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
 
 elif [ "${DEST_MODE}" = "cloud" ]; then
-		lcd_message "+$(l 'box_backup_waiting_for_cloud_1')" "+$(l 'box_backup_waiting_for_cloud_2')" "+${CLOUDSERVICE}"
+		lcd_message "$(l 'box_backup_waiting_for_cloud_1')" "$(l 'box_backup_waiting_for_cloud_2')" "${CLOUDSERVICE}"
 
 		STORAGE_PATH="${const_CLOUD_MOUNT_POINT}/${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
 
@@ -297,7 +299,7 @@ if [ "${SOURCE_MODE}" = "storage" ]; then
 
 	unset IFS
 
-	lcd_message "$(l 'box_backup_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED} ${STOR_FSTYPE}"
+	lcd_message "$(l 'box_backup_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
 	if [ $conf_DISP = true ]; then
 		sleep 2
 	fi
@@ -478,7 +480,7 @@ elif [ "${SOURCE_MODE}" = "camera" ]; then
 	done
 else
 	# no defined mode selected
-	lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "+1"
+	lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+1"
 fi
 
 # Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
@@ -613,7 +615,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 		cd
 	else
 		# no defined mode selected
-		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+3"
+		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "" "+3"
 		exit 1
 	fi
 
@@ -661,8 +663,8 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	fi
 
 	# Keep progress on display after finish
-	if [ $conf_DISP = true ] && [ -z "${SYNC_ERROR}" ]; then
-		sleep 4
+	if [ $conf_DISP = true ]; then
+		sleep 5
 	fi
 
 	# Kill the backup-progress.sh script
@@ -673,7 +675,7 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 	log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}; SYNC_TIME: ${SYNC_TIME}" 3
 
 	if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
-			lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')"
+			lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')" ""
 			sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
 	fi
 

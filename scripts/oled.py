@@ -25,10 +25,12 @@ from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 
 # get arguments
-Format  = ["","","","",""] # elements 0..4 (we need indexes 1..4)
-Line    = ["","","","",""] # elements 0..4 (we need indexes 1..4)
+# accepts 5 pairs of arguments: Format ("pos" or "neg") and Line (Text)
+# for progressbar use the Line-pattern "PGBAR:PERCENT", e.g. "PGBAR:61"
+Format  = ["","","","","",""] # elements 0..4 (we need indexes 1..5)
+Line    = ["","","","","",""] # elements 0..4 (we need indexes 1..5)
 
-for n in range(1,5):
+for n in range(1,6):
 	Format[n]	= sys.argv[(n-1)*2+1]
 	Line[n]		= sys.argv[(n-1)*2+2]
 
@@ -65,12 +67,12 @@ font = ImageFont.load_default()
 font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 12)
 # Move left to right keeping track of the current x position for drawing shapes.
 x			= 0
-line_height	= int((height - top)/4)
+line_height	= int((height - top)/5)
 y_shift		= 0
 
 # Write lines
-for n in range(1,5):
-	if Format[n]	== "pos":
+for n in range(1,6):
+	if Format[n] == "pos":
 		fg_fill	= 255
 		bg_fill	= 0
 	else:
@@ -79,8 +81,42 @@ for n in range(1,5):
 
 	y	= (n-1)*line_height
 
-	# Draw a filled box to clear the image.
+	# Draw a filled box to clear the image-line.
 	draw.rectangle((x, top + y + y_shift, width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
+
+	if Line[n][0:6] == "PGBAR:":
+
+		try:
+			progress	= int(Line[n][6:])
+		except ValueError:
+			progress	= 0
+
+		if progress < 1:
+			progress	= 0
+
+		# draw progressbar
+
+		pg_y_space	= 2
+		pgbar_x_l	= x + 40
+		pgbar_x_r	= width - 2
+		pgbar_y_u	= top + y + y_shift + pg_y_space
+		pgbar_y_d	= top + y + y_shift + line_height - pg_y_space
+
+		## draw outer frame
+		draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=fg_fill, fill=bg_fill)
+
+		## draw inner frame
+		pgbar_x_l	= pgbar_x_l + 1
+		pgbar_x_r	= pgbar_x_r - 1
+		pgbar_y_u	= pgbar_y_u + 1
+		pgbar_y_d	= pgbar_y_d - 1
+
+		pgbar_x_r	= pgbar_x_l + (pgbar_x_r - pgbar_x_l) * progress / 100
+
+		draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
+
+		# define text to print
+		Line[n]	= str(progress) + "%"
 
 	# Write text
 	draw.text((x + 2, top + y), Line[n], font=font, fill=fg_fill)

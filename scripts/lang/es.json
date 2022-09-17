@@ -236,13 +236,14 @@
       "secondary": "Ejecución secundaria",
       "mode_camera": "Cámara",
       "mode_cloud": "Nube",
-      "mode_external": "Ext. almacenamiento",
       "mode_internal": "Int. almacenamiento",
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
-      "mode_storage": "Almacenamiento",
+      "mode_storage": "Ext. almacenamiento",
       "storage_filesystem_short": "FS",
-      "exception": "Error desconocido"
+      "exception": "Error desconocido",
+      "time_remaining": "Tiempo",
+      "mode_external": "Ext. almacenamiento"
     },
     "cronip": {
       "offline": "desconectado",

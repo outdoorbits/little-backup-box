@@ -12,9 +12,9 @@
     "backup": {
       "primary": "Primary backup",
       "secondary": "Secondary backup",
-      "mode_storage": "Storage",
-      "mode_internal": "Int. storage",
+      "mode_storage": "Ext. storage",
       "mode_external": "Ext. storage",
+      "mode_internal": "Int. storage",
       "mode_camera": "Camera",
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
@@ -72,7 +72,8 @@
         "exception": "Unknown error"
       },
       "storage_filesystem_short": "FS",
-      "exception": "Unknown error"
+      "exception": "Unknown error",
+      "time_remaining": "Time"
     },
     "poweroff": {
       "poweroff": "Power off",
