@@ -118,15 +118,9 @@ function lcd_message () {
 			FORCE_FORMAT[$n]="pos"
 		fi
 
-		# get LINE into Lines-Array
-		Lines[$n]=${LINE}
-
-		if [ ! -z "${LogLines}" ]; then
-			LogLines="${LogLines}\n"
-		fi
-
 		if [[ "${LINE}" == "PGBAR:"* ]]; then
 			PERCENT=${LINE#"PGBAR:"}
+
 			if [ -z "${PERCENT}" ]; then
 				PERCENT=0
 			fi
@@ -138,7 +132,20 @@ function lcd_message () {
  			LINE="${PERCENT}% ${PROGRESSBAR}"
 		fi
 
+		# get LINE into Lines-Array
+		Lines[$n]=${LINE}
+
+		# modify LINE for logging
+		if [[ "${LINE}" == "IMAGE:"* ]]; then
+			LINE=$(echo "${LINE}" | cut -d":" -f3)
+		fi
+
+		# create log-text
+		if [ ! -z "${LogLines}" ]; then
+			LogLines="${LogLines}\n"
+		fi
 		LogLines="${LogLines}${LINE}"
+
 
 		n=$(expr $n + 1)
 	done

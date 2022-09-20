@@ -50,78 +50,93 @@ disp.show()
 # Make sure to create image with mode '1' for 1-bit color.
 width = disp.width
 height = disp.height
-image = Image.new("1", (width, height))
 
-# Get drawing object to draw on image.
-draw = ImageDraw.Draw(image)
+if Line[1][0:6] == "IMAGE:":
+	# PRINT IMAGE FROM FILE
+	# Only the first line can be interpreted as image. In This case no further text will be printed.
+	# FORMAT: "IMAGE:filename"
+	ImageLine = Line[1].split(":")
 
-# Draw some shapes.
-# First define some constants to allow easy resizing of shapes.
-top = 0
+	ImageFilename = ImageLine[1]
 
-# define font
-font = ImageFont.load_default()
-# Alternatively load a TTF font.  Make sure the .ttf font file is in the
-# same directory as the python script!
-# Some other nice fonts to try: http://www.dafont.com/bitmap.php
-font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 12)
-# Move left to right keeping track of the current x position for drawing shapes.
-x			= 0
-line_height	= int((height - top)/5)
-y_shift		= 0
+	image = Image.open(ImageFilename)
+	image = image.convert('1')
 
-# Write lines
-for n in range(1,6):
-	if Format[n] == "pos":
-		fg_fill	= 255
-		bg_fill	= 0
-	else:
-		fg_fill	= 0
-		bg_fill	= 255
+	draw = ImageDraw.Draw(image)
 
-	y	= (n-1)*line_height
+else:
+	# PRINT TEXT LINES
+	image = Image.new("1", (width, height))
 
-	# Draw a filled box to clear the image-line.
-	draw.rectangle((x, top + y + y_shift, width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
+	# Get drawing object to draw on image.
+	draw = ImageDraw.Draw(image)
 
-	if Line[n][0:6] == "PGBAR:":
+	# define constants
+	top = 0
 
-		try:
-			progress	= int(Line[n][6:])
-		except ValueError:
-			progress	= 0
+	# define font
+	font = ImageFont.load_default()
+	# Alternatively load a TTF font.  Make sure the .ttf font file is in the
+	# same directory as the python script!
+	# Some other nice fonts to try: http://www.dafont.com/bitmap.php
+	font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 12)
+	# Move left to right keeping track of the current x position for drawing shapes.
+	x			= 0
+	line_height	= int((height - top)/5)
+	y_shift		= 0
 
-		if progress < 1:
-			progress	= 0
+	# Write lines
+	for n in range(1,6):
+		if Format[n] == "pos":
+			fg_fill	= 255
+			bg_fill	= 0
+		else:
+			fg_fill	= 0
+			bg_fill	= 255
 
-		# draw progressbar
+		y	= (n-1)*line_height
 
-		pg_y_space	= 2
-		pgbar_x_l	= x + 40
-		pgbar_x_r	= width - 2
-		pgbar_y_u	= top + y + y_shift + pg_y_space
-		pgbar_y_d	= top + y + y_shift + line_height - pg_y_space
+		# Draw a filled box to clear the image-line.
+		draw.rectangle((x, top + y + y_shift, width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
 
-		## draw outer frame
-		draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=fg_fill, fill=bg_fill)
+		if Line[n][0:6] == "PGBAR:":
 
-		## draw inner frame
-		pgbar_x_l	= pgbar_x_l + 1
-		pgbar_x_r	= pgbar_x_r - 1
-		pgbar_y_u	= pgbar_y_u + 1
-		pgbar_y_d	= pgbar_y_d - 1
+			try:
+				progress	= int(Line[n][6:])
+			except ValueError:
+				progress	= 0
 
-		pgbar_x_r	= pgbar_x_l + (pgbar_x_r - pgbar_x_l) * progress / 100
+			if progress < 1:
+				progress	= 0
 
-		draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
+			# draw progressbar
 
-		# define text to print
-		Line[n]	= str(progress) + "%"
+			pg_y_space	= 2
+			pgbar_x_l	= x + 40
+			pgbar_x_r	= width - 2
+			pgbar_y_u	= top + y + y_shift + pg_y_space
+			pgbar_y_d	= top + y + y_shift + line_height - pg_y_space
 
-	# Write text
-	draw.text((x + 2, top + y), Line[n], font=font, fill=fg_fill)
+			## draw outer frame
+			draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=fg_fill, fill=bg_fill)
 
-	y_shift	+= 1
+			## draw inner frame
+			pgbar_x_l	= pgbar_x_l + 1
+			pgbar_x_r	= pgbar_x_r - 1
+			pgbar_y_u	= pgbar_y_u + 1
+			pgbar_y_d	= pgbar_y_d - 1
+
+			pgbar_x_r	= pgbar_x_l + (pgbar_x_r - pgbar_x_l) * progress / 100
+
+			draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
+
+			# define text to print
+			Line[n]	= str(progress) + "%"
+
+		# Write text
+		draw.text((x + 2, top + y), Line[n], font=font, fill=fg_fill)
+
+		y_shift	+= 1
 
 # Display image.
 disp.image(image)
