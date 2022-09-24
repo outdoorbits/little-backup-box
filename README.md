@@ -2,7 +2,10 @@
 
 <h1>Little Backup Box</h1>
 
-<h1>NEWS</h1>
+<h2>About</h2>
+Software that turns a single-board computer into a versatile and pocketable backup appliance
+
+<h2>NEWS</h2>
 <ul>
 	<li>2022/09/24: A disk formatting function has been added to the tools.</li>
 	<li>2022/04/03: A secondary default backup mode has been added. This allows you to configure a automatically starting network backup after a local backup.</li>
@@ -106,7 +109,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 <h2>Start</h2>
 If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.BOX or http://IP.OF.YOUR.BOX:8000<br>Have fun!
 <h2>Update</h2>
-To update you can perform a webUI-based one-click update. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
+To update you can be performed by the webUI. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
 
 <h2>Known problems</h2>
 <ul>
