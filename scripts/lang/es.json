@@ -121,7 +121,7 @@
     "password_as_set_in": "Contraseña como se establece en",
     "cloud_rclone_gui": "rclone GUI",
     "update_section": "Actualizar",
-    "update_text": "<h3> Actualizar Little Backup Box </h3> <p> Precaución: <ul> <li> ¡La actualización comienza inmediatamente detrás del siguiente enlace! </li> <li> La actualización puede inutilizar el sistema. </li> <li> La actualización puede causar un volumen de descarga de datos considerable y, por lo tanto, podria incurrir en costos. </li> <li> La actualización puede demorar varios minutos o más, dependiendo de la velocidad de Internet. </li> </ul> <br> Solo realice la actualización si ... <ul> <li> también podría realizar una nueva instalación de ser necesario </li> <li> tiene una conexión a Internet estable </li> <li> esta conectado a una fuente de alimentación estable </li> </ul> </p> <a href='/update.php'> Actualizar ahora, ¡no hay vuelta atrás! </a>",
+    "update_text": "<h3> Actualizar Little Backup Box </h3> <p> Precaución: <ul> <li> ¡La actualización comienza inmediatamente detrás del siguiente enlace! </li> <li> La actualización puede inutilizar el sistema. </li> <li> La actualización puede causar un volumen de descarga de datos considerable y, por lo tanto, podria incurrir en costos. </li> <li> La actualización puede demorar varios minutos o más, dependiendo de la velocidad de Internet. </li> </ul> <br> Solo realice la actualización si ... <ul> <li> también podría realizar una nueva instalación de ser necesario </li> <li> tiene una conexión a Internet estable </li> <li> esta conectado a una fuente de alimentación estable </li> </ul> </p>",
     "save_settings_download_link_text": "Configuraciones de descarga",
     "save_settings_download_text": "Descargar un archivo zip con su configuración",
     "save_settings_section": "Configuración de descarga / carga",
@@ -156,7 +156,8 @@
     "behavior_loglevel_medium": "medio",
     "behavior_loglevel_maximum": "máximo",
     "backup_header2": "Modo de copia de seguridad secundario predeterminado",
-    "backup_label2": "Seleccione un modo de copia de seguridad predeterminado secundario para ejecutar después del principal:"
+    "backup_label2": "Seleccione un modo de copia de seguridad predeterminado secundario para ejecutar después del principal:",
+    "update_linktext": "Actualizar ahora"
   },
   "tools": {
     "tools": "Herramientas",
@@ -164,18 +165,15 @@
     "mount_b": "Montar",
     "umount_b": "Eliminar",
     "repair": "Reparar",
-    "select_partition": "Seleccionar partición: ",
+    "select_partition": "Seleccionar partición",
     "fsck_check_b": "Verificar",
     "fsck_autorepair_b": "Reparar",
     "help": "Ayuda",
-    "help_text": "<h2> Reparar </h2>\n  <p class = 'text-center'> <mark> No lo utilice a menos que sepa lo que está haciendo. ¡Podría dañar su disco de almacenamiento! </mark> </p>\n  <h3> Procedimiento: </h3>\n  <ol>\n  <li> Verifique su fuente de alimentación. La interrupción del suministro eléctrico puede dañar el disco de almacenamiento de manera permanente. </li>\n  <li> Asegúrese de que no se esté ejecutando ningúna copia de respaldo. </li>\n  <li> No haga clic en ningún botón hasta que se hayan completado todas las operaciones de verificación y reparación. ¡No inicie ningún proceso! </li>\n  <li> Ejecute primero la verificación del sistema de archivos. </li>\n  <li> Si ve algún error en el registro, ejecute la reparación del sistema de archivos. </li>\n  <li> Cuando finalice la operación de reparación, apague la máquina y desconecte los dispositivos de almacenamiento antes de reiniciar. </li>\n  </ol>",
+    "help_text": "<h2>Reparar</h2>\n  <p class = 'text-center'> <mark> No lo utilice a menos que sepa lo que está haciendo. ¡Podría dañar su disco de almacenamiento! </mark> </p>\n  <h3> Procedimiento: </h3>\n  <ol>\n  <li> Verifique su fuente de alimentación. La interrupción del suministro eléctrico puede dañar el disco de almacenamiento de manera permanente. </li>\n  <li> Asegúrese de que no se esté ejecutando ningúna copia de respaldo. </li>\n  <li> No haga clic en ningún botón hasta que se hayan completado todas las operaciones de verificación y reparación. ¡No inicie ningún proceso! </li>\n  <li> Ejecute primero la verificación del sistema de archivos. </li>\n  <li> Si ve algún error en el registro, ejecute la reparación del sistema de archivos. </li>\n  <li> Cuando finalice la operación de reparación, apague la máquina y desconecte los dispositivos de almacenamiento antes de reiniciar. </li>\n  </ol>\n<h2>Formato</h2>\n   <p class='text-center'><mark>No use esta función si no sabe lo que está haciendo. Esto borrará su almacenamiento y los datos perdidos no se podrán recuperar.</mark> </p>\n<h3>Opciones:</h3>\n<ul>\n<li>FAT32 (Windows&#174;): generalizado, el tamaño del archivo está limitado a 4 GB.</li>\n<li>exFAT (Windows&#174;): menos común, sin límite de tamaño de archivo.</li>\n<li>NTFS (Windows&#174;): compatibilidad limitada con muchos dispositivos, sin límite de tamaño de archivo.\n<ul>\n<li>NTFS (compression enabled): Ahorra espacio en disco, pero puede reducir significativamente el rendimiento.</li>\n<li>NTFS (no compression): Compresión NTFS deshabilitada</li>\n</ul>\n</li>\n<li>Ext4 (Linux): sistema de archivos actual de Linux</li>\n<li>Ext3 (Linux): predecesor de Ext4, solo se recomienda si la memoria también debe ser compatible con dispositivos más antiguos que aún no admiten Ext4.</li>\n</ul>",
     "fsck_check_m": "verificación iniciada",
-    "fsck_autorepair_m": "reparación iniciada"
-  },
-  "update": {
-    "header": "Actualizar Little Backup Box",
-    "warning": "¡NO PARE ni refresque mientras se hace la actualizacion!",
-    "return_link": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE TERMINE LA ACTUALIZACIÓN!"
+    "fsck_autorepair_m": "reparación iniciada",
+    "format_b": "¡formatear disco!",
+    "select_format_fstype": "tipo de sistema de archivos"
   },
   "minutes_long": "minutos",
   "box": {
@@ -265,6 +263,18 @@
       "while_act_led_on_1": "mientras que",
       "while_act_led_on_2": "el LED está encendido. ¡Chau!",
       "idle_time_reached": "Tiempo de inactividad alcanzado"
+    },
+    "cmd": {
+      "format": {
+        "start1": "Formato",
+        "start2": "a débuté...",
+        "stop2": "terminado",
+        "stop1": "Formato"
+      },
+      "update": {
+        "start1": "Actualizar",
+        "start2": "a débuté..."
+      }
     }
   },
   "seconds_short": "s",
@@ -278,5 +288,22 @@
     "temperature_limit_prev": "Límite de temperature alcanzado previamente",
     "under_voltage_cur": "Voltaje bajo detectado.",
     "under_voltage_prev": "Voltaje bajo detectado previamente."
+  },
+  "cmd": {
+    "execute": "ejecutar",
+    "input_password": "Se requiere contraseña para comenzar",
+    "input_password_info": "Si no se establece una contraseña, no puede continuar. Configure primero una contraseña global.",
+    "update": {
+      "warning": "¡NO SE DETENGA ni recargue mientras corre!",
+      "return_link": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE TERMINE LA ACTUALIZACIÓN!",
+      "header": "Little Backup Box Actualizador"
+    },
+    "no_cmd": "No se ha dado ningún comando válido.",
+    "link_text_home": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE EL COMANDO HAYA TERMINADO!<br>(Espera &quot;FINISHED&quot;.)",
+    "format": {
+      "warning": "¡Peligro! ¡Esto borrará todos los datos en el dispositivo seleccionado!",
+      "header": "Formatear dispositivo",
+      "description": "Operación programada"
+    }
   }
 }

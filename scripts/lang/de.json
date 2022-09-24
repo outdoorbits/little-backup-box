@@ -121,7 +121,7 @@
     "password_as_set_in": "wie eingestellt in",
     "cloud_rclone_gui": "rclone GUI",
     "update_section": "Update",
-    "update_text": "<h3>Update Little Backup Box</h3><p>Achtung:<ul><li>Das Update startet direkt mit dem folgendem Link!</li><li>Das Update kann das System unbrauchbar machen.</li><li>Das Update kann ein erhebliches Downloadvolumen und damit ggf. Kosten verursachen.</li><li>Das Update kann je nach Internetgeschwindigkeit mehrere Minuten oder länger dauern.</li></ul><br>Führen Sie das Update nur durch, wenn Sie ...<ul><li>notfalls auch die Möglichkeit hätten, eine Neuinstallation durchführen</li><li>eine stabile Internetverbindung haben</li><li>eine stabile Stromversorgung haben</li></ul></p><a href='/update.php'>Jetzt aktualisieren - keine weiteren Schritte vorher!</a>",
+    "update_text": "<h3>Update Little Backup Box</h3><p>Achtung:<ul><li>Das Update startet direkt mit dem folgendem Link!</li><li>Das Update kann das System unbrauchbar machen.</li><li>Das Update kann ein erhebliches Downloadvolumen und damit ggf. Kosten verursachen.</li><li>Das Update kann je nach Internetgeschwindigkeit mehrere Minuten oder länger dauern.</li></ul><br>Führen Sie das Update nur durch, wenn Sie ...<ul><li>notfalls auch die Möglichkeit hätten, eine Neuinstallation durchführen</li><li>eine stabile Internetverbindung haben</li><li>eine stabile Stromversorgung haben</li></ul></p>",
     "save_settings_download_link_text": "Einstellungen herunterladen",
     "save_settings_download_text": "Zip-Archiv mit Einstellungen herunterladen",
     "save_settings_section": "Download / Upload der Einstellungen",
@@ -156,7 +156,8 @@
     "behavior_loglevel_medium": "mittel",
     "behavior_loglevel_maximum": "maximal",
     "backup_header2": "Standardmäßiger sekundärer Sicherungsmodus",
-    "backup_label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:"
+    "backup_label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:",
+    "update_linktext": "Update starten"
   },
   "tools": {
     "tools": "Werkzeug",
@@ -164,18 +165,15 @@
     "mount_b": "Mount",
     "umount_b": "Entfernen",
     "repair": "Reparatur",
-    "select_partition": "Partition auswählen: ",
+    "select_partition": "Partition auswählen",
     "fsck_check_b": "Überprüfen",
     "fsck_autorepair_b": "Reparatur",
     "help": "Hilfe",
-    "help_text": "<h2> Reparatur </h2>\n  <p class = 'text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher könnte beschädigt werden und Datenverlust wäre möglich! </mark> </p>\n<h3>Verfahren:</h3>\n<ol>\n<li>Überprüfen Sie Ihre Stromversorgung. Eine Unterbrechung der Stromversorgung kann den Speicher irreparabel beschädigen.</li>\n<li> Stellen Sie sicher, dass gleichzeitig kein Backup-Auftrag ausgeführt wird.</li>\n<li>Klicken Sie auf keine Schaltfläche und starten Sie keine Prozesse, bevor alle Prüf- und Reparaturvorgänge abgeschlossen sind!</li>\n<li> Führen Sie zuerst die Dateisystemprüfung durch.</li>\n  <li> Wenn Sie Fehler im Protokoll sehen, führen Sie die Dateisystemreparatur durch.</li>\n<li> Wenn der Reparaturvorgang abgeschlossen ist, fahren Sie das System herunter und trennen Sie dann die Speichergeräte vor dem Neustart.</li>\n</ol>",
+    "help_text": "<h2>Reparatur</h2>\n  <p class = 'text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher könnte beschädigt werden und Datenverlust wäre möglich! </mark> </p>\n<h3>Verfahren:</h3>\n<ol>\n<li>Überprüfen Sie Ihre Stromversorgung. Eine Unterbrechung der Stromversorgung kann den Speicher irreparabel beschädigen.</li>\n<li> Stellen Sie sicher, dass gleichzeitig kein Backup-Auftrag ausgeführt wird.</li>\n<li>Klicken Sie auf keine Schaltfläche und starten Sie keine Prozesse, bevor alle Prüf- und Reparaturvorgänge abgeschlossen sind!</li>\n<li> Führen Sie zuerst die Dateisystemprüfung durch.</li>\n  <li> Wenn Sie Fehler im Protokoll sehen, führen Sie die Dateisystemreparatur durch.</li>\n<li> Wenn der Reparaturvorgang abgeschlossen ist, fahren Sie das System herunter und trennen Sie dann die Speichergeräte vor dem Neustart.</li>\n</ol>\n<h2>Formatieren</h2>\n  <p class='text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher wird dadurch gelöscht und Datenverluste können nicht wiederhergestellt werden.</mark> </p>\n<h3>Optionen:</h3>\n<ul>\n\t<li>FAT32 (Windows&#174;): Weit verbreitet, die Dateigröße ist auf 4GB begrenzt.</li>\n\t<li>exFAT (Windows&#174;): Weniger verbreitet, keine Begrenzung der Dateigröße.</li>\n\t<li>NTFS (Windows&#174;): Eingeschränkte Kompatibilität mit vielen Geräten, keine Begrenzung der Dateigröße.\n\t\t<ul>\n\t\t\t<li>NTFS (compression enabled): Komprimierung, spart Speicherplatz, kann aber die Leistung signifikant reduzieren.</li>\n\t\t\t<li>NTFS (no compression): Keine Komprimierung.</li>\n\t\t</ul>\n\t</li>\n\t<li>Ext4 (Linux): Aktuelles Linux-Dateisystem</li>\n\t<li>Ext3 (Linux): Vorgänger von Ext4, nur empfohlen, wenn der Speicher auch mit älteren Geräten kompatibel sein muss, die Ext4 noch nicht unterstützen.</li>\n</ul>",
     "fsck_check_m": "Prüfung eingeleitet",
-    "fsck_autorepair_m": "Reparatur eingeleitet"
-  },
-  "update": {
-    "header": "Little Backup Box Updater",
-    "warning": "NICHT STOPPEN oder nachladen während des Updates!",
-    "return_link": "Zurück zur Little Backup Box - NICHT KLICKEN, BEVOR DAS UPDATE ABGESCHLOSSEN IST!"
+    "fsck_autorepair_m": "Reparatur eingeleitet",
+    "format_b": "Speicher formatieren!",
+    "select_format_fstype": "Dateisystemtyp"
   },
   "minutes_long": "Minuten",
   "box": {
@@ -265,6 +263,18 @@
       "while_act_led_on_1": "so lange die grüne",
       "while_act_led_on_2": "LED leuchtet. Bye!",
       "idle_time_reached": "Leerlaufzeit erreicht"
+    },
+    "cmd": {
+      "format": {
+        "start1": "Formatierung",
+        "start2": "gestartet...",
+        "stop2": "beendet",
+        "stop1": "Formatierung"
+      },
+      "update": {
+        "start1": "Update",
+        "start2": "gestartet..."
+      }
     }
   },
   "seconds_short": "s",
@@ -278,5 +288,22 @@
     "temperature_limit_prev": "Zuvor an der weichen Temperaturgrenze.",
     "under_voltage_cur": "Aktuell ist die Spannung zu niedrig.",
     "under_voltage_prev": "Zuvor war die Spannung zu niedrig."
+  },
+  "cmd": {
+    "execute": "ausführen",
+    "input_password": "Passwort erforderlich",
+    "input_password_info": "Falls kein Passwort festgelegt wurde, können Sie nicht fortfahren. Richten Sie zuerst ein globales Passwort ein.",
+    "update": {
+      "warning": "Während des Vorgangs NICHT STOPPEN oder nachladen!",
+      "return_link": "Zurück zu Little Backup Box - NICHT KLICKEN, BEVOR DAS UPDATE ABGESCHLOSSEN IST!",
+      "header": "Little Backup Box Updater"
+    },
+    "no_cmd": "Kein gültiger Befehl angegeben.",
+    "link_text_home": "Zurück zu Little Backup Box zurück - NICHT KLICKEN, BEVOR DER BEFEHL ABGESCHLOSSEN IST!<br>(Auf &quot;FINISHED&quot; warten.)",
+    "format": {
+      "warning": "Achtung! Dadurch werden alle Daten auf dem ausgewählten Gerät gelöscht!",
+      "header": "Speicher formatieren",
+      "description": "Geplanter Vorgang"
+    }
   }
 }

@@ -1,11 +1,10 @@
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb_display.jpg" align="right" width="320" height="213">
 
 <h1>Little Backup Box</h1>
-Dmitri Popov has entrusted me with the further maintenance of Little Backup Box today. Thank you Dima for this great project. I very much hope you stay connected to the project!<br>
-26.12.2021<br>
 
 <h1>NEWS</h1>
 <ul>
+	<li>2022/09/24: A disk formatting function has been added to the tools.</li>
 	<li>2022/04/03: A secondary default backup mode has been added. This allows you to configure a automatically starting network backup after a local backup.</li>
 	<li>2022/01/16: The <a href="https://github.com/outdoorbits/little-backup-box/wiki/02.-Hardware">Wiki</a> explains now, how to connect a LCD-display.</li>
 	<li>2022/01/12: Camera-backup: Paths to backup can be configured for each device.</li>
@@ -153,13 +152,13 @@ To update you can perform a webUI-based one-click update. Just follow the instru
 </ol>
 
 <h2>Authors</h2>
-Stefan Saam, founder is <a href="https://www.tokyoma.de/">Dmitri Popov</a>
+Stefan Saam, founder is <a href="https://www.tokyoma.de/">Dmitri Popov</a>. He has entrusted me with the further maintenance of Little Backup Box. Thank you Dima for this great project.<br>
 
 <h2>Contributors</h2>
 <ul>
 	<li>Dmitri Popov</li>
 	<li>Kerry Staite (STL files)</li>
-	<li><a href="https://github.com/munecito">munecito</a> (Spanish corrections added)</li>
+	<li><a href="https://github.com/munecito">munecito</a> (corrections of the Spanish translation)</li>
 </ul>
 
 <h2>License</h2>

@@ -58,7 +58,7 @@ unset IFS
 source "$CONFIG"
 
 # wipe lockfile
-sudo rm "$const_UPDATE_LOCKFILE" > /dev/null 2>&1
+sudo rm "$const_CMD_RUNNER_LOCKFILE" > /dev/null 2>&1
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"

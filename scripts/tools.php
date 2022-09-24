@@ -9,6 +9,19 @@ $theme = $config["conf_THEME"];
 $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 include($WORKING_DIR . "/sub-popup.php");
+
+
+function get_device_selector($name) {
+	exec("ls /dev/sd* | xargs -n 1 basename", $devices);
+
+	$selector	= '<select name="' . $name . '">\n';
+	$selector .= "<option value='-'>-</option>\n";
+	foreach ($devices as $n => $device) {
+		$selector .= "<option value='$device'>$device</option>\n";
+	}
+	$selector .= "</select>";
+	return($selector);
+}
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -44,14 +57,8 @@ include($WORKING_DIR . "/sub-popup.php");
 		<hr>
 			<form class="text-center" style="margin-top: 1em;" method="POST">
 					<label for="partition"><?php echo l::tools_select_partition ?></label>
-					<select name="partition">
 						<?php
-						unset ($devices);
-						exec("ls /dev/sd* | xargs -n 1 basename", $devices);
-						foreach ($devices as $n => $device) {
-								echo "<option value='$device'>$device</option>";
-						}
-						echo "</select>";
+						print(get_device_selector("partition"));
 						echo ("<button name='fsck_check'>" . l::tools_fsck_check_b . "</button>");
 						echo ("<button name='fsck_autorepair' class='danger'>" . l::tools_fsck_autorepair_b . "</button>");
 						?>
@@ -59,7 +66,34 @@ include($WORKING_DIR . "/sub-popup.php");
 	</div>
 
 	<?php include "sub-logmonitor.php"; ?>
-	<?php include "lib-log-helper.php"; ?>
+
+	<div class="card" style="margin-top: 3em;">
+		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::cmd_format_header; ?></h3>
+		<hr>
+			<form class="text-center" style="margin-top: 1em;" method="POST">
+					<label for="PARAM1"><?php echo l::tools_select_partition; ?>:</label>
+					<br>
+					<?php
+					print(get_device_selector("PARAM1"));
+					?>
+					<br>
+					<label for="PARAM2"><?php echo l::tools_select_format_fstype; ?>:</label>
+					<br>
+					<select name="PARAM2">
+						<option value="-">-</option>
+						<option value="FAT32">FAT32 (Windows&#174;)</option>
+						<option value="exFAT">exFAT (Windows&#174;)</option>
+						<option value="NTFS (compression enabled)">NTFS (compression enabled) (Windows&#174;)</option>
+						<option value="NTFS (no compression)">NTFS (compression disabled) (Windows&#174;)</option>
+						<option value="Ext4">Ext4 (Linux)</option>
+						<option value="Ext3">Ext3 (Linux)</option>
+					</select>
+					<br>
+					<?php
+					echo ("<button name='format' class='danger'>" . l::tools_format_b . "</button>");
+					?>
+			</form>
+	</div>
 
 	<div class="card" style="margin-top: 3em;">
 		<details>
@@ -120,6 +154,22 @@ include($WORKING_DIR . "/sub-popup.php");
 
 			$command = "sudo fsck -a /dev/${device}";
 			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+	}
+
+	if (isset($_POST['format'])) {
+
+			$PARAM1 = $_POST['PARAM1'];
+			$PARAM2 = $_POST['PARAM2'];
+
+			if (($PARAM1 !== "-") and ($PARAM2 !== "-")) {
+				?>
+				<script>
+						document.location.href="/cmd.php?CMD=format&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
+				</script>
+				<?php
+				exec ("./lib-log-helper.sh \"log_message\" \"format ${PARAM1} ${PARAM2}\" \"1\"");
+			}
+
 	}
 
 	?>

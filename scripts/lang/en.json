@@ -95,6 +95,18 @@
         "open_samba": "Open in file manager (Samba / Windows)",
         "info": "Little Backup Box Info"
       }
+    },
+    "cmd": {
+      "format": {
+        "start1": "Formatting",
+        "start2": "started...",
+        "stop2": "completed",
+        "stop1": "Formatting"
+      },
+      "update": {
+        "start1": "Update",
+        "start2": "started..."
+      }
     }
   },
   "mainmenue": {
@@ -244,7 +256,8 @@
     "password_as_set_in": "as set in",
     "cloud_rclone_gui": "rclone GUI",
     "update_section": "Update",
-    "update_text": "<h3>Update Little Backup Box</h3><p>Caution:<ul><li>The update starts immediately behind the following link!</li><li>The update can render the system unusable.</li><li>The update can cause a considerable download volume and thus possibly costs.</li><li>The update can take several minutes or longer, depending on the Internet speed.</li></ul><br>Only perform the update if you ...<ul><li>could also perform a new installation if necessary</li><li>have a stable internet connection</li><li>have a stable power supply</li></ul></p><a href='/update.php'>Update now - no more steps before!</a>",
+    "update_text": "<h3>Update Little Backup Box</h3><p>Caution:<ul><li>The update starts immediately behind the following link!</li><li>The update can render the system unusable.</li><li>The update can cause a considerable download volume and thus possibly costs.</li><li>The update can take several minutes or longer, depending on the Internet speed.</li></ul><br>Only perform the update if you ...<ul><li>could also perform a new installation if necessary</li><li>have a stable internet connection</li><li>have a stable power supply</li></ul></p>",
+    "update_linktext": "Update now",
     "save_settings_section": "Download / Upload settings",
     "save_settings_download_header": "Download",
     "save_settings_download_text": "Get a zip-archive with your settings",
@@ -266,17 +279,31 @@
     "mount_b": "Mount",
     "umount_b": "Remove",
     "repair": "Repair",
-    "select_partition": "Select partition:",
+    "format_b": "format disc!",
+    "select_format_fstype": "file system type",
+    "select_partition": "Select partition",
     "fsck_check_b": "Check",
     "fsck_autorepair_b": "Repair",
     "help": "Help",
-    "help_text": "<h2>Repair</h2>\n <p class='text-center'><mark>Do not use unless you know what you are doing. It could damage your storage!</mark></p>\n <h3>Procedure:</h3>\n <ol>\n <li>Check your power supply. Power interruption may damage storage beyond repair.</li>\n <li>Make sure that no backup job is running.</li>\n <li>Do not click any buttons until all check and repair operations are completed. Do not start any processes!</li>\n <li>Run filesystem check first.</li>\n <li>If you see any errors in the log, run filesystem repair.</li>\n <li>When the repair operation is finished, power down the machine and unplug the storage devices before boot.</li>\n </ol>",
+    "help_text": "<h2>Repair</h2>\n <p class='text-center'><mark>Do not use unless you know what you are doing. It could damage your storage!</mark></p>\n <h3>Procedure:</h3>\n <ol>\n <li>Check your power supply. Power interruption may damage storage beyond repair.</li>\n <li>Make sure that no backup job is running.</li>\n <li>Do not click any buttons until all check and repair operations are completed. Do not start any processes!</li>\n <li>Run filesystem check first.</li>\n <li>If you see any errors in the log, run filesystem repair.</li>\n <li>When the repair operation is finished, power down the machine and unplug the storage devices before boot.</li>\n </ol>\n<h2>Format</h2>\n   <p class='text-center'><mark>Do not use this function if you do not know what you are doing. This will erase your storage and any lost data cannot be recovered.</mark> </p>\n<h3>Options:</h3>\n<ul>\n<li>FAT32 (Windows&#174;): Widespread, file size is limited to 4GB.</li>\n<li>exFAT (Windows&#174;): Less common, no file size limit.</li>\n<li>NTFS (Windows&#174;): Limited compatibility with many devices, no file size limitation.\n<ul>\n<li>NTFS (compression enabled): Saves disk space, but can significantly reduce performance.</li>\n<li>NTFS (no compression)</li>\n</ul>\n</li>\n<li>Ext4 (Linux): Current Linux file system</li>\n<li>Ext3 (Linux): Predecessor of Ext4, only recommended if the memory also needs to be compatible with older devices that do not yet support Ext4.</li>\n</ul>",
     "fsck_check_m": "check initiated",
     "fsck_autorepair_m": " repair initiated"
   },
-  "update": {
-    "header": "Little Backup Box Updater",
-    "warning": "Do NOT STOP or reload while running!",
-    "return_link": "Return to Little Backup Box - DO NOT CLICK BEFORE THE UPDATE IS FINISHED!"
+  "cmd": {
+    "input_password": "Password requiered to start",
+    "input_password_info": "If no password is set, you cannot continue. Set up a global password first.",
+    "execute": "execute",
+    "no_cmd": "No valid command given.",
+    "link_text_home": "Return to Little Backup Box - DO NOT CLICK BEFORE THE COMMAND HAS FINISHED!<br>(Wait for &quot;FINISHED&quot;.)",
+    "update": {
+      "header": "Little Backup Box Updater",
+      "warning": "Do NOT STOP or reload while running!",
+      "return_link": "Return to Little Backup Box - DO NOT CLICK BEFORE THE UPDATE HAS FINISHED!"
+    },
+    "format": {
+      "header": "Format device",
+      "warning": "Danger! This will erase all data on the selected device!",
+      "description": "Scheduled operation"
+    }
   }
 }

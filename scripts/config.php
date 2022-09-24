@@ -504,6 +504,7 @@ function upload_settings() {
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_update_section; ?></summary>
 				<?php echo L::config_update_text; ?>
+				<a href='/cmd.php?CMD=update'><?php echo L::config_update_linktext ?></a>
 			</details>
 		</div>
 

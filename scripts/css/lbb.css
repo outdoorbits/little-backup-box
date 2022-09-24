@@ -16,7 +16,7 @@ html, body {
 	background-repeat: repeat-y;
 }
 
-Button.usb {
+button.usb {
 	color: var(--cusb);
 	border-color: var(--cusb);
 	width: 15em;
@@ -53,6 +53,11 @@ button.danger {
 div.backupsection {
 	padding-top: 0.5rem;
 	padding-bottom: 0.5rem;
+}
+
+ul.danger {
+	color: var(--cdanger);
+	font-weight: bold;
 }
 
 
