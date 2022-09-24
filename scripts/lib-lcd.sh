@@ -80,8 +80,8 @@ function lcd_message () {
 		n=$(expr $n + 1)
 	done
 
-	#save Lines to file
-	sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}\n${Lines[4]}' > '${const_DISPLAY_CONTENT_OLD_FILE}'"
+	#define OldLines for file, will be modified later
+	OldLines=("${Lines[@]}")
 
 	#display
 	LogLines=""
@@ -123,6 +123,8 @@ function lcd_message () {
 
 		# modify LINE for logging
 		if [[ "${LINE}" == "PGBAR:"* ]]; then
+			OldLines[$n]=""
+
 			PERCENT=${LINE#"PGBAR:"}
 
 			if [ -z "${PERCENT}" ]; then
@@ -137,6 +139,8 @@ function lcd_message () {
 		fi
 
 		if [[ "${LINE}" == "IMAGE:"* ]]; then
+			OldLines[$n]=""
+
 			LINE=$(echo "${LINE}" | cut -d":" -f3)
 		fi
 
@@ -156,6 +160,11 @@ function lcd_message () {
 	if [ $conf_DISP = true ]; then
 		sudo python3 ${WORKING_DIR}/oled.py "${FORCE_FORMAT[0]}" "${Lines[0]}" "${FORCE_FORMAT[1]}" "${Lines[1]}" "${FORCE_FORMAT[2]}" "${Lines[2]}" "${FORCE_FORMAT[3]}" "${Lines[3]}" "${FORCE_FORMAT[4]}" "${Lines[4]}"
 	fi
+
+
+
+	#save Lines to file
+	sudo bash -c "echo -en '${OldLines[0]}\n${OldLines[1]}\n${OldLines[2]}\n${OldLines[3]}\n${OldLines[4]}' > '${const_DISPLAY_CONTENT_OLD_FILE}'"
 
 	# log
 	if [ ! -z "${LogLines}" ];
