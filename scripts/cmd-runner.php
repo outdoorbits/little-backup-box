@@ -169,6 +169,8 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 					unlink($constants["const_CMD_RUNNER_LOCKFILE"]);
 				}
+			} else {
+				echo "NOT AUTHORISED";
 			}
 		?>
 

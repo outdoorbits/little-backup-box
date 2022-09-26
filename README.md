@@ -12,13 +12,29 @@ Software that turns a single-board computer into a versatile and pocketable back
 	<li>2022/01/16: The <a href="https://github.com/outdoorbits/little-backup-box/wiki/02.-Hardware">Wiki</a> explains now, how to connect a LCD-display.</li>
 	<li>2022/01/12: Camera-backup: Paths to backup can be configured for each device.</li>
 	<li>2022/01/08: Add option to backup only specific directories from cameras or smartphones.</li>
-	<li>2022/01/08: Remove upload.php. This is performed by the filemanager much better now.</li>
-	<li>2021/12/31: Add language support for display-messages <b>Caution: The translations were carried out by machine and could cause unpleasant feelings in native speakers. Help is particularly welcome here. Technically, working on the language files is extremely easy. Would you help?</b></li>
+	<li>2022/01/08: Uploads to the box can be done by the filemanager now.</li>
+	<li>2021/12/31: Add language support for display-messages*1</li>
 	<li>2021/12-27: Add power-off after idle time. Configuration in &quot;Settings&quot;.</li>
-	<li>2021/12/21: Add language support for French, Spanisch and German</li>
-	<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">one-click-update-function</a></li>
+	<li>2021/12/21: Add language support to the web-UI for French, Spanisch and German*1</li>
+	<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">menue based update-function</a>.</li>
 	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
 </ul>
+<h3>Some major developement-steps:</h3>
+<ul>
+	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
+	<li>Mounting devices is managed by UUIDs. If a device disconnects*2, it can be automatically reconnected. The backup-process becomes much more robust.</li>
+	<li>Some tools are added (check device, repair device)</li>
+	<li>Installation of components (comitup, mejiro) is automated</li>
+	<li>It has a full powered webserver now, ssl as standard</li>
+	<li>Setup is form-based</li>
+	<li>Setup can be ex- and imported as zip-file.</li>
+	<li>Web interface and Samba-Server can be configured for password-protection</li>
+	<li>sync to your rsync-server is possible</li>
+</ul>
+<br>
+... a lot of stuff! Please let me know about problems.
+*1) Caution: The translations were carried out by machine and could cause unpleasant feelings in native speakers. Help is particularly welcome here. Technically, working on the language files is extremely easy. Would you help?<br>
+*2) Maybe because of power-failures sometimes the connection to a device is disrupted. After reconnecting, it gets a new drive-identifier (e.g. sda becomes sdb) while the drives UUID is still the same.<br>
 <br>
 
 <figure align="center">
@@ -39,23 +55,6 @@ Little Backup Box has undergone massive development over the past few months. At
 Hence the request: Test, test, test!<br>
 Please give feedback on problems or translation errors but also on the successful use, if possible with details of your equipment.<br>
 <br>
-<h2>Some major developement-steps:</h2>
-<ul>
-	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
-	<li>Power-off after idle time. Configuration in &quot;Settings&quot;.</li>
-	<li>Mounting devices is managed by UUIDs. If a device disconnects*1, it can be automatically reconnected. The process becomes much more robust.</li>
-	<li>Some tools are added (check device, repair device)</li>
-	<li>Installation of components (comitup, mejiro) is automated</li>
-	<li>It has a full powered webserver now, ssl as standard</li>
-	<li>Setup is form-based</li>
-	<li>Setup can be ex- and imported as zip-file.</li>
-	<li>Web interface and Samba-Server can be configured for password-protection</li>
-	<li>sync to your rsync-server is possible</li>
-</ul>
-*1 Maybe because of power-failures sometimes the connection to a device is disrupted. After reconnecting, it gets a new drive-identifier (e.g. sda becomes sdb) while the drives UUID is still the same.<br>
-<br>
-... a lot of stuff! Please let me know about problems.
-
 <h2>Please mind the wiki!</h2>
 As there is no manual available anymore, the github-wiki should replace it one day: <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not particularly detailed yet, but it can certainly help with the most common questions.
 
@@ -111,38 +110,11 @@ If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.
 <h2>Update</h2>
 To update you can be performed by the webUI. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
 
-<h2>Known problems</h2>
-<ul>
-	<li>
-		<u>Samba does not show external mounts.</u><br>
-		Little Backup Box mounts external storage according to the following scheme:
-		<ol>
-			<li>the uuid of the device is determined:<br>
-				lsblk -p -P -o PATH,MOUNTPOINT,UUID<br>
-				The line for the USB memory sda1 gives:<br>
-				PATH="/dev/sda1" MOUNTPOINT="" UUID="B20D-9734"<br>
-			</li>
-			<li>
-				The mount is triggered through the web interface (apache2, user www-data in sudoers). A second called bash script does the following:<br>
-				sudo mount --uuid B20D-9734 /media/storage/ -o umask=0<br>
-			</li>
-		</ol>
-		From the point of view of the Little Backup Box web UI and its scripts, the mounts are now available. However, from the point of view of samba and from the command line (as root), they are not mounted. Even the command<br>
-		sudo mount<br>
-		gives no line for the mount.<br>
-		<br>
-		However, if I run the above mount command as user pi (member of sudoers), the mount is also available for the web UI and for samba.<br>
-		It gets even crazier when I unmount this mount via the web interface (Tools). The mount has now disappeared from the web interface, but from the command line it is retained and I still have full access.<br>
-		For me it's a miracle. Any idea?
-	</li>
-</ul>
-
-
 <h2>Contribute</h2>
 <ul>
-	<li>If you've found a bug or have a suggestion for improvement, open an issue in the <a href="https://github.com/outdoorbits/little-backup-box/issues">Issues section</a>.</li>
+	<li>If you've found a bug or have suggestions for improvements, open an issue in the <a href="https://github.com/outdoorbits/little-backup-box/issues">Issues section</a>.</li>
 	<li>If you could spend a bit of time and add a new language - great, just tell me, it's easy!</li>
-	<li>To add a new feature or fix issues yourself, follow the following steps.</li>
+	<li>To add new features or fix issues yourself, follow the following steps.</li>
 </ul>
 
 <ol>
