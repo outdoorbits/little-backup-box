@@ -32,7 +32,8 @@ Software that turns a single-board computer into a versatile and pocketable back
 	<li>sync to your rsync-server is possible</li>
 </ul>
 <br>
-... a lot of stuff! Please let me know about problems.
+... a lot of stuff! Please let me know about problems.<br>
+<br>
 *1) Caution: The translations were carried out by machine and could cause unpleasant feelings in native speakers. Help is particularly welcome here. Technically, working on the language files is extremely easy. Would you help?<br>
 *2) Maybe because of power-failures sometimes the connection to a device is disrupted. After reconnecting, it gets a new drive-identifier (e.g. sda becomes sdb) while the drives UUID is still the same.<br>
 <br>
