@@ -22,6 +22,9 @@ source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
+# Load Langauge library
+. "${WORKING_DIR}/lib-language.sh"
+
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 

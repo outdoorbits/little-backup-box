@@ -20,7 +20,9 @@
 # library expects from calling script:
 # - source config.cfg
 # - source constants.sh
+# - source lib-language.sh
 # - source lib-log.sh
+# - source lib-lcd.sh
 
 function mount_device() {
 	# mounts the device, if WAIT_FOR_MOUNT=true, waits until the device is available
@@ -64,15 +66,19 @@ function mount_device() {
 	local MOUNT_UID=$(id -u ${MOUNT_USER})
 	local MOUNT_GID=$(id -g ${MOUNT_GROUP})
 
+	local DisplayName=""
+
 	if [ "${MOUNT_DEVICE}" = "usb_1" ]; then
 		DEVICE_PRESET_THIS_IDENT="${DEVICE_IDENT_PRESET_1}"
 		DEVICE_PRESET_OTHER_IDENT="${DEVICE_IDENT_PRESET_2}"
 		MOUNT_POINT="${const_STORAGE_MOUNT_POINT}"
+		DisplayName="storage"
 	fi
 	if [ "${MOUNT_DEVICE}" = "usb_2" ]; then
 		DEVICE_PRESET_THIS_IDENT="${DEVICE_IDENT_PRESET_2}"
 		DEVICE_PRESET_OTHER_IDENT="${DEVICE_IDENT_PRESET_1}"
 		MOUNT_POINT="${const_SOURCE_MOUNT_POINT}"
+		DisplayName="source"
 	fi
 
 	# USB storage devices
@@ -158,6 +164,12 @@ function mount_device() {
 
 				# clean mountpoint
 				sudo rm -R "${MOUNT_POINT}"/*  > /dev/null 2>&1
+
+				local RET=""
+
+				if [ ! -z "${DisplayName}" ]; then
+					lcd_message "$(l "box_backup_mount"):" "$(l "box_backup_usb_${DisplayName}")"
+				fi
 
 				if [[ " fat vfat exfat ntfs " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
 					# windows-filesystems
@@ -254,20 +266,37 @@ function umount_device() {
 
 	# Definitions
 	local RESULT=""
+	local DisplayName=""
 
 	UMOUNT="${DEVICE}"
 	if [ "${DEVICE}" = "usb_1" ]; then
 		UMOUNT="${const_STORAGE_MOUNT_POINT}"
+		DisplayName="storage"
 	elif [ "${DEVICE}" = "usb_2" ]; then
 		UMOUNT="${const_SOURCE_MOUNT_POINT}"
+		DisplayName="source"
 	elif [ "${DEVICE}" = "ios" ]; then
 		UMOUNT="${const_IOS_MOUNT_POINT}"
+		DisplayName="ios"
 	fi
 
-	if [ ! -z "${UMOUNT}" ]; then
+	if [ ! -z "${UMOUNT}" ] && [ ! -z "$(device_mounted "${UMOUNT}")" ]; then
 		sudo service smbd stop
-		RESULT=$(sudo umount "${UMOUNT}")
+
+		if [ "${UMOUNT}" = "${const_IOS_MOUNT_POINT}" ]; then
+			RESULT=$(sudo fusermount -uz "${UMOUNT}")
+		else
+			RESULT=$(sudo umount "${UMOUNT}")
+		fi
+
+		if [ ! -z "${DisplayName}" ]; then
+			log_message "$(l "box_backup_umount") $(l "box_backup_usb_${DisplayName}")" 3
+			lcd_message "$(l "box_backup_umount"):" "$(l "box_backup_usb_${DisplayName}")"
+		fi
+
 		sudo service smbd start
+	else
+		log_message "umount ${UMOUNT}: Not mounted." 3
 	fi
 
 

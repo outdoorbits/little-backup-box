@@ -241,7 +241,12 @@
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
       "mode_storage": "Ext. Speicher",
-      "mode_external": "Ext. Speicher"
+      "mode_external": "Ext. Speicher",
+      "mount": "Einbinden",
+      "umount": "Aushängen",
+      "usb_storage": "USB-Speicher",
+      "usb_source": "USB-Quelle",
+      "usb_ios": "USB iOS"
     },
     "cronip": {
       "offline": "offline",

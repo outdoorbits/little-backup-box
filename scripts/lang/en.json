@@ -73,7 +73,12 @@
       },
       "storage_filesystem_short": "FS",
       "exception": "Unknown error",
-      "time_remaining": "Time"
+      "time_remaining": "Time",
+      "mount": "mounting",
+      "umount": "unmounting",
+      "usb_storage": "USB-storage",
+      "usb_source": "USB-source",
+      "usb_ios": "USB iOS"
     },
     "poweroff": {
       "poweroff": "Power off",

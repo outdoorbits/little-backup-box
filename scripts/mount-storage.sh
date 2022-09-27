@@ -26,11 +26,19 @@ source "$CONFIG"
 MODE=${1} # "mount", "umount" or "check"
 DEVICE=${2} # "usb_1" or "usb_2"
 
+# Load Language library
+. "${WORKING_DIR}/lib-language.sh"
+
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 
+# Load LCD library
+. "${WORKING_DIR}/lib-lcd.sh"
+
 # Load Device library
 . "${WORKING_DIR}/lib-devices.sh"
+
+
 
 if [ "${MODE}" = "mount" ]; then
 	mount_device "${DEVICE}" false "$(device_mounted usb_1)" "$(device_mounted usb_2)"

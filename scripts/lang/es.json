@@ -241,7 +241,12 @@
       "storage_filesystem_short": "FS",
       "exception": "Error desconocido",
       "time_remaining": "Tiempo",
-      "mode_external": "Ext. almacenamiento"
+      "mode_external": "Ext. almacenamiento",
+      "mount": "Desmontar",
+      "umount": "Desmontar",
+      "usb_storage": "USB Almacenamiento",
+      "usb_source": "Fuente USB",
+      "usb_ios": "USB iOS"
     },
     "cronip": {
       "offline": "desconectado",
