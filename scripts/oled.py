@@ -109,9 +109,9 @@ else:
 
 			if progress >= 100:
 				# no decimals on 100%
-				progress	= 100
-			# draw progressbar
+				progress	= int(progress + 0.5)
 
+			# draw progressbar
 			pg_y_space	= 2
 			pgbar_x_l	= x + 42
 			pgbar_x_r	= width - 2
