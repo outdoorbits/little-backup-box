@@ -494,6 +494,18 @@ SYNC_ERROR="-" # not empty!
 FILES_TO_SYNC=0
 SYNC_OUTPUT=""
 
+calculate_files_to_sync
+FILES_TO_SYNC_PRE="${FILES_TO_SYNC}"
+
+# Count of files in storage before backup starts
+## ANALOGOUS TO BACKUP-PROGRESS.SH ##
+if [ "${DEST_MODE}" = "rsyncserver" ]; then
+	FILES_TO_TRANSFER_START=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+else
+	FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
+fi
+## ANALOGOUS TO BACKUP-PROGRESS.SH ##
+
 while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; do
 
 	# RETRIES
@@ -536,7 +548,9 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 # CALCULATE NUMBER OF FILES TO BACK UP #
 ########################################
 
-	calculate_files_to_sync
+	if [ "${TRIES_DONE}" -gt "1" ]; then
+		calculate_files_to_sync
+	fi
 
 	log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
@@ -681,6 +695,25 @@ while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; d
 
 done # retry
 
+# Count of files in storage after backup
+## ANALOGOUS TO BACKUP-PROGRESS.SH ##
+if [ "${DEST_MODE}" = "rsyncserver" ]; then
+	FILES_TO_TRANSFER_STOP=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+	if [ "${FILES_TO_TRANSFER_START}" != "" ] && [ "${FILES_TO_TRANSFER_STOP}" != "" ]; then
+		TRANSFER_INFO="$(echo "${FILES_TO_TRANSFER_START} - ${FILES_TO_TRANSFER_STOP}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+	else
+		TRANSFER_INFO="$(l "box_backup_result_suspect")."
+	fi
+else
+	FILES_COUNT_STORAGE_STOP=$(find $BACKUP_PATH -type f | wc -l)
+	if [ "${FILES_COUNT_STORAGE_START}" != "" ] && [ "${FILES_COUNT_STORAGE_STOP}" != "" ]; then
+		TRANSFER_INFO="$(echo "${FILES_COUNT_STORAGE_STOP} - ${FILES_COUNT_STORAGE_START}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+	else
+		TRANSFER_INFO="$(l "box_backup_result_suspect")."
+	fi
+fi
+## ANALOGOUS TO BACKUP-PROGRESS.SH ##
+
 # umount (try, state unknown)
 umount_device "usb_1"
 umount_device "usb_2"
@@ -721,17 +754,17 @@ if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
 
 	if [ ! -z "${MESSAGE_MAIL}" ]; then
 		SUBJ_MSG="${MESSAGE_MAIL}"
-		BODY_MSG="${MESSAGE_MAIL}\n\n"
+		BODY_MSG="${MESSAGE_MAIL}\n${TRANSFER_INFO}\n\n"
 	else
 		SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
 		BODY_MSG=""
 	fi
 
-	send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): ${SOURCE_MODE} $(l 'box_backup_mail_to') ${DEST_MODE} ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+	send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${DEST_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 fi
 
 # Power off
 if [ "${SECONDARY_BACKUP_FOLLOWING}" == "no" ]; then
-	source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}"
+	source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}" "${TRANSFER_INFO}"
 fi
 

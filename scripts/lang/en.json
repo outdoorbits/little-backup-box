@@ -78,7 +78,9 @@
       "umount": "unmounting",
       "usb_storage": "USB-storage",
       "usb_source": "USB-source",
-      "usb_ios": "USB iOS"
+      "usb_ios": "USB iOS",
+      "result_suspect": "Success unclear.",
+      "files_copied": "files copied"
     },
     "poweroff": {
       "poweroff": "Power off",

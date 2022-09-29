@@ -246,7 +246,9 @@
       "umount": "Desmontar",
       "usb_storage": "USB Almacenamiento",
       "usb_source": "Fuente USB",
-      "usb_ios": "USB iOS"
+      "usb_ios": "USB iOS",
+      "result_suspect": "Exito poco claro.",
+      "files_copied": "arch. copiado"
     },
     "cronip": {
       "offline": "desconectado",

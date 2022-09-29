@@ -246,7 +246,9 @@
       "umount": "Démonter",
       "usb_storage": "stockage USB",
       "usb_source": "Source USB",
-      "usb_ios": "USB iOS"
+      "usb_ios": "USB iOS",
+      "result_suspect": "Succès incertain.",
+      "files_copied": "dos. copié"
     },
     "cronip": {
       "offline": "hors ligne",

@@ -246,7 +246,9 @@
       "umount": "Aushängen",
       "usb_storage": "USB-Speicher",
       "usb_source": "USB-Quelle",
-      "usb_ios": "USB iOS"
+      "usb_ios": "USB iOS",
+      "result_suspect": "Erfolg unklar.",
+      "files_copied": "Dat. kopiert"
     },
     "cronip": {
       "offline": "offline",
