@@ -71,7 +71,7 @@ while [ true ]; do
 
 	if [ "${FILES_TO_SYNC}" -gt "0" ]; then
 		if [ "${FILES_SYNCED}" -gt "0" ]; then
-			FINISHED_PERCENT=$(echo "100 * $FILES_SYNCED / $FILES_TO_SYNC" | bc)
+			FINISHED_PERCENT=$(echo "scale=1; 100 * $FILES_SYNCED / $FILES_TO_SYNC" | bc)
 			PROGRESSBAR="PGBAR:${FINISHED_PERCENT}"
 		else
 			PROGRESSBAR="$(l 'box_backup_checking_old_files')..."

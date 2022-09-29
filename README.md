@@ -109,7 +109,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 <h2>Start</h2>
 If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.BOX or http://IP.OF.YOUR.BOX:8000<br>Have fun!
 <h2>Update</h2>
-To update you can be performed by the webUI. Just follow the instructions at the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
+Updates can be carried out quickly and easily via the WebUI. Just follow the instructions in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.
 
 <h2>Contribute</h2>
 <ul>

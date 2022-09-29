@@ -290,7 +290,6 @@ function umount_device() {
 		fi
 
 		if [ ! -z "${DisplayName}" ]; then
-			log_message "$(l "box_backup_umount") $(l "box_backup_usb_${DisplayName}")" 3
 			lcd_message "$(l "box_backup_umount"):" "$(l "box_backup_usb_${DisplayName}")"
 		fi
 

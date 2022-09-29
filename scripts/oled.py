@@ -65,7 +65,7 @@ if Line[1][0:6] == "IMAGE:":
 	draw = ImageDraw.Draw(image)
 
 else:
-	# PRINT TEXT LINES
+	# PRINT TEXT LINES OR SPECIAL LINES
 	image = Image.new("1", (width, height))
 
 	# Get drawing object to draw on image.
@@ -100,19 +100,20 @@ else:
 		draw.rectangle((x, top + y + y_shift, width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
 
 		if Line[n][0:6] == "PGBAR:":
-
 			try:
-				progress	= int(Line[n][6:])
+				progress	= float(Line[n][6:])
 			except ValueError:
 				progress	= 0
 
-			if progress < 1:
-				progress	= 0
+			progress	= int(progress * 10 + 0.5) / 10
 
+			if progress >= 100:
+				# no decimals on 100%
+				progress	= 100
 			# draw progressbar
 
 			pg_y_space	= 2
-			pgbar_x_l	= x + 40
+			pgbar_x_l	= x + 42
 			pgbar_x_r	= width - 2
 			pgbar_y_u	= top + y + y_shift + pg_y_space
 			pgbar_y_d	= top + y + y_shift + line_height - pg_y_space

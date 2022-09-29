@@ -150,7 +150,6 @@ function lcd_message () {
 		fi
 		LogLines="${LogLines}${LINE}"
 
-
 		n=$(expr $n + 1)
 	done
 
