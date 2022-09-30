@@ -25,10 +25,6 @@ sudo dpkg -i --force-all davesteele-comitup-apt-source_latest.deb
 sudo rm davesteele-comitup-apt-source_latest.deb
 sudo apt update
 
-# Enable and start NetworkManager
-sudo systemctl enable NetworkManager.service
-sudo systemctl start NetworkManager.service
-
 # Installing comitup*: install comitup
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
@@ -59,6 +55,10 @@ sudo systemctl unmask wpa-supplicant.service
 sudo echo "ap_name: little-backup-box-<nnnn>" | sudo tee "/etc/comitup.conf"
 sudo echo "web_service: apache2.service" | sudo tee -a "/etc/comitup.conf"
 sudo echo "external_callback: /var/www/little-backup-box/handle_port_80.sh" | sudo tee -a "/etc/comitup.conf"
+
+# Enable and start NetworkManager
+sudo systemctl enable NetworkManager.service
+sudo systemctl start NetworkManager.service
 
 echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
 echo "comitup will be available after reboot."
