@@ -23,6 +23,10 @@ sudo dpkg -i --force-all davesteele-comitup-apt-source_latest.deb
 sudo rm davesteele-comitup-apt-source_latest.deb
 sudo apt update
 
+# Enable and start NetworkManager
+sudo systemctl enable NetworkManager.service
+sudo systemctl start NetworkManager.service
+
 # Installing Comitup*: install comitup
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
@@ -32,7 +36,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		comitup comitup-watch
 
 # Installing Comitup*: Allow NetworkManager to manage the wifi interfaces by removing references to them from /etc/network/interfaces
-sudo rm /etc/network/interfaces/*
+sudo rm /etc/network/interfaces
 
 # Installing Comitup*: Rename or delete /etc/wpa_supplicant/wpa_supplicant.conf
 if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf.old" ]; then
