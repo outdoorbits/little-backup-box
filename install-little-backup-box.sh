@@ -271,7 +271,9 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 		python3-pip python3-pil i2c-tools
 sudo pip3 install adafruit-circuitpython-ssd1306
+
 sudo raspi-config nonint do_i2c 0
+sleep 2
 
 # Enable OLED screen support if available
 ## append new line to config-file
