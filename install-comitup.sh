@@ -17,12 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf.old" ]; then
-	sudo rm /etc/wpa_supplicant/wpa_supplicant.conf.old
-fi
-if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf" ]; then
-	sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
-fi
+wget https://davesteele.github.io/comitup/latest/davesteele-comitup-apt-source_latest.deb
+sudo dpkg -i --force-all davesteele-comitup-apt-source_latest.deb
+sudo rm davesteele-comitup-apt-source_latest.deb
+apt update
 
 # create config
 echo "ap_name: little-backup-box-<nnnn>" | sudo tee "/etc/comitup.conf"
@@ -35,7 +33,21 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		comitup
+		comitup comitup-watch
+
+sudo rm /etc/network/interfaces/*
+sudo systemctl mask dnsmasq.service
+sudo systemctl mask systemd-resolved.service
+sudo systemctl mask dhcpd.service
+sudo systemctl mask dhcpcd.service
+sudo systemctl mask wpa-supplicant.service
+
+if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf.old" ]; then
+	sudo rm /etc/wpa_supplicant/wpa_supplicant.conf.old
+fi
+if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf" ]; then
+	sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
+fi
 
 echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
 echo "comitup ist available after reboot."

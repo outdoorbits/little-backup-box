@@ -38,12 +38,15 @@ FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
 
+# argruments
+FORCE_DISPLAY=${1}
+
 ping -c1 google.com &>/dev/null
 INTERNET_DISCONNECTED=$?
 
 IP=$(hostname -I | cut -d' ' -f1)
 
-if [ $conf_conf_DISP_IP_REPEAT = true ]; then
+if [ $conf_conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
 	if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
 		if [ "${INTERNET_DISCONNECTED}" = "0" ]; then
 			lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"

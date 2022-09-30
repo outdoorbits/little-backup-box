@@ -72,23 +72,7 @@ lcd_message "IMAGE:${WORKING_DIR}/little-backup-box.bmp:Little" "Backup" "Box"
 sleep 1
 
 # Display IP
-IP=$(hostname -I | cut -d' ' -f1)
-
-until [ ! -z "$IP" ]; do
-	sleep 1
-	IP=$(hostname -I | cut -d' ' -f1)
-done
-
-ping -c1 google.com &>/dev/null
-INTERNET_DISCONNECTED=$?
-
-if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
-	if [ "${INTERNET_DISCONNECTED}" = "0" ]; then
-		lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
-	else
-		lcd_message "IP ($(l 'box_cronip_offline')):" "${IP}"
-	fi
-fi
+source "${WORKING_DIR}/cron-ip.sh" "force_display" &
 
 
 # Default backup
