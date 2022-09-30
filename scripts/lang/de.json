@@ -306,7 +306,7 @@
       "header": "Little Backup Box Updater"
     },
     "no_cmd": "Kein gültiger Befehl angegeben.",
-    "link_text_home": "Zurück zu Little Backup Box zurück - NICHT KLICKEN, BEVOR DER BEFEHL ABGESCHLOSSEN IST!<br>(Auf &quot;FINISHED&quot; warten.)",
+    "link_text_home": "Zurück zu Little Backup Box zurück - NICHT KLICKEN, BEVOR DER VORGANG ABGESCHLOSSEN IST!<br>(Auf &quot;FINISHED&quot; warten.)",
     "format": {
       "warning": "Achtung! Dadurch werden alle Daten auf dem ausgewählten Gerät gelöscht!",
       "header": "Speicher formatieren",

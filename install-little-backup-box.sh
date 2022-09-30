@@ -169,7 +169,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 sudo raspi-config nonint do_boot_wait 1 # wait for network on boot: disable
 
 # Clone Little Backup Box
-echo "Clone Little Backup Box"
+echo "Cloning Little Backup Box"
 cd
 
 sudo rm -R ${INSTALLER_DIR}
