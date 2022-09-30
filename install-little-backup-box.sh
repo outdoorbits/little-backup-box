@@ -505,6 +505,11 @@ if [ "${SCRIPT_MODE}" = "update" ] && [ ! -z "${conf_PASSWORD}" ]; then
 fi
 
 # install mejiro
+## re-install (update) if installed
+if [ -d "/var/www/mejiro" ]; then
+	CHOICE_MEJIRO="0"
+fi
+
 case $CHOICE_MEJIRO in
 0)
 	echo "Installing mejiro ..."
@@ -519,10 +524,16 @@ case $CHOICE_MEJIRO in
 esac
 
 # install comitup
-if [ "${SCRIPT_MODE}" = "install" ]; then
+## re-install (update) if installed
+if [ "$(dpkg-query -W --showformat='${db:Status-Status}' "comitup" 2>&1)" = "installed" ]; then
+	CHOICE_COMITUP="0"
+fi
+
+if [ "${SCRIPT_MODE}" = "install" ] || [ "${CHOICE_COMITUP}" = "0" ]; then
 	case $CHOICE_COMITUP in
 	0)
-		read -r -d '' COMITUP_INSTALL_MESSAGE << EOM
+		if [ "${SCRIPT_MODE}" = "install" ]; then
+			read -r -d '' COMITUP_INSTALL_MESSAGE << EOM
 \Zb\ZuIMPORTANT INFORMATION\Zn
 
 \ZbPlease read this carefully, if your raspberry pi is connected by wlan.\Zn
@@ -555,11 +566,12 @@ We are always happy to receive your feedback!
 
 Press OK to proceed...
 EOM
-		dialog --colors --msgbox "${COMITUP_INSTALL_MESSAGE}" 40 80
+			dialog --colors --msgbox "${COMITUP_INSTALL_MESSAGE}" 40 80
 
-		clear
+			clear
 
-		echo "Installing comitup ..."
+		fi
+
 		source "${INSTALLER_DIR}/install-comitup.sh";
 		;;
 	1)

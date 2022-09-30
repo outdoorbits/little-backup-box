@@ -19,6 +19,8 @@
 
 # uses SCRIPT_MODE from parent script (if existing)
 
+echo "Installing mejiro"
+
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
    echo "Run the script as a regular user"
@@ -81,4 +83,4 @@ cd
 sudo ln -s /media "${WEB_ROOT_MEJIRO}/photos"
 
 #Finish
-echo "mejiro ist available after reboot."
+echo "mejiro will be available after reboot."

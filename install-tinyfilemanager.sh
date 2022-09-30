@@ -19,6 +19,8 @@
 
 # uses SCRIPT_MODE from parent script (if existing)
 
+echo "Installing tinyfilemanager..."
+
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
    echo "Run the script as a regular user"
@@ -66,12 +68,22 @@ sudo apt autoremove -y
 sudo rm ./tinyfilemanager -R
 git clone https://github.com/prasathmani/tinyfilemanager.git
 
+# backup config-file
+if [ -f "${WEB_ROOT_TINYFILEMANAGER}/config.php" ]; then
+	sudo cp "${WEB_ROOT_TINYFILEMANAGER}/config.php" "./tinyfilemanager/"
+fi
+
 # move files in place
-sudo cp -R ./tinyfilemanager/*.php ${WEB_ROOT_TINYFILEMANAGER}
-sudo cp -R ./tinyfilemanager/*.json ${WEB_ROOT_TINYFILEMANAGER}
+sudo cp -R ./tinyfilemanager/*.php "${WEB_ROOT_TINYFILEMANAGER}"
+sudo cp -R ./tinyfilemanager/*.json "${WEB_ROOT_TINYFILEMANAGER}"
 
 sudo mv "${WEB_ROOT_TINYFILEMANAGER}/tinyfilemanager.php" "${WEB_ROOT_TINYFILEMANAGER}/index.php"
-sudo cp "${WEB_ROOT_TINYFILEMANAGER}/config-sample.php" "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+
+if [ -f "./tinyfilemanager/config.php" ]; then
+	sudo cp "./tinyfilemanager/config.php" "${WEB_ROOT_TINYFILEMANAGER}/"
+else
+	sudo cp "${WEB_ROOT_TINYFILEMANAGER}/config-sample.php" "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+fi
 
 sudo ln -s "/media" "${WEB_ROOT_TINYFILEMANAGER}/media"
 
@@ -86,4 +98,4 @@ sudo chown www-data:www-data "${WEB_ROOT_TINYFILEMANAGER}" -R
 sudo chmod +x ${WEB_ROOT_TINYFILEMANAGER}/*.php
 
 #Finish
-echo "tinyfilemanager ist available after reboot."
+echo "tinyfilemanager will be available after reboot."
