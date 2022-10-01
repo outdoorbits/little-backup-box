@@ -157,7 +157,10 @@
     "behavior_loglevel_maximum": "maximal",
     "backup_header2": "Standardmäßiger sekundärer Sicherungsmodus",
     "backup_label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:",
-    "update_linktext": "Update starten"
+    "update_linktext": "Update starten",
+    "wifi_section": "WLAN-Einstellungen",
+    "wifi_country_label": "Wählen Sie das Land aus, in dem diese Little Backup Box verwendet werden soll",
+    "wifi_country_header": "WLAN-Land"
   },
   "tools": {
     "tools": "Werkzeug",

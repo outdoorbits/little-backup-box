@@ -15,6 +15,8 @@
 	include($WORKING_DIR . "/sub-popup.php");
 
 	include($WORKING_DIR . "/get-cloudservices.php");
+
+	$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
@@ -40,75 +42,97 @@
 
 		// read (new) config
 		$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
-// 		foreach($config_standard as $key => $value) {
-// 			if (! isset($config[$key]) ) {
-// 				$config[$key]	= $value;
-// 			}
-// 		}
+
+		# write wifi country-code from config.cfg
+		if (($WIFI_COUNTRY !== $config["conf_WIFI_COUNTRY"]) and ($config["conf_WIFI_COUNTRY"] !== "")) {
+			shell_exec("sudo raspi-config nonint do_wifi_country ".$config["conf_WIFI_COUNTRY"]);
+			$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
+		}
+
 	?>
 
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config_config; ?></h1>
 	<?php
 
-	function check_new_password($title, $pwd_1, $pwd_2) {
-		$pwd_valid = false;
-			if ($pwd_1 !== $pwd_2) {
-				popup($title . "\n" . L::config_alert_password_not_identical, true);
-			} elseif (strlen($pwd_1) < 5) {
-				popup($title . "\n" . L::config_alert_password_too_short, true);
-			} elseif (strpos("_" . $pwd_1,"\\") or strpos("_" . $pwd_1,"\"")) {
-				popup($title . "\n" . L::config_alert_password_characters_not_allowed, true);
-			} else {
-				$pwd_valid=true;
-			}
+function get_wifi_country_selector($ID,$NAME) {
+	global $WIFI_COUNTRY;
 
-		return($pwd_valid);
+	$wifi_contry_selector	= '<select id="'.$ID.'" name="'.$NAME.'">';
+
+		exec("sed '/^#/d' /usr/share/zoneinfo/iso3166.tab",$COUNTRIES);
+		foreach($COUNTRIES as $COUNTRY) {
+			$COUNTRY_ARRAY	= explode("\t",$COUNTRY,2);
+			$COUNTRYCODE	= trim($COUNTRY_ARRAY[0]);
+			$COUNTRYNAME	= trim($COUNTRY_ARRAY[1]);
+			$selected		= $WIFI_COUNTRY==$COUNTRYCODE ? " selected" : "";
+
+			$wifi_contry_selector	.= '<option value="'.$COUNTRYCODE.'"'.$selected.'>'.$COUNTRYCODE.' '.$COUNTRYNAME.'</option>';
+		}
+	$wifi_contry_selector	.= '</select>';
+	return ($wifi_contry_selector);
+}
+
+function check_new_password($title, $pwd_1, $pwd_2) {
+	$pwd_valid = false;
+		if ($pwd_1 !== $pwd_2) {
+			popup($title . "\n" . L::config_alert_password_not_identical, true);
+		} elseif (strlen($pwd_1) < 5) {
+			popup($title . "\n" . L::config_alert_password_too_short, true);
+		} elseif (strpos("_" . $pwd_1,"\\") or strpos("_" . $pwd_1,"\"")) {
+			popup($title . "\n" . L::config_alert_password_characters_not_allowed, true);
+		} else {
+			$pwd_valid=true;
+		}
+
+	return($pwd_valid);
+}
+
+function write_config()
+{
+	# write config.cfg
+	extract ($_POST);
+	global $WIFI_COUNTRY;
+
+	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
+	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
+	$conf_POWER_OFF				= isset($conf_POWER_OFF)?"true":"false";
+	$conf_NOTIFY				= isset($conf_NOTIFY)?"true":"false";
+	$conf_MAIL_HTML				= isset($conf_MAIL_HTML)?"true":"false";
+	$conf_DISP					= isset($conf_DISP)?"true":"false";
+	$conf_conf_DISP_IP_REPEAT	= isset($conf_conf_DISP_IP_REPEAT)?"true":"false";
+	$conf_LOG_SYNC				= isset($conf_LOG_SYNC)?"true":"false";
+	$conf_POPUP_MESSAGES		= isset($conf_POPUP_MESSAGES)?"true":"false";
+
+	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
+
+	if ($conf_MAIL_conf_PASSWORD != "") {
+		if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_conf_PASSWORD, $conf_MAIL_conf_PASSWORD)) {
+			$conf_MAIL_conf_PASSWORD	= "";
+		}
 	}
 
-	function write_config()
-	{
-		extract ($_POST);
-
-		list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
-		list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
-		$conf_POWER_OFF				= isset($conf_POWER_OFF)?"true":"false";
-		$conf_NOTIFY				= isset($conf_NOTIFY)?"true":"false";
-		$conf_MAIL_HTML				= isset($conf_MAIL_HTML)?"true":"false";
-		$conf_DISP					= isset($conf_DISP)?"true":"false";
-		$conf_conf_DISP_IP_REPEAT	= isset($conf_conf_DISP_IP_REPEAT)?"true":"false";
-		$conf_LOG_SYNC				= isset($conf_LOG_SYNC)?"true":"false";
-		$conf_POPUP_MESSAGES		= isset($conf_POPUP_MESSAGES)?"true":"false";
-
-		$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
-
-		if ($conf_MAIL_conf_PASSWORD != "") {
-			if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_conf_PASSWORD, $conf_MAIL_conf_PASSWORD)) {
-				$conf_MAIL_conf_PASSWORD	= "";
-			}
+	if ($conf_RSYNC_conf_PASSWORD != "") {
+		if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_conf_PASSWORD, $conf_RSYNC_conf_PASSWORD)) {
+			$conf_RSYNC_conf_PASSWORD	= "";
 		}
+	}
 
-		if ($conf_RSYNC_conf_PASSWORD != "") {
-			if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_conf_PASSWORD, $conf_RSYNC_conf_PASSWORD)) {
-				$conf_RSYNC_conf_PASSWORD	= "";
-			}
-		}
-
-		if (isset($conf_PASSWORD_REMOVE)) {
-			$conf_PASSWORD_LINE="conf_PASSWORD=\"\"";
-			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh remove");
+	if (isset($conf_PASSWORD_REMOVE)) {
+		$conf_PASSWORD_LINE="conf_PASSWORD=\"\"";
+		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh remove");
+		popup($title . "\n" . L::config_alert_password_change_after_reboot,true);
+	} elseif ($conf_PASSWORD_1 != "") {
+		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
+			$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_1\"";
+			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh set \"" . $conf_PASSWORD_1 . "\"");
 			popup($title . "\n" . L::config_alert_password_change_after_reboot,true);
-		} elseif ($conf_PASSWORD_1 != "") {
-			if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
-				$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_1\"";
-				exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh set \"" . $conf_PASSWORD_1 . "\"");
-				popup($title . "\n" . L::config_alert_password_change_after_reboot,true);
-			}
 		}
+	}
 
-		$CONFIGFILE = "config.cfg";
-		$config_file_handle = fopen($CONFIGFILE, "w");
+	$CONFIGFILE = "config.cfg";
+	$config_file_handle = fopen($CONFIGFILE, "w");
 
-		$config_file_content = <<<CONFIGDATA
+	$config_file_content = <<<CONFIGDATA
 conf_LANGUAGE="$conf_LANGUAGE"
 conf_BACKUP_DEFAULT_SOURCE="$conf_BACKUP_DEFAULT_SOURCE"
 conf_BACKUP_DEFAULT_TARGET="$conf_BACKUP_DEFAULT_TARGET"
@@ -137,14 +161,15 @@ conf_RSYNC_PORT="$conf_RSYNC_PORT"
 conf_RSYNC_USER="$conf_RSYNC_USER"
 conf_RSYNC_conf_PASSWORD="$conf_RSYNC_conf_PASSWORD"
 conf_RSYNC_SERVER_MODULE="$conf_RSYNC_SERVER_MODULE"
+conf_WIFI_COUNTRY="$conf_WIFI_COUNTRY"
 $conf_PASSWORD_LINE
 CONFIGDATA;
 
-		fwrite($config_file_handle, $config_file_content);
-		fclose($config_file_handle);
-		exec ("dos2unix './" . $CONFIGFILE . "'");
-		echo '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
-	}
+	fwrite($config_file_handle, $config_file_content);
+	fclose($config_file_handle);
+	exec ("dos2unix './" . $CONFIGFILE . "'");
+	echo '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
+}
 
 function upload_settings() {
 	global $WORKING_DIR, $config, $constants;
@@ -189,6 +214,7 @@ function upload_settings() {
 				if (file_exists($targetdir."config.cfg")) {
 					@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
 					if (rename($targetdir."config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {$Files_Copied="\n* 'config.cfg'";}
+
 				}
 				if (file_exists($targetdir."rclone.conf")) {
 					@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
@@ -424,6 +450,16 @@ function upload_settings() {
 				<h3><?php echo L::config_rsync_module_header; ?></h3>
 					<label for="conf_RSYNC_SERVER_MODULE"><?php echo L::config_rsync_module_label1 .  $config_standard['conf_RSYNC_SERVER_MODULE'] . L::config_rsync_module_label2; ?></label><br>
 					<input type="text" id="conf_RSYNC_SERVER_MODULE" name="conf_RSYNC_SERVER_MODULE" size="20" value="<?php echo $config['conf_RSYNC_SERVER_MODULE']; ?>">
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_wifi_section; ?></summary>
+
+				<h3><?php echo L::config_wifi_country_header; ?></h3>
+					<label for="conf_WIFI_COUNTRY"><?php echo L::config_wifi_country_label; ?></label><br>
+					<?php echo get_wifi_country_selector("conf_WIFI_COUNTRY","conf_WIFI_COUNTRY"); ?>
 			</details>
 		</div>
 

@@ -278,7 +278,10 @@
     "rsync_module_label1": "Module name on the rsync server, e.g. 'little-backup-box' (default:",
     "rsync_module_label2": "). <br> The module name is defined on the server side in rsyncd.conf and is set in [square brackets]. Also note <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
     "behavior_log_sync_protokoll_header": "Log sync-protocol",
-    "behavior_log_sync_protokoll_label": "Log sync-details?"
+    "behavior_log_sync_protokoll_label": "Log sync-details?",
+    "wifi_section": "WiFi settings",
+    "wifi_country_label": "Select the country in which this Little Backup Box is to be used",
+    "wifi_country_header": "WiFi country"
   },
   "tools": {
     "tools": "Tools",

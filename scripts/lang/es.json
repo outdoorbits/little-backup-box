@@ -157,7 +157,10 @@
     "behavior_loglevel_maximum": "máximo",
     "backup_header2": "Modo de copia de seguridad secundario predeterminado",
     "backup_label2": "Seleccione un modo de copia de seguridad predeterminado secundario para ejecutar después del principal:",
-    "update_linktext": "Actualizar ahora"
+    "update_linktext": "Actualizar ahora",
+    "wifi_section": "Configuración WiFi",
+    "wifi_country_label": "Seleccione el país en el que se utilizará esta Little Backup Box",
+    "wifi_country_header": "País WLAN"
   },
   "tools": {
     "tools": "Herramientas",

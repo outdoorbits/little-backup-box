@@ -157,7 +157,10 @@
     "behavior_loglevel_maximum": "maximum",
     "backup_header2": "Mode de sauvegarde secondaire par défaut",
     "backup_label2": "Sélectionnez un mode de sauvegarde secondaire par défaut à exécuter après le principal :",
-    "update_linktext": "Mettez à jour maintenant"
+    "update_linktext": "Mettez à jour maintenant",
+    "wifi_section": "Paramètres Wifi",
+    "wifi_country_label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée",
+    "wifi_country_header": "Pays Wi-Fi"
   },
   "tools": {
     "tools": "Outils",
