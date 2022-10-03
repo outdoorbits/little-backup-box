@@ -714,6 +714,47 @@ else
 fi
 ## ANALOGOUS TO BACKUP-PROGRESS.SH ##
 
+
+# generate thumbnails
+if [ $conf_BACKUP_GENERATE_THUMBNAILS = true ] && [[ " internal external " =~ " ${DEST_MODE} " ]]; then
+
+	lcd_message "+$(l "box_backup_generating_thumbnails_finding_images1")" "+$(l "box_backup_generating_thumbnails_finding_images2")" "+$(l "box_backup_generating_thumbnails_finding_images3")" "+$(l "box_backup_mode_${DEST_MODE}")" "+"
+
+	if [ "${DEST_MODE}" = "external" ]; then
+		THUMBNAIL_PATH="${const_STORAGE_MOUNT_POINT}"
+	else
+		THUMBNAIL_PATH="${const_INTERAL_BACKUP_DIR}"
+	fi
+
+	IMAGES_STR=$(sudo find "$THUMBNAIL_PATH" -name '*' -type f -not -path '*/tims/*' -exec file {} \; | grep  -o -P '^.+: \w+ image' | cut -d':' -f1)
+	IFS=$'\n' read -rd '' -a IMAGES <<<"$IMAGES_STR"
+	unset IFS
+
+	IMAGE_COUNT=${#IMAGES[@]}
+
+	LAST_MESSAGE_TIME=$(date +%s)
+	i=0
+	for IMAGE in "${IMAGES[@]}"
+	do
+		if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ]; then
+			FINISHED_PERCENT=$(echo "scale=1; 100 * ${i} / ${IMAGE_COUNT}" | bc)
+			lcd_message "+$(l "box_backup_generating_thumbnails1")" "+$(l "box_backup_generating_thumbnails2")" "+$(l "box_backup_mode_${DEST_MODE}")" "+${i} $(l "box_backup_of") ${IMAGE_COUNT}" "+PGBAR:${FINISHED_PERCENT}"
+			LAST_MESSAGE_TIME=$(date +%s)
+		fi
+
+		TIMS_FOLDER="$(dirname "${IMAGE}")/tims"
+		TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGE}")"
+		mkdir -p "${TIMS_FOLDER}"
+
+		if [ ! -f "${TIMS_FILE}" ]; then
+			convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
+		fi
+
+		i=$((i+1))
+	done
+
+fi
+
 # umount (try, state unknown)
 umount_device "usb_1"
 umount_device "usb_2"

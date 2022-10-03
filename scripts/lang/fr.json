@@ -160,7 +160,13 @@
     "update_linktext": "Mettez à jour maintenant",
     "wifi_section": "Paramètres Wifi",
     "wifi_country_label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée",
-    "wifi_country_header": "Pays Wi-Fi"
+    "wifi_country_header": "Pays Wi-Fi",
+    "backup": {
+      "generate_thumbnails_header": "Vignettes",
+      "generate_thumbnails_label": "Créer des vignettes pour mejiro après la sauvegarde? (Uniquement pour le stockage local)"
+    },
+    "disp_black_on_power_off_header": "Éteignez l'écran lors de l'arrêt",
+    "disp_black_on_power_off_label": "Voulez-vous que l'écran s'éteigne à l'arrêt ?"
   },
   "tools": {
     "tools": "Outils",
@@ -251,7 +257,12 @@
       "usb_source": "Source USB",
       "usb_ios": "USB iOS",
       "result_suspect": "Succès incertain.",
-      "files_copied": "dos. copié"
+      "files_copied": "dos. copié",
+      "generating_thumbnails1": "Génération",
+      "generating_thumbnails2": "de vignettes",
+      "generating_thumbnails_finding_images2": "compter les images",
+      "generating_thumbnails_finding_images1": "De vignettes",
+      "generating_thumbnails_finding_images3": "Peut prendre..."
     },
     "cronip": {
       "offline": "hors ligne",

@@ -80,7 +80,12 @@
       "usb_source": "USB-source",
       "usb_ios": "USB iOS",
       "result_suspect": "Success unclear.",
-      "files_copied": "files copied"
+      "files_copied": "files copied",
+      "generating_thumbnails1": "Generating",
+      "generating_thumbnails2": "thumbnails",
+      "generating_thumbnails_finding_images2": "counting images",
+      "generating_thumbnails_finding_images1": "Thumbnails",
+      "generating_thumbnails_finding_images3": "May take some time ..."
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -281,7 +286,13 @@
     "behavior_log_sync_protokoll_label": "Log sync-details?",
     "wifi_section": "WiFi settings",
     "wifi_country_label": "Select the country in which this Little Backup Box is to be used",
-    "wifi_country_header": "WiFi country"
+    "wifi_country_header": "WiFi country",
+    "backup": {
+      "generate_thumbnails_header": "Thumbnails",
+      "generate_thumbnails_label": "Create thumbnails for mejiro after backup? (Local storages only)"
+    },
+    "disp_black_on_power_off_header": "Display off when shutting down",
+    "disp_black_on_power_off_label": "Do you want the display to turn off on shutdown?"
   },
   "tools": {
     "tools": "Tools",

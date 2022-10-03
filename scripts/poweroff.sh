@@ -46,7 +46,7 @@ MESSAGE="${3}"
 TRANSFER_INFO="${4}"
 
 # Power off
-if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
+if [ "${conf_POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
     # umount
     umount_device "usb_1"
 	umount_device "usb_2"
@@ -57,7 +57,7 @@ if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
         if [ -z "${MESSAGE}" ]; then
             lcd_message "+" "+$(l 'box_poweroff_poweroff')" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
         else
-            lcd_message "+${MESSAGE}" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
+            lcd_message "+" "+${MESSAGE}" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
         fi
     elif [ "${ACTION}" = "reboot" ]; then
         if [ -z "${MESSAGE}" ]; then
@@ -73,7 +73,12 @@ if [ "$conf_POWER_OFF" = "true" ] || [ "${FORCE}" = "force" ]; then
     echo "" | sudo tee "${const_LOGFILE_SYNC}"
     sudo rm "${IP_MAIL_SENT_MARKERFILE}" > /dev/null 2>&1
 
+
     if [ "${ACTION}" = "poweroff" ]; then
+    if [ "${conf_DISP_BLACK_ON_POWER_OFF}" = "true" ]; then
+            sleep 4
+            lcd_message "+" "+" "+" "+" "+"
+        fi
         sudo halt
     elif [ "${ACTION}" = "reboot" ]; then
         sudo reboot

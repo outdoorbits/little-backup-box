@@ -95,13 +95,15 @@ function write_config()
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
-	$conf_POWER_OFF				= isset($conf_POWER_OFF)?"true":"false";
-	$conf_NOTIFY				= isset($conf_NOTIFY)?"true":"false";
-	$conf_MAIL_HTML				= isset($conf_MAIL_HTML)?"true":"false";
-	$conf_DISP					= isset($conf_DISP)?"true":"false";
-	$conf_conf_DISP_IP_REPEAT	= isset($conf_conf_DISP_IP_REPEAT)?"true":"false";
-	$conf_LOG_SYNC				= isset($conf_LOG_SYNC)?"true":"false";
-	$conf_POPUP_MESSAGES		= isset($conf_POPUP_MESSAGES)?"true":"false";
+	$conf_BACKUP_GENERATE_THUMBNAILS	= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
+	$conf_POWER_OFF						= isset($conf_POWER_OFF)?"true":"false";
+	$conf_NOTIFY						= isset($conf_NOTIFY)?"true":"false";
+	$conf_MAIL_HTML						= isset($conf_MAIL_HTML)?"true":"false";
+	$conf_DISP							= isset($conf_DISP)?"true":"false";
+	$conf_DISP_BLACK_ON_POWER_OFF		= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
+	$conf_conf_DISP_IP_REPEAT			= isset($conf_conf_DISP_IP_REPEAT)?"true":"false";
+	$conf_LOG_SYNC						= isset($conf_LOG_SYNC)?"true":"false";
+	$conf_POPUP_MESSAGES				= isset($conf_POPUP_MESSAGES)?"true":"false";
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
 
@@ -140,10 +142,12 @@ conf_BACKUP_DEFAULT_SOURCE2="$conf_BACKUP_DEFAULT_SOURCE2"
 conf_BACKUP_DEFAULT_TARGET2="$conf_BACKUP_DEFAULT_TARGET2"
 conf_BACKUP_CAMERA_FOLDER_MASK="$conf_BACKUP_CAMERA_FOLDER_MASK"
 conf_BACKUP_TARGET_BASEDIR_CLOUD="$conf_BACKUP_TARGET_BASEDIR_CLOUD"
+conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
 conf_POWER_OFF=$conf_POWER_OFF
 conf_NOTIFY=$conf_NOTIFY
 conf_MAIL_HTML=$conf_MAIL_HTML
 conf_DISP=$conf_DISP
+conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_conf_DISP_IP_REPEAT=$conf_conf_DISP_IP_REPEAT
 conf_THEME=$conf_THEME
 conf_BACKGROUND_IMAGE=$conf_BACKGROUND_IMAGE
@@ -314,6 +318,10 @@ function upload_settings() {
 					<label for="conf_BACKUP_TARGET_BASEDIR_CLOUD"><?php echo L::config_backup_target_basedir_cloud_label; ?></label><br>
 					<input type="text" id="conf_BACKUP_TARGET_BASEDIR_CLOUD" name="conf_BACKUP_TARGET_BASEDIR_CLOUD" size="6" value="<?php echo $config['conf_BACKUP_TARGET_BASEDIR_CLOUD']; ?>">
 
+				<h3><?php echo L::config_backup_generate_thumbnails_header; ?></h3>
+					<label for="conf_BACKUP_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
+					<input type="checkbox" id="conf_BACKUP_GENERATE_THUMBNAILS" name="conf_BACKUP_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
+
 				<h3><?php echo L::config_backup_power_off_header; ?></h3>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
 					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
@@ -331,14 +339,6 @@ function upload_settings() {
 				<h3><?php echo L::config_behavior_mail_html_header; ?></h3>
 					<label for="conf_MAIL_HTML"><?php echo L::config_behavior_mail_html_label; ?></label><br>
 					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
-
-				<h3><?php echo L::config_behavior_display_header; ?></h3>
-					<label for="conf_DISP"><?php echo L::config_behavior_display_label; ?></label><br>
-					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
-
-				<h3><?php echo L::config_behavior_disp_ip_header; ?></h3>
-					<label for="conf_conf_DISP_IP_REPEAT"><?php echo L::config_behavior_disp_ip_label; ?></label><br>
-					<input type="checkbox" id="conf_conf_DISP_IP_REPEAT" name="conf_conf_DISP_IP_REPEAT" <?php echo $config['conf_conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
 
 				<h3><?php echo L::config_behavior_loglevel_header; ?></h3>
 					<p><?php echo L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
@@ -397,6 +397,18 @@ function upload_settings() {
 				<h3><?php echo L::config_view_popup_header; ?></h3>
 					<label for="conf_POPUP_MESSAGES"><?php echo L::config_view_popup_label; ?></label><br>
 					<input type="checkbox" id="conf_POPUP_MESSAGES" name="conf_POPUP_MESSAGES" <?php echo $config['conf_POPUP_MESSAGES']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_display_header; ?></h3>
+					<label for="conf_DISP"><?php echo L::config_behavior_display_label; ?></label><br>
+					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_disp_ip_header; ?></h3>
+					<label for="conf_conf_DISP_IP_REPEAT"><?php echo L::config_behavior_disp_ip_label; ?></label><br>
+					<input type="checkbox" id="conf_conf_DISP_IP_REPEAT" name="conf_conf_DISP_IP_REPEAT" <?php echo $config['conf_conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_disp_black_on_power_off_header; ?></h3>
+					<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_disp_black_on_power_off_label; ?></label><br>
+					<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
 
 			</details>
 		</div>

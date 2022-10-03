@@ -160,7 +160,13 @@
     "update_linktext": "Actualizar ahora",
     "wifi_section": "Configuración WiFi",
     "wifi_country_label": "Seleccione el país en el que se utilizará esta Little Backup Box",
-    "wifi_country_header": "País WLAN"
+    "wifi_country_header": "País WLAN",
+    "backup": {
+      "generate_thumbnails_header": "Miniaturas",
+      "generate_thumbnails_label": "¿Crear miniaturas para mejiro después de la copia de seguridad? (Solo para almacenamiento local)"
+    },
+    "disp_black_on_power_off_header": "Apague la pantalla al apagar",
+    "disp_black_on_power_off_label": "¿Desea que la pantalla se apague al apagar?"
   },
   "tools": {
     "tools": "Herramientas",
@@ -251,7 +257,12 @@
       "usb_source": "Fuente USB",
       "usb_ios": "USB iOS",
       "result_suspect": "Exito poco claro.",
-      "files_copied": "arch. copiado"
+      "files_copied": "arch. copiado",
+      "generating_thumbnails1": "Generación",
+      "generating_thumbnails2": "de miniaturas",
+      "generating_thumbnails_finding_images2": "compter les images",
+      "generating_thumbnails_finding_images1": "De miniaturas",
+      "generating_thumbnails_finding_images3": "Puede llevar tiempo..."
     },
     "cronip": {
       "offline": "desconectado",

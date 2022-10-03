@@ -160,7 +160,13 @@
     "update_linktext": "Update starten",
     "wifi_section": "WLAN-Einstellungen",
     "wifi_country_label": "Wählen Sie das Land aus, in dem diese Little Backup Box verwendet werden soll",
-    "wifi_country_header": "WLAN-Land"
+    "wifi_country_header": "WLAN-Land",
+    "backup": {
+      "generate_thumbnails_header": "Vorschaubilder",
+      "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für mejiro erstellen? (Nur für lokale Speicher)"
+    },
+    "disp_black_on_power_off_header": "Display beim Herunterfahren ausschalten",
+    "disp_black_on_power_off_label": "Soll das Display beim Herunterfahren ausgeschaltet werden?"
   },
   "tools": {
     "tools": "Werkzeug",
@@ -251,7 +257,12 @@
       "usb_source": "USB-Quelle",
       "usb_ios": "USB iOS",
       "result_suspect": "Erfolg unklar.",
-      "files_copied": "Dat. kopiert"
+      "files_copied": "Dat. kopiert",
+      "generating_thumbnails1": "Erzeuge",
+      "generating_thumbnails2": "Vorschaubilder",
+      "generating_thumbnails_finding_images2": "zähle Bilder",
+      "generating_thumbnails_finding_images1": "Vorschaubilder",
+      "generating_thumbnails_finding_images3": "Kann dauern ..."
     },
     "cronip": {
       "offline": "offline",
