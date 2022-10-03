@@ -81,9 +81,9 @@
       "usb_ios": "USB iOS",
       "result_suspect": "Success unclear.",
       "files_copied": "files copied",
-      "generating_thumbnails_finding_images2": "Counting images...",
+      "generating_thumbnails_finding_images2": "Counting images",
       "generating_thumbnails_finding_images1": "Thumbnails",
-      "generating_thumbnails_finding_images3": "may take some time ...",
+      "generating_thumbnails_finding_images3": "can take a while...",
       "generating_thumbnails": "Gen. thumbnails"
     },
     "poweroff": {
