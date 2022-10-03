@@ -732,13 +732,33 @@ if [ $conf_BACKUP_GENERATE_THUMBNAILS = true ] && [[ " internal external " =~ " 
 
 	IMAGE_COUNT=${#IMAGES[@]}
 
-	LAST_MESSAGE_TIME=$(date +%s)
+	THUMBNAILS_START_TIME=$(date +%s)
+	THUMBNAILS_GENERATED="0"
+
+	LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
 	i=0
+
 	for IMAGE in "${IMAGES[@]}"
 	do
 		if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ]; then
 			FINISHED_PERCENT=$(echo "scale=1; 100 * ${i} / ${IMAGE_COUNT}" | bc)
-			lcd_message "+$(l "box_backup_generating_thumbnails1")" "+$(l "box_backup_generating_thumbnails2")" "+$(l "box_backup_mode_${DEST_MODE}")" "+${i} $(l "box_backup_of") ${IMAGE_COUNT}" "+PGBAR:${FINISHED_PERCENT}"
+
+			if [ "${THUMBNAILS_GENERATED}" -gt "0" ]; then
+				TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
+				TIME_REMAINING=$(echo "${TIME_RUN} * ( ${IMAGE_COUNT} - ${THUMBNAILS_GENERATED} ) / ${THUMBNAILS_GENERATED}" | bc)
+				TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
+				DAYS_LEFT=$((TIME_REMAINING/86400))
+				if [ "${DAYS_LEFT}" -gt "0" ]; then
+					TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
+				fi
+			else
+				THUMBNAILS_GENERATED="0"
+				TIME_REMAINING_FORMATED="?"
+			fi
+
+			DURATION="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+
+			lcd_message "+$(l "box_backup_generating_thumbnails")" "+$(l "box_backup_mode_${DEST_MODE}")" "+${i} $(l "box_backup_of") ${IMAGE_COUNT}" "+${DURATION}" "+PGBAR:${FINISHED_PERCENT}"
 			LAST_MESSAGE_TIME=$(date +%s)
 		fi
 
@@ -748,6 +768,7 @@ if [ $conf_BACKUP_GENERATE_THUMBNAILS = true ] && [[ " internal external " =~ " 
 
 		if [ ! -f "${TIMS_FILE}" ]; then
 			convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
+			THUMBNAILS_GENERATED=$((THUMBNAILS_GENERATED+1))
 		fi
 
 		i=$((i+1))

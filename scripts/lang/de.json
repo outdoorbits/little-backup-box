@@ -258,11 +258,10 @@
       "usb_ios": "USB iOS",
       "result_suspect": "Erfolg unklar.",
       "files_copied": "Dat. kopiert",
-      "generating_thumbnails1": "Erzeuge",
-      "generating_thumbnails2": "Vorschaubilder",
-      "generating_thumbnails_finding_images2": "zähle Bilder",
+      "generating_thumbnails_finding_images2": "Zähle Bilder...",
       "generating_thumbnails_finding_images1": "Vorschaubilder",
-      "generating_thumbnails_finding_images3": "Kann dauern ..."
+      "generating_thumbnails_finding_images3": "kann dauern ...",
+      "generating_thumbnails": "Gen. Vorschaubilder"
     },
     "cronip": {
       "offline": "offline",
