@@ -23,12 +23,6 @@ CONFIG="${WORKING_DIR}/config.cfg"
 CONFIG_STANDARDS="${WORKING_DIR}/config-standards.cfg"
 source "$CONFIG"
 
-#rewrite config to new standards
-if [ "${conf_BACKUP_DEFAULT_SOURCE}" = "storage" ]; then conf_BACKUP_DEFAULT_SOURCE="usb"; fi
-if [ "${conf_BACKUP_DEFAULT_TARGET}" = "external" ]; then conf_BACKUP_DEFAULT_SOURCE="usb"; fi
-if [ "${conf_BACKUP_DEFAULT_SOURCE2}" = "storage" ]; then conf_BACKUP_DEFAULT_SOURCE="usb"; fi
-if [ "${conf_BACKUP_DEFAULT_TARGET2}" = "external" ]; then conf_BACKUP_DEFAULT_SOURCE="usb"; fi
-
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
 
@@ -56,6 +50,12 @@ do
 done < "${CONFIG_STANDARDS}"
 
 unset IFS
+
+#rewrite config to new standards
+if [ "${conf_BACKUP_DEFAULT_SOURCE}" = "storage" ]; then echo 'conf_BACKUP_DEFAULT_SOURCE="usb"' | sudo tee -a "${CONFIG}"; fi
+if [ "${conf_BACKUP_DEFAULT_TARGET}" = "external" ]; then echo 'conf_BACKUP_DEFAULT_TARGET="usb"' | sudo tee -a "${CONFIG}"; fi
+if [ "${conf_BACKUP_DEFAULT_SOURCE2}" = "storage" ]; then echo 'conf_BACKUP_DEFAULT_SOURCE2="usb"' | sudo tee -a "${CONFIG}"; fi
+if [ "${conf_BACKUP_DEFAULT_TARGET2}" = "external" ]; then echo 'conf_BACKUP_DEFAULT_TARGET2="usb"' | sudo tee -a "${CONFIG}"; fi
 
 # Load config.cfg
 source "$CONFIG"
