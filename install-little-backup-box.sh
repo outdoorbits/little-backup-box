@@ -80,7 +80,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		3 "USB-source -> internal storage"
 		4 "Camera -> USB-target storage"
 		5 "Camera -> internal storage"
-		6 "iOS -> usb_target storage"
+		6 "iOS -> usb-target storage"
 		7 "iOS -> internal storage"
 	)
 
@@ -300,16 +300,16 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 			conf_BACKUP_DEFAULT_TARGET="none"
 		;;
 	2)
-			conf_BACKUP_DEFAULT_SOURCE="storage"
-			conf_BACKUP_DEFAULT_TARGET="usb_target"
+			conf_BACKUP_DEFAULT_SOURCE="usb"
+			conf_BACKUP_DEFAULT_TARGET="usb"
 		;;
 	3)
-			conf_BACKUP_DEFAULT_SOURCE="storage"
+			conf_BACKUP_DEFAULT_SOURCE="usb"
 			conf_BACKUP_DEFAULT_TARGET="internal"
 		;;
 	4)
 			conf_BACKUP_DEFAULT_SOURCE="camera"
-			conf_BACKUP_DEFAULT_TARGET="usb_target"
+			conf_BACKUP_DEFAULT_TARGET="usb"
 		;;
 	5)
 			conf_BACKUP_DEFAULT_SOURCE="camera"
@@ -317,7 +317,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		;;
 	6)
 			conf_BACKUP_DEFAULT_SOURCE="ios"
-			conf_BACKUP_DEFAULT_TARGET="usb_target"
+			conf_BACKUP_DEFAULT_TARGET="usb"
 		;;
 	7)
 			conf_BACKUP_DEFAULT_SOURCE="ios"
@@ -337,44 +337,13 @@ echo "conf_BACKUP_DEFAULT_SOURCE=\"${conf_BACKUP_DEFAULT_SOURCE}\"" | sudo tee -
 echo "conf_BACKUP_DEFAULT_TARGET=\"${conf_BACKUP_DEFAULT_TARGET}\"" | sudo tee -a "${CONFIG}"
 
 # set the default SECONDARY backup mode
-if [ "${SCRIPT_MODE}" = "install" ]; then
-	## append new line to config-file
-	echo -e '' | sudo tee -a "${CONFIG}"
+## append new line to config-file
+echo -e '' | sudo tee -a "${CONFIG}"
 
+if [ "${SCRIPT_MODE}" = "install" ]; then
 	# write new default-backup-method
 	conf_BACKUP_DEFAULT_SOURCE2="none"
 	conf_BACKUP_DEFAULT_TARGET2="none"
-
-	case $CHOICE_BACKUP_MODE in
-	1)
-			conf_BACKUP_DEFAULT_SOURCE2="none"
-			conf_BACKUP_DEFAULT_TARGET2="none"
-		;;
-	2)
-			conf_BACKUP_DEFAULT_SOURCE2="storage"
-			conf_BACKUP_DEFAULT_TARGET2="usb_target"
-		;;
-	3)
-			conf_BACKUP_DEFAULT_SOURCE2="storage"
-			conf_BACKUP_DEFAULT_TARGET2="internal"
-		;;
-	4)
-			conf_BACKUP_DEFAULT_SOURCE2="camera"
-			conf_BACKUP_DEFAULT_TARGET2="usb_target"
-		;;
-	5)
-			conf_BACKUP_DEFAULT_SOURCE2="camera"
-			conf_BACKUP_DEFAULT_TARGET2="internal"
-		;;
-	6)
-			conf_BACKUP_DEFAULT_SOURCE2="ios"
-			conf_BACKUP_DEFAULT_TARGET2="usb_target"
-		;;
-	7)
-			conf_BACKUP_DEFAULT_SOURCE2="ios"
-			conf_BACKUP_DEFAULT_TARGET2="internal"
-		;;
-	esac
 else
 	if [ -z "${conf_BACKUP_DEFAULT_SOURCE2}" ]; then
 		conf_BACKUP_DEFAULT_SOURCE2="none"
