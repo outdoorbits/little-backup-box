@@ -148,7 +148,7 @@ function lcd_message () {
 		if [ ! -z "${LogLines}" ]; then
 			LogLines="${LogLines}\n"
 		fi
-		LogLines="${LogLines}${LINE}"
+		LogLines="${LogLines}| ${LINE}"
 
 		n=$(expr $n + 1)
 	done

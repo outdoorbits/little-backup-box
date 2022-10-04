@@ -16,8 +16,6 @@
     "mejiro": "Mejiro"
   },
   "main": {
-    "source_button": "Quelle",
-    "external_button": "ext. Speicher",
     "internal_button": "int. Speicher",
     "camera_button": "Kamera",
     "ios_button": "iOS",
@@ -32,7 +30,10 @@
     "shutdown_m": "Little Backup Box wird ausgeschaltet. Sie können diese Seite schließen.",
     "help_txt": "<p class = 'text-center'> Bitte lesen Sie das <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.</p>",
     "stopbackup_button": "STOPP Backup",
-    "stopbackup_m": "Backup wird angehalten"
+    "stopbackup_m": "Backup wird angehalten",
+    "usb_button": "USB Speicher",
+    "backup_break1": "Backup",
+    "backup_break2": "abgebrochen."
   },
   "sysinfo": {
     "sysinfo": "Systeminformationen",
@@ -57,12 +58,8 @@
     "backup_header": "Standard-Backup-Modus",
     "backup_label": "Wählen Sie den Standard-Backup-Modus:",
     "backup_none": "kein automatisches Backup",
-    "backup_storage_external": "Quellspeicher nach externem Speicher",
-    "backup_storage_internal": "Quellspeicher nach internem Speicher",
-    "backup_camera_external": "Kamera nach externem Speicher",
-    "backup_camera_internal": "Kamera nach internem Speicher",
-    "backup_ios_external": "iOS nach externem Speicher",
-    "backup_ios_internal": "iOS nach internem Speicher",
+    "backup_camera_internal": "Kamera &rarr; internem Speicher",
+    "backup_ios_internal": "iOS &rarr; internem Speicher",
     "backup_power_off_header": "Ausschalten",
     "backup_power_off_label": "Ausschalten nach Backup",
     "behavior_section": "Verhalten",
@@ -166,7 +163,11 @@
       "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für mejiro erstellen? (Nur für lokale Speicher)"
     },
     "disp_black_on_power_off_header": "Display beim Herunterfahren ausschalten",
-    "disp_black_on_power_off_label": "Soll das Display beim Herunterfahren ausgeschaltet werden?"
+    "disp_black_on_power_off_label": "Soll das Display beim Herunterfahren ausgeschaltet werden?",
+    "backup_usb_usb": "USB-Quellspeicher &rarr; USB-Zielspeicher",
+    "backup_usb_internal": "USB-Quellspeicher &rarr; internem Speicher",
+    "backup_camera_usb": "Kamera &rarr; USB-Zielspeicher",
+    "backup_ios_usb": "iOS &rarr; USB-Zielspeicher"
   },
   "tools": {
     "tools": "Werkzeug",
@@ -187,11 +188,8 @@
   "minutes_long": "Minuten",
   "box": {
     "backup": {
-      "ext_storage_ok": "Ext. Speicher o.k.",
       "insert_source_1": "Bereit",
-      "insert_storage_1": "Bereit",
       "insert_source_2": "Quelle verbinden",
-      "insert_storage_2": "Speicher verbinden",
       "int_storage_ok": "Int. Speicher o.k.",
       "invalid_mode_combination_1": "Ungültige",
       "invalid_mode_combination_2": "Modus-",
@@ -225,7 +223,6 @@
       "no_ios_waiting_1": "Kein iOS-Gerät",
       "no_ios_waiting_2": "warte",
       "of": "von",
-      "source_ok": "Quelle o.k.",
       "try_backup": "Backup Vers.",
       "working": "arbeite",
       "time_remaining": "Zeit",
@@ -249,29 +246,32 @@
       "mode_internal": "Int.Speicher",
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
-      "mode_storage": "Ext. Speicher",
-      "mode_external": "Ext. Speicher",
       "mount": "Einbinden",
       "umount": "Aushängen",
-      "usb_storage": "USB-Speicher",
-      "usb_source": "USB-Quelle",
       "usb_ios": "USB iOS",
       "result_suspect": "Erfolg unklar.",
       "files_copied": "Dat. kopiert",
-      "generating_thumbnails_finding_images2": "Zähle Bilder",
+      "generating_thumbnails_finding_images2": "Zähle Bilder.",
       "generating_thumbnails_finding_images1": "Vorschaubilder",
-      "generating_thumbnails_finding_images3": "kann dauern...",
-      "generating_thumbnails": "Gen. Vorschaubilder"
+      "generating_thumbnails_finding_images3": "Moment...",
+      "generating_thumbnails": "Gen. Vorschaubilder",
+      "insert_target_1": "Bereit",
+      "insert_target_2": "USB-Ziel verbinden",
+      "usb_target_ok": "Ziel o.k.",
+      "mode_usb": "USB Speicher",
+      "usb_source_ok": "Quelle o.k.",
+      "usb_1": "USB-Ziel",
+      "usb_2": "USB-Quelle"
     },
     "cronip": {
       "offline": "offline",
       "online": "online",
       "mail": {
         "desription_http": "http (unsicher)",
-        "desription_https": "https (sicher, Zertifikat kann nicht automatisch verifiziert werden, bitte bestätigen)",
         "info": "Little Backup Box Info",
         "main": "web UI",
-        "open_samba": "Im Dateimanager öffnen (Samba / Windows)"
+        "open_samba": "Im Dateimanager öffnen (Samba / Windows)",
+        "description_https": "https (sicher, Zertifikat kann nicht automatisch verifiziert werden, bitte bestätigen)"
       }
     },
     "poweroff": {

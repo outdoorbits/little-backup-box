@@ -23,8 +23,11 @@ CONFIG="${WORKING_DIR}/config.cfg"
 CONFIG_STANDARDS="${WORKING_DIR}/config-standards.cfg"
 source "$CONFIG"
 
-# Check and complete config.cfg
-dos2unix "$CONFIG"
+#rewrite config to new standards
+if [ "${conf_BACKUP_DEFAULT_SOURCE}" = "storage" ]; then conf_BACKUP_DEFAULT_SOURCE="usb"; fi
+if [ "${conf_BACKUP_DEFAULT_TARGET}" = "external" ]; then conf_BACKUP_DEFAULT_SOURCE="usb"; fi
+if [ "${conf_BACKUP_DEFAULT_SOURCE2}" = "storage" ]; then conf_BACKUP_DEFAULT_SOURCE="usb"; fi
+if [ "${conf_BACKUP_DEFAULT_TARGET2}" = "external" ]; then conf_BACKUP_DEFAULT_SOURCE="usb"; fi
 
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
@@ -68,7 +71,7 @@ sudo rm "$const_CMD_RUNNER_LOCKFILE" > /dev/null 2>&1
 
 
 # Hello
-lcd_message "IMAGE:${WORKING_DIR}/little-backup-box.bmp:Little" "Backup" "Box"
+lcd_message "IMAGE:${WORKING_DIR}/little-backup-box.bmp" "Little" "Backup" "Box"
 sleep 1
 
 # Display IP
@@ -77,23 +80,23 @@ source "${WORKING_DIR}/cron-ip.sh" "force_display" &
 
 # Default backup
 
-RUN_SECONDARY_BACKUP="false"
+SECONDARY_BACKUP_FOLLOWS="false"
 if [ "${conf_BACKUP_DEFAULT_SOURCE2}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET2}" != "none" ]; then
-	RUN_SECONDARY_BACKUP="true"
+	SECONDARY_BACKUP_FOLLOWS="true"
 fi
 
 # default backup 1
 if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET}" != "none" ]; then
-	if [ "${RUN_SECONDARY_BACKUP}" == "true" ]; then
+	if [ "${SECONDARY_BACKUP_FOLLOWS}" == "true" ]; then
 		lcd_message "$(l 'box_backup_primary')"
 		sleep 1
 	fi
 
-	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" "${RUN_SECONDARY_BACKUP}"
+	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" "${SECONDARY_BACKUP_FOLLOWS}"
 fi
 
 # default-backup 2
-if [ "${RUN_SECONDARY_BACKUP}" == "true" ]; then
+if [ "${SECONDARY_BACKUP_FOLLOWS}" == "true" ]; then
 	lcd_message "$(l 'box_backup_secondary')"
 	sleep 1
 

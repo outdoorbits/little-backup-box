@@ -16,8 +16,6 @@
     "mejiro": "Mejiro"
   },
   "main": {
-    "source_button": "source",
-    "external_button": "poste stockage",
     "internal_button": "stockage interne",
     "camera_button": "caméra",
     "ios_button": "iOS",
@@ -32,7 +30,10 @@
     "shutdown_m": "Little Backup Box est éteint. Vous pouvez fermer cette page.",
     "help_txt": "<p class='text-center'>Veuillez lire le <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p >",
     "stopbackup_button": "ARRÊTER la sauvegarde",
-    "stopbackup_m": "Arrêt de la sauvegarde."
+    "stopbackup_m": "Arrêt de la sauvegarde.",
+    "usb_button": "Poste stockage USB",
+    "backup_break1": "Sauvegarde",
+    "backup_break2": "abandonnée."
   },
   "sysinfo": {
     "sysinfo": "Information système",
@@ -57,12 +58,8 @@
     "backup_header": "Mode de sauvegarde par défaut",
     "backup_label": "Sélectionnez le mode de sauvegarde par défaut :",
     "backup_none": "pas de sauvegarde automatique",
-    "backup_storage_external": "Stockage source vers stockage externe",
-    "backup_storage_internal": "Stockage source vers stockage interne",
-    "backup_camera_external": "Caméra vers stockage externe",
-    "backup_camera_internal": "Caméra vers stockage interne",
-    "backup_ios_external": "iOS vers stockage externe",
-    "backup_ios_internal": "iOS vers le stockage interne",
+    "backup_camera_internal": "Caméra &rarr; stockage interne",
+    "backup_ios_internal": "iOS &rarr; le stockage interne",
     "backup_power_off_header": "Éteindre",
     "backup_power_off_label": "Mise hors tension après sauvegarde",
     "behavior_section": "Comportement",
@@ -166,7 +163,11 @@
       "generate_thumbnails_label": "Créer des vignettes pour mejiro après la sauvegarde? (Uniquement pour le stockage local)"
     },
     "disp_black_on_power_off_header": "Éteignez l'écran lors de l'arrêt",
-    "disp_black_on_power_off_label": "Voulez-vous que l'écran s'éteigne à l'arrêt ?"
+    "disp_black_on_power_off_label": "Voulez-vous que l'écran s'éteigne à l'arrêt ?",
+    "backup_usb_usb": "USB stockage &rarr; USB stockage",
+    "backup_usb_internal": "USB Stockage source &rarr; stockage interne",
+    "backup_camera_usb": "Caméra &rarr; USB stockage",
+    "backup_ios_usb": "iOS &rarr; USB stockage"
   },
   "tools": {
     "tools": "Outils",
@@ -187,11 +188,8 @@
   "minutes_long": "minutes",
   "box": {
     "backup": {
-      "ext_storage_ok": "Poste stockage ok",
       "insert_source_1": "Prêt",
-      "insert_storage_1": "Prêt",
       "insert_source_2": "Insérer la source",
-      "insert_storage_2": "Insérer le stockage",
       "int_storage_ok": "Int. stockage ok",
       "invalid_mode_combination_1": "Invalide",
       "invalid_mode_combination_2": "mode",
@@ -223,7 +221,6 @@
       "no_ios_waiting_1": "Pas d'appareil iOS",
       "no_ios_waiting_2": "En attendant",
       "of": "de",
-      "source_ok": "Source ok",
       "try_backup": "Essayez",
       "working": "Travail",
       "mail": {
@@ -246,32 +243,35 @@
       "mode_internal": "Int. Stockage",
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
-      "mode_storage": "Ext. stockage",
       "storage_filesystem_short": "FS",
       "exception": "Erreur inconnue",
       "time_remaining": "Temps",
-      "mode_external": "Ext. stockage",
       "mount": "Démonter",
       "umount": "Démonter",
-      "usb_storage": "stockage USB",
-      "usb_source": "Source USB",
       "usb_ios": "USB iOS",
       "result_suspect": "Succès incertain.",
       "files_copied": "dos. copié",
-      "generating_thumbnails_finding_images2": "Compter les images",
+      "generating_thumbnails_finding_images2": "Compter les images.",
       "generating_thumbnails_finding_images1": "De vignettes",
-      "generating_thumbnails_finding_images3": "peut prendre...",
-      "generating_thumbnails": "Gén. de vignettes"
+      "generating_thumbnails_finding_images3": "Juste un moment......",
+      "generating_thumbnails": "Gén. de vignettes",
+      "insert_target_1": "Prêt",
+      "insert_target_2": "Insérer la cible USB",
+      "usb_target_ok": "Poste stockage ok",
+      "mode_usb": "USB Stockage ",
+      "usb_source_ok": "Source ok",
+      "usb_1": "Cible USB",
+      "usb_2": "Source USB"
     },
     "cronip": {
       "offline": "hors ligne",
       "online": "en ligne",
       "mail": {
         "desription_http": "http (non sécurisé)",
-        "desription_https": "https (sécurisé, le certificat ne peut pas être vérifié automatiquement, veuillez confirmer)",
         "info": "Little Backup Box Info",
         "main": "web UI",
-        "open_samba": "Ouvrir dans le gestionnaire de fichiers (Samba / Windows)"
+        "open_samba": "Ouvrir dans le gestionnaire de fichiers (Samba / Windows)",
+        "description_https": "https (sécurisé, le certificat ne peut pas être vérifié automatiquement, veuillez confirmer)"
       }
     },
     "poweroff": {

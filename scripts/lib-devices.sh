@@ -66,19 +66,15 @@ function mount_device() {
 	local MOUNT_UID=$(id -u ${MOUNT_USER})
 	local MOUNT_GID=$(id -g ${MOUNT_GROUP})
 
-	local DisplayName=""
-
 	if [ "${MOUNT_DEVICE}" = "usb_1" ]; then
 		DEVICE_PRESET_THIS_IDENT="${DEVICE_IDENT_PRESET_1}"
 		DEVICE_PRESET_OTHER_IDENT="${DEVICE_IDENT_PRESET_2}"
-		MOUNT_POINT="${const_STORAGE_MOUNT_POINT}"
-		DisplayName="storage"
+		MOUNT_POINT="${const_USB_TARGET_MOUNT_POINT}"
 	fi
 	if [ "${MOUNT_DEVICE}" = "usb_2" ]; then
 		DEVICE_PRESET_THIS_IDENT="${DEVICE_IDENT_PRESET_2}"
 		DEVICE_PRESET_OTHER_IDENT="${DEVICE_IDENT_PRESET_1}"
-		MOUNT_POINT="${const_SOURCE_MOUNT_POINT}"
-		DisplayName="source"
+		MOUNT_POINT="${const_USB_SOURCE_MOUNT_POINT}"
 	fi
 
 	# USB storage devices
@@ -167,8 +163,8 @@ function mount_device() {
 
 				local RET=""
 
-				if [ ! -z "${DisplayName}" ]; then
-					lcd_message "$(l "box_backup_mount"):" "$(l "box_backup_usb_${DisplayName}")"
+				if [ ! -z "${MOUNT_DEVICE}" ]; then
+					lcd_message "$(l "box_backup_mount"):" "$(l "box_backup_${MOUNT_DEVICE}")"
 				fi
 
 				if [[ " fat vfat exfat ntfs " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
@@ -221,9 +217,9 @@ function device_mounted() {
 	local USB_DEVICE_UUID=""
 
 	if [ "${SEARCH_FOR}" = "usb_1" ]; then
-		SEARCH_FOR="${const_STORAGE_MOUNT_POINT}"
+		SEARCH_FOR="${const_USB_TARGET_MOUNT_POINT}"
 	elif [ "${SEARCH_FOR}" = "usb_2" ]; then
-		SEARCH_FOR="${const_SOURCE_MOUNT_POINT}"
+		SEARCH_FOR="${const_USB_SOURCE_MOUNT_POINT}"
 	elif [ "${SEARCH_FOR}" = "ios" ]; then
 		SEARCH_FOR="${const_IOS_MOUNT_POINT}"
 	fi
@@ -266,18 +262,18 @@ function umount_device() {
 
 	# Definitions
 	local RESULT=""
-	local DisplayName=""
+	local MOUNT_DEVICE=""
 
 	UMOUNT="${DEVICE}"
 	if [ "${DEVICE}" = "usb_1" ]; then
-		UMOUNT="${const_STORAGE_MOUNT_POINT}"
-		DisplayName="storage"
+		UMOUNT="${const_USB_TARGET_MOUNT_POINT}"
+		MOUNT_DEVICE="usb_1"
 	elif [ "${DEVICE}" = "usb_2" ]; then
-		UMOUNT="${const_SOURCE_MOUNT_POINT}"
-		DisplayName="source"
+		UMOUNT="${const_USB_SOURCE_MOUNT_POINT}"
+		MOUNT_DEVICE="usb_2"
 	elif [ "${DEVICE}" = "ios" ]; then
 		UMOUNT="${const_IOS_MOUNT_POINT}"
-		DisplayName="ios"
+		MOUNT_DEVICE="usb_ios"
 	fi
 
 	if [ ! -z "${UMOUNT}" ] && [ ! -z "$(device_mounted "${UMOUNT}")" ]; then
@@ -289,8 +285,8 @@ function umount_device() {
 			RESULT=$(sudo umount "${UMOUNT}")
 		fi
 
-		if [ ! -z "${DisplayName}" ]; then
-			lcd_message "$(l "box_backup_umount"):" "$(l "box_backup_usb_${DisplayName}")"
+		if [ ! -z "${MOUNT_DEVICE}" ]; then
+			lcd_message "$(l "box_backup_umount"):" "$(l "box_backup_${MOUNT_DEVICE}")"
 		fi
 
 		sudo service smbd start

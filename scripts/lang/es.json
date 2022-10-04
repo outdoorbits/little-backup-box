@@ -16,8 +16,6 @@
     "mejiro": "Mejiro"
   },
   "main": {
-    "source_button": "fuente",
-    "external_button": "Almacenamiento ext.",
     "internal_button": "Almacenamiento int.",
     "camera_button": "cámara",
     "ios_button": "iOS",
@@ -32,7 +30,10 @@
     "shutdown_m": "Little Backup Box está apagado. Puede cerrar esta página.",
     "help_txt": "<p class = 'text-center'> Lea la <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'> Wiki </a> </ p >",
     "stopbackup_button": "Detener copia de seguridad",
-    "stopbackup_m": "Deteniendo la copia de seguridad."
+    "stopbackup_m": "Deteniendo la copia de seguridad.",
+    "usb_button": "Almacenamiento USB",
+    "backup_break1": "Copia de seguridad",
+    "backup_break2": "cancelada."
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
@@ -57,12 +58,8 @@
     "backup_header": "Modo de respaldo predeterminado",
     "backup_label": "Seleccione el modo de copia de seguridad predeterminado:",
     "backup_none": "sin respaldo automático",
-    "backup_storage_external": "Almacenar desde origen a almacenamiento externo",
-    "backup_storage_internal": "Almacenar desde origen a almacenamiento interno",
-    "backup_camera_external": "Cámara a almacenamiento externo",
-    "backup_camera_internal": "Cámara a almacenamiento interno",
-    "backup_ios_external": "iOS a almacenamiento externo",
-    "backup_ios_internal": "iOS al almacenamiento interno",
+    "backup_camera_internal": "Cámara &rarr; almacenamiento interno",
+    "backup_ios_internal": "iOS &rarr; almacenamiento interno",
     "backup_power_off_header": "Apagado",
     "backup_power_off_label": "Apagar después de la copia de seguridad",
     "behavior_section": "Comportamiento",
@@ -166,7 +163,11 @@
       "generate_thumbnails_label": "¿Crear miniaturas para mejiro después de la copia de seguridad? (Solo para almacenamiento local)"
     },
     "disp_black_on_power_off_header": "Apague la pantalla al apagar",
-    "disp_black_on_power_off_label": "¿Desea que la pantalla se apague al apagar?"
+    "disp_black_on_power_off_label": "¿Desea que la pantalla se apague al apagar?",
+    "backup_usb_usb": "USB almacenar &rarr; USB almacenamiento",
+    "backup_usb_internal": "USB Almacenar &rarr; almacenamiento interno",
+    "backup_camera_usb": "Cámara &rarr; USB almacenamiento",
+    "backup_ios_usb": "iOS &rarr; USB almacenamiento"
   },
   "tools": {
     "tools": "Herramientas",
@@ -187,11 +188,8 @@
   "minutes_long": "minutos",
   "box": {
     "backup": {
-      "ext_storage_ok": "Almacenamiento ext. o.k.",
-      "insert_storage_1": "Listo",
       "insert_source_1": "Listo",
       "insert_source_2": "Insertar origen",
-      "insert_storage_2": "Insertar almacenamiento",
       "int_storage_ok": "Almacenamiento int. o.k.",
       "invalid_mode_combination_1": "Modo",
       "invalid_mode_combination_2": "de combinacion",
@@ -223,7 +221,6 @@
       "no_ios_waiting_1": "Sin dispositivo iOS",
       "no_ios_waiting_2": "Espera",
       "of": "de",
-      "source_ok": "Origen o.k.",
       "try_backup": "Prueba copia",
       "working": "Trabajando",
       "mail": {
@@ -246,32 +243,35 @@
       "mode_internal": "Int. almacenamiento",
       "mode_ios": "iOS",
       "mode_rsyncserver": "rsync",
-      "mode_storage": "Ext. almacenamiento",
       "storage_filesystem_short": "FS",
       "exception": "Error desconocido",
       "time_remaining": "Tiempo",
-      "mode_external": "Ext. almacenamiento",
       "mount": "Desmontar",
       "umount": "Desmontar",
-      "usb_storage": "USB Almacenamiento",
-      "usb_source": "Fuente USB",
       "usb_ios": "USB iOS",
       "result_suspect": "Exito poco claro.",
       "files_copied": "arch. copiado",
-      "generating_thumbnails_finding_images2": "Contando imágenes",
+      "generating_thumbnails_finding_images2": "Contando imágenes.",
       "generating_thumbnails_finding_images1": "De miniaturas",
-      "generating_thumbnails_finding_images3": "puede llevar tiempo...",
-      "generating_thumbnails": "Gen. de miniaturas"
+      "generating_thumbnails_finding_images3": "Sólo un momento...",
+      "generating_thumbnails": "Gen. de miniaturas",
+      "insert_target_1": "Listo",
+      "insert_target_2": "Insertar destino USB",
+      "usb_target_ok": "Almacenamiento ext. o.k.",
+      "mode_usb": "USB Almacenamiento",
+      "usb_source_ok": "Origen o.k.",
+      "usb_1": "Destino USB",
+      "usb_2": "Fuente USB"
     },
     "cronip": {
       "offline": "desconectado",
       "online": "en línea",
       "mail": {
         "desription_http": "http (inseguro)",
-        "desription_https": "https (seguro, el certificado no se puede verificar automáticamente, confirme)",
         "info": "Información Little Backup Box",
         "main": "web UI",
-        "open_samba": "Abrir en el administrador de archivos (Samba / Windows)"
+        "open_samba": "Abrir en el administrador de archivos (Samba / Windows)",
+        "description_https": "https (seguro, el certificado no se puede verificar automáticamente, confirme)"
       }
     },
     "poweroff": {

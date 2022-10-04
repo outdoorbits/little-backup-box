@@ -23,6 +23,15 @@
 # To extend, just use the elif-section-examples
 ###############################################
 
+
+# usage: backup.sh SOURCE TARGET [SECONDARY_BACKUP_FOLLOWS]
+#			SOURCE: Can be usb*1, internal, camera or ios
+# 			TARGET: Can be usb*2, internal, rsyncserver or cloud_XXX
+#			SECONDARY_BACKUP_FOLLOWS: otionally, if true another run follows, no thumbnails, no power off
+#	*1 formerly storage
+#	*2 formerly external
+
+
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
@@ -45,38 +54,47 @@ SYNC_TIME_OVERHEATING_WAIT_SEC=60
 
 # To add a new definition, specify the desired arguments to the list
 SOURCE_ARG="${1}"
-DESTIN_ARG="${2}"
+TARGET_ARG="${2}"
 
-RUN_SECONDARY_BACKUP="false"
+# if SECONDARY_BACKUP_FOLLOWS = true: no thumbnails, no power off
+SECONDARY_BACKUP_FOLLOWS="false"
 if [ "${3}" == "true" ]; then
-	RUN_SECONDARY_BACKUP="true"
+	SECONDARY_BACKUP_FOLLOWS="true"
 fi
 
 # Source definition
-if [[ " storage camera ios internal " =~ " ${SOURCE_ARG} " ]]; then
+if [[ " usb internal camera ios " =~ " ${SOURCE_ARG} " ]]; then
 	SOURCE_MODE="${SOURCE_ARG}"
 else
-	SOURCE_MODE="storage"
+	SOURCE_MODE="usb"
 fi
 
-# Destination definition
-if [[ "${DESTIN_ARG}" =~ ^cloud_.* ]]; then
-	DEST_MODE="cloud"
-	CLOUDSERVICE=${DESTIN_ARG#"cloud_"}
+# Target definition
+if [[ "${TARGET_ARG}" =~ ^cloud_.* ]]; then
+	TARGET_MODE="cloud"
+	CLOUDSERVICE=${TARGET_ARG#"cloud_"}
 	if [ -z "${CLOUDSERVICE}" ]; then
-		DEST_MODE=""
+		TARGET_MODE=""
 	fi
 else
-	if [[ " internal external rsyncserver " =~ " ${DESTIN_ARG} " ]]; then
-		DEST_MODE="${DESTIN_ARG}"
+	if [[ " usb internal rsyncserver " =~ " ${TARGET_ARG} " ]]; then
+		TARGET_MODE="${TARGET_ARG}"
 	else
-		DEST_MODE="external"
+		TARGET_MODE="usb"
 	fi
 fi
 
-if [ "${SOURCE_MODE}" = "${DEST_MODE}" ]; then
+if [ "${SOURCE_MODE}" = "${TARGET_MODE}" ] && [ "${SOURCE_MODE}" != "usb" ]; then
 	lcd_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')" ""
 	exit 1
+fi
+
+# switch UUID_USB_1 and UUID_USB_2? (only relevant in secondary backup)
+if [ ! -z "${UUID_USB_1}" ] && [[ " rsyncserver cloud " =~ " ${TARGET_MODE} " ]]; then
+	# use target-usb from last run as source usb now
+	UUID_USB_temp="${UUID_USB_1}"
+	UUID_USB_1="${UUID_USB_2}"
+	UUID_USB_2="${UUID_USB_temp}"
 fi
 
 # Load Log library
@@ -101,19 +119,19 @@ fi
 . "${WORKING_DIR}/lib-language.sh"
 
 # log
-lcd_message "$(l "box_backup_mode_${SOURCE_MODE}")" " > $(l "box_backup_mode_${DEST_MODE}")" "   ${CLOUDSERVICE}"
+lcd_message "$(l "box_backup_mode_${SOURCE_MODE}")" " > $(l "box_backup_mode_${TARGET_MODE}")" "   ${CLOUDSERVICE}"
 
 log_message "Source: ${SOURCE_MODE}"
-log_message "Destination: ${DEST_MODE} ${CLOUDSERVICE}"
+log_message "Destination: ${TARGET_MODE} ${CLOUDSERVICE}"
 
 function calculate_files_to_sync() {
 	#sets $FILES_TO_SYNC
 
 	# To define a new method, add an elif block (example below)
 
-	if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
-		# Source storage ios internal
-		if [ ${DEST_MODE} = "rsyncserver" ]; then
+	if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
+		# Source usb ios internal
+		if [ ${TARGET_MODE} = "rsyncserver" ]; then
 			FILES_TO_SYNC=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 		else
 			FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
@@ -175,20 +193,20 @@ function calculate_files_to_sync() {
 
 	# To define a new method, add an elif block (example below)
 
-	if [ "${DEST_MODE}" = "external" ]; then
+	if [ "${TARGET_MODE}" = "usb" ]; then
 		# External mode
 		# If display support is enabled, display the specified message
 
-		lcd_message "$(l 'box_backup_insert_storage_1')" "$(l 'box_backup_insert_storage_2')"
+		lcd_message "$(l 'box_backup_insert_target_1')" "$(l 'box_backup_insert_target_2')"
 
-		# Wait for a USB storage device (e.g., a USB flash drive)
+		# Wait for a USB usb device (e.g., a USB flash drive)
 		UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
 		MOUNTED_DEVICES+=("${UUID_USB_1}")
 
-		STORAGE_PATH="${const_STORAGE_MOUNT_POINT}"
+		TARGET_PATH="${const_USB_TARGET_MOUNT_POINT}"
 
-		# notify that the storage device has been mounted
-		ret="$(get_storage_properties ${STORAGE_PATH})"
+		# notify that the usb device has been mounted
+		ret="$(get_storage_properties ${TARGET_PATH})"
 
 		IFS="|"
 		set -- $ret
@@ -200,17 +218,17 @@ function calculate_files_to_sync() {
 
 		unset IFS
 
-		lcd_message "$(l 'box_backup_ext_storage_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
+		lcd_message "$(l 'box_backup_usb_target_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
 			sleep 2
 		fi
 
-	elif [ "${DEST_MODE}" = "internal" ]; then
+	elif [ "${TARGET_MODE}" = "internal" ]; then
 		# Internal mode
-		STORAGE_PATH="${const_INTERAL_BACKUP_DIR}"
+		TARGET_PATH="${const_INTERNAL_BACKUP_DIR}"
 
-		ret="$(get_storage_properties ${STORAGE_PATH})"
+		ret="$(get_storage_properties ${TARGET_PATH})"
 
 		IFS="|"
 		set -- $ret
@@ -222,29 +240,29 @@ function calculate_files_to_sync() {
 
 		unset IFS
 
-		# If display support is enabled, notify that the storage device has been mounted
+		# If display support is enabled, notify that the usb device has been mounted
 		lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
 			sleep 2
 		fi
 
-	elif [ "${DEST_MODE}" = "rsyncserver" ]; then
+	elif [ "${TARGET_MODE}" = "rsyncserver" ]; then
 			RSYNC_CONNECTION="rsync://${conf_RSYNC_USER}@${conf_RSYNC_SERVER}:${conf_RSYNC_PORT}/${conf_RSYNC_SERVER_MODULE}"
-			STORAGE_PATH="${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
+			TARGET_PATH="${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
 
-	elif [ "${DEST_MODE}" = "cloud" ]; then
+	elif [ "${TARGET_MODE}" = "cloud" ]; then
 			lcd_message "$(l 'box_backup_waiting_for_cloud_1')" "$(l 'box_backup_waiting_for_cloud_2')" "${CLOUDSERVICE}"
 
-			STORAGE_PATH="${const_CLOUD_MOUNT_POINT}/${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
+			TARGET_PATH="${const_CLOUD_MOUNT_POINT}/${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
 
 			mount_cloud "${CLOUDSERVICE}" "${const_CLOUD_MOUNT_POINT}"
 
-	# elif [ "${DEST_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
+	# elif [ "${TARGET_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
 	#         lcd_message "+$(l 'box_backup__1')" "+$(l 'box_backup__2')"
 	#         ...
-	#         # Set storage path
-	#         STORAGE_PATH
+	#         # Set usb path
+	#         TARGET_PATH
 
 	else
 		# no defined mode selected
@@ -254,7 +272,7 @@ function calculate_files_to_sync() {
 
 	# END
 
-	# Set the ACT LED to blink at 1000ms to indicate that the storage device has been mounted
+	# Set the ACT LED to blink at 1000ms to indicate that the usb device has been mounted
 	sudo sh -c "echo timer > /sys/class/leds/led0/trigger"
 	sudo sh -c "echo 1000 > /sys/class/leds/led0/delay_on"
 
@@ -266,28 +284,18 @@ function calculate_files_to_sync() {
 
 	# To define a new method, add an elif block (example below)
 
-	if [ "${SOURCE_MODE}" = "storage" ]; then
+	if [ "${SOURCE_MODE}" = "usb" ]; then
 
-		# Source storage
+		# Source usb
 		# If display support is enabled, display the specified message
 		lcd_message "$(l 'box_backup_insert_source_1')" "$(l 'box_backup_insert_source_2')"
 
 		# Source device
-		if [ "${SOURCE_MODE}" = "storage" ]; then
-			if [ "${DEST_MODE}" = "external" ]; then
-				UUID_USB_2=$(mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}")
-				MOUNTED_DEVICES+=("${UUID_USB_2}")
+		UUID_USB_2=$(mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}")
+		MOUNTED_DEVICES+=("${UUID_USB_2}")
 
-				# Set SOURCE_PATH
-				SOURCE_PATH="${const_SOURCE_MOUNT_POINT}"
-			else
-				UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
-				MOUNTED_DEVICES+=("${UUID_USB_1}")
-
-				# Set SOURCE_PATH
-				SOURCE_PATH="${const_STORAGE_MOUNT_POINT}"
-			fi
-		fi
+		# Set SOURCE_PATH
+		SOURCE_PATH="${const_USB_SOURCE_MOUNT_POINT}"
 
 		# notify that the source device has been mounted
 		ret="$(get_storage_properties ${SOURCE_PATH})"
@@ -299,7 +307,7 @@ function calculate_files_to_sync() {
 
 		unset IFS
 
-		lcd_message "$(l 'box_backup_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
+		lcd_message "$(l 'box_backup_usb_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
 		if [ $conf_DISP = true ]; then
 			sleep 2
 		fi
@@ -315,7 +323,7 @@ function calculate_files_to_sync() {
 		cd
 
 		# Set BACKUP_PATH
-		BACKUP_PATH="${STORAGE_PATH}/${ID}"
+		BACKUP_PATH="${TARGET_PATH}/${ID}"
 
 		# Set SOURCE_IDENTIFIER
 		SOURCE_IDENTIFIER="Source ID: ${ID}"
@@ -347,7 +355,7 @@ function calculate_files_to_sync() {
 		cd
 
 		# Set BACKUP_PATH
-		BACKUP_PATH="${STORAGE_PATH}/iOS/${ID}"
+		BACKUP_PATH="${TARGET_PATH}/iOS/${ID}"
 
 		# Set SOURCE_IDENTIFIER
 		SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
@@ -356,10 +364,10 @@ function calculate_files_to_sync() {
 		lcd_message "$(l 'box_backup_int_storage_ok')"
 
 		# Set SOURCE_PATH
-		SOURCE_PATH="${const_INTERAL_BACKUP_DIR}"
+		SOURCE_PATH="${const_INTERNAL_BACKUP_DIR}"
 
 		# Set BACKUP_PATH
-		BACKUP_PATH="${STORAGE_PATH}/internal"
+		BACKUP_PATH="${TARGET_PATH}/internal"
 
 		# Set SOURCE_IDENTIFIER
 		SOURCE_IDENTIFIER="Internal memory"
@@ -408,7 +416,7 @@ function calculate_files_to_sync() {
 		# not used
 
 		# Set BACKUP_PATH
-		BACKUP_PATH="${STORAGE_PATH}/${CAMERA}${CAMERA_SERIAL_PATH_EXTENSION}"
+		BACKUP_PATH="${TARGET_PATH}/${CAMERA}${CAMERA_SERIAL_PATH_EXTENSION}"
 
 		# Set SOURCE_IDENTIFIER
 		SOURCE_IDENTIFIER="Camera: ${CAMERA} Serial: ${CAMERA_SERIAL}"
@@ -497,9 +505,9 @@ function calculate_files_to_sync() {
 	calculate_files_to_sync
 	FILES_TO_SYNC_PRE="${FILES_TO_SYNC}"
 
-	# Count of files in storage before backup starts
+	# Count of files in usb before backup starts
 	## ANALOGOUS TO BACKUP-PROGRESS.SH ##
-	if [ "${DEST_MODE}" = "rsyncserver" ]; then
+	if [ "${TARGET_MODE}" = "rsyncserver" ]; then
 		FILES_TO_TRANSFER_START=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 	else
 		FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
@@ -530,7 +538,7 @@ function calculate_files_to_sync() {
 			if [ "${UUID_USB_1}" != "" ]; then
 				RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_1}")
 				if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-					log_message "remount usb_2" 3
+					log_message "remount usb" 3
 					mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}"
 				fi
 			fi
@@ -538,7 +546,7 @@ function calculate_files_to_sync() {
 			if [ "${UUID_USB_2}" != "" ]; then
 				RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_2}")
 				if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-					log_message "remount usb_2" 3
+					log_message "remount usb" 3
 					mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}"
 				fi
 			fi
@@ -557,7 +565,7 @@ function calculate_files_to_sync() {
 		SYNC_START_TIME=$(date +%s)
 
 		# display
-		source "${WORKING_DIR}/backup-progress.sh" "${SOURCE_MODE}" "${DEST_MODE}" &
+		source "${WORKING_DIR}/backup-progress.sh" "${SOURCE_MODE}" "${TARGET_MODE}" &
 		PID=$!
 
 	##############
@@ -569,10 +577,10 @@ function calculate_files_to_sync() {
 		# To define a new method, add an elif block (example below)
 
 		SYNC_RETURN_CODE="0"
-		if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
-			# If source is storage or ios
+		if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
+			# If source is usb, internal or ios
 
-			if [ ${DEST_MODE} = "rsyncserver" ]; then
+			if [ ${TARGET_MODE} = "rsyncserver" ]; then
 				# to rsyncserver
 				if [ $conf_LOG_SYNC = true ]; then
 					SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --mkpath --no-perms --stats --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/")\n"
@@ -610,7 +618,7 @@ function calculate_files_to_sync() {
 
 		elif [ "${SOURCE_MODE}" = "camera" ]; then
 			# If source is camera
-			# Switch to const_STORAGE_MOUNT_POINT and transfer files from the camera
+			# Switch to const_USB_TARGET_MOUNT_POINT and transfer files from the camera
 
 			sudo mkdir -p "${BACKUP_PATH}"
 			cd "${BACKUP_PATH}"
@@ -638,7 +646,7 @@ function calculate_files_to_sync() {
 		# END BACKUP
 
 		# RE-CALCULATE NUMBER OF FILES TO BACK UP
-		if [[ " storage ios internal " =~ " ${SOURCE_MODE} " ]]; then
+		if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
 			calculate_files_to_sync
 			log_message "Files left to sync after backup: ${FILES_TO_SYNC}" 3
 		elif [ "${SOURCE_MODE}" = "camera" ]; then
@@ -695,9 +703,9 @@ function calculate_files_to_sync() {
 
 	done # retry
 
-# Count of files in storage after backup
+# Count of files in usb after backup
 	## ANALOGOUS TO BACKUP-PROGRESS.SH ##
-	if [ "${DEST_MODE}" = "rsyncserver" ]; then
+	if [ "${TARGET_MODE}" = "rsyncserver" ]; then
 		FILES_TO_TRANSFER_STOP=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 		if [ "${FILES_TO_TRANSFER_START}" != "" ] && [ "${FILES_TO_TRANSFER_STOP}" != "" ]; then
 			TRANSFER_INFO="$(echo "${FILES_TO_TRANSFER_START} - ${FILES_TO_TRANSFER_STOP}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
@@ -754,76 +762,80 @@ function calculate_files_to_sync() {
 			BODY_MSG=""
 		fi
 
-		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${DEST_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 	fi
 
 # generate thumbnails
-	if [ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] && [ "${RUN_SECONDARY_BACKUP}" == "false" ]; then
+	if [ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] && [ "${SECONDARY_BACKUP_FOLLOWS}" == "false" ]; then
 		# generate thumbnails only if it is the last backup-run
 
-		lcd_message "+$(l "box_backup_generating_thumbnails_finding_images1")" "+$(l "box_backup_generating_thumbnails_finding_images2")" "+$(l "box_backup_generating_thumbnails_finding_images3")" "+$(l "box_backup_mode_${DEST_MODE}")" "+"
-
-		if [ "${DEST_MODE}" = "internal" ]; then
-			THUMBNAIL_PATH="${const_INTERAL_BACKUP_DIR}"
+		if [[ " rsyncserver cloud " =~ " ${TARGET_MODE} " ]]; then
+			# work on source device
+			THUMBNAIL_MODE="${SOURCE_MODE}"
+			THUMBNAIL_PATH="${SOURCE_PATH}"
 		else
-			THUMBNAIL_PATH="${const_STORAGE_MOUNT_POINT}"
+			THUMBNAIL_MODE="${TARGET_MODE}"
+			THUMBNAIL_PATH="${TARGET_PATH}"
 		fi
 
-		IMAGES_STR=$(sudo find "$THUMBNAIL_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*' -exec file {} \; | grep  -o -P '^.+: \w+ image' | cut -d':' -f1)
-		IFS=$'\n' read -rd '' -a IMAGES <<<"$IMAGES_STR"
-		unset IFS
+		if [[ " usb internal " =~ " ${THUMBNAIL_MODE} " ]]; then
+			lcd_message "+$(l "box_backup_generating_thumbnails_finding_images1")" "+$(l "box_backup_generating_thumbnails_finding_images2")" "+$(l "box_backup_generating_thumbnails_finding_images3")" "+$(l "box_backup_mode_${THUMBNAIL_MODE}")" "+"
 
-		IMAGE_COUNT=${#IMAGES[@]}
+			IMAGES_STR=$(sudo find "$THUMBNAIL_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*')
+			IFS=$'\n' read -rd '' -a IMAGES <<<"$IMAGES_STR"
+			unset IFS
 
-		THUMBNAILS_START_TIME=$(date +%s)
-		THUMBNAILS_GENERATED="0"
+			IMAGE_COUNT=${#IMAGES[@]}
 
-		LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
-		i=0
+			THUMBNAILS_START_TIME=$(date +%s)
+			THUMBNAILS_GENERATED="0"
 
-		for IMAGE in "${IMAGES[@]}"
-		do
-			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ]; then
-				FINISHED_PERCENT=$(echo "scale=1; 100 * ${i} / ${IMAGE_COUNT}" | bc)
+			LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
+			i=0
 
-				if [ "${THUMBNAILS_GENERATED}" -gt "0" ]; then
-					IMAGES_TO_CONVERT_MAX=$(echo "$IMAGE_COUNT + $THUMBNAILS_GENERATED - $i" | bc)
+			for IMAGE in "${IMAGES[@]}"
+			do
+				if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ]; then
+					FINISHED_PERCENT=$(echo "scale=1; 100 * ${i} / ${IMAGE_COUNT}" | bc)
 
-					TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
-					TIME_REMAINING=$(echo "${TIME_RUN} * ( ${IMAGES_TO_CONVERT_MAX} - ${THUMBNAILS_GENERATED} ) / ${THUMBNAILS_GENERATED}" | bc)
-					TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
-					DAYS_LEFT=$((TIME_REMAINING/86400))
-					if [ "${DAYS_LEFT}" -gt "0" ]; then
-						TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
+					if [ "${THUMBNAILS_GENERATED}" -gt "0" ]; then
+						IMAGES_TO_CONVERT_MAX=$(echo "$IMAGE_COUNT + $THUMBNAILS_GENERATED - $i" | bc)
+
+						TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
+						TIME_REMAINING=$(echo "${TIME_RUN} * ( ${IMAGES_TO_CONVERT_MAX} - ${THUMBNAILS_GENERATED} ) / ${THUMBNAILS_GENERATED}" | bc)
+						TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
+						DAYS_LEFT=$((TIME_REMAINING/86400))
+						if [ "${DAYS_LEFT}" -gt "0" ]; then
+							TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
+						fi
+					else
+						THUMBNAILS_GENERATED="0"
+						TIME_REMAINING_FORMATED="?"
 					fi
-				else
-					THUMBNAILS_GENERATED="0"
-					TIME_REMAINING_FORMATED="?"
+
+					DURATION="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+
+					lcd_message "+$(l "box_backup_generating_thumbnails")" "+$(l "box_backup_mode_${THUMBNAIL_MODE}")" "+${i} $(l "box_backup_of") ${IMAGE_COUNT}" "+${DURATION}" "+PGBAR:${FINISHED_PERCENT}"
+					LAST_MESSAGE_TIME=$(date +%s)
 				fi
 
-				DURATION="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+				TIMS_FOLDER="$(dirname "${IMAGE}")/tims"
+				TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGE}")"
+				mkdir -p "${TIMS_FOLDER}"
 
-				lcd_message "+$(l "box_backup_generating_thumbnails")" "+$(l "box_backup_mode_${DEST_MODE}")" "+${i} $(l "box_backup_of") ${IMAGE_COUNT}" "+${DURATION}" "+PGBAR:${FINISHED_PERCENT}"
-				LAST_MESSAGE_TIME=$(date +%s)
-			fi
+				if [ ! -f "${TIMS_FILE}" ]; then
+					if [ "${THUMBNAILS_GENERATED}" = "0" ]; then
+						THUMBNAILS_START_TIME=$(date +%s)
+					fi
 
-			TIMS_FOLDER="$(dirname "${IMAGE}")/tims"
-			TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGE}")"
-			mkdir -p "${TIMS_FOLDER}"
+					convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
 
-			if [ ! -f "${TIMS_FILE}" ]; then
-				if [ "${THUMBNAILS_GENERATED}" = "0" ]; then
-					THUMBNAILS_START_TIME=$(date +%s)
+					THUMBNAILS_GENERATED=$((THUMBNAILS_GENERATED+1))
 				fi
 
-				convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
-
-				THUMBNAILS_GENERATED=$((THUMBNAILS_GENERATED+1))
-			fi
-
-			i=$((i+1))
-		done
-
+				i=$((i+1))
+			done
+		fi
 	fi
 
 # umount (try, state unknown)
@@ -833,7 +845,7 @@ function calculate_files_to_sync() {
 	sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}" 2>/dev/null
 
 # Power off
-	if [ "${RUN_SECONDARY_BACKUP}" == "false" ]; then
+	if [ "${SECONDARY_BACKUP_FOLLOWS}" == "false" ]; then
 		source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}" "${TRANSFER_INFO}"
 	fi
 

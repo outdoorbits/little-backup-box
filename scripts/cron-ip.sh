@@ -83,6 +83,9 @@ UPTIME=$(awk '{print int($1)}' /proc/uptime)
 
 # Mail
 if [ ! -z $conf_SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
+
+	touch "${IP_MAIL_SENT_MARKERFILE}"
+
 	MEJIRO_HTTP_PLAIN=""
 	MEJIRO_HTTPS_PLAIN=""
 	MEJIRO_HTTP_HTML=""
@@ -96,7 +99,7 @@ if [ ! -z $conf_SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
 	fi
 
 	TEXT_PLAIN="
-$(l 'box_mail_desription_https'):
+$(l 'box_cronip_mail_description_https'):
 $(l 'box_cronip_mail_main'): https://${IP}
 $(l 'mainmenue_filebrowser'): https://${IP}/files
 ${MEJIRO_HTTPS_PLAIN}
@@ -107,7 +110,7 @@ $(l 'mainmenue_filebrowser'): http://${IP}:8000/files
 ${MEJIRO_HTTP_PLAIN}miniDLNA: http://${IP}:8200"
 
 	TEXT_HTML="
-<b>$(l 'box_cronip_mail_desription_https'):</b><br>
+<b>$(l 'box_cronip_mail_description_https'):</b><br>
 $(l 'box_cronip_mail_main'): <a href='https://${IP}'>https://${IP}</a><br>
 $(l 'mainmenue_filebrowser'): <a href='https://${IP}/files'>http://${IP}/files</a><br>
 ${MEJIRO_HTTPS_HTML}
@@ -128,5 +131,4 @@ $(l 'box_cronip_mail_open_samba') 'smb://${IP}'"
 <br>
 $(l 'box_cronip_mail_open_samba'): '<a href='smb://${IP}'>smb://${IP}</a>'<br>"
 	send_email "$(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
-	touch "${IP_MAIL_SENT_MARKERFILE}"
 fi

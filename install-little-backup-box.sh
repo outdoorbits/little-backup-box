@@ -76,11 +76,11 @@ CHOICE_BACKUP_MODE=1
 if [ "${SCRIPT_MODE}" = "install" ]; then
 	OPTIONS=(
 		1 "none"
-		2 "Source -> external storage"
-		3 "Source -> internal storage"
-		4 "Camera -> external storage"
+		2 "USB-source -> USB-target storage"
+		3 "USB-source -> internal storage"
+		4 "Camera -> USB-target storage"
 		5 "Camera -> internal storage"
-		6 "iOS -> external storage"
+		6 "iOS -> usb_target storage"
 		7 "iOS -> internal storage"
 	)
 
@@ -222,15 +222,15 @@ echo "Creating the required media-directories"
 
 sudo mkdir -p "${const_MEDIA_DIR}"
 
-sudo umount "${const_SOURCE_MOUNT_POINT}" > /dev/null 2>&1
-sudo umount "${const_STORAGE_MOUNT_POINT}" > /dev/null 2>&1
-sudo umount "${const_INTERAL_BACKUP_DIR}" > /dev/null 2>&1
+sudo umount "${const_USB_SOURCE_MOUNT_POINT}" > /dev/null 2>&1
+sudo umount "${const_USB_TARGET_MOUNT_POINT}" > /dev/null 2>&1
+sudo umount "${const_INTERNAL_BACKUP_DIR}" > /dev/null 2>&1
 sudo umount "${const_IOS_MOUNT_POINT}" > /dev/null 2>&1
 sudo umount "${const_CLOUD_MOUNT_POINT}" > /dev/null 2>&1
 
-sudo mkdir -p "${const_SOURCE_MOUNT_POINT}"
-sudo mkdir -p "${const_STORAGE_MOUNT_POINT}"
-sudo mkdir -p "${const_INTERAL_BACKUP_DIR}"
+sudo mkdir -p "${const_USB_SOURCE_MOUNT_POINT}"
+sudo mkdir -p "${const_USB_TARGET_MOUNT_POINT}"
+sudo mkdir -p "${const_INTERNAL_BACKUP_DIR}"
 sudo mkdir -p "${const_IOS_MOUNT_POINT}"
 sudo mkdir -p "${const_CLOUD_MOUNT_POINT}"
 
@@ -247,9 +247,9 @@ else
 	sudo rm "/etc/minidlna.conf"
 	sudo cp "/etc/minidlna.conf.orig" "/etc/minidlna.conf"
 fi
-sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir="${const_STORAGE_MOUNT_POINT}"'|' /etc/minidlna.conf
+sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir="${const_USB_TARGET_MOUNT_POINT}"'|' /etc/minidlna.conf
 sudo sed -i 's/^#friendly_name=.*/friendly_name=little-backup-box/' /etc/minidlna.conf
-sudo sh -c "echo 'media_dir=${const_INTERAL_BACKUP_DIR}' >> /etc/minidlna.conf"
+sudo sh -c "echo 'media_dir=${const_INTERNAL_BACKUP_DIR}' >> /etc/minidlna.conf"
 sudo service minidlna start
 
 # add user www-data to sudoers
@@ -301,7 +301,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		;;
 	2)
 			conf_BACKUP_DEFAULT_SOURCE="storage"
-			conf_BACKUP_DEFAULT_TARGET="external"
+			conf_BACKUP_DEFAULT_TARGET="usb_target"
 		;;
 	3)
 			conf_BACKUP_DEFAULT_SOURCE="storage"
@@ -309,7 +309,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		;;
 	4)
 			conf_BACKUP_DEFAULT_SOURCE="camera"
-			conf_BACKUP_DEFAULT_TARGET="external"
+			conf_BACKUP_DEFAULT_TARGET="usb_target"
 		;;
 	5)
 			conf_BACKUP_DEFAULT_SOURCE="camera"
@@ -317,7 +317,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		;;
 	6)
 			conf_BACKUP_DEFAULT_SOURCE="ios"
-			conf_BACKUP_DEFAULT_TARGET="external"
+			conf_BACKUP_DEFAULT_TARGET="usb_target"
 		;;
 	7)
 			conf_BACKUP_DEFAULT_SOURCE="ios"
@@ -352,7 +352,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		;;
 	2)
 			conf_BACKUP_DEFAULT_SOURCE2="storage"
-			conf_BACKUP_DEFAULT_TARGET2="external"
+			conf_BACKUP_DEFAULT_TARGET2="usb_target"
 		;;
 	3)
 			conf_BACKUP_DEFAULT_SOURCE2="storage"
@@ -360,7 +360,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		;;
 	4)
 			conf_BACKUP_DEFAULT_SOURCE2="camera"
-			conf_BACKUP_DEFAULT_TARGET2="external"
+			conf_BACKUP_DEFAULT_TARGET2="usb_target"
 		;;
 	5)
 			conf_BACKUP_DEFAULT_SOURCE2="camera"
@@ -368,7 +368,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		;;
 	6)
 			conf_BACKUP_DEFAULT_SOURCE2="ios"
-			conf_BACKUP_DEFAULT_TARGET2="external"
+			conf_BACKUP_DEFAULT_TARGET2="usb_target"
 		;;
 	7)
 			conf_BACKUP_DEFAULT_SOURCE2="ios"
@@ -470,7 +470,7 @@ sudo sh -c "echo 'guest account = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
 sudo sh -c "echo '' >> /etc/samba/smb.conf"
 sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
 
-DIRECTORIES=("${const_SOURCE_MOUNT_POINT}" "${const_STORAGE_MOUNT_POINT}" "${const_INTERAL_BACKUP_DIR}" "${const_IOS_MOUNT_POINT}")
+DIRECTORIES=("${const_USB_SOURCE_MOUNT_POINT}" "${const_USB_TARGET_MOUNT_POINT}" "${const_INTERNAL_BACKUP_DIR}" "${const_IOS_MOUNT_POINT}")
 for DIRECTORY in "${DIRECTORIES[@]}"; do
     PATHNAME=$(basename ${DIRECTORY})
 

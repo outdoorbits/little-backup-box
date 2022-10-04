@@ -39,22 +39,22 @@
 	<form class="text-center" style="margin-top: 1em;" method="POST">
 		<div class="card">
 			<div class='backupsection'>
-				<button name="backup_storage_external" class="usb"><?php echo L::main_source_button . L::right_arrow . L::main_external_button; ?></button>
-				<button name="backup_storage_internal" class="usb"><?php echo L::main_source_button . L::right_arrow . L::main_internal_button; ?></button>
-				<button name="backup_internal_external" class="usb"><?php echo L::main_internal_button . L::right_arrow . L::main_external_button; ?></button>
+				<button name="backup_usb_usb" class="usb"><?php echo L::main_usb_button . L::right_arrow . L::main_usb_button; ?></button>
+				<button name="backup_usb_internal" class="usb"><?php echo L::main_usb_button . L::right_arrow . L::main_internal_button; ?></button>
+				<button name="backup_internal_usb" class="usb"><?php echo L::main_internal_button . L::right_arrow . L::main_usb_button; ?></button>
 			</div>
 			<div class='backupsection'>
-				<button name="backup_camera_external" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_external_button; ?></button>
+				<button name="backup_camera_usb" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_usb_button; ?></button>
 				<button name="backup_camera_internal" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_internal_button; ?></button>
 			</div>
 			<div class='backupsection'>
-				<button name="backup_ios_external" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_external_button; ?></button>
+				<button name="backup_ios_usb" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_usb_button; ?></button>
 				<button name="backup_ios_internal" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_internal_button; ?></button>
 			</div>
 			<?php
 				if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_conf_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
 					echo "<div class='backupsection'>";
-						echo "<button name=\"backup_external_server\" class=\"cloud\">" . L::main_external_button . L::right_arrow . L::main_rsync_button ."</button>";
+						echo "<button name=\"backup_usb_server\" class=\"cloud\">" . L::main_usb_button . L::right_arrow . L::main_rsync_button ."</button>";
 						echo "<button name=\"backup_internal_server\" class=\"cloud\">" . L::main_internal_button . L::right_arrow . L::main_rsync_button ."</button>";
 					echo "</div>";
 				}
@@ -64,7 +64,7 @@
 
 				foreach($CloudServices as $CloudService) {
 					echo "<div class='backupsection'>";
-						echo "<button name=\"backup_external_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_external_button . L::right_arrow ." " . $CloudService . "</button>";
+						echo "<button name=\"backup_usb_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_usb_button . L::right_arrow ." " . $CloudService . "</button>";
 						echo "<button name=\"backup_internal_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_internal_button . L::right_arrow ." " . $CloudService . "</button>";
 					echo "</div>";
 				}
@@ -97,59 +97,59 @@
 	exec("mkdir -p tmp");
 	exec("sudo chown www-data:www-data ./tmp -R");
 
-	if (isset($_POST['backup_storage_external'])) {
+	if (isset($_POST['backup_usb_usb'])) {
 		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh storage external > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_source_button . " " . L::main_backup_to . " " . L::main_external_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		exec("sudo ./backup.sh usb usb > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_usb_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	if (isset($_POST['backup_storage_internal'])) {
+	if (isset($_POST['backup_usb_internal'])) {
 		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh storage internal > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_source_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		exec("sudo ./backup.sh usb internal > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_usb_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	if (isset($_POST['backup_internal_external'])) {
+	if (isset($_POST['backup_internal_usb'])) {
 		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh internal external > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_internal_button . " " . L::main_backup_to . " " . L::main_external_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		exec("sudo ./backup.sh internal usb > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_internal_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	if (isset($_POST['backup_camera_external'])) {
+	if (isset($_POST['backup_camera_usb'])) {
 		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh camera external > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_camera_button . " " . L::main_backup_to . " " . L::main_external_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		exec("sudo ./backup.sh camera usb > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_camera_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_camera_internal'])) {
 		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh camera internal > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_camera_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	if (isset($_POST['backup_ios_external'])) {
+	if (isset($_POST['backup_ios_usb'])) {
 		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh ios external > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_ios_button . " " . L::main_backup_to . " " . L::main_external_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		exec("sudo ./backup.sh ios usb > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_ios_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_ios_internal'])) {
 		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh ios internal > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_ios_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	if (isset($_POST['backup_external_server'])) {
+	if (isset($_POST['backup_usb_server'])) {
 		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh storage rsyncserver > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_external_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		exec("sudo ./backup.sh usb rsyncserver > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_usb_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 	if (isset($_POST['backup_internal_server'])) {
 		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh internal rsyncserver > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_internal_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	foreach (['external','internal'] as $Source) {
+	foreach (['usb','internal'] as $Source) {
 		foreach ($CloudServices as $CloudService) {
 			if (isset($_POST['backup_' . $Source . '_cloud_' . $CloudService])) {
 				exec('sudo pkill -f "backup*"');
-				$SourceDevice=$Source === "external"?"storage":"internal";
+				$SourceDevice=$Source === "usb"?"usb":"internal";
 				exec("sudo ./backup.sh " . $SourceDevice . " cloud_" . $CloudService . " > /dev/null 2>&1 & echo $!");
 
-				popup(L::main_backup_backup . " " . ($Source=="external"?L::main_external_button:L::main_internal_button) . " " . L::main_backup_to . " " . L::main_cloudservice . " " . $CloudService . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+				popup(L::main_backup_backup . " " . ($Source=="usb"?L::main_usb_button:L::main_internal_button) . " " . L::main_backup_to . " " . L::main_cloudservice . " " . $CloudService . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 			}
 		}
 	}
@@ -157,6 +157,7 @@
 		popup(L::main_stopbackup_m,$config["conf_POPUP_MESSAGES"]);
 
 		exec('sudo pkill -f "backup*"');
+		exec('sudo ./lib-lcd-helper.sh "' . L::main_backup_break1 . '" "' . L::main_backup_break2 . '" "+" "+" "+"');
 	}
 	if (isset($_POST['reboot'])) {
 		popup(L::main_reboot_m,$config["conf_POPUP_MESSAGES"]);

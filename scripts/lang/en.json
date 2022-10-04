@@ -12,8 +12,6 @@
     "backup": {
       "primary": "Primary backup",
       "secondary": "Secondary backup",
-      "mode_storage": "Ext. storage",
-      "mode_external": "Ext. storage",
       "mode_internal": "Int. storage",
       "mode_camera": "Camera",
       "mode_ios": "iOS",
@@ -22,15 +20,12 @@
       "storage_size": "size",
       "storage_used": "used",
       "storage_free": "free",
-      "insert_storage_1": "Ready",
-      "insert_storage_2": "Insert storage",
       "invalid_mode_combination_1": "Invalid",
       "invalid_mode_combination_2": "mode",
       "invalid_mode_combination_3": "combination",
       "no_valid_source_mode_1": "No valid",
       "no_valid_source_mode_2": "source",
       "no_valid_source_mode_3": "mode defined",
-      "ext_storage_ok": "Ext. storage o.k.",
       "int_storage_ok": "Int. storage o.k.",
       "waiting_for_cloud_1": "Ready",
       "waiting_for_cloud_2": "Waiting for Cloud",
@@ -39,7 +34,6 @@
       "no_valid_destination_mode_3": "mode defined",
       "insert_source_1": "Ready",
       "insert_source_2": "Insert source",
-      "source_ok": "Source o.k.",
       "working": "Working",
       "connect_ios_1": "Ready",
       "connect_ios_2": "iOS device",
@@ -76,15 +70,20 @@
       "time_remaining": "Time",
       "mount": "mounting",
       "umount": "unmounting",
-      "usb_storage": "USB-storage",
-      "usb_source": "USB-source",
       "usb_ios": "USB iOS",
       "result_suspect": "Success unclear.",
       "files_copied": "files copied",
-      "generating_thumbnails_finding_images2": "Counting images",
+      "generating_thumbnails_finding_images2": "Counting images.",
       "generating_thumbnails_finding_images1": "Thumbnails",
-      "generating_thumbnails_finding_images3": "can take a while...",
-      "generating_thumbnails": "Gen. thumbnails"
+      "generating_thumbnails_finding_images3": "Just a moment...",
+      "generating_thumbnails": "Gen. thumbnails",
+      "insert_target_1": "Ready",
+      "insert_target_2": "Insert USB-target",
+      "usb_target_ok": "Target o.k.",
+      "mode_usb": "USB storage",
+      "usb_source_ok": "Source o.k.",
+      "usb_1": "USB-target",
+      "usb_2": "USB-source"
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -101,10 +100,10 @@
       "offline": "offline",
       "mail": {
         "main": "web UI",
-        "desription_https": "https (secure, certificate cannot be verified automatically, please confirm it)",
         "desription_http": "http (insecure)",
         "open_samba": "Open in file manager (Samba / Windows)",
-        "info": "Little Backup Box Info"
+        "info": "Little Backup Box Info",
+        "description_https": "https (secure, certificate cannot be verified automatically, please confirm it)"
       }
     },
     "cmd": {
@@ -130,8 +129,6 @@
     "mejiro": "Mejiro"
   },
   "main": {
-    "source_button": "source",
-    "external_button": "ext. storage",
     "internal_button": "int. storage",
     "camera_button": "camera",
     "ios_button": "iOS",
@@ -146,7 +143,10 @@
     "stopbackup_m": "Stopping backup.",
     "reboot_m": "Little Backup Box reboots. Refresh this page in a few moments.",
     "shutdown_m": "Little Backup Box is powered off. You can close this page.",
-    "help_txt": "<p class='text-center'>Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p>"
+    "help_txt": "<p class='text-center'>Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p>",
+    "usb_button": "USB storage",
+    "backup_break1": "Backup",
+    "backup_break2": "aborted."
   },
   "sysinfo": {
     "sysinfo": "System info",
@@ -195,12 +195,8 @@
     "backup_header2": "Default secondary backup mode",
     "backup_label2": "Select a secondary default backup-mode to run after the primary:",
     "backup_none": "no automatic backup",
-    "backup_storage_external": "Source storage to external storage",
-    "backup_storage_internal": "Source storage to internal storage",
-    "backup_camera_external": "Camera to external storage",
-    "backup_camera_internal": "Camera to internal storage",
-    "backup_ios_external": "iOS to external storage",
-    "backup_ios_internal": "iOS to internal storage",
+    "backup_camera_internal": "Camera &rarr; internal storage",
+    "backup_ios_internal": "iOS &rarr; internal storage",
     "backup_camera_folder_mask_header": "Directories to be backed up on smartphones and cameras",
     "backup_camera_folder_mask_label": "Here you can specify which directories are to be backed up by which cameras or smartphones. <br>\nEntries here have the form: <br>\n&quot; CAMERA: PATH &quot; <br>\nThe name of a connected camera can be found on the &quot; System &quot; page under &quot; Camera / Smartphone &quot ;. <br>\nIf an instruction is to apply to all cameras, &quot; * &quot; (without further additions) can be used as a joker for all devices. <br>\nThe path does not have to be specified in full. It is enough to use a unique part of it. <br>\nExamples: <br>\n&quot;*:DCIM &quot; (all cameras: all folders that contain &quot; DCIM &quot;) <br>\n&quot;*:DCIM; MyCamera: IMAGES &quot; (also from the &quot; MyCamera &quot; camera: all folders containing &quot; IMAGES &quot;) <br>\n&quot;&quot; (Field remains empty: Back up all folders of all cameras.) <br>\n<br>\nInstead of searching for a pattern, absolute paths can also be specified. These must always be marked with &quot;! / &quot; start:\n&quot;MyCamera:!/store_00020002/DCIM&quot; <br>\nAs soon as an absolute folder applies to a camera, there is no longer a search for a pattern for it. This saves time.\nMore information at <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
     "backup_power_off_header": "Power off",
@@ -291,7 +287,11 @@
       "generate_thumbnails_label": "Create thumbnails for mejiro after backup? (Local storages only)"
     },
     "disp_black_on_power_off_header": "Display off when shutting down",
-    "disp_black_on_power_off_label": "Do you want the display to turn off on shutdown?"
+    "disp_black_on_power_off_label": "Do you want the display to turn off on shutdown?",
+    "backup_usb_usb": "USB-source-storage &rarr; USB-target-storage",
+    "backup_usb_internal": "USB-source storage &rarr; internal storage",
+    "backup_camera_usb": "Camera &rarr; USB-target-storage",
+    "backup_ios_usb": "iOS &rarr; USB-storage"
   },
   "tools": {
     "tools": "Tools",

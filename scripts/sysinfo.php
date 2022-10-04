@@ -35,13 +35,13 @@
 	<div class="card">
 		<?php
 		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
-		$temp = round($temp / 1000, 1);
+		$temp = round((float) $temp / 1000, 1);
 
-		$cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
+		$cpuusage = 100 - (float) shell_exec("vmstat | tail -1 | awk '{print $15}'");
 
 		$mem_ram_frac = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
 		$mem_ram_all = shell_exec("free | grep Mem | awk '{print $2 / 1024}'");
-		$mem_ram = round($mem_ram_frac, 1) . " % * " . round($mem_ram_all) . " MB";
+		$mem_ram = round((float) $mem_ram_frac, 1) . " % * " . round((float) $mem_ram_all) . " MB";
 
 		$mem_swap_frac = shell_exec("free | grep Swap | awk '{print $3/$2 * 100.0}'");
 		$mem_swap_all = shell_exec("free | grep Swap | awk '{print $2 / 1024}'");

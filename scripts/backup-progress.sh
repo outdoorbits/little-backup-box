@@ -34,12 +34,12 @@
 # $FILES_TO_SYNC
 # $SYNC_START_TIME
 # $BACKUP_PATH
-# $DEST_MODE
+# $TARGET_MODE
 # $CLOUDSERVICE
 
 # Parameters
 SOURCE_MODE="${1}"
-DEST_MODE="${2}"
+TARGET_MODE="${2}"
 
 # Definitions
 TIME_RUN=0
@@ -50,12 +50,12 @@ TIME_RUN=0
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
 
-# Count of files in storage before backup starts
+# Count of files in target before backup starts
 ## ANALOGOUS TO BACKUP.SH ##
-if [ "${DEST_MODE}" = "rsyncserver" ]; then
+if [ "${TARGET_MODE}" = "rsyncserver" ]; then
 	FILES_TO_TRANSFER_START=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 else
-	FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
+	FILES_COUNT_TARGET_START=$(find $BACKUP_PATH -type f | wc -l)
 fi
 ## ANALOGOUS TO BACKUP.SH ##
 
@@ -64,12 +64,12 @@ while [ true ]; do
 	# Count files in the backup destination
 	# Calculate the number of files to be transferred
 
-	if [ "${DEST_MODE}" = "rsyncserver" ]; then
+	if [ "${TARGET_MODE}" = "rsyncserver" ]; then
 		FILES_TO_TRANSFER=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 		FILES_SYNCED=$(expr $FILES_TO_TRANSFER_START - $FILES_TO_TRANSFER)
 	else
-		FILES_COUNT_STORAGE=$(find $BACKUP_PATH -type f | wc -l)
-		FILES_SYNCED=$(expr $FILES_COUNT_STORAGE - $FILES_COUNT_STORAGE_START)
+		FILES_COUNT_TARGET=$(find $BACKUP_PATH -type f | wc -l)
+		FILES_SYNCED=$(expr $FILES_COUNT_TARGET - $FILES_COUNT_TARGET_START)
 	fi
 
 	if [ "${FILES_TO_SYNC}" -gt "0" ]; then
@@ -99,11 +99,11 @@ while [ true ]; do
 
 	DURATION="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
 
-	lcd_message "+$(l "box_backup_mode_${SOURCE_MODE}")" "+ > $(l "box_backup_mode_${DEST_MODE}") ${CLOUDSERVICE}" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${DURATION}" "+PGBAR:${FINISHED_PERCENT}"
+	lcd_message "+$(l "box_backup_mode_${SOURCE_MODE}")" "+ > $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}" "+${FILES_SYNCED} $(l 'box_backup_of') ${FILES_TO_SYNC}" "+${DURATION}" "+PGBAR:${FINISHED_PERCENT}"
 
 	# display-frequency depends on destination, slower for cloud-storage
 	INTERVAL_SEC=4
-	if [[ " external internal " =~ " ${DEST_MODE} " ]]; then
+	if [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 		INTERVAL_SEC=2
 	fi
 	sleep "${INTERVAL_SEC}"
