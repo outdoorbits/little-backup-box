@@ -27,7 +27,7 @@ Software that turns a single-board computer into a versatile and pocketable back
 	<table align="right"><tr><td>
 		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
 	</td></tr><tr><td>
-		<figcaption>The display while a backup from camera to usb and from usb to rsync-server.</figcaption>
+		<figcaption>The display while a backup<br>from camera to usb and<br>from usb to rsync-server.</figcaption>
 	</td></tr></table>
 </figure>
 
