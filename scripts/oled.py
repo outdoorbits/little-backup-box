@@ -139,6 +139,9 @@ else:
 
 		y_shift	+= 1
 
+# save image
+#image.save("/media/internal/{}.gif".format(time.time()))
+
 # Display image.
 disp.image(image)
 disp.show()
