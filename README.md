@@ -22,10 +22,12 @@ Software that turns a single-board computer into a versatile and pocketable back
 	<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">menue based update-function</a>.</li>
 	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
 </ul>
+
 <figure>
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
+	<img style="border:5px solid black;" src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
 	<figcaption>The display while a backup from camera to usb and from usb to rsync-server.</figcaption>
 </figure>
+
 <h3>Some major developement-steps:</h3>
 <ul>
 	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
