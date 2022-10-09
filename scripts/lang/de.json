@@ -118,7 +118,7 @@
     "password_as_set_in": "wie eingestellt in",
     "cloud_rclone_gui": "rclone GUI",
     "update_section": "Update",
-    "update_text": "<h3>Update Little Backup Box</h3><p>Achtung:<ul><li>Das Update startet direkt mit dem folgendem Link!</li><li>Das Update kann das System unbrauchbar machen.</li><li>Das Update kann ein erhebliches Downloadvolumen und damit ggf. Kosten verursachen.</li><li>Das Update kann je nach Internetgeschwindigkeit mehrere Minuten oder länger dauern.</li></ul><br>Führen Sie das Update nur durch, wenn Sie ...<ul><li>notfalls auch die Möglichkeit hätten, eine Neuinstallation durchführen</li><li>eine stabile Internetverbindung haben</li><li>eine stabile Stromversorgung haben</li></ul></p>",
+    "update_text": "<h3>Update Little Backup Box</h3><p>Achtung:<ul><li>Das Update kann das System unbrauchbar machen.</li><li>Das Update kann ein erhebliches Downloadvolumen und damit ggf. Kosten verursachen.</li><li>Das Update kann je nach Internetgeschwindigkeit mehrere Minuten oder länger dauern.</li></ul><br>Führen Sie das Update nur durch, wenn Sie ...<ul><li>notfalls auch die Möglichkeit hätten, eine Neuinstallation durchführen</li><li>eine stabile Internetverbindung haben</li><li>eine stabile Stromversorgung haben</li></ul></p>",
     "save_settings_download_link_text": "Einstellungen herunterladen",
     "save_settings_download_text": "Zip-Archiv mit Einstellungen herunterladen",
     "save_settings_section": "Download / Upload der Einstellungen",
