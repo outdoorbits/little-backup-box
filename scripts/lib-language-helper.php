@@ -10,10 +10,8 @@
 	#get argument (translation-key)
 	$key="$argv[1]";
 
-	require_once 'i18n.class.php';
-	$i18n = new i18n($WORKING_DIR . '/lang/{LANGUAGE}.json', 'cache/', 'en');
-	if ($config["conf_LANGUAGE"] !== "") {$i18n->setForcedLang($config["conf_LANGUAGE"]);}
-	$i18n->init();
+	require_once 'i18n.class.helper.php';
+	$i18n = i18n_setup($config);
 
 	if ($text=L::$key()) {
 		echo $text;

@@ -7,7 +7,8 @@ Software that turns a single-board computer into a versatile and pocketable back
 
 <h2>NEWS</h2>
 <ul>
-	<li>2022/10/03: If checked in settings, thumbnails will be generated after backup..</li>
+	<li>2022/10/09: Rework of the progress-monitoring to save traffic and increase speed.</li>
+	<li>2022/10/03: If checked in settings, thumbnails will be generated after backup.</li>
 	<li>2022/10/03: If checked in settings, the LCD display will be turned off before shutdown.</li>
 	<li>2022/10/01: The Wifi country code can now be set in the settings.</li>
 	<li>2022/09/24: A disk formatting function has been added to the tools.</li>

@@ -125,16 +125,16 @@ log_message "Source: ${SOURCE_MODE}"
 log_message "Destination: ${TARGET_MODE} ${CLOUDSERVICE}"
 
 function calculate_files_to_sync() {
-	#sets $FILES_TO_SYNC
+	local FILES_TO_SYNC=0
 
 	# To define a new method, add an elif block (example below)
 
 	if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
 		# Source usb ios internal
 		if [ ${TARGET_MODE} = "rsyncserver" ]; then
-			FILES_TO_SYNC=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+			FILES_TO_SYNC=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 		else
-			FILES_TO_SYNC=$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+			FILES_TO_SYNC=$(sudo rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 		fi
 
 	#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
@@ -173,6 +173,104 @@ function calculate_files_to_sync() {
 	if [ -z "${FILES_TO_SYNC}" ]; then
 		FILES_TO_SYNC="0"
 	fi
+
+	echo "${FILES_TO_SYNC}"
+}
+
+function syncprogress() {
+	local MODE="${1}"
+
+	local SPEED=""
+	local START_TIME=$(date +%s)
+	local TIME_RUN=0
+	local TIME_REMAINING=0
+	local TIME_REMAINING_FORMATED=""
+	local DAYS_LEFT=0
+
+	# define LCD1: source, LCD2: target
+
+	local LCD1="$(l "box_backup_mode_${SOURCE_MODE}")" # header1
+	local LCD2=" > $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}" # header2
+	local LCD3="" # filescount, speed
+	local LCD4="" # time remaining
+	local LCD5="" # progressbar
+
+	local LAST_MESSAGE_TIME=0
+	local FILESCOUNT=0
+	local FINISHED_PERCENT="?"
+	local FILENAME=""
+
+	touch "${const_LOGFILE_SYNC}"
+
+	while read PIPE; do
+		NEW_MESSAGE=false
+
+		if [ "${MODE}" = "rsync" ]; then
+			PIPE="$(echo "${PIPE}" | tr -cd '[:alnum:]\/\%\ ._-' | sed 's/   */ /g')"
+			if [ "${PIPE:0:1}" = " " ] && [ ! -z "${FILENAME}" ]; then
+				FILESCOUNT=$((FILESCOUNT+1))
+				SPEED="$(echo "${PIPE}" | cut -d ' ' -f4)"
+				if [ "${SPEED}" = "0.00kB/s" ]; then
+					SPEED=""
+				else
+					SPEED=", ${SPEED}"
+				fi
+				LCD3="${FILESCOUNT} $(l 'box_backup_of') ${FILES_TO_SYNC}${SPEED}"
+
+				NEW_MESSAGE=true
+			else
+				FILENAME="$PIPE"
+			fi
+
+		elif [ "${MODE}" = "gphoto2" ]; then
+			if [ "${PIPE:0:1}" = "#" ]; then
+				FILESCOUNT=$((FILESCOUNT+1))
+				LCD3="${FILESCOUNT} $(l 'box_backup_of') ${FILES_TO_SYNC}"
+
+				echo "${PIPE}" | tee -a "${const_LOGFILE_SYNC}"
+
+				NEW_MESSAGE=true
+			fi
+		fi
+
+		# calculte remaining time
+		if [ "${FILESCOUNT}" -gt "0" ]; then
+			TIME_RUN=$(echo "$(date +%s) - ${START_TIME}" | bc)
+			TIME_REMAINING=$(echo "${TIME_RUN} * ( ${FILES_TO_SYNC} - ${FILESCOUNT} ) / ${FILESCOUNT}" | bc)
+			TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
+			DAYS_LEFT=$((TIME_REMAINING/86400))
+			if [ "${DAYS_LEFT}" -gt "0" ]; then
+				TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
+			fi
+		else
+			FILESCOUNT="0"
+			TIME_REMAINING_FORMATED="?"
+		fi
+
+		LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+
+		# calculate progress
+		if [ "${FILES_TO_SYNC}" -gt "0" ]; then
+			if [ "${FILESCOUNT}" -gt "0" ]; then
+				FINISHED_PERCENT=$(echo "scale=1; 100 * ${FILESCOUNT} / ${FILES_TO_SYNC}" | bc)
+				LCD5="PGBAR:${FINISHED_PERCENT}"
+			else
+				LCD5="$(l 'box_backup_checking_old_files')..."
+			fi
+		else
+			FINISHED_PERCENT="?"
+			LCD5="PGBAR:0"
+		fi
+		if [ ${NEW_MESSAGE} = true ]; then
+			if [ $(($(date +%s) - ${LAST_MESSAGE_TIME})) -ge 1 ] || [ "${FINISHED_PERCENT}" = "100.0" ]; then
+				lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
+				if [ "${FINISHED_PERCENT}" = "100.0" ]; then
+					sleep 2
+				fi
+				LAST_MESSAGE_TIME=$(date +%s)
+			fi
+		fi
+	done
 
 }
 
@@ -401,11 +499,19 @@ function calculate_files_to_sync() {
 		CAMERA=$(sudo gphoto2 --summary | grep "Model" | cut -d: -f2 | tr -d '[:space:]')
 		CAMERA=${CAMERA//[^a-zA-Z0-9-_\.]/_}
 
-		lcd_message "${CAMERA}"
-		log_message "Camera: ${CAMERA}" 1
+		MANUFACTURER=$(sudo gphoto2 --summary | grep "Manufacturer" | cut -d: -f2 | tr -d '[:space:]')
+		MANUFACTURER=${MANUFACTURER//[^a-zA-Z0-9-_\.]/_}
 
 		CAMERA_SERIAL=$(sudo gphoto2 --summary | grep "Serial Number" | cut -d: -f2 | tr -d '[:space:]')
 		CAMERA_SERIAL=${CAMERA_SERIAL//[^a-zA-Z0-9-_\.]/_}
+
+		if [ ${#CAMERA_SERIAL} -le 13 ]; then
+			CAMERA_SERIAL_FORMATED="${CAMERA_SERIAL}"
+		else
+			CAMERA_SERIAL_FORMATED="...${CAMERA_SERIAL: -10}"
+		fi
+
+		lcd_message "${CAMERA}" "${MANUFACTURER}" "SN: ${CAMERA_SERIAL_FORMATED}"
 
 		CAMERA_SERIAL_PATH_EXTENSION=""
 		if [ "${CAMERA_SERIAL}" != "" ]; then
@@ -500,19 +606,15 @@ function calculate_files_to_sync() {
 	TRIES_DONE=0
 	SYNC_ERROR="-" # not empty!
 	FILES_TO_SYNC=0
-	SYNC_OUTPUT=""
+	SYNC_LOG=""
 
-	calculate_files_to_sync
+	FILES_TO_SYNC="$(calculate_files_to_sync)"
 	FILES_TO_SYNC_PRE="${FILES_TO_SYNC}"
 
 	# Count of files in usb before backup starts
-	## ANALOGOUS TO BACKUP-PROGRESS.SH ##
-	if [ "${TARGET_MODE}" = "rsyncserver" ]; then
-		FILES_TO_TRANSFER_START=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
-	else
-		FILES_COUNT_STORAGE_START=$(find $BACKUP_PATH -type f | wc -l)
+	if [ "${TARGET_MODE}" != "rsyncserver" ]; then
+		FILES_COUNT_STORAGE_PRE=$(find $BACKUP_PATH -type f | wc -l)
 	fi
-	## ANALOGOUS TO BACKUP-PROGRESS.SH ##
 
 	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; do
 
@@ -520,11 +622,11 @@ function calculate_files_to_sync() {
 
 		TRIES_DONE=$((TRIES_DONE+1))
 
-		if [ ! -z "${SYNC_OUTPUT}" ]; then
-			SYNC_OUTPUT="${SYNC_OUTPUT}\n\n"
+		if [ ! -z "${SYNC_LOG}" ]; then
+			SYNC_LOG="${SYNC_LOG}\n"
 		fi
 
-		SYNC_OUTPUT="${SYNC_OUTPUT}---- $(l 'box_backup_try') ${TRIES_DONE} ----\n"
+		SYNC_LOG="${SYNC_LOG}---- $(l 'box_backup_try') ${TRIES_DONE} ----"
 
 		if [ "${TRIES_DONE}" -gt "1" ]; then
 			lcd_message "$(l 'box_backup_try_backup') ${TRIES_DONE} $(l 'box_backup_of') ${TRIES_MAX}"
@@ -556,17 +658,9 @@ function calculate_files_to_sync() {
 	# CALCULATE NUMBER OF FILES TO BACK UP #
 	########################################
 
-		if [ "${TRIES_DONE}" -gt "1" ]; then
-			calculate_files_to_sync
-		fi
-
 		log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
 		SYNC_START_TIME=$(date +%s)
-
-		# display
-		source "${WORKING_DIR}/backup-progress.sh" "${SOURCE_MODE}" "${TARGET_MODE}" &
-		PID=$!
 
 	##############
 	# RUN BACKUP #
@@ -577,44 +671,46 @@ function calculate_files_to_sync() {
 		# To define a new method, add an elif block (example below)
 
 		SYNC_RETURN_CODE="0"
+
 		if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
 			# If source is usb, internal or ios
 
-			if [ ${TARGET_MODE} = "rsyncserver" ]; then
+			if [ "${TARGET_MODE}" = "rsyncserver" ]; then
 				# to rsyncserver
 				if [ $conf_LOG_SYNC = true ]; then
-					SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --mkpath --no-perms --stats --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/")\n"
-					SYNC_RETURN_CODE=$?
+					sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync"
+					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 					log_pick_file "${const_LOGFILE_SYNC}"
 				else
-					SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --mkpath --no-perms --stats --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/")\n"
-					SYNC_RETURN_CODE=$?
+					sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync"
+					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 				fi
 
 			else
 				# not to rsyncserver
 				sudo mkdir -p "${BACKUP_PATH}"
-
 				if [ $conf_LOG_SYNC = true ]; then
-					SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}")\n"
-					SYNC_RETURN_CODE=$?
+					sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync"
+					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 					log_pick_file "${const_LOGFILE_SYNC}"
 				else
-					SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo rsync -avh --stats --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}"/ "${BACKUP_PATH}")\n"
-					SYNC_RETURN_CODE=$?
+					sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync"
+					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 				fi
-
 			fi
 
-		#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
-		#     then
-		#     if [ $conf_LOG_SYNC = true ]; then
-		#         SYNC_OUTPUT="${SYNC_OUTPUT}$(...)\n"
-		#         SYNC_RETURN_CODE=$?
-		#         log_pick_file "${const_LOGFILE_SYNC}"
-		#     else
-		#         SYNC_OUTPUT="${SYNC_OUTPUT}$(...)\n"
-		#         SYNC_RETURN_CODE=$?
+	#	elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
+	#		if [ $conf_LOG_SYNC = true ]; then
+	#			...)
+	#			SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+	#			SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
+	#			log_pick_file "${const_LOGFILE_SYNC}"
+	#		else
+	#			...)
+	#			SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+	#		fi
 
 		elif [ "${SOURCE_MODE}" = "camera" ]; then
 			# If source is camera
@@ -628,10 +724,12 @@ function calculate_files_to_sync() {
 			do
 				log_message "Backup from camera: ${Camera_Sync_Folder}" 3
 
-				SYNC_OUTPUT="${SYNC_OUTPUT}$(sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}" --skip-existing --list-files)\n"
-				SYNC_RETURN_CODE=$?
-
-				log_message "gphoto2 --filename \"%F/%f.%C\" --get-all-files --folder \"${Camera_Sync_Folder}\"  --skip-existing --list-files:\nexitcode=${SYNC_RETURN_CODE}\n${SYNC_OUTPUT}" 3
+				sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}" --skip-existing --list-files | syncprogress "gphoto2"
+				SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+				if [ $conf_LOG_SYNC = true ]; then
+					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
+				fi
+				log_message "gphoto2 --filename \"%F/%f.%C\" --get-all-files --folder \"${Camera_Sync_Folder}\"  --skip-existing --list-files:\nexitcode=${SYNC_RETURN_CODE}\n" 3
 			done
 
 			cd
@@ -645,13 +743,43 @@ function calculate_files_to_sync() {
 
 		# END BACKUP
 
-		# RE-CALCULATE NUMBER OF FILES TO BACK UP
-		if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
-			calculate_files_to_sync
-			log_message "Files left to sync after backup: ${FILES_TO_SYNC}" 3
-		elif [ "${SOURCE_MODE}" = "camera" ]; then
-			#FILES_TO_SYNC in camera-mode only counts the files at the camera, value is not suitable for completition-check
-			FILES_TO_SYNC="0"
+		# Remove empty files (maybe can result from disconnection of a source-device)
+		if [ "${TARGET_MODE}" != "rsyncserver" ]; then
+			sudo find "${BACKUP_PATH}" -size 0 -delete
+		fi
+
+		# Re-calculate FILES_TO_SYNC
+		if [ "${TARGET_MODE}" = "rsyncserver" ]; then
+			FILES_TO_SYNC_POST="$(calculate_files_to_sync)"
+			if [ "${FILES_TO_SYNC_PRE}" != "" ] && [ "${FILES_TO_SYNC_POST}" != "" ]; then
+				FILES_TO_SYNC=$(($FILES_TO_SYNC_PRE - $FILES_TO_SYNC_POST))
+				TRANSFER_INFO="$(echo "${FILES_TO_SYNC_PRE} - ${FILES_TO_SYNC_POST}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+			else
+				TRANSFER_INFO="$(l "box_backup_result_suspect")."
+				FILES_TO_SYNC=0
+			fi
+		else
+			FILES_COUNT_STORAGE_POST=$(find $BACKUP_PATH -type f | wc -l)
+			if [ "${FILES_COUNT_STORAGE_PRE}" != "" ] && [ "${FILES_COUNT_STORAGE_POST}" != "" ]; then
+				FILES_TO_SYNC=$(($FILES_COUNT_STORAGE_POST - $FILES_COUNT_STORAGE_PRE - $FILES_TO_SYNC))
+				TRANSFER_INFO="$(echo "${FILES_COUNT_STORAGE_POST} - ${FILES_COUNT_STORAGE_PRE}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+			else
+				TRANSFER_INFO="$(l "box_backup_result_suspect")."
+				FILES_TO_SYNC=0
+			fi
+		fi
+
+		if [ "${FILES_TO_SYNC}" -gt "0" ]; then
+			SYNC_ERROR="${SYNC_ERROR} Files missing!"
+			log_message "Files missing: ${FILES_TO_SYNC} files not synced."
+			log_exec "Files missing" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
+			log_message "$(get_abnormal_system_conditions)" 1
+		fi
+
+		if [ "${SYNC_RETURN_CODE}" != "0" ]; then
+			SYNC_ERROR="${SYNC_ERROR} Exception"
+			log_message "Exception: ${SYNC_RETURN_CODE}"
+			log_message "$(get_abnormal_system_conditions)" 1
 		fi
 
 		# Check for lost devices
@@ -669,29 +797,6 @@ function calculate_files_to_sync() {
 			fi
 		done
 
-		if [ "${FILES_TO_SYNC}" -gt "0" ]; then
-			SYNC_ERROR="${SYNC_ERROR} Files missing!"
-			log_message "Files missing: ${FILES_TO_SYNC} files not synced."
-			sleep 2
-			log_exec "Files missing" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
-			log_message "$(get_abnormal_system_conditions)" 1
-		fi
-
-		if [ "${SYNC_RETURN_CODE}" != "0" ]; then
-			SYNC_ERROR="${SYNC_ERROR} Exception"
-			log_message "Exception: ${SYNC_RETURN_CODE}"
-			sleep 2
-			log_message "$(get_abnormal_system_conditions)" 1
-		fi
-
-		# Keep progress on display after finish
-		if [ "${conf_DISP}" = "true" ]; then
-			sleep 5
-		fi
-
-		# Kill the backup-progress.sh script
-		kill $PID
-
 		# Controller- overheating-error?
 		SYNC_TIME=$(($SYNC_STOP_TIME - $SYNC_START_TIME))
 		log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}; SYNC_TIME: ${SYNC_TIME}" 3
@@ -702,25 +807,6 @@ function calculate_files_to_sync() {
 		fi
 
 	done # retry
-
-# Count of files in usb after backup
-	## ANALOGOUS TO BACKUP-PROGRESS.SH ##
-	if [ "${TARGET_MODE}" = "rsyncserver" ]; then
-		FILES_TO_TRANSFER_STOP=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
-		if [ "${FILES_TO_TRANSFER_START}" != "" ] && [ "${FILES_TO_TRANSFER_STOP}" != "" ]; then
-			TRANSFER_INFO="$(echo "${FILES_TO_TRANSFER_START} - ${FILES_TO_TRANSFER_STOP}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
-		else
-			TRANSFER_INFO="$(l "box_backup_result_suspect")."
-		fi
-	else
-		FILES_COUNT_STORAGE_STOP=$(find $BACKUP_PATH -type f | wc -l)
-		if [ "${FILES_COUNT_STORAGE_START}" != "" ] && [ "${FILES_COUNT_STORAGE_STOP}" != "" ]; then
-			TRANSFER_INFO="$(echo "${FILES_COUNT_STORAGE_STOP} - ${FILES_COUNT_STORAGE_START}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
-		else
-			TRANSFER_INFO="$(l "box_backup_result_suspect")."
-		fi
-	fi
-	## ANALOGOUS TO BACKUP-PROGRESS.SH ##
 
 # prepare message for mail and power off
 	MESSAGE_MAIL=""
@@ -762,7 +848,7 @@ function calculate_files_to_sync() {
 			BODY_MSG=""
 		fi
 
-		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n\n${SYNC_OUTPUT}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n${SYNC_LOG}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 	fi
 
 # generate thumbnails
