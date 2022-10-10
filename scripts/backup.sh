@@ -180,6 +180,8 @@ function calculate_files_to_sync() {
 function syncprogress() {
 	local MODE="${1}"
 
+# 	local TIMER_START=$(date +%s)
+
 	local SPEED=""
 	local START_TIME=$(date +%s)
 	local TIME_RUN=0
@@ -191,35 +193,44 @@ function syncprogress() {
 
 	local LCD1="$(l "box_backup_mode_${SOURCE_MODE}")" # header1
 	local LCD2=" > $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}" # header2
-	local LCD3="" # filescount, speed
-	local LCD4="" # time remaining
-	local LCD5="" # progressbar
+	local LCD3="0 $(l 'box_backup_of') ${FILES_TO_SYNC}" # filescount, speed
+	local LCD4="?" # time remaining
+	local LCD5="PGBAR:0" # progressbar
+
+	# start screen
+	lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 
 	local LAST_MESSAGE_TIME=0
 	local FILESCOUNT=0
 	local FINISHED_PERCENT="?"
 	local FILENAME=""
 
-	touch "${const_LOGFILE_SYNC}"
+	if [ "${MODE}" = "gphoto2" ]; then
+		touch "${const_LOGFILE_SYNC}"
+	fi
 
 	while read PIPE; do
 		NEW_MESSAGE=false
 
 		if [ "${MODE}" = "rsync" ]; then
 			PIPE="$(echo "${PIPE}" | tr -cd '[:alnum:]\/\%\ ._-' | sed 's/   */ /g')"
-			if [ "${PIPE:0:1}" = " " ] && [ ! -z "${FILENAME}" ]; then
-				FILESCOUNT=$((FILESCOUNT+1))
-				SPEED="$(echo "${PIPE}" | cut -d ' ' -f4)"
-				if [ "${SPEED}" = "0.00kB/s" ]; then
-					SPEED=""
-				else
-					SPEED=", ${SPEED}"
-				fi
-				LCD3="${FILESCOUNT} $(l 'box_backup_of') ${FILES_TO_SYNC}${SPEED}"
+			if  [ "${PIPE:0:1}" = " " ] && [ ! -z "${FILENAME}" ]; then
+				if [ -f "${BACKUP_PATH}/$FILENAME" ]; then
+					FILESCOUNT=$((FILESCOUNT+1))
+					SPEED="$(echo "${PIPE}" | cut -d ' ' -f4)"
+					if [ "${SPEED}" = "0.00kB/s" ]; then
+						SPEED=""
+					else
+						SPEED=", ${SPEED}"
+					fi
+					LCD3="${FILESCOUNT} $(l 'box_backup_of') ${FILES_TO_SYNC}${SPEED}"
 
-				NEW_MESSAGE=true
-			else
-				FILENAME="$PIPE"
+					FILENAME=""
+
+					NEW_MESSAGE=true
+				fi
+			elif  [ "${PIPE:0:1}" != " " ]; then
+				FILENAME="${PIPE}";
 			fi
 
 		elif [ "${MODE}" = "gphoto2" ]; then
@@ -261,17 +272,19 @@ function syncprogress() {
 			FINISHED_PERCENT="?"
 			LCD5="PGBAR:0"
 		fi
+
 		if [ ${NEW_MESSAGE} = true ]; then
 			if [ $(($(date +%s) - ${LAST_MESSAGE_TIME})) -ge 1 ] || [ "${FINISHED_PERCENT}" = "100.0" ]; then
 				lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
-				if [ "${FINISHED_PERCENT}" = "100.0" ]; then
-					sleep 2
-				fi
 				LAST_MESSAGE_TIME=$(date +%s)
 			fi
 		fi
 	done
 
+	# hold final screen
+	sleep 2
+
+# 	log_message "Backup-time: $(echo "$(date +%s) - ${TIMER_START}" | bc) seconds" 3
 }
 
 # Set the ACT LED to heartbeat
