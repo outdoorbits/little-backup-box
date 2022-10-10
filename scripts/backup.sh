@@ -194,7 +194,7 @@ function syncprogress() {
 	local LCD1="$(l "box_backup_mode_${SOURCE_MODE}")" # header1
 	local LCD2=" > $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}" # header2
 	local LCD3="0 $(l 'box_backup_of') ${FILES_TO_SYNC}" # filescount, speed
-	local LCD4="?" # time remaining
+	local LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
 	local LCD5="PGBAR:0" # progressbar
 
 	# start screen
