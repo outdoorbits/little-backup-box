@@ -215,7 +215,7 @@ function syncprogress() {
 		if [ "${MODE}" = "rsync" ]; then
 			PIPE="$(echo "${PIPE}" | tr -cd '[:alnum:]\/\%\ ._-' | sed 's/   */ /g')"
 			if  [ "${PIPE:0:1}" = " " ] && [ ! -z "${FILENAME}" ]; then
-				if [ -f "${BACKUP_PATH}/$FILENAME" ]; then
+				if [ -f "${SOURCE_PATH}/${FILENAME}" ]; then
 					FILESCOUNT=$((FILESCOUNT+1))
 					SPEED="$(echo "${PIPE}" | cut -d ' ' -f4)"
 					if [ "${SPEED}" = "0.00kB/s" ]; then
@@ -238,9 +238,8 @@ function syncprogress() {
 				FILESCOUNT=$((FILESCOUNT+1))
 				LCD3="${FILESCOUNT} $(l 'box_backup_of') ${FILES_TO_SYNC}"
 
-				echo "${PIPE}" | tee -a "${const_LOGFILE_SYNC}"
-
 				NEW_MESSAGE=true
+				echo "${PIPE}" | tee -a "${const_LOGFILE_SYNC}"
 			fi
 		fi
 
@@ -281,7 +280,8 @@ function syncprogress() {
 		fi
 	done
 
-	# hold final screen
+	# force to display and hold final screen
+	lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 	sleep 2
 
 # 	log_message "Backup-time: $(echo "$(date +%s) - ${TIMER_START}" | bc) seconds" 3
