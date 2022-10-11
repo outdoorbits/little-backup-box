@@ -189,7 +189,6 @@ function syncprogress() {
 	local TIME_REMAINING_FORMATED=""
 	local DAYS_LEFT=0
 
-	# define LCD1: source, LCD2: target
 	local LCD1="$(l "box_backup_mode_${SOURCE_MODE}")" # header1
 	local LCD2=" > $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}" # header2
 	local LCD3="0 $(l 'box_backup_of') ${FILES_TO_SYNC}" # filescount, speed
@@ -877,7 +876,6 @@ function syncprogress() {
 			LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
 			i=0
 
-			# define LCD1: source, LCD2: target
 			LCD1="$(l "box_backup_generating_thumbnails")" # header1
 			LCD2="$(l "box_backup_mode_${THUMBNAIL_MODE}")" # header2
 			LCD3="0 $(l "box_backup_of") ${IMAGE_COUNT}" # filescount
