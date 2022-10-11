@@ -803,6 +803,10 @@ function syncprogress() {
 				sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
 		fi
 
+		if [ "${SYNC_ERROR}" = "-" ]; then
+			SYNC_ERROR=""
+		fi
+
 	done # retry
 
 # prepare message for mail and power off
@@ -849,90 +853,80 @@ function syncprogress() {
 	fi
 
 # generate thumbnails
-	if [ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] && [ "${SECONDARY_BACKUP_FOLLOWS}" == "false" ]; then
-		# generate thumbnails only if it is the last backup-run
 
-		if [[ " rsyncserver cloud " =~ " ${TARGET_MODE} " ]]; then
-			# work on source device
-			THUMBNAIL_MODE="${SOURCE_MODE}"
-			THUMBNAIL_PATH="${SOURCE_PATH}"
-		else
-			THUMBNAIL_MODE="${TARGET_MODE}"
-			THUMBNAIL_PATH="${TARGET_PATH}"
-		fi
+	if [ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+		# generate thumbnails only after backup to local drive (usb or internal)
 
-		if [[ " usb internal " =~ " ${THUMBNAIL_MODE} " ]]; then
-			lcd_message "+$(l "box_backup_generating_thumbnails_finding_images1")" "+$(l "box_backup_generating_thumbnails_finding_images2")" "+$(l "box_backup_generating_thumbnails_finding_images3")" "+$(l "box_backup_mode_${THUMBNAIL_MODE}")" "+"
+		lcd_message "+$(l "box_backup_generating_thumbnails_finding_images1")" "+$(l "box_backup_generating_thumbnails_finding_images2")" "+$(l "box_backup_generating_thumbnails_finding_images3")" "+$(l "box_backup_mode_${TARGET_MODE}")" "+"
 
-			IMAGES_STR=$(sudo find "$THUMBNAIL_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*')
-			IFS=$'\n' read -rd '' -a IMAGES <<<"$IMAGES_STR"
-			unset IFS
+		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*')
+		IFS=$'\n' read -rd '' -a IMAGES <<<"$IMAGES_STR"
+		unset IFS
 
-			IMAGE_COUNT=${#IMAGES[@]}
+		IMAGE_COUNT=${#IMAGES[@]}
 
-			THUMBNAILS_START_TIME=$(date +%s)
-			THUMBNAILS_GENERATED="0"
+		THUMBNAILS_START_TIME=$(date +%s)
+		THUMBNAILS_GENERATED="0"
 
-			LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
-			i=0
+		LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
+		i=0
 
-			LCD1="$(l "box_backup_generating_thumbnails")" # header1
-			LCD2="$(l "box_backup_mode_${THUMBNAIL_MODE}")" # header2
-			LCD3="0 $(l "box_backup_of") ${IMAGE_COUNT}" # filescount
-			LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
-			LCD5="PGBAR:0" # progressbar
+		LCD1="$(l "box_backup_generating_thumbnails")" # header1
+		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
+		LCD3="0 $(l "box_backup_of") ${IMAGE_COUNT}" # filescount
+		LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
+		LCD5="PGBAR:0" # progressbar
 
-			# start screen
-			lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
+		# start screen
+		lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 
-			for IMAGE in "${IMAGES[@]}"
-			do
-				i=$((i+1))
+		for IMAGE in "${IMAGES[@]}"
+		do
+			i=$((i+1))
 
-				TIMS_FOLDER="$(dirname "${IMAGE}")/tims"
-				TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGE}")"
-				mkdir -p "${TIMS_FOLDER}"
+			TIMS_FOLDER="$(dirname "${IMAGE}")/tims"
+			TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGE}")"
+			mkdir -p "${TIMS_FOLDER}"
 
-				if [ ! -f "${TIMS_FILE}" ]; then
-					if [ "${THUMBNAILS_GENERATED}" = "0" ]; then
-						THUMBNAILS_START_TIME=$(date +%s)
-					fi
-
-					convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
-
-					THUMBNAILS_GENERATED=$((THUMBNAILS_GENERATED+1))
+			if [ ! -f "${TIMS_FILE}" ]; then
+				if [ "${THUMBNAILS_GENERATED}" = "0" ]; then
+					THUMBNAILS_START_TIME=$(date +%s)
 				fi
 
-				if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ] || [ ${i} -eq ${IMAGE_COUNT} ]; then
-					FINISHED_PERCENT=$(echo "scale=1; 100 * ${i} / ${IMAGE_COUNT}" | bc)
+				convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
 
-					if [ "${THUMBNAILS_GENERATED}" -gt "0" ]; then
-						IMAGES_TO_CONVERT_MAX=$(echo "$IMAGE_COUNT + $THUMBNAILS_GENERATED - $i" | bc)
+				THUMBNAILS_GENERATED=$((THUMBNAILS_GENERATED+1))
+			fi
 
-						TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
-						TIME_REMAINING=$(echo "${TIME_RUN} * ( ${IMAGES_TO_CONVERT_MAX} - ${THUMBNAILS_GENERATED} ) / ${THUMBNAILS_GENERATED}" | bc)
-						TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
-						DAYS_LEFT=$((TIME_REMAINING/86400))
-						if [ "${DAYS_LEFT}" -gt "0" ]; then
-							TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
-						fi
-					else
-						THUMBNAILS_GENERATED="0"
-						TIME_REMAINING_FORMATED="?"
+			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ] || [ ${i} -eq ${IMAGE_COUNT} ]; then
+				FINISHED_PERCENT=$(echo "scale=1; 100 * ${i} / ${IMAGE_COUNT}" | bc)
+
+				if [ "${THUMBNAILS_GENERATED}" -gt "0" ]; then
+					IMAGES_TO_CONVERT_MAX=$(echo "$IMAGE_COUNT + $THUMBNAILS_GENERATED - $i" | bc)
+
+					TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
+					TIME_REMAINING=$(echo "${TIME_RUN} * ( ${IMAGES_TO_CONVERT_MAX} - ${THUMBNAILS_GENERATED} ) / ${THUMBNAILS_GENERATED}" | bc)
+					TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
+					DAYS_LEFT=$((TIME_REMAINING/86400))
+					if [ "${DAYS_LEFT}" -gt "0" ]; then
+						TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
 					fi
-
-					LCD3="${i} $(l "box_backup_of") ${IMAGE_COUNT}"
-					LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
-					LCD5="PGBAR:${FINISHED_PERCENT}"
-
-					lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
-					LAST_MESSAGE_TIME=$(date +%s)
+				else
+					THUMBNAILS_GENERATED="0"
+					TIME_REMAINING_FORMATED="?"
 				fi
 
-			done
-			# hold final screen
-			sleep 2
-		fi
+				LCD3="${i} $(l "box_backup_of") ${IMAGE_COUNT}"
+				LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+				LCD5="PGBAR:${FINISHED_PERCENT}"
+
+				lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
+				LAST_MESSAGE_TIME=$(date +%s)
+			fi
+
+		done
+		# hold final screen
+		sleep 2
 	fi
 
 # umount (try, state unknown)
