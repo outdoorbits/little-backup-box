@@ -26,7 +26,7 @@
 
 # usage: backup.sh SOURCE TARGET [SECONDARY_BACKUP_FOLLOWS]
 #			SOURCE: Can be usb*1, internal, camera or ios
-# 			TARGET: Can be usb*2, internal, rsyncserver or cloud_XXX
+# 			TARGET: Can be usb*2, internal, rsyncserver or cloud_???
 #			SECONDARY_BACKUP_FOLLOWS: otionally, if true another run follows, no thumbnails, no power off
 #	*1 formerly storage
 #	*2 formerly external
@@ -190,7 +190,6 @@ function syncprogress() {
 	local DAYS_LEFT=0
 
 	# define LCD1: source, LCD2: target
-
 	local LCD1="$(l "box_backup_mode_${SOURCE_MODE}")" # header1
 	local LCD2=" > $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}" # header2
 	local LCD3="0 $(l 'box_backup_of') ${FILES_TO_SYNC}" # filescount, speed
@@ -681,8 +680,6 @@ function syncprogress() {
 
 		# START
 
-		# To define a new method, add an elif block (example below)
-
 		SYNC_RETURN_CODE="0"
 
 		if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
@@ -713,17 +710,6 @@ function syncprogress() {
 					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 				fi
 			fi
-
-	#	elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
-	#		if [ $conf_LOG_SYNC = true ]; then
-	#			...)
-	#			SYNC_RETURN_CODE="${PIPESTATUS[0]}"
-	#			SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
-	#			log_pick_file "${const_LOGFILE_SYNC}"
-	#		else
-	#			...)
-	#			SYNC_RETURN_CODE="${PIPESTATUS[0]}"
-	#		fi
 
 		elif [ "${SOURCE_MODE}" = "camera" ]; then
 			# If source is camera
@@ -796,13 +782,12 @@ function syncprogress() {
 		fi
 
 		# Check for lost devices
-		SYNC_ERROR=""
 		for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"; do
 			RESULT_DEVICE_MOUNTED=$(device_mounted "${MOUNTED_DEVICE}")
 			log_message "Lost device? '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'" 3
 
 			if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-				SYNC_ERROR="Err.Lost device!"
+				SYNC_ERROR="${SYNC_ERROR} Err.Lost device!"
 				log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
 				sleep 2
 				log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
@@ -892,9 +877,35 @@ function syncprogress() {
 			LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
 			i=0
 
+			# define LCD1: source, LCD2: target
+			LCD1="$(l "box_backup_generating_thumbnails")" # header1
+			LCD2="$(l "box_backup_mode_${THUMBNAIL_MODE}")" # header2
+			LCD3="0 $(l "box_backup_of") ${IMAGE_COUNT}" # filescount
+			LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
+			LCD5="PGBAR:0" # progressbar
+
+			# start screen
+			lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
+
 			for IMAGE in "${IMAGES[@]}"
 			do
-				if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ]; then
+				i=$((i+1))
+
+				TIMS_FOLDER="$(dirname "${IMAGE}")/tims"
+				TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGE}")"
+				mkdir -p "${TIMS_FOLDER}"
+
+				if [ ! -f "${TIMS_FILE}" ]; then
+					if [ "${THUMBNAILS_GENERATED}" = "0" ]; then
+						THUMBNAILS_START_TIME=$(date +%s)
+					fi
+
+					convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
+
+					THUMBNAILS_GENERATED=$((THUMBNAILS_GENERATED+1))
+				fi
+
+				if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ] || [ ${i} -eq ${IMAGE_COUNT} ]; then
 					FINISHED_PERCENT=$(echo "scale=1; 100 * ${i} / ${IMAGE_COUNT}" | bc)
 
 					if [ "${THUMBNAILS_GENERATED}" -gt "0" ]; then
@@ -912,28 +923,17 @@ function syncprogress() {
 						TIME_REMAINING_FORMATED="?"
 					fi
 
-					DURATION="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+					LCD3="${i} $(l "box_backup_of") ${IMAGE_COUNT}"
+					LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+					LCD5="PGBAR:${FINISHED_PERCENT}"
 
-					lcd_message "+$(l "box_backup_generating_thumbnails")" "+$(l "box_backup_mode_${THUMBNAIL_MODE}")" "+${i} $(l "box_backup_of") ${IMAGE_COUNT}" "+${DURATION}" "+PGBAR:${FINISHED_PERCENT}"
+					lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 					LAST_MESSAGE_TIME=$(date +%s)
 				fi
 
-				TIMS_FOLDER="$(dirname "${IMAGE}")/tims"
-				TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGE}")"
-				mkdir -p "${TIMS_FOLDER}"
-
-				if [ ! -f "${TIMS_FILE}" ]; then
-					if [ "${THUMBNAILS_GENERATED}" = "0" ]; then
-						THUMBNAILS_START_TIME=$(date +%s)
-					fi
-
-					convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
-
-					THUMBNAILS_GENERATED=$((THUMBNAILS_GENERATED+1))
-				fi
-
-				i=$((i+1))
 			done
+			# hold final screen
+			sleep 2
 		fi
 	fi
 
