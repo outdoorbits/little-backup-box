@@ -629,6 +629,8 @@ function syncprogress() {
 
 	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; do
 
+		SYNC_ERROR=""
+
 		# RETRIES
 
 		TRIES_DONE=$((TRIES_DONE+1))
@@ -801,10 +803,6 @@ function syncprogress() {
 		if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
 				lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')" ""
 				sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
-		fi
-
-		if [ "${SYNC_ERROR}" = "-" ]; then
-			SYNC_ERROR=""
 		fi
 
 	done # retry
