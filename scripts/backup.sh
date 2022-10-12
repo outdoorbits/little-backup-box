@@ -91,7 +91,7 @@ fi
 
 # switch UUID_USB_1 and UUID_USB_2? (only relevant in secondary backup)
 if [ ! -z "${UUID_USB_1}" ] && [[ " rsyncserver cloud " =~ " ${TARGET_MODE} " ]]; then
-	# use target-usb from last run as source usb now
+	# use target-usb of the last run as source usb now
 	UUID_USB_temp="${UUID_USB_1}"
 	UUID_USB_1="${UUID_USB_2}"
 	UUID_USB_2="${UUID_USB_temp}"
@@ -750,10 +750,9 @@ function syncprogress() {
 
 		# Re-calculate FILES_TO_SYNC
 		if [ "${TARGET_MODE}" = "rsyncserver" ]; then
-			FILES_TO_SYNC_POST="$(calculate_files_to_sync)"
-			if [ "${FILES_TO_SYNC_PRE}" != "" ] && [ "${FILES_TO_SYNC_POST}" != "" ]; then
-				FILES_TO_SYNC=$(($FILES_TO_SYNC_PRE - $FILES_TO_SYNC_POST))
-				TRANSFER_INFO="$(echo "${FILES_TO_SYNC_PRE} - ${FILES_TO_SYNC_POST}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+			FILES_TO_SYNC="$(calculate_files_to_sync)"
+			if [ "${FILES_TO_SYNC_PRE}" != "" ] && [ "${FILES_TO_SYNC}" != "" ]; then
+				TRANSFER_INFO="$(echo "${FILES_TO_SYNC_PRE} - ${FILES_TO_SYNC}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
 			else
 				TRANSFER_INFO="$(l "box_backup_result_suspect")."
 				FILES_TO_SYNC=0
