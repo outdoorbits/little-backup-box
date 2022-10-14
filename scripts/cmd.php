@@ -11,9 +11,9 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 # expected parameters:
-# CMD: "update", "format"
+# CMD: "update", "format", "f3"
 # optional parameters:
-# format: PARAM1:[partition, e.g. 'sda1'] PARAM2:[FSTYPE]
+# PARAM1, PARAM2
 
 ?>
 

@@ -7,6 +7,7 @@ Software that turns a single-board computer into a versatile and pocketable back
 
 <h2>NEWS</h2>
 <ul>
+	<li>2022/10/14: Add f3probe to tools to test external storages integrity before use.</li>
 	<li>2022/10/09: Rework of the progress-monitoring to save traffic and increase speed.</li>
 	<li>2022/10/03: If checked in settings, thumbnails will be generated after backup.</li>
 	<li>2022/10/03: If checked in settings, the LCD display will be turned off before shutdown.</li>
