@@ -2,9 +2,12 @@
 License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <?php
-	$theme = "dark";
 	$WORKING_DIR=dirname(__FILE__);
+	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
 	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
+
+	$theme = $config["conf_THEME"];
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -132,6 +135,39 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 							}
 						} else {
 							$COMMAND_LINE	= "";
+						}
+						break;
+
+					case 'f3':
+						switch($PARAM2) {
+							case 'f3probe_non_destructive':
+									$MAIN_COMMAND	= "f3probe --time-ops /dev/$PARAM1";
+
+									$COMMAND_LINE	= "sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::box_cmd_f3_probe_start1 . "' '$PARAM1: " . L::box_cmd_f3_probe_non_destructive . "' '" . L::box_cmd_f3_probe_start2 . "'";
+									$COMMAND_LINE	.= ";sudo umount /dev/$PARAM1";
+									$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+									$COMMAND_LINE	.= ";echo ''";
+									$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+									$COMMAND_LINE	.= ";echo ''";
+									$COMMAND_LINE	.= ";echo 'FINISHED.'";
+									$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::box_cmd_f3_probe_stop1 . "' '$PARAM1: " . L::box_cmd_f3_probe_non_destructive . "' '" . L::box_cmd_f3_probe_stop2 . "'";
+								break;
+
+							case 'f3probe_destructive':
+									$MAIN_COMMAND	= "f3probe --destructive --time-ops /dev/$PARAM1";
+
+									$COMMAND_LINE	= "sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::box_cmd_f3_probe_start1 . "' '$PARAM1: " . L::box_cmd_f3_probe_destructive . "' '" . L::box_cmd_f3_probe_start2 . "'";
+									$COMMAND_LINE	.= ";sudo umount /dev/$PARAM1";
+									$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+									$COMMAND_LINE	.= ";echo ''";
+									$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+									$COMMAND_LINE	.= ";echo ''";
+									$COMMAND_LINE	.= ";echo 'FINISHED.'";
+									$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::box_cmd_f3_probe_stop1 . "' '$PARAM1: " . L::box_cmd_f3_probe_destructive . "' '" . L::box_cmd_f3_probe_stop2 . "'";
+								break;
+
+							default:
+								$COMMAND_LINE	= "";
 						}
 						break;
 

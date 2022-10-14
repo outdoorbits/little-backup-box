@@ -481,15 +481,6 @@ function syncprogress() {
 		# Set SOURCE_IDENTIFIER
 		SOURCE_IDENTIFIER="Internal memory"
 
-	# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
-	#
-	#         lcd_message "Ready" "Insert NEW_SOURCE_TYPE"
-	#         ...
-	#         # Specify backup path and source identifier
-	#         SOURCE_PATH
-	#         BACKUP_PATH
-	#         SOURCE_IDENTIFIER
-
 	elif [ "${SOURCE_MODE}" = "camera" ]; then
 		# Source camera
 		# If display support is enabled, display the specified message
@@ -603,6 +594,16 @@ function syncprogress() {
 		do
 			log_message "*** - ${Camera_Sync_Folder} - For use as pattern in Settings ('$(l 'config_backup_camera_folder_mask_header')'): '${CAMERA}:!${Camera_Sync_Folder}'" 1
 		done
+
+	# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
+	#
+	#         lcd_message "Ready" "Insert NEW_SOURCE_TYPE"
+	#         ...
+	#         # Specify backup path and source identifier
+	#         SOURCE_PATH
+	#         BACKUP_PATH
+	#         SOURCE_IDENTIFIER
+
 	else
 		# no defined mode selected
 		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+1"

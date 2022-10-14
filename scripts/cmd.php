@@ -3,11 +3,12 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 <!doctype html>
 
 <?php
-$WORKING_DIR=dirname(__FILE__);
-$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+	$WORKING_DIR=dirname(__FILE__);
+	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
-$theme = $config["conf_THEME"];
-$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$theme = $config["conf_THEME"];
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 # expected parameters:
 # CMD: "update", "format"
@@ -52,6 +53,35 @@ switch($CMD) {
 		$CMD_ARGUMENTS		= "CMD=format&PARAM1=$PARAM1&PARAM2=$PARAM2";
 		$PASSWORD_REQ		= True;
 		$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
+		break;
+
+	case 'f3':
+		$CMD_HEADER			= L::cmd_no_cmd;
+		$INFO_TEXT			= "";
+		$CMD_DESCRIPTION	= "";
+		$CMD_ARGUMENTS		= "";
+		$PASSWORD_REQ		= False;
+		$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
+
+		switch($PARAM2) {
+			case 'f3probe_non_destructive':
+				$CMD_HEADER			= L::cmd_f3_header;
+				$INFO_TEXT			= L::cmd_f3_warning_non_destructive;
+				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": $PARAM1 &rarr; " . L::cmd_f3_description_non_destructive . "</li></ul>";
+				$CMD_ARGUMENTS		= "CMD=f3&PARAM1=$PARAM1&PARAM2=$PARAM2";
+				$PASSWORD_REQ		= True;
+				$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
+				break;
+
+			case 'f3probe_destructive':
+				$CMD_HEADER			= L::cmd_f3_header;
+				$INFO_TEXT			= L::cmd_f3_warning_destructive;
+				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": $PARAM1 &rarr; " . L::cmd_f3_description_destructive . "</li></ul>";
+				$CMD_ARGUMENTS		= "CMD=f3&PARAM1=$PARAM1&PARAM2=$PARAM2";
+				$PASSWORD_REQ		= True;
+				$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
+				break;
+		}
 		break;
 
 	default:

@@ -96,6 +96,30 @@ function get_device_selector($name) {
 	</div>
 
 	<div class="card" style="margin-top: 3em;">
+		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::cmd_f3_header; ?></h3>
+		<hr>
+			<form class="text-center" style="margin-top: 1em;" method="POST">
+					<label for="PARAM1"><?php echo l::tools_select_partition; ?>:</label>
+					<br>
+					<?php
+					print(get_device_selector("PARAM1"));
+					?>
+					<br>
+					<label for="PARAM2"><?php echo l::tools_f3_select_action; ?>:</label>
+					<br>
+					<select name="PARAM2">
+						<option value="-">-</option>
+						<option value="f3probe_non_destructive"><?php echo l::tools_f3_probe_non_destructive; ?></option>
+						<option value="f3probe_destructive"><?php echo l::tools_f3_probe_destructive; ?></option>
+					</select>
+					<br>
+					<?php
+					echo ("<button name='f3' class='danger'>" . l::tools_f3_b . "</button>");
+					?>
+			</form>
+	</div>
+
+	<div class="card" style="margin-top: 3em;">
 		<details>
 			<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo l::tools_help; ?></summary>
 			<p><?php echo l::tools_help_text; ?></p>
@@ -169,7 +193,21 @@ function get_device_selector($name) {
 				<?php
 				exec ("./lib-log-helper.sh \"log_message\" \"format ${PARAM1} ${PARAM2}\" \"1\"");
 			}
+	}
 
+	if (isset($_POST['f3'])) {
+
+			$PARAM1 = $_POST['PARAM1'];
+			$PARAM2 = $_POST['PARAM2'];
+
+			if (($PARAM1 !== "-") and ($PARAM2 !== "-")) {
+				?>
+				<script>
+						document.location.href="/cmd.php?CMD=f3&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
+				</script>
+				<?php
+				exec ("./lib-log-helper.sh \"log_message\" \"format ${PARAM1} ${PARAM2}\" \"1\"");
+			}
 	}
 
 	?>

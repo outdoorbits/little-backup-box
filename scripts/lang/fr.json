@@ -179,11 +179,17 @@
     "fsck_check_b": "Vérifier",
     "fsck_autorepair_b": "réparation",
     "help": "Aider",
-    "help_text": "<h2>Réparation</h2>\n  <p class = 'text-center'> <mark> Ne l'utilisez que si vous savez ce que vous faites. Cela pourrait endommager votre stockage ! </mark> </p>\n  <h3> Procédure : </h3>\n  <ol>\n  <li> Vérifiez votre alimentation. Une coupure de courant peut endommager le stockage de manière irréparable. </li>\n  <li> Assurez-vous qu'aucune tâche de sauvegarde n'est en cours d'exécution. </li>\n  <li> Ne cliquez sur aucun bouton tant que toutes les opérations de vérification et de réparation ne sont pas terminées. Ne démarrez aucun processus ! </li>\n  <li> Exécutez d'abord la vérification du système de fichiers. </li>\n  <li> Si vous voyez des erreurs dans le journal, exécutez la réparation du système de fichiers. </li>\n  <li> Une fois l'opération de réparation terminée, éteignez la machine et débranchez les périphériques de stockage avant le démarrage. </li>\n  </ol>\n<h2>Formater</h2>\n   <p class='text-center'><mark>N'utilisez pas cette fonction si vous ne savez pas ce que vous faites. Cela effacera votre espace de stockage et les données perdues ne pourront pas être récupérées.</mark> </p>\n<h3>Choix :</h3>\n<ul>\n<li>FAT32 (Windows&#174;) : généralisé, la taille du fichier est limitée à 4 Go.</li>\n<li>exFAT (Windows&#174;) : moins courant, pas de limite de taille de fichier.</li>\n<li>NTFS (Windows&#174;) : compatibilité limitée avec de nombreux appareils, aucune limitation de taille de fichier.\n<ul>\n<li>NTFS (compression enabled): Compression activée, économise de l'espace disque, mais peut réduire considérablement les performances.</li>\n<li>NTFS (no compression): Compression NTFS désactivée</li>\n</ul>\n</li>\n<li>Ext4 (Linux) : système de fichiers Linux actuel</li>\n<li>Ext3 (Linux) : prédécesseur d'Ext4, uniquement recommandé si la mémoire doit également être compatible avec des appareils plus anciens qui ne prennent pas encore en charge Ext4.</li>\n</ul>",
+    "help_text": "<h2>Réparation</h2>\n  <p class = 'text-center'> <mark> Ne l'utilisez que si vous savez ce que vous faites. Cela pourrait endommager votre stockage ! </mark> </p>\n  <h3> Procédure : </h3>\n  <ol>\n  <li> Vérifiez votre alimentation. Une coupure de courant peut endommager le stockage de manière irréparable. </li>\n  <li> Assurez-vous qu'aucune tâche de sauvegarde n'est en cours d'exécution. </li>\n  <li> Ne cliquez sur aucun bouton tant que toutes les opérations de vérification et de réparation ne sont pas terminées. Ne démarrez aucun processus ! </li>\n  <li> Exécutez d'abord la vérification du système de fichiers. </li>\n  <li> Si vous voyez des erreurs dans le journal, exécutez la réparation du système de fichiers. </li>\n  <li> Une fois l'opération de réparation terminée, éteignez la machine et débranchez les périphériques de stockage avant le démarrage. </li>\n  </ol>\n<h2>Formater</h2>\n   <p class='text-center'><mark>N'utilisez pas cette fonction si vous ne savez pas ce que vous faites. Cela effacera votre espace de stockage et les données perdues ne pourront pas être récupérées.</mark> </p>\n<h3>Choix :</h3>\n<ul>\n<li>FAT32 (Windows&#174;) : généralisé, la taille du fichier est limitée à 4 Go.</li>\n<li>exFAT (Windows&#174;) : moins courant, pas de limite de taille de fichier.</li>\n<li>NTFS (Windows&#174;) : compatibilité limitée avec de nombreux appareils, aucune limitation de taille de fichier.\n<ul>\n<li>NTFS (compression enabled): Compression activée, économise de l'espace disque, mais peut réduire considérablement les performances.</li>\n<li>NTFS (no compression): Compression NTFS désactivée</li>\n</ul>\n</li>\n<li>Ext4 (Linux) : système de fichiers Linux actuel</li>\n<li>Ext3 (Linux) : prédécesseur d'Ext4, uniquement recommandé si la mémoire doit également être compatible avec des appareils plus anciens qui ne prennent pas encore en charge Ext4.</li>\n</ul>\n<h2>Vérifier l'authenticité du périphérique USB</h2>\n    <p class='text-center'><mark>N'utilisez pas cette fonction si vous ne savez pas ce que vous faites. Cela peut effacer votre stockage et les données perdues ne peuvent pas être récupérées.</mark> </p>\n<h3>Choix :</h3>\n<ul>\n<li>EFFACER les données, plus rapidement : f3probe s'exécute sans tenter de conserver les données.</li>\n<li>essai d'obtenir des données, lent : f3probe est en cours d'exécution. Tentative d'obtention des données.</li>\n</ul>",
     "fsck_check_m": "vérification lancée",
     "fsck_autorepair_m": "réparation lancée",
     "format_b": "formater le disque !",
-    "select_format_fstype": "type de système de fichiers"
+    "select_format_fstype": "type de système de fichiers",
+    "f3": {
+      "select_action": "Sélectionner l'essai",
+      "probe_non_destructive": "essayer de conserver les données, lent",
+      "probe_destructive": "EFFACER les données, plus rapide",
+      "b": "commencer l'essai"
+    }
   },
   "minutes_long": "minutes",
   "box": {
@@ -294,6 +300,14 @@
       "update": {
         "start1": "Mise à jour",
         "start2": "en cours..."
+      },
+      "f3": {
+        "probe_start1": "Examen",
+        "probe_start2": "en cours...",
+        "probe_stop1": "Examen",
+        "probe_stop2": "complété",
+        "probe_non_destructive": "non destructif",
+        "probe_destructive": "destructeur"
       }
     }
   },
@@ -324,6 +338,14 @@
       "warning": "Danger! Cela effacera toutes les données sur l'appareil sélectionné !",
       "header": "Formater l'appareil",
       "description": "Opération programmée"
+    },
+    "f3": {
+      "header": "Vérifier l'authenticité du périphérique USB",
+      "warning_non_destructive": "Attention, TOUTES LES DONNEES sur le support de données pourraient être supprimées !",
+      "warning_destructive": "Attention, TOUTES LES DONNEES sur le support de données seront supprimées!",
+      "description_non_destructive": "Les données seront conservées dans la mesure du possible.",
+      "description_destructive": "Les données seront supprimées !",
+      "description": "Vérifiez le disque"
     }
   }
 }

@@ -179,11 +179,17 @@
     "fsck_check_b": "Verificar",
     "fsck_autorepair_b": "Reparar",
     "help": "Ayuda",
-    "help_text": "<h2>Reparar</h2>\n  <p class = 'text-center'> <mark> No lo utilice a menos que sepa lo que está haciendo. ¡Podría dañar su disco de almacenamiento! </mark> </p>\n  <h3> Procedimiento: </h3>\n  <ol>\n  <li> Verifique su fuente de alimentación. La interrupción del suministro eléctrico puede dañar el disco de almacenamiento de manera permanente. </li>\n  <li> Asegúrese de que no se esté ejecutando ningúna copia de respaldo. </li>\n  <li> No haga clic en ningún botón hasta que se hayan completado todas las operaciones de verificación y reparación. ¡No inicie ningún proceso! </li>\n  <li> Ejecute primero la verificación del sistema de archivos. </li>\n  <li> Si ve algún error en el registro, ejecute la reparación del sistema de archivos. </li>\n  <li> Cuando finalice la operación de reparación, apague la máquina y desconecte los dispositivos de almacenamiento antes de reiniciar. </li>\n  </ol>\n<h2>Formato</h2>\n   <p class='text-center'><mark>No use esta función si no sabe lo que está haciendo. Esto borrará su almacenamiento y los datos perdidos no se podrán recuperar.</mark> </p>\n<h3>Opciones:</h3>\n<ul>\n<li>FAT32 (Windows&#174;): generalizado, el tamaño del archivo está limitado a 4 GB.</li>\n<li>exFAT (Windows&#174;): menos común, sin límite de tamaño de archivo.</li>\n<li>NTFS (Windows&#174;): compatibilidad limitada con muchos dispositivos, sin límite de tamaño de archivo.\n<ul>\n<li>NTFS (compression enabled): Ahorra espacio en disco, pero puede reducir significativamente el rendimiento.</li>\n<li>NTFS (no compression): Compresión NTFS deshabilitada</li>\n</ul>\n</li>\n<li>Ext4 (Linux): sistema de archivos actual de Linux</li>\n<li>Ext3 (Linux): predecesor de Ext4, solo se recomienda si la memoria también debe ser compatible con dispositivos más antiguos que aún no admiten Ext4.</li>\n</ul>",
+    "help_text": "<h2>Reparar</h2>\n  <p class = 'text-center'> <mark> No lo utilice a menos que sepa lo que está haciendo. ¡Podría dañar su disco de almacenamiento! </mark> </p>\n  <h3> Procedimiento: </h3>\n  <ol>\n  <li> Verifique su fuente de alimentación. La interrupción del suministro eléctrico puede dañar el disco de almacenamiento de manera permanente. </li>\n  <li> Asegúrese de que no se esté ejecutando ningúna copia de respaldo. </li>\n  <li> No haga clic en ningún botón hasta que se hayan completado todas las operaciones de verificación y reparación. ¡No inicie ningún proceso! </li>\n  <li> Ejecute primero la verificación del sistema de archivos. </li>\n  <li> Si ve algún error en el registro, ejecute la reparación del sistema de archivos. </li>\n  <li> Cuando finalice la operación de reparación, apague la máquina y desconecte los dispositivos de almacenamiento antes de reiniciar. </li>\n  </ol>\n<h2>Formato</h2>\n   <p class='text-center'><mark>No use esta función si no sabe lo que está haciendo. Esto borrará su almacenamiento y los datos perdidos no se podrán recuperar.</mark> </p>\n<h3>Opciones:</h3>\n<ul>\n<li>FAT32 (Windows&#174;): generalizado, el tamaño del archivo está limitado a 4 GB.</li>\n<li>exFAT (Windows&#174;): menos común, sin límite de tamaño de archivo.</li>\n<li>NTFS (Windows&#174;): compatibilidad limitada con muchos dispositivos, sin límite de tamaño de archivo.\n<ul>\n<li>NTFS (compression enabled): Ahorra espacio en disco, pero puede reducir significativamente el rendimiento.</li>\n<li>NTFS (no compression): Compresión NTFS deshabilitada</li>\n</ul>\n</li>\n<li>Ext4 (Linux): sistema de archivos actual de Linux</li>\n<li>Ext3 (Linux): predecesor de Ext4, solo se recomienda si la memoria también debe ser compatible con dispositivos más antiguos que aún no admiten Ext4.</li>\n</ul>\n<h2>Comprobar la autenticidad del dispositivo USB</h2>\n    <p class='text-center'><mark>No use esta función si no sabe lo que está haciendo. Esto puede borrar su almacenamiento y los datos perdidos no se pueden recuperar.</mark> </p>\n<h3>Opciones:</h3>\n<ul>\n<li>BORRAR datos, más rápido: f3probe se ejecuta sin intentar conservar los datos.</li>\n<li>intentando obtener datos, lento: f3probe se está ejecutando. Intentando obtener los datos.</li>\n</ul>",
     "fsck_check_m": "verificación iniciada",
     "fsck_autorepair_m": "reparación iniciada",
     "format_b": "¡formatear disco!",
-    "select_format_fstype": "tipo de sistema de archivos"
+    "select_format_fstype": "tipo de sistema de archivos",
+    "f3": {
+      "select_action": "Seleccionar prueba",
+      "probe_non_destructive": "tratar de mantener los datos, lento",
+      "probe_destructive": "BORRAR datos, más rápido",
+      "b": "prueba de inicio"
+    }
   },
   "minutes_long": "minutos",
   "box": {
@@ -294,6 +300,14 @@
       "update": {
         "start1": "Actualizar",
         "start2": "a débuté..."
+      },
+      "f3": {
+        "probe_start1": "Examen",
+        "probe_start2": "a débuté...",
+        "probe_stop1": "Examen",
+        "probe_stop2": "terminado",
+        "probe_non_destructive": "no destructivo",
+        "probe_destructive": "destructivo"
       }
     }
   },
@@ -324,6 +338,14 @@
       "warning": "¡Peligro! ¡Esto borrará todos los datos en el dispositivo seleccionado!",
       "header": "Formatear dispositivo",
       "description": "Operación programada"
+    },
+    "f3": {
+      "header": "Verifique la autenticidad del dispositivo USB",
+      "warning_non_destructive": "¡Atención, TODOS LOS DATOS en el soporte de datos podrían borrarse!",
+      "warning_destructive": "¡Atención, TODOS LOS DATOS en el soporte de datos serán eliminados!",
+      "description_non_destructive": "Los datos se conservarán en la medida de lo posible.",
+      "description_destructive": "¡Los datos serán eliminados!",
+      "description": "Verificar disco"
     }
   }
 }
