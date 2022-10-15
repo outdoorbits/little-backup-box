@@ -125,7 +125,7 @@ If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.
 <h2>Update</h2>
 <ul>
 	<li>Updates can be carried out quickly and easily via the WebUI. Just follow the instructions in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.</li>
-	<li>Alternatively just login via ssh an execute the installation-command from above. It will run in update-mode.'</li>
+	<li>Alternatively just login via ssh an execute the installation-command from above. It will run in update-mode.</li>
 </ul>
 
 
