@@ -36,24 +36,22 @@ function lcd_message () {
 	Lines=( "$@" )
 
 	#Wait for Lockfile
-	if [ -f "${const_DISPLAY_LOCKFILE}" ]; then
-
+	while [ -f "${const_DISPLAY_LOCKFILE}" ];
+	do
 		DispayLockFileTime=$(sudo head -n 1 ${const_DISPLAY_LOCKFILE})
 		ActualTime=$(date +%s.%N )
-
 		TimeDiff=$(echo "${ActualTime} - ${DispayLockFileTime}" | bc)
 
-		while (( $(echo "${TimeDiff} < 1.0" | bc -l) ))
-		do
-			DispayLockFileTime=$(sudo head -n 1 ${const_DISPLAY_LOCKFILE})
-			ActualTime=$(date +%s.%N )
+		# if lockfile is older than defined seconds, it must be lost and can be removed
+		if (( $(echo "${TimeDiff} > 2" | bc -l) )); then
+			rm "${const_DISPLAY_LOCKFILE}"
+		fi
 
-			TimeDiff=$(echo "${ActualTime} - ${DispayLockFileTime}" | bc)
+		sleep 1
+	done
 
-			sleep 1
-		done
-	fi
 
+	# write lockfile of this process
 	date +%s.%N | tee "${const_DISPLAY_LOCKFILE}" > /dev/null 2>&1
 
 	# clear screen
@@ -160,8 +158,6 @@ function lcd_message () {
 		sudo python3 ${WORKING_DIR}/oled.py "${FORCE_FORMAT[0]}" "${Lines[0]}" "${FORCE_FORMAT[1]}" "${Lines[1]}" "${FORCE_FORMAT[2]}" "${Lines[2]}" "${FORCE_FORMAT[3]}" "${Lines[3]}" "${FORCE_FORMAT[4]}" "${Lines[4]}"
 	fi
 
-
-
 	#save Lines to file
 	sudo bash -c "echo -en '${OldLines[0]}\n${OldLines[1]}\n${OldLines[2]}\n${OldLines[3]}\n${OldLines[4]}' > '${const_DISPLAY_CONTENT_OLD_FILE}'"
 
@@ -170,5 +166,11 @@ function lcd_message () {
 	then
 		log_message "${LogLines}"
 	fi
+
+	#hold lockfile and display
+	sleep 0.5
+
+	#remove lockfile of this process
+	rm "${const_DISPLAY_LOCKFILE}"
 }
 
