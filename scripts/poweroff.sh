@@ -55,15 +55,15 @@ if [ "${conf_POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 
     if [ "${ACTION}" = "poweroff" ]; then
         if [ -z "${MESSAGE}" ]; then
-            lcd_message "+" "+$(l 'box_poweroff_poweroff')" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
+            lcd_message "+${TRANSFER_INFO}" "+$(l 'box_poweroff_poweroff')" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
         else
-            lcd_message "+" "+${MESSAGE}" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
+            lcd_message "+${TRANSFER_INFO}" "+${MESSAGE}" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')"
         fi
     elif [ "${ACTION}" = "reboot" ]; then
         if [ -z "${MESSAGE}" ]; then
-            lcd_message "+$(l 'box_poweroff_rebooting')..." "+$(l 'box_poweroff_do_not_unplug')!" "+" "+" "+"
+            lcd_message "+${TRANSFER_INFO}" "+" "+$(l 'box_poweroff_rebooting')..." "+$(l 'box_poweroff_do_not_unplug')!" "+"
         else
-            lcd_message "+${MESSAGE}" "+$(l 'box_poweroff_rebooting')..." "+$(l 'box_poweroff_do_not_unplug')!" "+" "+"
+            lcd_message "+${TRANSFER_INFO}" "+${MESSAGE}" "+$(l 'box_poweroff_rebooting')..." "+$(l 'box_poweroff_do_not_unplug')!" "+"
         fi
     fi
 
