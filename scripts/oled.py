@@ -139,7 +139,7 @@ else:
 
 		y_shift	+= 1
 
-# save image
+# save image ### for documentation only
 #image.save("/media/internal/{}.gif".format(time.time()))
 
 # Display image.
