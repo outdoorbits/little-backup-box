@@ -6,7 +6,6 @@
 </form>
 
 <?php
-print_r($_GET);
 	if (isset($_POST['reboot']) or isset($_GET['reboot'])) {
 		popup(L::main_reboot_m,$config["conf_POPUP_MESSAGES"]);
 
