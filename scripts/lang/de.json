@@ -46,7 +46,8 @@
     "memory_ram": "RAM belegt",
     "memory_swap": "SWAP belegt",
     "camera_serial": "Seriennummer",
-    "camera_storages": "Speicherpfade"
+    "camera_storages": "Speicherpfade",
+    "refresh_button": "aktualisieren"
   },
   "config": {
     "config": "Einstellungen",
@@ -179,15 +180,15 @@
     "fsck_check_b": "Überprüfen",
     "fsck_autorepair_b": "Reparatur",
     "help": "Hilfe",
-    "help_text": "<h2>Reparatur</h2>\n  <p class = 'text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher könnte beschädigt werden und Datenverlust wäre möglich! </mark> </p>\n<h3>Verfahren:</h3>\n<ol>\n<li>Überprüfen Sie Ihre Stromversorgung. Eine Unterbrechung der Stromversorgung kann den Speicher irreparabel beschädigen.</li>\n<li> Stellen Sie sicher, dass gleichzeitig kein Backup-Auftrag ausgeführt wird.</li>\n<li>Klicken Sie auf keine Schaltfläche und starten Sie keine Prozesse, bevor alle Prüf- und Reparaturvorgänge abgeschlossen sind!</li>\n<li> Führen Sie zuerst die Dateisystemprüfung durch.</li>\n  <li> Wenn Sie Fehler im Protokoll sehen, führen Sie die Dateisystemreparatur durch.</li>\n<li> Wenn der Reparaturvorgang abgeschlossen ist, fahren Sie das System herunter und trennen Sie dann die Speichergeräte vor dem Neustart.</li>\n</ol>\n<h2>Formatieren</h2>\n  <p class='text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher wird dadurch gelöscht und Datenverluste können nicht wiederhergestellt werden.</mark> </p>\n<h3>Optionen:</h3>\n<ul>\n\t<li>FAT32 (Windows&#174;): Weit verbreitet, die Dateigröße ist auf 4GB begrenzt.</li>\n\t<li>exFAT (Windows&#174;): Weniger verbreitet, keine Begrenzung der Dateigröße.</li>\n\t<li>NTFS (Windows&#174;): Eingeschränkte Kompatibilität mit vielen Geräten, keine Begrenzung der Dateigröße.\n\t\t<ul>\n\t\t\t<li>NTFS (compression enabled): Komprimierung, spart Speicherplatz, kann aber die Leistung signifikant reduzieren.</li>\n\t\t\t<li>NTFS (no compression): Keine Komprimierung.</li>\n\t\t</ul>\n\t</li>\n\t<li>Ext4 (Linux): Aktuelles Linux-Dateisystem</li>\n\t<li>Ext3 (Linux): Vorgänger von Ext4, nur empfohlen, wenn der Speicher auch mit älteren Geräten kompatibel sein muss, die Ext4 noch nicht unterstützen.</li>\n</ul>\n<h2>USB-Gerät auf Echtheit prüfen</h2>\n  <p class='text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher wird dadurch ggf. gelöscht und Datenverluste können nicht wiederhergestellt werden.</mark> </p>\n<h3>Optionen:</h3>\n<ul>\n\t<li>Daten LÖSCHEN, schneller: f3probe wird ausgeführt, ohne den Versuch, die Daten zu erhalten.</li>\n\t<li>versuchen Daten zu erhalten, langsam: f3probe wird ausgeführt. Es wird versucht, die Daten zu erhalten.</li>\n</ul>",
+    "help_text": "<h2>Reparatur</h2>\n  <p class = 'text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher könnte beschädigt werden und Datenverlust wäre möglich! </mark> </p>\n<h3>Verfahren:</h3>\n<ol>\n<li>Überprüfen Sie Ihre Stromversorgung. Eine Unterbrechung der Stromversorgung kann den Speicher irreparabel beschädigen.</li>\n<li> Stellen Sie sicher, dass gleichzeitig kein Backup-Auftrag ausgeführt wird.</li>\n<li>Klicken Sie auf keine Schaltfläche und starten Sie keine Prozesse, bevor alle Prüf- und Reparaturvorgänge abgeschlossen sind!</li>\n<li> Führen Sie zuerst die Dateisystemprüfung durch.</li>\n  <li> Wenn Sie Fehler im Protokoll sehen, führen Sie die Dateisystemreparatur durch.</li>\n<li> Wenn der Reparaturvorgang abgeschlossen ist, fahren Sie das System herunter und trennen Sie dann die Speichergeräte vor dem Neustart.</li>\n</ol>\n<h2>Formatieren</h2>\n  <p class='text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher wird dadurch gelöscht und Datenverluste können nicht wiederhergestellt werden.</mark> </p>\n<h3>Optionen:</h3>\n<ul>\n\t<li>FAT32 (Windows&#174;): Weit verbreitet, die Dateigröße ist auf 4GB begrenzt.</li>\n\t<li>exFAT (Windows&#174;): Weniger verbreitet, keine Begrenzung der Dateigröße.</li>\n\t<li>NTFS (Windows&#174;): Eingeschränkte Kompatibilität mit vielen Geräten, keine Begrenzung der Dateigröße.\n\t\t<ul>\n\t\t\t<li>NTFS (compression enabled): Komprimierung, spart Speicherplatz, kann aber die Leistung signifikant reduzieren.</li>\n\t\t\t<li>NTFS (no compression): Keine Komprimierung.</li>\n\t\t</ul>\n\t</li>\n\t<li>Ext4 (Linux): Aktuelles Linux-Dateisystem</li>\n\t<li>Ext3 (Linux): Vorgänger von Ext4, nur empfohlen, wenn der Speicher auch mit älteren Geräten kompatibel sein muss, die Ext4 noch nicht unterstützen.</li>\n</ul>\n<h2>USB-Gerät auf Echtheit prüfen</h2>\n  <p class='text-center'><mark>Verwenden Sie diese Funktion nicht, wenn Sie nicht wissen, was Sie tun. Ihr Speicher wird dadurch ggf. gelöscht und Datenverluste können nicht wiederhergestellt werden.</mark> </p>\n<h3>Optionen:</h3>\n<ul>\n\t<li>Daten LÖSCHEN (schneller): f3probe wird ausgeführt, alle Daten werden gelöscht.</li>\n\t<li>versuchen Daten zu erhalten (langsam): f3probe wird ausgeführt. Dabei wird versucht, die Daten zu erhalten.</li>\n</ul>",
     "fsck_check_m": "Prüfung eingeleitet",
     "fsck_autorepair_m": "Reparatur eingeleitet",
     "format_b": "Speicher formatieren!",
     "select_format_fstype": "Dateisystemtyp",
     "f3": {
       "select_action": "Test auswählen",
-      "probe_non_destructive": "versuchen Daten zu erhalten, langsam",
-      "probe_destructive": "Daten LÖSCHEN, schneller",
+      "probe_non_destructive": "versuchen Daten zu erhalten (langsam)",
+      "probe_destructive": "Daten LÖSCHEN (schneller)",
       "b": "Test starten"
     }
   },

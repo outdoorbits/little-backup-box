@@ -5,16 +5,16 @@
 
 <?php
 	$WORKING_DIR=dirname(__FILE__);
-	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+	$config = parse_ini_file("config.cfg", false);
 	$config_standard = parse_ini_file("$WORKING_DIR/config-standards.cfg", false);
-	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
+	$constants = parse_ini_file("constants.sh", false);
 
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-	include($WORKING_DIR . "/sub-popup.php");
+	include("sub-popup.php");
 
-	include($WORKING_DIR . "/get-cloudservices.php");
+	include("get-cloudservices.php");
 
 	$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
 ?>
@@ -41,7 +41,7 @@
 		};
 
 		// read (new) config
-		$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+		$config = parse_ini_file("config.cfg", false);
 
 		# write wifi country-code from config.cfg
 		if (($WIFI_COUNTRY !== $config["conf_WIFI_COUNTRY"]) and ($config["conf_WIFI_COUNTRY"] !== "")) {
@@ -226,11 +226,11 @@ function upload_settings() {
 				}
 				popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
 
-				$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+				$config = parse_ini_file("config.cfg", false);
 				if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
-					exec("sudo " . $WORKING_DIR . "/password.sh set \"" . $config["conf_PASSWORD"] . "\"");
+					exec("sudo password.sh set \"" . $config["conf_PASSWORD"] . "\"");
 				} else {
-					exec("sudo " . $WORKING_DIR . "/password.sh remove");
+					exec("sudo password.sh remove");
 				}
 				popup(L::config_alert_password_change_after_reboot,true);
 			}
@@ -261,7 +261,7 @@ function upload_settings() {
 						<?php
 							echo "<option value='' " . ($config["conf_LANGUAGE"] == ""?" selected":"") . ">" . L::config_lang_browser_detect . "</option>";
 							$languages=array();
-							exec ("find '" . $WORKING_DIR . "/lang'/*.json -type f ",$languages);
+							exec ("find 'lang'/*.json -type f ",$languages);
 							foreach($languages as $language) {
 								$language = basename($language, ".json");
 								echo "<option value='" . $language . "' " . ($config["conf_LANGUAGE"] == $language?" selected":"") . ">" . $language . "</option>";
@@ -381,12 +381,12 @@ function upload_settings() {
 					</select>
 
 				<h3><?php echo L::config_view_bg_image_header; ?></h3>
-					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo $WORKING_DIR . "/img/backgrounds" ;?>&quot;.</label><br>
+					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo "img/backgrounds" ;?>&quot;.</label><br>
 						<select name="conf_BACKGROUND_IMAGE" id="conf_BACKGROUND_IMAGE">
 						<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
 						<?php
 							$bg_images=array();
-							exec ("find '" . $WORKING_DIR . "/img/backgrounds' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
+							exec ("find 'img/backgrounds' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
 							foreach($bg_images as $bg_image) {
 								$bg_image = basename($bg_image);
 								echo "<option value='" . $bg_image . "' " . ($config["conf_BACKGROUND_IMAGE"] == $bg_image?" selected":"") . ">" . $bg_image . "</option>";
@@ -556,6 +556,7 @@ function upload_settings() {
 			</details>
 		</div>
 
+		<?php include "sub-footer.php"; ?>
 
 </body>
 

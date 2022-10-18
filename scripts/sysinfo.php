@@ -7,6 +7,8 @@
 
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+
+	include("sub-popup.php");
 ?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
@@ -130,10 +132,12 @@
 			?>
 	</div>
 
-	<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::log_refresh_button); ?></button></div>
+	<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::sysinfo_refresh_button); ?></button></div>
 
 	<?php include "sub-logmonitor.php"; ?>
-		
+
+	<?php include "sub-footer.php"; ?>
+
 </body>
 
 </html>

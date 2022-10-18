@@ -11,9 +11,9 @@
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-	include($WORKING_DIR . "/sub-popup.php");
+	include("sub-popup.php");
 
-	include($WORKING_DIR . "/get-cloudservices.php");
+	include("get-cloudservices.php");
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
@@ -75,12 +75,6 @@
 			</div>
 
 		</div>
-
-		<div class="card" style="margin-top: 3em;">
-			<button name="reboot" class="danger"><?php echo L::main_reboot_button; ?></button>
-			<button name="shutdown" class="danger"><?php echo L::main_shutdown_button; ?></button>
-		</div>
-
 	</form>
 
 
@@ -93,6 +87,8 @@
 			<p><?php echo L::main_help_txt; ?></p>
 		</details>
 	</div>
+
+	<?php include "${WORKING_DIR}/sub-footer.php"; ?>
 	<?php
 	exec("mkdir -p tmp");
 	exec("sudo chown www-data:www-data ./tmp -R");
@@ -158,16 +154,6 @@
 
 		exec('sudo pkill -f "backup*"');
 		exec('sudo ./lib-lcd-helper.sh "' . L::main_backup_break1 . '" "' . L::main_backup_break2 . '" "+" "+" "+"');
-	}
-	if (isset($_POST['reboot'])) {
-		popup(L::main_reboot_m,$config["conf_POPUP_MESSAGES"]);
-
-		exec("sudo ./poweroff.sh reboot force");
-	}
-	if (isset($_POST['shutdown'])) {
-		popup(L::main_shutdown_m,$config["conf_POPUP_MESSAGES"]);
-
-		exec("sudo ./poweroff.sh poweroff force");
 	}
 	?>
 </body>

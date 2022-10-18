@@ -8,8 +8,7 @@ $constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 $theme = $config["conf_THEME"];
 $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-include($WORKING_DIR . "/sub-popup.php");
-
+include("sub-popup.php");
 
 function get_device_selector($name) {
 	exec("ls /dev/sd* | xargs -n 1 basename", $devices);
@@ -125,6 +124,8 @@ function get_device_selector($name) {
 			<p><?php echo l::tools_help_text; ?></p>
 		</details>
 	</div>
+
+	<?php include "sub-footer.php"; ?>
 
 	<?php
 	if (isset($_POST['mount_usb_1'])) {
