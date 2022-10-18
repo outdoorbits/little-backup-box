@@ -88,7 +88,7 @@
 		</details>
 	</div>
 
-	<?php include "${WORKING_DIR}/sub-footer.php"; ?>
+	<?php include "sub-footer.php"; ?>
 	<?php
 	exec("mkdir -p tmp");
 	exec("sudo chown www-data:www-data ./tmp -R");
