@@ -22,7 +22,7 @@ sub expects from calling script:
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<div class="collapse navbar-collapse order-1 w-50" id="navbarSupportedContent">
+		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="index.php"?" active":""; ?>" href="/index.php"><?php echo L::mainmenue_main; ?></a></li>
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="sysinfo.php"?" active":""; ?>" href="/sysinfo.php"><?php echo L::mainmenue_sysinfo; ?></a></li>
@@ -30,7 +30,7 @@ sub expects from calling script:
 			</ul>
 		</div>
 
-		<div class="collapse navbar-collapse order-2 w-50" id="navbarSupportedContent">
+		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
 				<li class="nav-item"><a class="nav-link" href="/files" target="_blank"><?php echo L::mainmenue_filebrowser; ?></a></li>
 				<?php
@@ -47,9 +47,16 @@ sub expects from calling script:
 			</ul>
 		</div>
 
-		<div class="navbar-collapse collapse order-3" id="navbarSupportedContent">
+		<div class="navbar-collapse collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="config.php"?" active":""; ?>" href="/config.php"><?php echo L::mainmenue_config; ?></a></li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPower" role="button" data-bs-toggle="dropdown" aria-expanded="false">&#9211;</a>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdownPower">
+						<li><a class="dropdown-item" href="<?php echo $_SERVER["PATH_INFO"]; ?>?reboot=true"><?php echo L::main_reboot_button; ?></a></li>
+						<li><a class="dropdown-item" href="<?php echo $_SERVER["PATH_INFO"]; ?>?shutdown=true"><?php echo L::main_shutdown_button; ?></a></li>
+					</ul>
+				</li>
 			</ul>
 		</div>
 

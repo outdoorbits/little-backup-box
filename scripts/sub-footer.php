@@ -6,12 +6,13 @@
 </form>
 
 <?php
-	if (isset($_POST['reboot'])) {
+print_r($_GET);
+	if (isset($_POST['reboot']) or isset($_GET['reboot'])) {
 		popup(L::main_reboot_m,$config["conf_POPUP_MESSAGES"]);
 
 		exec("sudo ./poweroff.sh reboot force");
 	}
-	if (isset($_POST['shutdown'])) {
+	if (isset($_POST['shutdown']) or isset($_GET['shutdown'])) {
 		popup(L::main_shutdown_m,$config["conf_POPUP_MESSAGES"]);
 
 		exec("sudo ./poweroff.sh poweroff force");

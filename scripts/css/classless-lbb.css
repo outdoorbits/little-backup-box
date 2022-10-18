@@ -84,8 +84,8 @@ header, footer, figure, table, video, details, blockquote, ul, ol, dl, fieldset,
 	display: block;
 	margin: 0.5rem 0rem 1rem;
 	width: 100%;
-	overflow-x: auto;
-	overflow-y: hidden;
+	overflow-x: visible;
+	overflow-y: visible;
 	text-align: left;
 }
 

@@ -19,13 +19,13 @@
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
 
 <head>
-	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
+	<?php include "sub-standards-header-loader.php"; ?>
 	<script src="js/refresh_iframe.js"></script>
 </head>
 
 <body onload="refreshIFrame()" <?php echo $background; ?>>
-	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
-	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	<?php include "sub-standards-body-loader.php"; ?>
+	<?php include "sub-menu.php"; ?>
 
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
