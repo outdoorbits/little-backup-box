@@ -40,8 +40,8 @@ html[data-theme='light'], :root {
 	--ccloud: #00d0ff;
 	--cdanger: #f00;
 	--ornament: "‹‹‹ ›››";
-	--font-p: 13pt 'Barlow', Arial, sans-serif;
-	--font-h: 13pt 'Barlow', Arial, sans-serif;
+	--font-p: 13pt Arial, sans-serif;
+	--font-h: 13pt Arial, sans-serif;
 	--font-c: 12pt monospace;
 }
 
@@ -64,8 +64,8 @@ html[data-theme='sepia'] {
 	--cbg: #fefbf4;
 	--cfg: #433;
 	--ornament: "❦ ❦ ❦";
-	--font-p: 13pt 'Barlow', Arial, sans-serif;
-	--font-h: 13pt 'Barlow', Arial, sans-serif;
+	--font-p: 13pt Arial, sans-serif;
+	--font-h: 13pt Arial, sans-serif;
 	--font-c: 12pt monospace;
 }
 
