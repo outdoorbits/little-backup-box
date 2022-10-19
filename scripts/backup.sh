@@ -27,7 +27,7 @@
 # usage: backup.sh SOURCE TARGET [SECONDARY_BACKUP_FOLLOWS]
 #			SOURCE: Can be usb*1, internal, camera or ios
 # 			TARGET: Can be usb*2, internal, rsyncserver or cloud_???
-#			SECONDARY_BACKUP_FOLLOWS: otionally, if true another run follows, no thumbnails, no power off
+#			SECONDARY_BACKUP_FOLLOWS: otionally, if true another run follows, no power off
 #	*1 formerly storage
 #	*2 formerly external
 
@@ -56,7 +56,7 @@ SYNC_TIME_OVERHEATING_WAIT_SEC=60
 SOURCE_ARG="${1}"
 TARGET_ARG="${2}"
 
-# if SECONDARY_BACKUP_FOLLOWS = true: no thumbnails, no power off
+# if SECONDARY_BACKUP_FOLLOWS = true: no power off
 SECONDARY_BACKUP_FOLLOWS="false"
 if [ "${3}" == "true" ]; then
 	SECONDARY_BACKUP_FOLLOWS="true"
@@ -857,14 +857,46 @@ function syncprogress() {
 
 		lcd_message "+$(l "box_backup_generating_thumbnails_finding_images1")" "+$(l "box_backup_generating_thumbnails_finding_images2")" "+$(l "box_backup_generating_thumbnails_finding_images3")" "+$(l "box_backup_mode_${TARGET_MODE}")" "+"
 
+		#find all images
 		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*')
-		IFS=$'\n' read -rd '' -a IMAGES <<<"$IMAGES_STR"
+		IFS=$'\n' read -rd '' -a IMAGES_ARRAY <<<"${IMAGES_STR}"
 		unset IFS
 
-		IMAGE_COUNT=${#IMAGES[@]}
+		#find all tims
+		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*')
+		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
+		unset IFS
+
+		#reshape TIMS_ARRAY back to the path of the original file-list
+		for i in "${!TIMS_ARRAY[@]}"; do
+			FOLDER=$(dirname ${TIMS_ARRAY[$i]})
+			ORIG_FOLDER=${FOLDER::-5}
+			TIMS_ARRAY[$i]="${ORIG_FOLDER}/$(basename ${TIMS_ARRAY[$i]})"
+		done
+
+		#remove all files from list having tims already created
+		REMOVE_IMAGES_ID_ARRAY=()
+		for i in "${!IMAGES_ARRAY[@]}"; do
+			if [[ " ${TIMS_ARRAY[@]} " =~ " ${IMAGES_ARRAY[$i]} " ]]; then
+				REMOVE_IMAGES_ID_ARRAY+=($i)
+			fi
+		done
+
+		#sort indexes invers
+		IFS=$'\n' REMOVE_IMAGES_ID_ARRAY=($(sort -n -r <<<"${REMOVE_IMAGES_ID_ARRAY[*]}")); unset IFS
+
+		#remove ready images from todo-list
+		for REMOVE_IMAGES_ID in ${REMOVE_IMAGES_ID_ARRAY[@]}; do
+			unset IMAGES_ARRAY[$REMOVE_IMAGES_ID]
+		done
+
+		#reindex IMAGES_ARRAY
+		IMAGES_ARRAY=( "${IMAGES_ARRAY[@]}" )
+
+		#prepare loop to create thumbnails
+		IMAGE_COUNT=${#IMAGES_ARRAY[@]}
 
 		THUMBNAILS_START_TIME=$(date +%s)
-		THUMBNAILS_GENERATED="0"
 
 		LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
 		i=0
@@ -878,43 +910,29 @@ function syncprogress() {
 		# start screen
 		lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 
-		for IMAGE in "${IMAGES[@]}"
-		do
-			i=$((i+1))
+		for i in "${!IMAGES_ARRAY[@]}"; do
 
-			TIMS_FOLDER="$(dirname "${IMAGE}")/tims"
-			TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGE}")"
+			TIMS_FOLDER="$(dirname "${IMAGES_ARRAY[$i]}")/tims"
+			TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGES_ARRAY[$i]}")"
 			mkdir -p "${TIMS_FOLDER}"
 
-			if [ ! -f "${TIMS_FILE}" ]; then
-				if [ "${THUMBNAILS_GENERATED}" = "0" ]; then
-					THUMBNAILS_START_TIME=$(date +%s)
+			convert "${IMAGES_ARRAY[$i]}" -resize 800 "${TIMS_FILE}"
+
+
+			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ] || [ $(( ${i} + 1 )) -eq ${IMAGE_COUNT} ]; then
+				FINISHED_PERCENT=$(echo "scale=1; 100 * (${i} + 1) / ${IMAGE_COUNT}" | bc)
+
+				IMAGES_TO_CONVERT=$(echo "${IMAGE_COUNT} - $i - 1" | bc)
+
+				TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
+				TIME_REMAINING=$(echo "${TIME_RUN} * ${IMAGES_TO_CONVERT} / ( ${i} + 1 )" | bc)
+				TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
+				DAYS_LEFT=$((TIME_REMAINING/86400))
+				if [ "${DAYS_LEFT}" -gt "0" ]; then
+					TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
 				fi
 
-				convert "${IMAGE}" -resize 800 "${TIMS_FILE}"
-
-				THUMBNAILS_GENERATED=$((THUMBNAILS_GENERATED+1))
-			fi
-
-			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ] || [ ${i} -eq ${IMAGE_COUNT} ]; then
-				FINISHED_PERCENT=$(echo "scale=1; 100 * ${i} / ${IMAGE_COUNT}" | bc)
-
-				if [ "${THUMBNAILS_GENERATED}" -gt "0" ]; then
-					IMAGES_TO_CONVERT_MAX=$(echo "$IMAGE_COUNT + $THUMBNAILS_GENERATED - $i" | bc)
-
-					TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
-					TIME_REMAINING=$(echo "${TIME_RUN} * ( ${IMAGES_TO_CONVERT_MAX} - ${THUMBNAILS_GENERATED} ) / ${THUMBNAILS_GENERATED}" | bc)
-					TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
-					DAYS_LEFT=$((TIME_REMAINING/86400))
-					if [ "${DAYS_LEFT}" -gt "0" ]; then
-						TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
-					fi
-				else
-					THUMBNAILS_GENERATED="0"
-					TIME_REMAINING_FORMATED="?"
-				fi
-
-				LCD3="${i} $(l "box_backup_of") ${IMAGE_COUNT}"
+				LCD3="$(( ${i} + 1 )) $(l "box_backup_of") ${IMAGE_COUNT}"
 				LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
 				LCD5="PGBAR:${FINISHED_PERCENT}"
 
@@ -923,6 +941,7 @@ function syncprogress() {
 			fi
 
 		done
+
 		# hold final screen
 		sleep 2
 	fi
