@@ -855,24 +855,20 @@ function syncprogress() {
 	if [ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 		# generate thumbnails only after backup to local drive (usb or internal)
 
-		lcd_message "+$(l "box_backup_generating_thumbnails_finding_images1")" "+$(l "box_backup_generating_thumbnails_finding_images2")" "+$(l "box_backup_generating_thumbnails_finding_images3")" "+$(l "box_backup_mode_${TARGET_MODE}")" "+"
+		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_generating_thumbnails_finding_images2")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
 
 		#find all images
 		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*')
 		IFS=$'\n' read -rd '' -a IMAGES_ARRAY <<<"${IMAGES_STR}"
 		unset IFS
 
-		#find all tims
-		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*')
+		#find all tims and convert them to the estimated original filename
+		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' -exec bash -c 'FOLDER=$(dirname "{}");echo "${FOLDER::-5}/$(basename {})"' \;)
 		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
 		unset IFS
 
-		#reshape TIMS_ARRAY back to the path of the original file-list
-		for i in "${!TIMS_ARRAY[@]}"; do
-			FOLDER=$(dirname ${TIMS_ARRAY[$i]})
-			ORIG_FOLDER=${FOLDER::-5}
-			TIMS_ARRAY[$i]="${ORIG_FOLDER}/$(basename ${TIMS_ARRAY[$i]})"
-		done
+		#removing from IMAGES_ARRAY all lines known in TIMS_ARRAY (quick!)
+		IMAGES_ARRAY=($(echo -e "$(printf "%s\n" "${IMAGES_ARRAY[@]}")\n$(printf "%s\n" "${TIMS_ARRAY[@]}")" | sort | uniq -u))
 
 		#remove all files from list having tims already created
 		REMOVE_IMAGES_ID_ARRAY=()
@@ -897,9 +893,7 @@ function syncprogress() {
 		IMAGE_COUNT=${#IMAGES_ARRAY[@]}
 
 		THUMBNAILS_START_TIME=$(date +%s)
-
 		LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
-		i=0
 
 		LCD1="$(l "box_backup_generating_thumbnails")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
