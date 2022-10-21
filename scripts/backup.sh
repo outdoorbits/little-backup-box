@@ -863,7 +863,7 @@ function syncprogress() {
 		unset IFS
 
 		#find all tims and convert them to the estimated original filename
-		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' -exec echo "{}" \; |  sed -E 's#(.*)/tims/#\1/#')
+		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' |  sed -E 's#(.*)/tims/#\1/#')
 		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
 		unset IFS
 
