@@ -863,14 +863,15 @@ function syncprogress() {
 		unset IFS
 
 		#find all tims and convert them to the estimated original filename
-		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' -exec bash -c 'FOLDER=$(dirname "{}");echo "${FOLDER::-5}/$(basename {})"' \;)
+		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' -exec echo "{}" \; |  sed -E 's#(.*)/tims/#\1/#')
 		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
 		unset IFS
 
-		#removing from IMAGES_ARRAY all lines known in TIMS_ARRAY (quick!)
+		#remove from IMAGES_ARRAY all lines known in TIMS_ARRAY (quick!)
 		IMAGES_ARRAY=($(echo -e "$(printf "%s\n" "${IMAGES_ARRAY[@]}")\n$(printf "%s\n" "${TIMS_ARRAY[@]}")" | sort | uniq -u))
 
-		#remove all files from list having tims already created
+		#remove from IMAGES_ARRAY all files from list having tims already created (reverse check to prevent jobs comming from TIMS_ARRAY)
+		##1 find them, get indexes
 		REMOVE_IMAGES_ID_ARRAY=()
 		for i in "${!IMAGES_ARRAY[@]}"; do
 			if [[ " ${TIMS_ARRAY[@]} " =~ " ${IMAGES_ARRAY[$i]} " ]]; then
@@ -878,15 +879,15 @@ function syncprogress() {
 			fi
 		done
 
-		#sort indexes invers
+		##2 sort indexes inverted
 		IFS=$'\n' REMOVE_IMAGES_ID_ARRAY=($(sort -n -r <<<"${REMOVE_IMAGES_ID_ARRAY[*]}")); unset IFS
 
-		#remove ready images from todo-list
+		##3 remove images from ##1 from IMAGES_ARRAY
 		for REMOVE_IMAGES_ID in ${REMOVE_IMAGES_ID_ARRAY[@]}; do
 			unset IMAGES_ARRAY[$REMOVE_IMAGES_ID]
 		done
 
-		#reindex IMAGES_ARRAY
+		##4 reindex IMAGES_ARRAY
 		IMAGES_ARRAY=( "${IMAGES_ARRAY[@]}" )
 
 		#prepare loop to create thumbnails
