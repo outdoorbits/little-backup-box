@@ -63,22 +63,24 @@ if [ ! -z $conf_SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
 	#wait for internet if not connected
 	TRIES_MAX=5
 	TRIES_DONE=0
-	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${INTERNET_DISCONNECTED}" != "0" ]]; do
+	INTERNET_DISCONNECTED_NEW="${INTERNET_DISCONNECTED}"
+	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${INTERNET_DISCONNECTED_NEW}" != "0" ]]; do
 		sleep 2
 		ping -c1 google.com &>/dev/null
-		INTERNET_DISCONNECTED=$?
+		INTERNET_DISCONNECTED_NEW=$?
 
 		TRIES_DONE=$((TRIES_DONE+1))
 	done
 
-	if [ "${INTERNET_DISCONNECTED}" = "0" ]; then
+	if [ "${INTERNET_DISCONNECTED_NEW}" = "0" ]; then
 		#online!
 
-		IP=$(hostname -I | cut -d' ' -f1)
+		IP_NEW=$(hostname -I | cut -d' ' -f1)
 
 		if [ $conf_DISP = true ] && [ $conf_DISP_IP_REPEAT = true ]; then
-			if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
+			if [ "${IP}" != "${IP_NEW}" ] || [ "${INTERNET_DISCONNECTED}" != "${INTERNET_DISCONNECTED_NEW}" ]; then
 				# IP changed
+				IP=$IP_NEW
 				sleep 1
 				lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
 			fi
