@@ -57,11 +57,14 @@ if [ "${conf_BACKUP_DEFAULT_TARGET}" = "external" ]; then echo 'conf_BACKUP_DEFA
 if [ "${conf_BACKUP_DEFAULT_SOURCE2}" = "storage" ]; then echo 'conf_BACKUP_DEFAULT_SOURCE2="usb"' | sudo tee -a "${CONFIG}"; fi
 if [ "${conf_BACKUP_DEFAULT_TARGET2}" = "external" ]; then echo 'conf_BACKUP_DEFAULT_TARGET2="usb"' | sudo tee -a "${CONFIG}"; fi
 
+#rewrite config to new names
+if [ ! -z "${conf_conf_DISP_IP_REPEAT}" ]; then echo "conf_DISP_IP_REPEAT=${conf_conf_DISP_IP_REPEAT}" | sudo tee -a "${CONFIG}"; fi
+
 # Load config.cfg
 source "$CONFIG"
 
-# wipe lockfile
-sudo rm "$const_CMD_RUNNER_LOCKFILE" > /dev/null 2>&1
+# wipe lockfile cmd-runner
+sudo rm "${const_CMD_RUNNER_LOCKFILE}" > /dev/null 2>&1
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
@@ -77,15 +80,13 @@ sleep 1
 # Display IP
 source "${WORKING_DIR}/cron-ip.sh" "force_display" &
 
-
 # Default backup
-
 SECONDARY_BACKUP_FOLLOWS="false"
 if [ "${conf_BACKUP_DEFAULT_SOURCE2}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET2}" != "none" ]; then
 	SECONDARY_BACKUP_FOLLOWS="true"
 fi
 
-# default backup 1
+## default backup 1
 if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET}" != "none" ]; then
 	if [ "${SECONDARY_BACKUP_FOLLOWS}" == "true" ]; then
 		lcd_message "$(l 'box_backup_primary')"
@@ -95,7 +96,7 @@ if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TAR
 	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" "${SECONDARY_BACKUP_FOLLOWS}"
 fi
 
-# default-backup 2
+## default-backup 2
 if [ "${SECONDARY_BACKUP_FOLLOWS}" == "true" ]; then
 	lcd_message "$(l 'box_backup_secondary')"
 	sleep 1

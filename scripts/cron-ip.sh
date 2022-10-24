@@ -41,12 +41,13 @@ FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 # argruments
 FORCE_DISPLAY=${1}
 
+#online?
 ping -c1 google.com &>/dev/null
 INTERNET_DISCONNECTED=$?
 
 IP=$(hostname -I | cut -d' ' -f1)
 
-if [ $conf_conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
+if [ $conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
 	if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
 		if [ "${INTERNET_DISCONNECTED}" = "0" ]; then
 			lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
@@ -56,49 +57,56 @@ if [ $conf_conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
 	fi
 fi
 
-TRIES_MAX=5
-TRIES_DONE=0
-while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${INTERNET_DISCONNECTED}" != "0" ]]; do
-	sleep 2
-	ping -c1 google.com &>/dev/null
-	INTERNET_DISCONNECTED=$?
-
-	TRIES_DONE=$((TRIES_DONE+1))
-done
-
-if [ "${INTERNET_DISCONNECTED}" != "0" ]; then
-	exit 0
-fi
-
-# Internet
-IP=$(hostname -I | cut -d' ' -f1)
-
-if [ $conf_DISP = true ] && [ $conf_conf_DISP_IP_REPEAT = true ]; then
-	if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
-		lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
-	fi
-fi
-
-UPTIME=$(awk '{print int($1)}' /proc/uptime)
-
 # Mail
 if [ ! -z $conf_SMTP_SERVER ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
 
-	touch "${IP_MAIL_SENT_MARKERFILE}"
+	#wait for internet if not connected
+	TRIES_MAX=5
+	TRIES_DONE=0
+	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${INTERNET_DISCONNECTED}" != "0" ]]; do
+		sleep 2
+		ping -c1 google.com &>/dev/null
+		INTERNET_DISCONNECTED=$?
 
-	MEJIRO_HTTP_PLAIN=""
-	MEJIRO_HTTPS_PLAIN=""
-	MEJIRO_HTTP_HTML=""
-	MEJIRO_HTTPS_HTML=""
+		TRIES_DONE=$((TRIES_DONE+1))
+	done
 
-	if [ -f "${WORKING_DIR}/../mejiro/index.php" ]; then
-		MEJIRO_HTTP_PLAIN="Mejiro: http://${IP}:8000/mejiro\n"
-		MEJIRO_HTTPS_PLAIN="Mejiro: https://${IP}/mejiro\n"
-		MEJIRO_HTTP_HTML="Mejiro: <a href='http://${IP}:8000/mejiro/'>http://${IP}:8000/mejiro/</a><br>\n"
-		MEJIRO_HTTPS_HTML="Mejiro: <a href='https://${IP}/mejiro/'>http://${IP}/mejiro/</a><br>\n"
-	fi
+	if [ "${INTERNET_DISCONNECTED}" = "0" ]; then
+		#online!
 
-	TEXT_PLAIN="
+		IP=$(hostname -I | cut -d' ' -f1)
+
+		if [ $conf_DISP = true ] && [ $conf_DISP_IP_REPEAT = true ]; then
+			if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
+				# IP changed
+				sleep 1
+				lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
+			fi
+		fi
+
+		#lockfile
+		if [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
+			touch "${IP_MAIL_SENT_MARKERFILE}"
+		else
+			#Lockfile has obviously been created by another process in the meantime, exit
+			exit 0
+		fi
+
+		#create mail
+
+		MEJIRO_HTTP_PLAIN=""
+		MEJIRO_HTTPS_PLAIN=""
+		MEJIRO_HTTP_HTML=""
+		MEJIRO_HTTPS_HTML=""
+
+		if [ -f "${WORKING_DIR}/../mejiro/index.php" ]; then
+			MEJIRO_HTTP_PLAIN="Mejiro: http://${IP}:8000/mejiro\n"
+			MEJIRO_HTTPS_PLAIN="Mejiro: https://${IP}/mejiro\n"
+			MEJIRO_HTTP_HTML="Mejiro: <a href='http://${IP}:8000/mejiro/'>http://${IP}:8000/mejiro/</a><br>\n"
+			MEJIRO_HTTPS_HTML="Mejiro: <a href='https://${IP}/mejiro/'>http://${IP}/mejiro/</a><br>\n"
+		fi
+
+		TEXT_PLAIN="
 $(l 'box_cronip_mail_description_https'):
 $(l 'box_cronip_mail_main'): https://${IP}
 $(l 'mainmenue_filebrowser'): https://${IP}/files
@@ -123,12 +131,14 @@ miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
 
 
 
-	TEXT_PLAIN="${TEXT_PLAIN}
+		TEXT_PLAIN="${TEXT_PLAIN}
 
 $(l 'box_cronip_mail_open_samba') 'smb://${IP}'"
 
 		TEXT_HTML="${TEXT_HTML}
 <br>
 $(l 'box_cronip_mail_open_samba'): '<a href='smb://${IP}'>smb://${IP}</a>'<br>"
-	send_email "$(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
+
+		send_email "$(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
+	fi
 fi

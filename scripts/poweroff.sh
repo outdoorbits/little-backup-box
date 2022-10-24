@@ -25,7 +25,6 @@ source "$CONFIG"
 
 # Configuration
 FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
-IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
@@ -71,8 +70,6 @@ if [ "${conf_POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
     echo "" | sudo tee "${FILE_OLED_OLD}"
     echo "" | sudo tee "${const_LOGFILE}"
     echo "" | sudo tee "${const_LOGFILE_SYNC}"
-    sudo rm "${IP_MAIL_SENT_MARKERFILE}" > /dev/null 2>&1
-
 
     if [ "${ACTION}" = "poweroff" ]; then
     if [ "${conf_DISP_BLACK_ON_POWER_OFF}" = "true" ]; then

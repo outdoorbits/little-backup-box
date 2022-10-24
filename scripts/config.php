@@ -101,7 +101,7 @@ function write_config()
 	$conf_MAIL_HTML						= isset($conf_MAIL_HTML)?"true":"false";
 	$conf_DISP							= isset($conf_DISP)?"true":"false";
 	$conf_DISP_BLACK_ON_POWER_OFF		= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
-	$conf_conf_DISP_IP_REPEAT			= isset($conf_conf_DISP_IP_REPEAT)?"true":"false";
+	$conf_DISP_IP_REPEAT				= isset($conf_DISP_IP_REPEAT)?"true":"false";
 	$conf_LOG_SYNC						= isset($conf_LOG_SYNC)?"true":"false";
 	$conf_POPUP_MESSAGES				= isset($conf_POPUP_MESSAGES)?"true":"false";
 
@@ -148,7 +148,7 @@ conf_NOTIFY=$conf_NOTIFY
 conf_MAIL_HTML=$conf_MAIL_HTML
 conf_DISP=$conf_DISP
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
-conf_conf_DISP_IP_REPEAT=$conf_conf_DISP_IP_REPEAT
+conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_THEME=$conf_THEME
 conf_BACKGROUND_IMAGE=$conf_BACKGROUND_IMAGE
 conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
@@ -403,8 +403,8 @@ function upload_settings() {
 					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
 
 				<h3><?php echo L::config_behavior_disp_ip_header; ?></h3>
-					<label for="conf_conf_DISP_IP_REPEAT"><?php echo L::config_behavior_disp_ip_label; ?></label><br>
-					<input type="checkbox" id="conf_conf_DISP_IP_REPEAT" name="conf_conf_DISP_IP_REPEAT" <?php echo $config['conf_conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+					<label for="conf_DISP_IP_REPEAT"><?php echo L::config_behavior_disp_ip_label; ?></label><br>
+					<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
 
 				<h3><?php echo L::config_disp_black_on_power_off_header; ?></h3>
 					<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_disp_black_on_power_off_label; ?></label><br>
