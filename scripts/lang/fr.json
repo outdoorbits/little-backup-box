@@ -369,7 +369,9 @@
       "order_by_creationdate": "Date"
     },
     "images": {
-      "download": "Télécharger l'original"
+      "download": "Télécharger l'original",
+      "page": "Page",
+      "images": "Images"
     },
     "footer": {
       "footer": "Attention, seules les images qui ont des vignettes sont affichées ici. Générez-les soit automatiquement (Paramètres, Sauvegarde) soit via la page Sauvegarde."

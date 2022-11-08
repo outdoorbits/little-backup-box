@@ -23,7 +23,7 @@
 
 	function navigator($filter_images_per_page,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate) {
 		$offset_left	= $offset >= $filter_images_per_page?$offset-$filter_images_per_page:0;
-		$offset_end		= $imagecount >= $filter_images_per_page?($imagecount % $filter_images_per_page) * $filter_images_per_page:0;
+		$offset_end		= $imagecount >= $filter_images_per_page?intval($imagecount / $filter_images_per_page) * $filter_images_per_page:0;
 		$offset_right	= $offset + $filter_images_per_page < $imagecount?$offset+$filter_images_per_page:$offset_end;
 
 		?>
@@ -44,6 +44,10 @@
 						$link_order			.= "ASC";
 					}
 					echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
+
+					$page	= intval($offset / $filter_images_per_page) + 1;
+					$pages	= intval($imagecount / $filter_images_per_page) + 1;
+					echo "&nbsp;&nbsp;&nbsp;&nbsp;" . L::view_images_page . ' ' . $page . '/' . $pages;
 				?>
 			</div>
 
@@ -58,6 +62,9 @@
 					} else {
 						$link_order			.= "ASC";
 					}
+
+					echo $imagecount . ' ' . L::view_images_images . "&nbsp;&nbsp;&nbsp;&nbsp;";
+
 					echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
 				?>
 				&nbsp;&nbsp;&nbsp;&nbsp;

@@ -369,7 +369,9 @@
       "order_by_creationdate": "Datum"
     },
     "images": {
-      "download": "Download Original"
+      "download": "Download Original",
+      "page": "Seite",
+      "images": "Bilder"
     },
     "footer": {
       "footer": "Achtung, hier werden nur Bilder angezeigt, von denen Vorschaubilder bestehen. Erzeugen Sie diese entweder automatisch (Einstellungen, Backup) oder über die Backup-Seite."
