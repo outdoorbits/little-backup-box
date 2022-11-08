@@ -42,16 +42,21 @@ DB_SETUP_ARRAY+=("create table EXIF_DATA (ID integer primary key autoincrement);
 DB_VERSION=0
 
 # try to get version of existing db
+
 if [ -f "${DB}" ]; then
 	DB_VERSION=$(sqlite3 "${DB}" "select VERSION from CONFIG;")
-# 	echo "VERSION: $DB_VERSION"
+#  	echo "VERSION: ${DB_VERSION}"
+fi
+
+if [ "${DB_VERSION}" == "" ]; then
+	DB_VERSION=0
 fi
 
 # update if necessary
 if [ -z "${DB_VERSION}" ] || [ "${DB_VERSION}" -lt "${#DB_SETUP_ARRAY[@]}" ]; then
 	for ((i = 0; i < ${#DB_SETUP_ARRAY[@]}; i++)); do
 		if [ "${i}" -ge "${DB_VERSION}" ]; then
-# 			echo "UPDATE: ${DB_SETUP_ARRAY[$i]}"
+#  			echo "UPDATE: ${DB_SETUP_ARRAY[$i]}"
 			sqlite3 "${DB}" "${DB_SETUP_ARRAY[$i]}"
 			sqlite3 "${DB}" "update CONFIG set VERSION = $(($i + 1));"
 		fi

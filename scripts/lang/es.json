@@ -368,7 +368,9 @@
       "order_by_filename": "Nombre del archivo",
       "order_by_creationdate": "Fecha"
     },
-    "images": {},
+    "images": {
+      "download": "Descargar originales"
+    },
     "footer": {
       "footer": "Advertencia, aquí solo se muestran las imágenes que tienen miniaturas. Génelos automáticamente (Configuración, Copia de seguridad) o a través de la página Copia de seguridad."
     }

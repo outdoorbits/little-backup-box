@@ -368,7 +368,9 @@
       "order_by_filename": "Dateiname",
       "order_by_creationdate": "Datum"
     },
-    "images": {},
+    "images": {
+      "download": "Download Original"
+    },
     "footer": {
       "footer": "Achtung, hier werden nur Bilder angezeigt, von denen Vorschaubilder bestehen. Erzeugen Sie diese entweder automatisch (Einstellungen, Backup) oder über die Backup-Seite."
     }

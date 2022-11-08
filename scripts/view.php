@@ -309,6 +309,7 @@
 					while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
 						$Directory				= fix_medium_in_dir($IMAGE['Directory'],$STORAGE_PATH);
 						$IMAGE_ID				= $IMAGE['ID'];
+						$IMAGE_FILENAME			= $Directory . '/' . $IMAGE['File_Name'];
 						$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'];
 						?>
 
@@ -316,7 +317,12 @@
 							<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
 								<img style="max-width: 100%; border-radius: 5px;" src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
 							</a>
+							<br>
+							<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+								<?php echo L::view_images_download; ?>
+							</a>
 						</div>
+
 						<div style="float:left;width: 100%;padding: 5px;">
 							<table>
 							<?php
