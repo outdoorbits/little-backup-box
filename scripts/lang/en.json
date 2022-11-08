@@ -83,7 +83,10 @@
       "mode_usb": "USB storage",
       "usb_source_ok": "Source o.k.",
       "usb_1": "USB-target",
-      "usb_2": "USB-source"
+      "usb_2": "USB-source",
+      "mode_thumbnails": "Thumbnails",
+      "camera_storage_not_exists_2": "does not exist.",
+      "camera_storage_not_exists_1": "Camera-storage"
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -134,7 +137,7 @@
     "tools": "Tools",
     "filebrowser": "Files",
     "minidlna": "MiniDLNA",
-    "mejiro": "Mejiro"
+    "view": "View"
   },
   "main": {
     "internal_button": "int. storage",
@@ -147,14 +150,15 @@
     "backup_to": "to",
     "backup_initiated": "initiated",
     "cloudservice": "cloudservice",
-    "stopbackup_button": "STOP backup",
+    "stopbackup_button": "STOP",
     "stopbackup_m": "Stopping backup.",
     "reboot_m": "Little Backup Box reboots. Refresh this page in a few moments.",
     "shutdown_m": "Little Backup Box is powered off. You can close this page.",
     "help_txt": "<p class='text-center'>Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p>",
     "usb_button": "USB storage",
     "backup_break1": "Backup",
-    "backup_break2": "aborted."
+    "backup_break2": "aborted.",
+    "thumbnails_button": "Thumbnails"
   },
   "sysinfo": {
     "sysinfo": "System info",
@@ -347,6 +351,26 @@
       "description_non_destructive": "Data will be preserved as far as possible.",
       "description_destructive": "Data will be deleted!",
       "description": "Check disk"
+    }
+  },
+  "view": {
+    "view": "Image viewer",
+    "filter": {
+      "medium": "Storage medium",
+      "medium_usb_storage": "USB-target",
+      "section": "Filter",
+      "images_per_page": "Images per page",
+      "medium_internal": "Int. storage",
+      "medium_usb_source": "USB-Source",
+      "directory": "Folder",
+      "no_medium": "No valid medium selected.",
+      "date": "Date",
+      "order_by_filename": "Filename",
+      "order_by_creationdate": "Date"
+    },
+    "images": {},
+    "footer": {
+      "footer": "Warning, only images that have thumbnails are displayed here. Generate them either automatically (Settings, Backup) or via the Backup page."
     }
   }
 }

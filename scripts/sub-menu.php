@@ -27,6 +27,7 @@ sub expects from calling script:
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="index.php"?" active":""; ?>" href="/index.php"><?php echo L::mainmenue_main; ?></a></li>
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="sysinfo.php"?" active":""; ?>" href="/sysinfo.php"><?php echo L::mainmenue_sysinfo; ?></a></li>
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="tools.php"?" active":""; ?>" href="/tools.php"><?php echo L::mainmenue_tools; ?></a></li>
+				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="view.php"?" active":""; ?>" href="/view.php"><?php echo L::mainmenue_view; ?></a></li>
 			</ul>
 		</div>
 
@@ -39,10 +40,6 @@ sub expects from calling script:
 					} else {
 						echo ("<li class=\"nav-item\"><a class=\"nav-link\" href='http://" . str_replace(":" . $_SERVER['SERVER_PORT'], ":8200", $HTTP_HOST) ."' target='_blank'>" . L::mainmenue_minidlna . "</a></li>");
 					}
-
-					if (file_exists("${WORKING_DIR}/../mejiro/index.php")) {
-						echo ("<li class=\"nav-item\"><a class=\"nav-link\" href='/mejiro' target='_blank'>" . L::mainmenue_mejiro . "</a></li>");
-					}
 				?>
 			</ul>
 		</div>
@@ -53,8 +50,8 @@ sub expects from calling script:
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPower" role="button" data-bs-toggle="dropdown" aria-expanded="false">&#9211;</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdownPower">
-						<li><a class="dropdown-item" href="<?php echo $_SERVER["PATH_INFO"]; ?>?reboot=true"><?php echo L::main_reboot_button; ?></a></li>
-						<li><a class="dropdown-item" href="<?php echo $_SERVER["PATH_INFO"]; ?>?shutdown=true"><?php echo L::main_shutdown_button; ?></a></li>
+						<li><a class="dropdown-item" href="?reboot=true"><?php echo L::main_reboot_button; ?></a></li>
+						<li><a class="dropdown-item" href="?shutdown=true"><?php echo L::main_shutdown_button; ?></a></li>
 					</ul>
 				</li>
 			</ul>

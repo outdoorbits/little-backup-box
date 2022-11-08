@@ -13,7 +13,7 @@
     "tools": "Outils",
     "filebrowser": "Des dossiers",
     "minidlna": "MiniDLNA",
-    "mejiro": "Mejiro"
+    "view": "View"
   },
   "main": {
     "internal_button": "stockage interne",
@@ -29,11 +29,12 @@
     "reboot_m": "Little Backup Box redémarre. Actualisez cette page dans quelques instants.",
     "shutdown_m": "Little Backup Box est éteint. Vous pouvez fermer cette page.",
     "help_txt": "<p class='text-center'>Veuillez lire le <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p >",
-    "stopbackup_button": "ARRÊTER la sauvegarde",
+    "stopbackup_button": "ARRÊTER",
     "stopbackup_m": "Arrêt de la sauvegarde.",
     "usb_button": "Poste stockage USB",
     "backup_break1": "Sauvegarde",
-    "backup_break2": "abandonnée."
+    "backup_break2": "abandonnée.",
+    "thumbnails_button": "De vignettes"
   },
   "sysinfo": {
     "sysinfo": "Information système",
@@ -268,7 +269,10 @@
       "mode_usb": "USB Stockage ",
       "usb_source_ok": "Source ok",
       "usb_1": "Cible USB",
-      "usb_2": "Source USB"
+      "usb_2": "Source USB",
+      "mode_thumbnails": "De vignettes",
+      "camera_storage_not_exists_2": "n'existe pas.",
+      "camera_storage_not_exists_1": "Caméra-stockage"
     },
     "cronip": {
       "offline": "hors ligne",
@@ -347,6 +351,26 @@
       "description_non_destructive": "Les données seront conservées dans la mesure du possible.",
       "description_destructive": "Les données seront supprimées !",
       "description": "Vérifiez le disque"
+    }
+  },
+  "view": {
+    "view": "Visionneuse d'images",
+    "filter": {
+      "medium": "Support de stockage",
+      "medium_usb_storage": "Cible USB",
+      "section": "Filtre",
+      "images_per_page": "Images par page",
+      "medium_internal": "Int. stockage",
+      "medium_usb_source": "USB-Source",
+      "directory": "Dossier",
+      "no_medium": "Aucun support valide sélectionné.",
+      "date": "Date",
+      "order_by_filename": "nom de fichier",
+      "order_by_creationdate": "Date"
+    },
+    "images": {},
+    "footer": {
+      "footer": "Attention, seules les images qui ont des vignettes sont affichées ici. Générez-les soit automatiquement (Paramètres, Sauvegarde) soit via la page Sauvegarde."
     }
   }
 }

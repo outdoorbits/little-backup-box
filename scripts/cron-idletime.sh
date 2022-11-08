@@ -34,8 +34,18 @@ if [ "$conf_POWER_OFF_IDLE_TIME" -gt "0" ]; then
 	if [ -f "$const_CMD_RUNNER_LOCKFILE" ]; then CMD_RUNNER_ACTIVE=true; else CMD_RUNNER_ACTIVE=false; fi
 	UpTimeSec=$(awk '{print $1}' /proc/uptime)
 	UpTimeSec=${UpTimeSec%.*}
-	LogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${const_LOGFILE}")`
-	ApacheLogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${APACHE_ACCESS_LOGFILE}")`
+
+	if [ -f "${const_LOGFILE}" ]; then
+		LogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${const_LOGFILE}")`
+	else
+		LogfileAgeSec="$IDLE_SEC_to_POWER_OFF"
+	fi
+
+	if [ -f "${APACHE_ACCESS_LOGFILE}" ]; then
+		ApacheLogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${APACHE_ACCESS_LOGFILE}")`
+	else
+		ApacheLogfileAgeSec="$IDLE_SEC_to_POWER_OFF"
+	fi
 
 # 	echo "CMD_RUNNER_ACTIVE=$CMD_RUNNER_ACTIVE"
 # 	echo "IDLE_SEC_to_POWER_OFF=$IDLE_SEC_to_POWER_OFF"
@@ -44,6 +54,9 @@ if [ "$conf_POWER_OFF_IDLE_TIME" -gt "0" ]; then
 # 	echo "ApacheLogfileAgeSec=$ApacheLogfileAgeSec"
 
 	if [ $CMD_RUNNER_ACTIVE = false ] && [ "$UpTimeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$LogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ] && [ "$ApacheLogfileAgeSec" -ge "$IDLE_SEC_to_POWER_OFF" ]; then
-		source "${WORKING_DIR}/poweroff.sh" "poweroff" "force" "$(l 'box_poweroff_idle_time_reached')"
+		#second layer: Are rsync or gphoto2 active?
+		if [[ ! $(pgrep rsync) ]] && [[ ! $(pgrep gphoto2) ]]; then
+			source "${WORKING_DIR}/poweroff.sh" "poweroff" "force" "$(l 'box_poweroff_idle_time_reached')"
+		fi
 	fi
 fi

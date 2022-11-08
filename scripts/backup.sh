@@ -63,7 +63,7 @@ if [ "${3}" == "true" ]; then
 fi
 
 # Source definition
-if [[ " usb internal camera ios " =~ " ${SOURCE_ARG} " ]]; then
+if [[ " usb internal camera ios thumbnails " =~ " ${SOURCE_ARG} " ]]; then
 	SOURCE_MODE="${SOURCE_ARG}"
 else
 	SOURCE_MODE="usb"
@@ -131,11 +131,23 @@ function calculate_files_to_sync() {
 
 	if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
 		# Source usb ios internal
-		if [ ${TARGET_MODE} = "rsyncserver" ]; then
-			FILES_TO_SYNC=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
-		else
-			FILES_TO_SYNC=$(sudo rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
-		fi
+
+		for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
+
+			if [ ${TARGET_MODE} = "rsyncserver" ]; then
+				FILES_IN_FOLDER=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+			else
+				FILES_IN_FOLDER=$(sudo rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+			fi
+
+			if [ -z "${FILES_IN_FOLDER}" ]; then
+				FILES_IN_FOLDER=0
+			fi
+
+			log_message "Files in folder '${SOURCE_PATH}': ${FILES_IN_FOLDER}"
+
+			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_IN_FOLDER} ))
+		done
 
 	#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
 	#     then
@@ -145,28 +157,29 @@ function calculate_files_to_sync() {
 		# Source camera
 		sudo mkdir -p "${BACKUP_PATH}"
 		cd "${BACKUP_PATH}"
-		FILES_TO_SYNC=0
 
-		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
-		do
-			GPHOTO=$(sudo gphoto2 --list-files --folder "${Camera_Sync_Folder}")
-			log_message "gphoto2 --list-files --folder \"${Camera_Sync_Folder}\":\nexitcode=$?\n${GPHOTO}" 3
+		for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
+			GPHOTO=$(sudo gphoto2 --list-files --folder "${SOURCE_PATH}")
+			log_message "gphoto2 --list-files --folder \"${SOURCE_PATH}\":\nexitcode=$?\n${GPHOTO}" 3
 
 			FILES_IN_FOLDER=$(echo "${GPHOTO}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
+
 			if [ -z "${FILES_IN_FOLDER}" ]; then
 				FILES_IN_FOLDER=0
 			fi
 
-			log_message "Files in folder '${Camera_Sync_Folder}': ${FILES_IN_FOLDER}"
+			log_message "Files in folder '${SOURCE_PATH}': ${FILES_IN_FOLDER}"
 
 			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_IN_FOLDER} ))
 		done
 
 		cd
 
+	elif [ "${SOURCE_MODE}" = "thumbnails" ]; then
+		echo "" # dummy action
 	else
 		# no defined mode selected
-		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "" "+2"
+		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+2"
 		exit 1
 	fi
 
@@ -232,7 +245,7 @@ function syncprogress() {
 			fi
 
 		elif [ "${MODE}" = "gphoto2" ]; then
-			if [ "${PIPE:0:1}" = "#" ]; then
+			if [ "${PIPE:0:6}" = "Saving" ] || [ "${PIPE:0:4}" = "Skip" ]; then
 				FILESCOUNT=$((FILESCOUNT+1))
 				LCD3="${FILESCOUNT} $(l 'box_backup_of') ${FILES_TO_SYNC}"
 
@@ -240,22 +253,6 @@ function syncprogress() {
 				echo "${PIPE}" | tee -a "${const_LOGFILE_SYNC}"
 			fi
 		fi
-
-		# calculte remaining time
-		if [ "${FILESCOUNT}" -gt "0" ]; then
-			TIME_RUN=$(echo "$(date +%s) - ${START_TIME}" | bc)
-			TIME_REMAINING=$(echo "${TIME_RUN} * ( ${FILES_TO_SYNC} - ${FILESCOUNT} ) / ${FILESCOUNT}" | bc)
-			TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
-			DAYS_LEFT=$((TIME_REMAINING/86400))
-			if [ "${DAYS_LEFT}" -gt "0" ]; then
-				TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
-			fi
-		else
-			FILESCOUNT="0"
-			TIME_REMAINING_FORMATED="?"
-		fi
-
-		LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
 
 		# calculate progress
 		if [ "${FILES_TO_SYNC}" -gt "0" ]; then
@@ -270,17 +267,32 @@ function syncprogress() {
 			LCD5="PGBAR:0"
 		fi
 
-		if [ ${NEW_MESSAGE} = true ]; then
-			if [ $(($(date +%s) - ${LAST_MESSAGE_TIME})) -ge 1 ] || [ "${FINISHED_PERCENT}" = "100.0" ]; then
-				lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
-				LAST_MESSAGE_TIME=$(date +%s)
+		if [ ${NEW_MESSAGE} = true ] && ([ $(($(date +%s) - ${LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${FINISHED_PERCENT}" = "100.0" ]); then
+
+			# calculte remaining time
+			if [ "${FILESCOUNT}" -gt "0" ]; then
+				TIME_RUN=$(echo "$(date +%s) - ${START_TIME}" | bc)
+				TIME_REMAINING=$(echo "${TIME_RUN} * ( ${FILES_TO_SYNC} - ${FILESCOUNT} ) / ${FILESCOUNT}" | bc)
+				TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
+				DAYS_LEFT=$((TIME_REMAINING/86400))
+				if [ "${DAYS_LEFT}" -gt "0" ]; then
+					TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
+				fi
+			else
+				FILESCOUNT="0"
+				TIME_REMAINING_FORMATED="?"
 			fi
+
+			LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+
+			lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
+			LAST_MESSAGE_TIME=$(date +%s)
 		fi
 	done
 
 	# force to display and hold final screen
 	lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
-	sleep 2
+	sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 
 # 	log_message "Backup-time: $(echo "$(date +%s) - ${TIMER_START}" | bc) seconds" 3
 }
@@ -395,7 +407,6 @@ function syncprogress() {
 
 	if [ "${SOURCE_MODE}" = "usb" ]; then
 
-		# Source usb
 		# If display support is enabled, display the specified message
 		lcd_message "$(l 'box_backup_insert_source_1')" "$(l 'box_backup_insert_source_2')"
 
@@ -404,10 +415,10 @@ function syncprogress() {
 		MOUNTED_DEVICES+=("${UUID_USB_2}")
 
 		# Set SOURCE_PATH
-		SOURCE_PATH="${const_USB_SOURCE_MOUNT_POINT}"
+		SOURCE_PATHS=("${const_USB_SOURCE_MOUNT_POINT}")
 
 		# notify that the source device has been mounted
-		ret="$(get_storage_properties ${SOURCE_PATH})"
+		ret="$(get_storage_properties ${SOURCE_PATHS[0]})"
 		IFS="|"
 		set -- $ret
 		STOR_SIZE="$(l 'box_backup_storage_size'): $1"
@@ -417,12 +428,13 @@ function syncprogress() {
 		unset IFS
 
 		lcd_message "$(l 'box_backup_usb_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
+
 		if [ $conf_DISP = true ]; then
 			sleep 2
 		fi
 
 		# Create  a .id random identifier file if doesn't exist
-		cd "${SOURCE_PATH}"
+		cd "${SOURCE_PATHS[0]}"
 		if [ ! -f *.id ]; then
 			random=$(echo $RANDOM)
 			sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
@@ -451,10 +463,10 @@ function syncprogress() {
 		done
 
 		# Mount iOS device
-		SOURCE_PATH="${const_IOS_MOUNT_POINT}/DCIM"
+		SOURCE_PATHS=("${const_IOS_MOUNT_POINT}/DCIM")
 
 		# Create  a .id random identifier file if doesn't exist
-		cd "${SOURCE_PATH}"
+		cd "${SOURCE_PATHS[0]}"
 		if [ ! -f *.id ]; then
 			random=$(echo $RANDOM)
 			sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
@@ -470,13 +482,38 @@ function syncprogress() {
 		SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
 
 	elif [ "${SOURCE_MODE}" = "internal" ]; then
-		lcd_message "$(l 'box_backup_int_storage_ok')"
 
 		# Set SOURCE_PATH
-		SOURCE_PATH="${const_INTERNAL_BACKUP_DIR}"
+		SOURCE_PATHS=("${const_INTERNAL_BACKUP_DIR}")
+
+		# display device information
+		ret="$(get_storage_properties ${SOURCE_PATHS[0]})"
+		IFS="|"
+		set -- $ret
+		STOR_SIZE="$(l 'box_backup_storage_size'): $1"
+		STOR_USED="$(l 'box_backup_storage_used'): $2"
+		STOR_FSTYPE="$(l 'box_backup_storage_filesystem_short'): $4"
+
+		unset IFS
+
+		lcd_message "$(l 'box_backup_int_storage_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
+
+		if [ $conf_DISP = true ]; then
+			sleep 2
+		fi
+
+		# Create  a .id random identifier file if doesn't exist
+		cd "${SOURCE_PATHS[0]}"
+		if [ ! -f *.id ]; then
+			random=$(echo $RANDOM)
+			sudo touch $(date -d "today" +"%Y%m%d%H%M")-$random.id
+		fi
+		ID_FILE=$(ls -t *.id | head -n1)
+		ID="${ID_FILE%.*}"
+		cd
 
 		# Set BACKUP_PATH
-		BACKUP_PATH="${TARGET_PATH}/internal"
+		BACKUP_PATH="${TARGET_PATH}/internal/${ID}"
 
 		# Set SOURCE_IDENTIFIER
 		SOURCE_IDENTIFIER="Internal memory"
@@ -505,7 +542,8 @@ function syncprogress() {
 		MANUFACTURER=${MANUFACTURER//[^a-zA-Z0-9-_\.]/_}
 
 		CAMERA_SERIAL=$(sudo gphoto2 --summary | grep "Serial Number" | cut -d: -f2 | tr -d '[:space:]')
-		CAMERA_SERIAL=${CAMERA_SERIAL//[^a-zA-Z0-9-_\.]/_}
+		CAMERA_SERIAL=${CAMERA_SERIAL//[^a-zA-Z0-9-_\.]/_} #replace unsupported letters
+		CAMERA_SERIAL=$(echo $CAMERA_SERIAL | sed 's/^0*//') #remove leading "0"
 
 		if [ ${#CAMERA_SERIAL} -le 13 ]; then
 			CAMERA_SERIAL_FORMATED="${CAMERA_SERIAL}"
@@ -520,8 +558,9 @@ function syncprogress() {
 			CAMERA_SERIAL_PATH_EXTENSION="_SN_${CAMERA_SERIAL}"
 		fi
 
-		#Set SOURCE_PATH
-		# not used
+		CAMERA_STORAGES_STR=$(sudo gphoto2 --storage-info | grep 'basedir' | cut -d= -f2 | tr -d ' ')
+		IFS=$'\n' read -rd '' -a CAMERA_STORAGES_ARRAY <<<"${CAMERA_STORAGES_STR}"
+		unset IFS
 
 		# Set BACKUP_PATH
 		BACKUP_PATH="${TARGET_PATH}/${CAMERA}${CAMERA_SERIAL_PATH_EXTENSION}"
@@ -531,7 +570,7 @@ function syncprogress() {
 
 		# Define source-folders
 		Camera_Search_Folders=()
-		Camera_Sync_Folders=()
+		SOURCE_PATHS=()
 
 		# split config-entry by ";"
 		if [ ! -z "${conf_BACKUP_CAMERA_FOLDER_MASK}" ]; then
@@ -547,8 +586,24 @@ function syncprogress() {
 
 				if [ "${MaskSetCamera}" = "${CAMERA}" ] || [ "${MaskSetCamera}" = "*" ]; then
 					if [ "${#MaskSetFolder}" -gt "1" ] && [[ ${MaskSetFolder:0:2} == '!/' ]]; then
-						Camera_Sync_Folders+=("${MaskSetFolder:1}")
+						#static defined source folders (quick)
+
+						#check if path exists in CAMERA_STORAGES_ARRAY
+						CAMERA_STORAGE_EXISTS=false
+						for CAMERA_STORAGES_PATH in "${CAMERA_STORAGES_ARRAY[@]}"; do
+							if [[ "${MaskSetFolder:1}" =~ "${CAMERA_STORAGES_PATH}" ]]; then
+								CAMERA_STORAGE_EXISTS=true
+							fi
+						done
+
+						if [ $CAMERA_STORAGE_EXISTS = true ]; then
+							SOURCE_PATHS+=("${MaskSetFolder:1}")
+						else
+							lcd_message "$(l 'box_backup_camera_storage_not_exists_1')" "${MaskSetFolder:1}" "$(l 'box_backup_camera_storage_not_exists_2')"
+						fi
+
 					elif [ ! -z "${MaskSetFolder}" ]; then
+						#dynamic search for source folders (slow)
 						Camera_Search_Folders+=("$MaskSetFolder")
 					fi
 				fi
@@ -556,44 +611,47 @@ function syncprogress() {
 		fi
 
 		# only if Camera_Search_Folders has no values yet
-		if [ ${#Camera_Sync_Folders[@]} -eq 0 ]; then
+		if [ ${#SOURCE_PATHS[@]} -eq 0 ]; then
 			lcd_message "$(l 'box_backup_camera_scanning_folders')"
 			Camera_Folders=( $(sudo gphoto2 --list-folders | cut -d"'" -f2 | grep "^/") )
 
-			for Camera_Folder in "${Camera_Folders[@]}"
-			do
+			for Camera_Folder in "${Camera_Folders[@]}"; do
 				log_message "Found folder: ${Camera_Folder}" 3
 				for Camera_Search_Folder in "${Camera_Search_Folders[@]}"
 				do
 					if [[ "${Camera_Folder}" =~ "${Camera_Search_Folder}" ]]; then
 
 						known=false
-						for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
+						for SOURCE_PATH in "${SOURCE_PATHS[@]}"
 						do
-							if [[ ${Camera_Folder} = ${Camera_Sync_Folder}* ]]; then
+							if [[ ${Camera_Folder} = ${SOURCE_PATH}* ]]; then
 								known=true
 							fi
 						done
 
 						if [ $known = false ]; then
-							Camera_Sync_Folders+=("${Camera_Folder}")
+							SOURCE_PATHS+=("${Camera_Folder}")
 						fi
 					fi
 				done
 			done
 
-			if [ ${#Camera_Sync_Folders[@]} -eq 0 ]; then
-				Camera_Sync_Folders=("/")
+			if [ ${#SOURCE_PATHS[@]} -eq 0 ]; then
+				SOURCE_PATHS=("/")
 			fi
 
 		fi
 
 		#log Camera_Search_Folders
 		log_message "Folders to sync from camera '${CAMERA}':" 1
-		for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
+		for SOURCE_PATH in "${SOURCE_PATHS[@]}"
 		do
-			log_message "*** - ${Camera_Sync_Folder} - For use as pattern in Settings ('$(l 'config_backup_camera_folder_mask_header')'): '${CAMERA}:!${Camera_Sync_Folder}'" 1
+			log_message "*** - ${SOURCE_PATH} - For use as pattern in Settings ('$(l 'config_backup_camera_folder_mask_header')'): '${CAMERA}:!${SOURCE_PATH}'" 1
 		done
+
+	elif [ "${SOURCE_MODE}" = "thumbnails" ]; then
+		# no backup, generate thumbnails only
+		echo "" # dummy action
 
 	# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 	#
@@ -628,184 +686,191 @@ function syncprogress() {
 		FILES_COUNT_STORAGE_PRE=$(find $BACKUP_PATH -type f | wc -l)
 	fi
 
-	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; do
+	#sourcepaths-loop
+	for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
 
-		SYNC_ERROR=""
+		#retry-loop
+		while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; do
 
-		# RETRIES
+			SYNC_ERROR=""
 
-		TRIES_DONE=$((TRIES_DONE+1))
+			# RETRIES
 
-		if [ ! -z "${SYNC_LOG}" ]; then
-			SYNC_LOG="${SYNC_LOG}\n"
-		fi
+			TRIES_DONE=$((TRIES_DONE+1))
 
-		SYNC_LOG="${SYNC_LOG}---- $(l 'box_backup_try') ${TRIES_DONE} ----"
+			if [ ! -z "${SYNC_LOG}" ]; then
+				SYNC_LOG="${SYNC_LOG}\n"
+			fi
 
-		if [ "${TRIES_DONE}" -gt "1" ]; then
-			lcd_message "$(l 'box_backup_try_backup') ${TRIES_DONE} $(l 'box_backup_of') ${TRIES_MAX}"
-			sleep 5 # time to stabilize the system after device-lost
-		fi
+			SYNC_LOG="${SYNC_LOG}---- $(l 'box_backup_try') ${TRIES_DONE} ----"
 
-		# Remount devices if "Err.Lost device"
-		if [[ "${SYNC_ERROR}" =~ "Err.Lost device" ]]; then
-			log_exec "Lost device: pre remount" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
+			if [ "${TRIES_DONE}" -gt "1" ]; then
+				lcd_message "$(l 'box_backup_try_backup') ${TRIES_DONE} $(l 'box_backup_of') ${TRIES_MAX}"
+				sleep 5 # time to stabilize the system after device-lost
+			fi
 
-			if [ "${UUID_USB_1}" != "" ]; then
-				RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_1}")
-				if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-					log_message "remount usb" 3
-					mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}"
+			# Remount devices if "Err.Lost device"
+			if [[ "${SYNC_ERROR}" =~ "Err.Lost device" ]]; then
+				log_exec "Lost device: pre remount" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
+
+				if [ "${UUID_USB_1}" != "" ]; then
+					RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_1}")
+					if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
+						log_message "remount usb" 3
+						mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}"
+					fi
+				fi
+
+				if [ "${UUID_USB_2}" != "" ]; then
+					RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_2}")
+					if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
+						log_message "remount usb" 3
+						mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}"
+					fi
 				fi
 			fi
 
-			if [ "${UUID_USB_2}" != "" ]; then
-				RESULT_DEVICE_MOUNTED=$(device_mounted "${UUID_USB_2}")
-				if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-					log_message "remount usb" 3
-					mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}"
-				fi
-			fi
-		fi
+		########################################
+		# CALCULATE NUMBER OF FILES TO BACK UP #
+		########################################
 
-	########################################
-	# CALCULATE NUMBER OF FILES TO BACK UP #
-	########################################
+			log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
-		log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
+			SYNC_START_TIME=$(date +%s)
 
-		SYNC_START_TIME=$(date +%s)
+		##############
+		# RUN BACKUP #
+		##############
 
-	##############
-	# RUN BACKUP #
-	##############
+			# START
 
-		# START
+			SYNC_RETURN_CODE="0"
 
-		SYNC_RETURN_CODE="0"
+			if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
+				# If source is usb, internal or ios
 
-		if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
-			# If source is usb, internal or ios
+				if [ "${TARGET_MODE}" = "rsyncserver" ]; then
+					# to rsyncserver
+					if [ $conf_LOG_SYNC = true ]; then
+						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync"
+						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+						SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
+						log_pick_file "${const_LOGFILE_SYNC}"
+					else
+						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync"
+						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+					fi
 
-			if [ "${TARGET_MODE}" = "rsyncserver" ]; then
-				# to rsyncserver
-				if [ $conf_LOG_SYNC = true ]; then
-					sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync"
-					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
-					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
-					log_pick_file "${const_LOGFILE_SYNC}"
 				else
-					sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync"
-					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+					# not to rsyncserver
+					sudo mkdir -p "${BACKUP_PATH}"
+					if [ $conf_LOG_SYNC = true ]; then
+						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync"
+						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+						SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
+						log_pick_file "${const_LOGFILE_SYNC}"
+					else
+						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync"
+						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
+					fi
 				fi
 
-			else
-				# not to rsyncserver
+			elif [ "${SOURCE_MODE}" = "camera" ]; then
+				# If source is camera
+				# Switch to const_USB_TARGET_MOUNT_POINT and transfer files from the camera
+
 				sudo mkdir -p "${BACKUP_PATH}"
-				if [ $conf_LOG_SYNC = true ]; then
-					sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync"
-					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
-					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
-					log_pick_file "${const_LOGFILE_SYNC}"
-				else
-					sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync"
-					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
-				fi
-			fi
+				cd "${BACKUP_PATH}"
 
-		elif [ "${SOURCE_MODE}" = "camera" ]; then
-			# If source is camera
-			# Switch to const_USB_TARGET_MOUNT_POINT and transfer files from the camera
+				# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
 
-			sudo mkdir -p "${BACKUP_PATH}"
-			cd "${BACKUP_PATH}"
+				log_message "Backup from camera: ${SOURCE_PATH}" 3
 
-			# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
-			for Camera_Sync_Folder in "${Camera_Sync_Folders[@]}"
-			do
-				log_message "Backup from camera: ${Camera_Sync_Folder}" 3
+				sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${SOURCE_PATH}" --skip-existing | syncprogress "gphoto2"
 
-				sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${Camera_Sync_Folder}" --skip-existing --list-files | syncprogress "gphoto2"
 				SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 				if [ $conf_LOG_SYNC = true ]; then
 					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 				fi
-				log_message "gphoto2 --filename \"%F/%f.%C\" --get-all-files --folder \"${Camera_Sync_Folder}\"  --skip-existing --list-files:\nexitcode=${SYNC_RETURN_CODE}\n" 3
-			done
+				log_message "gphoto2 --filename \"%F/%f.%C\" --get-all-files --folder \"${SOURCE_PATH}\"  --skip-existing:\nexitcode=${SYNC_RETURN_CODE}\n" 3
 
-			cd
-		else
-			# no defined mode selected
-			lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_1')" "" "+3"
-			exit 1
-		fi
-
-		SYNC_STOP_TIME=$(date +%s)
-
-		# END BACKUP
-
-		# Remove empty files (maybe can result from disconnection of a source-device)
-		if [ "${TARGET_MODE}" != "rsyncserver" ]; then
-			sudo find "${BACKUP_PATH}" -size 0 -delete
-		fi
-
-		# Re-calculate FILES_TO_SYNC
-		if [ "${TARGET_MODE}" = "rsyncserver" ]; then
-			FILES_TO_SYNC="$(calculate_files_to_sync)"
-			if [ "${FILES_TO_SYNC_PRE}" != "" ] && [ "${FILES_TO_SYNC}" != "" ]; then
-				TRANSFER_INFO="$(echo "${FILES_TO_SYNC_PRE} - ${FILES_TO_SYNC}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+				cd
+			elif [ "${SOURCE_MODE}" = "thumbnails" ]; then
+				# no backup action
+				echo "" # dummy action
 			else
-				TRANSFER_INFO="$(l "box_backup_result_suspect")."
-				FILES_TO_SYNC=0
+				# no defined mode selected
+				lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+3"
+				exit 1
 			fi
-		else
-			FILES_COUNT_STORAGE_POST=$(find $BACKUP_PATH -type f | wc -l)
-			if [ "${FILES_COUNT_STORAGE_PRE}" != "" ] && [ "${FILES_COUNT_STORAGE_POST}" != "" ]; then
-				FILES_TO_SYNC=$(($FILES_COUNT_STORAGE_POST - $FILES_COUNT_STORAGE_PRE - $FILES_TO_SYNC))
-				TRANSFER_INFO="$(echo "${FILES_COUNT_STORAGE_POST} - ${FILES_COUNT_STORAGE_PRE}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+
+			SYNC_STOP_TIME=$(date +%s)
+
+			# END BACKUP
+
+			# Remove empty files (maybe can result from disconnection of a source-device)
+			if [ "${TARGET_MODE}" != "rsyncserver" ]; then
+				sudo find "${BACKUP_PATH}" -size 0 -delete
+			fi
+
+			# Re-calculate FILES_TO_SYNC
+			if [ "${TARGET_MODE}" = "rsyncserver" ]; then
+				FILES_TO_SYNC="$(calculate_files_to_sync)"
+				if [ "${FILES_TO_SYNC_PRE}" != "" ] && [ "${FILES_TO_SYNC}" != "" ]; then
+					TRANSFER_INFO="$(echo "${FILES_TO_SYNC_PRE} - ${FILES_TO_SYNC}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+				else
+					TRANSFER_INFO="$(l "box_backup_result_suspect")."
+					FILES_TO_SYNC=0
+				fi
 			else
-				TRANSFER_INFO="$(l "box_backup_result_suspect")."
-				FILES_TO_SYNC=0
+				FILES_COUNT_STORAGE_POST=$(find $BACKUP_PATH -type f | wc -l)
+				if [ "${FILES_COUNT_STORAGE_PRE}" != "" ] && [ "${FILES_COUNT_STORAGE_POST}" != "" ]; then
+					FILES_TO_SYNC=$(($FILES_COUNT_STORAGE_POST - $FILES_COUNT_STORAGE_PRE - $FILES_TO_SYNC))
+					TRANSFER_INFO="$(echo "${FILES_COUNT_STORAGE_POST} - ${FILES_COUNT_STORAGE_PRE}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
+				else
+					TRANSFER_INFO="$(l "box_backup_result_suspect")."
+					FILES_TO_SYNC=0
+				fi
 			fi
-		fi
 
-		if [ "${FILES_TO_SYNC}" -gt "0" ]; then
-			SYNC_ERROR="${SYNC_ERROR} Files missing!"
-			log_message "Files missing: ${FILES_TO_SYNC} files not synced."
-			log_exec "Files missing" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
-			log_message "$(get_abnormal_system_conditions)" 1
-		fi
-
-		if [ "${SYNC_RETURN_CODE}" != "0" ]; then
-			SYNC_ERROR="${SYNC_ERROR} Exception"
-			log_message "Exception: ${SYNC_RETURN_CODE}"
-			log_message "$(get_abnormal_system_conditions)" 1
-		fi
-
-		# Check for lost devices
-		for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"; do
-			RESULT_DEVICE_MOUNTED=$(device_mounted "${MOUNTED_DEVICE}")
-			log_message "Lost device? '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'" 3
-
-			if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-				SYNC_ERROR="${SYNC_ERROR} Err.Lost device!"
-				log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
-				sleep 2
-				log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
+			if [ "${FILES_TO_SYNC}" -gt "0" ]; then
+				SYNC_ERROR="${SYNC_ERROR} Files missing!"
+				log_message "Files missing: ${FILES_TO_SYNC} files not synced."
+				log_exec "Files missing" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 				log_message "$(get_abnormal_system_conditions)" 1
 			fi
-		done
 
-		# Controller- overheating-error?
-		SYNC_TIME=$(($SYNC_STOP_TIME - $SYNC_START_TIME))
-		log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}; SYNC_TIME: ${SYNC_TIME}" 3
+			if [ "${SYNC_RETURN_CODE}" != "0" ]; then
+				SYNC_ERROR="${SYNC_ERROR} Exception"
+				log_message "Exception: ${SYNC_RETURN_CODE}"
+				log_message "$(get_abnormal_system_conditions)" 1
+			fi
 
-		if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
-				lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')" ""
-				sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
-		fi
+			# Check for lost devices
+			for MOUNTED_DEVICE in "${MOUNTED_DEVICES[@]}"; do
+				RESULT_DEVICE_MOUNTED=$(device_mounted "${MOUNTED_DEVICE}")
+				log_message "Lost device? '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'" 3
 
-	done # retry
+				if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
+					SYNC_ERROR="${SYNC_ERROR} Err.Lost device!"
+					log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
+					sleep 2
+					log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
+					log_message "$(get_abnormal_system_conditions)" 1
+				fi
+			done
+
+			# Controller- overheating-error?
+			SYNC_TIME=$(($SYNC_STOP_TIME - $SYNC_START_TIME))
+			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}; SYNC_TIME: ${SYNC_TIME}" 3
+
+			if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
+					lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')" ""
+					sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
+			fi
+
+		done # retry
+	done # sources
 
 # prepare message for mail and power off
 	MESSAGE_MAIL=""
@@ -850,20 +915,25 @@ function syncprogress() {
 		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n${SYNC_LOG}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 	fi
 
-# generate thumbnails
+#######################
+# GENERATE THUMBNAILS #
+#######################
 
-	if [ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+	if ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 		# generate thumbnails only after backup to local drive (usb or internal)
+
+		# prepare database
+		source "${WORKING_DIR}/lib-db-setup.sh"
 
 		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_generating_thumbnails_finding_images2")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
 
 		#find all images
-		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*')
+		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*' | sed 's/\ /##\*\*##/g') # temporarily replace spaces
 		IFS=$'\n' read -rd '' -a IMAGES_ARRAY <<<"${IMAGES_STR}"
 		unset IFS
 
 		#find all tims and convert them to the estimated original filename
-		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' |  sed -E 's#(.*)/tims/#\1/#')
+		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#')
 		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
 		unset IFS
 
@@ -905,16 +975,20 @@ function syncprogress() {
 		# start screen
 		lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 
-		for i in "${!IMAGES_ARRAY[@]}"; do
+		for ((i = 0; i < ${#IMAGES_ARRAY[@]}; i++)); do
+			SOURCE_IMAGES_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
 
-			TIMS_FOLDER="$(dirname "${IMAGES_ARRAY[$i]}")/tims"
-			TIMS_FILE="${TIMS_FOLDER}/$(basename "${IMAGES_ARRAY[$i]}")"
+			TIMS_FOLDER="$(dirname "${SOURCE_IMAGES_FILENAME}")/tims"
+			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGES_FILENAME}")"
 			mkdir -p "${TIMS_FOLDER}"
 
-			convert "${IMAGES_ARRAY[$i]}" -resize 800 "${TIMS_FILE}"
+			convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
 
+			if [ "$?" = "0" ]; then
+				source "${WORKING_DIR}/lib-db-insert.sh"
+			fi
 
-			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -gt "2" ] || [ $(( ${i} + 1 )) -eq ${IMAGE_COUNT} ]; then
+			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ $(( ${i} + 1 )) -eq ${IMAGE_COUNT} ]; then
 				FINISHED_PERCENT=$(echo "scale=1; 100 * (${i} + 1) / ${IMAGE_COUNT}" | bc)
 
 				IMAGES_TO_CONVERT=$(echo "${IMAGE_COUNT} - $i - 1" | bc)
@@ -938,7 +1012,7 @@ function syncprogress() {
 		done
 
 		# hold final screen
-		sleep 2
+		sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 	fi
 
 # umount (try, state unknown)

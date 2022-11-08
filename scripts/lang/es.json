@@ -13,7 +13,7 @@
     "tools": "Herramientas",
     "filebrowser": "Archivos",
     "minidlna": "MiniDLNA",
-    "mejiro": "Mejiro"
+    "view": "View"
   },
   "main": {
     "internal_button": "Almacenamiento int.",
@@ -29,11 +29,12 @@
     "reboot_m": "Little Backup Box se reiniciará. Actualice esta página en unos momentos.",
     "shutdown_m": "Little Backup Box está apagado. Puede cerrar esta página.",
     "help_txt": "<p class = 'text-center'> Lea la <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'> Wiki </a> </ p >",
-    "stopbackup_button": "Detener copia de seguridad",
+    "stopbackup_button": "DETENER",
     "stopbackup_m": "Deteniendo la copia de seguridad.",
     "usb_button": "Almacenamiento USB",
     "backup_break1": "Copia de seguridad",
-    "backup_break2": "cancelada."
+    "backup_break2": "cancelada.",
+    "thumbnails_button": "De miniaturas"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
@@ -268,7 +269,10 @@
       "mode_usb": "USB Almacenamiento",
       "usb_source_ok": "Origen o.k.",
       "usb_1": "Destino USB",
-      "usb_2": "Fuente USB"
+      "usb_2": "Fuente USB",
+      "mode_thumbnails": "De miniaturas",
+      "camera_storage_not_exists_2": "no existe.",
+      "camera_storage_not_exists_1": "Cámara-almacenamiento"
     },
     "cronip": {
       "offline": "desconectado",
@@ -347,6 +351,26 @@
       "description_non_destructive": "Los datos se conservarán en la medida de lo posible.",
       "description_destructive": "¡Los datos serán eliminados!",
       "description": "Verificar disco"
+    }
+  },
+  "view": {
+    "view": "Visor de imágenes",
+    "filter": {
+      "medium": "Medio de almacenamiento",
+      "medium_usb_storage": "Destino USB",
+      "section": "Filtrar",
+      "images_per_page": "Imágenes por página",
+      "medium_internal": "Almacenamiento int.",
+      "medium_usb_source": "USB-Origen",
+      "directory": "Carpeta",
+      "no_medium": "No se ha seleccionado ningún medio válido.",
+      "date": "Fecha",
+      "order_by_filename": "Nombre del archivo",
+      "order_by_creationdate": "Fecha"
+    },
+    "images": {},
+    "footer": {
+      "footer": "Advertencia, aquí solo se muestran las imágenes que tienen miniaturas. Génelos automáticamente (Configuración, Copia de seguridad) o a través de la página Copia de seguridad."
     }
   }
 }

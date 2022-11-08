@@ -7,6 +7,7 @@ Software that turns a single-board computer into a versatile and pocketable back
 
 <h2>NEWS</h2>
 <ul>
+	<li>2022/11-08: Image-viewer mejiro is replaced by a integrated solution offering much faster options to find images.</li>
 	<li>2022/10/14: Add f3probe to tools to test external storages integrity before use.</li>
 	<li>2022/10/09: Rework of the progress-monitoring to save traffic and increase speed.</li>
 	<li>2022/10/03: If checked in settings, thumbnails will be generated after backup.</li>
@@ -35,6 +36,7 @@ Software that turns a single-board computer into a versatile and pocketable back
 
 <h3>Some major developement-steps:</h3>
 <ul>
+	<li>Image-viewer mejiro is replaced by a integrated solution offering much faster options to find images.</li>
 	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
 	<li>Mounting devices is managed by UUIDs. If a device disconnects*2, it can be automatically reconnected. The backup-process becomes much more robust.</li>
 	<li>Some tools are added (check device, repair device)</li>
@@ -87,8 +89,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code>
 	</li>
 	<li>
-		You will be asked if you want to install <a href="https://github.com/outdoorbits/mejiro">mejiro</a> and <a href="https://davesteele.github.io/comitup/">comitup</a>.<br>
-		Mejiro is an easy-to-use PHP web app for instant photo publishing.<br>
+		You will be asked if you want to install <a href="https://davesteele.github.io/comitup/">comitup</a>.<br>
 		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
 	</li>
 	<li>

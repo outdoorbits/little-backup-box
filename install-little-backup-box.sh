@@ -95,30 +95,6 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	clear
 fi
 
-## Promt to install mejiro
-CHOICE_MEJIRO=1
-if [ "${SCRIPT_MODE}" = "install" ]; then
-
-	read -r -d '' MEJIRO_INSTALL_QUESTION << EOM
-\Zb\ZuInstall mejiro?\Zn
-
-Mejiro is a simple image-gallery, smoothly integrated into Little-Backup-Box.
-EOM
-
-	dialog --clear \
-		--colors \
-		--title "mejiro" \
-		--backtitle "$BACKTITLE" \
-		--yesno "${MEJIRO_INSTALL_QUESTION}" \
-		14 80
-
-	CHOICE_MEJIRO=$?
-
-	clear
-elif [ -d "/var/www/mejiro" ]; then
-		CHOICE_MEJIRO=0
-fi
-
 ## Prompt to install comitup
 CHOICE_COMITUP=1
 if [ "${SCRIPT_MODE}" = "install" ]; then
@@ -159,7 +135,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl dialog php php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3
+		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl dialog php php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3
 
 # Remove obsolete packages
 sudo DEBIAN_FRONTEND=noninteractive \
@@ -474,25 +450,6 @@ if [ "${SCRIPT_MODE}" = "update" ] && [ ! -z "${conf_PASSWORD}" ]; then
 	echo "Restore password-protection"
 	sudo "${const_WEB_ROOT_LBB}/password.sh" set "${conf_PASSWORD}"
 fi
-
-# install mejiro
-## re-install (update) if installed
-if [ -d "/var/www/mejiro" ]; then
-	CHOICE_MEJIRO="0"
-fi
-
-case $CHOICE_MEJIRO in
-0)
-	echo "Installing mejiro ..."
-	source "${INSTALLER_DIR}/install-mejiro.sh";
-    ;;
-1)
-	echo "You can install mejiro later by script install-mejiro.sh"
-	;;
-255)
-	echo "You can install mejiro later by script install-mejiro.sh"
-	;;
-esac
 
 # install comitup
 ## re-install (update) if installed

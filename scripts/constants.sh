@@ -12,3 +12,5 @@ const_DISPLAY_CONTENT_OLD_FILE="/var/www/little-backup-box/tmp/oled_old.txt"
 const_RCLONE_CONFIG_FILE="/media/rclone.conf"
 const_STORAGE_DEV_MASK="sd"
 const_CMD_RUNNER_LOCKFILE="/var/www/little-backup-box/cmd-runner.lock"
+const_PROGRESS_DISPLAY_WAIT_SEC=3
+const_IMAGE_DATABASE_FILENAME="images.db"

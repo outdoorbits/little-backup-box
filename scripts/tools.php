@@ -130,28 +130,28 @@ function get_device_selector($name) {
 	<?php
 	if (isset($_POST['mount_usb_1'])) {
 			$command = "./mount-storage.sh mount usb_1";
-			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
 			echo "</script>";
 	}
 	if (isset($_POST['umount_usb_1'])) {
 			$command = "./mount-storage.sh umount usb_1";
-			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
 			echo "</script>";
 	}
 	if (isset($_POST['mount_usb_2'])) {
 			$command = "./mount-storage.sh mount usb_2";
-			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
 			echo "</script>";
 	}
 	if (isset($_POST['umount_usb_2'])) {
 			$command = "./mount-storage.sh umount usb_2";
-			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
 			echo "<script>";
 				echo "window.location = window.location.href;";
 			echo "</script>";
@@ -163,10 +163,10 @@ function get_device_selector($name) {
 			popup($device . l::tools_fsck_check_m,$config["conf_POPUP_MESSAGES"]);
 
 			$command = "sudo umount /dev/${device}";
-			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
 
 			$command = "sudo fsck /dev/${device}";
-			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
 	}
 	if (isset($_POST['fsck_autorepair'])) {
 
@@ -175,10 +175,10 @@ function get_device_selector($name) {
 			popup($device . l::tools_fsck_autorepair_m,$config["conf_POPUP_MESSAGES"]);
 
 			$command = "sudo umount /dev/${device}";
-			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
 
 			$command = "sudo fsck -a /dev/${device}";
-			exec ("./lib-log-helper.sh \"log_exec\" \"${MSG}\" \"${command}\" \"1\"");
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
 	}
 
 	if (isset($_POST['format'])) {

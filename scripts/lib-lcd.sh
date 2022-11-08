@@ -167,9 +167,6 @@ function lcd_message () {
 		log_message "${LogLines}"
 	fi
 
-	#hold lockfile and display
-	sleep 0.5
-
 	#remove lockfile of this process
 	rm "${const_DISPLAY_LOCKFILE}"
 }

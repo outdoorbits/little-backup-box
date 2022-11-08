@@ -13,7 +13,7 @@
     "tools": "Tools",
     "filebrowser": "Dateien",
     "minidlna": "MiniDLNA",
-    "mejiro": "Mejiro"
+    "view": "View"
   },
   "main": {
     "internal_button": "int. Speicher",
@@ -29,11 +29,12 @@
     "reboot_m": "Little Backup Box wird neu gestartet. Aktualisieren Sie diese Seite in einigen Sekunden.",
     "shutdown_m": "Little Backup Box wird ausgeschaltet. Sie können diese Seite schließen.",
     "help_txt": "<p class = 'text-center'> Bitte lesen Sie das <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.</p>",
-    "stopbackup_button": "STOPP Backup",
+    "stopbackup_button": "STOPP",
     "stopbackup_m": "Backup wird angehalten",
     "usb_button": "USB Speicher",
     "backup_break1": "Backup",
-    "backup_break2": "abgebrochen."
+    "backup_break2": "abgebrochen.",
+    "thumbnails_button": "Vorschaubilder"
   },
   "sysinfo": {
     "sysinfo": "Systeminformationen",
@@ -268,7 +269,10 @@
       "mode_usb": "USB Speicher",
       "usb_source_ok": "Quelle o.k.",
       "usb_1": "USB-Ziel",
-      "usb_2": "USB-Quelle"
+      "usb_2": "USB-Quelle",
+      "mode_thumbnails": "Vorschaubilder",
+      "camera_storage_not_exists_2": "existiert nicht.",
+      "camera_storage_not_exists_1": "Kamera-Speicher"
     },
     "cronip": {
       "offline": "offline",
@@ -347,6 +351,26 @@
       "description_non_destructive": "Daten werden möglichst erhalten.",
       "description_destructive": "Daten werden gelöscht!",
       "description": "Datenträger überprüfen"
+    }
+  },
+  "view": {
+    "view": "Bildbetrachter",
+    "filter": {
+      "medium": "Speichermedium",
+      "medium_usb_storage": "USB-Ziel",
+      "section": "Filter",
+      "images_per_page": "Bilder pro Seite",
+      "medium_internal": "Int. Speicher",
+      "medium_usb_source": "USB-Quelle",
+      "directory": "Verzeichnis",
+      "no_medium": "Kein gültiges Medium gewählt.",
+      "date": "Datum",
+      "order_by_filename": "Dateiname",
+      "order_by_creationdate": "Datum"
+    },
+    "images": {},
+    "footer": {
+      "footer": "Achtung, hier werden nur Bilder angezeigt, von denen Vorschaubilder bestehen. Erzeugen Sie diese entweder automatisch (Einstellungen, Backup) oder über die Backup-Seite."
     }
   }
 }
