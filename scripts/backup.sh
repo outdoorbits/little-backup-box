@@ -25,8 +25,8 @@
 
 
 # usage: backup.sh SOURCE TARGET [SECONDARY_BACKUP_FOLLOWS]
-#			SOURCE: Can be usb*1, internal, camera or ios
-# 			TARGET: Can be usb*2, internal, rsyncserver or cloud_???
+#			SOURCE: Can be usb *1, internal, camera or ios; database or thumbnails (only in combination with usb or internal)
+# 			TARGET: Can be usb *2, internal, rsyncserver or cloud_???
 #			SECONDARY_BACKUP_FOLLOWS: otionally, if true another run follows, no power off
 #	*1 formerly storage
 #	*2 formerly external
@@ -63,7 +63,7 @@ if [ "${3}" == "true" ]; then
 fi
 
 # Source definition
-if [[ " usb internal camera ios thumbnails " =~ " ${SOURCE_ARG} " ]]; then
+if [[ " usb internal camera ios thumbnails database " =~ " ${SOURCE_ARG} " ]]; then
 	SOURCE_MODE="${SOURCE_ARG}"
 else
 	SOURCE_MODE="usb"
@@ -653,6 +653,10 @@ function syncprogress() {
 		# no backup, generate thumbnails only
 		echo "" # dummy action
 
+	elif [ "${SOURCE_MODE}" = "database" ]; then
+		# no backup, generate database only
+		echo "" # dummy action
+
 	# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 	#
 	#         lcd_message "Ready" "Insert NEW_SOURCE_TYPE"
@@ -919,7 +923,8 @@ function syncprogress() {
 # GENERATE DATABASE #
 #####################
 
-	if [ ! -f "${TARGET_PATH}/${const_IMAGE_DATABASE_FILENAME}" ] && ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "database" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+	DB="${TARGET_PATH}/${const_IMAGE_DATABASE_FILENAME}"
+	if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "database" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 
 		# prepare database
 		source "${WORKING_DIR}/lib-db-setup.sh"
@@ -950,7 +955,14 @@ function syncprogress() {
 			# replace substitute of space by space
 			SOURCE_IMAGES_FILENAME=$(echo ${TIMS_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
 
-			source "${WORKING_DIR}/lib-db-insert.sh"
+			File_Name=$(basename "${SOURCE_IMAGES_FILENAME}")
+			Directory=$(dirname "${SOURCE_IMAGES_FILENAME}")
+
+			Directory=$(echo ${Directory} | sed -E "s#^${TARGET_PATH}/##")
+
+			if [[ ! $(sqlite3 "${DB}" "select ID from EXIF_DATA where File_Name=\"${File_Name}\" and Directory=\"${Directory}\"") ]]; then
+				source "${WORKING_DIR}/lib-db-insert.sh"
+			fi
 
 			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ $(( ${i} + 1 )) -eq ${IMAGE_COUNT} ]; then
 				FINISHED_PERCENT=$(echo "scale=1; 100 * (${i} + 1) / ${IMAGE_COUNT}" | bc)
