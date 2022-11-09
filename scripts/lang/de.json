@@ -34,7 +34,8 @@
     "usb_button": "USB Speicher",
     "backup_break1": "Backup",
     "backup_break2": "abgebrochen.",
-    "thumbnails_button": "Vorschaubilder"
+    "thumbnails_button": "Vorschaubilder",
+    "database_button": "Datenbank"
   },
   "sysinfo": {
     "sysinfo": "Systeminformationen",
@@ -276,7 +277,8 @@
       "generating_database_finding_images1": "Datenbank",
       "generating_database_finding_images2": "Zähle Bilder.",
       "generating_database_finding_images3": "Moment...",
-      "generating_database": "Erzeuge Datenbank"
+      "generating_database": "Erzeuge Datenbank",
+      "mode_database": "Datenbank"
     },
     "cronip": {
       "offline": "offline",

@@ -76,6 +76,11 @@
 			</div>
 
 			<div class='backupsection'>
+				<button name="backup_database_usb" class="usb"><?php echo L::main_database_button . L::right_arrow . L::main_usb_button; ?></button>
+				<button name="backup_database_internal" class="usb"><?php echo L::main_database_button . L::right_arrow . L::main_internal_button; ?></button>
+			</div>
+
+			<div class='backupsection'>
 				<button name="stopbackup" class="danger"><?php echo L::main_stopbackup_button; ?>
 			</div>
 
@@ -154,6 +159,7 @@
 			}
 		}
 	}
+
 	if (isset($_POST['backup_thumbnails_usb'])) {
 		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh thumbnails usb > /dev/null 2>&1 & echo $!");
@@ -164,6 +170,17 @@
 		exec("sudo ./backup.sh thumbnails internal > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
+	if (isset($_POST['backup_database_usb'])) {
+		exec('sudo pkill -f "backup*"');
+		exec("sudo ./backup.sh database usb > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+	}
+	if (isset($_POST['backup_database_internal'])) {
+		exec('sudo pkill -f "backup*"');
+		exec("sudo ./backup.sh database internal > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+	}
+
 	if (isset($_POST['stopbackup'])) {
 		popup(L::main_stopbackup_m,$config["conf_POPUP_MESSAGES"]);
 

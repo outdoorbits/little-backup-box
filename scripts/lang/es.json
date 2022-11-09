@@ -34,7 +34,8 @@
     "usb_button": "Almacenamiento USB",
     "backup_break1": "Copia de seguridad",
     "backup_break2": "cancelada.",
-    "thumbnails_button": "De miniaturas"
+    "thumbnails_button": "De miniaturas",
+    "database_button": "Base de datos"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
@@ -276,7 +277,8 @@
       "generating_database_finding_images1": "Base de datos",
       "generating_database_finding_images2": "Contando imágenes.",
       "generating_database_finding_images3": "Sólo un momento...",
-      "generating_database": "Crear base de datos"
+      "generating_database": "Crear base de datos",
+      "mode_database": "Base de datos"
     },
     "cronip": {
       "offline": "desconectado",
