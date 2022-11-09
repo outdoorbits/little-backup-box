@@ -902,7 +902,7 @@ function syncprogress() {
 	# Check internet connection and send
 	# a notification by mail if the conf_NOTIFY option is enabled
 	check=$(wget -q --spider http://google.com/)
-	if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
+	if ([ $conf_NOTIFY = true ] || [ ! -z "$check" ]) && [ "${SOURCE_MODE}" != "database" ] && [ "${SOURCE_MODE}" != "thumbnails" ]; then
 
 		if [ ! -z "${MESSAGE_MAIL}" ]; then
 			SUBJ_MSG="${MESSAGE_MAIL}"
@@ -913,6 +913,68 @@ function syncprogress() {
 		fi
 
 		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n${SYNC_LOG}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+	fi
+
+#####################
+# GENERATE DATABASE #
+#####################
+
+	if [ ! -f "${TARGET_PATH}/${const_IMAGE_DATABASE_FILENAME}" ] && ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "database" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+
+		# prepare database
+		source "${WORKING_DIR}/lib-db-setup.sh"
+
+		lcd_message "$(l "box_backup_generating_database_finding_images1")" "$(l "box_backup_generating_database_finding_images2")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_generating_database_finding_images3")" ""
+
+		#find all tims and convert them to the estimated original filename; replace space by substitute of space ##**##
+		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#')
+		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
+		unset IFS
+
+		#prepare loop to create thumbnails
+		IMAGE_COUNT=${#TIMS_ARRAY[@]}
+
+		DATABASE_START_TIME=$(date +%s)
+		LAST_MESSAGE_TIME=$DATABASE_START_TIME
+
+		LCD1="$(l "box_backup_generating_database")" # header1
+		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
+		LCD3="0 $(l "box_backup_of") ${IMAGE_COUNT}" # filescount
+		LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
+		LCD5="PGBAR:0" # progressbar
+
+		# start screen
+		lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
+
+		for ((i = 0; i < ${#TIMS_ARRAY[@]}; i++)); do
+			# replace substitute of space by space
+			SOURCE_IMAGES_FILENAME=$(echo ${TIMS_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
+
+			source "${WORKING_DIR}/lib-db-insert.sh"
+
+			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ $(( ${i} + 1 )) -eq ${IMAGE_COUNT} ]; then
+				FINISHED_PERCENT=$(echo "scale=1; 100 * (${i} + 1) / ${IMAGE_COUNT}" | bc)
+				IMAGES_TO_READ=$(echo "${IMAGE_COUNT} - $i - 1" | bc)
+				TIME_RUN=$(echo "$(date +%s) - ${DATABASE_START_TIME}" | bc)
+				TIME_REMAINING=$(echo "${TIME_RUN} * ${IMAGES_TO_READ} / ( ${i} + 1 )" | bc)
+				TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
+				DAYS_LEFT=$(($TIME_REMAINING/86400))
+				if [ "${DAYS_LEFT}" -gt "0" ]; then
+					TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
+				fi
+
+				LCD3="$(( ${i} + 1 )) $(l "box_backup_of") ${IMAGE_COUNT}"
+				LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
+				LCD5="PGBAR:${FINISHED_PERCENT}"
+
+				lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
+				LAST_MESSAGE_TIME=$(date +%s)
+			fi
+
+		done
+
+		# hold final screen
+		sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 	fi
 
 #######################
@@ -927,12 +989,12 @@ function syncprogress() {
 
 		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_generating_thumbnails_finding_images2")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
 
-		#find all images
+		#find all images; replace space by substitute of space ##**##
 		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*' | sed 's/\ /##\*\*##/g') # temporarily replace spaces
 		IFS=$'\n' read -rd '' -a IMAGES_ARRAY <<<"${IMAGES_STR}"
 		unset IFS
 
-		#find all tims and convert them to the estimated original filename
+		#find all tims and convert them to the estimated original filename; replace space by substitute of space ##**##
 		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#')
 		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
 		unset IFS
@@ -976,6 +1038,7 @@ function syncprogress() {
 		lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 
 		for ((i = 0; i < ${#IMAGES_ARRAY[@]}; i++)); do
+			#replace substitute of space by space
 			SOURCE_IMAGES_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
 
 			TIMS_FOLDER="$(dirname "${SOURCE_IMAGES_FILENAME}")/tims"
@@ -996,7 +1059,7 @@ function syncprogress() {
 				TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
 				TIME_REMAINING=$(echo "${TIME_RUN} * ${IMAGES_TO_CONVERT} / ( ${i} + 1 )" | bc)
 				TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
-				DAYS_LEFT=$((TIME_REMAINING/86400))
+				DAYS_LEFT=$(($TIME_REMAINING/86400))
 				if [ "${DAYS_LEFT}" -gt "0" ]; then
 					TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
 				fi

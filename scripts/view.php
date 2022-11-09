@@ -90,19 +90,6 @@
 		}
 	}
 
-	function fix_medium_in_dir($ImageDir,$STORAGE_PATH) {
-		global $constants;
-		if (strpos($ImageDir, $STORAGE_PATH) === 0) {
-			return $ImageDir;
-		}
-		elseif (strpos($ImageDir, $constants['const_USB_TARGET_MOUNT_POINT']) === 0) {
-			return (substr_replace($ImageDir, $STORAGE_PATH, 0, strlen($constants['const_USB_TARGET_MOUNT_POINT'])));
-		}
-		elseif (strpos($ImageDir, $constants['const_USB_SOURCE_MOUNT_POINT']) === 0) {
-			return (substr_replace($ImageDir, $STORAGE_PATH, 0, strlen($constants['const_USB_SOURCE_MOUNT_POINT'])));
-		}
-	}
-
 	# setup
 	$IMAGES_PER_PAGE_OPTIONS	= array (10,25,50,100);
 
@@ -298,7 +285,7 @@
 			<?php
 				if ($view_mode == "grid") {
 					while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
-						$Directory				= fix_medium_in_dir($IMAGE['Directory'],$STORAGE_PATH);
+						$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 						$IMAGE_ID				= $IMAGE['ID'];
 						$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'];
 						?>
@@ -314,7 +301,7 @@
 				}
 				elseif ($view_mode == "single") {
 					while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
-						$Directory				= fix_medium_in_dir($IMAGE['Directory'],$STORAGE_PATH);
+						$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 						$IMAGE_ID				= $IMAGE['ID'];
 						$IMAGE_FILENAME			= $Directory . '/' . $IMAGE['File_Name'];
 						$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'];

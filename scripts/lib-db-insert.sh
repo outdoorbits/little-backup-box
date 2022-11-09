@@ -1,6 +1,3 @@
-#!/bin/bash
-
-
 #!/usr/bin/env bash
 
 # Author: Stefan Saam, github@saams.de
@@ -47,17 +44,25 @@ VALUES=""
 NO_ENTRY="true"
 
 for ((j = 0; j < ${#EXIF_ARRAY[@]}; j++)); do
+
 	IFS=':' read -r FIELD VALUE <<< "${EXIF_ARRAY[$j]}"
+
 	FIELD=$(echo ${FIELD} | sed -e 's/[[:space:]]*$//')
 	FIELD=${FIELD//[^a-zA-Z0-9_\.]/_}
  	VALUE=$(echo ${VALUE} | sed -e 's/^[[:space:]]*//')
  	VALUE=${VALUE//\"/\'\'}
 
 	if [ ! -z "${FIELD}" ] && [ ! -z "${VALUE}" ]; then
+
+		# #add column to the table if doesn't exist
 		if [[ ! " ${EXIF_COLUMNS_ARRAY[@]} " =~ " ${FIELD} " ]]; then
-			#add column to the table
 			sqlite3 "${DB}" "alter table EXIF_DATA add column ${FIELD} text;"
 			EXIF_COLUMNS_ARRAY+=(${FIELD})
+		fi
+
+		#replace media-path from Directory
+		if [ "${FIELD}" == "Directory" ]; then
+ 			VALUE=$(echo ${VALUE} | sed -E "s#^${TARGET_PATH}/##")
 		fi
 
 		if [ "${NO_ENTRY}" = "false" ]; then

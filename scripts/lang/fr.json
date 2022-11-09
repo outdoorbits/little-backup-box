@@ -272,7 +272,11 @@
       "usb_2": "Source USB",
       "mode_thumbnails": "De vignettes",
       "camera_storage_not_exists_2": "n'existe pas.",
-      "camera_storage_not_exists_1": "Caméra-stockage"
+      "camera_storage_not_exists_1": "Caméra-stockage",
+      "generating_database_finding_images1": "Base de données",
+      "generating_database_finding_images2": "Compter les images.",
+      "generating_database_finding_images3": "Juste un moment......",
+      "generating_database": "Créer base de données"
     },
     "cronip": {
       "offline": "hors ligne",
