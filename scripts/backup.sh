@@ -126,13 +126,25 @@ log_message "Destination: ${TARGET_MODE} ${CLOUDSERVICE}"
 
 function calculate_files_to_sync() {
 	local FILES_TO_SYNC=0
+	local SOURCE_PATH="${1}"
+	local SOURCE_PATHS_ARRAY=()
+	local i=0
+
+	if [ -z "${SOURCE_PATH}" ]; then
+		# copy SOURCE_PATHS into local SOURCE_PATHS_ARRAY
+		for ((i = 0; i < ${#SOURCE_PATHS[@]}; i++)); do
+			SOURCE_PATHS_ARRAY+=(${SOURCE_PATHS[$i]})
+		done
+	else
+		SOURCE_PATHS_ARRAY=("${SOURCE_PATH}")
+	fi
 
 	# To define a new method, add an elif block (example below)
 
 	if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
 		# Source usb ios internal
 
-		for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
+		for SOURCE_PATH in "${SOURCE_PATHS_ARRAY[@]}"; do
 
 			if [ ${TARGET_MODE} = "rsyncserver" ]; then
 				FILES_IN_FOLDER=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
@@ -158,7 +170,7 @@ function calculate_files_to_sync() {
 		sudo mkdir -p "${BACKUP_PATH}"
 		cd "${BACKUP_PATH}"
 
-		for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
+		for SOURCE_PATH in "${SOURCE_PATHS_ARRAY[@]}"; do
 			GPHOTO=$(sudo gphoto2 --list-files --folder "${SOURCE_PATH}")
 			log_message "gphoto2 --list-files --folder \"${SOURCE_PATH}\":\nexitcode=$?\n${GPHOTO}" 3
 
@@ -177,6 +189,8 @@ function calculate_files_to_sync() {
 
 	elif [ "${SOURCE_MODE}" = "thumbnails" ]; then
 		echo "" # dummy action
+	elif [ "${SOURCE_MODE}" = "database" ]; then
+		echo "" # dummy action
 	else
 		# no defined mode selected
 		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+2"
@@ -188,6 +202,67 @@ function calculate_files_to_sync() {
 	fi
 
 	echo "${FILES_TO_SYNC}"
+}
+
+function progressmonitor() {
+	# usage: progressmonitor "${START_TIME}" "${PRGMON_ABS_COUNT}" "${PRGMON_PRG_COUNT}" "${LCD1}" "${LCD2}" "${SPEED}"
+
+	if [ ! -z "${PRGMON_PRG_COUNT}" ]; then
+		PRGMON_PRG_COUNT_OLD="${PRGMON_PRG_COUNT}"
+	fi
+
+	PRGMON_START_TIME="${1}"
+	PRGMON_ABS_COUNT="${2}"
+	PRGMON_PRG_COUNT="${3}"
+	PRGMON_LCD1="${4}"
+	PRGMON_LCD2="${5}"
+	PRGMON_SPEED="${6}"
+
+	if [ -z "${PRGMON_LAST_MESSAGE_TIME}" ]; then
+		PRGMON_LAST_MESSAGE_TIME=0
+	fi
+
+	if [ "${PRGMON_SPEED}" = "" ] || [ "${PRGMON_SPEED}" = "0.00kB/s" ]; then
+		PRGMON_SPEED=""
+	else
+		PRGMON_SPEED=", ${PRGMON_SPEED}"
+	fi
+	PRGMON_LCD3="${PRGMON_PRG_COUNT} $(l 'box_backup_of') ${PRGMON_ABS_COUNT}${PRGMON_SPEED}"
+
+	# calculate progress
+	if [ "${PRGMON_ABS_COUNT}" -gt "0" ]; then
+		if [ "${PRGMON_PRG_COUNT}" -gt "0" ]; then
+			PRGMON_FINISHED_PERCENT=$(echo "scale=1; 100 * ${PRGMON_PRG_COUNT} / ${PRGMON_ABS_COUNT}" | bc)
+			PRGMON_LCD5="PGBAR:${PRGMON_FINISHED_PERCENT}"
+		else
+			PRGMON_LCD5="$(l 'box_backup_checking_old_files')..."
+		fi
+	else
+		PRGMON_FINISHED_PERCENT="?"
+		PRGMON_LCD5="PGBAR:0"
+	fi
+
+	if [ "${PRGMON_PRG_COUNT}" != "${PRGMON_PRG_COUNT_OLD}" ] && ([ $(($(date +%s) - ${PRGMON_LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]); then
+
+		# calculte remaining time
+		if [ "${PRGMON_PRG_COUNT}" -gt "0" ]; then
+			PRGMON_TIME_RUN=$(echo "$(date +%s) - ${PRGMON_START_TIME}" | bc)
+			PRGMON_TIME_REMAINING=$(echo "${PRGMON_TIME_RUN} * ( ${PRGMON_ABS_COUNT} - ${PRGMON_PRG_COUNT} ) / ${PRGMON_PRG_COUNT}" | bc)
+			PRGMON_TIME_REMAINING_FORMATED=$(date -d@${PRGMON_TIME_REMAINING} -u +%H:%M:%S)
+			PRGMON_DAYS_LEFT=$((PRGMON_TIME_REMAINING/86400))
+			if [ "${PRGMON_DAYS_LEFT}" -gt "0" ]; then
+				PRGMON_TIME_REMAINING_FORMATED="${PRGMON_DAYS_LEFT}d ${PRGMON_TIME_REMAINING_FORMATED}"
+			fi
+		else
+			PRGMON_PRG_COUNT="0"
+			PRGMON_TIME_REMAINING_FORMATED="?"
+		fi
+
+		PRGMON_LCD4="$(l "box_backup_time_remaining"): ${PRGMON_TIME_REMAINING_FORMATED}"
+		lcd_message "+${PRGMON_LCD1}" "+${PRGMON_LCD2}" "+${PRGMON_LCD3}" "+${PRGMON_LCD4}" "+${PRGMON_LCD5}"
+
+		PRGMON_LAST_MESSAGE_TIME=$(date +%s)
+	fi
 }
 
 function syncprogress() {
@@ -221,7 +296,6 @@ function syncprogress() {
 	fi
 
 	while read PIPE; do
-		NEW_MESSAGE=false
 
 		if [ "${MODE}" = "rsync" ]; then
 			PIPE="$(echo "${PIPE}" | tr -cd '[:alnum:]\/\%\ ._-' | sed 's/   */ /g')"
@@ -229,16 +303,9 @@ function syncprogress() {
 				if [ -f "${SOURCE_PATH}/${FILENAME}" ]; then
 					FILESCOUNT=$((FILESCOUNT+1))
 					SPEED="$(echo "${PIPE}" | cut -d ' ' -f4)"
-					if [ "${SPEED}" = "0.00kB/s" ]; then
-						SPEED=""
-					else
-						SPEED=", ${SPEED}"
-					fi
-					LCD3="${FILESCOUNT} $(l 'box_backup_of') ${FILES_TO_SYNC}${SPEED}"
 
 					FILENAME=""
 
-					NEW_MESSAGE=true
 				fi
 			elif  [ "${PIPE:0:1}" != " " ]; then
 				FILENAME="${PIPE}";
@@ -247,51 +314,14 @@ function syncprogress() {
 		elif [ "${MODE}" = "gphoto2" ]; then
 			if [ "${PIPE:0:6}" = "Saving" ] || [ "${PIPE:0:4}" = "Skip" ]; then
 				FILESCOUNT=$((FILESCOUNT+1))
-				LCD3="${FILESCOUNT} $(l 'box_backup_of') ${FILES_TO_SYNC}"
 
-				NEW_MESSAGE=true
 				echo "${PIPE}" | tee -a "${const_LOGFILE_SYNC}"
 			fi
 		fi
 
-		# calculate progress
-		if [ "${FILES_TO_SYNC}" -gt "0" ]; then
-			if [ "${FILESCOUNT}" -gt "0" ]; then
-				FINISHED_PERCENT=$(echo "scale=1; 100 * ${FILESCOUNT} / ${FILES_TO_SYNC}" | bc)
-				LCD5="PGBAR:${FINISHED_PERCENT}"
-			else
-				LCD5="$(l 'box_backup_checking_old_files')..."
-			fi
-		else
-			FINISHED_PERCENT="?"
-			LCD5="PGBAR:0"
-		fi
-
-		if [ ${NEW_MESSAGE} = true ] && ([ $(($(date +%s) - ${LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${FINISHED_PERCENT}" = "100.0" ]); then
-
-			# calculte remaining time
-			if [ "${FILESCOUNT}" -gt "0" ]; then
-				TIME_RUN=$(echo "$(date +%s) - ${START_TIME}" | bc)
-				TIME_REMAINING=$(echo "${TIME_RUN} * ( ${FILES_TO_SYNC} - ${FILESCOUNT} ) / ${FILESCOUNT}" | bc)
-				TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
-				DAYS_LEFT=$((TIME_REMAINING/86400))
-				if [ "${DAYS_LEFT}" -gt "0" ]; then
-					TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
-				fi
-			else
-				FILESCOUNT="0"
-				TIME_REMAINING_FORMATED="?"
-			fi
-
-			LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
-
-			lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
-			LAST_MESSAGE_TIME=$(date +%s)
-		fi
+		progressmonitor "${START_TIME}" "${FILES_TO_SYNC}" "${FILESCOUNT}" "${LCD1}" "${LCD2}" "${SPEED}"
 	done
 
-	# force to display and hold final screen
-	lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 	sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 
 # 	log_message "Backup-time: $(echo "$(date +%s) - ${TIMER_START}" | bc) seconds" 3
@@ -677,13 +707,11 @@ function syncprogress() {
 
 	# In case of SYNC_ERROR retry
 	TRIES_MAX=5
-	TRIES_DONE=0
-	SYNC_ERROR="-" # not empty!
+	SYNC_ERROR=""
 	FILES_TO_SYNC=0
 	SYNC_LOG=""
 
-	FILES_TO_SYNC="$(calculate_files_to_sync)"
-	FILES_TO_SYNC_PRE="${FILES_TO_SYNC}"
+	log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
 	# Count of files in usb before backup starts
 	if [ "${TARGET_MODE}" != "rsyncserver" ]; then
@@ -694,9 +722,14 @@ function syncprogress() {
 	for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
 
 		#retry-loop
-		while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR}" != "" ]]; do
+		TRIES_DONE=0
+		SYNC_ERROR_TMP="-" # not empty!
 
-			SYNC_ERROR=""
+		FILES_TO_SYNC="$(calculate_files_to_sync "${SOURCE_PATH}")"
+
+		while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR_TMP}" != "" ]]; do
+
+			SYNC_ERROR_TMP=""
 
 			# RETRIES
 
@@ -714,7 +747,7 @@ function syncprogress() {
 			fi
 
 			# Remount devices if "Err.Lost device"
-			if [[ "${SYNC_ERROR}" =~ "Err.Lost device" ]]; then
+			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device" ]]; then
 				log_exec "Lost device: pre remount" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 
 				if [ "${UUID_USB_1}" != "" ]; then
@@ -733,12 +766,6 @@ function syncprogress() {
 					fi
 				fi
 			fi
-
-		########################################
-		# CALCULATE NUMBER OF FILES TO BACK UP #
-		########################################
-
-			log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
 			SYNC_START_TIME=$(date +%s)
 
@@ -802,6 +829,9 @@ function syncprogress() {
 			elif [ "${SOURCE_MODE}" = "thumbnails" ]; then
 				# no backup action
 				echo "" # dummy action
+			elif [ "${SOURCE_MODE}" = "database" ]; then
+				# no backup action
+				echo "" # dummy action
 			else
 				# no defined mode selected
 				lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+3"
@@ -818,34 +848,29 @@ function syncprogress() {
 			fi
 
 			# Re-calculate FILES_TO_SYNC
-			if [ "${TARGET_MODE}" = "rsyncserver" ]; then
-				FILES_TO_SYNC="$(calculate_files_to_sync)"
-				if [ "${FILES_TO_SYNC_PRE}" != "" ] && [ "${FILES_TO_SYNC}" != "" ]; then
-					TRANSFER_INFO="$(echo "${FILES_TO_SYNC_PRE} - ${FILES_TO_SYNC}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
-				else
-					TRANSFER_INFO="$(l "box_backup_result_suspect")."
-					FILES_TO_SYNC=0
-				fi
+			if [ "${SOURCE_MODE}" = "camera" ]; then
+				FILES_TO_SYNC_NEW=0 # novalidation against target possible
 			else
-				FILES_COUNT_STORAGE_POST=$(find $BACKUP_PATH -type f | wc -l)
-				if [ "${FILES_COUNT_STORAGE_PRE}" != "" ] && [ "${FILES_COUNT_STORAGE_POST}" != "" ]; then
-					FILES_TO_SYNC=$(($FILES_COUNT_STORAGE_POST - $FILES_COUNT_STORAGE_PRE - $FILES_TO_SYNC))
-					TRANSFER_INFO="$(echo "${FILES_COUNT_STORAGE_POST} - ${FILES_COUNT_STORAGE_PRE}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC_PRE} $(l "box_backup_files_copied")."
-				else
-					TRANSFER_INFO="$(l "box_backup_result_suspect")."
-					FILES_TO_SYNC=0
-				fi
+				FILES_TO_SYNC_NEW="$(calculate_files_to_sync "${SOURCE_PATH}")"
 			fi
 
+			if [ "${FILES_TO_SYNC}" != "" ] && [ "${FILES_TO_SYNC_NEW}" != "" ]; then
+				TRANSFER_INFO="${TRANSFER_INFO}\n${SOURCE_PATH}: $(echo "${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied")."
+			else
+				TRANSFER_INFO="$(l "box_backup_result_suspect")."
+				FILES_TO_SYNC=0
+			fi
+			FILES_TO_SYNC="${FILES_TO_SYNC_NEW}"
+
 			if [ "${FILES_TO_SYNC}" -gt "0" ]; then
-				SYNC_ERROR="${SYNC_ERROR} Files missing!"
+				SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Files missing!"
 				log_message "Files missing: ${FILES_TO_SYNC} files not synced."
 				log_exec "Files missing" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 				log_message "$(get_abnormal_system_conditions)" 1
 			fi
 
 			if [ "${SYNC_RETURN_CODE}" != "0" ]; then
-				SYNC_ERROR="${SYNC_ERROR} Exception"
+				SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Exception"
 				log_message "Exception: ${SYNC_RETURN_CODE}"
 				log_message "$(get_abnormal_system_conditions)" 1
 			fi
@@ -856,7 +881,7 @@ function syncprogress() {
 				log_message "Lost device? '${MOUNTED_DEVICE}': '${RESULT_DEVICE_MOUNTED}'" 3
 
 				if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
-					SYNC_ERROR="${SYNC_ERROR} Err.Lost device!"
+					SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Err.Lost device!"
 					log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
 					sleep 2
 					log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
@@ -868,12 +893,14 @@ function syncprogress() {
 			SYNC_TIME=$(($SYNC_STOP_TIME - $SYNC_START_TIME))
 			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}; SYNC_TIME: ${SYNC_TIME}" 3
 
-			if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
+			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
 					lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')" ""
 					sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
 			fi
 
+			SYNC_ERROR="${SYNC_ERROR} ${SYNC_ERROR_TMP}"
 		done # retry
+		sleep ${const_PROGRESS_DISPLAY_WAIT_SEC}
 	done # sources
 
 # prepare message for mail and power off
@@ -939,8 +966,8 @@ function syncprogress() {
 		#prepare loop to create thumbnails
 		IMAGE_COUNT=${#TIMS_ARRAY[@]}
 
-		DATABASE_START_TIME=$(date +%s)
-		LAST_MESSAGE_TIME=$DATABASE_START_TIME
+		START_TIME=$(date +%s)
+		LAST_MESSAGE_TIME=$START_TIME
 
 		LCD1="$(l "box_backup_generating_database")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
@@ -964,24 +991,7 @@ function syncprogress() {
 				source "${WORKING_DIR}/lib-db-insert.sh"
 			fi
 
-			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ $(( ${i} + 1 )) -eq ${IMAGE_COUNT} ]; then
-				FINISHED_PERCENT=$(echo "scale=1; 100 * (${i} + 1) / ${IMAGE_COUNT}" | bc)
-				IMAGES_TO_READ=$(echo "${IMAGE_COUNT} - $i - 1" | bc)
-				TIME_RUN=$(echo "$(date +%s) - ${DATABASE_START_TIME}" | bc)
-				TIME_REMAINING=$(echo "${TIME_RUN} * ${IMAGES_TO_READ} / ( ${i} + 1 )" | bc)
-				TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
-				DAYS_LEFT=$(($TIME_REMAINING/86400))
-				if [ "${DAYS_LEFT}" -gt "0" ]; then
-					TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
-				fi
-
-				LCD3="$(( ${i} + 1 )) $(l "box_backup_of") ${IMAGE_COUNT}"
-				LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
-				LCD5="PGBAR:${FINISHED_PERCENT}"
-
-				lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
-				LAST_MESSAGE_TIME=$(date +%s)
-			fi
+			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 
 		done
 
@@ -1037,8 +1047,8 @@ function syncprogress() {
 		#prepare loop to create thumbnails
 		IMAGE_COUNT=${#IMAGES_ARRAY[@]}
 
-		THUMBNAILS_START_TIME=$(date +%s)
-		LAST_MESSAGE_TIME=$THUMBNAILS_START_TIME
+		START_TIME=$(date +%s)
+		LAST_MESSAGE_TIME=$START_TIME
 
 		LCD1="$(l "box_backup_generating_thumbnails")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
@@ -1063,26 +1073,7 @@ function syncprogress() {
 				source "${WORKING_DIR}/lib-db-insert.sh"
 			fi
 
-			if [ "$(echo "$(date +%s) - ${LAST_MESSAGE_TIME}" | bc)" -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ $(( ${i} + 1 )) -eq ${IMAGE_COUNT} ]; then
-				FINISHED_PERCENT=$(echo "scale=1; 100 * (${i} + 1) / ${IMAGE_COUNT}" | bc)
-
-				IMAGES_TO_CONVERT=$(echo "${IMAGE_COUNT} - $i - 1" | bc)
-
-				TIME_RUN=$(echo "$(date +%s) - ${THUMBNAILS_START_TIME}" | bc)
-				TIME_REMAINING=$(echo "${TIME_RUN} * ${IMAGES_TO_CONVERT} / ( ${i} + 1 )" | bc)
-				TIME_REMAINING_FORMATED=$(date -d@${TIME_REMAINING} -u +%H:%M:%S)
-				DAYS_LEFT=$(($TIME_REMAINING/86400))
-				if [ "${DAYS_LEFT}" -gt "0" ]; then
-					TIME_REMAINING_FORMATED="${DAYS_LEFT}d ${TIME_REMAINING_FORMATED}"
-				fi
-
-				LCD3="$(( ${i} + 1 )) $(l "box_backup_of") ${IMAGE_COUNT}"
-				LCD4="$(l "box_backup_time_remaining"): ${TIME_REMAINING_FORMATED}"
-				LCD5="PGBAR:${FINISHED_PERCENT}"
-
-				lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
-				LAST_MESSAGE_TIME=$(date +%s)
-			fi
+			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 
 		done
 
@@ -1098,6 +1089,6 @@ function syncprogress() {
 
 # Power off
 	if [ "${SECONDARY_BACKUP_FOLLOWS}" == "false" ]; then
-		source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}" "${TRANSFER_INFO}"
+		source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}" "${TRANSFER_INFO//$'\n'/ }"
 	fi
 

@@ -71,13 +71,13 @@
 			?>
 
 			<div class='backupsection'>
-				<button name="backup_thumbnails_usb" class="usb"><?php echo L::main_thumbnails_button . L::right_arrow . L::main_usb_button; ?></button>
-				<button name="backup_thumbnails_internal" class="usb"><?php echo L::main_thumbnails_button . L::right_arrow . L::main_internal_button; ?></button>
+				<button name="backup_thumbnails_usb"><?php echo L::main_thumbnails_button . L::right_arrow . L::main_usb_button; ?></button>
+				<button name="backup_thumbnails_internal"><?php echo L::main_thumbnails_button . L::right_arrow . L::main_internal_button; ?></button>
 			</div>
 
 			<div class='backupsection'>
-				<button name="backup_database_usb" class="usb"><?php echo L::main_database_button . L::right_arrow . L::main_usb_button; ?></button>
-				<button name="backup_database_internal" class="usb"><?php echo L::main_database_button . L::right_arrow . L::main_internal_button; ?></button>
+				<button name="backup_database_usb"><?php echo L::main_database_button . L::right_arrow . L::main_usb_button; ?></button>
+				<button name="backup_database_internal"><?php echo L::main_database_button . L::right_arrow . L::main_internal_button; ?></button>
 			</div>
 
 			<div class='backupsection'>
