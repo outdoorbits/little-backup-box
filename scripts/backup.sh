@@ -126,7 +126,7 @@ log_message "Destination: ${TARGET_MODE} ${CLOUDSERVICE}"
 
 function calculate_files_to_sync() {
 	local FILES_TO_SYNC=0
-	local FILES_TO_SYNC_PART=0
+	local FILES_TO_SYNC_PATH=0
 	local SOURCE_PATH="${1}"
 	local SOURCE_PATHS_ARRAY=()
 	local i=0
@@ -148,18 +148,18 @@ function calculate_files_to_sync() {
 		for SOURCE_PATH in "${SOURCE_PATHS_ARRAY[@]}"; do
 
 			if [ ${TARGET_MODE} = "rsyncserver" ]; then
-				FILES_TO_SYNC_PART=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+				FILES_TO_SYNC_PATH=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 			else
-				FILES_TO_SYNC_PART=$(sudo rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+				FILES_TO_SYNC_PATH=$(sudo rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 			fi
 
-			if [ -z "${FILES_TO_SYNC_PART}" ]; then
-				FILES_TO_SYNC_PART=0
+			if [ -z "${FILES_TO_SYNC_PATH}" ]; then
+				FILES_TO_SYNC_PATH=0
 			fi
 
-			log_message "Files to sync from folder '${SOURCE_PATH}': ${FILES_TO_SYNC_PART}"
+			log_message "Files to sync from folder '${SOURCE_PATH}': ${FILES_TO_SYNC_PATH}"
 
-			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_TO_SYNC_PART} ))
+			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_TO_SYNC_PATH} ))
 		done
 
 	#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
@@ -175,15 +175,15 @@ function calculate_files_to_sync() {
 			GPHOTO=$(sudo gphoto2 --list-files --folder "${SOURCE_PATH}")
 			log_message "gphoto2 --list-files --folder \"${SOURCE_PATH}\":\nexitcode=$?\n${GPHOTO}" 3
 
-			FILES_TO_SYNC_PART=$(echo "${GPHOTO}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
+			FILES_TO_SYNC_PATH=$(echo "${GPHOTO}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
 
-			if [ -z "${FILES_TO_SYNC_PART}" ]; then
-				FILES_TO_SYNC_PART=0
+			if [ -z "${FILES_TO_SYNC_PATH}" ]; then
+				FILES_TO_SYNC_PATH=0
 			fi
 
-			log_message "Files in folder '${SOURCE_PATH}': ${FILES_TO_SYNC_PART}"
+			log_message "Files in folder '${SOURCE_PATH}': ${FILES_TO_SYNC_PATH}"
 
-			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_TO_SYNC_PART} ))
+			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_TO_SYNC_PATH} ))
 		done
 
 		cd
@@ -858,9 +858,9 @@ function syncprogress() {
 			fi
 
 			if [ "${FILES_TO_SYNC}" != "" ] && [ "${FILES_TO_SYNC_NEW}" != "" ]; then
-				TRANSFER_INFO="${TRANSFER_INFO}\n$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied") (${SOURCE_PATH})."
+				TRANSFER_INFO="${TRANSFER_INFO}$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied") (${SOURCE_PATH}).\n"
 			else
-				TRANSFER_INFO="${TRANSFER_INFO}\n$(l "box_backup_result_suspect") (${SOURCE_PATH})."
+				TRANSFER_INFO="${TRANSFER_INFO}$(l "box_backup_result_suspect") (${SOURCE_PATH}).\n"
 				FILES_TO_SYNC=0
 			fi
 			FILES_TO_SYNC="${FILES_TO_SYNC_NEW}"
@@ -903,7 +903,6 @@ function syncprogress() {
 
 			SYNC_ERROR="${SYNC_ERROR} ${SYNC_ERROR_TMP}"
 		done # retry
-		sleep ${const_PROGRESS_DISPLAY_WAIT_SEC}
 	done # sources
 
 # prepare message for mail and power off
@@ -1026,8 +1025,6 @@ function syncprogress() {
 
 		done
 
-		# hold final screen
-		sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 	fi
 
 #######################
@@ -1108,8 +1105,6 @@ function syncprogress() {
 
 		done
 
-		# hold final screen
-		sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 	fi
 
 # umount (try, state unknown)
