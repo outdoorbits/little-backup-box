@@ -126,6 +126,7 @@ log_message "Destination: ${TARGET_MODE} ${CLOUDSERVICE}"
 
 function calculate_files_to_sync() {
 	local FILES_TO_SYNC=0
+	local FILES_TO_SYNC_PART=0
 	local SOURCE_PATH="${1}"
 	local SOURCE_PATHS_ARRAY=()
 	local i=0
@@ -147,18 +148,18 @@ function calculate_files_to_sync() {
 		for SOURCE_PATH in "${SOURCE_PATHS_ARRAY[@]}"; do
 
 			if [ ${TARGET_MODE} = "rsyncserver" ]; then
-				FILES_IN_FOLDER=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+				FILES_TO_SYNC_PART=$(sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 			else
-				FILES_IN_FOLDER=$(sudo rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+				FILES_TO_SYNC_PART=$(sudo rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 			fi
 
-			if [ -z "${FILES_IN_FOLDER}" ]; then
-				FILES_IN_FOLDER=0
+			if [ -z "${FILES_TO_SYNC_PART}" ]; then
+				FILES_TO_SYNC_PART=0
 			fi
 
-			log_message "Files in folder '${SOURCE_PATH}': ${FILES_IN_FOLDER}"
+			log_message "Files to sync from folder '${SOURCE_PATH}': ${FILES_TO_SYNC_PART}"
 
-			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_IN_FOLDER} ))
+			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_TO_SYNC_PART} ))
 		done
 
 	#     elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ];
@@ -174,15 +175,15 @@ function calculate_files_to_sync() {
 			GPHOTO=$(sudo gphoto2 --list-files --folder "${SOURCE_PATH}")
 			log_message "gphoto2 --list-files --folder \"${SOURCE_PATH}\":\nexitcode=$?\n${GPHOTO}" 3
 
-			FILES_IN_FOLDER=$(echo "${GPHOTO}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
+			FILES_TO_SYNC_PART=$(echo "${GPHOTO}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There are files in folder" || $i " " $(i+1) " " $(i+3) " " $(i+4) " " $(i+5)=="There is file in folder"){SUM+=$(i+2);}} END {print SUM}')
 
-			if [ -z "${FILES_IN_FOLDER}" ]; then
-				FILES_IN_FOLDER=0
+			if [ -z "${FILES_TO_SYNC_PART}" ]; then
+				FILES_TO_SYNC_PART=0
 			fi
 
-			log_message "Files in folder '${SOURCE_PATH}': ${FILES_IN_FOLDER}"
+			log_message "Files in folder '${SOURCE_PATH}': ${FILES_TO_SYNC_PART}"
 
-			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_IN_FOLDER} ))
+			FILES_TO_SYNC=$(( ${FILES_TO_SYNC} + ${FILES_TO_SYNC_PART} ))
 		done
 
 		cd
@@ -710,22 +711,23 @@ function syncprogress() {
 	SYNC_ERROR=""
 	FILES_TO_SYNC=0
 	SYNC_LOG=""
-
-	log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
-
-	# Count of files in usb before backup starts
-	if [ "${TARGET_MODE}" != "rsyncserver" ]; then
-		FILES_COUNT_STORAGE_PRE=$(find $BACKUP_PATH -type f | wc -l)
-	fi
+	TRANSFER_INFO=""
 
 	#sourcepaths-loop
 	for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
+
+		# Count of files in usb before backup starts
+		if [ "${TARGET_MODE}" != "rsyncserver" ]; then
+			FILES_COUNT_STORAGE_PRE=$(find $BACKUP_PATH -type f | wc -l)
+		fi
 
 		#retry-loop
 		TRIES_DONE=0
 		SYNC_ERROR_TMP="-" # not empty!
 
 		FILES_TO_SYNC="$(calculate_files_to_sync "${SOURCE_PATH}")"
+
+		log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
 		while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR_TMP}" != "" ]]; do
 
@@ -848,21 +850,22 @@ function syncprogress() {
 			fi
 
 			# Re-calculate FILES_TO_SYNC
-			if [ "${SOURCE_MODE}" = "camera" ]; then
-				FILES_TO_SYNC_NEW=0 # novalidation against target possible
+			if [ "${TARGET_MODE}" != "rsyncserver" ]; then
+				FILES_COUNT_STORAGE_POST=$(find $BACKUP_PATH -type f | wc -l)
+				FILES_TO_SYNC_NEW=$(($FILES_TO_SYNC - $FILES_COUNT_STORAGE_POST + $FILES_COUNT_STORAGE_PRE))
 			else
 				FILES_TO_SYNC_NEW="$(calculate_files_to_sync "${SOURCE_PATH}")"
 			fi
 
 			if [ "${FILES_TO_SYNC}" != "" ] && [ "${FILES_TO_SYNC_NEW}" != "" ]; then
-				TRANSFER_INFO="${TRANSFER_INFO}\n${SOURCE_PATH}: $(echo "${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW}" | bc) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied")."
+				TRANSFER_INFO="${TRANSFER_INFO}\n$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied") (${SOURCE_PATH})."
 			else
-				TRANSFER_INFO="$(l "box_backup_result_suspect")."
+				TRANSFER_INFO="${TRANSFER_INFO}\n$(l "box_backup_result_suspect") (${SOURCE_PATH})."
 				FILES_TO_SYNC=0
 			fi
 			FILES_TO_SYNC="${FILES_TO_SYNC_NEW}"
 
-			if [ "${FILES_TO_SYNC}" -gt "0" ]; then
+			if [ "${FILES_TO_SYNC}" -gt "0" ] && [ "${SOURCE_MODE}" != "camera" ]; then
 				SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Files missing!"
 				log_message "Files missing: ${FILES_TO_SYNC} files not synced."
 				log_exec "Files missing" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
@@ -937,13 +940,13 @@ function syncprogress() {
 
 		if [ ! -z "${MESSAGE_MAIL}" ]; then
 			SUBJ_MSG="${MESSAGE_MAIL}"
-			BODY_MSG="${MESSAGE_MAIL}\n${TRANSFER_INFO}\n\n"
+			BODY_MSG="${SUBJ_MSG}\n"
 		else
 			SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
 			BODY_MSG=""
 		fi
 
-		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n\n$(l 'box_backup_mail_log'):\n${SYNC_LOG}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n${TRANSFER_INFO}\n\n$(l 'box_backup_mail_log'):\n${SYNC_LOG}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 	fi
 
 #####################
@@ -953,9 +956,37 @@ function syncprogress() {
 	DB="${TARGET_PATH}/${const_IMAGE_DATABASE_FILENAME}"
 	if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "database" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 
+		if [ -f "${DB}" ]; then
+			DATABASE_IS_NEW=false
+		else
+			DATABASE_IS_NEW=true
+		fi
+
 		# prepare database
 		source "${WORKING_DIR}/lib-db-setup.sh"
 
+		# clean database
+		LCD1="$(l "box_backup_cleaning_database")" # header1
+		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
+
+		DB_STR=$(sudo sqlite3 "${DB}" "select ID, Directory || '/' || File_Name from EXIF_DATA"  | sed 's/\ /##\*\*##/g')
+		IFS=$'\n' read -rd '' -a DB_ARRAY <<<"${DB_STR}"
+		unset IFS
+
+		IMAGE_COUNT=${#DB_ARRAY[@]}
+
+		START_TIME=$(date +%s)
+		for ((i = 0; i < ${#DB_ARRAY[@]}; i++)); do
+			IMAGE_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | sed 's/##\*\*##/\ /g' | cut -d'|' -f2)"
+
+			if [ ! -f "${IMAGE_FILENAME}" ]; then
+				ID="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f1)"
+				sudo sqlite3 "${DB}" "DELETE from EXIF_DATA WHERE ID=${ID};"
+			fi
+			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
+		done
+
+		# import into database
 		lcd_message "$(l "box_backup_generating_database_finding_images1")" "$(l "box_backup_generating_database_finding_images2")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_generating_database_finding_images3")" ""
 
 		#find all tims and convert them to the estimated original filename; replace space by substitute of space ##**##
@@ -987,7 +1018,7 @@ function syncprogress() {
 
 			Directory=$(echo ${Directory} | sed -E "s#^${TARGET_PATH}/##")
 
-			if [[ ! $(sqlite3 "${DB}" "select ID from EXIF_DATA where File_Name=\"${File_Name}\" and Directory=\"${Directory}\"") ]]; then
+			if [ $DATABASE_IS_NEW = true ] || [[ ! $(sqlite3 "${DB}" "select ID from EXIF_DATA where File_Name=\"${File_Name}\" and Directory=\"${Directory}\"") ]]; then
 				source "${WORKING_DIR}/lib-db-insert.sh"
 			fi
 
@@ -1089,6 +1120,6 @@ function syncprogress() {
 
 # Power off
 	if [ "${SECONDARY_BACKUP_FOLLOWS}" == "false" ]; then
-		source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}" "${TRANSFER_INFO//$'\n'/ }"
+		source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}" "$(echo "${TRANSFER_INFO}" | tr "\n" " ")"
 	fi
 

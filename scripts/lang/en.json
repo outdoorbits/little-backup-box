@@ -91,7 +91,8 @@
       "generating_database_finding_images2": "Counting images.",
       "generating_database_finding_images3": "Just a moment...",
       "generating_database": "Create database",
-      "mode_database": "Database"
+      "mode_database": "Database",
+      "cleaning_database": "Cleaning database"
     },
     "poweroff": {
       "poweroff": "Power off",

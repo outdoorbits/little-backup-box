@@ -278,7 +278,8 @@
       "generating_database_finding_images2": "Zähle Bilder.",
       "generating_database_finding_images3": "Moment...",
       "generating_database": "Erzeuge Datenbank",
-      "mode_database": "Datenbank"
+      "mode_database": "Datenbank",
+      "cleaning_database": "Bereinige Datenbank"
     },
     "cronip": {
       "offline": "offline",
