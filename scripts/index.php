@@ -71,19 +71,25 @@
 			?>
 
 			<div class='backupsection'>
-				<button name="backup_thumbnails_usb"><?php echo L::main_thumbnails_button . L::right_arrow . L::main_usb_button; ?></button>
-				<button name="backup_thumbnails_internal"><?php echo L::main_thumbnails_button . L::right_arrow . L::main_internal_button; ?></button>
-			</div>
-
-			<div class='backupsection'>
-				<button name="backup_database_usb"><?php echo L::main_database_button . L::right_arrow . L::main_usb_button; ?></button>
-				<button name="backup_database_internal"><?php echo L::main_database_button . L::right_arrow . L::main_internal_button; ?></button>
-			</div>
-
-			<div class='backupsection'>
 				<button name="stopbackup" class="danger"><?php echo L::main_stopbackup_button; ?>
 			</div>
+		</div>
 
+		<div class="card" style="margin-top: 3em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_view_database; ?></summary>
+				<div class='backupsection'>
+					<h3><?php echo L::main_thumbnails_header; ?></h3>
+					<button name="backup_thumbnails_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
+					<button name="backup_thumbnails_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+				</div>
+
+				<div class='backupsection'>
+					<h3><?php echo L::main_database_header; ?></h3>
+					<button name="backup_database_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
+					<button name="backup_database_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+				</div>
+			</details>
 		</div>
 	</form>
 

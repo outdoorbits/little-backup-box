@@ -34,8 +34,9 @@
     "usb_button": "Poste stockage USB",
     "backup_break1": "Sauvegarde",
     "backup_break2": "abandonnée.",
-    "thumbnails_button": "De vignettes",
-    "database_button": "Base de données"
+    "view_database": "View-Base de données",
+    "thumbnails_header": "Générer des vignettes",
+    "database_header": "Synchroniser la base de données"
   },
   "sysinfo": {
     "sysinfo": "Information système",
@@ -277,7 +278,7 @@
       "generating_database_finding_images1": "Base de données",
       "generating_database_finding_images2": "Compter les images.",
       "generating_database_finding_images3": "Juste un moment......",
-      "generating_database": "Créer base de données",
+      "generating_database": "Synchroniser la base de données",
       "mode_database": "Base de données",
       "cleaning_database": "Base de données de nettoyage"
     },

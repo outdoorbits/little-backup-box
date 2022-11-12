@@ -90,7 +90,7 @@
       "generating_database_finding_images1": "Database",
       "generating_database_finding_images2": "Counting images.",
       "generating_database_finding_images3": "Just a moment...",
-      "generating_database": "Create database",
+      "generating_database": "Sync database",
       "mode_database": "Database",
       "cleaning_database": "Cleaning database"
     },
@@ -164,8 +164,9 @@
     "usb_button": "USB storage",
     "backup_break1": "Backup",
     "backup_break2": "aborted.",
-    "thumbnails_button": "Thumbnails",
-    "database_button": "Database"
+    "view_database": "View-Database",
+    "thumbnails_header": "Generate thumbnails",
+    "database_header": "Synchronize the database"
   },
   "sysinfo": {
     "sysinfo": "System info",
