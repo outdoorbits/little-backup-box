@@ -858,9 +858,9 @@ function syncprogress() {
 			fi
 
 			if [ "${FILES_TO_SYNC}" != "" ] && [ "${FILES_TO_SYNC_NEW}" != "" ]; then
-				TRANSFER_INFO="${TRANSFER_INFO}$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied") (${SOURCE_PATH}).\n"
+				TRANSFER_INFO="${TRANSFER_INFO}$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied").\n"
 			else
-				TRANSFER_INFO="${TRANSFER_INFO}$(l "box_backup_result_suspect") (${SOURCE_PATH}).\n"
+				TRANSFER_INFO="${TRANSFER_INFO}$(l "box_backup_result_suspect").\n"
 				FILES_TO_SYNC=0
 			fi
 			FILES_TO_SYNC="${FILES_TO_SYNC_NEW}"

@@ -38,6 +38,9 @@ DB_SETUP_ARRAY=()
 DB_SETUP_ARRAY+=("create table CONFIG (VERSION integer);")
 DB_SETUP_ARRAY+=("insert into CONFIG (VERSION) values (0);")
 DB_SETUP_ARRAY+=("create table EXIF_DATA (ID integer primary key autoincrement);")
+DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Directory text;")
+DB_SETUP_ARRAY+=("alter table EXIF_DATA add column File_Name text;")
+DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Create_Date text;")
 
 DB_VERSION=0
 
