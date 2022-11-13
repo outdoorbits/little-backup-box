@@ -874,7 +874,7 @@ function syncprogress() {
 			fi
 
 			if [ "${FILES_TO_SYNC}" != "" ] && [ "${FILES_TO_SYNC_NEW}" != "" ]; then
-				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied"). $(l "box_backup_try") ${TRIES_DONE}\n"
+				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied"). ($(l "box_backup_try") ${TRIES_DONE})\n"
 			else
 				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$(l "box_backup_result_suspect").\n"
 				FILES_TO_SYNC=0
@@ -1000,6 +1000,9 @@ function syncprogress() {
 			fi
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 		done
+
+		# vacuum database
+		sudo sqlite3 "${DB}" "VACUUM;"
 
 		# import into database
 		lcd_message "$(l "box_backup_generating_database_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_database_finding_images3")" ""

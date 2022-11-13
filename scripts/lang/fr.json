@@ -35,8 +35,8 @@
     "backup_break1": "Sauvegarde",
     "backup_break2": "abandonnée.",
     "view_database": "View-Base de données",
-    "thumbnails_header": "Générer des vignettes",
-    "database_header": "Synchroniser la base de données"
+    "thumbnails_header": "Genere miniaturas e impórtelas a la base de datos",
+    "database_header": "Synchroniser et nettoyer la base de données"
   },
   "sysinfo": {
     "sysinfo": "Information système",

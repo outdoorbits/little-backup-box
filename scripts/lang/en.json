@@ -162,8 +162,8 @@
     "backup_break1": "Backup",
     "backup_break2": "aborted.",
     "view_database": "View-Database",
-    "thumbnails_header": "Generate thumbnails",
-    "database_header": "Synchronize the database"
+    "thumbnails_header": "Generate thumbnails and import them into the database",
+    "database_header": "Synchronize and clean database"
   },
   "sysinfo": {
     "sysinfo": "System info",

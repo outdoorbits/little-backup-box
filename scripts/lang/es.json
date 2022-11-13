@@ -35,8 +35,8 @@
     "backup_break1": "Copia de seguridad",
     "backup_break2": "cancelada.",
     "view_database": "View-Base de datos",
-    "thumbnails_header": "Generar miniaturas",
-    "database_header": "Sincronizar la base de datos"
+    "thumbnails_header": "Genere miniaturas e impórtelas a la base de datos",
+    "database_header": "Sincronizar y limpiar base de datos"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
