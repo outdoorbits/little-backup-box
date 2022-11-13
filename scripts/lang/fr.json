@@ -261,10 +261,8 @@
       "usb_ios": "USB iOS",
       "result_suspect": "Succès incertain.",
       "files_copied": "dos. copié",
-      "generating_thumbnails_finding_images2": "Compter les images.",
-      "generating_thumbnails_finding_images1": "De vignettes",
+      "generating_thumbnails_finding_images1": "Gén. de vignettes",
       "generating_thumbnails_finding_images3": "Juste un moment......",
-      "generating_thumbnails": "Gén. de vignettes",
       "insert_target_1": "Prêt",
       "insert_target_2": "Insérer la cible USB",
       "usb_target_ok": "Poste stockage ok",
@@ -275,12 +273,11 @@
       "mode_thumbnails": "De vignettes",
       "camera_storage_not_exists_2": "n'existe pas.",
       "camera_storage_not_exists_1": "Caméra-stockage",
-      "generating_database_finding_images1": "Base de données",
-      "generating_database_finding_images2": "Compter les images.",
+      "generating_database_finding_images1": "Synchroniser la base de données",
       "generating_database_finding_images3": "Juste un moment......",
-      "generating_database": "Synchroniser la base de données",
       "mode_database": "Base de données",
-      "cleaning_database": "Base de données de nettoyage"
+      "cleaning_database": "Base de données de nettoyage",
+      "counting_images": "Compter les images."
     },
     "cronip": {
       "offline": "hors ligne",

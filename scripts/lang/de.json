@@ -261,10 +261,8 @@
       "usb_ios": "USB iOS",
       "result_suspect": "Erfolg unklar.",
       "files_copied": "Dat. kopiert",
-      "generating_thumbnails_finding_images2": "Zähle Bilder.",
-      "generating_thumbnails_finding_images1": "Vorschaubilder",
+      "generating_thumbnails_finding_images1": "Gen. Vorschaubilder",
       "generating_thumbnails_finding_images3": "Moment...",
-      "generating_thumbnails": "Gen. Vorschaubilder",
       "insert_target_1": "Bereit",
       "insert_target_2": "USB-Ziel verbinden",
       "usb_target_ok": "Ziel o.k.",
@@ -275,12 +273,11 @@
       "mode_thumbnails": "Vorschaubilder",
       "camera_storage_not_exists_2": "existiert nicht.",
       "camera_storage_not_exists_1": "Kamera-Speicher",
-      "generating_database_finding_images1": "Datenbank",
-      "generating_database_finding_images2": "Zähle Bilder.",
+      "generating_database_finding_images1": "Synchr. Datenbank",
       "generating_database_finding_images3": "Moment...",
-      "generating_database": "Synchr. Datenbank",
       "mode_database": "Datenbank",
-      "cleaning_database": "Bereinige Datenbank"
+      "cleaning_database": "Bereinige Datenbank",
+      "counting_images": "Zähle Bilder."
     },
     "cronip": {
       "offline": "offline",

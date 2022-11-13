@@ -268,6 +268,7 @@ function progressmonitor() {
 
 function syncprogress() {
 	local MODE="${1}"
+	local SOURCE_FOLDER_NUMBER="${2}"
 
 # 	local TIMER_START=$(date +%s)
 
@@ -278,7 +279,7 @@ function syncprogress() {
 	local TIME_REMAINING_FORMATED=""
 	local DAYS_LEFT=0
 
-	local LCD1="$(l "box_backup_mode_${SOURCE_MODE}")" # header1
+	local LCD1="$(l "box_backup_mode_${SOURCE_MODE}") ${SOURCE_FOLDER_NUMBER}" # header1
 	local LCD2=" > $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}" # header2
 	local LCD3="0 $(l 'box_backup_of') ${FILES_TO_SYNC}" # filescount, speed
 	local LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
@@ -712,9 +713,25 @@ function syncprogress() {
 	FILES_TO_SYNC=0
 	SYNC_LOG=""
 	TRANSFER_INFO=""
+	SOURCE_FOLDER_NUMBER=""
 
 	#sourcepaths-loop
 	for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
+
+		#SOURCE_FOLDER_NUMBER
+		if [ "${#SOURCE_PATHS[@]}" -gt "1" ]; then
+			if [ "${SOURCE_FOLDER_NUMBER}" == "" ]; then
+				SOURCE_FOLDER_NUMBER=1
+			else
+				SOURCE_FOLDER_NUMBER=$(($SOURCE_FOLDER_NUMBER + 1))
+			fi
+		fi
+
+		if [ "${SOURCE_FOLDER_NUMBER}" == "" ]; then
+			SOURCE_FOLDER_NUMBER_FORMATED=""
+		else
+			SOURCE_FOLDER_NUMBER_FORMATED="${SOURCE_FOLDER_NUMBER}: "
+		fi
 
 		# Count of files in usb before backup starts
 		if [ "${TARGET_MODE}" != "rsyncserver" ]; then
@@ -734,7 +751,6 @@ function syncprogress() {
 			SYNC_ERROR_TMP=""
 
 			# RETRIES
-
 			TRIES_DONE=$((TRIES_DONE+1))
 
 			if [ ! -z "${SYNC_LOG}" ]; then
@@ -785,12 +801,12 @@ function syncprogress() {
 				if [ "${TARGET_MODE}" = "rsyncserver" ]; then
 					# to rsyncserver
 					if [ $conf_LOG_SYNC = true ]; then
-						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync"
+						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_NUMBER}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 						SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 						log_pick_file "${const_LOGFILE_SYNC}"
 					else
-						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync"
+						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_NUMBER}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 					fi
 
@@ -798,12 +814,12 @@ function syncprogress() {
 					# not to rsyncserver
 					sudo mkdir -p "${BACKUP_PATH}"
 					if [ $conf_LOG_SYNC = true ]; then
-						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync"
+						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_NUMBER}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 						SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 						log_pick_file "${const_LOGFILE_SYNC}"
 					else
-						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync"
+						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_NUMBER}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 					fi
 				fi
@@ -819,7 +835,7 @@ function syncprogress() {
 
 				log_message "Backup from camera: ${SOURCE_PATH}" 3
 
-				sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${SOURCE_PATH}" --skip-existing | syncprogress "gphoto2"
+				sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${SOURCE_PATH}" --skip-existing | syncprogress "gphoto2" "${SOURCE_FOLDER_NUMBER}"
 
 				SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 				if [ $conf_LOG_SYNC = true ]; then
@@ -858,9 +874,9 @@ function syncprogress() {
 			fi
 
 			if [ "${FILES_TO_SYNC}" != "" ] && [ "${FILES_TO_SYNC_NEW}" != "" ]; then
-				TRANSFER_INFO="${TRANSFER_INFO}$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied").\n"
+				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied"). $(l "box_backup_try") ${TRIES_DONE}\n"
 			else
-				TRANSFER_INFO="${TRANSFER_INFO}$(l "box_backup_result_suspect").\n"
+				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$(l "box_backup_result_suspect").\n"
 				FILES_TO_SYNC=0
 			fi
 			FILES_TO_SYNC="${FILES_TO_SYNC_NEW}"
@@ -986,7 +1002,7 @@ function syncprogress() {
 		done
 
 		# import into database
-		lcd_message "$(l "box_backup_generating_database_finding_images1")" "$(l "box_backup_generating_database_finding_images2")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_generating_database_finding_images3")" ""
+		lcd_message "$(l "box_backup_generating_database_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_database_finding_images3")" ""
 
 		#find all tims and convert them to the estimated original filename; replace space by substitute of space ##**##
 		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#')
@@ -999,14 +1015,8 @@ function syncprogress() {
 		START_TIME=$(date +%s)
 		LAST_MESSAGE_TIME=$START_TIME
 
-		LCD1="$(l "box_backup_generating_database")" # header1
+		LCD1="$(l "box_backup_generating_database_finding_images1")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
-		LCD3="0 $(l "box_backup_of") ${IMAGE_COUNT}" # filescount
-		LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
-		LCD5="PGBAR:0" # progressbar
-
-		# start screen
-		lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 
 		for ((i = 0; i < ${#TIMS_ARRAY[@]}; i++)); do
 			# replace substitute of space by space
@@ -1024,7 +1034,6 @@ function syncprogress() {
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 
 		done
-
 	fi
 
 #######################
@@ -1037,7 +1046,7 @@ function syncprogress() {
 		# prepare database
 		source "${WORKING_DIR}/lib-db-setup.sh"
 
-		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_generating_thumbnails_finding_images2")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
+		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
 
 		#find all images; replace space by substitute of space ##**##
 		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*' | sed 's/\ /##\*\*##/g') # temporarily replace spaces
@@ -1078,14 +1087,8 @@ function syncprogress() {
 		START_TIME=$(date +%s)
 		LAST_MESSAGE_TIME=$START_TIME
 
-		LCD1="$(l "box_backup_generating_thumbnails")" # header1
+		LCD1="$(l "box_backup_generating_thumbnails_finding_images1")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
-		LCD3="0 $(l "box_backup_of") ${IMAGE_COUNT}" # filescount
-		LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
-		LCD5="PGBAR:0" # progressbar
-
-		# start screen
-		lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
 
 		for ((i = 0; i < ${#IMAGES_ARRAY[@]}; i++)); do
 			#replace substitute of space by space

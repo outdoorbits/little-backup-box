@@ -73,10 +73,8 @@
       "usb_ios": "USB iOS",
       "result_suspect": "Success unclear.",
       "files_copied": "files copied",
-      "generating_thumbnails_finding_images2": "Counting images.",
-      "generating_thumbnails_finding_images1": "Thumbnails",
+      "generating_thumbnails_finding_images1": "Gen. thumbnails",
       "generating_thumbnails_finding_images3": "Just a moment...",
-      "generating_thumbnails": "Gen. thumbnails",
       "insert_target_1": "Ready",
       "insert_target_2": "Insert USB-target",
       "usb_target_ok": "Target o.k.",
@@ -87,12 +85,11 @@
       "mode_thumbnails": "Thumbnails",
       "camera_storage_not_exists_2": "does not exist.",
       "camera_storage_not_exists_1": "Camera-storage",
-      "generating_database_finding_images1": "Database",
-      "generating_database_finding_images2": "Counting images.",
+      "generating_database_finding_images1": "Sync database",
       "generating_database_finding_images3": "Just a moment...",
-      "generating_database": "Sync database",
       "mode_database": "Database",
-      "cleaning_database": "Cleaning database"
+      "cleaning_database": "Cleaning database",
+      "counting_images": "Counting images."
     },
     "poweroff": {
       "poweroff": "Power off",
