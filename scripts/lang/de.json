@@ -164,7 +164,7 @@
     "wifi_country_header": "WLAN-Land",
     "backup": {
       "generate_thumbnails_header": "Vorschaubilder",
-      "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für mejiro erstellen? (Nur für lokale Speicher)"
+      "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)"
     },
     "disp_black_on_power_off_header": "Display beim Herunterfahren ausschalten",
     "disp_black_on_power_off_label": "Soll das Display beim Herunterfahren ausgeschaltet werden?",

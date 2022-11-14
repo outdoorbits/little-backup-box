@@ -164,7 +164,7 @@
     "wifi_country_header": "Pays Wi-Fi",
     "backup": {
       "generate_thumbnails_header": "Vignettes",
-      "generate_thumbnails_label": "Créer des vignettes pour mejiro après la sauvegarde? (Uniquement pour le stockage local)"
+      "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)"
     },
     "disp_black_on_power_off_header": "Éteignez l'écran lors de l'arrêt",
     "disp_black_on_power_off_label": "Voulez-vous que l'écran s'éteigne à l'arrêt ?",

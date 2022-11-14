@@ -42,7 +42,7 @@ DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Directory text;")
 DB_SETUP_ARRAY+=("alter table EXIF_DATA add column File_Name text;")
 DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Create_Date text;")
 DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Rating integer default 2;")
-DB_SETUP_ARRAY+=("update EXIF_DATA set Rating=2 where Rating=0;")
+DB_SETUP_ARRAY+=("update EXIF_DATA set Rating=2 where Rating is null;")
 
 DB_VERSION=0
 

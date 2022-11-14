@@ -164,7 +164,7 @@
     "wifi_country_header": "País WLAN",
     "backup": {
       "generate_thumbnails_header": "Miniaturas",
-      "generate_thumbnails_label": "¿Crear miniaturas para mejiro después de la copia de seguridad? (Solo para almacenamiento local)"
+      "generate_thumbnails_label": "¿Crear miniaturas para View después de la copia de seguridad? (Solo para almacenamiento local)"
     },
     "disp_black_on_power_off_header": "Apague la pantalla al apagar",
     "disp_black_on_power_off_label": "¿Desea que la pantalla se apague al apagar?",

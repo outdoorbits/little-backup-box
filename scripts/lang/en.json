@@ -302,7 +302,7 @@
     "wifi_country_header": "WiFi country",
     "backup": {
       "generate_thumbnails_header": "Thumbnails",
-      "generate_thumbnails_label": "Create thumbnails for mejiro after backup? (Local storages only)"
+      "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)"
     },
     "disp_black_on_power_off_header": "Display off when shutting down",
     "disp_black_on_power_off_label": "Do you want the display to turn off on shutdown?",
