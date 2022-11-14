@@ -371,7 +371,10 @@
       "no_medium": "Kein gültiges Medium gewählt.",
       "date": "Datum",
       "order_by_filename": "Dateiname",
-      "order_by_creationdate": "Datum"
+      "order_by_creationdate": "Datum",
+      "rating": "Bewertung",
+      "rating_stars": "Sterne",
+      "rating_all": "alle"
     },
     "images": {
       "download": "Download Original",
@@ -380,6 +383,8 @@
     },
     "footer": {
       "footer": "Achtung, hier werden nur Bilder angezeigt, von denen Vorschaubilder bestehen. Erzeugen Sie diese entweder automatisch (Einstellungen, Backup) oder über die Backup-Seite."
-    }
+    },
+    "ratings_save_button": "Speichern",
+    "ratings_1_delete_button": "Bilder löschen"
   }
 }

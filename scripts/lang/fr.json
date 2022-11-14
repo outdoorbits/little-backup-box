@@ -371,7 +371,10 @@
       "no_medium": "Aucun support valide sélectionné.",
       "date": "Date",
       "order_by_filename": "nom de fichier",
-      "order_by_creationdate": "Date"
+      "order_by_creationdate": "Date",
+      "rating": "Évaluation",
+      "rating_stars": "Étoiles",
+      "rating_all": "tout"
     },
     "images": {
       "download": "Télécharger l'original",
@@ -380,6 +383,8 @@
     },
     "footer": {
       "footer": "Attention, seules les images qui ont des vignettes sont affichées ici. Générez-les soit automatiquement (Paramètres, Sauvegarde) soit via la page Sauvegarde."
-    }
+    },
+    "ratings_save_button": "Sauvegarder",
+    "ratings_1_delete_button": "supprimer des images"
   }
 }

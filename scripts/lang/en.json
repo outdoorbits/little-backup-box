@@ -371,7 +371,10 @@
       "no_medium": "No valid medium selected.",
       "date": "Date",
       "order_by_filename": "Filename",
-      "order_by_creationdate": "Date"
+      "order_by_creationdate": "Date",
+      "rating": "Rating",
+      "rating_stars": "stars",
+      "rating_all": "all"
     },
     "images": {
       "download": "Download original",
@@ -380,6 +383,8 @@
     },
     "footer": {
       "footer": "Warning, only images that have thumbnails are displayed here. Generate them either automatically (Settings, Backup) or via the Backup page."
-    }
+    },
+    "ratings_save_button": "Save",
+    "ratings_1_delete_button": "delete images"
   }
 }
