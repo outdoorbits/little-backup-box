@@ -209,6 +209,9 @@
 			shell_exec("sudo chown www-data:www-data '" . $DATABASE_FILE ."'");
 			$db = new SQLite3($DATABASE_FILE);
 
+			#set rating where missing
+			$db->exec("update EXIF_DATA set Rating=2 where Rating is null or Rating=0;");
+
 			# save ratings in any case
 			foreach($RATINGS_ARRAY as $key=>$val) {
 				$key	= intval($key);

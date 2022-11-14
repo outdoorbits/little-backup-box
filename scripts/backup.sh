@@ -118,6 +118,9 @@ fi
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
 
+#load database library
+. "${WORKING_DIR}/lib-db.sh"
+
 # log
 lcd_message "$(l "box_backup_mode_${SOURCE_MODE}")" " > $(l "box_backup_mode_${TARGET_MODE}")" "   ${CLOUDSERVICE}"
 
@@ -329,6 +332,46 @@ function syncprogress() {
 # 	log_message "Backup-time: $(echo "$(date +%s) - ${TIMER_START}" | bc) seconds" 3
 }
 
+function sync_return_code_decoder() {
+	local mode="${1}"
+	local code="${2}"
+
+	ERROR_TEXT=()
+
+	if [ "${mode}" == "camera" ]; then
+		#gphoto2-codes
+		echo "" # dummy action
+	else
+		#rsync-codes
+		ERROR_TEXT[0]="Success"
+		ERROR_TEXT[1]="Syntax or usage error"
+		ERROR_TEXT[2]="Protocol incompatibility"
+		ERROR_TEXT[3]="Errors selecting input/output files, dirs"
+		ERROR_TEXT[4]="Requested action not supported: an attempt was made to manipulate 64-bit files on a platform that cannot support them or an option was specified that is supported by the client and not by the server."
+		ERROR_TEXT[5]="Error starting client-server protocol"
+		ERROR_TEXT[6]="Daemon unable to append to log-file"
+		ERROR_TEXT[10]="Error in socket I/O"
+		ERROR_TEXT[11]="Error in file I/O"
+		ERROR_TEXT[12]="Error in rsync protocol data stream"
+		ERROR_TEXT[13]="Errors with program diagnostics"
+		ERROR_TEXT[14]="Error in IPC code"
+		ERROR_TEXT[20]="Received SIGUSR1 or SIGINT"
+		ERROR_TEXT[21]="Some error returned by waitpid()"
+		ERROR_TEXT[22]="Error allocating core memory buffers"
+		ERROR_TEXT[23]="Partial transfer due to error"
+		ERROR_TEXT[24]="Partial transfer due to vanished source files"
+		ERROR_TEXT[25]="The --max-delete limit stopped deletions"
+		ERROR_TEXT[30]="Timeout in data send/receive"
+		ERROR_TEXT[35]="Timeout waiting for daemon connection"
+	fi
+
+	if [ ! -z "${ERROR_TEXT[$code]}" ]; then
+		echo " $code=${ERROR_TEXT[$code]}"
+	else
+		echo "$code"
+	fi
+}
+
 # Set the ACT LED to heartbeat
 	sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
@@ -511,7 +554,7 @@ function syncprogress() {
 		BACKUP_PATH="${TARGET_PATH}/iOS/${ID}"
 
 		# Set SOURCE_IDENTIFIER
-		SOURCE_IDENTIFIER="Source ID: iOS ${ID}"
+		SOURCE_IDENTIFIER="Source ID: ${ID}"
 
 	elif [ "${SOURCE_MODE}" = "internal" ]; then
 
@@ -548,7 +591,7 @@ function syncprogress() {
 		BACKUP_PATH="${TARGET_PATH}/internal/${ID}"
 
 		# Set SOURCE_IDENTIFIER
-		SOURCE_IDENTIFIER="Internal memory"
+		SOURCE_IDENTIFIER="Source ID: ${ID}"
 
 	elif [ "${SOURCE_MODE}" = "camera" ]; then
 		# Source camera
@@ -714,6 +757,9 @@ function syncprogress() {
 	SYNC_LOG=""
 	TRANSFER_INFO=""
 	SOURCE_FOLDER_NUMBER=""
+	MESSAGE_MAIL=""
+	MESSAGE_LCD=""
+	SYNC_ERROR_LAST=false
 
 	#sourcepaths-loop
 	for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
@@ -733,22 +779,11 @@ function syncprogress() {
 			SOURCE_FOLDER_NUMBER_FORMATED="${SOURCE_FOLDER_NUMBER}: "
 		fi
 
-		# Count of files in usb before backup starts
-		if [ "${TARGET_MODE}" != "rsyncserver" ]; then
-			FILES_COUNT_STORAGE_PRE=$(find $BACKUP_PATH -type f | wc -l)
-		fi
-
 		#retry-loop
 		TRIES_DONE=0
 		SYNC_ERROR_TMP="-" # not empty!
 
-		FILES_TO_SYNC="$(calculate_files_to_sync "${SOURCE_PATH}")"
-
-		log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
-
 		while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR_TMP}" != "" ]]; do
-
-			SYNC_ERROR_TMP=""
 
 			# RETRIES
 			TRIES_DONE=$((TRIES_DONE+1))
@@ -793,7 +828,16 @@ function syncprogress() {
 
 			# START
 
+			SYNC_ERROR_TMP="" # empty, no further loop if no error
 			SYNC_RETURN_CODE="0"
+
+			# Count of files in usb before backup starts
+			if [ "${TARGET_MODE}" != "rsyncserver" ]; then
+				FILES_COUNT_STORAGE_PRE=$(find $BACKUP_PATH -type f | wc -l)
+			fi
+
+			FILES_TO_SYNC="$(calculate_files_to_sync "${SOURCE_PATH}")"
+			log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
 			if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
 				# If source is usb, internal or ios
@@ -841,7 +885,7 @@ function syncprogress() {
 				if [ $conf_LOG_SYNC = true ]; then
 					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 				fi
-				log_message "gphoto2 --filename \"%F/%f.%C\" --get-all-files --folder \"${SOURCE_PATH}\"  --skip-existing:\nexitcode=${SYNC_RETURN_CODE}\n" 3
+				log_message "gphoto2 --filename \"%F/%f.%C\" --get-all-files --folder \"${SOURCE_PATH}\"  --skip-existing:\nexitcode=${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")\n" 3
 
 				cd
 			elif [ "${SOURCE_MODE}" = "thumbnails" ]; then
@@ -874,7 +918,9 @@ function syncprogress() {
 			fi
 
 			if [ "${FILES_TO_SYNC}" != "" ] && [ "${FILES_TO_SYNC_NEW}" != "" ]; then
-				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW})) $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied"). ($(l "box_backup_try") ${TRIES_DONE})\n"
+				FILES_TRANSFERRED=$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW}))
+				if [ "${FILES_TRANSFERRED}" -lt "0" ]; then FILES_TRANSFERRED=$(l "box_backup_unknown"); fi
+				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied"). ($(l "box_backup_try") ${TRIES_DONE})\n"
 			else
 				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$(l "box_backup_result_suspect").\n"
 				FILES_TO_SYNC=0
@@ -890,7 +936,7 @@ function syncprogress() {
 
 			if [ "${SYNC_RETURN_CODE}" != "0" ]; then
 				SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Exception"
-				log_message "Exception: ${SYNC_RETURN_CODE}"
+				log_message "Exception: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")"
 				log_message "$(get_abnormal_system_conditions)" 1
 			fi
 
@@ -910,40 +956,44 @@ function syncprogress() {
 
 			# Controller- overheating-error?
 			SYNC_TIME=$(($SYNC_STOP_TIME - $SYNC_START_TIME))
-			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}; SYNC_TIME: ${SYNC_TIME}" 3
+			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}"); SYNC_TIME: ${SYNC_TIME}" 3
 
 			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
 					lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')" ""
 					sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
 			fi
 
+
+			# prepare message for mail and power off
+			if [ -z "${SYNC_ERROR_TMP}" ]; then
+				SYNC_ERROR_LAST=false
+				MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_backup_complete'). ($(l 'box_backup_try') ${TRIES_DONE})\n"
+				MESSAGE_LCD="${MESSAGE_LCD}$(l 'box_backup_complete'). ($(l 'box_backup_try') ${TRIES_DONE})\n"
+			else
+				SYNC_ERROR_LAST=true
+
+				if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]]; then
+					MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_lost_device') ($(l 'box_backup_try') ${TRIES_DONE})\n"
+					MESSAGE_LCD="${MESSAGE_LCD}$(l 'box_backup_lost_device') ($(l 'box_backup_try') ${TRIES_DONE})\n"
+				fi
+
+				if [[ "${SYNC_ERROR_TMP}" =~ "Files missing!" ]]; then
+					MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_files_missing') ($(l 'box_backup_try') ${TRIES_DONE})\n"
+					MESSAGE_LCD="${MESSAGE_LCD}$(l 'box_backup_files_missing') ($(l 'box_backup_try') ${TRIES_DONE})\n"
+				fi
+
+				if [[ "${SYNC_ERROR_TMP}" =~ "Exception" ]]; then
+					MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}") ($(l 'box_backup_try') ${TRIES_DONE})\n"
+					MESSAGE_LCD="${MESSAGE_LCD}$(l 'box_backup_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}") ($(l 'box_backup_try') ${TRIES_DONE})\n"
+				fi
+			fi
+
 			SYNC_ERROR="${SYNC_ERROR} ${SYNC_ERROR_TMP}"
+
 		done # retry
 	done # sources
 
-# prepare message for mail and power off
-	MESSAGE_MAIL=""
-	MESSAGE_LCD=""
-	if [ -z "${SYNC_ERROR}" ]; then
-		MESSAGE_MAIL="$(l 'box_backup_mail_backup_complete')."
-		MESSAGE_LCD="$(l 'box_backup_complete')."
-	else
-		if [[ "${SYNC_ERROR}" =~ "Err.Lost device!" ]]; then
-			MESSAGE_MAIL="$(l 'box_backup_mail_lost_device') "
-			MESSAGE_LCD="$(l 'box_backup_lost_device') "
-		fi
-
-		if [[ "${SYNC_ERROR}" =~ "Files missing!" ]]; then
-			MESSAGE_MAIL="${MESSAGE_MAIL} $(l 'box_backup_mail_files_missing')"
-			MESSAGE_LCD="${MESSAGE_LCD} $(l 'box_backup_files_missing')"
-		fi
-
-		if [[ "${SYNC_ERROR}" =~ "Exception" ]]; then
-			MESSAGE_MAIL="${MESSAGE_MAIL} $(l 'box_backup_mail_exception'): ${SYNC_RETURN_CODE}"
-			MESSAGE_LCD="${MESSAGE_LCD} $(l 'box_backup_exception'): ${SYNC_RETURN_CODE}"
-		fi
-	fi
-
+	# prepare message for mail and power off
 	#remove leading spaces
 	MESSAGE_MAIL="$(echo -e "${MESSAGE_MAIL}" | sed -e 's/^[[:space:]]*//')"
 	MESSAGE_LCD="$(echo -e "${MESSAGE_LCD}" | sed -e 's/^[[:space:]]*//')"
@@ -953,13 +1003,12 @@ function syncprogress() {
 	check=$(wget -q --spider http://google.com/)
 	if ([ $conf_NOTIFY = true ] || [ ! -z "$check" ]) && [ "${SOURCE_MODE}" != "database" ] && [ "${SOURCE_MODE}" != "thumbnails" ]; then
 
-		if [ ! -z "${MESSAGE_MAIL}" ]; then
-			SUBJ_MSG="${MESSAGE_MAIL}"
-			BODY_MSG="${SUBJ_MSG}\n"
+		if [ ${SYNC_ERROR_LAST} = true  ]; then
+			SUBJ_MSG="$(l 'box_backup_mail_error')"
 		else
 			SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
-			BODY_MSG=""
 		fi
+		BODY_MSG="${MESSAGE_MAIL}\n\n"
 
 		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}\n${SOURCE_IDENTIFIER}\n${TRANSFER_INFO}\n\n$(l 'box_backup_mail_log'):\n${SYNC_LOG}\n\n${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 	fi
@@ -978,7 +1027,7 @@ function syncprogress() {
 		fi
 
 		# prepare database
-		source "${WORKING_DIR}/lib-db-setup.sh"
+		db_setup
 
 		# clean database
 		LCD1="$(l "box_backup_cleaning_database")" # header1
@@ -1028,10 +1077,12 @@ function syncprogress() {
 			File_Name=$(basename "${SOURCE_IMAGES_FILENAME}")
 			Directory=$(dirname "${SOURCE_IMAGES_FILENAME}")
 
-			Directory=$(echo ${Directory} | sed -E "s#^${TARGET_PATH}/##")
+			TARGET_PATH_MARKED="0-0-0-0${TARGET_PATH}"
+			DIRECTORY_MARKED="0-0-0-0${Directory}"
+			Directory=${DIRECTORY_MARKED//${TARGET_PATH_MARKED}}
 
 			if [ $DATABASE_IS_NEW = true ] || [[ ! $(sqlite3 "${DB}" "select ID from EXIF_DATA where File_Name=\"${File_Name}\" and Directory=\"${Directory}\"") ]]; then
-				source "${WORKING_DIR}/lib-db-insert.sh"
+				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
 			fi
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
@@ -1047,7 +1098,7 @@ function syncprogress() {
 		# generate thumbnails only after backup to local drive (usb or internal)
 
 		# prepare database
-		source "${WORKING_DIR}/lib-db-setup.sh"
+		db_setup
 
 		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
 
@@ -1104,7 +1155,7 @@ function syncprogress() {
 			convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
 
 			if [ "$?" = "0" ]; then
-				source "${WORKING_DIR}/lib-db-insert.sh"
+				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
 			fi
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""

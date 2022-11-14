@@ -241,7 +241,8 @@
         "backup_complete": "Respaldo completada",
         "files_missing": "¡Faltan archivos!",
         "lost_device": "Err. Dispositivo perdido!",
-        "exception": "Error desconocido"
+        "exception": "Excepción",
+        "error": "Error"
       },
       "try": "Intentar",
       "checking_old_files": "comparando",
@@ -277,7 +278,8 @@
       "generating_database_finding_images3": "Sólo un momento...",
       "mode_database": "Base de datos",
       "cleaning_database": "Base de datos de limpieza",
-      "counting_images": "Contando imágenes."
+      "counting_images": "Contando imágenes.",
+      "unknown": "número desconocido (error)"
     },
     "cronip": {
       "offline": "desconectado",

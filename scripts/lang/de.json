@@ -244,7 +244,8 @@
         "backup_complete": "Backup komplett",
         "files_missing": "Dateien fehlen!",
         "lost_device": "Fehler. Gerät verloren!",
-        "exception": "Unbekannter Fehler"
+        "exception": "Ausnahme",
+        "error": "Fehler"
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",
@@ -277,7 +278,8 @@
       "generating_database_finding_images3": "Moment...",
       "mode_database": "Datenbank",
       "cleaning_database": "Bereinige Datenbank",
-      "counting_images": "Zähle Bilder."
+      "counting_images": "Zähle Bilder.",
+      "unknown": "unbekannte Zahl (Fehler)"
     },
     "cronip": {
       "offline": "offline",

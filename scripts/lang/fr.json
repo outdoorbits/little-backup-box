@@ -241,7 +241,8 @@
         "backup_complete": "Sauvegarde terminée",
         "files_missing": "Fichiers manquants!",
         "lost_device": "Err.Périphérique perdu!",
-        "exception": "Erreur inconnue"
+        "exception": "Exception",
+        "error": "Erreur"
       },
       "try": "essayer",
       "checking_old_files": "comparant",
@@ -277,7 +278,8 @@
       "generating_database_finding_images3": "Juste un moment......",
       "mode_database": "Base de données",
       "cleaning_database": "Base de données de nettoyage",
-      "counting_images": "Compter les images."
+      "counting_images": "Compter les images.",
+      "unknown": "numéro inconnu (erreur)"
     },
     "cronip": {
       "offline": "hors ligne",
