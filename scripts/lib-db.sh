@@ -42,6 +42,8 @@ function db_setup() {
 	DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Directory text;")
 	DB_SETUP_ARRAY+=("alter table EXIF_DATA add column File_Name text;")
 	DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Create_Date text;")
+	DB_SETUP_ARRAY+=("DEPRECATED") # keep array-keys for correct update-status, keyword "DEPRECATED" will be ignored to execute
+	DB_SETUP_ARRAY+=("DEPRECATED") # keep array-keys for correct update-status, keyword "DEPRECATED" will be ignored to execute
 	DB_SETUP_ARRAY+=("alter table EXIF_DATA add column LbbRating integer default 2;")
 
 	DB_VERSION=0
@@ -61,11 +63,13 @@ function db_setup() {
 	if [ -z "${DB_VERSION}" ] || [ "${DB_VERSION}" -lt "${#DB_SETUP_ARRAY[@]}" ]; then
 		for ((i = 0; i < ${#DB_SETUP_ARRAY[@]}; i++)); do
 			if [ "${i}" -ge "${DB_VERSION}" ]; then
-# 	  			echo "UPDATE: ${DB_SETUP_ARRAY[$i]}"
-				sqlite3 "${DB}" "${DB_SETUP_ARRAY[$i]}"
-				sqlite3 "${DB}" "update CONFIG set VERSION = $(($i + 1));"
+				if [ "${DB_SETUP_ARRAY[$i]}" != "DEPRECATED" ]; then
+	# 	  			echo "UPDATE: ${DB_SETUP_ARRAY[$i]}"
+					sqlite3 "${DB}" "${DB_SETUP_ARRAY[$i]}"
+				fi
 			fi
 		done
+		sqlite3 "${DB}" "update CONFIG set VERSION = $(($i + 1));"
 	fi
 
 	#export EXIF_COLUMNS_ARRAY
