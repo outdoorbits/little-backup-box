@@ -103,6 +103,11 @@ function db_insert() {
 
 		if [ ! -z "${FIELD}" ] && [ ! -z "${VALUE}" ]; then
 
+			# do not allow to use ID as EXIF-field
+			if [ "${FIELD}" == "ID" ]; then
+				FIELD="ID_CAMERA"
+			fi
+
 			# #add column to the table if doesn't exist
 			if [[ ! " ${EXIF_COLUMNS_ARRAY[@]} " =~ " ${FIELD} " ]]; then
 				sqlite3 "${DB}" "alter table EXIF_DATA add column ${FIELD} text;"
