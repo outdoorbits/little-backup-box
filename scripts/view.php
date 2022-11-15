@@ -185,7 +185,7 @@
 	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'",array('images','directories','ratings'));}
 
 	if (isset($delete_ratings_1)) {$filter_rating="all";}
-	if ($filter_rating != "all") {add_to_where("Rating = " . $filter_rating,array('images','dates','directories'));}
+	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating,array('images','dates','directories'));}
 
 	# define path of the database-file
 	$STORAGE_PATH	= "";
@@ -209,14 +209,11 @@
 			shell_exec("sudo chown www-data:www-data '" . $DATABASE_FILE ."'");
 			$db = new SQLite3($DATABASE_FILE);
 
-			#set rating where missing
-			$db->exec("update EXIF_DATA set Rating=2 where Rating is null or Rating=0;");
-
 			# save ratings in any case
 			foreach($RATINGS_ARRAY as $key=>$val) {
 				$key	= intval($key);
 				$val	= intval($val);
-				$db->exec("update EXIF_DATA set Rating=". $val . " where ID=" . $key) . ";";
+				$db->exec("update EXIF_DATA set LbbRating=". $val . " where ID=" . $key) . ";";
 			}
 
 			# delete
@@ -231,7 +228,7 @@
 						$DELETE_TIMS	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/tims/' . $IMAGE['File_Name'];
 						shell_exec ("sudo rm '" . $DELETE_FILE . "'");
 						shell_exec ("sudo rm '" . $DELETE_TIMS . "'");
-						$db->exec("delete from EXIF_DATA where ID=" . $key . " and Rating=1;");
+						$db->exec("delete from EXIF_DATA where ID=" . $key . " and LbbRating=1;");
 					}
 
 				}
@@ -247,7 +244,7 @@
 			$statement		= $db->prepare("SELECT Directory, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['directories'] . " group by Directory;");
 			$DIRECTORIES	= $statement->execute();
 
-			$statement		= $db->prepare("SELECT Rating, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['ratings'] . " group by Rating;");
+			$statement		= $db->prepare("SELECT LbbRating, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['ratings'] . " group by LbbRating;");
 			$RATINGS		= $statement->execute();
 
 			$statement		= $db->prepare("SELECT substr(replace(Create_Date,':','-'),1,10) as Create_Day, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['dates'] . " group by Create_Day order by Create_Day desc;");
@@ -351,7 +348,7 @@
 										$i=0;
 										while ($RATING = $RATINGS->fetchArray(SQLITE3_ASSOC)) {
 											$i+=1;
-											echo "<option value=\"" . $RATING['Rating'] . "\" " . ($filter_rating == $RATING['Rating']?" selected":"") . ">" . $RATING['Rating'] . " " . L::view_filter_rating_stars . " (" . $RATING['FILECOUNT'] . ")</option>";
+											echo "<option value=\"" . $RATING['LbbRating'] . "\" " . ($filter_rating == $RATING['LbbRating']?" selected":"") . ">" . $RATING['LbbRating'] . " " . L::view_filter_rating_stars . " (" . $RATING['FILECOUNT'] . ")</option>";
 										}
 									?>
 								</select>
@@ -399,18 +396,18 @@
 
 							<div style="float:left;width: 33.33%;padding: 5px;" title="<?php echo $IMAGE['File_Name']; ?>">
 								<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
-									<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['Rating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
+									<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
 								</a>
 								<div class="rating">
-									<input id="rating_1_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="1" <?php echo $IMAGE['Rating']>=1?"checked":""; ?>>
+									<input id="rating_1_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="1" <?php echo $IMAGE['LbbRating']>=1?"checked":""; ?>>
 									<label for="rating_1_<?php echo $IMAGE['ID']; ?>"></label>
-									<input id="rating_2_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="2" <?php echo $IMAGE['Rating']>=2?"checked":""; ?>>
+									<input id="rating_2_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="2" <?php echo $IMAGE['LbbRating']>=2?"checked":""; ?>>
 									<label for="rating_2_<?php echo $IMAGE['ID']; ?>"></label>
-									<input id="rating_3_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="3" <?php echo $IMAGE['Rating']>=3?"checked":""; ?>>
+									<input id="rating_3_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="3" <?php echo $IMAGE['LbbRating']>=3?"checked":""; ?>>
 									<label for="rating_3_<?php echo $IMAGE['ID']; ?>"></label>
-									<input id="rating_4_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="4" <?php echo $IMAGE['Rating']>=4?"checked":""; ?>>
+									<input id="rating_4_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="4" <?php echo $IMAGE['LbbRating']>=4?"checked":""; ?>>
 									<label for="rating_4_<?php echo $IMAGE['ID']; ?>"></label>
-									<input id="rating_5_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="5" <?php echo $IMAGE['Rating']>=5?"checked":""; ?>>
+									<input id="rating_5_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="5" <?php echo $IMAGE['LbbRating']>=5?"checked":""; ?>>
 									<label for="rating_5_<?php echo $IMAGE['ID']; ?>"></label>
 								</div>
 							</div>
@@ -428,7 +425,7 @@
 
 							<div style="float:left;width: 100%;padding: 5px;">
 								<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
-									<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['Rating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
+									<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
 								</a>
 								<br>
 								<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
