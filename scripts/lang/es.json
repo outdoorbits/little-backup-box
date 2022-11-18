@@ -376,7 +376,8 @@
       "order_by_creationdate": "Fecha",
       "rating": "Clasificación",
       "rating_stars": "Estrellas",
-      "rating_all": "todos"
+      "rating_all": "todos",
+      "variable": "Valores EXIF"
     },
     "images": {
       "download": "Descargar originales",

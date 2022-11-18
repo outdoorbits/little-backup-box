@@ -54,7 +54,6 @@ Software that turns a single-board computer into a versatile and pocketable back
 *1) Caution: The translations were carried out by machine and could cause unpleasant feelings in native speakers. Help is particularly welcome here. Technically, working on the language files is extremely easy. Would you help?<br>
 *2) Maybe because of power-failures sometimes the connection to a device is disrupted. After reconnecting, it gets a new drive-identifier (e.g. sda becomes sdb) while the drives UUID is still the same.<br>
 <br>
-
 <figure align="center">
 	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui.png" align="center" width="90%">
 	<figcaption>The web UI</figcaption>
@@ -122,6 +121,10 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		<br>
 	</li>
 </ol>
+<figure align="center">
+	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui-view.png" align="center" width="90%">
+	<figcaption>Image-viewer View</figcaption>
+</figure>
 <h2>Start</h2>
 If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.BOX or http://IP.OF.YOUR.BOX:8000<br>Have fun!
 <h2>Update</h2>

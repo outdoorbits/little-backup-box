@@ -21,11 +21,10 @@
 	}
 
 
-	function navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate) {
+	function navigator($filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate) {
 		$offset_left	= $offset >= $filter_images_per_page?$offset-$filter_images_per_page:0;
 		$offset_end		= $imagecount >= $filter_images_per_page?intval($imagecount / $filter_images_per_page) * $filter_images_per_page:0;
 		$offset_right	= $offset + $filter_images_per_page < $imagecount?$offset+$filter_images_per_page:$offset_end;
-
 		?>
 		<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
 			<div style="float:left;width: 50%;padding: 5px;">
@@ -73,7 +72,6 @@
 				<a href="<?php echo $GET_PARAMETER . "&offset=".$offset_end; ?>">&gt;&gt;</a>
 			</div>
 
-			<?php if ($view_mode=="grid") { ?>
 			<div style="display: flow-root;width: 100%">
 				<div style="float:left;width: 50%;padding: 5px;">
 					<?php
@@ -89,7 +87,6 @@
 					?>
 				</div>
 			</div>
-			<?php } ?>
 		</div>
 		<?php
 	}
@@ -118,6 +115,8 @@
 	$filter_directory		= "";
 	$filter_date			= "all";
 	$filter_rating			= "all";
+	$filter_variable_field	= "";
+	$filter_variable_value	= "";
 	$offset					= 0;
 	$imagecount				= 0;
 	$order_by          		= "Create_Date";
@@ -149,6 +148,8 @@
 		}
 	}
 
+
+
 	# ratings-preparation
 	$RATINGS_ARRAY=array();
 	foreach ($_POST as $key=>$val) {
@@ -175,17 +176,32 @@
 	$WHERE['directories']	= "";
 	$WHERE['dates']			= "";
 	$WHERE['ratings']		= "";
+	$WHERE['variable']		= "";
 
 	if (isset($ID)) {add_to_where("ID=" . $ID,array('images'));}
+
 	if ($filter_directory != "") {
 		$filter_directory	= str_replace("+","=",$filter_directory);
 		$filter_directory	= base64_decode($filter_directory);
-		add_to_where("Directory='" . $filter_directory . "'",array('images','dates','ratings'));
-	}
-	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'",array('images','directories','ratings'));}
 
-	if (isset($delete_ratings_1)) {$filter_rating="all";}
+		add_to_where("Directory='" . $filter_directory . "'",array('images','dates','ratings','variable'));
+	}
+
+	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'",array('images','directories','ratings','variable'));}
+
+	if (isset($delete_ratings_1)) {$filter_rating="all";} # after delete remove rating-filter
+
 	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating,array('images','dates','directories'));}
+
+	if ($filter_variable_value != "") {
+		$filter_variable_value	= str_replace("+","=",$filter_variable_value);
+		$filter_variable_value	= base64_decode($filter_variable_value);
+
+		if (($filter_variable_field != "") and ($filter_variable_value != "")) {add_to_where($filter_variable_field . "='" . $filter_variable_value . "'",array('images','directories','dates','ratings'));}
+	}
+
+	# generate select_offset
+	if ($view_mode=="grid") {$select_offset="offset " . $offset;} else {$select_offset="";}
 
 	# define path of the database-file
 	$STORAGE_PATH	= "";
@@ -234,21 +250,29 @@
 				}
 			}
 
-			$statement		= $db->prepare("SELECT * FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . " limit " . $filter_images_per_page . " offset " . $offset . ";");
-			$IMAGES			= $statement->execute();
+			$statement			= $db->prepare("SELECT * FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . " limit " . $filter_images_per_page . " " . $select_offset . ";");
+			$IMAGES				= $statement->execute();
 
-			$statement		= $db->prepare("SELECT count(ID) as IMAGECOUNT FROM EXIF_DATA " . $WHERE['images'] . ";");
-			$IMAGECOUNTER	= $statement->execute();
-			$imagecount		= $IMAGECOUNTER->fetchArray(SQLITE3_ASSOC)['IMAGECOUNT'];
+			$statement			= $db->prepare("SELECT count(ID) as IMAGECOUNT FROM EXIF_DATA " . $WHERE['images'] . ";");
+			$IMAGECOUNTER		= $statement->execute();
+			$imagecount			= $IMAGECOUNTER->fetchArray(SQLITE3_ASSOC)['IMAGECOUNT'];
 
-			$statement		= $db->prepare("SELECT Directory, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['directories'] . " group by Directory;");
-			$DIRECTORIES	= $statement->execute();
+			$statement			= $db->prepare("SELECT Directory, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['directories'] . " group by Directory order by Directory;");
+			$DIRECTORIES		= $statement->execute();
 
-			$statement		= $db->prepare("SELECT LbbRating, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['ratings'] . " group by LbbRating;");
-			$RATINGS		= $statement->execute();
+			$statement			= $db->prepare("SELECT LbbRating, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['ratings'] . " group by LbbRating order by LbbRating;");
+			$RATINGS			= $statement->execute();
 
-			$statement		= $db->prepare("SELECT substr(replace(Create_Date,':','-'),1,10) as Create_Day, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['dates'] . " group by Create_Day order by Create_Day desc;");
-			$DATES			= $statement->execute();
+			$statement			= $db->prepare("SELECT substr(replace(Create_Date,':','-'),1,10) as Create_Day, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['dates'] . " group by Create_Day order by Create_Day desc;");
+			$DATES				= $statement->execute();
+
+			$statement			= $db->prepare("PRAGMA table_info(EXIF_DATA);");
+			$VAR_FIELDS			= $statement->execute();
+
+			if ($filter_variable_field != "") {
+				$statement			= $db->prepare("SELECT " . $filter_variable_field . " as var_filter_value, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['variable'] . " group by " . $filter_variable_field . " order by " . $filter_variable_field . ";");
+				$VAR_VALUES	= $statement->execute();
+			}
 
 			$DATABASE_CONNECTED=true;
 		} catch (Error $e) {
@@ -261,21 +285,28 @@
 	$GET_PARAMETER	= "?filter_medium=$filter_medium";
 	$GET_PARAMETER	.= "&order_by=$order_by";
 	$GET_PARAMETER	.= "&order_dir=$order_dir";
+	$GET_PARAMETER	.= "&offset=$offset";
 	if ($view_mode != "") {$GET_PARAMETER	.= "&view_mode=$view_mode";}
 	$GET_PARAMETER	.= "&filter_images_per_page=$filter_images_per_page";
 	if ($filter_directory != "") {$GET_PARAMETER	.= "&filter_directory=" . str_replace("=","+",base64_encode($filter_directory));}
 	if ($filter_date != "") {$GET_PARAMETER	.= "&filter_date=" . $filter_date;}
 	if ($filter_rating != "") {$GET_PARAMETER	.= "&filter_rating=$filter_rating";}
+	if ($filter_variable_field != "") {$GET_PARAMETER	.= "&filter_variable_field=$filter_variable_field";}
+	if ($filter_variable_value != "") {$GET_PARAMETER	.= "&filter_variable_value=" . str_replace("=","+",base64_encode($filter_variable_value));}
+
 
 	# define hidden HIDDEN_INPUTS
 	$HIDDEN_INPUTS	="<input type=\"hidden\" name=\"filter_medium\" value=\"" . $filter_medium . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_by\" value=\"" . $order_by . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_dir\" value=\"" . $order_dir . "\">";
+	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"offset\" value=\"" . $offset . "\">";
 	if ($view_mode != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"view_mode\" value=\"" . $view_mode . "\">";}
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_images_per_page\" value=\"" . $filter_images_per_page . "\">";
 	if ($filter_directory != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_directory\" value=\"" . str_replace("=","+",base64_encode($filter_directory)) . "\">";}
 	if ($filter_date != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_date\" value=\"" . $filter_date . "\">";}
 	if ($filter_rating != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_rating\" value=\"" . $filter_rating . "\">";}
+	if ($filter_variable_field != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_variable_field\" value=\"" . $filter_variable_field . "\">";}
+	if ($filter_variable_value != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_variable_value\" value=\"" . str_replace("=","+",base64_encode($filter_variable_value)) . "\">";}
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
@@ -329,9 +360,7 @@
 								<select name="filter_date" id="filter_date" onchange="this.form.submit()">
 									<option value="all" <?php echo ($filter_date == ""?" selected":""); ?>>-</option>
 									<?php
-										$i=0;
 										while ($DATE = $DATES->fetchArray(SQLITE3_ASSOC)) {
-											$i+=1;
 											echo "<option value=\"" . $DATE['Create_Day'] . "\" " . ($filter_date == $DATE['Create_Day']?" selected":"") . ">" . $DATE['Create_Day'] . " (" . $DATE['FILECOUNT'] . ")</option>";
 										}
 									?>
@@ -345,9 +374,7 @@
 								<select name="filter_rating" id="filter_rating" onchange="this.form.submit()">
 									<?php
 										echo "<option value=\"all\">" . L::view_filter_rating_all . "</option>";
-										$i=0;
 										while ($RATING = $RATINGS->fetchArray(SQLITE3_ASSOC)) {
-											$i+=1;
 											echo "<option value=\"" . $RATING['LbbRating'] . "\" " . ($filter_rating == $RATING['LbbRating']?" selected":"") . ">" . $RATING['LbbRating'] . " " . L::view_filter_rating_stars . " (" . $RATING['FILECOUNT'] . ")</option>";
 										}
 									?>
@@ -363,13 +390,46 @@
 								<select name="filter_directory" id="filter_directory" onchange="this.form.submit()">
 									<option value="" <?php echo ($filter_directory == ""?" selected":""); ?>>/</option>
 									<?php
-										$i=0;
 										while ($DIRECTORY = $DIRECTORIES->fetchArray(SQLITE3_ASSOC)) {
-											$i+=1;
 											echo "<option value=\"" . str_replace("=","+",base64_encode($DIRECTORY['Directory'])) . "\" " . ($filter_directory == $DIRECTORY['Directory']?" selected":"") . ">" . str_replace($STORAGE_PATH,"",$DIRECTORY['Directory']) . " (" . $DIRECTORY['FILECOUNT'] . ")</option>";
 										}
 									?>
 								</select>
+						</div>
+					<?php } ?>
+				</div>
+
+				<div style="display: flow-root">
+					<?php if ($DATABASE_CONNECTED) { ?>
+						<div style="float:left;padding: 5px;">
+							<label for="filter_variable_field"><?php echo L::view_filter_variable; ?></label><br>
+								<select name="filter_variable_field" id="filter_variable_field" onchange="this.form.submit()">
+									<option value="" <?php echo ($filter_variable_field == ""?" selected":""); ?>>-</option>
+									<?php
+										$FIELDS_ARRAY=array();
+										while ($FIELD = $VAR_FIELDS->fetchArray(SQLITE3_ASSOC)) {
+											$FIELDS_ARRAY[]=$FIELD['name'];
+										}
+										asort($FIELDS_ARRAY);
+										foreach($FIELDS_ARRAY as $FIELD) {
+											echo "<option value=\"" . $FIELD . "\" " . ($filter_variable_field == $FIELD?" selected":"") . ">" . $FIELD . "</option>";
+										}
+									?>
+								</select>
+								<?php
+									if (isset($VAR_VALUES)) {
+										?>
+										<select name="filter_variable_value" id="filter_variable_value" onchange="this.form.submit()">
+											<option value="" <?php echo ($VALUE['var_filter_value'] == ""?" selected":""); ?>>-</option>
+											<?php
+												while ($VALUE = $VAR_VALUES->fetchArray(SQLITE3_ASSOC)) {
+													echo "<option value=\"" . str_replace("=","+",base64_encode($VALUE['var_filter_value'])) . "\" " . ($filter_variable_value == $VALUE['var_filter_value']?" selected":"") . ">" . $VALUE['var_filter_value'] . "(" . $VALUE['FILECOUNT'] . ")</option>";
+												}
+											?>
+										</select>
+										<?php
+									}
+								?>
 						</div>
 					<?php } ?>
 				</div>
@@ -383,7 +443,7 @@
 		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 
 			<?php echo $HIDDEN_INPUTS; ?>
-			<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
+			<?php if ($view_mode == "grid") {navigator($filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate);} ?>
 
 			<div class="card" style="margin-top: 2em;display: inline-block">
 				<?php
@@ -452,7 +512,7 @@
 				?>
 			</div>
 
-			<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
+			<?php if ($view_mode == "grid") {navigator($filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate);} ?>
 		</form>
 
 	<?php } else { ?>

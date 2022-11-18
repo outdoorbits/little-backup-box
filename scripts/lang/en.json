@@ -376,7 +376,8 @@
       "order_by_creationdate": "Date",
       "rating": "Rating",
       "rating_stars": "stars",
-      "rating_all": "all"
+      "rating_all": "all",
+      "variable": "EXIF values"
     },
     "images": {
       "download": "Download original",
