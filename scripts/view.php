@@ -455,22 +455,36 @@
 							?>
 
 							<div style="float:left;width: 33.33%;padding: 5px;" title="<?php echo $IMAGE['File_Name']; ?>">
-								<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
-									<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
-								</a>
-								<div class="rating">
-									<input id="rating_1_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="1" <?php echo $IMAGE['LbbRating']>=1?"checked":""; ?>>
-									<label for="rating_1_<?php echo $IMAGE['ID']; ?>"></label>
-									<input id="rating_2_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="2" <?php echo $IMAGE['LbbRating']>=2?"checked":""; ?>>
-									<label for="rating_2_<?php echo $IMAGE['ID']; ?>"></label>
-									<input id="rating_3_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="3" <?php echo $IMAGE['LbbRating']>=3?"checked":""; ?>>
-									<label for="rating_3_<?php echo $IMAGE['ID']; ?>"></label>
-									<input id="rating_4_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="4" <?php echo $IMAGE['LbbRating']>=4?"checked":""; ?>>
-									<label for="rating_4_<?php echo $IMAGE['ID']; ?>"></label>
-									<input id="rating_5_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="5" <?php echo $IMAGE['LbbRating']>=5?"checked":""; ?>>
-									<label for="rating_5_<?php echo $IMAGE['ID']; ?>"></label>
+
+								<div style="width: 100%">
+									<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
+										<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
+									</a>
+								</div>
+
+								<div style="display: flow-root;width: 100%">
+									<div style="float:left;padding: 5px;" class="rating">
+										<input id="rating_1_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="1" <?php echo $IMAGE['LbbRating']>=1?"checked":""; ?>>
+										<label for="rating_1_<?php echo $IMAGE['ID']; ?>"></label>
+										<input id="rating_2_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="2" <?php echo $IMAGE['LbbRating']>=2?"checked":""; ?>>
+										<label for="rating_2_<?php echo $IMAGE['ID']; ?>"></label>
+										<input id="rating_3_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="3" <?php echo $IMAGE['LbbRating']>=3?"checked":""; ?>>
+										<label for="rating_3_<?php echo $IMAGE['ID']; ?>"></label>
+										<input id="rating_4_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="4" <?php echo $IMAGE['LbbRating']>=4?"checked":""; ?>>
+										<label for="rating_4_<?php echo $IMAGE['ID']; ?>"></label>
+										<input id="rating_5_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="5" <?php echo $IMAGE['LbbRating']>=5?"checked":""; ?>>
+										<label for="rating_5_<?php echo $IMAGE['ID']; ?>"></label>
+									</div>
+
+									<div style="float:right;padding: 5px;font-size:0.8em;" class="hidden-mobile">
+										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
+											<?php echo $IMAGE['File_Name']; ?>
+										</a>
+									</div>
 								</div>
 							</div>
+
+
 
 							<?php
 						}

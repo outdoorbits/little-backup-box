@@ -3,6 +3,12 @@
 
 @import url("classless-lbb.css");
 
+@media (max-width: 768px) {
+	.hidden-mobile {
+		display: none;
+	}
+}
+
 html, body {
     min-height: 100% !important;
     height: 200%;
@@ -90,3 +96,5 @@ ul.danger {
 img.delete {
 	border: 3px solid #F00;
 }
+
+
