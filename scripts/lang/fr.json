@@ -36,7 +36,9 @@
     "backup_break2": "abandonnée.",
     "view_database": "View-Base de données",
     "thumbnails_header": "Genere miniaturas e impórtelas a la base de datos",
-    "database_header": "Synchroniser et nettoyer la base de données"
+    "database_header": "Synchroniser et nettoyer la base de données",
+    "thumbnails_button": "Vignettes",
+    "database_button": "Base de données"
   },
   "sysinfo": {
     "sysinfo": "Information système",

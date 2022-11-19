@@ -165,7 +165,9 @@
     "backup_break2": "aborted.",
     "view_database": "View-Database",
     "thumbnails_header": "Generate thumbnails and import them into the database",
-    "database_header": "Synchronize and clean database"
+    "database_header": "Synchronize and clean database",
+    "thumbnails_button": "Thumbnails",
+    "database_button": "Database"
   },
   "sysinfo": {
     "sysinfo": "System info",
@@ -368,7 +370,7 @@
       "section": "Filter",
       "images_per_page": "Images per page",
       "medium_internal": "Int. storage",
-      "medium_usb_source": "USB-Source",
+      "medium_usb_source": "USB-source",
       "directory": "Folder",
       "no_medium": "No valid medium selected.",
       "date": "Date",

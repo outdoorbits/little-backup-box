@@ -36,7 +36,9 @@
     "backup_break2": "cancelada.",
     "view_database": "View-Base de datos",
     "thumbnails_header": "Genere miniaturas e impórtelas a la base de datos",
-    "database_header": "Sincronizar y limpiar base de datos"
+    "database_header": "Sincronizar y limpiar base de datos",
+    "thumbnails_button": "Miniaturas",
+    "database_button": "Base de datos"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",

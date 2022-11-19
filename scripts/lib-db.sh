@@ -90,7 +90,8 @@ function db_insert() {
 	#prepare data
 	local FIELDS=""
 	local VALUES=""
-	local NO_ENTRY="true"
+	local DATE=""
+	local HAS_CREATE_DATE=false
 
 	for ((j = 0; j < ${#EXIF_ARRAY[@]}; j++)); do
 
@@ -108,6 +109,16 @@ function db_insert() {
 				FIELD="ID_CAMERA"
 			fi
 
+			if [ "${FIELD}" = "Create_Date" ]; then
+				HAS_CREATE_DATE=true
+			fi
+
+			if [ $HAS_CREATE_DATE = false ] && [ -z "${DATE}" ]; then
+				if [[ " File_Modification_Date_Time File_Access_Date_Time Date_Time_Original " =~ "${FIELD}" ]]; then
+					DATE="${VALUE}"
+				fi
+			fi
+
 			# #add column to the table if doesn't exist
 			if [[ ! " ${EXIF_COLUMNS_ARRAY[@]} " =~ " ${FIELD} " ]]; then
 				sqlite3 "${DB}" "alter table EXIF_DATA add column ${FIELD} text;"
@@ -121,20 +132,29 @@ function db_insert() {
 				VALUE=${VALUE_MARKED//${TARGET_PATH_MARKED}}
 			fi
 
-			if [ "${NO_ENTRY}" = "false" ]; then
+			if [ ! -z "${FIELDS}" ]; then
 				FIELDS="${FIELDS}, "
 				VALUES="${VALUES}, "
 			fi
 
 			FIELDS="${FIELDS}${FIELD}"
 			VALUES="${VALUES}\"${VALUE}\""
-
-			NO_ENTRY=false
 		fi
 	done
 
+	if [ $HAS_CREATE_DATE = false ] && [ ! -z "${DATE}" ]; then
+
+		if [ ! -z "${FIELDS}" ]; then
+			FIELDS="${FIELDS}, "
+			VALUES="${VALUES}, "
+		fi
+
+		FIELDS="${FIELDS}Create_Date"
+		VALUES="${VALUES}\"${DATE}\""
+	fi
+
 	#insert data
-	if [ "${NO_ENTRY}" = "false" ]; then
+	if [ ! -z "${FIELDS}" ]; then
 # 		echo "insert into EXIF_DATA (${FIELDS}) values (${VALUES});"
 		sqlite3 "${DB}" "insert into EXIF_DATA (${FIELDS}) values (${VALUES});"
 	fi

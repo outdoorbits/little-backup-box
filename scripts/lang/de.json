@@ -36,7 +36,9 @@
     "backup_break2": "abgebrochen.",
     "view_database": "View-Datenbank",
     "thumbnails_header": "Vorschaubilder erzeugen und in Datenbank einlesen",
-    "database_header": "Datenbank synchronisieren und bereinigen"
+    "database_header": "Datenbank synchronisieren und bereinigen",
+    "thumbnails_button": "Vorschaubilder",
+    "database_button": "Datenbank"
   },
   "sysinfo": {
     "sysinfo": "Systeminformationen",

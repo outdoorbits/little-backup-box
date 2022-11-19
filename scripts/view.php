@@ -432,7 +432,7 @@
 									if (isset($VAR_VALUES)) {
 										?>
 										<select name="filter_variable_value" id="filter_variable_value" onchange="this.form.submit()">
-											<option value="" <?php echo ($VALUE['var_filter_value'] == ""?" selected":""); ?>>-</option>
+											<option value="">-</option>
 											<?php
 												while ($VALUE = $VAR_VALUES->fetchArray(SQLITE3_ASSOC)) {
 													echo "<option value=\"" . str_replace("=","+",base64_encode($VALUE['var_filter_value'])) . "\" " . ($filter_variable_value == $VALUE['var_filter_value']?" selected":"") . ">" . $VALUE['var_filter_value'] . "(" . $VALUE['FILECOUNT'] . ")</option>";
@@ -527,18 +527,29 @@
 										</a>
 
 								<?php
-									} else {
+									} elseif ((strtolower($IMAGE_FILENAME_PARTS['extension']) == 'mp4') or (strtolower($IMAGE_FILENAME_PARTS['extension']) == 'avi')) {
 // 										video-file
 										?>
 											<video width="100%" controls autoplay>
 												<source src="<?php echo $IMAGE_FILENAME; ?>" type="video/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>"></source>
 											</video>
 											<br>
-										<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
-											<?php echo L::view_images_download; ?>
-										</a>
-										<?php
+											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+												<?php echo L::view_images_download; ?>
+											</a>
 
+										<?php
+									} elseif ((strtolower($IMAGE_FILENAME_PARTS['extension']) == 'wav') or (strtolower($IMAGE_FILENAME_PARTS['extension']) == 'mp3')) {
+// 										audio-file
+										?>
+											<audio width="100%" controls autoplay>
+												<source src="<?php echo $IMAGE_FILENAME; ?>" type="audio/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>">">
+											</audio>
+											<br>
+											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+												<?php echo L::view_images_download; ?>
+											</a>
+										<?php
 									}
 								?>
 							</div>
