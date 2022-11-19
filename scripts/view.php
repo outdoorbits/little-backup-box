@@ -21,74 +21,86 @@
 	}
 
 
-	function navigator($filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate) {
-		$offset_left	= $offset >= $filter_images_per_page?$offset-$filter_images_per_page:0;
-		$offset_end		= $imagecount >= $filter_images_per_page?intval($imagecount / $filter_images_per_page) * $filter_images_per_page:0;
-		$offset_right	= $offset + $filter_images_per_page < $imagecount?$offset+$filter_images_per_page:$offset_end;
-		?>
-		<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
-			<div style="float:left;width: 50%;padding: 5px;">
-				<a href="<?php echo $GET_PARAMETER . "&offset=0"; ?>">&lt;&lt;</a>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="<?php echo $GET_PARAMETER . "&offset=" . $offset_left; ?>">&lt;</a>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<?php
-					$link_order_text	= $label_creationdate;
-					$link_order			= $GET_PARAMETER . "&order_by=Create_Date&order_dir=";
-					if ($order_by=="Create_Date") {
-						$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
-						$link_order_text	= "<b>" . $link_order_text . "</b>";
-						$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
-					} else {
-						$link_order			.= "ASC";
-					}
-					echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
-
-					$page	= intval($offset / $filter_images_per_page) + 1;
-					$pages	= intval($imagecount / $filter_images_per_page) + 1;
-					echo "&nbsp;&nbsp;&nbsp;&nbsp;" . L::view_images_page . ' ' . $page . '/' . $pages;
-				?>
-			</div>
-
-			<div style="float:right;width: 50%;padding: 5px;text-align: right">
-				<?php
-					$link_order_text	= $label_filename;
-					$link_order			= $GET_PARAMETER . "&order_by=File_Name&order_dir=";
-					if ($order_by=="File_Name") {
-						$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
-						$link_order_text	= "<b>" . $link_order_text . "</b>";
-						$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
-					} else {
-						$link_order			.= "ASC";
-					}
-
-					echo $imagecount . ' ' . L::view_images_images . "&nbsp;&nbsp;&nbsp;&nbsp;";
-
-					echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
-				?>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="<?php echo $GET_PARAMETER . "&offset=".$offset_right; ?>">&gt;</a>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="<?php echo $GET_PARAMETER . "&offset=".$offset_end; ?>">&gt;&gt;</a>
-			</div>
-
-			<div style="display: flow-root;width: 100%">
+	function navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate) {
+		if ($view_mode == "grid") {
+			$offset_left	= $offset >= $filter_images_per_page?$offset-$filter_images_per_page:0;
+			$offset_end		= $imagecount >= $filter_images_per_page?intval($imagecount / $filter_images_per_page) * $filter_images_per_page:0;
+			$offset_right	= $offset + $filter_images_per_page < $imagecount?$offset+$filter_images_per_page:$offset_end;
+			?>
+			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
 				<div style="float:left;width: 50%;padding: 5px;">
+					<a href="<?php echo $GET_PARAMETER . "&offset=0"; ?>">&lt;&lt;</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="<?php echo $GET_PARAMETER . "&offset=" . $offset_left; ?>">&lt;</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
 					<?php
-						echo "&nbsp;&nbsp;&nbsp;&nbsp;<button style=\"margin-top: 2em;\" type=\"submit\" name=\"save_ratings\">" . L::view_ratings_save_button . "</button>";
+						$link_order_text	= $label_creationdate;
+						$link_order			= $GET_PARAMETER . "&order_by=Create_Date&order_dir=";
+						if ($order_by=="Create_Date") {
+							$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
+							$link_order_text	= "<b>" . $link_order_text . "</b>";
+							$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
+						} else {
+							$link_order			.= "ASC";
+						}
+						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
+
+						$page	= intval($offset / $filter_images_per_page) + 1;
+						$pages	= intval($imagecount / $filter_images_per_page) + 1;
+						echo "&nbsp;&nbsp;&nbsp;&nbsp;" . L::view_images_page . ' ' . $page . '/' . $pages;
 					?>
 				</div>
 
 				<div style="float:right;width: 50%;padding: 5px;text-align: right">
 					<?php
-						if ($filter_rating == 1) {
-							echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"delete_ratings_1\" class=\"danger\">" . L::view_ratings_1_delete_button . "</button>";
+						$link_order_text	= $label_filename;
+						$link_order			= $GET_PARAMETER . "&order_by=File_Name&order_dir=";
+						if ($order_by=="File_Name") {
+							$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
+							$link_order_text	= "<b>" . $link_order_text . "</b>";
+							$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
+						} else {
+							$link_order			.= "ASC";
 						}
+
+						echo $imagecount . ' ' . L::view_images_images . "&nbsp;&nbsp;&nbsp;&nbsp;";
+
+						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
 					?>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="<?php echo $GET_PARAMETER . "&offset=".$offset_right; ?>">&gt;</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="<?php echo $GET_PARAMETER . "&offset=".$offset_end; ?>">&gt;&gt;</a>
+				</div>
+
+				<div style="display: flow-root;width: 100%">
+					<div style="float:left;width: 50%;padding: 5px;">
+						<?php
+							echo "&nbsp;&nbsp;&nbsp;&nbsp;<button style=\"margin-top: 2em;\" type=\"submit\" name=\"save_ratings\">" . L::view_ratings_save_button . "</button>";
+						?>
+					</div>
+
+					<div style="float:right;width: 50%;padding: 5px;text-align: right">
+						<?php
+							if ($filter_rating == 1) {
+								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"delete_ratings_1\" class=\"danger\">" . L::view_ratings_1_delete_button . "</button>";
+							}
+						?>
+					</div>
 				</div>
 			</div>
-		</div>
-		<?php
+			<?php
+		} else {
+			?>
+			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
+				<div style="float:left;width: 50%;padding: 5px;">
+					<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
+						<?php echo L::view_images_back_to_grid; ?>
+					</a>
+				</div>
+			</div>
+			<?php
+		}
 	}
 
 	function add_to_where($new_where,$target_array) {
@@ -241,7 +253,7 @@
 					$IMAGES			= $statement->execute();
 					if ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
 						$DELETE_FILE	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'];
-						$DELETE_TIMS	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/tims/' . $IMAGE['File_Name'];
+						$DELETE_TIMS	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/tims/' . $IMAGE['File_Name'] . '.JPG';
 						shell_exec ("sudo rm '" . $DELETE_FILE . "'");
 						shell_exec ("sudo rm '" . $DELETE_TIMS . "'");
 						$db->exec("delete from EXIF_DATA where ID=" . $key . " and LbbRating=1;");
@@ -443,7 +455,7 @@
 		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 
 			<?php echo $HIDDEN_INPUTS; ?>
-			<?php if ($view_mode == "grid") {navigator($filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate);} ?>
+			<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
 
 			<div class="card" style="margin-top: 2em;display: inline-block">
 				<?php
@@ -451,7 +463,7 @@
 						while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
-							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'];
+							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
 							?>
 
 							<div style="float:left;width: 33.33%;padding: 5px;" title="<?php echo $IMAGE['File_Name']; ?>">
@@ -494,17 +506,41 @@
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
 							$IMAGE_FILENAME			= $Directory . '/' . $IMAGE['File_Name'];
-							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'];
+							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
 							?>
 
 							<div style="float:left;width: 100%;padding: 5px;">
-								<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
-									<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
-								</a>
-								<br>
-								<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
-									<?php echo L::view_images_download; ?>
-								</a>
+
+								<?php
+									$IMAGE_FILENAME_PARTS=pathinfo($IMAGE_FILENAME);
+
+									if ((strtolower($IMAGE_FILENAME_PARTS['extension']) == 'jpg') or (strtolower($IMAGE_FILENAME_PARTS['extension']) == 'jpeg')) {
+// 										image-file
+								?>
+
+										<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
+											<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
+										</a>
+										<br>
+										<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+											<?php echo L::view_images_download; ?>
+										</a>
+
+								<?php
+									} else {
+// 										video-file
+										?>
+											<video width="100%" controls autoplay>
+												<source src="<?php echo $IMAGE_FILENAME; ?>" type="video/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>"></source>
+											</video>
+											<br>
+										<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+											<?php echo L::view_images_download; ?>
+										</a>
+										<?php
+
+									}
+								?>
 							</div>
 
 							<div style="float:left;width: 100%;padding: 5px;">
@@ -526,7 +562,7 @@
 				?>
 			</div>
 
-			<?php if ($view_mode == "grid") {navigator($filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate);} ?>
+			<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
 		</form>
 
 	<?php } else { ?>

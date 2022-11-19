@@ -382,7 +382,8 @@
     "images": {
       "download": "Download original",
       "page": "Page",
-      "images": "Images"
+      "images": "Images",
+      "back_to_grid": "Back to overview"
     },
     "footer": {
       "footer": "Warning, only images that have thumbnails are displayed here. Generate them either automatically (Settings, Backup) or via the Backup page.<br>\nSee the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/05a.-view-image-viewer\">Wiki</a> for more information."

@@ -7,6 +7,7 @@ Software that turns a single-board computer into a versatile and pocketable back
 
 <h2>NEWS</h2>
 <ul>
+	<li>2022/11/14: Image-viewer &quot;View&quot; now can handle videos! **IMPORTANT: ALL THUMBNAILS HAVE TO BE CREATED AGAIN AFTER THIS UPDATE!**.</li>
 	<li>2022/11/14: Image-viewer &quot;View&quot; got a rating function. Images having one star only can be deleted.</li>
 	<li>2022/11/08: Image-viewer mejiro is replaced by a integrated solution offering much faster options to find images.</li>
 	<li>2022/10/14: Add f3probe to tools to test external storages integrity before use.</li>

@@ -1076,15 +1076,18 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		# vacuum database
 		sudo sqlite3 "${DB}" "VACUUM;"
 
-		# import into database
+		# import preexisting tims into database
 		lcd_message "$(l "box_backup_generating_database_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_database_finding_images3")" ""
 
-		#find all tims and convert them to the estimated original filename; replace space by substitute of space ##**##
-		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#')
+		# find all tims and convert their filename to the estimated original filename:
+		## 1. replace space by substitute of space ##**##
+		## 2. replace only last '/tims/' by '/'
+		## 3. remove last part of file extension
+		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#' | sed 's/\.[^.]*$//')
 		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
 		unset IFS
 
-		#prepare loop to create thumbnails
+		# prepare loop to create thumbnails
 		IMAGE_COUNT=${#TIMS_ARRAY[@]}
 
 		START_TIME=$(date +%s)
@@ -1100,6 +1103,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			File_Name=$(basename "${SOURCE_IMAGES_FILENAME}")
 			Directory=$(dirname "${SOURCE_IMAGES_FILENAME}")
 
+			# clean Directory from /media/storage|source|internal/
 			TARGET_PATH_MARKED="0-0-0-0${TARGET_PATH}"
 			DIRECTORY_MARKED="0-0-0-0${Directory}"
 			Directory=${DIRECTORY_MARKED//${TARGET_PATH_MARKED}}
@@ -1126,12 +1130,15 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
 
 		#find all images; replace space by substitute of space ##**##
-		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -not -path '*/tims/*' | sed 's/\ /##\*\*##/g') # temporarily replace spaces
+		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.mp4' -o -iname '*.avi' \) -not -path '*/tims/*' | sed 's/\ /##\*\*##/g') # temporarily replace spaces
 		IFS=$'\n' read -rd '' -a IMAGES_ARRAY <<<"${IMAGES_STR}"
 		unset IFS
 
-		#find all tims and convert them to the estimated original filename; replace space by substitute of space ##**##
-		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#')
+		# find all tims and convert their filename to the estimated original filename:
+		## 1. replace space by substitute of space ##**##
+		## 2. replace only last '/tims/' by '/'
+		## 3. remove last part of file extension
+		TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#' | sed 's/\.[^.]*$//')
 		IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
 		unset IFS
 
@@ -1172,10 +1179,18 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			SOURCE_IMAGES_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
 
 			TIMS_FOLDER="$(dirname "${SOURCE_IMAGES_FILENAME}")/tims"
-			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGES_FILENAME}")"
+			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGES_FILENAME}").JPG"
 			mkdir -p "${TIMS_FOLDER}"
 
-			convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
+			if [[ ${SOURCE_IMAGES_FILENAME,,} == *.jpg ]] || [[ ${SOURCE_IMAGES_FILENAME,,} == *.jpeg ]]; then
+				# file-type: image
+				convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
+			else
+				# file-type: video
+				ffmpeg -i "${SOURCE_IMAGES_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"
+				mogrify -resize 800x800 "${TIMS_FILE}"
+				composite -gravity center '/var/www/little-backup-box/img/play.png' "${TIMS_FILE}" "${TIMS_FILE}"
+			fi
 
 			if [ "$?" = "0" ]; then
 				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
