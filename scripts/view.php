@@ -7,7 +7,6 @@
 	$WORKING_DIR=dirname(__FILE__);
 	$config = parse_ini_file("config.cfg", false);
 	$constants = parse_ini_file("constants.sh", false);
-
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
@@ -330,10 +329,9 @@
 <body <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+<?php print_r($constants['const_FILE_EXTENSIONS_ARRAY_JPG']); ?>
 
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::view_view; ?></h1>
-
-
 
 	<div class="card" style="margin-top: 2em">
 		<details>
@@ -514,7 +512,7 @@
 								<?php
 									$IMAGE_FILENAME_PARTS=pathinfo($IMAGE_FILENAME);
 
-									if ((strtolower($IMAGE_FILENAME_PARTS['extension']) == 'jpg') or (strtolower($IMAGE_FILENAME_PARTS['extension']) == 'jpeg')) {
+									if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										image-file
 								?>
 
@@ -527,7 +525,7 @@
 										</a>
 
 								<?php
-									} elseif ((strtolower($IMAGE_FILENAME_PARTS['extension']) == 'mp4') or (strtolower($IMAGE_FILENAME_PARTS['extension']) == 'avi')) {
+									} elseif (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_VIDEO'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										video-file
 										?>
 											<video width="100%" controls autoplay>
@@ -539,7 +537,7 @@
 											</a>
 
 										<?php
-									} elseif ((strtolower($IMAGE_FILENAME_PARTS['extension']) == 'wav') or (strtolower($IMAGE_FILENAME_PARTS['extension']) == 'mp3')) {
+									} elseif (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_AUDIO'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										audio-file
 										?>
 											<audio width="100%" controls autoplay>

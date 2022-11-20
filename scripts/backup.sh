@@ -1130,7 +1130,19 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
 
 		#find all images; replace space by substitute of space ##**##
-		IMAGES_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.mp4' -o -iname '*.avi' -o -iname '*.wav' -o -iname '*.mp3' \) -not -path '*/tims/*' | sed 's/\ /##\*\*##/g') # temporarily replace spaces
+		INAMES=""
+
+		IFS=$' ' read -rd '' -a FILE_EXTENSIONS_ARRAY <<<"${const_FILE_EXTENSIONS_LIST_JPG} ${const_FILE_EXTENSIONS_LIST_RAW} ${const_FILE_EXTENSIONS_LIST_VIDEO} ${const_FILE_EXTENSIONS_LIST_AUDIO}"
+		unset IFS
+
+		for extension in "${FILE_EXTENSIONS_ARRAY[@]}";do
+			if [ ! -z "${INAMES}" ]; then
+				INAMES="${INAMES} -o "
+			fi
+			INAMES="${INAMES} -iname '*.${extension}'"
+		done
+
+		IMAGES_STR=$(eval "sudo find \"$TARGET_PATH\" -type f \( ${INAMES} \) -not -path '*/tims/*' | sed 's/\ /##\*\*##/g'") # temporarily replace spaces
 		IFS=$'\n' read -rd '' -a IMAGES_ARRAY <<<"${IMAGES_STR}"
 		unset IFS
 
@@ -1177,20 +1189,28 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		for ((i = 0; i < ${#IMAGES_ARRAY[@]}; i++)); do
 			#replace substitute of space by space
 			SOURCE_IMAGES_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
+			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME##*.}"
+			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME_EXTENSION,,}"
 
 			TIMS_FOLDER="$(dirname "${SOURCE_IMAGES_FILENAME}")/tims"
 			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGES_FILENAME}").JPG"
 			mkdir -p "${TIMS_FOLDER}"
 
-			if [[ ${SOURCE_IMAGES_FILENAME,,} == *.jpg ]] || [[ ${SOURCE_IMAGES_FILENAME,,} == *.jpeg ]]; then
+			if [[ " ${const_FILE_EXTENSIONS_LIST_JPG} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: image
 				convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
-			elif [[ ${SOURCE_IMAGES_FILENAME,,} == *.mp4 ]] || [[ ${SOURCE_IMAGES_FILENAME,,} == *.avi ]]; then
+			elif [[ " ${const_FILE_EXTENSIONS_LIST_RAW} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
+				# file-type: raw-image
+				## NO CONVERTER CONFIGURED YET!
+				## UFRAW not available anymore
+# 				convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
+				echo "" # dummy action
+			elif [[ " ${const_FILE_EXTENSIONS_LIST_VIDEO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: video
 				ffmpeg -i "${SOURCE_IMAGES_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"
 				mogrify -resize 800x800 "${TIMS_FILE}"
 				composite -gravity center '/var/www/little-backup-box/img/play.png' "${TIMS_FILE}" "${TIMS_FILE}"
-			elif [[ ${SOURCE_IMAGES_FILENAME,,} == *.wav ]] || [[ ${SOURCE_IMAGES_FILENAME,,} == *.mp3 ]]; then
+			elif [[ " ${const_FILE_EXTENSIONS_LIST_AUDIO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				cp '/var/www/little-backup-box/img/audio.JPG' "${TIMS_FILE}"
 				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGES_FILENAME}")" "${TIMS_FILE}"
 			fi
