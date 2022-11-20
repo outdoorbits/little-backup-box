@@ -1201,10 +1201,14 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 				convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_RAW} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: raw-image
-				## NO CONVERTER CONFIGURED YET!
-				## UFRAW not available anymore
-# 				convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
-				echo "" # dummy action
+				## NO QUALITY CONVERTER CONFIGURED YET!
+				## THIS IS JUST A WORKAROUND
+				TMP_RAW_FILE_NAME="/tmp/rawimage"
+				if [ -f "${TMP_RAW_FILE_NAME}" ]; then
+					rm "${TMP_RAW_FILE_NAME}"
+				fi
+				cp "${SOURCE_IMAGES_FILENAME}" "${TMP_RAW_FILE_NAME}"
+ 				convert "${TMP_RAW_FILE_NAME}" -resize 800 "${TIMS_FILE}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_VIDEO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: video
 				ffmpeg -i "${SOURCE_IMAGES_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"

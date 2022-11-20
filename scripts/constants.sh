@@ -15,6 +15,6 @@ const_CMD_RUNNER_LOCKFILE="/var/www/little-backup-box/cmd-runner.lock"
 const_PROGRESS_DISPLAY_WAIT_SEC=2
 const_IMAGE_DATABASE_FILENAME="images.db"
 const_FILE_EXTENSIONS_LIST_JPG="jpg jpeg"
-const_FILE_EXTENSIONS_LIST_RAW="NOT_SUPPORTED_YET"
+const_FILE_EXTENSIONS_LIST_RAW="3fr arw dcr dng cr2 cr3 crw fff gpr j6i k25 kc2 kdc mdc mrw nef nrw orf pef raw raf rw2 rwl sr2 srf srw x3f"
 const_FILE_EXTENSIONS_LIST_VIDEO="mp4 avi"
 const_FILE_EXTENSIONS_LIST_AUDIO="mp3 wav"
