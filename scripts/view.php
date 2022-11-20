@@ -329,7 +329,6 @@
 <body <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-<?php print_r($constants['const_FILE_EXTENSIONS_ARRAY_JPG']); ?>
 
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::view_view; ?></h1>
 
