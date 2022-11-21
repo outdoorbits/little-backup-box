@@ -511,7 +511,7 @@
 								<?php
 									$IMAGE_FILENAME_PARTS=pathinfo($IMAGE_FILENAME);
 
-									if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+									if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " " . $constants['const_FILE_EXTENSIONS_LIST_HEIC'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										image-file
 								?>
 

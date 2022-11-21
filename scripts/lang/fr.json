@@ -173,7 +173,12 @@
     "backup_usb_usb": "USB stockage &rarr; USB stockage",
     "backup_usb_internal": "USB Stockage source &rarr; stockage interne",
     "backup_camera_usb": "Caméra &rarr; USB stockage",
-    "backup_ios_usb": "iOS &rarr; USB stockage"
+    "backup_ios_usb": "iOS &rarr; USB stockage",
+    "imageviewer": {
+      "section": "Visionneuse d'images View",
+      "convert_heic_header": "Convertir des images heic en jpeg",
+      "convert_heic_label": "Créer des images jpeg à partir d'images au format heic (heif)"
+    }
   },
   "tools": {
     "tools": "Outils",

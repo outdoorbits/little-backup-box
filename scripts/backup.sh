@@ -1132,7 +1132,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		#find all images; replace space by substitute of space ##**##
 		INAMES=""
 
-		IFS=$' ' read -rd '' -a FILE_EXTENSIONS_ARRAY <<<"${const_FILE_EXTENSIONS_LIST_JPG} ${const_FILE_EXTENSIONS_LIST_RAW} ${const_FILE_EXTENSIONS_LIST_VIDEO} ${const_FILE_EXTENSIONS_LIST_AUDIO}"
+		IFS=$' ' read -rd '' -a FILE_EXTENSIONS_ARRAY <<<"${const_FILE_EXTENSIONS_LIST_JPG} ${const_FILE_EXTENSIONS_LIST_HEIC} ${const_FILE_EXTENSIONS_LIST_RAW} ${const_FILE_EXTENSIONS_LIST_VIDEO} ${const_FILE_EXTENSIONS_LIST_AUDIO}"
 		unset IFS
 
 		for extension in "${FILE_EXTENSIONS_ARRAY[@]}";do
@@ -1199,6 +1199,13 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			if [[ " ${const_FILE_EXTENSIONS_LIST_JPG} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: image
 				convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
+			elif [[ " ${const_FILE_EXTENSIONS_LIST_HEIC} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
+				# file-type: heic/heif
+				heif-convert "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
+				convert "${SOURCE_IMAGES_FILENAME}.JPG" -resize 800 "${TIMS_FILE}"
+				if [ ${conf_VIEW_CONVERT_HEIC} = false ]; then
+					rm "${SOURCE_IMAGES_FILENAME}.JPG"
+				fi
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_RAW} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: raw-image
 				## NO QUALITY CONVERTER CONFIGURED YET!

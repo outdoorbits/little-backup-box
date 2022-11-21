@@ -104,6 +104,7 @@ function write_config()
 	$conf_DISP_IP_REPEAT				= isset($conf_DISP_IP_REPEAT)?"true":"false";
 	$conf_LOG_SYNC						= isset($conf_LOG_SYNC)?"true":"false";
 	$conf_POPUP_MESSAGES				= isset($conf_POPUP_MESSAGES)?"true":"false";
+	$conf_VIEW_CONVERT_HEIC				= isset($conf_VIEW_CONVERT_HEIC)?"true":"false";
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
 
@@ -155,6 +156,7 @@ conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
 conf_LOGLEVEL=$conf_LOGLEVEL
 conf_LOG_SYNC=$conf_LOG_SYNC
 conf_POWER_OFF_IDLE_TIME=$conf_POWER_OFF_IDLE_TIME
+conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
 conf_SMTP_SERVER="$conf_SMTP_SERVER"
 conf_SMTP_PORT="$conf_SMTP_PORT"
 conf_MAIL_USER="$conf_MAIL_USER"
@@ -167,6 +169,7 @@ conf_RSYNC_conf_PASSWORD="$conf_RSYNC_conf_PASSWORD"
 conf_RSYNC_SERVER_MODULE="$conf_RSYNC_SERVER_MODULE"
 conf_WIFI_COUNTRY="$conf_WIFI_COUNTRY"
 $conf_PASSWORD_LINE
+
 CONFIGDATA;
 
 	fwrite($config_file_handle, $config_file_content);
@@ -410,6 +413,16 @@ function upload_settings() {
 					<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_disp_black_on_power_off_label; ?></label><br>
 					<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
 
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_imageviewer_section; ?></summary>
+
+				<h3><?php echo L::config_imageviewer_convert_heic_header; ?></h3>
+					<label for="conf_VIEW_CONVERT_HEIC"><?php echo L::config_imageviewer_convert_heic_label; ?></label><br>
+					<input type="checkbox" id="conf_VIEW_CONVERT_HEIC" name="conf_VIEW_CONVERT_HEIC" <?php echo $config['conf_VIEW_CONVERT_HEIC']=="1"?"checked":""; ?>>
 			</details>
 		</div>
 
