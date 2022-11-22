@@ -455,9 +455,11 @@
 		<?php echo $HIDDEN_INPUTS; ?>
 		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
 
-		<div class="card" style="margin-top: 2em;display: inline-block">
+		<div class="card" style="margin-top: 2em">
 
-				<?php
+			<?php
+
+				if ($imagecount >= 1) {
 					if ($view_mode == "grid") {
 						?>
 						<table style="padding: 0; width: 100%; border: 0">
@@ -476,7 +478,7 @@
 							?>
 
 
-							<td style="padding: 5px; width: <?php 100 / $constants['const_VIEW_GRID_COLUMNS']; ?>">
+							<td style="padding: 5px; width: <?php 100 / $constants['const_VIEW_GRID_COLUMNS']; ?>%">
 
 								<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
 									<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
@@ -596,7 +598,13 @@
 							<?php
 						}
 					}
-				?>
+				} else {
+// 					imagecount=0
+					?>
+						<?php echo L::view_images_empty; ?>
+					<?php
+				}
+			?>
 
 		</div>
 
@@ -611,7 +619,7 @@
 	<?php } ?>
 
 	<div class="card" style="margin-top: 2em;">
-			<?php echo L::view_footer_footer; ?>
+		<?php echo L::view_footer_footer; ?>
 	</div>
 
 	<?php include "sub-footer.php"; ?>

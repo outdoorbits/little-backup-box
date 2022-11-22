@@ -390,7 +390,8 @@
       "download": "Download Original",
       "page": "Seite",
       "images": "Bilder",
-      "back_to_grid": "Zurück zur Übersicht"
+      "back_to_grid": "Zurück zur Übersicht",
+      "empty": "Die Auswahl enthält keine Bilder."
     },
     "footer": {
       "footer": "Achtung, hier werden nur Bilder angezeigt, von denen Vorschaubilder bestehen. Erzeugen Sie diese entweder automatisch (Einstellungen, Backup) oder über die Backup-Seite.<br>\nWeitere Informationen finden Sie im <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/05a.-view-image-viewer\">Wiki</a>."
