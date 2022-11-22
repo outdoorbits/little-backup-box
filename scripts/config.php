@@ -95,7 +95,6 @@ function write_config()
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
-	$conf_BACKUP_GENERATE_THUMBNAILS	= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
 	$conf_POWER_OFF						= isset($conf_POWER_OFF)?"true":"false";
 	$conf_NOTIFY						= isset($conf_NOTIFY)?"true":"false";
 	$conf_MAIL_HTML						= isset($conf_MAIL_HTML)?"true":"false";
@@ -104,6 +103,7 @@ function write_config()
 	$conf_DISP_IP_REPEAT				= isset($conf_DISP_IP_REPEAT)?"true":"false";
 	$conf_LOG_SYNC						= isset($conf_LOG_SYNC)?"true":"false";
 	$conf_POPUP_MESSAGES				= isset($conf_POPUP_MESSAGES)?"true":"false";
+	$conf_BACKUP_GENERATE_THUMBNAILS	= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
 	$conf_VIEW_CONVERT_HEIC				= isset($conf_VIEW_CONVERT_HEIC)?"true":"false";
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
@@ -143,7 +143,6 @@ conf_BACKUP_DEFAULT_SOURCE2="$conf_BACKUP_DEFAULT_SOURCE2"
 conf_BACKUP_DEFAULT_TARGET2="$conf_BACKUP_DEFAULT_TARGET2"
 conf_BACKUP_CAMERA_FOLDER_MASK="$conf_BACKUP_CAMERA_FOLDER_MASK"
 conf_BACKUP_TARGET_BASEDIR_CLOUD="$conf_BACKUP_TARGET_BASEDIR_CLOUD"
-conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
 conf_POWER_OFF=$conf_POWER_OFF
 conf_NOTIFY=$conf_NOTIFY
 conf_MAIL_HTML=$conf_MAIL_HTML
@@ -156,6 +155,7 @@ conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
 conf_LOGLEVEL=$conf_LOGLEVEL
 conf_LOG_SYNC=$conf_LOG_SYNC
 conf_POWER_OFF_IDLE_TIME=$conf_POWER_OFF_IDLE_TIME
+conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
 conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
 conf_SMTP_SERVER="$conf_SMTP_SERVER"
 conf_SMTP_PORT="$conf_SMTP_PORT"
@@ -321,10 +321,6 @@ function upload_settings() {
 					<label for="conf_BACKUP_TARGET_BASEDIR_CLOUD"><?php echo L::config_backup_target_basedir_cloud_label; ?></label><br>
 					<input type="text" id="conf_BACKUP_TARGET_BASEDIR_CLOUD" name="conf_BACKUP_TARGET_BASEDIR_CLOUD" size="6" value="<?php echo $config['conf_BACKUP_TARGET_BASEDIR_CLOUD']; ?>">
 
-				<h3><?php echo L::config_backup_generate_thumbnails_header; ?></h3>
-					<label for="conf_BACKUP_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
-					<input type="checkbox" id="conf_BACKUP_GENERATE_THUMBNAILS" name="conf_BACKUP_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
-
 				<h3><?php echo L::config_backup_power_off_header; ?></h3>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
 					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
@@ -420,9 +416,14 @@ function upload_settings() {
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_imageviewer_section; ?></summary>
 
+				<h3><?php echo L::config_backup_generate_thumbnails_header; ?></h3>
+					<label for="conf_BACKUP_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
+					<input type="checkbox" id="conf_BACKUP_GENERATE_THUMBNAILS" name="conf_BACKUP_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
+
 				<h3><?php echo L::config_imageviewer_convert_heic_header; ?></h3>
 					<label for="conf_VIEW_CONVERT_HEIC"><?php echo L::config_imageviewer_convert_heic_label; ?></label><br>
 					<input type="checkbox" id="conf_VIEW_CONVERT_HEIC" name="conf_VIEW_CONVERT_HEIC" <?php echo $config['conf_VIEW_CONVERT_HEIC']=="1"?"checked":""; ?>>
+
 			</details>
 		</div>
 

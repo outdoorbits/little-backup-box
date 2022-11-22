@@ -117,12 +117,12 @@
 	}
 
 	# setup
-	$IMAGES_PER_PAGE_OPTIONS	= array (10,25,50,100);
+	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5,$constants['const_VIEW_GRID_COLUMNS']*10,$constants['const_VIEW_GRID_COLUMNS']*20,$constants['const_VIEW_GRID_COLUMNS']*50);
 
 	# standard values
 	$filter_medium			= "-";
 	$view_mode				= "grid";
-	$filter_images_per_page	= 10;
+	$filter_images_per_page	= $IMAGES_PER_PAGE_OPTIONS[0];
 	$filter_directory		= "";
 	$filter_date			= "all";
 	$filter_rating			= "all";
@@ -332,6 +332,7 @@
 
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::view_view; ?></h1>
 
+<!-- FILTER -->
 	<div class="card" style="margin-top: 2em">
 		<details>
 			<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::view_filter_section; ?></summary>
@@ -447,31 +448,43 @@
 		</details>
 	</div>
 
-
+<!-- IMAGES -->
 	<?php if ($DATABASE_CONNECTED) { ?>
-		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 
-			<?php echo $HIDDEN_INPUTS; ?>
-			<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
+		<?php echo $HIDDEN_INPUTS; ?>
+		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
 
-			<div class="card" style="margin-top: 2em;display: inline-block">
+		<div class="card" style="margin-top: 2em;display: inline-block">
+
 				<?php
 					if ($view_mode == "grid") {
+						?>
+						<table style="padding: 0; width: 100%; border: 0">
+						<?php
+						$i	= 0;
 						while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
+
+							$i	+= 1;
+							if ($i % $constants['const_VIEW_GRID_COLUMNS'] == 1) {
+								echo "<tr>";
+							}
+
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
 							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
 							?>
 
-							<div style="float:left;width: 33.33%;padding: 5px;" title="<?php echo $IMAGE['File_Name']; ?>">
 
-								<div style="width: 100%">
+							<td style="padding: 5px; width: <?php 100 / $constants['const_VIEW_GRID_COLUMNS']; ?>">
+
+								<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
 									<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
 										<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
 									</a>
 								</div>
 
-								<div style="display: flow-root;width: 100%">
+								<div style="width: 100%">
 									<div style="float:left;padding: 5px;" class="rating">
 										<input id="rating_1_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="1" <?php echo $IMAGE['LbbRating']>=1?"checked":""; ?>>
 										<label for="rating_1_<?php echo $IMAGE['ID']; ?>"></label>
@@ -491,12 +504,28 @@
 										</a>
 									</div>
 								</div>
-							</div>
+
+							</td>
 
 
 
 							<?php
+
+							if ($i == $constants['const_VIEW_GRID_COLUMNS']) {
+								echo "</tr>";
+							}
 						}
+
+						if ($i !== $constants['const_VIEW_GRID_COLUMNS']) {
+							for ($j=1; $j <= $i % $constants['const_VIEW_GRID_COLUMNS']; $j++) {
+								echo "<td></td>";
+							}
+							echo "</tr>";
+						}
+
+						?>
+						</table>
+						<?php
 					}
 					elseif ($view_mode == "single") {
 						while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
@@ -568,10 +597,12 @@
 						}
 					}
 				?>
-			</div>
 
-			<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
-		</form>
+		</div>
+
+		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
+
+	</form>
 
 	<?php } else { ?>
 		<div class="card" style="margin-top: 2em;">
