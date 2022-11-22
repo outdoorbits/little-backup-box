@@ -1226,9 +1226,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGES_FILENAME}")" "${TIMS_FILE}"
 			fi
 
-			if [ "$?" = "0" ]; then
-				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
-			fi
+			db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 

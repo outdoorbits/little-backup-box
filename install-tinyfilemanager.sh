@@ -79,19 +79,19 @@ sudo cp -R ./tinyfilemanager/*.json "${WEB_ROOT_TINYFILEMANAGER}"
 
 sudo mv "${WEB_ROOT_TINYFILEMANAGER}/tinyfilemanager.php" "${WEB_ROOT_TINYFILEMANAGER}/index.php"
 
+# setup
 if [ -f "./tinyfilemanager/config.php" ]; then
 	sudo cp "./tinyfilemanager/config.php" "${WEB_ROOT_TINYFILEMANAGER}/"
 else
-	sudo cp "${WEB_ROOT_TINYFILEMANAGER}/config-sample.php" "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+	echo "<?php" | sudo tee "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+	echo "   \$use_auth = false;" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+	echo "   \$root_path = \"\/var\/www\/tinyfilemanager\/media\";" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+	echo "   \$root_url = \"files\/media\";" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+	echo "   \$max_upload_size_bytes = 1048576000;" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+	echo "?>" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
 fi
 
 sudo ln -s "/media" "${WEB_ROOT_TINYFILEMANAGER}/media"
-
-# setup
-sudo sed -i 's/^$use_auth = .*/$use_auth = false;/' "${WEB_ROOT_TINYFILEMANAGER}/config.php"
-sudo sed -i 's/^$root_path = .*/$root_path = "\/var\/www\/tinyfilemanager\/media";/' "${WEB_ROOT_TINYFILEMANAGER}/config.php"
-sudo sed -i 's/^$root_url = .*/$root_url = "files\/media";/' "${WEB_ROOT_TINYFILEMANAGER}/config.php"
-sudo sed -i 's/^$max_upload_size_bytes = .*/$max_upload_size_bytes = 1048576000;/' "${WEB_ROOT_TINYFILEMANAGER}/config.php"
 
 # change owner and make scripts executable
 sudo chown www-data:www-data "${WEB_ROOT_TINYFILEMANAGER}" -R
