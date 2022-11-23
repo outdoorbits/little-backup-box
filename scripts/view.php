@@ -549,6 +549,14 @@
 										<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
 											<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
 										</a>
+
+										<?php
+											if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+	// 											RAW-image
+												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution . "</p>";
+											}
+										?>
+
 										<br>
 										<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
 											<?php echo L::view_images_download; ?>
