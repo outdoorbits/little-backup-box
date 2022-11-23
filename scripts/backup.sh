@@ -327,7 +327,9 @@ function syncprogress() {
 		progressmonitor "${START_TIME}" "${FILES_TO_SYNC}" "${FILESCOUNT}" "${LCD1}" "${LCD2}" "${SPEED}"
 	done
 
-	sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
+	if [ $conf_DISP = true ]; then
+		sleep "${const_DISPLAY_HOLD_SEC}"
+	fi
 
 # 	log_message "Backup-time: $(echo "$(date +%s) - ${TIMER_START}" | bc) seconds" 3
 }
@@ -417,7 +419,7 @@ function sync_return_code_decoder() {
 		lcd_message "$(l 'box_backup_usb_target_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
-			sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
+			sleep "${const_DISPLAY_HOLD_SEC}"
 		fi
 
 	elif [ "${TARGET_MODE}" = "internal" ]; then
@@ -440,7 +442,7 @@ function sync_return_code_decoder() {
 		lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
-			sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
+			sleep "${const_DISPLAY_HOLD_SEC}"
 		fi
 
 	elif [ "${TARGET_MODE}" = "rsyncserver" ]; then
@@ -505,7 +507,7 @@ function sync_return_code_decoder() {
 		lcd_message "$(l 'box_backup_usb_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
-			sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
+			sleep "${const_DISPLAY_HOLD_SEC}"
 		fi
 
 		# Create  a .id random identifier file if doesn't exist
@@ -574,7 +576,7 @@ function sync_return_code_decoder() {
 		lcd_message "$(l 'box_backup_int_storage_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
-			sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
+			sleep "${const_DISPLAY_HOLD_SEC}"
 		fi
 
 		# Create  a .id random identifier file if doesn't exist
@@ -954,7 +956,9 @@ function sync_return_code_decoder() {
 				if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
 					SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Err.Lost device!"
 					log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
-					sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
+
+					sleep 2
+
 					log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 					log_message "$(get_abnormal_system_conditions)" 1
 				fi
