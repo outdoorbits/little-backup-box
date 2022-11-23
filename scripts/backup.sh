@@ -1202,11 +1202,16 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_HEIC} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: heic/heif
 				heif-convert "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
-				exiftool -TagsFromFile "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
+				exiftool  -overwrite_original -TagsFromFile "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
 				convert "${SOURCE_IMAGES_FILENAME}.JPG" -resize 800 "${TIMS_FILE}"
-				if [ ${conf_VIEW_CONVERT_HEIC} = false ]; then
+
+				if [ ${conf_VIEW_CONVERT_HEIC} = true ]; then
+					IMAGES_ARRAY+=("${SOURCE_IMAGES_FILENAME}.JPG")
+					IMAGE_COUNT=${#IMAGES_ARRAY[@]}
+				else
 					rm "${SOURCE_IMAGES_FILENAME}.JPG"
 				fi
+
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_RAW} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: raw-image
 				## NO QUALITY CONVERTER CONFIGURED YET!
