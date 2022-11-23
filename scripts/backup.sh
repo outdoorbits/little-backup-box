@@ -1202,6 +1202,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_HEIC} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: heic/heif
 				heif-convert "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
+				exiftool -TagsFromFile "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
 				convert "${SOURCE_IMAGES_FILENAME}.JPG" -resize 800 "${TIMS_FILE}"
 				if [ ${conf_VIEW_CONVERT_HEIC} = false ]; then
 					rm "${SOURCE_IMAGES_FILENAME}.JPG"
