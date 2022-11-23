@@ -417,7 +417,7 @@ function sync_return_code_decoder() {
 		lcd_message "$(l 'box_backup_usb_target_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
-			sleep 2
+			sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 		fi
 
 	elif [ "${TARGET_MODE}" = "internal" ]; then
@@ -440,7 +440,7 @@ function sync_return_code_decoder() {
 		lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
-			sleep 2
+			sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 		fi
 
 	elif [ "${TARGET_MODE}" = "rsyncserver" ]; then
@@ -505,7 +505,7 @@ function sync_return_code_decoder() {
 		lcd_message "$(l 'box_backup_usb_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
-			sleep 2
+			sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 		fi
 
 		# Create  a .id random identifier file if doesn't exist
@@ -574,7 +574,7 @@ function sync_return_code_decoder() {
 		lcd_message "$(l 'box_backup_int_storage_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
-			sleep 2
+			sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 		fi
 
 		# Create  a .id random identifier file if doesn't exist
@@ -954,7 +954,7 @@ function sync_return_code_decoder() {
 				if [ -z "${RESULT_DEVICE_MOUNTED}" ]; then
 					SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Err.Lost device!"
 					log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
-					sleep 2
+					sleep "${const_PROGRESS_DISPLAY_WAIT_SEC}"
 					log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 					log_message "$(get_abnormal_system_conditions)" 1
 				fi
@@ -1063,6 +1063,9 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		IMAGE_COUNT=${#DB_ARRAY[@]}
 
 		START_TIME=$(date +%s)
+
+		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
+
 		for ((i = 0; i < ${#DB_ARRAY[@]}; i++)); do
 			IMAGE_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | sed 's/##\*\*##/\ /g' | cut -d'|' -f2)"
 
@@ -1095,6 +1098,8 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 		LCD1="$(l "box_backup_generating_database_finding_images1")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
+
+		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
 		for ((i = 0; i < ${#TIMS_ARRAY[@]}; i++)); do
 			# replace substitute of space by space
@@ -1185,6 +1190,8 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 		LCD1="$(l "box_backup_generating_thumbnails_finding_images1")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
+
+		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
 		for ((i = 0; i < ${#IMAGES_ARRAY[@]}; i++)); do
 			#replace substitute of space by space
