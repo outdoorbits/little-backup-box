@@ -455,7 +455,7 @@
 		<?php echo $HIDDEN_INPUTS; ?>
 		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
 
-		<div class="card" style="margin-top: 2em">
+		<div class="card" style="margin-top: 2em;display: inline-block">
 
 			<?php
 
@@ -538,7 +538,6 @@
 							?>
 
 							<div style="float:left;width: 100%;padding: 5px;">
-
 								<?php
 									$IMAGE_FILENAME_PARTS=pathinfo($IMAGE_FILENAME);
 
@@ -567,7 +566,7 @@
 // 										video-file
 										?>
 											<video width="100%" controls autoplay>
-												<source src="<?php echo $IMAGE_FILENAME; ?>" type="video/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>"></source>
+												<source src="<?php echo $IMAGE_FILENAME; ?>" type="video/<?php echo strtolower($IMAGE_FILENAME_PARTS['extension']); ?>"></source>
 											</video>
 											<br>
 											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
