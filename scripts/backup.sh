@@ -1209,12 +1209,12 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 			if [[ " ${const_FILE_EXTENSIONS_LIST_JPG} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: image
-				convert "${SOURCE_IMAGES_FILENAME}" -resize 800 "${TIMS_FILE}"
+				convert "${SOURCE_IMAGES_FILENAME}" -resize 800\> "${TIMS_FILE}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_HEIC} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: heic/heif
 				heif-convert "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
 				exiftool  -overwrite_original -TagsFromFile "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
-				convert "${SOURCE_IMAGES_FILENAME}.JPG" -resize 800 "${TIMS_FILE}"
+				convert "${SOURCE_IMAGES_FILENAME}.JPG" -resize 800\> "${TIMS_FILE}"
 
 				if [ ${conf_VIEW_CONVERT_HEIC} = true ]; then
 					IMAGES_ARRAY+=("${SOURCE_IMAGES_FILENAME}.JPG")
@@ -1232,11 +1232,11 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 					rm "${TMP_RAW_FILE_NAME}"
 				fi
 				cp "${SOURCE_IMAGES_FILENAME}" "${TMP_RAW_FILE_NAME}"
- 				convert "${TMP_RAW_FILE_NAME}" -resize 800 "${TIMS_FILE}"
+ 				convert "${TMP_RAW_FILE_NAME}" -resize 800\> "${TIMS_FILE}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_VIDEO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: video
 				ffmpeg -i "${SOURCE_IMAGES_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"
-				mogrify -resize 800x800 "${TIMS_FILE}"
+				mogrify -resize 800\> "${TIMS_FILE}"
 				composite -gravity center '/var/www/little-backup-box/img/play.png' "${TIMS_FILE}" "${TIMS_FILE}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_AUDIO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				cp '/var/www/little-backup-box/img/audio.JPG' "${TIMS_FILE}"

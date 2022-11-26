@@ -18,6 +18,6 @@ const_IMAGE_DATABASE_FILENAME="images.db"
 const_FILE_EXTENSIONS_LIST_JPG="jpg jpeg"
 const_FILE_EXTENSIONS_LIST_HEIC="heic heif"
 const_FILE_EXTENSIONS_LIST_RAW="3fr arw dcr dng cr2 cr3 crw fff gpr j6i k25 kc2 kdc mdc mrw nef nrw orf pef raw raf rw2 rwl sr2 srf srw x3f"
-const_FILE_EXTENSIONS_LIST_VIDEO="mp4 avi"
+const_FILE_EXTENSIONS_LIST_VIDEO="avi lrv mp4"
 const_FILE_EXTENSIONS_LIST_AUDIO="mp3 wav"
 const_VIEW_GRID_COLUMNS=3

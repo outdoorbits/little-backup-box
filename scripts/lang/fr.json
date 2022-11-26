@@ -392,7 +392,8 @@
       "images": "Images",
       "back_to_grid": "Retour à l'aperçu",
       "empty": "La sélection ne contient aucune image.",
-      "preview_low_resolution": "Vignette en très basse résolution !"
+      "preview_low_resolution_image": "Vignette en très basse résolution !",
+      "preview_low_resolution_video": "Vidéo d'aperçu en basse résolution !"
     },
     "footer": {
       "footer": "Attention, seules les images qui ont des vignettes sont affichées ici. Générez-les soit automatiquement (Paramètres, Sauvegarde) soit via la page Sauvegarde.<br>\nConsulte la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/05a.-view-image-viewer\">Wiki</a> para obtener más información."

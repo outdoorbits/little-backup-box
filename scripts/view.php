@@ -535,11 +535,12 @@
 							$IMAGE_ID				= $IMAGE['ID'];
 							$IMAGE_FILENAME			= $Directory . '/' . $IMAGE['File_Name'];
 							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
+							$IMAGE_TYPE				= $IMAGE['File_Type'] !== ""?strtolower($IMAGE['File_Type']):strtolower($IMAGE_FILENAME_PARTS['extension']);
+							$IMAGE_FILENAME_PARTS	= pathinfo($IMAGE_FILENAME);
 							?>
 
 							<div style="float:left;width: 100%;padding: 5px;">
 								<?php
-									$IMAGE_FILENAME_PARTS=pathinfo($IMAGE_FILENAME);
 
 									if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " " . $constants['const_FILE_EXTENSIONS_LIST_HEIC'] . " " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										image-file
@@ -552,7 +553,7 @@
 										<?php
 											if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 	// 											RAW-image
-												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution . "</p>";
+												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_image . "</p>";
 											}
 										?>
 
@@ -564,10 +565,26 @@
 								<?php
 									} elseif (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_VIDEO'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										video-file
+										$IMAGE_FILENAME_PREVIEW	= $IMAGE_FILENAME;
+										$LOW_RES	= false;
+										if (strpos($IMAGE['Compressor_Name'],"GoPro H.265 encoder") !== false) {
+											#GoPro: GoPro H.265 encoder not supported by most browsers
+											$IMAGE_FILENAME_PREVIEW_CANDIDATE	= $IMAGE_FILENAME_PARTS['dirname'] . DIRECTORY_SEPARATOR . substr_replace($IMAGE_FILENAME_PARTS['filename'],'L',1,1) . ".LRV";
+											if (file_exists($IMAGE_FILENAME_PREVIEW_CANDIDATE)) {
+												$IMAGE_FILENAME_PREVIEW	= $IMAGE_FILENAME_PREVIEW_CANDIDATE;
+												$LOW_RES	= true;
+											}
+										}
 										?>
 											<video width="100%" controls autoplay>
-												<source src="<?php echo $IMAGE_FILENAME; ?>" type="video/<?php echo strtolower($IMAGE_FILENAME_PARTS['extension']); ?>"></source>
+												<source src="<?php echo $IMAGE_FILENAME_PREVIEW; ?>" type="video/<?php echo $IMAGE_TYPE; ?>"></source>
 											</video>
+											<?php
+											if ($LOW_RES) {
+	// 											RAW-image
+												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_video . "</p>";
+											}
+											?>
 											<br>
 											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
 												<?php echo L::view_images_download; ?>
