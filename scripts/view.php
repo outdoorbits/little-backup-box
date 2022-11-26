@@ -73,19 +73,21 @@
 				</div>
 
 				<div style="display: flow-root;width: 100%">
-					<div style="float:left;width: 50%;padding: 5px;">
-						<?php
-							echo "&nbsp;&nbsp;&nbsp;&nbsp;<button style=\"margin-top: 2em;\" type=\"submit\" name=\"save_ratings\">" . L::view_ratings_save_button . "</button>";
-						?>
-					</div>
 
-					<div style="float:right;width: 50%;padding: 5px;text-align: right">
+					<div style="float:left;width: 50%;padding: 5px">
 						<?php
 							if ($filter_rating == 1) {
 								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"delete_ratings_1\" class=\"danger\">" . L::view_ratings_1_delete_button . "</button>";
 							}
 						?>
 					</div>
+
+					<div style="float:right;width: 50%;padding: 5px;text-align: right;">
+						<?php
+							echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"save_ratings\">" . L::view_ratings_save_button . "</button>";
+						?>
+					</div>
+
 				</div>
 			</div>
 			<?php
@@ -97,9 +99,30 @@
 						<?php echo L::view_images_back_to_grid; ?>
 					</a>
 				</div>
+
+				<div style="float:right;width: 50%;padding: 5px;text-align: right;">
+						<button style="margin-top: 2em;" type="submit" name="save_ratings"><?php echo L::view_ratings_save_button ?></button>
+				</div>
 			</div>
 			<?php
 		}
+	}
+
+	function rating_radio($IMAGE_ID, $IMAGE_RATING) {
+		?>
+			<div style="float:left;padding: 5px;" class="rating">
+				<input id="rating_1_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="1" <?php echo $IMAGE_RATING>=1?"checked":""; ?>>
+				<label for="rating_1_<?php echo $IMAGE_ID; ?>"></label>
+				<input id="rating_2_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="2" <?php echo $IMAGE_RATING>=2?"checked":""; ?>>
+				<label for="rating_2_<?php echo $IMAGE_ID; ?>"></label>
+				<input id="rating_3_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="3" <?php echo $IMAGE_RATING>=3?"checked":""; ?>>
+				<label for="rating_3_<?php echo $IMAGE_ID; ?>"></label>
+				<input id="rating_4_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="4" <?php echo $IMAGE_RATING>=4?"checked":""; ?>>
+				<label for="rating_4_<?php echo $IMAGE_ID; ?>"></label>
+				<input id="rating_5_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="5" <?php echo $IMAGE_RATING>=5?"checked":""; ?>>
+				<label for="rating_5_<?php echo $IMAGE_ID; ?>"></label>
+			</div>
+		<?php
 	}
 
 	function add_to_where($new_where,$target_array) {
@@ -311,7 +334,6 @@
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_by\" value=\"" . $order_by . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_dir\" value=\"" . $order_dir . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"offset\" value=\"" . $offset . "\">";
-	if ($view_mode != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"view_mode\" value=\"" . $view_mode . "\">";}
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_images_per_page\" value=\"" . $filter_images_per_page . "\">";
 	if ($filter_directory != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_directory\" value=\"" . str_replace("=","+",base64_encode($filter_directory)) . "\">";}
 	if ($filter_date != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_date\" value=\"" . $filter_date . "\">";}
@@ -478,27 +500,17 @@
 							?>
 
 
-							<td style="padding: 5px; width: <?php 100 / $constants['const_VIEW_GRID_COLUMNS']; ?>%">
+							<td style="padding: 5px; width: <?php echo 100 / $constants['const_VIEW_GRID_COLUMNS']; ?>%">
 
 								<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
 									<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
-										<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
+										<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
 									</a>
 								</div>
 
 								<div style="width: 100%">
-									<div style="float:left;padding: 5px;" class="rating">
-										<input id="rating_1_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="1" <?php echo $IMAGE['LbbRating']>=1?"checked":""; ?>>
-										<label for="rating_1_<?php echo $IMAGE['ID']; ?>"></label>
-										<input id="rating_2_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="2" <?php echo $IMAGE['LbbRating']>=2?"checked":""; ?>>
-										<label for="rating_2_<?php echo $IMAGE['ID']; ?>"></label>
-										<input id="rating_3_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="3" <?php echo $IMAGE['LbbRating']>=3?"checked":""; ?>>
-										<label for="rating_3_<?php echo $IMAGE['ID']; ?>"></label>
-										<input id="rating_4_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="4" <?php echo $IMAGE['LbbRating']>=4?"checked":""; ?>>
-										<label for="rating_4_<?php echo $IMAGE['ID']; ?>"></label>
-										<input id="rating_5_<?php echo $IMAGE['ID']; ?>" type="radio" name="rating_<?php echo $IMAGE['ID']; ?>" value="5" <?php echo $IMAGE['LbbRating']>=5?"checked":""; ?>>
-										<label for="rating_5_<?php echo $IMAGE['ID']; ?>"></label>
-									</div>
+
+									<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
 
 									<div style="float:right;padding: 5px;font-size:0.8em;" class="hidden-mobile">
 										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
@@ -545,22 +557,28 @@
 									if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " " . $constants['const_FILE_EXTENSIONS_LIST_HEIC'] . " " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										image-file
 								?>
+										<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
+											<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
+												<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
+											</a>
+										</div>
 
-										<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
-											<img style="max-width: 100%; border-radius: 5px;" <?php echo ($IMAGE['LbbRating']==1)?"class=\"delete\"":""; ?> src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
-										</a>
+										<div style="width: 100%">
+											<?php
+												if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+		// 											RAW-image
+													echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_image . "</p>";
+												}
+											?>
+										</div>
 
-										<?php
-											if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
-	// 											RAW-image
-												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_image . "</p>";
-											}
-										?>
+										<div padding: 5px;font-size:0.8em;">
+											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
 
-										<br>
-										<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
-											<?php echo L::view_images_download; ?>
-										</a>
+											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+												<?php echo L::view_images_download; ?>
+											</a>
+										</div>
 
 								<?php
 									} elseif (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_VIDEO'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
@@ -576,31 +594,40 @@
 											}
 										}
 										?>
-											<video width="100%" controls autoplay>
+											<video width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
 												<source src="<?php echo $IMAGE_FILENAME_PREVIEW; ?>" type="video/<?php echo $IMAGE_TYPE; ?>"></source>
 											</video>
+
 											<?php
 											if ($LOW_RES) {
 	// 											RAW-image
 												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_video . "</p>";
 											}
 											?>
-											<br>
-											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
-												<?php echo L::view_images_download; ?>
-											</a>
+
+											<div padding: 5px;font-size:0.8em;">
+												<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
+
+												<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+													<?php echo L::view_images_download; ?>
+												</a>
+											</div>
 
 										<?php
 									} elseif (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_AUDIO'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										audio-file
 										?>
-											<audio width="100%" controls autoplay>
+											<audio width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
 												<source src="<?php echo $IMAGE_FILENAME; ?>" type="audio/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>">">
 											</audio>
-											<br>
-											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
-												<?php echo L::view_images_download; ?>
-											</a>
+
+											<div padding: 5px;font-size:0.8em;">
+												<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
+
+												<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+													<?php echo L::view_images_download; ?>
+												</a>
+											</div>
 										<?php
 									}
 								?>

@@ -93,8 +93,24 @@ ul.danger {
   background-position : -32px 0;
 }
 
-img.delete {
+img.rating1, video.rating1, audio.rating1 {
 	border: 3px solid #F00;
+}
+
+img.rating2, video.rating2, audio.rating2 {
+	border: 0px solid #000000;
+}
+
+img.rating3, video.rating3, audio.rating3 {
+	border: 3px solid #6a3805;
+}
+
+img.rating4, video.rating4, audio.rating4 {
+	border: 3px solid #C0C0C0;
+}
+
+img.rating5, video.rating5, audio.rating5 {
+	border: 3px solid #af9500;
 }
 
 

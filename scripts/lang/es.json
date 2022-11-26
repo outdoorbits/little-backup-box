@@ -399,6 +399,6 @@
       "footer": "Advertencia, aquí solo se muestran las imágenes que tienen miniaturas. Génelos automáticamente (Configuración, Copia de seguridad) o a través de la página Copia de seguridad.<br>\nConsultez le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/05a.-view-image-viewer\">Wiki</a> pour plus d'informations."
     },
     "ratings_save_button": "Guardar",
-    "ratings_1_delete_button": "eliminar imágenes"
+    "ratings_1_delete_button": "Eliminar archivos multimedia"
   }
 }
