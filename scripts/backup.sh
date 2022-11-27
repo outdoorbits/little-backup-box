@@ -760,6 +760,7 @@ function sync_return_code_decoder() {
 	TRANSFER_INFO=""
 	TRANSFER_INFO_DISP=""
 	SOURCE_FOLDER_NUMBER=""
+	SOURCE_FOLDER_INFO=""
 	SOURCE_FOLDER_NUMBER_FORMATED=""
 	SOURCE_PATH_LEGEND_STAR=""
 	SOURCE_PATHS_LEGEND=""
@@ -777,6 +778,7 @@ function sync_return_code_decoder() {
 			else
 				SOURCE_FOLDER_NUMBER=$(($SOURCE_FOLDER_NUMBER + 1))
 			fi
+			SOURCE_FOLDER_INFO="${SOURCE_FOLDER_NUMBER}/${#SOURCE_PATHS[@]}"
 		fi
 
 		if [ "${SOURCE_FOLDER_NUMBER}" != "" ]; then
@@ -851,12 +853,12 @@ function sync_return_code_decoder() {
 				if [ "${TARGET_MODE}" = "rsyncserver" ]; then
 					# to rsyncserver
 					if [ $conf_LOG_SYNC = true ]; then
-						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_NUMBER}"
+						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 						SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 						log_pick_file "${const_LOGFILE_SYNC}"
 					else
-						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_NUMBER}"
+						sudo sshpass -p "${conf_RSYNC_conf_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 					fi
 
@@ -864,12 +866,12 @@ function sync_return_code_decoder() {
 					# not to rsyncserver
 					sudo mkdir -p "${BACKUP_PATH}"
 					if [ $conf_LOG_SYNC = true ]; then
-						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_NUMBER}"
+						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 						SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 						log_pick_file "${const_LOGFILE_SYNC}"
 					else
-						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_NUMBER}"
+						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 					fi
 				fi
@@ -885,7 +887,7 @@ function sync_return_code_decoder() {
 
 				log_message "Backup from camera: ${SOURCE_PATH}" 3
 
-				sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${SOURCE_PATH}" --skip-existing | syncprogress "gphoto2" "${SOURCE_FOLDER_NUMBER}"
+				sudo gphoto2 --filename "%F/%f.%C" --get-all-files --folder "${SOURCE_PATH}" --skip-existing | syncprogress "gphoto2" "${SOURCE_FOLDER_INFO}"
 
 				SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 				if [ $conf_LOG_SYNC = true ]; then
