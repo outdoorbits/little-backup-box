@@ -177,7 +177,9 @@
     "imageviewer": {
       "section": "Bildbetrachter View",
       "convert_heic_header": "heic-Bilder in jpeg konvertieren",
-      "convert_heic_label": "Von Bildern im Format heic (heif) jpeg-Bilder erstellen"
+      "convert_heic_label": "Von Bildern im Format heic (heif) jpeg-Bilder erstellen",
+      "write_rating_exif_label": "Bewertungen werden in die Original-Dateien eingetragen und können in der Weiterbearbeitung genutzt werden.",
+      "write_rating_exif_header": "Bewertungen in Originaldateien speichern?"
     }
   },
   "tools": {

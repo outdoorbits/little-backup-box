@@ -259,14 +259,33 @@
 			shell_exec("sudo chown www-data:www-data '" . $DATABASE_FILE ."'");
 			$db = new SQLite3($DATABASE_FILE);
 
-			# save ratings in any case
+			# save ratings
 			foreach($RATINGS_ARRAY as $key=>$val) {
 				$key	= intval($key);
 				$val	= intval($val);
-				$db->exec("update EXIF_DATA set LbbRating=". $val . " where ID=" . $key) . ";";
+
+				if ($config['conf_VIEW_WRITE_RATING_EXIF'] == true) {
+					# get database-values before update
+					$statement			= $db->prepare("SELECT Directory, File_Name, Rating FROM EXIF_DATA where ID=" . $key . ";");
+					$RATING_IMAGES		= $statement->execute();
+					$RATING_IMAGE		= $RATING_IMAGES->fetchArray(SQLITE3_ASSOC);
+
+					# define update-command
+					$SQL_UPDATE	= "update EXIF_DATA set LbbRating=". $val . ", Rating=". $val . " where ID=" . $key . ";";
+				} else {
+					# define update-command
+					$SQL_UPDATE	= "update EXIF_DATA set LbbRating=". $val . " where ID=" . $key . ";";
+				}
+
+				$db->exec($SQL_UPDATE);
+
+				if (($config['conf_VIEW_WRITE_RATING_EXIF'] == true) and ((int)$RATING_IMAGE['Rating'] !== (int)$val)) {
+					#update exif-data of original file
+					shell_exec ("sudo exiftool -P -Rating=" . (int)$val . " '".$STORAGE_PATH . '/' . $RATING_IMAGE['Directory']. '/' .$RATING_IMAGE['File_Name'] . "'");
+				}
 			}
 
-			# delete
+			# delete media-files
 			if (isset($delete_ratings_1)) {
 				foreach($RATINGS_ARRAY as $key=>$val) {
 					$key	= intval($key);
@@ -283,6 +302,8 @@
 
 				}
 			}
+
+			# database-queries
 
 			$statement			= $db->prepare("SELECT * FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . " limit " . $filter_images_per_page . " " . $select_offset . ";");
 			$IMAGES				= $statement->execute();

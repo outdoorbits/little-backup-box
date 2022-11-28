@@ -317,7 +317,9 @@
     "imageviewer": {
       "section": "Image viewer View",
       "convert_heic_header": "Convert heic images to jpeg",
-      "convert_heic_label": "Create jpeg images from heic (heif) format images"
+      "convert_heic_label": "Create jpeg images from heic (heif) format images",
+      "write_rating_exif_label": "Ratings are entered in the original files and can be used in further processing.",
+      "write_rating_exif_header": "Save ratings in original files?"
     }
   },
   "tools": {

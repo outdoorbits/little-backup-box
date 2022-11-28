@@ -177,7 +177,9 @@
     "imageviewer": {
       "section": "Visionneuse d'images View",
       "convert_heic_header": "Convertir des images heic en jpeg",
-      "convert_heic_label": "Créer des images jpeg à partir d'images au format heic (heif)"
+      "convert_heic_label": "Créer des images jpeg à partir d'images au format heic (heif)",
+      "write_rating_exif_label": "Les notations sont entrées dans les fichiers originaux et peuvent être utilisées dans un traitement ultérieur.",
+      "write_rating_exif_header": "Enregistrer les notes dans les fichiers d'origine ?"
     }
   },
   "tools": {

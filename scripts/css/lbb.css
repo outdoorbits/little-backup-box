@@ -102,19 +102,19 @@ img.rating2, video.rating2, audio.rating2 {
 }
 
 img.rating3, video.rating3, audio.rating3 {
-	background: linear-gradient(white, white) padding-box, linear-gradient(to right top, #FFDCA8, #A97142) border-box;
+	background: linear-gradient(white, white) padding-box, linear-gradient(to left top, #A97142, #FFDCA8, #A97142) border-box;
 	border-radius: 5px;
-	border: 3px solid transparent;
+	border: 4px solid transparent;
 }
 
 img.rating4, video.rating4, audio.rating4 {
-	background: linear-gradient(white, white) padding-box, linear-gradient(to right top, #F0F0F0, #C0C0C0) border-box;
+	background: linear-gradient(white, white) padding-box, linear-gradient(to left top, #B0B0B0, #FFFFFF, #C0C0C0) border-box;
 	border-radius: 5px;
 	border: 4px solid transparent;
 }
 
 img.rating5, video.rating5, audio.rating5 {
-	background: linear-gradient(white, white) padding-box, linear-gradient(to right top, #FAFAD2, #D4AF37) border-box;
+	background: linear-gradient(white, white) padding-box, linear-gradient(to left top, #D4AF37, #FAFAD2, #D4AF37) border-box;
 	border-radius: 5px;
 	border: 4px solid transparent;
 }

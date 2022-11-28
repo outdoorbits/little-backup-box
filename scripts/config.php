@@ -105,6 +105,7 @@ function write_config()
 	$conf_POPUP_MESSAGES				= isset($conf_POPUP_MESSAGES)?"true":"false";
 	$conf_BACKUP_GENERATE_THUMBNAILS	= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
 	$conf_VIEW_CONVERT_HEIC				= isset($conf_VIEW_CONVERT_HEIC)?"true":"false";
+	$conf_VIEW_WRITE_RATING_EXIF		= isset($conf_VIEW_WRITE_RATING_EXIF)?"true":"false";
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
 
@@ -157,6 +158,7 @@ conf_LOG_SYNC=$conf_LOG_SYNC
 conf_POWER_OFF_IDLE_TIME=$conf_POWER_OFF_IDLE_TIME
 conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
 conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
+conf_VIEW_WRITE_RATING_EXIF=$conf_VIEW_WRITE_RATING_EXIF
 conf_SMTP_SERVER="$conf_SMTP_SERVER"
 conf_SMTP_PORT="$conf_SMTP_PORT"
 conf_MAIL_USER="$conf_MAIL_USER"
@@ -423,6 +425,10 @@ function upload_settings() {
 				<h3><?php echo L::config_imageviewer_convert_heic_header; ?></h3>
 					<label for="conf_VIEW_CONVERT_HEIC"><?php echo L::config_imageviewer_convert_heic_label; ?></label><br>
 					<input type="checkbox" id="conf_VIEW_CONVERT_HEIC" name="conf_VIEW_CONVERT_HEIC" <?php echo $config['conf_VIEW_CONVERT_HEIC']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_imageviewer_write_rating_exif_header; ?></h3>
+					<label for="conf_VIEW_WRITE_RATING_EXIF"><?php echo L::config_imageviewer_write_rating_exif_label; ?></label><br>
+					<input type="checkbox" id="conf_VIEW_WRITE_RATING_EXIF" name="conf_VIEW_WRITE_RATING_EXIF" <?php echo $config['conf_VIEW_WRITE_RATING_EXIF']=="1"?"checked":""; ?>>
 
 			</details>
 		</div>
