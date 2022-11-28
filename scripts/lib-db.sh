@@ -129,12 +129,9 @@ function db_insert() {
 			fi
 
 			# catch value of Rating for LbbRating
-			if [ "${FIELD}" = "Rating" ]; then
+			if [ "${FIELD}" = "Rating" ] && [ "${VALUE}" -gt "0" ]; then
 				EXIF_ARRAY+=("LbbRating:${VALUE}")
 			fi
-
-
-
 
 
 			#replace media-path from Directory
@@ -169,5 +166,6 @@ function db_insert() {
 	if [ ! -z "${FIELDS}" ]; then
 # 		echo "insert into EXIF_DATA (${FIELDS}) values (${VALUES});"
 		sqlite3 "${DB}" "insert into EXIF_DATA (${FIELDS}) values (${VALUES});"
+		log_message "db_insert ${SOURCE_IMAGES_FILENAME}" 3
 	fi
 }

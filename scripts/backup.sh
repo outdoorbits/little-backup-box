@@ -1078,6 +1078,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			if [ ! -f "${IMAGE_FILENAME}" ]; then
 				ID="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f1)"
 				sudo sqlite3 "${DB}" "DELETE from EXIF_DATA WHERE ID=${ID};"
+				log_message "DELETE from EXIF_DATA WHERE ID=${ID};" 3
 			fi
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 		done
@@ -1204,6 +1205,8 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			SOURCE_IMAGES_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
 			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME##*.}"
 			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME_EXTENSION,,}"
+
+			log_message "Generating thumbnail for ${SOURCE_IMAGES_FILENAME}" 3
 
 			TIMS_FOLDER="$(dirname "${SOURCE_IMAGES_FILENAME}")/tims"
 			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGES_FILENAME}").JPG"
