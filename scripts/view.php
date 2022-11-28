@@ -145,7 +145,7 @@
 	# standard values
 	$filter_medium			= "-";
 	$view_mode				= "grid";
-	$filter_images_per_page	= $IMAGES_PER_PAGE_OPTIONS[0];
+	$filter_images_per_page	= $IMAGES_PER_PAGE_OPTIONS[1];
 	$filter_directory		= "";
 	$filter_date			= "all";
 	$filter_rating			= "all";
@@ -281,7 +281,7 @@
 
 				if (($config['conf_VIEW_WRITE_RATING_EXIF'] == true) and ((int)$RATING_IMAGE['Rating'] !== (int)$val)) {
 					#update exif-data of original file
-					shell_exec ("sudo exiftool -P -Rating=" . (int)$val . " '".$STORAGE_PATH . '/' . $RATING_IMAGE['Directory']. '/' .$RATING_IMAGE['File_Name'] . "'");
+					shell_exec ("sudo exiftool -overwrite_original -P -Rating=" . (int)$val . " '".$STORAGE_PATH . '/' . $RATING_IMAGE['Directory']. '/' .$RATING_IMAGE['File_Name'] . "'");
 				}
 			}
 
