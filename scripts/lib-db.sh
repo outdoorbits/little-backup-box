@@ -104,11 +104,20 @@ function db_insert() {
 
 		if [ ! -z "${FIELD}" ] && [ ! -z "${VALUE}" ]; then
 
-			# do not allow to use ID as EXIF-field
+			# prepare and care database-structure
+			## do not allow to use ID as EXIF-field
 			if [ "${FIELD}" == "ID" ]; then
 				FIELD="ID_CAMERA"
 			fi
 
+			## add column to the table if doesn't exist
+			if [[ ! " ${EXIF_COLUMNS_ARRAY[@]} " =~ " ${FIELD} " ]]; then
+				sqlite3 "${DB}" "alter table EXIF_DATA add column ${FIELD} text;"
+				EXIF_COLUMNS_ARRAY+=(${FIELD})
+			fi
+
+			## prepare values
+			# manage date
 			if [ "${FIELD}" = "Create_Date" ]; then
 				HAS_CREATE_DATE=true
 			fi
@@ -119,11 +128,14 @@ function db_insert() {
 				fi
 			fi
 
-			# #add column to the table if doesn't exist
-			if [[ ! " ${EXIF_COLUMNS_ARRAY[@]} " =~ " ${FIELD} " ]]; then
-				sqlite3 "${DB}" "alter table EXIF_DATA add column ${FIELD} text;"
-				EXIF_COLUMNS_ARRAY+=(${FIELD})
+			# catch value of Rating for LbbRating
+			if [ "${FIELD}" = "Rating" ]; then
+				EXIF_ARRAY+=("LbbRating:${VALUE}")
 			fi
+
+
+
+
 
 			#replace media-path from Directory
 			if [ "${FIELD}" == "Directory" ]; then
