@@ -110,7 +110,7 @@
 
 	function rating_radio($IMAGE_ID, $IMAGE_RATING) {
 		?>
-			<div style="float:left;padding: 5px;" class="rating">
+			<div style="float:left;padding: 2px;" class="rating">
 				<input id="rating_1_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="1" <?php echo $IMAGE_RATING>=1?"checked":""; ?>>
 				<label for="rating_1_<?php echo $IMAGE_ID; ?>"></label>
 				<input id="rating_2_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="2" <?php echo $IMAGE_RATING>=2?"checked":""; ?>>
@@ -505,14 +505,14 @@
 				if ($imagecount >= 1) {
 					if ($view_mode == "grid") {
 						?>
-						<table style="padding: 0; width: 100%; border: 0">
 						<?php
 						$i	= 0;
 						while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
 
 							$i	+= 1;
 							if ($i % $constants['const_VIEW_GRID_COLUMNS'] == 1) {
-								echo "<tr>";
+// 								wrap div arround every line
+								echo "<div style=\"display: inline-block; padding: 2; width: 100%;\">";
 							}
 
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
@@ -521,46 +521,35 @@
 							?>
 
 
-							<td style="padding: 5px; width: <?php echo 100 / $constants['const_VIEW_GRID_COLUMNS']; ?>%">
-
-								<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
-									<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
-										<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
-									</a>
-								</div>
-
-								<div style="width: 100%">
-
-									<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
-
-									<div style="float:right;padding: 5px;font-size:0.8em;" class="hidden-mobile">
+								<div style="display: inline-block; padding: 0; width: <?php echo 100/$constants['const_VIEW_GRID_COLUMNS']-1; ?>%; vertical-align: top;">
+									<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
 										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
-											<?php echo $IMAGE['File_Name']; ?>
+											<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
 										</a>
 									</div>
+
+									<div style="width: 100%; display: inline-block; padding-left: 2px;padding-right: 2px; padding-top: 2px; padding-bottom: 6px;">
+
+										<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
+
+										<div style="float:right;padding: 2px;font-size:0.8em;" class="hidden-mobile">
+											<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
+												<?php echo $IMAGE['File_Name']; ?>
+											</a>
+										</div>
+									</div>
+
 								</div>
-
-							</td>
-
-
-
 							<?php
 
-							if ($i == $constants['const_VIEW_GRID_COLUMNS']) {
-								echo "</tr>";
+							if ($i % $constants['const_VIEW_GRID_COLUMNS'] == 0) {
+								echo "</div>";
 							}
 						}
-
-						if ($i !== $constants['const_VIEW_GRID_COLUMNS']) {
-							for ($j=1; $j <= $i % $constants['const_VIEW_GRID_COLUMNS']; $j++) {
-								echo "<td></td>";
-							}
-							echo "</tr>";
+						if ($i % $constants['const_VIEW_GRID_COLUMNS'] !== 0) {
+								echo "</div>";
 						}
 
-						?>
-						</table>
-						<?php
 					}
 					elseif ($view_mode == "single") {
 						while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
