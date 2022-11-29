@@ -1253,7 +1253,11 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGES_FILENAME}")" "${TIMS_FILE}"
 			fi
 
-			db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
+			if [ -f "${TIMS_FILE}" ]; then
+				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
+			else
+				log_message "ERROR: TIMS of '"${SOURCE_IMAGES_FILENAME}"' ('${TIMS_FILE}') does not exist."
+			fi
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 
