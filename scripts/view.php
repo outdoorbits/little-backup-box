@@ -23,7 +23,8 @@
 	function navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate) {
 		if ($view_mode == "grid") {
 			$offset_left	= $offset >= $filter_images_per_page?$offset-$filter_images_per_page:0;
-			$offset_end		= $imagecount >= $filter_images_per_page?intval($imagecount / $filter_images_per_page) * $filter_images_per_page:0;
+			$offset_end		= $imagecount > $filter_images_per_page?intval($imagecount / $filter_images_per_page) * $filter_images_per_page:0;
+			$offset_end		= $offset_end==$imagecount?$offset_end-$filter_images_per_page:$offset_end;
 			$offset_right	= $offset + $filter_images_per_page < $imagecount?$offset+$filter_images_per_page:$offset_end;
 			?>
 			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">

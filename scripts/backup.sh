@@ -1241,6 +1241,11 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_VIDEO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: video
 				ffmpeg -i "${SOURCE_IMAGES_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"
+				if [ ! -f "${TIMS_FILE}" ]; then
+					# tims file not generated. Video too short? Try at second 0
+					ffmpeg -i "${SOURCE_IMAGES_FILENAME}" -ss 00:00:00 -vframes 1 "${TIMS_FILE}"
+				fi
+
 				mogrify -resize 800\> "${TIMS_FILE}"
 				composite -gravity center '/var/www/little-backup-box/img/play.png' "${TIMS_FILE}" "${TIMS_FILE}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_AUDIO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
