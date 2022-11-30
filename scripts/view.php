@@ -508,8 +508,10 @@
 	<?php if ($DATABASE_CONNECTED) { ?>
 	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 
-		<?php echo $HIDDEN_INPUTS; ?>
-		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id); ?>
+		<?php
+			echo $HIDDEN_INPUTS;
+			navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id);
+		?>
 
 		<div class="card" style="margin-top: 2em;display: inline-block">
 
@@ -520,13 +522,26 @@
 						?>
 						<?php
 						$i	= 0;
+						$LAST_DATE	= "";
 						while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
 
 							$i	+= 1;
-							if ($i % $constants['const_VIEW_GRID_COLUMNS'] == 1) {
+
+							if ($IMAGE['Create_Date'] !== $LAST_DATE) {
+								if ($i > 1) {
+									echo "</div>";
+								}
+								echo "<div style=\"display: inline-block; padding: 2; width: 100%;\">";
+								echo "	Datum:XXX " . $IMAGE['Create_Date'];
+								echo "</div>";
+							}
+
+							if (($i % $constants['const_VIEW_GRID_COLUMNS'] == 1) or ($IMAGE['Create_Date'] !== $LAST_DATE)) {
 // 								wrap div arround every line
 								echo "<div style=\"display: inline-block; padding: 2; width: 100%;\">";
 							}
+
+							$LAST_DATE	= $IMAGE['Create_Date'];
 
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
