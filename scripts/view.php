@@ -20,7 +20,7 @@
 	}
 
 
-	function navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate) {
+	function navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate,$label_id) {
 		if ($view_mode == "grid") {
 			$offset_left	= $offset >= $filter_images_per_page?$offset-$filter_images_per_page:0;
 			$offset_end		= $imagecount > $filter_images_per_page?intval($imagecount / $filter_images_per_page) * $filter_images_per_page:0;
@@ -34,6 +34,7 @@
 					<a href="<?php echo $GET_PARAMETER . "&offset=" . $offset_left; ?>">&lt;</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;
 					<?php
+
 						$link_order_text	= $label_creationdate;
 						$link_order			= $GET_PARAMETER . "&order_by=Create_Date&order_dir=";
 						if ($order_by=="Create_Date") {
@@ -65,6 +66,17 @@
 
 						echo $imagecount . ' ' . L::view_images_images . "&nbsp;&nbsp;&nbsp;&nbsp;";
 
+						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>&nbsp;&nbsp;&nbsp;&nbsp;";
+
+						$link_order_text	= $label_id;
+						$link_order			= $GET_PARAMETER . "&order_by=ID&order_dir=";
+						if ($order_by=="ID") {
+							$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
+							$link_order_text	= "<b>" . $link_order_text . "</b>";
+							$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
+						} else {
+							$link_order			.= "ASC";
+						}
 						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
 					?>
 					&nbsp;&nbsp;&nbsp;&nbsp;
@@ -172,7 +184,7 @@
 	}
 	$offset	= intval($offset);
 
-	if (! in_array($order_by,array('File_Name','Create_Date'))) {$order_by='Create_Date';}
+	if (! in_array($order_by,array('File_Name','Create_Date','ID'))) {$order_by='Create_Date';}
 
 	if (! in_array($order_dir,array('ASC','DESC'))) {$order_dir='DESC';}
 
@@ -497,7 +509,7 @@
 	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 
 		<?php echo $HIDDEN_INPUTS; ?>
-		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
+		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id); ?>
 
 		<div class="card" style="margin-top: 2em;display: inline-block">
 
@@ -670,7 +682,7 @@
 
 		</div>
 
-		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate); ?>
+		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id); ?>
 
 	</form>
 

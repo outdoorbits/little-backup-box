@@ -386,7 +386,8 @@
       "rating": "Évaluation",
       "rating_stars": "Étoiles",
       "rating_all": "tout",
-      "variable": "Valeurs EXIF"
+      "variable": "Valeurs EXIF",
+      "order_by_id": "ID"
     },
     "images": {
       "download": "Télécharger l'original",

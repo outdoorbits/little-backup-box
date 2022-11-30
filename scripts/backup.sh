@@ -1256,7 +1256,9 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			if [ -f "${TIMS_FILE}" ]; then
 				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
 			else
-				log_message "ERROR: TIMS of '"${SOURCE_IMAGES_FILENAME}"' ('${TIMS_FILE}') does not exist."
+				log_message "ERROR: TIMS of '"${SOURCE_IMAGES_FILENAME}"' ('${TIMS_FILE}') not regular created."
+				cp '/var/www/little-backup-box/img/unknown.JPG' "${TIMS_FILE}"
+				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGES_FILENAME}")" "${TIMS_FILE}"
 			fi
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
