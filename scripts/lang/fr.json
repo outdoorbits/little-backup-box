@@ -402,6 +402,7 @@
       "footer": "Attention, seules les images qui ont des vignettes sont affichées ici. Générez-les soit automatiquement (Paramètres, Sauvegarde) soit via la page Sauvegarde.<br>\nConsulte la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/05a.-view-image-viewer\">Wiki</a> para obtener más información."
     },
     "ratings_save_button": "Sauvegarder",
-    "ratings_1_delete_button": "Supprimer des fichiers multimédias"
+    "ratings_1_delete_button": "Supprimer des fichiers multimédias",
+    "date_format": "d.m.Y"
   }
 }

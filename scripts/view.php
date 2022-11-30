@@ -527,21 +527,13 @@
 
 							$i	+= 1;
 
-							if ($IMAGE['Create_Date'] !== $LAST_DATE) {
-								if ($i > 1) {
-									echo "</div>";
-								}
-								echo "<div style=\"display: inline-block; padding: 2; width: 100%;\">";
-								echo "	Datum:XXX " . $IMAGE['Create_Date'];
-								echo "</div>";
-							}
+							$IMAGE_DATE	= date_create($IMAGE['Create_Date']);
+							$IMAGE_DATE	= date_format($IMAGE_DATE,L::view_date_format);
 
-							if (($i % $constants['const_VIEW_GRID_COLUMNS'] == 1) or ($IMAGE['Create_Date'] !== $LAST_DATE)) {
+							if ($i % $constants['const_VIEW_GRID_COLUMNS'] == 1) {
 // 								wrap div arround every line
 								echo "<div style=\"display: inline-block; padding: 2; width: 100%;\">";
 							}
-
-							$LAST_DATE	= $IMAGE['Create_Date'];
 
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
@@ -551,6 +543,12 @@
 
 								<div style="display: inline-block; padding: 0; width: <?php echo 100/$constants['const_VIEW_GRID_COLUMNS']-1; ?>%; vertical-align: top;">
 									<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
+										<?php
+											if (($order_by == 'Create_Date') and ($LAST_DATE !== $IMAGE_DATE)) {
+												echo '<b>' . $IMAGE_DATE . '</b>';
+												$LAST_DATE	= $IMAGE_DATE;
+											}
+										?>
 										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
 											<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
 										</a>
