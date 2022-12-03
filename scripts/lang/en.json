@@ -91,7 +91,11 @@
       "mode_database": "Database",
       "cleaning_database": "Cleaning database",
       "counting_images": "Counting images.",
-      "unknown": "unknown number (error)"
+      "unknown": "unknown number (error)",
+      "generating_thumbnails": "Gen. thumbnails",
+      "updating_exif": "Updating EXIF",
+      "generating_database": "Sync database",
+      "mode_exif": "EXIF"
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -167,7 +171,9 @@
     "thumbnails_header": "Generate thumbnails and import them into the database",
     "database_header": "Synchronize and clean database",
     "thumbnails_button": "Thumbnails",
-    "database_button": "Database"
+    "exif_header": "Write EXIF data (ratings) to the original files",
+    "database_button": "Database",
+    "exif_button": "EXIF"
   },
   "sysinfo": {
     "sysinfo": "System info",
@@ -306,7 +312,9 @@
     "wifi_country_header": "WiFi country",
     "backup": {
       "generate_thumbnails_header": "Thumbnails",
-      "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)"
+      "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)",
+      "update_exif_header": "Automatically adjust EXIF data of media files on import",
+      "update_exif_label": "New media without their own rating receive the standard rating. If possible, this is written to the original file."
     },
     "disp_black_on_power_off_header": "Display off when shutting down",
     "disp_black_on_power_off_label": "Do you want the display to turn off on shutdown?",
@@ -318,8 +326,8 @@
       "section": "Image viewer View",
       "convert_heic_header": "Convert heic images to jpeg",
       "convert_heic_label": "Create jpeg images from heic (heif) format images",
-      "write_rating_exif_label": "Ratings are entered in the original files and can be used in further processing.",
-      "write_rating_exif_header": "Save ratings in original files?"
+      "write_rating_exif_label": "Ratings are immediately entered into the original files and can be used in further processing. Alternatively, these can also be transferred later from the database to the files (backup page).",
+      "write_rating_exif_header": "Write ratings immediately in the original files"
     }
   },
   "tools": {

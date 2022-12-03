@@ -25,7 +25,7 @@
 
 
 # usage: backup.sh SOURCE TARGET [SECONDARY_BACKUP_FOLLOWS]
-#			SOURCE: Can be usb *1, internal, camera or ios; database or thumbnails (only in combination with usb or internal)
+#			SOURCE: Can be usb *1, internal, camera or ios; database, thumbnails or exif (only in combination with usb or internal)
 # 			TARGET: Can be usb *2, internal, rsyncserver or cloud_???
 #			SECONDARY_BACKUP_FOLLOWS: otionally, if true another run follows, no power off
 #	*1 formerly storage
@@ -63,7 +63,7 @@ if [ "${3}" == "true" ]; then
 fi
 
 # Source definition
-if [[ " usb internal camera ios thumbnails database " =~ " ${SOURCE_ARG} " ]]; then
+if [[ " usb internal camera ios thumbnails database exif " =~ " ${SOURCE_ARG} " ]]; then
 	SOURCE_MODE="${SOURCE_ARG}"
 else
 	SOURCE_MODE="usb"
@@ -195,6 +195,8 @@ function calculate_files_to_sync() {
 		echo "" # dummy action
 	elif [ "${SOURCE_MODE}" = "database" ]; then
 		echo "" # dummy action
+	elif [ "${SOURCE_MODE}" = "exif" ]; then
+		echo "" # dummy action
 	else
 		# no defined mode selected
 		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+2"
@@ -246,7 +248,7 @@ function progressmonitor() {
 		PRGMON_LCD5="PGBAR:0"
 	fi
 
-	if [ "${PRGMON_PRG_COUNT}" != "${PRGMON_PRG_COUNT_OLD}" ] && ([ $(($(date +%s) - ${PRGMON_LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]); then
+	if ([ "${PRGMON_PRG_COUNT}" != "${PRGMON_PRG_COUNT_OLD}" ] || [ "${PRGMON_PRG_COUNT}" == "0" ]) && ([ $(($(date +%s) - ${PRGMON_LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]); then
 
 		# calculte remaining time
 		if [ "${PRGMON_PRG_COUNT}" -gt "0" ]; then
@@ -734,6 +736,10 @@ function sync_return_code_decoder() {
 		# no backup, generate database only
 		echo "" # dummy action
 
+	elif [ "${SOURCE_MODE}" = "exif" ]; then
+		# no backup, update exif only
+		echo "" # dummy action
+
 	# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 	#
 	#         lcd_message "Ready" "Insert NEW_SOURCE_TYPE"
@@ -902,6 +908,9 @@ function sync_return_code_decoder() {
 			elif [ "${SOURCE_MODE}" = "database" ]; then
 				# no backup action
 				echo "" # dummy action
+			elif [ "${SOURCE_MODE}" = "exif" ]; then
+				# no backup action
+				echo "" # dummy action
 			else
 				# no defined mode selected
 				lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+3"
@@ -1019,8 +1028,8 @@ function sync_return_code_decoder() {
 
 	# Check internet connection and send
 	# a notification by mail if the conf_NOTIFY option is enabled
-	check=$(wget -q --spider http://google.com/)
-	if ([ $conf_NOTIFY = true ] || [ ! -z "$check" ]) && [ "${SOURCE_MODE}" != "database" ] && [ "${SOURCE_MODE}" != "thumbnails" ]; then
+	ONLINE_CHECK=$(wget -q --spider http://google.com/)
+	if ([ $conf_NOTIFY = true ] || [ ! -z "$ONLINE_CHECK" ]) && [ ! "database thumbnails exif " =~ " ${SOURCE_MODE} " ]; then
 
 		if [ ${SYNC_ERROR_LAST} = true  ]; then
 			SUBJ_MSG="$(l 'box_backup_mail_error')"
@@ -1047,13 +1056,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 ########################
 
 	DB="${TARGET_PATH}/${const_IMAGE_DATABASE_FILENAME}"
-	if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "database" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
-
-		if [ -f "${DB}" ]; then
-			DATABASE_IS_NEW=false
-		else
-			DATABASE_IS_NEW=true
-		fi
+	if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [[ " thumbnails database exif " =~ " ${SOURCE_MODE} " ]]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 
 		# prepare database
 		db_setup
@@ -1062,7 +1065,8 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		LCD1="$(l "box_backup_cleaning_database")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
 
-		DB_STR=$(sudo sqlite3 "${DB}" "select ID, Directory || '/' || File_Name from EXIF_DATA"  | sed 's/\ /##\*\*##/g')
+		# select directory and filename as DirFile and replace spaces by placeholder
+		DB_STR=$(sudo sqlite3 "${DB}" "select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA" | sed 's/\ /##\*\*##/g')
 		IFS=$'\n' read -rd '' -a DB_ARRAY <<<"${DB_STR}"
 		unset IFS
 
@@ -1073,7 +1077,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
 		for ((i = 0; i < ${#DB_ARRAY[@]}; i++)); do
-			IMAGE_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | sed 's/##\*\*##/\ /g' | cut -d'|' -f2)"
+			IMAGE_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
 
 			if [ ! -f "${IMAGE_FILENAME}" ]; then
 				ID="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f1)"
@@ -1103,7 +1107,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		START_TIME=$(date +%s)
 		LAST_MESSAGE_TIME=$START_TIME
 
-		LCD1="$(l "box_backup_generating_database_finding_images1")" # header1
+		LCD1="$(l "box_backup_generating_database")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
 
 		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
@@ -1120,7 +1124,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			DIRECTORY_MARKED="0-0-0-0${Directory}"
 			Directory=${DIRECTORY_MARKED//${TARGET_PATH_MARKED}}
 
-			if [ $DATABASE_IS_NEW = true ] || [[ ! $(sqlite3 "${DB}" "select ID from EXIF_DATA where File_Name=\"${File_Name}\" and Directory=\"${Directory}\"") ]]; then
+			if [[ ! $(sqlite3 "${DB}" "select ID from EXIF_DATA where File_Name=\"${File_Name}\" and Directory=\"${Directory}\"") ]]; then
 				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
 			fi
 
@@ -1134,7 +1138,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 #######################
 
 	if ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
-		# generate thumbnails only after backup to local drive (usb or internal)
+		# generate thumbnails on local drive (usb or internal)
 
 		# prepare database
 		db_setup
@@ -1195,7 +1199,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		START_TIME=$(date +%s)
 		LAST_MESSAGE_TIME=$START_TIME
 
-		LCD1="$(l "box_backup_generating_thumbnails_finding_images1")" # header1
+		LCD1="$(l "box_backup_generating_thumbnails")" # header1
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
 
 		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
@@ -1203,10 +1207,12 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		for ((i = 0; i < ${#IMAGES_ARRAY[@]}; i++)); do
 			#replace substitute of space by space
 			SOURCE_IMAGES_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
-			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME##*.}"
-			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME_EXTENSION,,}"
 
-			log_message "Generating thumbnail for ${SOURCE_IMAGES_FILENAME}" 3
+			#extract extension from filename
+			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME##*.}"
+
+			#change extension to lowercase
+			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME_EXTENSION,,}"
 
 			TIMS_FOLDER="$(dirname "${SOURCE_IMAGES_FILENAME}")/tims"
 			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGES_FILENAME}").JPG"
@@ -1262,6 +1268,50 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			fi
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
+
+		done
+
+	fi
+
+###############
+# EXIF UPDATE #
+###############
+
+	if ([ "${conf_BACKUP_UPDATE_EXIF}" = "true" ] || [ "${SOURCE_MODE}" = "exif" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+		# update exif-information in original files on local drive (usb or internal)
+
+		# prepare database
+		db_setup
+
+		lcd_message "$(l "box_backup_updating_exif")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "" ""
+
+
+		# select directory and filename as DirFile and replace spaces by placeholder
+		DB_STR=$(sudo sqlite3 "${DB}" "select ID, Directory || '/' || File_Name as DirFile, LbbRating from EXIF_DATA where LbbRating != Rating or Rating is null" | sed 's/\ /##\*\*##/g')
+		IFS=$'\n' read -rd '' -a DB_ARRAY <<<"${DB_STR}"
+		unset IFS
+
+		#prepare loop to create thumbnails
+		DB_COUNT=${#DB_ARRAY[@]}
+
+		START_TIME=$(date +%s)
+		LAST_MESSAGE_TIME=$START_TIME
+
+		LCD1="$(l "box_backup_updating_exif")" # header1
+		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
+
+		progressmonitor "${START_TIME}" "${DB_COUNT}" "0" "${LCD1}" "${LCD2}" ""
+
+		for ((i = 0; i < ${#DB_ARRAY[@]}; i++)); do
+			#replace substitute of space by space
+			MEDIA_ID="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f1)"
+			MEDIA_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
+			MEDIA_LBB_RATING="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f3)"
+
+			sudo exiftool -overwrite_original -P -Rating="${MEDIA_LBB_RATING}" "${MEDIA_FILENAME}"
+			sudo sqlite3 "${DB}" "update EXIF_DATA set Rating=${MEDIA_LBB_RATING} where ID=${MEDIA_ID};"
+
+			progressmonitor "${START_TIME}" "${DB_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 
 		done
 

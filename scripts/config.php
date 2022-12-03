@@ -104,6 +104,7 @@ function write_config()
 	$conf_LOG_SYNC						= isset($conf_LOG_SYNC)?"true":"false";
 	$conf_POPUP_MESSAGES				= isset($conf_POPUP_MESSAGES)?"true":"false";
 	$conf_BACKUP_GENERATE_THUMBNAILS	= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
+	$conf_BACKUP_UPDATE_EXIF		= isset($conf_BACKUP_UPDATE_EXIF)?"true":"false";
 	$conf_VIEW_CONVERT_HEIC				= isset($conf_VIEW_CONVERT_HEIC)?"true":"false";
 	$conf_VIEW_WRITE_RATING_EXIF		= isset($conf_VIEW_WRITE_RATING_EXIF)?"true":"false";
 
@@ -157,6 +158,7 @@ conf_LOGLEVEL=$conf_LOGLEVEL
 conf_LOG_SYNC=$conf_LOG_SYNC
 conf_POWER_OFF_IDLE_TIME=$conf_POWER_OFF_IDLE_TIME
 conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
+conf_BACKUP_UPDATE_EXIF=$conf_BACKUP_UPDATE_EXIF
 conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
 conf_VIEW_WRITE_RATING_EXIF=$conf_VIEW_WRITE_RATING_EXIF
 conf_SMTP_SERVER="$conf_SMTP_SERVER"
@@ -429,6 +431,10 @@ function upload_settings() {
 				<h3><?php echo L::config_imageviewer_write_rating_exif_header; ?></h3>
 					<label for="conf_VIEW_WRITE_RATING_EXIF"><?php echo L::config_imageviewer_write_rating_exif_label; ?></label><br>
 					<input type="checkbox" id="conf_VIEW_WRITE_RATING_EXIF" name="conf_VIEW_WRITE_RATING_EXIF" <?php echo $config['conf_VIEW_WRITE_RATING_EXIF']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_backup_update_exif_header; ?></h3>
+					<label for="conf_BACKUP_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br>
+					<input type="checkbox" id="conf_BACKUP_UPDATE_EXIF" name="conf_BACKUP_UPDATE_EXIF" <?php echo $config['conf_BACKUP_UPDATE_EXIF']=="1"?"checked":""; ?>>
 
 			</details>
 		</div>

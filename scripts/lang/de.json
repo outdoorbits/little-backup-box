@@ -38,7 +38,9 @@
     "thumbnails_header": "Vorschaubilder erzeugen und in Datenbank einlesen",
     "database_header": "Datenbank synchronisieren und bereinigen",
     "thumbnails_button": "Vorschaubilder",
-    "database_button": "Datenbank"
+    "exif_header": "EXIF-Daten (Bewertungen) in die Original-Dateien schreiben",
+    "database_button": "Datenbank",
+    "exif_button": "EXIF"
   },
   "sysinfo": {
     "sysinfo": "Systeminformationen",
@@ -166,7 +168,9 @@
     "wifi_country_header": "WLAN-Land",
     "backup": {
       "generate_thumbnails_header": "Vorschaubilder",
-      "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)"
+      "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)",
+      "update_exif_header": "EXIF-Daten von Mediendateien beim Import automatisch anpassen",
+      "update_exif_label": "Neue Medien ohne eigene Bewertung erhalten die Standardbewertung. Diese wird - wenn möglich - in die Originaldatei geschrieben."
     },
     "disp_black_on_power_off_header": "Display beim Herunterfahren ausschalten",
     "disp_black_on_power_off_label": "Soll das Display beim Herunterfahren ausgeschaltet werden?",
@@ -178,8 +182,8 @@
       "section": "Bildbetrachter View",
       "convert_heic_header": "heic-Bilder in jpeg konvertieren",
       "convert_heic_label": "Von Bildern im Format heic (heif) jpeg-Bilder erstellen",
-      "write_rating_exif_label": "Bewertungen werden in die Original-Dateien eingetragen und können in der Weiterbearbeitung genutzt werden.",
-      "write_rating_exif_header": "Bewertungen in Originaldateien speichern?"
+      "write_rating_exif_label": "Bewertungen werden sofort in die Original-Dateien eingetragen und können in der Weiterbearbeitung genutzt werden. Alternativ können diese auch später aus der Datenbank auf die Dateien übertragen werden (Backup-Seite).",
+      "write_rating_exif_header": "Bewertungen sofort in Originaldateien schreiben"
     }
   },
   "tools": {
@@ -288,7 +292,11 @@
       "mode_database": "Datenbank",
       "cleaning_database": "Bereinige Datenbank",
       "counting_images": "Zähle Bilder.",
-      "unknown": "unbekannte Zahl (Fehler)"
+      "unknown": "unbekannte Zahl (Fehler)",
+      "generating_thumbnails": "Gen. Vorschaubilder",
+      "updating_exif": "EXIF aktualisieren",
+      "generating_database": "Synchr. Datenbank",
+      "mode_exif": "EXIF"
     },
     "cronip": {
       "offline": "offline",

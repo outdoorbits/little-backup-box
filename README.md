@@ -7,6 +7,7 @@ Software that turns a single-board computer into a versatile and pocketable back
 
 <h2>NEWS</h2>
 <ul>
+	<li>2022/12/03: Rating function supports writing of EXIF-data into media-files. This allows to use the ratings in futher processing (e.g. in <a href="https://www.darktable.org/">darktable</a>).</li>
 	<li>2022/11/19: Image-viewer &quot;View&quot; now can handle videos and audios! <b>IMPORTANT: ALL THUMBNAILS HAVE TO BE CREATED AGAIN AFTER THIS UPDATE! PLEASE DELETE ALL TIMS-FOLDERS ON YOUR STORAGE.</b></li>
 	<li>2022/11/14: Image-viewer &quot;View&quot; got a rating function. Images having one star only can be deleted.</li>
 	<li>2022/11/08: Image-viewer mejiro is replaced by a integrated solution offering much faster options to find images.</li>

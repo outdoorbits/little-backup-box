@@ -38,7 +38,9 @@
     "thumbnails_header": "Genere miniaturas e impórtelas a la base de datos",
     "database_header": "Synchroniser et nettoyer la base de données",
     "thumbnails_button": "Vignettes",
-    "database_button": "Base de données"
+    "exif_header": "Écrire des données EXIF ​​​​(notes) dans les fichiers d'origine",
+    "database_button": "Base de données",
+    "exif_button": "EXIF"
   },
   "sysinfo": {
     "sysinfo": "Information système",
@@ -166,7 +168,9 @@
     "wifi_country_header": "Pays Wi-Fi",
     "backup": {
       "generate_thumbnails_header": "Vignettes",
-      "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)"
+      "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)",
+      "update_exif_header": "Ajustez automatiquement les données EXIF ​​​​des fichiers multimédias lors de l'importation",
+      "update_exif_label": "Les nouveaux médias sans leur propre classement reçoivent le classement standard. Si possible, ceci est écrit dans le fichier d'origine."
     },
     "disp_black_on_power_off_header": "Éteignez l'écran lors de l'arrêt",
     "disp_black_on_power_off_label": "Voulez-vous que l'écran s'éteigne à l'arrêt ?",
@@ -178,8 +182,8 @@
       "section": "Visionneuse d'images View",
       "convert_heic_header": "Convertir des images heic en jpeg",
       "convert_heic_label": "Créer des images jpeg à partir d'images au format heic (heif)",
-      "write_rating_exif_label": "Les notations sont entrées dans les fichiers originaux et peuvent être utilisées dans un traitement ultérieur.",
-      "write_rating_exif_header": "Enregistrer les notes dans les fichiers d'origine ?"
+      "write_rating_exif_label": "Les notations sont immédiatement saisies dans les fichiers d'origine et peuvent être utilisées dans un traitement ultérieur. Alternativement, ceux-ci peuvent également être transférés ultérieurement de la base de données vers les fichiers (page de sauvegarde).",
+      "write_rating_exif_header": "Ecrire immédiatement les évaluations dans les fichiers d'origine"
     }
   },
   "tools": {
@@ -288,7 +292,11 @@
       "mode_database": "Base de données",
       "cleaning_database": "Base de données de nettoyage",
       "counting_images": "Compter les images.",
-      "unknown": "numéro inconnu (erreur)"
+      "unknown": "numéro inconnu (erreur)",
+      "generating_thumbnails": "Gén. de vignettes",
+      "updating_exif": "Mise à jour EXIF",
+      "generating_database": "Synchroniser la base de données",
+      "mode_exif": "EXIF"
     },
     "cronip": {
       "offline": "hors ligne",

@@ -527,8 +527,7 @@
 
 							$i	+= 1;
 
-							$IMAGE_DATE	= date_create($IMAGE['Create_Date']);
-							$IMAGE_DATE	= date_format($IMAGE_DATE,L::view_date_format);
+							$IMAGE_DATE	= date_format(date_create($IMAGE['Create_Date']),L::view_date_format);
 
 							if ($i % $constants['const_VIEW_GRID_COLUMNS'] == 1) {
 // 								wrap div arround every line

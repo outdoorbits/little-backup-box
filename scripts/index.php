@@ -78,6 +78,7 @@
 		<div class="card" style="margin-top: 3em;">
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_view_database; ?></summary>
+
 				<div class='backupsection'>
 					<h3><?php echo L::main_thumbnails_header; ?></h3>
 					<button name="backup_thumbnails_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
@@ -89,6 +90,13 @@
 					<button name="backup_database_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
 					<button name="backup_database_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
 				</div>
+
+				<div class='backupsection'>
+					<h3><?php echo L::main_exif_header; ?></h3>
+					<button name="backup_exif_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
+					<button name="backup_exif_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+				</div>
+
 			</details>
 		</div>
 	</form>
@@ -176,6 +184,7 @@
 		exec("sudo ./backup.sh thumbnails internal > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
+
 	if (isset($_POST['backup_database_usb'])) {
 		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh database usb > /dev/null 2>&1 & echo $!");
@@ -185,6 +194,17 @@
 		exec('sudo pkill -f "backup*"');
 		exec("sudo ./backup.sh database internal > /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+	}
+
+	if (isset($_POST['backup_exif_usb'])) {
+		exec('sudo pkill -f "backup*"');
+		exec("sudo ./backup.sh exif usb > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+	}
+	if (isset($_POST['backup_exif_internal'])) {
+		exec('sudo pkill -f "backup*"');
+		exec("sudo ./backup.sh exif internal > /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 
 	if (isset($_POST['stopbackup'])) {

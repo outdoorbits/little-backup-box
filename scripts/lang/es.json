@@ -38,7 +38,9 @@
     "thumbnails_header": "Genere miniaturas e impórtelas a la base de datos",
     "database_header": "Sincronizar y limpiar base de datos",
     "thumbnails_button": "Miniaturas",
-    "database_button": "Base de datos"
+    "exif_header": "Escribe datos EXIF ​​​​(calificaciones) en los archivos originales",
+    "database_button": "Base de datos",
+    "exif_button": "EXIF"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
@@ -166,7 +168,9 @@
     "wifi_country_header": "País WLAN",
     "backup": {
       "generate_thumbnails_header": "Miniaturas",
-      "generate_thumbnails_label": "¿Crear miniaturas para View después de la copia de seguridad? (Solo para almacenamiento local)"
+      "generate_thumbnails_label": "¿Crear miniaturas para View después de la copia de seguridad? (Solo para almacenamiento local)",
+      "update_exif_header": "Ajuste automáticamente los datos EXIF ​​​​de los archivos multimedia al importar",
+      "update_exif_label": "Los nuevos medios sin calificación propia reciben la calificación estándar. Si es posible, esto se escribe en el archivo original."
     },
     "disp_black_on_power_off_header": "Apague la pantalla al apagar",
     "disp_black_on_power_off_label": "¿Desea que la pantalla se apague al apagar?",
@@ -178,8 +182,8 @@
       "section": "Visor de imágenes View",
       "convert_heic_header": "Convertir imágenes heic a jpeg",
       "convert_heic_label": "Cree imágenes jpeg a partir de imágenes en formato heic (heif)",
-      "write_rating_exif_label": "Las calificaciones se ingresan en los archivos originales y se pueden usar en un procesamiento posterior.",
-      "write_rating_exif_header": "¿Guardar calificaciones en archivos originales?"
+      "write_rating_exif_label": "Las calificaciones se ingresan inmediatamente en los archivos originales y se pueden usar en un procesamiento posterior. Alternativamente, estos también se pueden transferir más tarde desde la base de datos a los archivos (página de copia de seguridad).",
+      "write_rating_exif_header": "Escribir calificaciones inmediatamente en los archivos originales"
     }
   },
   "tools": {
@@ -288,7 +292,11 @@
       "mode_database": "Base de datos",
       "cleaning_database": "Base de datos de limpieza",
       "counting_images": "Contando imágenes.",
-      "unknown": "número desconocido (error)"
+      "unknown": "número desconocido (error)",
+      "generating_thumbnails": "Gen. de miniaturas",
+      "updating_exif": "Actualización de EXIF",
+      "generating_database": "Sincronizar base de datos",
+      "mode_exif": "EXIF"
     },
     "cronip": {
       "offline": "desconectado",
