@@ -213,10 +213,6 @@ function calculate_files_to_sync() {
 function progressmonitor() {
 	# usage: progressmonitor "${START_TIME}" "${PRGMON_ABS_COUNT}" "${PRGMON_PRG_COUNT}" "${LCD1}" "${LCD2}" "${SPEED}"
 
-	if [ ! -z "${PRGMON_PRG_COUNT}" ]; then
-		PRGMON_PRG_COUNT_OLD="${PRGMON_PRG_COUNT}"
-	fi
-
 	PRGMON_START_TIME="${1}"
 	PRGMON_ABS_COUNT="${2}"
 	PRGMON_PRG_COUNT="${3}"
@@ -248,7 +244,7 @@ function progressmonitor() {
 		PRGMON_LCD5="PGBAR:0"
 	fi
 
-	if ([ "${PRGMON_PRG_COUNT}" != "${PRGMON_PRG_COUNT_OLD}" ] || [ "${PRGMON_PRG_COUNT}" == "0" ]) && ([ $(($(date +%s) - ${PRGMON_LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]); then
+	if ([ "${PRGMON_PRG_COUNT}" != "${PRGMON_PRG_COUNT_OLD}" ] || [ "${PRGMON_LCD1}" != "${PRGMON_LCD1_OLD}" ]) && ([ $(($(date +%s) - ${PRGMON_LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${PRGMON_PRG_COUNT}" == "0" ] || [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]); then
 
 		# calculte remaining time
 		if [ "${PRGMON_PRG_COUNT}" -gt "0" ]; then
@@ -269,6 +265,9 @@ function progressmonitor() {
 
 		PRGMON_LAST_MESSAGE_TIME=$(date +%s)
 	fi
+
+	PRGMON_PRG_COUNT_OLD="${PRGMON_PRG_COUNT}"
+	PRGMON_LCD1_OLD="${PRGMON_LCD1}"
 }
 
 function syncprogress() {
