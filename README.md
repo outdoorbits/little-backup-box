@@ -3,7 +3,9 @@
 <h1>Little Backup Box</h1>
 
 <h2>About</h2>
-Software that turns a single-board computer into a versatile and pocketable backup appliance
+This software turns a single-board computer into a versatile, pocket-sized backup solution.<br>
+Especially for digital photography, this is the solution for backing up images and media files on mass storage devices when traveling or at events.<br>
+Media content can be viewed and rated for the subsequent process at home.
 
 <h2>NEWS</h2>
 <ul>
