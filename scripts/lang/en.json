@@ -300,7 +300,7 @@
     "save_settings_upload_header": "Upload",
     "save_settings_upload_label": "Select the settings-file",
     "save_settings_upload_button": "Upload settings",
-    "backup_target_basedir_cloud_header": "Base folder on the cloud server (destination)",
+    "backup_target_basedir_cloud_header": "Base folder on cloud servers (destination)",
     "backup_target_basedir_cloud_label": "The backup on the cloud server is carried out under this directory.",
     "rsync_module_header": "rsync module",
     "rsync_module_label1": "Module name on the rsync server, e.g. 'little-backup-box' (default:",
