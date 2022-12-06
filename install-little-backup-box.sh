@@ -40,6 +40,10 @@ if [ "${INTERNET_DISCONNECTED}" != "0" ]; then
 	exit 0
 fi
 
+# define users
+USER_WWW_DATA="www-data"
+USER_SAMBA="lbb"
+
 # change into actual user-dir
 cd
 
@@ -185,10 +189,6 @@ fi
 #Install Rclone
 curl https://rclone.org/install.sh | sudo bash
 
-# define users
-USER_WWW_DATA="www-data"
-USER_SAMBA="lbb"
-
 # create linux-user for samba
 sudo useradd --create-home -s /bin/bash ${USER_SAMBA}
 sudo usermod -aG ${USER_WWW_DATA} ${USER_SAMBA}
@@ -229,14 +229,14 @@ sudo sh -c "echo 'media_dir=${const_INTERNAL_BACKUP_DIR}' >> /etc/minidlna.conf"
 sudo service minidlna start
 
 # add user www-data to sudoers
-sudo usermod -aG sudo www-data
+sudo usermod -aG sudo ${USER_WWW_DATA}
 yes | sudo cp -f "${INSTALLER_DIR}/etc_sudoers_d_www-data" "/etc/sudoers.d/www-data"
 sudo chmod 0440 "/etc/sudoers.d/www-data"
 
 # change owner and make scripts executable
 sudo chmod 777 ${INSTALLER_DIR}/*.sh
 
-sudo chown www-data:www-data "${const_WEB_ROOT_LBB}" -R
+sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R
 sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 
 # Display
