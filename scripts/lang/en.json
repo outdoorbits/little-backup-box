@@ -171,7 +171,7 @@
     "thumbnails_header": "Generate thumbnails and import them into the database",
     "database_header": "Synchronize and clean database",
     "thumbnails_button": "Thumbnails",
-    "exif_header": "Write EXIF data (ratings) to the original files",
+    "exif_header": "Write EXIF data (ratings) into the original files",
     "database_button": "Database",
     "exif_button": "EXIF"
   },
@@ -327,7 +327,7 @@
       "convert_heic_header": "Convert heic images to jpeg",
       "convert_heic_label": "Create jpeg images from heic (heif) format images",
       "write_rating_exif_label": "Ratings are immediately entered into the original files and can be used in further processing. Alternatively, these can also be transferred later from the database to the files (backup page).",
-      "write_rating_exif_header": "Write ratings immediately in the original files"
+      "write_rating_exif_header": "Write ratings immediately into the original files"
     }
   },
   "tools": {
