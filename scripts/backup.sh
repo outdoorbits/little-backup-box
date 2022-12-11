@@ -1223,7 +1223,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_HEIC} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
 				# file-type: heic/heif
 				heif-convert "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
-				exiftool  -overwrite_original -P -TagsFromFile "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
+				exiftool  -overwrite_original -TagsFromFile "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
 				convert "${SOURCE_IMAGES_FILENAME}.JPG" -resize 800\> "${TIMS_FILE}"
 
 				if [ ${conf_VIEW_CONVERT_HEIC} = true ]; then
@@ -1307,7 +1307,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			MEDIA_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
 			MEDIA_LBB_RATING="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f3)"
 
-			sudo exiftool -overwrite_original -P -Rating="${MEDIA_LBB_RATING}" "${MEDIA_FILENAME}"
+			sudo exiftool -overwrite_original -Rating="${MEDIA_LBB_RATING}" "${MEDIA_FILENAME}"
 			sudo sqlite3 "${DB}" "update EXIF_DATA set Rating=${MEDIA_LBB_RATING} where ID=${MEDIA_ID};"
 
 			progressmonitor "${START_TIME}" "${DB_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
