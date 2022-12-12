@@ -173,6 +173,9 @@
 		}
 	}
 
+	# global variables
+	$magnifying_glass = false;
+
 	# setup
 	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5,$constants['const_VIEW_GRID_COLUMNS']*10,$constants['const_VIEW_GRID_COLUMNS']*20,$constants['const_VIEW_GRID_COLUMNS']*50);
 
@@ -412,6 +415,8 @@
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
+	<link rel="stylesheet" href="css/mglass.css">
+	<script src="js/mglass.js"></script>
 </head>
 
 <body <?php echo $background; ?>>
@@ -551,6 +556,7 @@
 
 				if ($imagecount >= 1) {
 					if ($view_mode == "grid") {
+// GRID
 						?>
 						<?php
 						$i	= 0;
@@ -561,18 +567,13 @@
 
 							$IMAGE_DATE	= date_format(date_create($IMAGE['Create_Date']),L::view_date_format);
 
-							if ($i % $constants['const_VIEW_GRID_COLUMNS'] == 1) {
-// 								wrap div arround every line
-								echo "<div style=\"display: inline-block; padding: 2; width: 100%;\">";
-							}
-
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
 							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
 							?>
 
 
-								<div style="display: inline-block; padding: 0; width: <?php echo 100/$constants['const_VIEW_GRID_COLUMNS']-1; ?>%; vertical-align: top;">
+								<div style="width: <?php echo 100/$constants['const_VIEW_GRID_COLUMNS']-1; ?>%;" class="floating">
 									<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
 										<?php
 											if (($order_by == 'Create_Date') and ($LAST_DATE !== $IMAGE_DATE)) {
@@ -598,17 +599,10 @@
 
 								</div>
 							<?php
-
-							if ($i % $constants['const_VIEW_GRID_COLUMNS'] == 0) {
-								echo "</div>";
-							}
 						}
-						if ($i % $constants['const_VIEW_GRID_COLUMNS'] !== 0) {
-								echo "</div>";
-						}
-
 					}
 					elseif ($view_mode == "single") {
+// SINGLE
 						while ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
@@ -623,11 +617,32 @@
 
 									if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " " . $constants['const_FILE_EXTENSIONS_LIST_HEIC'] . " " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
 // 										image-file
+
+										if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+											$FILENAME_DISPLAY	= $IMAGE_FILENAME;
+										} else {
+											$FILENAME_DISPLAY	= $IMAGE_FILENAME_TIMS;
+										}
 								?>
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
-											<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
-												<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
-											</a>
+											<?php
+												if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+// 													RAW
+													?>
+														<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
+													<?php
+												} else {
+// 													not RAW
+													$magnifying_glass	= true;
+													?>
+														<div class="img-magnifier-container">
+															<img id="fullsizeimage" onClick="magnify('fullsizeimage', 3)" style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
+														</div>
+													<?php
+												}
+
+											?>
+
 										</div>
 
 
@@ -640,12 +655,24 @@
 											}
 										?>
 
-										<div padding: 5px;font-size:0.8em;">
-											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
+										<div style="width=100%;padding: 30px;font-size:0.8em;">
+											<div style="float:left;width: 33%;text-align: left;padding: 0;padding-top: 0.5em;">
+												<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
+											</div>
 
-											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
-												<?php echo L::view_images_download; ?>
-											</a>
+											<div style="float:left;width: 34%;text-align: center;padding: 0;">
+												<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+													<?php echo L::view_images_download; ?>
+												</a>
+											</div>
+
+											<div style="float:left;width: 33%;text-align: right;padding: 0;">
+												<?php
+													if ($magnifying_glass) {
+														echo L::view_images_magnifying_glass;
+													}
+												?>
+											</div>
 										</div>
 
 								<?php
@@ -745,7 +772,9 @@
 		<?php echo L::view_footer_footer; ?>
 	</div>
 
-	<?php include "sub-footer.php"; ?>
+	<?php
+		include "sub-footer.php";
+	?>
 
 </body>
 

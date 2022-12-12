@@ -404,7 +404,8 @@
       "back_to_grid": "Back to overview",
       "empty": "The selection contains no images.",
       "preview_low_resolution_image": "Very low resolution thumbnail!",
-      "preview_low_resolution_video": "Low resolution preview video!"
+      "preview_low_resolution_video": "Low resolution preview video!",
+      "magnifying_glass": "Click on image for magnifying glass"
     },
     "footer": {
       "footer": "Warning, only images that have thumbnails are displayed here. Generate them either automatically (Settings, Backup) or via the Backup page.<br>\nSee the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/05a.-view-image-viewer\">Wiki</a> for more information."
