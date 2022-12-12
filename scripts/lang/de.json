@@ -405,7 +405,7 @@
       "empty": "Die Auswahl enthält keine Bilder.",
       "preview_low_resolution_image": "Vorschaubild mit sehr geringer Auflösung!",
       "preview_low_resolution_video": "Vorschauvideo mit geringer Auflösung!",
-      "magnifying_glass": "Auf das Bild klicken für Lupe"
+      "magnifying_glass": "Auf das Bild klicken für die Lupe"
     },
     "footer": {
       "footer": "Achtung, hier werden nur Bilder angezeigt, von denen Vorschaubilder bestehen. Erzeugen Sie diese entweder automatisch (Einstellungen, Backup) oder über die Backup-Seite.<br>\nWeitere Informationen finden Sie im <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/05a.-view-image-viewer\">Wiki</a>."

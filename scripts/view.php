@@ -636,7 +636,7 @@
 													$magnifying_glass	= true;
 													?>
 														<div class="img-magnifier-container">
-															<img id="fullsizeimage" onClick="magnify('fullsizeimage', 3)" style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
+															<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
 														</div>
 													<?php
 												}

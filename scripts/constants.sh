@@ -21,3 +21,4 @@ const_FILE_EXTENSIONS_LIST_RAW="3fr arw dcr dng cr2 cr3 crw fff gpr j6i k25 kc2 
 const_FILE_EXTENSIONS_LIST_VIDEO="avi lrv mp4"
 const_FILE_EXTENSIONS_LIST_AUDIO="mp3 wav"
 const_VIEW_GRID_COLUMNS=3
+const_VIEW_MAGNIFYING_GLASS_ZOOM=10
