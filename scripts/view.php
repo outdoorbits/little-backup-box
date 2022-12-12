@@ -387,7 +387,6 @@
 	$GET_PARAMETER	.= "&order_dir=$order_dir";
 	$GET_PARAMETER	.= "&offset=$offset";
 	if ($view_mode=="single") {$GET_PARAMETER	.= "&offsetadd=" . $offsetadd;}
-	if ($view_mode != "") {$GET_PARAMETER	.= "&view_mode=$view_mode";}
 	$GET_PARAMETER	.= "&filter_images_per_page=$filter_images_per_page";
 	if ($filter_directory != "") {$GET_PARAMETER	.= "&filter_directory=" . str_replace("=","+",base64_encode($filter_directory));}
 	if ($filter_date != "") {$GET_PARAMETER	.= "&filter_date=" . $filter_date;}
@@ -402,7 +401,7 @@
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_by\" value=\"" . $order_by . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_dir\" value=\"" . $order_dir . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"offset\" value=\"" . $offset . "\">";
-	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"offsetadd\" value=\"" . $offsetadd . "\">";
+	if ($view_mode=="single") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"offsetadd\" value=\"" . $offsetadd . "\">";}
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_images_per_page\" value=\"" . $filter_images_per_page . "\">";
 	if ($filter_directory != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_directory\" value=\"" . str_replace("=","+",base64_encode($filter_directory)) . "\">";}
 	if ($filter_date != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_date\" value=\"" . $filter_date . "\">";}
