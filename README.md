@@ -7,6 +7,23 @@ This software turns a single-board computer into a versatile, pocket-sized backu
 Especially for digital photography, this is the solution for backing up images and media files on mass storage devices when traveling or at events.<br>
 Media content can be viewed and rated for the subsequent process.
 
+<table>
+	<tr>
+		<td>
+			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_us.png" width="50px" align="center">
+		</td>
+		<td>
+			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_france.png" width="50px" align="center">
+		</td>
+		<td>
+			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_spain.png" width="50px" align="center">
+		</td>
+		<td>
+			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_germany.png" width="50px" align="center">
+		</td>
+	</tr>
+</table>
+
 <h2>NEWS</h2>
 <ul>
 	<li>2022/12/12: View got magnifying glass-function. This allows quick ratings with improved evidence.</li>
@@ -31,23 +48,6 @@ Media content can be viewed and rated for the subsequent process.
 	<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">menue based update-function</a>.</li>
 	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
 </ul>
-
-<table width="100%">
-	<tr>
-		<td>
-			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_us.png" align="center">
-		</td>
-		<td>
-			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_france.png" align="center">
-		</td>
-		<td>
-			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_spain.png" align="center">
-		</td>
-		<td>
-			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_germany.png" align="center">
-		</td>
-	</tr>
-</table>
 
 <figure>
 	<table align="right">
