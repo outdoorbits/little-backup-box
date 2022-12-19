@@ -23,7 +23,7 @@ Media content can be viewed and rated for the subsequent process.<br>
 		</td>
 	</tr>
 </table>
-These languages are already available. Do you want to maintain or create a new translation?<br>
+These languages are already available. Do you want to maintain or create a translation?<br>
 
 
 <h2>NEWS</h2>
