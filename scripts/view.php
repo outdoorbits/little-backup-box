@@ -626,12 +626,12 @@
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 											<?php
 												if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
-// 													RAW
+// 													RAW-image
 													?>
 														<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
 													<?php
 												} else {
-// 													not RAW
+// 													not RAW-image
 													$magnifying_glass	= true;
 													?>
 														<div class="img-magnifier-container">

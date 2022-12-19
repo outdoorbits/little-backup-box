@@ -32,12 +32,36 @@ Media content can be viewed and rated for the subsequent process.
 	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
 </ul>
 
+<table width="100%">
+	<tr>
+		<td>
+			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_us.png" align="center">
+		</td>
+		<td>
+			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_france.png" align="center">
+		</td>
+		<td>
+			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_spain.png" align="center">
+		</td>
+		<td>
+			<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_germany.png" align="center">
+		</td>
+	</tr>
+</table>
+
 <figure>
-	<table align="right"><tr><td>
-		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
-	</td></tr><tr><td>
-		<figcaption>The display while a backup<br>from camera to usb and<br>from usb to rsync-server.</figcaption>
-	</td></tr></table>
+	<table align="right">
+		<tr>
+			<td>
+				<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<figcaption>The display while a backup<br>from camera to usb and<br>from usb to rsync-server.</figcaption>
+			</td>
+		</tr>
+	</table>
 </figure>
 
 <h3>Some major developement-steps:</h3>
