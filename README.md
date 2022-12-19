@@ -5,8 +5,8 @@
 <h2>About</h2>
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br>
 Especially for digital photography, this is the solution for backing up images and media files on mass storage devices when traveling or at events.<br>
-Media content can be viewed and rated for the subsequent process.
-
+Media content can be viewed and rated for the subsequent process.<br>
+<br>
 <table>
 	<tr>
 		<td>
@@ -23,6 +23,8 @@ Media content can be viewed and rated for the subsequent process.
 		</td>
 	</tr>
 </table>
+These languages are already available. Do you want to maintain or create a new translation?<br>
+
 
 <h2>NEWS</h2>
 <ul>
