@@ -33,6 +33,11 @@
 		// write new config
 		if (isset($_POST['save'])) {
 			write_config();
+
+			if (isset($_POST['conf_MAIL_TEST'])) {
+				shell_exec("${WORKING_DIR}/testmail.sh");
+				echo '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
+			}
 		};
 
 		// Upload settings
@@ -458,6 +463,10 @@ function upload_settings() {
 				<h3><?php echo L::config_mail_recipient_header; ?></h3>
 					<label for="conf_MAIL_TO"><?php echo L::config_mail_recipient_label; ?></label><br>
 					<input type="text" id="conf_MAIL_TO" name="conf_MAIL_TO" size="20" value="<?php echo $config['conf_MAIL_TO']; ?>">
+
+				<h3><?php echo L::config_mail_testmail_header; ?></h3>
+					<label for="conf_MAIL_TEST"><?php echo L::config_mail_testmail_label; ?></label><br>
+					<input type="checkbox" id="conf_MAIL_TEST" name="conf_MAIL_TEST">
 			</details>
 		</div>
 
