@@ -38,6 +38,23 @@ function log_message() {
 			touch "${const_LOGFILE}"
 		fi
 
+		#remove passwords from log
+		for PWD in "${conf_PASSWORD}" "${conf_MAIL_PASSWORD}" "${conf_RSYNC_conf_PASSWORD}"; do
+			ESCAPED_PASSWORD=""
+			for (( i=0; i<${#PWD}; i++ )); do
+				ESCAPE_STRING=""
+
+				if [[ "\$*./[^" =~ "${PWD:$i:1}" ]]; then
+					ESCAPE_STRING="\\"
+				fi
+
+				ESCAPED_PASSWORD="${ESCAPED_PASSWORD}${ESCAPE_STRING}${PWD:$i:1}"
+			done
+
+			MESSAGE=$(echo "${MESSAGE}" | sed -e "s/${ESCAPED_PASSWORD}/PASSWORD/g")
+
+		done
+
 		echo -e "$(date '+%H:%M:%S')\n${MESSAGE}\n" | sudo tee -a "${const_LOGFILE}" > /dev/null 2>&1
 
 	fi
@@ -57,7 +74,7 @@ function log_exec() {
 		if [ ! -z "${MESSAGE}" ]; then
 			MESSAGE="${MESSAGE}\n"
 		fi
-		log_message "${MESSAGE}> ${COMMAND}:\n$(${COMMAND})" "${LEVEL}"
+		log_message "${MESSAGE}> ${COMMAND}:\n$(eval ${COMMAND} 2>&1)" "${LEVEL}"
     fi
 }
 

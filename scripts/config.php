@@ -115,9 +115,9 @@ function write_config()
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
 
-	if ($conf_MAIL_conf_PASSWORD != "") {
-		if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_conf_PASSWORD, $conf_MAIL_conf_PASSWORD)) {
-			$conf_MAIL_conf_PASSWORD	= "";
+	if ($conf_MAIL_PASSWORD != "") {
+		if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
+			$conf_MAIL_PASSWORD	= "";
 		}
 	}
 
@@ -169,7 +169,8 @@ conf_VIEW_WRITE_RATING_EXIF=$conf_VIEW_WRITE_RATING_EXIF
 conf_SMTP_SERVER="$conf_SMTP_SERVER"
 conf_SMTP_PORT="$conf_SMTP_PORT"
 conf_MAIL_USER="$conf_MAIL_USER"
-conf_MAIL_conf_PASSWORD="$conf_MAIL_conf_PASSWORD"
+conf_MAIL_PASSWORD="$conf_MAIL_PASSWORD"
+conf_MAIL_FROM="$conf_MAIL_FROM"
 conf_MAIL_TO="$conf_MAIL_TO"
 conf_RSYNC_SERVER="$conf_RSYNC_SERVER"
 conf_RSYNC_PORT="$conf_RSYNC_PORT"
@@ -457,8 +458,12 @@ function upload_settings() {
 					<input type="text" id="conf_MAIL_USER" name="conf_MAIL_USER" size="20" value="<?php echo $config['conf_MAIL_USER']; ?>">
 
 				<h3><?php echo L::config_mail_password_header; ?></h3>
-					<label for="conf_MAIL_conf_PASSWORD"><?php echo L::config_mail_password_label; ?></label><br>
-					<input type="password" id="conf_MAIL_conf_PASSWORD" name="conf_MAIL_conf_PASSWORD" size="20" value="<?php echo $config['conf_MAIL_conf_PASSWORD']; ?>">
+					<label for="conf_MAIL_PASSWORD"><?php echo L::config_mail_password_label; ?></label><br>
+					<input type="password" id="conf_MAIL_PASSWORD" name="conf_MAIL_PASSWORD" size="20" value="<?php echo $config['conf_MAIL_PASSWORD']; ?>">
+
+				<h3><?php echo L::config_mail_sender_header; ?></h3>
+					<label for="conf_MAIL_FROM"><?php echo L::config_mail_sender_label; ?></label><br>
+					<input type="text" id="conf_MAIL_FROM" name="conf_MAIL_FROM" size="20" value="<?php echo $config['conf_MAIL_FROM']; ?>">
 
 				<h3><?php echo L::config_mail_recipient_header; ?></h3>
 					<label for="conf_MAIL_TO"><?php echo L::config_mail_recipient_label; ?></label><br>

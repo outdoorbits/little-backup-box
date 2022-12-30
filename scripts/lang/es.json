@@ -190,7 +190,9 @@
       "testmail_label": "Después de guardar, se intenta enviar un correo de prueba.",
       "testmail_subject": "Saludos desde LBB",
       "testmail_content": "Felicitaciones, la entrega de correo funciona.",
-      "testmail_sent": "Se envió correo de prueba"
+      "testmail_sent": "Se envió correo de prueba",
+      "sender_header": "Ausente",
+      "sender_label": "Dirección de correo electrónico del remitente"
     }
   },
   "tools": {

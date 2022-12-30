@@ -190,7 +190,9 @@
       "testmail_label": "Nach dem Speichern wird versucht, eine Test-Mail zu versenden.",
       "testmail_subject": "Grüße von der LBB",
       "testmail_content": "Herzlichen Glückwunsch, der Mailversand funktioniert.",
-      "testmail_sent": "Test-Mail wurde abgesetzt"
+      "testmail_sent": "Test-Mail wurde abgesetzt",
+      "sender_header": "Absender",
+      "sender_label": "Mailadresse des Absenders"
     }
   },
   "tools": {

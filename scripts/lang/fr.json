@@ -190,7 +190,9 @@
       "testmail_label": "Après l'enregistrement, une tentative d'envoi d'un e-mail de test est effectuée.",
       "testmail_subject": "Salutations de LBB",
       "testmail_content": "Félicitations, la distribution du courrier fonctionne.",
-      "testmail_sent": "L'e-mail de test a été envoyé"
+      "testmail_sent": "L'e-mail de test a été envoyé",
+      "sender_header": "Expéditeur",
+      "sender_label": "Adresse e-mail de l'expéditeur"
     }
   },
   "tools": {

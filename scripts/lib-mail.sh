@@ -66,11 +66,13 @@ ${TEXT_HTML}
     # a notification if the conf_NOTIFY option is enabled
     check=$(wget -q --spider http://google.com/)
     if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
-        curl --url 'smtps://'$conf_SMTP_SERVER':'$conf_SMTP_PORT --ssl-reqd \
-            --mail-from $conf_MAIL_USER \
-            --mail-rcpt $conf_MAIL_TO \
-            --user $conf_MAIL_USER':'$conf_MAIL_conf_PASSWORD \
-            -T <(echo -e "From: ${conf_MAIL_USER}\nTo: ${conf_MAIL_TO}\nSubject: ${SUBJECT}\n${TEXT}")
+        COMMAND="curl --url 'smtps://$conf_SMTP_SERVER:$conf_SMTP_PORT' --ssl-reqd"
+        COMMAND="${COMMAND} --mail-from '$conf_MAIL_FROM'"
+        COMMAND="${COMMAND} --mail-rcpt '$conf_MAIL_TO'"
+        COMMAND="${COMMAND} --user '$conf_MAIL_USER':'$conf_MAIL_PASSWORD'"
+        COMMAND="${COMMAND} -T <(echo -e \"From: ${conf_MAIL_USER}\nTo: ${conf_MAIL_TO}\nSubject: ${SUBJECT}\n${TEXT}\")"
+
+        log_exec "OUTGOING MAIL" "$COMMAND" 3
     fi
 
     log_message "Mail:\n${SUBJECT}\n${TEXT}"

@@ -334,7 +334,9 @@
       "testmail_label": "After saving, an attempt is made to send a test mail.",
       "testmail_subject": "Greetings from LBB",
       "testmail_content": "Congratulations, the mail delivery works.",
-      "testmail_sent": "Test mail was sent"
+      "testmail_sent": "Test mail was sent",
+      "sender_header": "Sender",
+      "sender_label": "E-mail address of the sender"
     }
   },
   "tools": {
