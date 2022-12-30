@@ -123,7 +123,6 @@
     "save_settings_download_header": "Télécharger",
     "save_settings_upload_header": "Télécharger",
     "save_settings_upload_label": "Sélectionnez le fichier de paramètres",
-    "alert_password_change_after_reboot": "Mot de passe global\nLes modifications prendront effet après le redémarrage",
     "alert_password_characters_not_allowed": "Le mot de passe ne doit pas contenir de guillemets (& quot;) ni de barre oblique inverse (& bsol;)",
     "alert_password_not_identical": "Le mot de passe répété n'est pas identique.",
     "alert_password_too_short": "Le mot de passe doit comporter au moins 5 caractères.",
@@ -193,7 +192,13 @@
       "testmail_sent": "L'e-mail de test a été envoyé",
       "sender_header": "Expéditeur",
       "sender_label": "Adresse e-mail de l'expéditeur"
-    }
+    },
+    "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
+    "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
+    "cloud_rclone_description": "Selon votre service cloud, votre configuration peut expirer. Peut-être que vous devez toujours répéter cette étape avant l'accès au cloud.",
+    "cloud_restart_header": "Mettre à jour l'interface rclone et redémarrer",
+    "cloud_restart_label": "Une connexion internet est obligatoire.",
+    "rclone_gui_restarted": "L'interface utilisateur rclone a été redémarrée."
   },
   "tools": {
     "tools": "Outils",

@@ -123,7 +123,6 @@
     "save_settings_download_header": "Herunterladen",
     "save_settings_upload_header": "Hochladen",
     "save_settings_upload_label": "Wählen Sie die Einstellungsdatei",
-    "alert_password_change_after_reboot": "Globales Passwort\nÄnderungen werden nach dem Neustart wirksam",
     "alert_password_characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&quot;) und Backslash (&bsol;) enthalten.",
     "alert_password_not_identical": "Wiederholtes Passwort ist nicht identisch.",
     "alert_password_too_short": "Das Passwort muss mindestens 5 Zeichen lang sein.",
@@ -193,7 +192,13 @@
       "testmail_sent": "Test-Mail wurde abgesetzt",
       "sender_header": "Absender",
       "sender_label": "Mailadresse des Absenders"
-    }
+    },
+    "alert_password_change_after_reboot_set": "Globales Passwort festgelegt\nÄnderungen werden nach dem Neustart wirksam",
+    "alert_password_change_after_reboot_remove": "Globales Passwort entfernt\nÄnderungen werden nach dem Neustart wirksam",
+    "cloud_rclone_description": "Abhängig von Ihrem Cloud-Dienst kann Ihre Konfiguration ablaufen. Eventuell müssen Sie diesen Schritt immer vor dem Cloud-Zugriff wiederholen.",
+    "cloud_restart_header": "rclone-Oberfläche aktualisieren und neu starten",
+    "cloud_restart_label": "Eine Internet-Verbindung ist zwingend erforderlich.",
+    "rclone_gui_restarted": "Die rclone-Benutzeroberfläche wurde neu gestartet."
   },
   "tools": {
     "tools": "Werkzeug",

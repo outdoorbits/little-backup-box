@@ -5,7 +5,7 @@
 
 <?php
 	$WORKING_DIR=dirname(__FILE__);
-	$config = parse_ini_file("config.cfg", false);
+	$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
 	$config_standard = parse_ini_file("$WORKING_DIR/config-standards.cfg", false);
 	$constants = parse_ini_file("constants.sh", false);
 
@@ -34,9 +34,14 @@
 		if (isset($_POST['save'])) {
 			write_config();
 
-			if (isset($_POST['conf_MAIL_TEST'])) {
-				shell_exec("${WORKING_DIR}/testmail.sh");
+			if (isset($_POST['send_testmail'])) {
+				shell_exec("$WORKING_DIR/testmail.sh");
 				echo '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
+			}
+
+			if (isset($_POST['restart_rclone_gui'])) {
+				exec("sudo $WORKING_DIR/start-rclone-gui.sh update_gui > /dev/null 2>/dev/null &");
+				echo '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
 			}
 		};
 
@@ -46,7 +51,7 @@
 		};
 
 		// read (new) config
-		$config = parse_ini_file("config.cfg", false);
+		$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
 
 		# write wifi country-code from config.cfg
 		if (($WIFI_COUNTRY !== $config["conf_WIFI_COUNTRY"]) and ($config["conf_WIFI_COUNTRY"] !== "")) {
@@ -96,6 +101,8 @@ function write_config()
 {
 	# write config.cfg
 	extract ($_POST);
+
+	global $WORKING_DIR;
 	global $WIFI_COUNTRY;
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
@@ -130,16 +137,16 @@ function write_config()
 	if (isset($conf_PASSWORD_REMOVE)) {
 		$conf_PASSWORD_LINE="conf_PASSWORD=\"\"";
 		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh remove");
-		popup($title . "\n" . L::config_alert_password_change_after_reboot,true);
+		popup($title . "\n" . L::config_alert_password_change_after_reboot_remove,true);
 	} elseif ($conf_PASSWORD_1 != "") {
 		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
 			$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_1\"";
 			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh set \"" . $conf_PASSWORD_1 . "\"");
-			popup($title . "\n" . L::config_alert_password_change_after_reboot,true);
+			popup($title . "\n" . L::config_alert_password_change_after_reboot_set,true);
 		}
 	}
 
-	$CONFIGFILE = "config.cfg";
+	$CONFIGFILE = "$WORKING_DIR/config.cfg";
 	$config_file_handle = fopen($CONFIGFILE, "w");
 
 	$config_file_content = <<<CONFIGDATA
@@ -197,61 +204,66 @@ function upload_settings() {
 		$type = $_FILES["settings_file"]["type"];
 		$name = explode(".", $filename);
 		$accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
+
+		$FILETYPE_ZIP	= false;
 		foreach($accepted_types as $mime_type) {
 			if($mime_type == $type) {
-				$okay = true;
+				$FILETYPE_ZIP = true;
 				break;
 			}
 		}
-		$continue = strtolower($name[1]) == 'zip' ? true : false;
+		$continue = ((strtolower($name[1]) == 'zip') and $FILETYPE_ZIP) ? true : false;
 		if(!$continue) {
-			popup(L::config_alert_settings_upload_not_zip,$config["conf_POPUP_MESSAGES"]);
-		}
-		/* PHP current path */
-		$filenoext = basename ($filename, '.zip');
-		$filenoext = basename ($filenoext, '.ZIP');
+			popup(L::config_alert_settings_upload_not_zip,true);
+		} else {
+			/* PHP current path */
+			$filenoext = basename ($filename, '.zip');
+			$filenoext = basename ($filenoext, '.ZIP');
 
-		$targetdir = $constants["const_WEB_ROOT_LBB"].'/tmp/unzip/';
-		$targetzip = $targetdir . $filename;
-		/* create directory if not exists' */
-		@mkdir($targetdir, 0777);
+			$targetdir = $constants["const_WEB_ROOT_LBB"].'/tmp/unzip/';
+			$targetzip = $targetdir . $filename;
+			/* create directory if not exists' */
+			@mkdir($targetdir, 0777);
 
-		/* here it is really happening */
+			/* here it is really happening */
 
-		if(move_uploaded_file($source, $targetzip)) {
-			$zip = new ZipArchive();
-			$file_opened = $zip->open($targetzip);  // open the zip file to extract
-			if ($file_opened === true) {
-				$zip->extractTo($targetdir); // place in the directory with same name
-				$zip->close();
+			if(move_uploaded_file($source, $targetzip)) {
+				$zip = new ZipArchive();
+				$file_opened = $zip->open($targetzip);  // open the zip file to extract
+				if ($file_opened === true) {
+					$zip->extractTo($targetdir); // place in the directory with same name
+					$zip->close();
 
-				unlink($targetzip);
-				$Files_Copied="";
+					unlink($targetzip);
+					$Files_Copied="";
 
-				if (file_exists($targetdir."config.cfg")) {
-					@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
-					if (rename($targetdir."config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {$Files_Copied="\n* 'config.cfg'";}
+					if (file_exists($targetdir."config.cfg")) {
+						@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
+						if (rename($targetdir."config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {$Files_Copied="\n* 'config.cfg'";}
 
+					}
+					if (file_exists($targetdir."rclone.conf")) {
+						@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
+						if (rename($targetdir."rclone.conf",$constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* 'rclone.cfg'";}
+					}
+					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
+
+					$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
+
+					if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
+						exec("sudo $WORKING_DIR/password.sh set \"" . $config["conf_PASSWORD"] . "\"");
+						popup(L::config_alert_password_change_after_reboot_set,true);
+					} else {
+						exec("sudo password.sh remove");
+						popup(L::config_alert_password_change_after_reboot_remove,true);
+					}
 				}
-				if (file_exists($targetdir."rclone.conf")) {
-					@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
-					if (rename($targetdir."rclone.conf",$constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* 'rclone.cfg'";}
-				}
-				popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
 
-				$config = parse_ini_file("config.cfg", false);
-				if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
-					exec("sudo password.sh set \"" . $config["conf_PASSWORD"] . "\"");
-				} else {
-					exec("sudo password.sh remove");
-				}
-				popup(L::config_alert_password_change_after_reboot,true);
+			} else {
+				popup(L::config_alert_settings_upload_problem,$config["conf_POPUP_MESSAGES"]);
 			}
 
-		} else {
-			popup(L::config_alert_settings_upload_problem,$config["conf_POPUP_MESSAGES"]);
 		}
-
 		exec("sudo rm -R ".$targetdir);
 	}
 }
@@ -470,8 +482,8 @@ function upload_settings() {
 					<input type="text" id="conf_MAIL_TO" name="conf_MAIL_TO" size="20" value="<?php echo $config['conf_MAIL_TO']; ?>">
 
 				<h3><?php echo L::config_mail_testmail_header; ?></h3>
-					<label for="conf_MAIL_TEST"><?php echo L::config_mail_testmail_label; ?></label><br>
-					<input type="checkbox" id="conf_MAIL_TEST" name="conf_MAIL_TEST">
+					<label for="send_testmail"><?php echo L::config_mail_testmail_label; ?></label><br>
+					<input type="checkbox" id="send_testmail" name="send_testmail">
 			</details>
 		</div>
 
@@ -542,7 +554,7 @@ function upload_settings() {
 
 				<h3><?php echo L::config_cloud_header; ?></h3>
 					<p>
-						Depending on your cloud-service, your configuration can expire. Maybe you have to repeat this step always before cloud-access.<br>
+						<?php echo L::config_cloud_rclone_description ; ?><br>
 						<?php
 							if (empty($config['conf_PASSWORD'])) {
 								echo L::config_username . ": 'lbb', " . L::config_password . ": 'lbb'";
@@ -561,6 +573,10 @@ function upload_settings() {
 						}
 					?>
 					<a href="<?php echo $rclone_link; ?>" target="_blank"><?php echo L::config_cloud_rclone_gui; ?></a>
+
+				<h3><?php echo L::config_cloud_restart_header; ?></h3>
+					<label for="restart_rclone_gui"><?php echo L::config_cloud_restart_label; ?></label><br>
+					<input type="checkbox" id="restart_rclone_gui" name="restart_rclone_gui">
 
 			</details>
 		</div>

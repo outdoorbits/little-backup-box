@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
+# Author: Stefan Saam, github@saams.de
 
 #######################################################################
 # This program is free software: you can redistribute it and/or modify
@@ -22,21 +22,29 @@ source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
-# Load Langauge library
-. "${WORKING_DIR}/lib-language.sh"
+#Arguments
+RCLONE_MODE="${1}"
 
-# Load Log library
-. "${WORKING_DIR}/lib-log.sh"
-
-# Load LCD library
-. "${WORKING_DIR}/lib-lcd.sh"
-
-#load DEVICES library
-. "${WORKING_DIR}/lib-devices.sh"
-
-## start minidlna
-sudo minidlnad -R
-sudo service minidlna start
+## kill rclone-gui
+sudo pkill -f "rclone rcd --rc-web-gui"
 
 ##start rclone web-gui
-source "${WORKING_DIR}/start-rclone-gui.sh"
+if [ ! -f "${const_RCLONE_CONFIG_FILE}" ]; then
+	sudo touch "${const_RCLONE_CONFIG_FILE}"
+fi
+sudo chmod 777 "${const_RCLONE_CONFIG_FILE}"
+
+if [ ! -z "${conf_PASSWORD}" ]; then
+	PASSWORD="${conf_PASSWORD}"
+else
+	PASSWORD="lbb"
+fi
+
+if [ "${RCLONE_MODE}" == "update_gui" ]; then
+	UPDATE_GUI="--rc-web-gui-force-update "
+fi
+
+COMMAND="sudo rclone rcd --rc-web-gui ${UPDATE_GUI}--rc-web-gui-no-open-browser --rc-addr :5572 --config '${const_RCLONE_CONFIG_FILE}' --rc-user lbb --rc-pass '${PASSWORD}' &"
+echo $COMMAND
+eval "$COMMAND"
+

@@ -123,7 +123,6 @@
     "save_settings_download_header": "Descargar",
     "save_settings_upload_header": "Subir",
     "save_settings_upload_label": "Seleccione el archivo de configuración",
-    "alert_password_change_after_reboot": "Contraseña global\nLos cambios serán aplicados después del reinicio",
     "alert_password_characters_not_allowed": "La contraseña no debe contener comillas (& quot;) ni barra invertida (& bsol;)",
     "alert_password_not_identical": "La contraseña repetida no es idéntica.",
     "alert_password_too_short": "La contraseña debe contener al menos 5 caracteres.",
@@ -193,7 +192,13 @@
       "testmail_sent": "Se envió correo de prueba",
       "sender_header": "Ausente",
       "sender_label": "Dirección de correo electrónico del remitente"
-    }
+    },
+    "alert_password_change_after_reboot_set": "Conjunto de contraseñas globales\nLos cambios serán aplicados después del reinicio",
+    "alert_password_change_after_reboot_remove": "Se eliminó la contraseña global\nLos cambios serán aplicados después del reinicio",
+    "cloud_rclone_description": "Dependiendo de su servicio en la nube, su configuración puede caducar. Tal vez tenga que repetir este paso siempre antes del acceso a la nube.",
+    "cloud_restart_header": "Actualice la interfaz rclone y reinicie",
+    "cloud_restart_label": "Una conexión a Internet es obligatoria.",
+    "rclone_gui_restarted": "La interfaz de usuario de rclone se ha reiniciado."
   },
   "tools": {
     "tools": "Herramientas",
