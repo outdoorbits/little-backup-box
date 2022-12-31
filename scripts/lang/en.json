@@ -340,7 +340,7 @@
     "alert_password_change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
     "alert_password_change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",
     "cloud_rclone_description": "Depending on your cloud-service, your configuration can expire. Maybe you have to repeat this step always before cloud-access.",
-    "cloud_restart_header": "Update rclone GUI and restart",
+    "cloud_restart_header": "Update and restart rclone GUI",
     "cloud_restart_label": "An internet connection is mandatory.",
     "rclone_gui_restarted": "The rclone UI has been restarted."
   },

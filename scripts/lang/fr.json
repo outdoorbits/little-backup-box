@@ -196,7 +196,7 @@
     "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
     "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
     "cloud_rclone_description": "Selon votre service cloud, votre configuration peut expirer. Peut-être que vous devez toujours répéter cette étape avant l'accès au cloud.",
-    "cloud_restart_header": "Mettre à jour l'interface rclone et redémarrer",
+    "cloud_restart_header": "Mettre à jour et redémarrer l'interface rclone",
     "cloud_restart_label": "Une connexion internet est obligatoire.",
     "rclone_gui_restarted": "L'interface utilisateur rclone a été redémarrée."
   },
