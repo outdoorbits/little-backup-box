@@ -515,37 +515,6 @@ function upload_settings() {
 
 		<div class="card" style="margin-top: 2em;">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_wifi_section; ?></summary>
-
-				<h3><?php echo L::config_wifi_country_header; ?></h3>
-					<label for="conf_WIFI_COUNTRY"><?php echo L::config_wifi_country_label; ?></label><br>
-					<?php echo get_wifi_country_selector("conf_WIFI_COUNTRY","conf_WIFI_COUNTRY"); ?>
-			</details>
-		</div>
-
-		<div class="card" style="margin-top: 2em;">
-			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_password_section; ?></summary>
-
-				<h3><?php echo L::config_password_header; ?></h3>
-					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
-					<label for="conf_PASSWORD_1"><?php echo L::config_password_label1; ?></label><br>
-					<input type="password" id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
-					<label for="conf_PASSWORD_2"><?php echo L::config_password_label2; ?></label><br>
-					<input type="password" id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">
-
-					<?php
-						if ($config['conf_PASSWORD'] != "") {
-							echo "<h3>" . L::config_password_remove_header . "</h3>";
-							echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label ."</label><br>";
-							echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">";
-						}
-					?>
-			</details>
-		</div>
-
-		<div class="card" style="margin-top: 2em;">
-			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_cloud_section; ?></summary>
 
 				<h3><?php echo L::config_backup_target_basedir_cloud_header; ?></h3>
@@ -578,6 +547,37 @@ function upload_settings() {
 					<label for="restart_rclone_gui"><?php echo L::config_cloud_restart_label; ?></label><br>
 					<input type="checkbox" id="restart_rclone_gui" name="restart_rclone_gui">
 
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_wifi_section; ?></summary>
+
+				<h3><?php echo L::config_wifi_country_header; ?></h3>
+					<label for="conf_WIFI_COUNTRY"><?php echo L::config_wifi_country_label; ?></label><br>
+					<?php echo get_wifi_country_selector("conf_WIFI_COUNTRY","conf_WIFI_COUNTRY"); ?>
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_password_section; ?></summary>
+
+				<h3><?php echo L::config_password_header; ?></h3>
+					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
+					<label for="conf_PASSWORD_1"><?php echo L::config_password_label1; ?></label><br>
+					<input type="password" id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
+					<label for="conf_PASSWORD_2"><?php echo L::config_password_label2; ?></label><br>
+					<input type="password" id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">
+
+					<?php
+						if ($config['conf_PASSWORD'] != "") {
+							echo "<h3>" . L::config_password_remove_header . "</h3>";
+							echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label ."</label><br>";
+							echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">";
+						}
+					?>
 			</details>
 		</div>
 

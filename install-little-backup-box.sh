@@ -186,8 +186,11 @@ if [ "${SCRIPT_MODE}" = "update" ]; then
 	source "${CONFIG}"
 fi
 
-#Install Rclone
+# Install rclone
 curl https://rclone.org/install.sh | sudo bash
+
+## Install rclone gui (needs to start gui, random password for this session to prevent login)
+sudo rclone rcd --rc-web-gui --rc-web-gui-force-update --rc-web-gui-no-open-browser --rc-addr :5572 --rc-user lbb --rc-pass "$(echo $RANDOM | md5sum | head -c 20)" &
 
 # create linux-user for samba
 sudo useradd --create-home -s /bin/bash ${USER_SAMBA}

@@ -53,10 +53,10 @@ elif [ "${MODE}" = "set" ]; then # Mode: set ###################################
 	echo "${conf_PASSWORD}" | sudo htpasswd -ci "/etc/apache2/includes/htpasswd" "${USER}"
 
 	cat <<EOF | sudo tee "/etc/apache2/includes/password.conf"
-			Authtype Basic
-			Authname "Password Required"
-			AuthUserFile /etc/apache2/includes/htpasswd
-			Require valid-user
+Authtype Basic
+Authname "Password Required"
+AuthUserFile /etc/apache2/includes/htpasswd
+Require valid-user
 EOF
 
 	# Linux
