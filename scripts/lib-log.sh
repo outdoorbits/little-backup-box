@@ -31,6 +31,9 @@ function log_message() {
     local MESSAGE="${1}"
     local LEVEL="${2}"
     local i=0
+    local PWD=""
+    local ESCAPED_PASSWORD=""
+    local ESCAPE_STRING=""
 
     if [ ! -z "$(log_level_reached ${LEVEL})" ]; then
 
