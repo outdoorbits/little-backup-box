@@ -30,6 +30,7 @@ function log_message() {
     # Arguments
     local MESSAGE="${1}"
     local LEVEL="${2}"
+    local i=0
 
     if [ ! -z "$(log_level_reached ${LEVEL})" ]; then
 

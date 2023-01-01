@@ -136,7 +136,7 @@ function calculate_files_to_sync() {
 
 	if [ -z "${SOURCE_PATH}" ]; then
 		# copy SOURCE_PATHS into local SOURCE_PATHS_ARRAY
-		for ((i = 0; i < ${#SOURCE_PATHS[@]}; i++)); do
+		for ((i=0; i < ${#SOURCE_PATHS[@]}; i++)); do
 			SOURCE_PATHS_ARRAY+=(${SOURCE_PATHS[$i]})
 		done
 	else
@@ -1028,7 +1028,7 @@ function sync_return_code_decoder() {
 	# Check internet connection and send
 	# a notification by mail if the conf_NOTIFY option is enabled
 	ONLINE_CHECK=$(wget -q --spider http://google.com/)
-	if ([ $conf_NOTIFY = true ] || [ ! -z "$ONLINE_CHECK" ]) && [ ! "database thumbnails exif " =~ " ${SOURCE_MODE} " ]; then
+	if ([ $conf_NOTIFY = true ] || [ ! -z "$ONLINE_CHECK" ]) && [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
 
 		if [ ${SYNC_ERROR_LAST} = true  ]; then
 			SUBJ_MSG="$(l 'box_backup_mail_error')"
@@ -1075,7 +1075,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
-		for ((i = 0; i < ${#DB_ARRAY[@]}; i++)); do
+		for ((i=0; i < ${#DB_ARRAY[@]}; i++)); do
 			IMAGE_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
 
 			if [ ! -f "${IMAGE_FILENAME}" ]; then
@@ -1111,12 +1111,12 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
-		for ((i = 0; i < ${#TIMS_ARRAY[@]}; i++)); do
+		for ((i=0; i < ${#TIMS_ARRAY[@]}; i++)); do
 			# replace substitute of space by space
-			SOURCE_IMAGES_FILENAME=$(echo ${TIMS_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
 
-			File_Name=$(basename "${SOURCE_IMAGES_FILENAME}")
-			Directory=$(dirname "${SOURCE_IMAGES_FILENAME}")
+			SOURCE_IMAGE_FILENAME=$(echo ${TIMS_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
+			File_Name=$(basename "${SOURCE_IMAGE_FILENAME}")
+			Directory=$(dirname "${SOURCE_IMAGE_FILENAME}")
 
 			# clean Directory from /media/storage|source|internal/
 			TARGET_PATH_MARKED="0-0-0-0${TARGET_PATH}"
@@ -1124,7 +1124,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			Directory=${DIRECTORY_MARKED//${TARGET_PATH_MARKED}}
 
 			if [[ ! $(sqlite3 "${DB}" "select ID from EXIF_DATA where File_Name=\"${File_Name}\" and Directory=\"${Directory}\"") ]]; then
-				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
+				db_insert "${SOURCE_IMAGE_FILENAME}" "${TARGET_PATH}"
 			fi
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
@@ -1144,12 +1144,13 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
 
-		#find all images; replace space by substitute of space ##**##
+		#find all images; replace "space" by substitute of space "##**##"
 		INAMES=""
 
 		IFS=$' ' read -rd '' -a FILE_EXTENSIONS_ARRAY <<<"${const_FILE_EXTENSIONS_LIST_JPG} ${const_FILE_EXTENSIONS_LIST_HEIC} ${const_FILE_EXTENSIONS_LIST_RAW} ${const_FILE_EXTENSIONS_LIST_VIDEO} ${const_FILE_EXTENSIONS_LIST_AUDIO}"
 		unset IFS
 
+		# create list of valid extensions
 		for extension in "${FILE_EXTENSIONS_ARRAY[@]}";do
 			if [ ! -z "${INAMES}" ]; then
 				INAMES="${INAMES} -o "
@@ -1203,71 +1204,73 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
-		for ((i = 0; i < ${#IMAGES_ARRAY[@]}; i++)); do
+		for ((i=0; i < ${#IMAGES_ARRAY[@]}; i++)); do
 			#replace substitute of space by space
-			SOURCE_IMAGES_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
+			SOURCE_IMAGE_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
 
 			#extract extension from filename
-			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME##*.}"
+			SOURCE_IMAGE_FILENAME_EXTENSION="${SOURCE_IMAGE_FILENAME##*.}"
 
 			#change extension to lowercase
-			SOURCE_IMAGES_FILENAME_EXTENSION="${SOURCE_IMAGES_FILENAME_EXTENSION,,}"
+			SOURCE_IMAGE_FILENAME_EXTENSION="${SOURCE_IMAGE_FILENAME_EXTENSION,,}"
 
-			TIMS_FOLDER="$(dirname "${SOURCE_IMAGES_FILENAME}")/tims"
-			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGES_FILENAME}").JPG"
+			TIMS_FOLDER="$(dirname "${SOURCE_IMAGE_FILENAME}")/tims"
+			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGE_FILENAME}").JPG"
 			mkdir -p "${TIMS_FOLDER}"
 
-			if [[ " ${const_FILE_EXTENSIONS_LIST_JPG} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
+			if [[ " ${const_FILE_EXTENSIONS_LIST_JPG} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: image
-				convert "${SOURCE_IMAGES_FILENAME}" -resize 800\> "${TIMS_FILE}"
-			elif [[ " ${const_FILE_EXTENSIONS_LIST_HEIC} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
+				convert "${SOURCE_IMAGE_FILENAME}" -resize 800\> "${TIMS_FILE}"
+			elif [[ " ${const_FILE_EXTENSIONS_LIST_HEIC} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: heic/heif
-				heif-convert "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
-				exiftool  -overwrite_original -TagsFromFile "${SOURCE_IMAGES_FILENAME}" "${SOURCE_IMAGES_FILENAME}.JPG"
-				convert "${SOURCE_IMAGES_FILENAME}.JPG" -resize 800\> "${TIMS_FILE}"
+				heif-convert "${SOURCE_IMAGE_FILENAME}" "${SOURCE_IMAGE_FILENAME}.JPG"
+				exiftool  -overwrite_original -TagsFromFile "${SOURCE_IMAGE_FILENAME}" "${SOURCE_IMAGE_FILENAME}.JPG"
+				convert "${SOURCE_IMAGE_FILENAME}.JPG" -resize 800\> "${TIMS_FILE}"
 
 				if [ ${conf_VIEW_CONVERT_HEIC} = true ]; then
-					IMAGES_ARRAY+=("${SOURCE_IMAGES_FILENAME}.JPG")
+					IMAGES_ARRAY+=("${SOURCE_IMAGE_FILENAME}.JPG")
 					IMAGE_COUNT=${#IMAGES_ARRAY[@]}
 				else
-					rm "${SOURCE_IMAGES_FILENAME}.JPG"
+					rm "${SOURCE_IMAGE_FILENAME}.JPG"
 				fi
 
-			elif [[ " ${const_FILE_EXTENSIONS_LIST_RAW} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
+			elif [[ " ${const_FILE_EXTENSIONS_LIST_RAW} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: raw-image
 				## NO QUALITY CONVERTER CONFIGURED YET!
 				## THIS IS JUST A WORKAROUND
 				TMP_RAW_FILE_NAME="/tmp/rawimage"
+
+				#remove file from previous run
 				if [ -f "${TMP_RAW_FILE_NAME}" ]; then
 					rm "${TMP_RAW_FILE_NAME}"
 				fi
-				cp "${SOURCE_IMAGES_FILENAME}" "${TMP_RAW_FILE_NAME}"
+
+				cp "${SOURCE_IMAGE_FILENAME}" "${TMP_RAW_FILE_NAME}"
  				convert "${TMP_RAW_FILE_NAME}" -resize 800\> "${TIMS_FILE}"
-			elif [[ " ${const_FILE_EXTENSIONS_LIST_VIDEO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
+			elif [[ " ${const_FILE_EXTENSIONS_LIST_VIDEO} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: video
-				ffmpeg -i "${SOURCE_IMAGES_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"
+				ffmpeg -i "${SOURCE_IMAGE_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"
 				if [ ! -f "${TIMS_FILE}" ]; then
 					# tims file not generated. Video too short? Try at second 0
-					ffmpeg -i "${SOURCE_IMAGES_FILENAME}" -ss 00:00:00 -vframes 1 "${TIMS_FILE}"
+					ffmpeg -i "${SOURCE_IMAGE_FILENAME}" -ss 00:00:00 -vframes 1 "${TIMS_FILE}"
 				fi
 
 				mogrify -resize 800\> "${TIMS_FILE}"
 				composite -gravity center '/var/www/little-backup-box/img/play.png' "${TIMS_FILE}" "${TIMS_FILE}"
-			elif [[ " ${const_FILE_EXTENSIONS_LIST_AUDIO} " =~ " ${SOURCE_IMAGES_FILENAME_EXTENSION} " ]]; then
+			elif [[ " ${const_FILE_EXTENSIONS_LIST_AUDIO} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				cp '/var/www/little-backup-box/img/audio.JPG' "${TIMS_FILE}"
-				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGES_FILENAME}")" "${TIMS_FILE}"
+				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGE_FILENAME}")" "${TIMS_FILE}"
 			fi
 
 			if [ -f "${TIMS_FILE}" ]; then
-				db_insert "${SOURCE_IMAGES_FILENAME}" "${TARGET_PATH}"
+				db_insert "${SOURCE_IMAGE_FILENAME}" "${TARGET_PATH}"
 			else
-				log_message "ERROR: TIMS of '"${SOURCE_IMAGES_FILENAME}"' ('${TIMS_FILE}') not regular created."
+				log_message "ERROR: TIMS of '"${SOURCE_IMAGE_FILENAME}"' ('${TIMS_FILE}') not regular created."
 				cp '/var/www/little-backup-box/img/unknown.JPG' "${TIMS_FILE}"
-				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGES_FILENAME}")" "${TIMS_FILE}"
+				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGE_FILENAME}")" "${TIMS_FILE}"
 			fi
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
-
 		done
 
 	fi
@@ -1301,7 +1304,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 		progressmonitor "${START_TIME}" "${DB_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
-		for ((i = 0; i < ${#DB_ARRAY[@]}; i++)); do
+		for ((i=0; i < ${#DB_ARRAY[@]}; i++)); do
 			#replace substitute of space by space
 			MEDIA_ID="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f1)"
 			MEDIA_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
