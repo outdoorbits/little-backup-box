@@ -32,6 +32,7 @@
 DB="${TARGET_PATH}/${const_IMAGE_DATABASE_FILENAME}"
 
 function db_setup() {
+	local i=0
 
 	# define database, append lines for updates, do not change existing lines!
 	DB_SETUP_ARRAY=()
@@ -81,6 +82,7 @@ function db_setup() {
 function db_insert() {
 	local SOURCE_IMAGES_FILENAME="${1}"
 	local TARGET_PATH="${2}"
+	local j=0
 
 	#read exif-data from file
 	EXIF_STR=$(sudo exiftool "${SOURCE_IMAGES_FILENAME}")
