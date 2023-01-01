@@ -89,6 +89,7 @@ function log_level_reached() {
     # returns "" for no and "1" for yes
 
     local LEVEL="${1}"
+
     if [ -z "${LEVEL}" ] || [ "${conf_LOGLEVEL}" -ge "${LEVEL}" ]; then
 		echo "1"
     fi
