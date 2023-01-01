@@ -1065,7 +1065,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		LCD2="$(l "box_backup_mode_${TARGET_MODE}")" # header2
 
 		# remove duplicates
-		sudo sqlite3 "${DB}" "delete from EXIF_DATA where ID not in (select max(ID) from EXIF_DATA group by File_Name, Directory);"
+		sudo sqlite3 "${DB}" "delete from EXIF_DATA where ID not in (select min(ID) from EXIF_DATA group by File_Name, Directory);"
 
 		# select directory and filename as DirFile and replace spaces by placeholder
 		DB_STR=$(sudo sqlite3 "${DB}" "select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA" | sed 's/\ /##\*\*##/g')
