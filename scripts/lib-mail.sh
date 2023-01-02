@@ -36,8 +36,7 @@ function send_email () {
     TEXT=""
 
     #Mail-body
-    if [ ${conf_MAIL_HTML} = true ] && [ ! -z "${TEXT_HTML}" ];
-    then
+    if [ ${conf_MAIL_HTML} == true ] && [ ! -z "${TEXT_HTML}" ]; then
         TEXT="Content-Type: multipart/alternative; boundary=${BOUNDARY}
 
 ${TEXT_PLAIN}
@@ -66,11 +65,19 @@ ${TEXT_HTML}
     # a notification if the conf_NOTIFY option is enabled
     check=$(wget -q --spider http://google.com/)
     if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
+
+    MAIL_CONTENT_FILE="${WORKING_DIR}/tmp/email.txt"
+
         COMMAND="curl --url 'smtps://$conf_SMTP_SERVER:$conf_SMTP_PORT' --ssl-reqd"
         COMMAND="${COMMAND} --mail-from '$conf_MAIL_FROM'"
         COMMAND="${COMMAND} --mail-rcpt '$conf_MAIL_TO'"
         COMMAND="${COMMAND} --user '$conf_MAIL_USER':'$conf_MAIL_PASSWORD'"
-        COMMAND="${COMMAND} -T <(echo -e \"From: ${conf_MAIL_USER}\nTo: ${conf_MAIL_TO}\nSubject: ${SUBJECT}\n${TEXT}\")"
+        COMMAND="${COMMAND} --upload-file ${MAIL_CONTENT_FILE}"
+
+        echo "From: ${conf_MAIL_USER}" | tee "${MAIL_CONTENT_FILE}"
+        echo "To: ${conf_MAIL_TO}" | tee -a "${MAIL_CONTENT_FILE}"
+        echo "Subject: ${SUBJECT}" | tee -a "${MAIL_CONTENT_FILE}"
+        echo "${TEXT}" | tee -a "${MAIL_CONTENT_FILE}"
 
         log_exec "OUTGOING MAIL" "$COMMAND" 3
     fi
