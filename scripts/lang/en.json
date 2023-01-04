@@ -324,7 +324,7 @@
       "port_label": "Port of the SMTP-Mailserver (default:",
       "recipient_header": "Recipient",
       "recipient_label": "Mailaddress of the recipient",
-      "section": "Mail-server-configuration",
+      "section": "Email Notifications",
       "smtp_header": "SMTP-server",
       "smtp_label": "Address of the SMTP-mailserver",
       "user_header": "Username",
@@ -335,7 +335,8 @@
       "testmail_content": "Congratulations, the mail delivery works.",
       "testmail_sent": "Test mail was sent",
       "sender_header": "Sender",
-      "sender_label": "Mailaddress of the sender"
+      "sender_label": "Mailaddress of the sender",
+      "security_header": "Connection security"
     },
     "alert_password_change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
     "alert_password_change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",

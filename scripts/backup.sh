@@ -1026,9 +1026,9 @@ function sync_return_code_decoder() {
 	MESSAGE_LCD="$(echo -e "${MESSAGE_LCD}" | sed -e 's/^[[:space:]]*//')"
 
 	# Check internet connection and send
-	# a notification by mail if the conf_NOTIFY option is enabled
+	# a notification by mail if the conf_MAIL_NOTIFICATIONS option is enabled
 	ONLINE_CHECK=$(wget -q --spider http://google.com/)
-	if ([ $conf_NOTIFY = true ] || [ ! -z "$ONLINE_CHECK" ]) && [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
+	if ([ $conf_MAIL_NOTIFICATIONS = true ] || [ ! -z "$ONLINE_CHECK" ]) && [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
 
 		if [ ${SYNC_ERROR_LAST} = true  ]; then
 			SUBJ_MSG="$(l 'box_backup_mail_error')"

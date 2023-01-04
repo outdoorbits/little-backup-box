@@ -180,7 +180,7 @@
       "port_label": "Puerto del servidor de correo SMTP (predeterminado:",
       "recipient_header": "Destinatario",
       "recipient_label": "Dirección de correo del destinatario",
-      "section": "Configuración del servidor de correo",
+      "section": "Notificaciónes de Correo Electrónico",
       "smtp_header": "SMTP-Servidor",
       "smtp_label": "Dirección del servidor de correo SMTP",
       "user_header": "Nombre de usuario",
@@ -191,7 +191,8 @@
       "testmail_content": "Felicitaciones, la entrega de correo funciona.",
       "testmail_sent": "Se envió correo de prueba",
       "sender_header": "Ausente",
-      "sender_label": "Dirección de correo electrónico del remitente"
+      "sender_label": "Dirección de correo electrónico del remitente",
+      "security_header": "Seguridad de conexion"
     },
     "alert_password_change_after_reboot_set": "Conjunto de contraseñas globales\nLos cambios serán aplicados después del reinicio",
     "alert_password_change_after_reboot_remove": "Se eliminó la contraseña global\nLos cambios serán aplicados después del reinicio",

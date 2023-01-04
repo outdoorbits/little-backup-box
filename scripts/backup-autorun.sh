@@ -57,10 +57,11 @@ if [ "${conf_BACKUP_DEFAULT_TARGET}" = "external" ]; then echo 'conf_BACKUP_DEFA
 if [ "${conf_BACKUP_DEFAULT_SOURCE2}" = "storage" ]; then echo 'conf_BACKUP_DEFAULT_SOURCE2="usb"' | sudo tee -a "${CONFIG}"; fi
 if [ "${conf_BACKUP_DEFAULT_TARGET2}" = "external" ]; then echo 'conf_BACKUP_DEFAULT_TARGET2="usb"' | sudo tee -a "${CONFIG}"; fi
 if [ ! -z "${conf_MAIL_conf_PASSWORD}" ]; then echo "conf_MAIL_PASSWORD=\"${conf_MAIL_conf_PASSWORD}\"" | sudo tee -a "${CONFIG}"; fi
-if [ -z "${conf_MAIL_FROM}" ]; then echo "conf_MAIL_FROM=\"${conf_MAIL_USER}\"" | sudo tee -a "${CONFIG}"; fi
 
 #rewrite config to new names
-if [ ! -z "${conf_conf_DISP_IP_REPEAT}" ]; then echo "conf_DISP_IP_REPEAT=${conf_conf_DISP_IP_REPEAT}" | sudo tee -a "${CONFIG}"; fi
+if [ -z "${conf_MAIL_FROM}" ]; then echo "conf_MAIL_FROM=\"${conf_MAIL_USER}\"" | sudo tee -a "${CONFIG}"; fi
+if [ -z "${conf_DISP_IP_REPEAT}" ]; then echo "conf_DISP_IP_REPEAT=${conf_conf_DISP_IP_REPEAT}" | sudo tee -a "${CONFIG}"; fi
+if [ -z "${conf_MAIL_NOTIFICATIONS}" ]; then echo "conf_MAIL_NOTIFICATIONS=${conf_NOTIFY}" | sudo tee -a "${CONFIG}"; fi
 
 # Load config.cfg
 source "$CONFIG"

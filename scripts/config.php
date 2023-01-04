@@ -108,7 +108,7 @@ function write_config()
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
 	$conf_POWER_OFF						= isset($conf_POWER_OFF)?"true":"false";
-	$conf_NOTIFY						= isset($conf_NOTIFY)?"true":"false";
+	$conf_MAIL_NOTIFICATIONS						= isset($conf_MAIL_NOTIFICATIONS)?"true":"false";
 	$conf_MAIL_HTML						= isset($conf_MAIL_HTML)?"true":"false";
 	$conf_DISP							= isset($conf_DISP)?"true":"false";
 	$conf_DISP_BLACK_ON_POWER_OFF		= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
@@ -158,8 +158,6 @@ conf_BACKUP_DEFAULT_TARGET2="$conf_BACKUP_DEFAULT_TARGET2"
 conf_BACKUP_CAMERA_FOLDER_MASK="$conf_BACKUP_CAMERA_FOLDER_MASK"
 conf_BACKUP_TARGET_BASEDIR_CLOUD="$conf_BACKUP_TARGET_BASEDIR_CLOUD"
 conf_POWER_OFF=$conf_POWER_OFF
-conf_NOTIFY=$conf_NOTIFY
-conf_MAIL_HTML=$conf_MAIL_HTML
 conf_DISP=$conf_DISP
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
@@ -173,8 +171,11 @@ conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
 conf_BACKUP_UPDATE_EXIF=$conf_BACKUP_UPDATE_EXIF
 conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
 conf_VIEW_WRITE_RATING_EXIF=$conf_VIEW_WRITE_RATING_EXIF
+conf_MAIL_NOTIFICATIONS=$conf_MAIL_NOTIFICATIONS
+conf_MAIL_HTML=$conf_MAIL_HTML
 conf_SMTP_SERVER="$conf_SMTP_SERVER"
 conf_SMTP_PORT="$conf_SMTP_PORT"
+conf_MAIL_SECURITY="$conf_MAIL_SECURITY"
 conf_MAIL_USER="$conf_MAIL_USER"
 conf_MAIL_PASSWORD="$conf_MAIL_PASSWORD"
 conf_MAIL_FROM="$conf_MAIL_FROM"
@@ -349,14 +350,6 @@ function upload_settings() {
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_behavior_section; ?></summary>
 
-				<h3><?php echo L::config_behavior_notify_header; ?></h3>
-					<label for="conf_NOTIFY"><?php echo L::config_behavior_notify_label; ?></label><br>
-					<input type="checkbox" id="conf_NOTIFY" name="conf_NOTIFY"<?php echo $config['conf_NOTIFY']=="1"?"checked":""; ?>>
-
-				<h3><?php echo L::config_behavior_mail_html_header; ?></h3>
-					<label for="conf_MAIL_HTML"><?php echo L::config_behavior_mail_html_label; ?></label><br>
-					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
-
 				<h3><?php echo L::config_behavior_loglevel_header; ?></h3>
 					<p><?php echo L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
 					<label for="conf_LOGLEVEL"><?php echo L::config_behavior_loglevel_label; ?></label><br>
@@ -457,6 +450,14 @@ function upload_settings() {
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_mail_section; ?></summary>
 
+				<h3><?php echo L::config_behavior_notify_header; ?></h3>
+					<label for="conf_MAIL_NOTIFICATIONS"><?php echo L::config_behavior_notify_label; ?></label><br>
+					<input type="checkbox" id="conf_MAIL_NOTIFICATIONS" name="conf_MAIL_NOTIFICATIONS"<?php echo $config['conf_MAIL_NOTIFICATIONS']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_mail_html_header; ?></h3>
+					<label for="conf_MAIL_HTML"><?php echo L::config_behavior_mail_html_label; ?></label><br>
+					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
+
 				<h3><?php echo L::config_mail_smtp_header; ?></h3>
 					<label for="conf_SMTP_SERVER"><?php echo L::config_mail_smtp_label; ?></label><br>
 					<input type="text" id="conf_SMTP_SERVER" name="conf_SMTP_SERVER" size="6" value="<?php echo $config['conf_SMTP_SERVER']; ?>">
@@ -464,6 +465,12 @@ function upload_settings() {
 				<h3><?php echo L::config_mail_port_header; ?></h3>
 					<label for="conf_SMTP_PORT"><?php echo L::config_mail_port_label . " " . $config_standard["conf_SMTP_PORT"]; ?>)</label><br>
 					<input type="text" id="conf_SMTP_PORT" name="conf_SMTP_PORT" size="20" value="<?php echo $config['conf_SMTP_PORT']; ?>">
+
+				<h3><?php echo L::config_mail_security_header; ?></h3>
+					<input type="radio" id="conf_MAIL_SECURITY_STARTTLS" name="conf_MAIL_SECURITY" value="STARTTLS" <?php echo $config['conf_MAIL_SECURITY']!=="SSL"?"checked":""; ?>>
+					<label for="conf_MAIL_SECURITY_STARTTLS">STARTTLS</label><br>
+					<input type="radio" id="conf_MAIL_SECURITY_SSL" name="conf_MAIL_SECURITY" value="SSL" <?php echo $config['conf_MAIL_SECURITY']=="SSL"?"checked":""; ?>>
+					<label for="conf_MAIL_SECURITY_SSL">SSL</label><br>
 
 				<h3><?php echo L::config_mail_user_header; ?></h3>
 					<label for="conf_MAIL_USER"><?php echo L::config_mail_user_label; ?></label><br>

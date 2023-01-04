@@ -180,7 +180,7 @@
       "port_label": "Port du serveur de messagerie SMTP (par défaut :",
       "recipient_header": "Destinataire",
       "recipient_label": "Adresse e-mail du destinataire",
-      "section": "Configuration du serveur de messagerie",
+      "section": "Notifications par email",
       "smtp_header": "SMTP-Serveur",
       "smtp_label": "Adresse du serveur de messagerie SMTP",
       "user_header": "Nom d'utilisateur",
@@ -191,7 +191,8 @@
       "testmail_content": "Félicitations, la distribution du courrier fonctionne.",
       "testmail_sent": "L'e-mail de test a été envoyé",
       "sender_header": "Expéditeur",
-      "sender_label": "Adresse e-mail de l'expéditeur"
+      "sender_label": "Adresse e-mail de l'expéditeur",
+      "security_header": "Sécurité de la connexion"
     },
     "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
     "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",

@@ -27,17 +27,17 @@ function send_email () {
 # Takes up to 3 arguments:
 # sendmail "$Subject" "$Text_plain" "$Text_HTML (optional)"
 
-    # Arguments
-    SUBJECT="${1}"
-    TEXT_PLAIN="${2}"
-    TEXT_HTML="${3}"
-    BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
+	# Arguments
+	SUBJECT="${1}"
+	TEXT_PLAIN="${2}"
+	TEXT_HTML="${3}"
+	BOUNDARY="${RANDOM}${RANDOM}${RANDOM}"
 
-    TEXT=""
+	TEXT=""
 
-    #Mail-body
-    if [ ${conf_MAIL_HTML} == true ] && [ ! -z "${TEXT_HTML}" ]; then
-        TEXT="Content-Type: multipart/alternative; boundary=${BOUNDARY}
+	#Mail-body
+	if [ ${conf_MAIL_HTML} == true ] && [ ! -z "${TEXT_HTML}" ]; then
+		TEXT="Content-Type: multipart/alternative; boundary=${BOUNDARY}
 
 ${TEXT_PLAIN}
 
@@ -57,30 +57,35 @@ ${TEXT_HTML}
 
 --${BOUNDARY}--"
 
-    else
-        TEXT="\n\n$TEXT_PLAIN\n\n"
-    fi
+	else
+		TEXT="\n\n$TEXT_PLAIN\n\n"
+	fi
 
-    # Check internet connection and send
-    # a notification if the conf_NOTIFY option is enabled
-    check=$(wget -q --spider http://google.com/)
-    if [ $conf_NOTIFY = true ] || [ ! -z "$check" ]; then
+	# Check internet connection and send
+	# a notification if the conf_MAIL_NOTIFICATIONS option is enabled
+	check=$(wget -q --spider http://google.com/)
+	if [ $conf_MAIL_NOTIFICATIONS = true ] || [ ! -z "$check" ]; then
 
-    MAIL_CONTENT_FILE="${WORKING_DIR}/tmp/email.txt"
+		MAIL_CONTENT_FILE="${WORKING_DIR}/tmp/email.txt"
 
-        COMMAND="curl --url 'smtps://$conf_SMTP_SERVER:$conf_SMTP_PORT' --ssl-reqd"
-        COMMAND="${COMMAND} --mail-from '$conf_MAIL_FROM'"
-        COMMAND="${COMMAND} --mail-rcpt '$conf_MAIL_TO'"
-        COMMAND="${COMMAND} --user '$conf_MAIL_USER':'$conf_MAIL_PASSWORD'"
-        COMMAND="${COMMAND} --upload-file ${MAIL_CONTENT_FILE}"
+		if [ "${conf_MAIL_SECURITY}" == "SSL" ]; then
+			COMMAND="curl --url 'smtps://$conf_SMTP_SERVER:$conf_SMTP_PORT' --ssl"
+		else
+			COMMAND="curl --url 'smtps://$conf_SMTP_SERVER:$conf_SMTP_PORT' --ssl-reqd"
+		fi
 
-        echo "From: ${conf_MAIL_USER}" | tee "${MAIL_CONTENT_FILE}"
-        echo "To: ${conf_MAIL_TO}" | tee -a "${MAIL_CONTENT_FILE}"
-        echo "Subject: ${SUBJECT}" | tee -a "${MAIL_CONTENT_FILE}"
-        echo "${TEXT}" | tee -a "${MAIL_CONTENT_FILE}"
+		COMMAND="${COMMAND} --mail-from '$conf_MAIL_FROM'"
+		COMMAND="${COMMAND} --mail-rcpt '$conf_MAIL_TO'"
+		COMMAND="${COMMAND} --user '$conf_MAIL_USER':'$conf_MAIL_PASSWORD'"
+		COMMAND="${COMMAND} --upload-file ${MAIL_CONTENT_FILE}"
 
-        log_exec "OUTGOING MAIL" "$COMMAND" 3
-    fi
+		echo "From: ${conf_MAIL_USER}" | tee "${MAIL_CONTENT_FILE}"
+		echo "To: ${conf_MAIL_TO}" | tee -a "${MAIL_CONTENT_FILE}"
+		echo "Subject: ${SUBJECT}" | tee -a "${MAIL_CONTENT_FILE}"
+		echo -e "${TEXT}" | tee -a "${MAIL_CONTENT_FILE}"
 
-    log_message "Mail:\n${SUBJECT}\n${TEXT}"
+		log_exec "OUTGOING MAIL" "$COMMAND" 3
+	fi
+
+	log_message "Mail:\n${SUBJECT}\n${TEXT}"
 }

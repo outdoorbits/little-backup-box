@@ -58,7 +58,7 @@ if [ $conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
 fi
 
 # Mail
-if [ ! -z $conf_NOTIFY ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
+if [ ! -z $conf_MAIL_NOTIFICATIONS ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; then
 
 	#wait for internet if not connected
 	TRIES_MAX=5
