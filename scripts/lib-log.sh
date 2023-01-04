@@ -45,17 +45,20 @@ function log_message() {
 		#remove passwords from log
 		for PWD in "${conf_PASSWORD}" "${conf_MAIL_PASSWORD}" "${conf_RSYNC_conf_PASSWORD}"; do
 			ESCAPED_PASSWORD=""
-			for (( i=0; i<${#PWD}; i++ )); do
-				ESCAPE_STRING=""
 
-				if [[ "\$*./[^" =~ "${PWD:$i:1}" ]]; then
-					ESCAPE_STRING="\\"
-				fi
+			if [ ! -z "${PWD}" ]; then
+				for (( i=0; i<${#PWD}; i++ )); do
+					ESCAPE_STRING=""
 
-				ESCAPED_PASSWORD="${ESCAPED_PASSWORD}${ESCAPE_STRING}${PWD:$i:1}"
-			done
+					if [[ "\$*./[^" =~ "${PWD:$i:1}" ]]; then
+						ESCAPE_STRING="\\"
+					fi
 
-			MESSAGE=$(echo "${MESSAGE}" | sed -e "s/${ESCAPED_PASSWORD}/PASSWORD/g")
+					ESCAPED_PASSWORD="${ESCAPED_PASSWORD}${ESCAPE_STRING}${PWD:$i:1}"
+				done
+
+				MESSAGE=$(echo "${MESSAGE}" | sed -e "s/${ESCAPED_PASSWORD}/PASSWORD/g")
+			fi
 
 		done
 
