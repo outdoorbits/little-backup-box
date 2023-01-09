@@ -159,6 +159,7 @@ conf_BACKUP_CAMERA_FOLDER_MASK="$conf_BACKUP_CAMERA_FOLDER_MASK"
 conf_BACKUP_TARGET_BASEDIR_CLOUD="$conf_BACKUP_TARGET_BASEDIR_CLOUD"
 conf_POWER_OFF=$conf_POWER_OFF
 conf_DISP=$conf_DISP
+conf_DISP_I2C_ADDRESS="$conf_DISP_I2C_ADDRESS"
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_THEME=$conf_THEME
@@ -194,6 +195,8 @@ CONFIGDATA;
 	fclose($config_file_handle);
 	exec ("dos2unix './" . $CONFIGFILE . "'");
 	echo '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
+
+	shell_exec("sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'");
 }
 
 function upload_settings() {
@@ -411,6 +414,21 @@ function upload_settings() {
 				<h3><?php echo L::config_behavior_display_header; ?></h3>
 					<label for="conf_DISP"><?php echo L::config_behavior_display_label; ?></label><br>
 					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_behavior_display_address_header; ?></h3>
+					<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_behavior_display_address_label; ?></label><br>
+
+					<?php
+						$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
+
+						$I2C_LIST=array("3c","3d");
+						foreach($I2C_LIST as $I2C) {
+					?>
+							<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
+							<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_view_device_available:""; ?></label><br>
+					<?php
+						}
+					?>
 
 				<h3><?php echo L::config_behavior_disp_ip_header; ?></h3>
 					<label for="conf_DISP_IP_REPEAT"><?php echo L::config_behavior_disp_ip_label; ?></label><br>

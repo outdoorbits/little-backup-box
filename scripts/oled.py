@@ -30,9 +30,11 @@ import adafruit_ssd1306
 Format  = ["","","","","",""] # elements 0..4 (we need indexes 1..5)
 Line    = ["","","","","",""] # elements 0..4 (we need indexes 1..5)
 
+I2C_ADDRESS=int(sys.argv[1], 16)
+
 for n in range(1,6):
-	Format[n]	= sys.argv[(n-1)*2+1]
-	Line[n]		= sys.argv[(n-1)*2+2]
+	Format[n]	= sys.argv[(n-1)*2+2]
+	Line[n]		= sys.argv[(n-1)*2+3]
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
@@ -40,7 +42,7 @@ i2c = busio.I2C(SCL, SDA)
 # Create the SSD1306 OLED class.
 # The first two parameters are the pixel width and pixel height.  Change these
 # to the right size for your display!
-disp = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c,addr=0x3C)
+disp = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c,addr=I2C_ADDRESS)
 
 # Clear display
 disp.poweron() # resets display (just in case of black frozen screen)

@@ -258,10 +258,14 @@ sleep 2
 ## append new line to config-file
 echo -e '' | sudo tee -a "${CONFIG}"
 ## activate display if detected
-if [ ! -z "$(sudo i2cdetect -y 1 | grep " 3c")" ]; then
+I2C_DETECT=$(sudo i2cdetect -y 1)
+
+if [[ "${I2C_DETECT}" =~ " 3c" ]]; then
 	echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
-else
-	echo -e 'conf_DISP=false' | sudo tee -a "${CONFIG}"
+	echo -e 'conf_DISP_I2C_ADDRESS="0x3c"' | sudo tee -a "${CONFIG}"
+elif [[ "${I2C_DETECT}" =~ " 3d" ]]; then
+	echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
+	echo -e 'conf_DISP_I2C_ADDRESS="0x3d"' | sudo tee -a "${CONFIG}"
 fi
 
 # set the default backup mode
