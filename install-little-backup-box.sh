@@ -262,10 +262,10 @@ I2C_DETECT=$(sudo i2cdetect -y 1)
 
 if [[ "${I2C_DETECT}" =~ " 3c" ]]; then
 	echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
-	echo -e 'conf_DISP_I2C_ADDRESS="0x3c"' | sudo tee -a "${CONFIG}"
+	echo -e 'conf_DISP_I2C_ADDRESS="3c"' | sudo tee -a "${CONFIG}"
 elif [[ "${I2C_DETECT}" =~ " 3d" ]]; then
 	echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
-	echo -e 'conf_DISP_I2C_ADDRESS="0x3d"' | sudo tee -a "${CONFIG}"
+	echo -e 'conf_DISP_I2C_ADDRESS="3d"' | sudo tee -a "${CONFIG}"
 fi
 
 # set the default backup mode
