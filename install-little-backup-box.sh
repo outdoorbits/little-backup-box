@@ -257,16 +257,18 @@ sleep 2
 # Enable OLED screen support if available
 ## append new line to config-file
 echo -e '' | sudo tee -a "${CONFIG}"
+
 ## activate display if detected
 I2C_DETECT=$(sudo i2cdetect -y 1)
 
-if [[ "${I2C_DETECT}" =~ " 3c" ]]; then
-	echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
-	echo -e 'conf_DISP_I2C_ADDRESS="3c"' | sudo tee -a "${CONFIG}"
-elif [[ "${I2C_DETECT}" =~ " 3d" ]]; then
-	echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
-	echo -e 'conf_DISP_I2C_ADDRESS="3d"' | sudo tee -a "${CONFIG}"
-fi
+I2C_LIST=("3c" "3d")
+for I2C in "${I2C_LIST[@]}"; do
+	if [[ "${I2C_DETECT}" =~ " ${I2C}" ]]; then
+		echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
+		echo -e "conf_DISP_I2C_ADDRESS=\"${I2C}\"" | sudo tee -a "${CONFIG}"
+		break
+	fi
+done
 
 # set the default backup mode
 if [ "${SCRIPT_MODE}" = "install" ]; then
