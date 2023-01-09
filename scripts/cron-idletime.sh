@@ -26,14 +26,22 @@ source "$CONFIG"
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
 
+#load time library
+. "${WORKING_DIR}/lib-time.sh"
+
 APACHE_ACCESS_LOGFILE="/var/log/apache2/lbb-access.log"
 
 if [ "$conf_POWER_OFF_IDLE_TIME" -gt "0" ]; then
 
 	IDLE_SEC_to_POWER_OFF=$(($conf_POWER_OFF_IDLE_TIME * 60))
-	if [ -f "$const_CMD_RUNNER_LOCKFILE" ]; then CMD_RUNNER_ACTIVE=true; else CMD_RUNNER_ACTIVE=false; fi
-	UpTimeSec=$(awk '{print $1}' /proc/uptime)
-	UpTimeSec=${UpTimeSec%.*}
+
+	if [ -f "$const_CMD_RUNNER_LOCKFILE" ]; then
+		CMD_RUNNER_ACTIVE=true;
+	else
+		CMD_RUNNER_ACTIVE=false;
+	fi
+
+	UpTimeSec=$(get_uptime_seconds)
 
 	if [ -f "${const_LOGFILE}" ]; then
 		LogfileAgeSec=`expr $(date +%s) - $(stat -c '%Y' "${const_LOGFILE}")`

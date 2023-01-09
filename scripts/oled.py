@@ -42,9 +42,9 @@ i2c = busio.I2C(SCL, SDA)
 # to the right size for your display!
 disp = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c)
 
-# Clear display.
+# Clear display
+disp.poweron() # resets display (just in case of black frozen screen)
 disp.fill(0)
-disp.show()
 
 # Create blank image for drawing.
 # Make sure to create image with mode '1' for 1-bit color.

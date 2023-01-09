@@ -121,6 +121,9 @@ fi
 #load database library
 . "${WORKING_DIR}/lib-db.sh"
 
+#load time library
+. "${WORKING_DIR}/lib-time.sh"
+
 # log
 lcd_message "$(l "box_backup_mode_${SOURCE_MODE}")" " > $(l "box_backup_mode_${TARGET_MODE}")" "   ${CLOUDSERVICE}"
 
@@ -244,11 +247,11 @@ function progressmonitor() {
 		PRGMON_LCD5="PGBAR:0"
 	fi
 
-	if ([ "${PRGMON_PRG_COUNT}" != "${PRGMON_PRG_COUNT_OLD}" ] || [ "${PRGMON_LCD1}" != "${PRGMON_LCD1_OLD}" ]) && ([ $(($(date +%s) - ${PRGMON_LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${PRGMON_PRG_COUNT}" == "0" ] || [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]); then
+	if ([ "${PRGMON_PRG_COUNT}" != "${PRGMON_PRG_COUNT_OLD}" ] || [ "${PRGMON_LCD1}" != "${PRGMON_LCD1_OLD}" ]) && ([ $(($(get_uptime_seconds) - ${PRGMON_LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${PRGMON_PRG_COUNT}" == "0" ] || [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]); then
 
 		# calculte remaining time
 		if [ "${PRGMON_PRG_COUNT}" -gt "0" ]; then
-			PRGMON_TIME_RUN=$(echo "$(date +%s) - ${PRGMON_START_TIME}" | bc)
+			PRGMON_TIME_RUN=$(echo "$(get_uptime_seconds) - ${PRGMON_START_TIME}" | bc)
 			PRGMON_TIME_REMAINING=$(echo "${PRGMON_TIME_RUN} * ( ${PRGMON_ABS_COUNT} - ${PRGMON_PRG_COUNT} ) / ${PRGMON_PRG_COUNT}" | bc)
 			PRGMON_TIME_REMAINING_FORMATED=$(date -d@${PRGMON_TIME_REMAINING} -u +%H:%M:%S)
 			PRGMON_DAYS_LEFT=$((PRGMON_TIME_REMAINING/86400))
@@ -263,7 +266,7 @@ function progressmonitor() {
 		PRGMON_LCD4="$(l "box_backup_time_remaining"): ${PRGMON_TIME_REMAINING_FORMATED}"
 		lcd_message "+${PRGMON_LCD1}" "+${PRGMON_LCD2}" "+${PRGMON_LCD3}" "+${PRGMON_LCD4}" "+${PRGMON_LCD5}"
 
-		PRGMON_LAST_MESSAGE_TIME=$(date +%s)
+		PRGMON_LAST_MESSAGE_TIME=$(get_uptime_seconds)
 	fi
 
 	PRGMON_PRG_COUNT_OLD="${PRGMON_PRG_COUNT}"
@@ -274,10 +277,10 @@ function syncprogress() {
 	local MODE="${1}"
 	local SOURCE_FOLDER_NUMBER="${2}"
 
-# 	local TIMER_START=$(date +%s)
+# 	local TIMER_START=$(get_uptime_seconds)
 
 	local SPEED=""
-	local START_TIME=$(date +%s)
+	local START_TIME=$(get_uptime_seconds)
 	local TIME_RUN=0
 	local TIME_REMAINING=0
 	local TIME_REMAINING_FORMATED=""
@@ -332,7 +335,7 @@ function syncprogress() {
 		sleep "${const_DISPLAY_HOLD_SEC}"
 	fi
 
-# 	log_message "Backup-time: $(echo "$(date +%s) - ${TIMER_START}" | bc) seconds" 3
+# 	log_message "Backup-time: $(echo "$(get_uptime_seconds) - ${TIMER_START}" | bc) seconds" 3
 }
 
 function sync_return_code_decoder() {
@@ -833,7 +836,7 @@ function sync_return_code_decoder() {
 				fi
 			fi
 
-			SYNC_START_TIME=$(date +%s)
+			SYNC_START_TIME=$(get_uptime_seconds)
 
 		##############
 		# RUN BACKUP #
@@ -916,7 +919,7 @@ function sync_return_code_decoder() {
 				exit 1
 			fi
 
-			SYNC_STOP_TIME=$(date +%s)
+			SYNC_STOP_TIME=$(get_uptime_seconds)
 
 			# END BACKUP
 
@@ -1074,7 +1077,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 		IMAGE_COUNT=${#DB_ARRAY[@]}
 
-		START_TIME=$(date +%s)
+		START_TIME=$(get_uptime_seconds)
 
 		progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
@@ -1106,7 +1109,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		# prepare loop to create thumbnails
 		IMAGE_COUNT=${#TIMS_ARRAY[@]}
 
-		START_TIME=$(date +%s)
+		START_TIME=$(get_uptime_seconds)
 		LAST_MESSAGE_TIME=$START_TIME
 
 		LCD1="$(l "box_backup_generating_database")" # header1
@@ -1199,7 +1202,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		#prepare loop to create thumbnails
 		IMAGE_COUNT=${#IMAGES_ARRAY[@]}
 
-		START_TIME=$(date +%s)
+		START_TIME=$(get_uptime_seconds)
 		LAST_MESSAGE_TIME=$START_TIME
 
 		LCD1="$(l "box_backup_generating_thumbnails")" # header1
@@ -1299,7 +1302,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 		#prepare loop to create thumbnails
 		DB_COUNT=${#DB_ARRAY[@]}
 
-		START_TIME=$(date +%s)
+		START_TIME=$(get_uptime_seconds)
 		LAST_MESSAGE_TIME=$START_TIME
 
 		LCD1="$(l "box_backup_updating_exif")" # header1
