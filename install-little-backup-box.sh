@@ -523,7 +523,7 @@ fi
 
 # post-install-information
 ## load network library
-. "${WORKING_DIR}/lib-network.sh"
+. "${const_WEB_ROOT_LBB}/lib-network.sh"
 
 IP=$(get_ip)
 
