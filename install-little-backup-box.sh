@@ -526,6 +526,7 @@ fi
 . "${const_WEB_ROOT_LBB}/lib-network.sh"
 
 IP=$(get_ip)
+echo "${const_WEB_ROOT_LBB} ${IP}"
 
 echo ""
 echo "********************************************************************************************"
