@@ -105,7 +105,14 @@ $(l 'box_cronip_mail_main'): https://${IP}
 
 $(l 'box_cronip_mail_desription_http'):
 $(l 'box_cronip_mail_main'): http://${IP}:8000
-miniDLNA: http://${IP}:8200"
+miniDLNA: http://${IP}:8200
+
+DEBUG:
+ip route get 1:
+$(ip route get 1)
+
+hostname -I:
+$(hostname -I)"
 
 	TEXT_HTML="
 <b>$(l 'box_cronip_mail_description_https'):</b><br>
@@ -121,7 +128,14 @@ $(l 'box_cronip_mail_open_samba') smb://${IP}"
 
 		TEXT_HTML="${TEXT_HTML}
 <br>
-$(l 'box_cronip_mail_open_samba'): <a href='smb://${IP}'>smb://${IP}</a><br>"
+$(l 'box_cronip_mail_open_samba'): <a href='smb://${IP}'>smb://${IP}</a><br>
+<br>
+DEBUG:<br>
+ip route get 1:<br>
+$(ip route get 1)<br>
+<br>
+hostname -I:<br>
+$(hostname -I)"
 
 		send_email "$(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
 	fi
