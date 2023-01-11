@@ -79,7 +79,7 @@ ${TEXT_HTML}
 		COMMAND="${COMMAND} --user '$conf_MAIL_USER':'$conf_MAIL_PASSWORD'"
 		COMMAND="${COMMAND} --upload-file ${MAIL_CONTENT_FILE}"
 
-		echo "From: ${conf_MAIL_USER}" | tee "${MAIL_CONTENT_FILE}"
+		echo "From: ${conf_MAIL_FROM}" | tee "${MAIL_CONTENT_FILE}"
 		echo "To: ${conf_MAIL_TO}" | tee -a "${MAIL_CONTENT_FILE}"
 		echo "Subject: ${SUBJECT}" | tee -a "${MAIL_CONTENT_FILE}"
 		echo -e "${TEXT}" | tee -a "${MAIL_CONTENT_FILE}"

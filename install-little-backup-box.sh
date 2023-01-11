@@ -258,7 +258,7 @@ sleep 2
 ## append new line to config-file
 echo -e '' | sudo tee -a "${CONFIG}"
 
-## activate display if detected
+## activate display if detected (Only works in updates, i2c is not available on primary install.)
 I2C_DETECT=$(sudo i2cdetect -y 1)
 
 I2C_LIST=("3c" "3d")
