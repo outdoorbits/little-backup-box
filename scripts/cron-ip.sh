@@ -38,6 +38,9 @@ FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
 
+#load network library
+. "${WORKING_DIR}/lib-network.sh"
+
 # argruments
 FORCE_DISPLAY=${1}
 
@@ -45,7 +48,7 @@ FORCE_DISPLAY=${1}
 ping -c1 google.com &>/dev/null
 INTERNET_DISCONNECTED=$?
 
-IP=$(hostname -I | cut -d' ' -f1)
+IP=$(get_ip)
 
 if [ $conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
 	if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
