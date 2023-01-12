@@ -427,7 +427,6 @@
       "images": "Images",
       "back_to_grid": "Back to overview",
       "empty": "The selection contains no images.",
-      "preview_low_resolution_image": "Very low resolution thumbnail!",
       "preview_low_resolution_video": "Low resolution preview video!",
       "magnifying_glass": "Click on image for magnifying glass"
     },

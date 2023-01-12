@@ -644,16 +644,6 @@
 
 										</div>
 
-
-										<?php
-											if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
-	// 											RAW-image
-												echo "<div style=\"width: 100%\">";
-												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_image . "</p>";
-												echo "</div>";
-											}
-										?>
-
 										<div style="width=100%;padding: 30px;font-size:0.8em;">
 											<div style="float:left;width: 33%;text-align: left;padding: 0;padding-top: 0.5em;">
 												<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>

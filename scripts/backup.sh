@@ -1242,17 +1242,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_RAW} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: raw-image
-				## NO QUALITY CONVERTER CONFIGURED YET!
-				## THIS IS JUST A WORKAROUND
-				TMP_RAW_FILE_NAME="/tmp/rawimage"
-
-				#remove file from previous run
-				if [ -f "${TMP_RAW_FILE_NAME}" ]; then
-					rm "${TMP_RAW_FILE_NAME}"
-				fi
-
-				cp "${SOURCE_IMAGE_FILENAME}" "${TMP_RAW_FILE_NAME}"
- 				convert "${TMP_RAW_FILE_NAME}" -resize 800\> "${TIMS_FILE}"
+				dcraw -w -c "${SOURCE_IMAGE_FILENAME}" | convert - -resize 800 "${TIMS_FILE}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_VIDEO} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: video
 				ffmpeg -i "${SOURCE_IMAGE_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"
@@ -1268,13 +1258,13 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGE_FILENAME}")" "${TIMS_FILE}"
 			fi
 
-			if [ -f "${TIMS_FILE}" ]; then
-				db_insert "${SOURCE_IMAGE_FILENAME}" "${TARGET_PATH}"
-			else
+			if [ ! -f "${TIMS_FILE}" ]; then
 				log_message "ERROR: TIMS of '"${SOURCE_IMAGE_FILENAME}"' ('${TIMS_FILE}') not regular created."
 				cp '/var/www/little-backup-box/img/unknown.JPG' "${TIMS_FILE}"
 				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGE_FILENAME}")" "${TIMS_FILE}"
 			fi
+
+			db_insert "${SOURCE_IMAGE_FILENAME}" "${TARGET_PATH}"
 
 			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
 		done
