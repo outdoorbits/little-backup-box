@@ -173,9 +173,6 @@
 		}
 	}
 
-	# global variables
-	$magnifying_glass = false;
-
 	# setup
 	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5,$constants['const_VIEW_GRID_COLUMNS']*10,$constants['const_VIEW_GRID_COLUMNS']*20,$constants['const_VIEW_GRID_COLUMNS']*50);
 
@@ -624,25 +621,21 @@
 										}
 								?>
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
-											<?php
-												if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
-// 													RAW-image
-													?>
-														<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
-													<?php
-												} else {
-// 													not RAW-image
-													$magnifying_glass	= true;
-													?>
-														<div class="img-magnifier-container">
-															<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
-														</div>
-													<?php
-												}
 
-											?>
+											<div class="img-magnifier-container">
+												<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
+											</div>
 
 										</div>
+
+										<?php
+											if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+	// 											RAW-image
+												echo "<div style=\"width: 100%\">";
+													echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_image . "</p>";
+												echo "</div>";
+											}
+										?>
 
 										<div style="width=100%;padding: 30px;font-size:0.8em;">
 											<div style="float:left;width: 33%;text-align: left;padding: 0;padding-top: 0.5em;">
@@ -656,11 +649,7 @@
 											</div>
 
 											<div style="float:left;width: 33%;text-align: right;padding: 0;">
-												<?php
-													if ($magnifying_glass) {
-														echo L::view_images_magnifying_glass;
-													}
-												?>
+												<?php echo L::view_images_magnifying_glass; ?>
 											</div>
 										</div>
 

@@ -428,7 +428,8 @@
       "back_to_grid": "De regreso a la visión general",
       "empty": "La selección no contiene imágenes.",
       "preview_low_resolution_video": "¡Vídeo de vista previa de baja resolución!",
-      "magnifying_glass": "Click en la imagen para lupa"
+      "magnifying_glass": "Click en la imagen para lupa",
+      "preview_low_resolution_image": "¡Imagen de vista previa de baja resolución!"
     },
     "footer": {
       "footer": "Advertencia, aquí solo se muestran las imágenes que tienen miniaturas. Génelos automáticamente (Configuración, Copia de seguridad) o a través de la página Copia de seguridad.<br>\nConsultez le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/05a.-view-image-viewer\">Wiki</a> pour plus d'informations."
