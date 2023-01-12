@@ -419,7 +419,9 @@
       "rating_stars": "Sterne",
       "rating_all": "alle",
       "variable": "EXIF-Werte",
-      "order_by_id": "ID"
+      "order_by_id": "ID",
+      "file_type_extension": "Dateityperweiterung",
+      "camera_model_name": "Kamera"
     },
     "images": {
       "download": "Download Original",

@@ -177,19 +177,21 @@
 	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5,$constants['const_VIEW_GRID_COLUMNS']*10,$constants['const_VIEW_GRID_COLUMNS']*20,$constants['const_VIEW_GRID_COLUMNS']*50);
 
 	# standard values
-	$filter_medium			= "-";
-	$view_mode				= "grid";
-	$filter_images_per_page	= $IMAGES_PER_PAGE_OPTIONS[1];
-	$filter_directory		= "";
-	$filter_date			= "all";
-	$filter_rating			= "all";
-	$filter_variable_field	= "";
-	$filter_variable_value	= "";
-	$offset					= 0;
-	$offsetadd				= 0;
-	$imagecount				= 0;
-	$order_by          		= "Create_Date";
-	$order_dir				= "DESC";
+	$filter_medium					= "-";
+	$view_mode						= "grid";
+	$filter_images_per_page			= $IMAGES_PER_PAGE_OPTIONS[1];
+	$filter_directory				= "";
+	$filter_date					= "all";
+	$filter_rating					= "all";
+	$filter_file_type_extension		= "all";
+	$filter_camera_model_name		= "all";
+	$filter_variable_field			= "";
+	$filter_variable_value			= "";
+	$offset							= 0;
+	$offsetadd						= 0;
+	$imagecount						= 0;
+	$order_by          				= "Create_Date";
+	$order_dir						= "DESC";
 
 	$FIELDS_BLOCKED_ARRAY	= array(
 		"ID",
@@ -219,8 +221,6 @@
 		}
 	}
 
-
-
 	# ratings-preparation
 	$RATINGS_ARRAY=array();
 	foreach ($_POST as $key=>$val) {
@@ -243,30 +243,36 @@
 	}
 
 	#generate WHERE
-	$WHERE['images']		= "";
-	$WHERE['directories']	= "";
-	$WHERE['dates']			= "";
-	$WHERE['ratings']		= "";
-	$WHERE['variable']		= "";
+	$WHERE['images']				= "";
+	$WHERE['directories']			= "";
+	$WHERE['dates']					= "";
+	$WHERE['ratings']				= "";
+	$WHERE['file_type_extensions']	= "";
+	$WHERE['camera_model_name']		= "";
+	$WHERE['variable']				= "";
 
 	if ($filter_directory != "") {
 		$filter_directory	= str_replace("+","=",$filter_directory);
 		$filter_directory	= base64_decode($filter_directory);
 
-		add_to_where("Directory='" . $filter_directory . "'",array('images','dates','ratings','variable'));
+		add_to_where("Directory='" . $filter_directory . "'",array('images','dates','ratings','file_type_extensions','camera_model_name','variable'));
 	}
 
-	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'",array('images','directories','ratings','variable'));}
+	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'",array('images','directories','ratings','file_type_extensions','camera_model_name','variable'));}
 
 	if (isset($delete_ratings_1)) {$filter_rating="all";} # after delete remove rating-filter
 
-	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating,array('images','dates','directories'));}
+	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating,array('images','dates','file_type_extensions','camera_model_name','directories'));}
+
+	if ($filter_file_type_extension != "all") {add_to_where("File_Type_Extension = '" . $filter_file_type_extension . "'",array('images','dates','ratings','camera_model_name','directories'));}
+
+	if ($filter_camera_model_name != "all") {add_to_where("Camera_Model_Name = '" . $filter_camera_model_name . "'",array('images','dates','ratings','file_type_extensions','directories'));}
 
 	if ($filter_variable_value != "") {
 		$filter_variable_value	= str_replace("+","=",$filter_variable_value);
 		$filter_variable_value	= base64_decode($filter_variable_value);
 
-		if (($filter_variable_field != "") and ($filter_variable_value != "")) {add_to_where($filter_variable_field . "='" . $filter_variable_value . "'",array('images','directories','dates','ratings'));}
+		if (($filter_variable_field != "") and ($filter_variable_value != "")) {add_to_where($filter_variable_field . "='" . $filter_variable_value . "'",array('images','directories','dates','ratings','file_type_extensions','camera_model_name'));}
 	}
 
 	# generate select_offset
@@ -346,24 +352,30 @@
 			}
 
 			# database-queries
-			$statement			= $db->prepare("SELECT * FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . " " . $select_limit . " " . $select_offset . ";");
-			$IMAGES				= $statement->execute();
+			$statement				= $db->prepare("SELECT * FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . " " . $select_limit . " " . $select_offset . ";");
+			$IMAGES					= $statement->execute();
 
-			$statement			= $db->prepare("SELECT count(ID) as IMAGECOUNT FROM EXIF_DATA " . $WHERE['images'] . ";");
-			$IMAGECOUNTER		= $statement->execute();
-			$imagecount			= $IMAGECOUNTER->fetchArray(SQLITE3_ASSOC)['IMAGECOUNT'];
+			$statement				= $db->prepare("SELECT count(ID) as IMAGECOUNT FROM EXIF_DATA " . $WHERE['images'] . ";");
+			$IMAGECOUNTER			= $statement->execute();
+			$imagecount				= $IMAGECOUNTER->fetchArray(SQLITE3_ASSOC)['IMAGECOUNT'];
 
-			$statement			= $db->prepare("SELECT Directory, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['directories'] . " group by Directory order by Directory;");
-			$DIRECTORIES		= $statement->execute();
+			$statement				= $db->prepare("SELECT Directory, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['directories'] . " group by Directory order by Directory;");
+			$DIRECTORIES			= $statement->execute();
 
-			$statement			= $db->prepare("SELECT LbbRating, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['ratings'] . " group by LbbRating order by LbbRating;");
-			$RATINGS			= $statement->execute();
+			$statement				= $db->prepare("SELECT LbbRating, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['ratings'] . " group by LbbRating order by LbbRating;");
+			$RATINGS				= $statement->execute();
 
-			$statement			= $db->prepare("SELECT substr(replace(Create_Date,':','-'),1,10) as Create_Day, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['dates'] . " group by Create_Day order by Create_Day desc;");
-			$DATES				= $statement->execute();
+			$statement				= $db->prepare("SELECT substr(replace(Create_Date,':','-'),1,10) as Create_Day, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['dates'] . " group by Create_Day order by Create_Day desc;");
+			$DATES					= $statement->execute();
 
-			$statement			= $db->prepare("PRAGMA table_info(EXIF_DATA);");
-			$VAR_FIELDS			= $statement->execute();
+			$statement				= $db->prepare("SELECT File_Type_Extension, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['file_type_extensions'] . " group by File_Type_Extension order by File_Type_Extension;");
+			$FILE_TYPE_EXTENSIONS	= $statement->execute();
+
+			$statement				= $db->prepare("SELECT Camera_Model_Name, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['camera_model_name'] . " group by Camera_Model_Name order by Camera_Model_Name;");
+			$CAMERA_MODEL_NAMES		= $statement->execute();
+
+			$statement				= $db->prepare("PRAGMA table_info(EXIF_DATA);");
+			$VAR_FIELDS				= $statement->execute();
 
 			if ($filter_variable_field != "") {
 				$statement			= $db->prepare("SELECT " . $filter_variable_field . " as var_filter_value, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['variable'] . " group by " . $filter_variable_field . " order by " . $filter_variable_field . ";");
@@ -388,6 +400,8 @@
 	if ($filter_directory != "") {$GET_PARAMETER	.= "&filter_directory=" . str_replace("=","+",base64_encode($filter_directory));}
 	if ($filter_date != "") {$GET_PARAMETER	.= "&filter_date=" . $filter_date;}
 	if ($filter_rating != "") {$GET_PARAMETER	.= "&filter_rating=$filter_rating";}
+	if ($filter_file_type_extension != "") {$GET_PARAMETER	.= "&filter_file_type_extension=$filter_file_type_extension";}
+	if ($filter_camera_model_name != "") {$GET_PARAMETER	.= "&filter_camera_model_name=$filter_camera_model_name";}
 	if ($filter_variable_field != "") {$GET_PARAMETER	.= "&filter_variable_field=$filter_variable_field";}
 	if ($filter_variable_value != "") {$GET_PARAMETER	.= "&filter_variable_value=" . str_replace("=","+",base64_encode($filter_variable_value));}
 
@@ -403,6 +417,8 @@
 	if ($filter_directory != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_directory\" value=\"" . str_replace("=","+",base64_encode($filter_directory)) . "\">";}
 	if ($filter_date != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_date\" value=\"" . $filter_date . "\">";}
 	if ($filter_rating != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_rating\" value=\"" . $filter_rating . "\">";}
+	if ($filter_file_type_extension != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_file_type_extension\" value=\"" . $filter_file_type_extension . "\">";}
+	if ($filter_camera_model_name != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_camera_model_name\" value=\"" . $filter_camera_model_name . "\">";}
 	if ($filter_variable_field != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_variable_field\" value=\"" . $filter_variable_field . "\">";}
 	if ($filter_variable_value != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_variable_value\" value=\"" . str_replace("=","+",base64_encode($filter_variable_value)) . "\">";}
 ?>
@@ -480,6 +496,37 @@
 								</select>
 						</div>
 					<?php } ?>
+				</div>
+
+				<div style="display: flow-root">
+					<?php if ($DATABASE_CONNECTED) { ?>
+						<div style="float:left;padding: 5px;">
+							<label for="filter_file_type_extension"><?php echo L::view_filter_file_type_extension; ?></label><br>
+								<select name="filter_file_type_extension" id="filter_file_type_extension" onchange="this.form.submit()">
+									<option value="all" <?php echo ($filter_file_type_extension == ""?" selected":""); ?>>-</option>
+									<?php
+										while ($FILE_TYPE_EXTENSION = $FILE_TYPE_EXTENSIONS->fetchArray(SQLITE3_ASSOC)) {
+											echo "<option value=\"" . $FILE_TYPE_EXTENSION['File_Type_Extension'] . "\" " . ($filter_file_type_extension == $FILE_TYPE_EXTENSION['File_Type_Extension']?" selected":"") . ">" . $FILE_TYPE_EXTENSION['File_Type_Extension'] . " (" . $FILE_TYPE_EXTENSION['FILECOUNT'] . ")</option>";
+										}
+									?>
+								</select>
+						</div>
+					<?php } ?>
+
+					<?php if ($DATABASE_CONNECTED) { ?>
+						<div style="float:right;padding: 5px;">
+							<label for="filter_rating"><?php echo L::view_filter_camera_model_name; ?></label><br>
+								<select name="filter_camera_model_name" id="filter_camera_model_name" onchange="this.form.submit()">
+									<?php
+										echo "<option value=\"all\">-</option>";
+										while ($CAMERA_MODEL_NAME = $CAMERA_MODEL_NAMES->fetchArray(SQLITE3_ASSOC)) {
+											echo "<option value=\"" . $CAMERA_MODEL_NAME['Camera_Model_Name'] . "\" " . ($filter_camera_model_name == $CAMERA_MODEL_NAME['Camera_Model_Name']?" selected":"") . ">" . $CAMERA_MODEL_NAME['Camera_Model_Name'] . " (" . $CAMERA_MODEL_NAME['FILECOUNT'] . ")</option>";
+										}
+									?>
+								</select>
+						</div>
+					<?php } ?>
+
 				</div>
 
 				<div style="display: flow-root">

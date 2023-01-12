@@ -419,7 +419,9 @@
       "rating_stars": "Étoiles",
       "rating_all": "tout",
       "variable": "Valeurs EXIF",
-      "order_by_id": "ID"
+      "order_by_id": "ID",
+      "file_type_extension": "Extension de type de fichier",
+      "camera_model_name": "Appareil photo"
     },
     "images": {
       "download": "Télécharger l'original",
