@@ -135,13 +135,13 @@ function write_config()
 	}
 
 	if (isset($conf_PASSWORD_REMOVE)) {
-		$conf_PASSWORD_LINE="conf_PASSWORD=\"\"";
+		$conf_PASSWORD_LINE="conf_PASSWORD=''";
 		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh remove");
 		popup($title . "\n" . L::config_alert_password_change_after_reboot_remove,true);
 	} elseif ($conf_PASSWORD_1 != "") {
 		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
-			$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_1\"";
-			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh set \"" . $conf_PASSWORD_1 . "\"");
+			$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
+			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh set '" . $conf_PASSWORD_1 . "'");
 			popup($title . "\n" . L::config_alert_password_change_after_reboot_set,true);
 		}
 	}
@@ -150,16 +150,16 @@ function write_config()
 	$config_file_handle = fopen($CONFIGFILE, "w");
 
 	$config_file_content = <<<CONFIGDATA
-conf_LANGUAGE="$conf_LANGUAGE"
-conf_BACKUP_DEFAULT_SOURCE="$conf_BACKUP_DEFAULT_SOURCE"
-conf_BACKUP_DEFAULT_TARGET="$conf_BACKUP_DEFAULT_TARGET"
-conf_BACKUP_DEFAULT_SOURCE2="$conf_BACKUP_DEFAULT_SOURCE2"
-conf_BACKUP_DEFAULT_TARGET2="$conf_BACKUP_DEFAULT_TARGET2"
-conf_BACKUP_CAMERA_FOLDER_MASK="$conf_BACKUP_CAMERA_FOLDER_MASK"
-conf_BACKUP_TARGET_BASEDIR_CLOUD="$conf_BACKUP_TARGET_BASEDIR_CLOUD"
+conf_LANGUAGE='$conf_LANGUAGE'
+conf_BACKUP_DEFAULT_SOURCE='$conf_BACKUP_DEFAULT_SOURCE'
+conf_BACKUP_DEFAULT_TARGET='$conf_BACKUP_DEFAULT_TARGET'
+conf_BACKUP_DEFAULT_SOURCE2='$conf_BACKUP_DEFAULT_SOURCE2'
+conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
+conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
+conf_BACKUP_TARGET_BASEDIR_CLOUD='$conf_BACKUP_TARGET_BASEDIR_CLOUD'
 conf_POWER_OFF=$conf_POWER_OFF
 conf_DISP=$conf_DISP
-conf_DISP_I2C_ADDRESS="$conf_DISP_I2C_ADDRESS"
+conf_DISP_I2C_ADDRESS='$conf_DISP_I2C_ADDRESS'
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_THEME=$conf_THEME
@@ -174,19 +174,19 @@ conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
 conf_VIEW_WRITE_RATING_EXIF=$conf_VIEW_WRITE_RATING_EXIF
 conf_MAIL_NOTIFICATIONS=$conf_MAIL_NOTIFICATIONS
 conf_MAIL_HTML=$conf_MAIL_HTML
-conf_SMTP_SERVER="$conf_SMTP_SERVER"
-conf_SMTP_PORT="$conf_SMTP_PORT"
-conf_MAIL_SECURITY="$conf_MAIL_SECURITY"
-conf_MAIL_USER="$conf_MAIL_USER"
-conf_MAIL_PASSWORD="$conf_MAIL_PASSWORD"
-conf_MAIL_FROM="$conf_MAIL_FROM"
-conf_MAIL_TO="$conf_MAIL_TO"
-conf_RSYNC_SERVER="$conf_RSYNC_SERVER"
-conf_RSYNC_PORT="$conf_RSYNC_PORT"
-conf_RSYNC_USER="$conf_RSYNC_USER"
-conf_RSYNC_conf_PASSWORD="$conf_RSYNC_conf_PASSWORD"
-conf_RSYNC_SERVER_MODULE="$conf_RSYNC_SERVER_MODULE"
-conf_WIFI_COUNTRY="$conf_WIFI_COUNTRY"
+conf_SMTP_SERVER='$conf_SMTP_SERVER'
+conf_SMTP_PORT='$conf_SMTP_PORT'
+conf_MAIL_SECURITY='$conf_MAIL_SECURITY'
+conf_MAIL_USER='$conf_MAIL_USER'
+conf_MAIL_PASSWORD='$conf_MAIL_PASSWORD'
+conf_MAIL_FROM='$conf_MAIL_FROM'
+conf_MAIL_TO='$conf_MAIL_TO'
+conf_RSYNC_SERVER='$conf_RSYNC_SERVER'
+conf_RSYNC_PORT='$conf_RSYNC_PORT'
+conf_RSYNC_USER='$conf_RSYNC_USER'
+conf_RSYNC_conf_PASSWORD='$conf_RSYNC_conf_PASSWORD'
+conf_RSYNC_SERVER_MODULE='$conf_RSYNC_SERVER_MODULE'
+conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
 $conf_PASSWORD_LINE
 
 CONFIGDATA;
