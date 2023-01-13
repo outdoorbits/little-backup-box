@@ -88,7 +88,7 @@ function check_new_password($title, $pwd_1, $pwd_2) {
 			popup($title . "\n" . L::config_alert_password_not_identical, true);
 		} elseif (strlen($pwd_1) < 5) {
 			popup($title . "\n" . L::config_alert_password_too_short, true);
-		} elseif (strpos("_" . $pwd_1,"\\") or strpos("_" . $pwd_1,"\"")) {
+		} elseif (strpos("_" . $pwd_1,"\\") or strpos("_" . $pwd_1,"'")) {
 			popup($title . "\n" . L::config_alert_password_characters_not_allowed, true);
 		} else {
 			$pwd_valid=true;
