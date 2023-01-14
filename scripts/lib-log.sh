@@ -77,12 +77,11 @@ function log_exec() {
 	local COMMAND="${2}"
     local LEVEL="${3}"
 
-    if [ ! -z "$(log_level_reached ${LEVEL})" ]; then
-		if [ ! -z "${MESSAGE}" ]; then
-			MESSAGE="${MESSAGE}\n"
-		fi
-		log_message "${MESSAGE}> ${COMMAND}:\n$(eval ${COMMAND} 2>&1)" "${LEVEL}"
-    fi
+	if [ ! -z "${MESSAGE}" ]; then
+		MESSAGE="${MESSAGE}\n"
+	fi
+
+	log_message "${MESSAGE}> ${COMMAND}:\n$(eval ${COMMAND} 2>&1)" "${LEVEL}"
 }
 
 function log_level_reached() {

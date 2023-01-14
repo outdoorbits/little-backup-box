@@ -45,15 +45,14 @@ FILE_OLED_OLD="${WORKING_DIR}/tmp/oled_old.txt"
 FORCE_DISPLAY=${1}
 
 #online?
-ping -c1 google.com &>/dev/null
-INTERNET_DISCONNECTED=$?
+INTERNET_STATUS=$(get_internet_status)
 
 #display online-status and IP
 IP=$(get_ip)
 
 if [ $conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
 	if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
-		if [ "${INTERNET_DISCONNECTED}" = "0" ]; then
+		if [ "${INTERNET_STATUS}" = "connected" ]; then
 			lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
 		else
 			lcd_message "IP ($(l 'box_cronip_offline')):" "${IP}"
@@ -67,25 +66,24 @@ if [ ! -z $conf_MAIL_NOTIFICATIONS ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; t
 	#wait for internet if not connected
 	TRIES_MAX=5
 	TRIES_DONE=0
-	INTERNET_DISCONNECTED_NEW="${INTERNET_DISCONNECTED}"
-	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && ([ -z "${IP}" ] || [ "${INTERNET_DISCONNECTED_NEW}" != "0" ]); do
+	INTERNET_STATUS_NEW=$(get_internet_status)
+	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && ([ -z "${IP}" ] || [ "${INTERNET_STATUS_NEW}" != "connected" ]); do
 		sleep 2
 
 		IP=$(get_ip)
 
-		ping -c1 google.com &>/dev/null
-		INTERNET_DISCONNECTED_NEW=$?
+		INTERNET_STATUS_NEW=$(get_internet_status)
 
 		TRIES_DONE=$((TRIES_DONE+1))
 	done
 
-	if [ ! -z "${IP}" ] && [ "${INTERNET_DISCONNECTED_NEW}" = "0" ]; then
+	if [ ! -z "${IP}" ] && [ "${INTERNET_STATUS_NEW}" = "connected" ]; then
 		#online!
 
 		IP_NEW=$(get_ip)
 
 		if [ $conf_DISP = true ] && [ $conf_DISP_IP_REPEAT = true ]; then
-			if [ "${IP}" != "${IP_NEW}" ] || [ "${INTERNET_DISCONNECTED}" != "${INTERNET_DISCONNECTED_NEW}" ]; then
+			if [ "${IP}" != "${IP_NEW}" ] || [ "${INTERNET_STATUS}" != "${INTERNET_STATUS_NEW}" ]; then
 				# IP changed
 				IP="${IP_NEW}"
 				lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"

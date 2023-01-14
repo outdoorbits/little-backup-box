@@ -21,6 +21,7 @@
 # - source config.cfg
 # - source constants.sh
 # - source lib-log.sh
+# - source lib-network
 
 function send_email () {
 
@@ -63,8 +64,8 @@ ${TEXT_HTML}
 
 	# Check internet connection and send
 	# a notification if the conf_MAIL_NOTIFICATIONS option is enabled
-	check=$(wget -q --spider http://google.com/)
-	if [ $conf_MAIL_NOTIFICATIONS = true ] || [ ! -z "$check" ]; then
+	INTERNET_STATUS=$(get_internet_status)
+	if [ $conf_MAIL_NOTIFICATIONS = true ] || [ "${INTERNET_STATUS}" = "connected" ]; then
 
 		MAIL_CONTENT_FILE="${WORKING_DIR}/tmp/email.txt"
 

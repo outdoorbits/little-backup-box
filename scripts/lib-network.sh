@@ -20,3 +20,14 @@
 function get_ip() {
 	hostname -I | awk '{$1=$1};1' # trims the result
 }
+
+
+function get_internet_status() {
+	ping -c1 "google.com" &>/dev/null
+	local STATUS=$?
+	if [ "${STATUS}" == "0" ]; then
+		echo "connected"
+	else
+		echo "disconnected"
+	fi
+}

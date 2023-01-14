@@ -124,6 +124,9 @@ fi
 #load time library
 . "${WORKING_DIR}/lib-time.sh"
 
+#load network library
+. "${WORKING_DIR}/lib-network.sh"
+
 # log
 lcd_message "$(l "box_backup_mode_${SOURCE_MODE}")" " > $(l "box_backup_mode_${TARGET_MODE}")" "   ${CLOUDSERVICE}"
 
@@ -1030,14 +1033,15 @@ function sync_return_code_decoder() {
 
 	# Check internet connection and send
 	# a notification by mail if the conf_MAIL_NOTIFICATIONS option is enabled
-	ONLINE_CHECK=$(wget -q --spider http://google.com/)
-	if ([ $conf_MAIL_NOTIFICATIONS = true ] || [ ! -z "$ONLINE_CHECK" ]) && [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
+	INTERNET_STATUS=$(get_internet_status)
+	if [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
 
 		if [ ${SYNC_ERROR_LAST} = true  ]; then
 			SUBJ_MSG="$(l 'box_backup_mail_error')"
 		else
 			SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
 		fi
+
 		BODY_MSG="$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}
 ${SOURCE_IDENTIFIER}
 

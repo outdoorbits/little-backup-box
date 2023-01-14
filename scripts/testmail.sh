@@ -32,5 +32,8 @@ source "$CONFIG"
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
 
+#load network library
+. "${WORKING_DIR}/lib-network.sh"
+
 # Send testmail
 send_email "$(l 'config_mail_testmail_subject')" "$(l 'config_mail_testmail_content')"

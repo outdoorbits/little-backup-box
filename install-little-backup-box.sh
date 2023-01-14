@@ -19,7 +19,7 @@
 #######################################################################
 
 
-# IMPORTANT:
+# IMPORTANT for developers:
 # All actions have to be sufficient for modes install and update!
 # To differ between both modes, use variable SCRIPT_MODE:
 # if [ "${SCRIPT_MODE}" = "install" ]; then ...
@@ -34,8 +34,8 @@ fi
 
 # internet-connection required
 ping -c1 google.com &>/dev/null
-INTERNET_DISCONNECTED=$?
-if [ "${INTERNET_DISCONNECTED}" != "0" ]; then
+INTERNET_STATUS=$?
+if [ "${INTERNET_STATUS}" != "0" ]; then
 	echo "No internet-connection detected. Exit."
 	exit 0
 fi
