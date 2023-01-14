@@ -93,9 +93,12 @@ switch($CMD) {
 		$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
 }
 
+$PASSWORD_ASK	= false;
 if ($PASSWORD_REQ) {
 	if (isset($PWD)) {
-		$PASSWORD_REQ	= (($PWD !== $config['conf_PASSWORD']) or ($PWD == ""));
+		$PASSWORD_ASK	= ($PWD !== $config['conf_PASSWORD']);
+	} else {
+		$PASSWORD_ASK	= true;
 	}
 }
 ?>
@@ -107,19 +110,29 @@ if ($PASSWORD_REQ) {
 		<?php echo $CMD_DESCRIPTION; ?><br>
 	</p>
 
-	<?php if ($PASSWORD_REQ) { ?>
-		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-			<input type="hidden" name="CMD" value="<?php echo $CMD; ?>">
-			<input type="hidden" name="PARAM1" value="<?php echo $PARAM1; ?>">
-			<input type="hidden" name="PARAM2" value="<?php echo $PARAM2; ?>">
-			<div class="card" style="margin-top: 2em;">
-				<label for="PWD"><?php echo L::cmd_input_password; ?>:</label>
-				<input type="password" size="20" name="PWD" id="PWD"><br>
-				<?php echo l::cmd_input_password_info; ?><br>
-				<button style="margin-top: 2em;" type="submit" name="upload_settings"><?php echo L::cmd_execute; ?></button>
-			</div>
-		</form>
-	<?php } elseif ($CMD_ARGUMENTS != "") { ?>
+	<?php
+		if ($PASSWORD_ASK) {
+			if ($config['conf_PASSWORD'] != "") {
+	?>
+			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+				<input type="hidden" name="CMD" value="<?php echo $CMD; ?>">
+				<input type="hidden" name="PARAM1" value="<?php echo $PARAM1; ?>">
+				<input type="hidden" name="PARAM2" value="<?php echo $PARAM2; ?>">
+				<div class="card" style="margin-top: 2em;">
+					<label for="PWD"><?php echo L::cmd_input_password; ?>:</label>
+					<input type="password" size="20" name="PWD" id="PWD"><br>
+					<button style="margin-top: 2em;" type="submit" name="upload_settings"><?php echo L::cmd_execute; ?></button>
+				</div>
+			</form>
+	<?php
+			} else {
+	?>
+				<div class="card" style="margin-top: 2em;">
+					<?php echo l::cmd_password_input_info . "<br><a href ='/config.php'>" . l::cmd_password_set_link . '</a>'; ?><br>
+				</div>
+	<?php
+			}
+		} elseif ($CMD_ARGUMENTS != "") { ?>
 		<iframe id="cmdmonitor" src="/cmd-runner.php?<?php echo $CMD_ARGUMENTS; ?>" width="100%" height="500" style="background: #FFFFFF;"></iframe>
 	<?php } ?>
 

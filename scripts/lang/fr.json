@@ -379,7 +379,6 @@
   "cmd": {
     "execute": "exécuter",
     "input_password": "Mot de passe requis pour démarrer",
-    "input_password_info": "Si aucun mot de passe n'est défini, vous ne pouvez pas continuer. Configurez d'abord un mot de passe global.",
     "update": {
       "warning": "NE PAS ARRÊTER ou recharger pendant la course !",
       "return_link": "Retour à Little Backup Box - NE CLIQUEZ PAS AVANT QUE LA MISE À JOUR SOIT TERMINÉE !",
@@ -399,7 +398,9 @@
       "description_non_destructive": "Les données seront conservées dans la mesure du possible.",
       "description_destructive": "Les données seront supprimées !",
       "description": "Vérifiez le disque"
-    }
+    },
+    "password_input_info": "Aucun mot de passe global n'a été défini. Vous ne pouvez pas continuer. Veuillez d'abord configurer un mot de passe global.",
+    "password_set_link": "Définir le mot de passe global"
   },
   "view": {
     "view": "Visionneuse d'images",

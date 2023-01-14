@@ -378,7 +378,6 @@
   },
   "cmd": {
     "input_password": "Password requiered to start",
-    "input_password_info": "If no password is set, you cannot continue. Set up a global password first.",
     "execute": "execute",
     "no_cmd": "No valid command given.",
     "link_text_home": "Return to Little Backup Box - DO NOT CLICK BEFORE THE COMMAND HAS FINISHED!<br>(Wait for &quot;FINISHED&quot;.)",
@@ -399,7 +398,9 @@
       "description_non_destructive": "Data will be preserved as far as possible.",
       "description_destructive": "Data will be deleted!",
       "description": "Check disk"
-    }
+    },
+    "password_input_info": "No global password has been set. You cannot continue. Please set up a global password first.",
+    "password_set_link": "Set global password"
   },
   "view": {
     "view": "Image viewer",

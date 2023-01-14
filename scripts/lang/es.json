@@ -379,7 +379,6 @@
   "cmd": {
     "execute": "ejecutar",
     "input_password": "Se requiere contraseña para comenzar",
-    "input_password_info": "Si no se establece una contraseña, no puede continuar. Configure primero una contraseña global.",
     "update": {
       "warning": "¡NO SE DETENGA ni recargue mientras corre!",
       "return_link": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE TERMINE LA ACTUALIZACIÓN!",
@@ -399,7 +398,9 @@
       "description_non_destructive": "Los datos se conservarán en la medida de lo posible.",
       "description_destructive": "¡Los datos serán eliminados!",
       "description": "Verificar disco"
-    }
+    },
+    "password_input_info": "No se ha establecido ninguna contraseña global. No puedes continuar. Primero configure una contraseña global.",
+    "password_set_link": "Establecer contraseña global"
   },
   "view": {
     "view": "Visor de imágenes",

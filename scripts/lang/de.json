@@ -379,7 +379,6 @@
   "cmd": {
     "execute": "ausführen",
     "input_password": "Passwort erforderlich",
-    "input_password_info": "Falls kein Passwort festgelegt wurde, können Sie nicht fortfahren. Richten Sie zuerst ein globales Passwort ein.",
     "update": {
       "warning": "Während des Vorgangs NICHT STOPPEN oder nachladen!",
       "return_link": "Zurück zu Little Backup Box - NICHT KLICKEN, BEVOR DAS UPDATE ABGESCHLOSSEN IST!",
@@ -399,7 +398,9 @@
       "description_non_destructive": "Daten werden möglichst erhalten.",
       "description_destructive": "Daten werden gelöscht!",
       "description": "Datenträger überprüfen"
-    }
+    },
+    "password_input_info": "Es wurde kein globales Passwort festgelegt. Sie können nicht fortfahren. Richten Sie bitte zuerst ein globales Passwort ein.",
+    "password_set_link": "Globales Passwort setzen"
   },
   "view": {
     "view": "Bildbetrachter",
