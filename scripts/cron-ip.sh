@@ -48,6 +48,7 @@ FORCE_DISPLAY=${1}
 ping -c1 google.com &>/dev/null
 INTERNET_DISCONNECTED=$?
 
+#display online-status and IP
 IP=$(get_ip)
 
 if [ $conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
@@ -67,24 +68,26 @@ if [ ! -z $conf_MAIL_NOTIFICATIONS ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; t
 	TRIES_MAX=5
 	TRIES_DONE=0
 	INTERNET_DISCONNECTED_NEW="${INTERNET_DISCONNECTED}"
-	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${INTERNET_DISCONNECTED_NEW}" != "0" ]]; do
+	while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && ([ -z "${IP}" ] || [ "${INTERNET_DISCONNECTED_NEW}" != "0" ]); do
 		sleep 2
+
+		IP=$(get_ip)
+
 		ping -c1 google.com &>/dev/null
 		INTERNET_DISCONNECTED_NEW=$?
 
 		TRIES_DONE=$((TRIES_DONE+1))
 	done
 
-	if [ "${INTERNET_DISCONNECTED_NEW}" = "0" ]; then
+	if [ ! -z "${IP}" ] && [ "${INTERNET_DISCONNECTED_NEW}" = "0" ]; then
 		#online!
 
-		IP_NEW=$(hostname -I | cut -d' ' -f1)
+		IP_NEW=$(get_ip)
 
 		if [ $conf_DISP = true ] && [ $conf_DISP_IP_REPEAT = true ]; then
 			if [ "${IP}" != "${IP_NEW}" ] || [ "${INTERNET_DISCONNECTED}" != "${INTERNET_DISCONNECTED_NEW}" ]; then
 				# IP changed
 				IP="${IP_NEW}"
-				sleep 1
 				lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
 			fi
 		fi
@@ -105,14 +108,7 @@ $(l 'box_cronip_mail_main'): https://${IP}
 
 $(l 'box_cronip_mail_desription_http'):
 $(l 'box_cronip_mail_main'): http://${IP}:8000
-miniDLNA: http://${IP}:8200
-
-DEBUG:
-ip route get 1:
-$(ip route get 1)
-
-hostname -I:
-$(hostname -I)"
+miniDLNA: http://${IP}:8200"
 
 	TEXT_HTML="
 <b>$(l 'box_cronip_mail_description_https'):</b><br>
@@ -128,14 +124,7 @@ $(l 'box_cronip_mail_open_samba') smb://${IP}"
 
 		TEXT_HTML="${TEXT_HTML}
 <br>
-$(l 'box_cronip_mail_open_samba'): <a href='smb://${IP}'>smb://${IP}</a><br>
-<br>
-DEBUG:<br>
-ip route get 1:<br>
-$(ip route get 1)<br>
-<br>
-hostname -I:<br>
-$(hostname -I)"
+$(l 'box_cronip_mail_open_samba'): <a href='smb://${IP}'>smb://${IP}</a>"
 
 		send_email "$(l 'box_cronip_mail_info'): ${IP}" "${TEXT_PLAIN}" "${TEXT_HTML}"
 	fi

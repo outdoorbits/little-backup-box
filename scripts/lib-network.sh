@@ -18,5 +18,5 @@
 #######################################################################
 
 function get_ip() {
-	ip route get 1 | awk '{print $(NF-2);exit}'
+	hostname -I | awk '{$1=$1};1' # trims the result
 }
