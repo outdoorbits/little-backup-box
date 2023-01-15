@@ -1225,17 +1225,17 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 			SOURCE_IMAGE_FILENAME_EXTENSION="${SOURCE_IMAGE_FILENAME_EXTENSION,,}"
 
 			TIMS_FOLDER="$(dirname "${SOURCE_IMAGE_FILENAME}")/tims"
-			TIMS_FILE="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGE_FILENAME}").JPG"
+			TIMS_FILENAME="${TIMS_FOLDER}/$(basename "${SOURCE_IMAGE_FILENAME}").JPG"
 			mkdir -p "${TIMS_FOLDER}"
 
 			if [[ " ${const_FILE_EXTENSIONS_LIST_JPG} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: image
-				convert "${SOURCE_IMAGE_FILENAME}" -resize 800\> "${TIMS_FILE}"
+				convert "${SOURCE_IMAGE_FILENAME}" -resize 800\> "${TIMS_FILENAME}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_HEIC} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: heic/heif
 				heif-convert "${SOURCE_IMAGE_FILENAME}" "${SOURCE_IMAGE_FILENAME}.JPG"
 				exiftool  -overwrite_original -TagsFromFile "${SOURCE_IMAGE_FILENAME}" "${SOURCE_IMAGE_FILENAME}.JPG"
-				convert "${SOURCE_IMAGE_FILENAME}.JPG" -resize 800\> "${TIMS_FILE}"
+				convert "${SOURCE_IMAGE_FILENAME}.JPG" -resize 800\> "${TIMS_FILENAME}"
 
 				if [ ${conf_VIEW_CONVERT_HEIC} = true ]; then
 					IMAGES_ARRAY+=("${SOURCE_IMAGE_FILENAME}.JPG")
@@ -1246,26 +1246,26 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_RAW} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: raw-image
-				dcraw -w -c "${SOURCE_IMAGE_FILENAME}" | convert - -resize 800 "${TIMS_FILE}"
+ 				/usr/lib/libraw/dcraw_emu -w -Z - "${SOURCE_IMAGE_FILENAME}" | convert - -resize 800 "${TIMS_FILENAME}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_VIDEO} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
 				# file-type: video
-				ffmpeg -i "${SOURCE_IMAGE_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILE}"
-				if [ ! -f "${TIMS_FILE}" ]; then
+				ffmpeg -i "${SOURCE_IMAGE_FILENAME}" -ss 00:00:01 -vframes 1 "${TIMS_FILENAME}"
+				if [ ! -f "${TIMS_FILENAME}" ]; then
 					# tims file not generated. Video too short? Try at second 0
-					ffmpeg -i "${SOURCE_IMAGE_FILENAME}" -ss 00:00:00 -vframes 1 "${TIMS_FILE}"
+					ffmpeg -i "${SOURCE_IMAGE_FILENAME}" -ss 00:00:00 -vframes 1 "${TIMS_FILENAME}"
 				fi
 
-				mogrify -resize 800\> "${TIMS_FILE}"
-				composite -gravity center '/var/www/little-backup-box/img/play.png' "${TIMS_FILE}" "${TIMS_FILE}"
+				mogrify -resize 800\> "${TIMS_FILENAME}"
+				composite -gravity center '/var/www/little-backup-box/img/play.png' "${TIMS_FILENAME}" "${TIMS_FILENAME}"
 			elif [[ " ${const_FILE_EXTENSIONS_LIST_AUDIO} " =~ " ${SOURCE_IMAGE_FILENAME_EXTENSION} " ]]; then
-				cp '/var/www/little-backup-box/img/audio.JPG' "${TIMS_FILE}"
-				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGE_FILENAME}")" "${TIMS_FILE}"
+				cp '/var/www/little-backup-box/img/audio.JPG' "${TIMS_FILENAME}"
+				convert "${TIMS_FILENAME}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGE_FILENAME}")" "${TIMS_FILENAME}"
 			fi
 
-			if [ ! -f "${TIMS_FILE}" ]; then
-				log_message "ERROR: TIMS of '"${SOURCE_IMAGE_FILENAME}"' ('${TIMS_FILE}') not regular created."
-				cp '/var/www/little-backup-box/img/unknown.JPG' "${TIMS_FILE}"
-				convert "${TIMS_FILE}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGE_FILENAME}")" "${TIMS_FILE}"
+			if [ ! -f "${TIMS_FILENAME}" ]; then
+				log_message "ERROR: TIMS of '"${SOURCE_IMAGE_FILENAME}"' ('${TIMS_FILENAME}') not regular created."
+				cp '/var/www/little-backup-box/img/unknown.JPG' "${TIMS_FILENAME}"
+				convert "${TIMS_FILENAME}" -gravity center -pointsize 50 -annotate 0 "$(basename "${SOURCE_IMAGE_FILENAME}")" "${TIMS_FILENAME}"
 			fi
 
 			db_insert "${SOURCE_IMAGE_FILENAME}" "${TARGET_PATH}"
