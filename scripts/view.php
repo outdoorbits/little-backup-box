@@ -670,7 +670,7 @@
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 
 											<div class="img-magnifier-container">
-												<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
+												<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%;border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
 											</div>
 
 										</div>
@@ -758,12 +758,12 @@
 							</div>
 
 							<div style="float:left;width: 100%;padding: 5px;">
-								<table>
+								<table style="table-layout: fixed;max-width: 100%;">
 								<?php
 									foreach ($IMAGE as $FIELD => $VALUE) {
 										if (($VALUE != "") and (! in_array($FIELD,$FIELDS_BLOCKED_ARRAY))) {
 											$FIELD	= str_replace('_',' ',$FIELD);
-											echo "<tr><td valign='top' width='30%'>$FIELD:</td><td valign='top' width='70%'><b>$VALUE</b></td></tr>";
+											echo "<tr><td style='word-break: break-all;width: 40%;vertical-align: top;'><u>$FIELD:</u></td><td style='word-break: break-all;width: 60%;vertical-align: top;'><b>$VALUE</b></td></tr>";
 										}
 									}
 								?>
