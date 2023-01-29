@@ -44,8 +44,11 @@ FORCE="${2}"
 MESSAGE="${3}"
 TRANSFER_INFO="${4}"
 
+# predefined values?
+if [ "${POWER_OFF}" = "" ]; then POWER_OFF="${conf_POWER_OFF}"; fi
+
 # Power off
-if [ "${conf_POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
+if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
     # umount
     umount_device "usb_1"
 	umount_device "usb_2"

@@ -52,14 +52,26 @@ SYNC_TIME_OVERHEATING_WAIT_SEC=60
 
 # START
 
-# To add a new definition, specify the desired arguments to the list
+# Get arguments
 SOURCE_ARG="${1}"
 TARGET_ARG="${2}"
 
+GENERATE_THUMBNAILS="${3}" #  ['true'|'false'|empty]
+UPDATE_EXIF="${4}" #  ['true'|'false'|empty]
+POWER_OFF="${5}" #  ['true'|'false'|empty]
+
+SECONDARY_BACKUP_FOLLOWS="${6}" #  ['true'|'false'|empty]
+
+if [ "${GENERATE_THUMBNAILS}" = "" ]; then GENERATE_THUMBNAILS="${conf_BACKUP_GENERATE_THUMBNAILS}"; fi
+
+if [ "${UPDATE_EXIF}" = "" ]; then UPDATE_EXIF="${conf_BACKUP_UPDATE_EXIF}"; fi
+
+if [ "${POWER_OFF}" = "true" ]; then POWER_OFF_FORCE="force"; fi # force power off, if set by argument
+if [ "${POWER_OFF}" = "" ]; then POWER_OFF="${conf_POWER_OFF}"; fi
+
 # if SECONDARY_BACKUP_FOLLOWS = true: no power off
-SECONDARY_BACKUP_FOLLOWS="false"
-if [ "${3}" == "true" ]; then
-	SECONDARY_BACKUP_FOLLOWS="true"
+if [ "${SECONDARY_BACKUP_FOLLOWS}" != "true" ]; then
+	SECONDARY_BACKUP_FOLLOWS="false"
 fi
 
 # Source definition
@@ -1062,7 +1074,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 ########################
 
 	DB="${TARGET_PATH}/${const_IMAGE_DATABASE_FILENAME}"
-	if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [[ " thumbnails database exif " =~ " ${SOURCE_MODE} " ]]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+	if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${GENERATE_THUMBNAILS}" = "true" ] || [[ " thumbnails database exif " =~ " ${SOURCE_MODE} " ]]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 
 		# prepare database
 		db_setup
@@ -1146,7 +1158,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 # GENERATE THUMBNAILS #
 #######################
 
-	if ([ "${conf_BACKUP_GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+	if ([ "${GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "thumbnails" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 		# generate thumbnails on local drive (usb or internal)
 
 		# prepare database
@@ -1279,7 +1291,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 # EXIF UPDATE #
 ###############
 
-	if ([ "${conf_BACKUP_UPDATE_EXIF}" = "true" ] || [ "${SOURCE_MODE}" = "exif" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+	if ([ "${UPDATE_EXIF}" = "true" ] || [ "${SOURCE_MODE}" = "exif" ]) && [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
 		# update exif-information in original files on local drive (usb or internal)
 
 		# prepare database
@@ -1326,7 +1338,7 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 	sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}" 2>/dev/null
 
 # Power off
-	if [ "${SECONDARY_BACKUP_FOLLOWS}" == "false" ]; then
-		source "${WORKING_DIR}/poweroff.sh" "poweroff" "" "${MESSAGE_LCD}" "$(echo "${TRANSFER_INFO_DISP}" | tr "\n" " ")"
+	if [ "${SECONDARY_BACKUP_FOLLOWS}" = "false" ]; then
+		source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_LCD}" "$(echo "${TRANSFER_INFO_DISP}" | tr "\n" " ")"
 	fi
 

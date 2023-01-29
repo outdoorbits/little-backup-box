@@ -96,7 +96,7 @@ if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TAR
 		sleep 1
 	fi
 
-	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" "${SECONDARY_BACKUP_FOLLOWS}"
+	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" '' '' '' "${SECONDARY_BACKUP_FOLLOWS}"
 fi
 
 ## default-backup 2
