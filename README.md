@@ -73,7 +73,7 @@ These languages are already available. Do you want to maintain or create a trans
 	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
 	<li>Mounting devices is managed by UUIDs. If a device disconnects*2, it can be automatically reconnected. The backup-process becomes much more robust.</li>
 	<li>Some tools are added (check device, repair device)</li>
-	<li>Installation of components (comitup, mejiro) is automated</li>
+	<li>Installation of comitup is automated</li>
 	<li>It has a full powered webserver now, ssl as standard</li>
 	<li>Setup is form-based</li>
 	<li>Setup can be ex- and imported as zip-file.</li>
@@ -125,6 +125,10 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		Run the following command on the Raspberry Pi:<br>
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code><br>
 		Errors are reported into ./install-error.log
+	</li>
+	<li>
+		You will be asked for the default backup mode.<br>
+		This is the action started automatically after boot.
 	</li>
 	<li>
 		You will be asked if you want to install <a href="https://davesteele.github.io/comitup/">comitup</a>.<br>
