@@ -24,8 +24,9 @@ Media content can be viewed and rated for the subsequent process.<br>
 	</tr>
 </table>
 These languages are already available. Do you want to maintain or create a translation?<br>
-
-
+<br>
+<a href="#installation"><b>Jump to installation instructions</b></a><br>
+<br>
 <h2>NEWS</h2>
 <ul>
 	<li>2022/12/12: View got magnifying glass-function. This allows quick ratings with improved evidence.</li>
@@ -106,10 +107,17 @@ Please give feedback on problems or translation errors but also on the successfu
 <h2>Please mind the wiki!</h2>
 As there is no manual available anymore, the github-wiki should replace it one day: <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not particularly detailed yet, but it can certainly help with the most common questions.
 
-<h2>Installation</h2>
+<h2 id="installation">Installation</h2>
 <ol>
 	<li>Create a bootable SD card with the latest version of Raspberry Pi OS Lite (32 or 64 bit) for use with Little Backup Box.<br>
-		An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select &quot;Raspberry Pi OS (other)&quot; &gt; &quot;Raspberry Pi OS Lite (32-bit)&quot; or &quot;Raspberry Pi OS Lite (64-bit)&quot;. If you need, you can enable ssh by Raspberry Pi Imager: Shift+Ctrl+x opens an options-dialog, where you can activate ssh. Write ...</li>
+		An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select &quot;Raspberry Pi OS (other)&quot; &gt; &quot;Raspberry Pi OS Lite (32-bit)&quot; or &quot;Raspberry Pi OS Lite (64-bit)&quot;.<br>
+		In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens the options-dialog. Here you can ...
+		<ul>
+			<li>enable ssh</li>
+			<li>change the password for user pi (standard password is &quot;raspberry&quot;)</li>
+			<li>define wifi settings</li>
+		</ul>
+	</li>
 	<li>If you couldn't activate ssh in the previous step, just add an empty (text-)file "ssh" to the new boot-partition to enable ssh.</li>
 	<li>Do not change any more settings (language!).</li>
 	<li>Make sure that your Raspberry Pi is connected to the internet.</li>
