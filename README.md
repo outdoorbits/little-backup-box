@@ -121,6 +121,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 	<li>If you couldn't activate ssh in the previous step, just add an empty (text-)file "ssh" to the new boot-partition to enable ssh.</li>
 	<li>Do not change any more settings (language!).</li>
 	<li>Make sure that your Raspberry Pi is connected to the internet.</li>
+	<li>login to your Raspberry Pi. If you are using ssh, there is a report about problems using WINSCP. While WINSCP itself uses putty, it's reported to work with native putty.</li>
 	<li>
 		Run the following command on the Raspberry Pi:<br>
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code><br>
@@ -135,18 +136,26 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
 	</li>
 	<li>
-		<b>Don't worry:</b> Please note this in case you installed via wlan/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's comming up, it changes your wlan-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is a short information, how to access Little Backup Box. In your setting, this would be the information you need:<br>
+		<b>Don't worry:</b> Please note this in case you installed via wifi/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's comming up, it changes your wifi-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is a short information, how to access Little Backup Box. In your setting, this would be the information you need:<br>
 		<br>	&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; How to proceed:<br>
 		&ast;&ast;&ast;<br>
-		&ast;&ast;&ast; Your raspberrys wlan-configuration has been removed by comitup now. Because comitup has no<br>
-		&ast;&ast;&ast; access-data for your wlan yet, it can't connect to it and will start as a wlan-hotspot:<br>
+		&ast;&ast;&ast; Your raspberrys wifi-configuration has been removed by comitup now. Because comitup has no<br>
+		&ast;&ast;&ast; access-data for your wifi yet, it can't connect to it and will start as a wifi-hotspot:<br>
 		&ast;&ast;&ast; ssid=little-backup-box-nnnn (nnnn is a random number).<br>
 		&ast;&ast;&ast;<br>
-		&ast;&ast;&ast; Please connect your mobile or your notebook to this wlan.<br>
-		&ast;&ast;&ast; If you want to configure comitup now, navigate to <b>http</b>://10.41.0.1 (http, not https!)<br>
+		&ast;&ast;&ast; Please connect your mobile or notebook to this wifi.<br>
 		&ast;&ast;&ast;<br>
-		&ast;&ast;&ast; Alternatively can reach the web UI of Little Backup Box when you are connected to its<br>
+		&ast;&ast;&ast; There are two options now:<br>
+		&ast;&ast;&ast;<br>
+		&ast;&ast;&ast; 1. If you want to configure comitup now, navigate to <b>http</b>://10.41.0.1 (http, not https!)
+		&ast;&ast;&ast; and connect your lbb to your wifi.<br>
+		&ast;&ast;&ast; Connect your mobile or notbook to the same wifi. If you use a display on your lbb, it will<br>
+		&ast;&ast;&ast; tell you its new IP. Connect to lbb:<br>
+		&ast;&ast;&ast; <b>https</b>://IP.IN.YOUR.WIFI (secure, certificate can't be verified automatically, please confirm it)<br>
+		&ast;&ast;&ast; <b>http</b>://IP.IN.YOUR.WIFI:8000 (insecure)<br>
+		&ast;&ast;&ast;<br>
+		&ast;&ast;&ast; 2. Alternatively can reach the web UI of Little Backup Box when you are connected to its<br>
 		&ast;&ast;&ast; hotspot as follows:<br>
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; <b>https</b>://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)<br>
@@ -159,7 +168,6 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		&ast;&ast;&ast;<br>
 		&ast;&ast;&ast; We are always happy to receive your feedback!<br>
 		&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;&ast;<br>
-		... using comitup, you now have to connect your computer to the wlan <i>little-backup-box-nnnn</i> to access the new IP 10.41.0.1.
 		<br>
 	</li>
 </ol>

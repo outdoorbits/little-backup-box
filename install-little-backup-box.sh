@@ -473,33 +473,42 @@ if [ "${SCRIPT_MODE}" = "install" ] || [ "${CHOICE_COMITUP}" = "0" ]; then
 			read -r -d '' COMITUP_INSTALL_MESSAGE << EOM
 \Zb\ZuIMPORTANT INFORMATION\Zn
 
-\ZbPlease read this carefully, if your raspberry pi is connected by wlan.\Zn
+\ZbPlease read this carefully, if your raspberry pi is connected by wifi.\Zn
 
-\Zb\Z1Next (and last) step of the installation is to install comitup. When comitup starts, it takes over control about the raspberry pi's wlan-connections.
-That's why your pi's wlan-connection may break during this last step of the installation.
+\Zb\Z1Next (and last) step of the installation is to install comitup. When comitup starts, it takes over control about the raspberry pi's wifi-connections.
+That's why your pi's wifi-connection may break during this last step of the installation.
 BUT DON'T WORRY!\Zn
 
-The installation will finish seconds later, but you won't see that progress on screen anymore. Your raspberry pi will reboot when setup is finished. Have a look at the action-LED.
+The installation will finish seconds later, but maybe you won't see that progress on screen anymore. Your raspberry pi will reboot when setup is finished. Have a look at the action-LED.
 
 \ZuWhat's going on?\Zn
-Your raspberry pi's wlan-configuration will be removed by comitup.
-Because comitup at this time has no access-data for your wlan yet, it can't connect to it.
-So it will start as a wlan-hotspot with ssid=\Zblittle-backup-box-nnnn\Zn (nnnn is a random number).
+Your raspberrys wifi-configuration has been removed by comitup now. Because comitup has no
+access-data for your wifi yet, it can't connect to it and will start as a wifi-hotspot:
+ssid=little-backup-box-nnnn (nnnn is a random number).
 
-\ZuWhat to do?\Zn
-After the reboot, please connect your mobile or notebook to the little-backup-box-nnnn wlan.
+Please connect your mobile or notebook to this wifi.
 
-If you want to configure comitup now, navigate to \Zuhttp://10.41.0.1\Zn (http, not https!)
+\ZuThere are two options now:\Zn
 
-Alternatively can reach the web UI of Little Backup Box when you are connected to its hotspot as follows:
+ 1. If you want to configure comitup now, navigate to \Zb\Z1http\Zn://10.41.0.1 (http, not https!)
+ and connect your lbb to your wifi.
+ Connect your mobile or notbook to the same wifi. If you use a display on your lbb, it will
+ tell you its new IP. Connect to lbb:
+ \Zb\Z1https\Zn://IP.IN.YOUR.WIFI (secure, certificate can't be verified automatically, please confirm it)
+ \Zb\Z1http\Zn://IP.IN.YOUR.WIFI:8000 (insecure)
 
-\Zuhttps://10.41.0.1\Zn (secure, certificate can't be verified automatically, please confirm it)
-\Zuhttp://10.41.0.1:8000\Zn (insecure)
+ 2. Alternatively can reach the web UI of Little Backup Box when you are connected to its
+ hotspot as follows:
 
-If you have further questions, please check the wiki first:
-\Zuhttps://github.com/outdoorbits/little-backup-box/wiki\Zn
+ \Zb\Z1https\Zn://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)
+ \Zb\Z1http\Zn://10.41.0.1:8000 (insecure)
 
-We are always happy to receive your feedback!
+ Please use the settings of the web UI to optimally adapt the Little Backup Box for you.
+
+ If you have further questions, please check the wiki first:
+ https://github.com/outdoorbits/little-backup-box/wiki
+
+ We are always happy to receive your feedback!
 
 Press OK to proceed...
 EOM
@@ -540,6 +549,8 @@ echo "*** Please use the settings of the web UI to optimally adapt the Little Ba
 echo "***"
 echo "*** If you have further questions, please check the wiki first:"
 echo "*** https://github.com/outdoorbits/little-backup-box/wiki"
+echo "***"
+echo "*** IF YOU ARE USING COMITUP: READ ALSO %quot;How to proceed%quot; in README/Installation!"
 echo "***"
 echo "*** We are always happy to receive your feedback!"
 echo "********************************************************************************************"
