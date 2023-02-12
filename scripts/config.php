@@ -629,6 +629,17 @@ function upload_settings() {
 			</details>
 		</div>
 
+		<?php if (shell_exec('which comitup-cli') != '') { ?>
+			<div class="card" style="margin-top: 2em;">
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_comitup_section; ?></summary>
+					<?php echo L::config_comitup_text; ?><br>
+					<br>
+					<a href='/cmd.php?CMD=comitup_reset'><?php echo L::config_comitup_linktext ?></a>
+				</details>
+			</div>
+		<?php } ?>
+
 		<div class="card" style="margin-top: 2em;">
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_update_section; ?></summary>

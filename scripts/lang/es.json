@@ -212,7 +212,12 @@
       "bg_image_header": "Imagen de fondo"
     },
     "display_message_settings_saved_1": "Ajustes",
-    "display_message_settings_saved_2": "salvado."
+    "display_message_settings_saved_2": "salvado.",
+    "comitup": {
+      "section": "comitup",
+      "text": "Los datos de acceso WiFi guardados se eliminarán. Se interrumpe una conexión Wi-Fi existente y comitup entra en modo punto de acceso.<br>\nLuego, conéctese al punto de acceso WiFi \"little-backup-box-nnnn\". Ahora puede acceder a la confirmación en <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. Puede acceder a la WebUI de Little Backup Box aquí: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
+      "linktext": "Eliminar credenciales de WiFi"
+    }
   },
   "tools": {
     "tools": "Herramientas",
@@ -389,7 +394,7 @@
       "header": "Little Backup Box Actualizador"
     },
     "no_cmd": "No se ha dado ningún comando válido.",
-    "link_text_home": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE EL COMANDO HAYA TERMINADO!<br>(Espera &quot;FINISHED&quot;.)",
+    "link_text_home": "Regrese a Little Backup Box",
     "format": {
       "warning": "¡Peligro! ¡Esto borrará todos los datos en el dispositivo seleccionado!",
       "header": "Formatear dispositivo",
@@ -404,7 +409,8 @@
       "description": "Verificar disco"
     },
     "password_input_info": "No se ha establecido ninguna contraseña global. No puedes continuar. Primero configure una contraseña global.",
-    "password_set_link": "Establecer contraseña global"
+    "password_set_link": "Establecer contraseña global",
+    "link_text_home_running": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE EL COMANDO HAYA TERMINADO!<br>(Espera &quot;FINISHED&quot;.)"
   },
   "view": {
     "view": "Visor de imágenes",

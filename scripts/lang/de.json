@@ -212,7 +212,12 @@
       "bg_image_header": "Hintergrundbild"
     },
     "display_message_settings_saved_1": "Einstellungen",
-    "display_message_settings_saved_2": "gespeichert."
+    "display_message_settings_saved_2": "gespeichert.",
+    "comitup": {
+      "section": "comitup",
+      "text": "Gespeicherte WiFi-Zugangsdaten werden gelöscht. Eine bestehende WiFi-Verbindung wird unterbrochen und comitup geht in den Hotspot-Modus.<br>\nVerbinden Sie sich danach mit dem WiFi-Hotspot \"little-backup-box-nnnn\". Nun können Sie comitup unter <a href=\"http://10.41.0.1\">http://10.41.0.1</a> erreichen. Zur WebUI der Little Backup Box kommen Sie hier: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
+      "linktext": "WiFi-Zugangsdaten löschen"
+    }
   },
   "tools": {
     "tools": "Werkzeug",
@@ -389,7 +394,7 @@
       "header": "Little Backup Box Updater"
     },
     "no_cmd": "Kein gültiger Befehl angegeben.",
-    "link_text_home": "Zurück zu Little Backup Box zurück - NICHT KLICKEN, BEVOR DER VORGANG ABGESCHLOSSEN IST!<br>(Auf &quot;FINISHED&quot; warten.)",
+    "link_text_home": "Zurück zu Little Backup Box",
     "format": {
       "warning": "Achtung! Dadurch werden alle Daten auf dem ausgewählten Gerät gelöscht!",
       "header": "Speicher formatieren",
@@ -404,7 +409,8 @@
       "description": "Datenträger überprüfen"
     },
     "password_input_info": "Es wurde kein globales Passwort festgelegt. Sie können nicht fortfahren. Richten Sie bitte zuerst ein globales Passwort ein.",
-    "password_set_link": "Globales Passwort setzen"
+    "password_set_link": "Globales Passwort setzen",
+    "link_text_home_running": "Zurück zu Little Backup Box - NICHT KLICKEN, BEVOR DER VORGANG ABGESCHLOSSEN IST!<br>(Auf &quot;FINISHED&quot; warten.)"
   },
   "view": {
     "view": "Bildbetrachter",

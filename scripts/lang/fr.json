@@ -212,7 +212,12 @@
       "bg_image_header": "Image de fond"
     },
     "display_message_settings_saved_1": "Les paramètres",
-    "display_message_settings_saved_2": "enregistré."
+    "display_message_settings_saved_2": "enregistré.",
+    "comitup": {
+      "section": "comitup",
+      "text": "Les données d'accès WiFi enregistrées seront supprimées. Une connexion Wi-Fi existante est interrompue et comitup passe en mode point d'accès.<br>\nConnectez-vous ensuite au hotspot WiFi \"little-backup-box-nnnn\". Vous pouvez maintenant accéder à commitup sur <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. Vous pouvez accéder à l'interface Web de Little Backup Box ici : <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
+      "linktext": "Supprimer les identifiants WiFi"
+    }
   },
   "tools": {
     "tools": "Outils",
@@ -389,7 +394,7 @@
       "header": "Little Backup Box Mise à jour"
     },
     "no_cmd": "Aucune commande valide donnée.",
-    "link_text_home": "Retour à Little Backup Box - NE CLIQUEZ PAS AVANT QUE LA COMMANDE SOIT TERMINÉE !<br>(Attendez &quot;FINISHED&quot;.)",
+    "link_text_home": "Retour à Little Backup Box",
     "format": {
       "warning": "Danger! Cela effacera toutes les données sur l'appareil sélectionné !",
       "header": "Formater l'appareil",
@@ -404,7 +409,8 @@
       "description": "Vérifiez le disque"
     },
     "password_input_info": "Aucun mot de passe global n'a été défini. Vous ne pouvez pas continuer. Veuillez d'abord configurer un mot de passe global.",
-    "password_set_link": "Définir le mot de passe global"
+    "password_set_link": "Définir le mot de passe global",
+    "link_text_home_running": "Retour à Little Backup Box - NE CLIQUEZ PAS AVANT QUE LA COMMANDE SOIT TERMINÉE !<br>(Attendez &quot;FINISHED&quot;.)"
   },
   "view": {
     "view": "Visionneuse d'images",

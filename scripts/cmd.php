@@ -84,6 +84,14 @@ switch($CMD) {
 		}
 		break;
 
+			case 'comitup_reset':
+				$CMD_HEADER			= L::config_comitup_section;
+				$INFO_TEXT			= '';
+				$CMD_DESCRIPTION	= L::config_comitup_text;
+				$CMD_ARGUMENTS		= "CMD=comitup&PARAM1=reset";
+				$PASSWORD_REQ		= True;
+				$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
+				break;
 	default:
 		$CMD_HEADER			= L::cmd_no_cmd;
 		$INFO_TEXT			= "";
@@ -112,6 +120,7 @@ if ($PASSWORD_REQ) {
 
 	<?php
 		if ($PASSWORD_ASK) {
+// 			password check necessary
 			if ($config['conf_PASSWORD'] != "") {
 	?>
 			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
@@ -132,13 +141,18 @@ if ($PASSWORD_REQ) {
 				</div>
 	<?php
 			}
+			?>
+				<p>
+					<a href="/"><?php echo L::cmd_link_text_home; ?></a>
+				</p>
+			<?php
 		} elseif ($CMD_ARGUMENTS != "") { ?>
+<!-- 			run command -->
 		<iframe id="cmdmonitor" src="/cmd-runner.php?<?php echo $CMD_ARGUMENTS; ?>" width="100%" height="500" style="background: #FFFFFF;"></iframe>
+		<p>
+			<a href="/"><?php echo L::cmd_link_text_home_running; ?></a>
+		</p>
 	<?php } ?>
-
-	<p>
-		<a href="/"><?php echo $CMD_LINK_TEXT_HOME; ?></a>
-	</p>
 </body>
 </html>
 

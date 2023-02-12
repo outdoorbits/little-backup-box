@@ -356,7 +356,12 @@
       "bg_image_header": "Background-image"
     },
     "display_message_settings_saved_1": "Settings",
-    "display_message_settings_saved_2": "saved."
+    "display_message_settings_saved_2": "saved.",
+    "comitup": {
+      "section": "comitup",
+      "text": "Saved WiFi access data will be deleted. An existing WiFi connection is interrupted and comitup goes into hotspot mode.<br>\nThen connect to the \"little-backup-box-nnnn\" WiFi hotspot. Now you can reach commitup at <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. You can access the Little Backup Box WebUI here: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
+      "linktext": "Delete WiFi credentials"
+    }
   },
   "tools": {
     "tools": "Tools",
@@ -384,7 +389,7 @@
     "input_password": "Password requiered to start",
     "execute": "execute",
     "no_cmd": "No valid command given.",
-    "link_text_home": "Return to Little Backup Box - DO NOT CLICK BEFORE THE COMMAND HAS FINISHED!<br>(Wait for &quot;FINISHED&quot;.)",
+    "link_text_home": "Return to Little Backup Box",
     "update": {
       "header": "Little Backup Box Updater",
       "warning": "Do NOT STOP or reload while running!",
@@ -404,7 +409,8 @@
       "description": "Check disk"
     },
     "password_input_info": "No global password has been set. You cannot continue. Please set up a global password first.",
-    "password_set_link": "Set global password"
+    "password_set_link": "Set global password",
+    "link_text_home_running": "Return to Little Backup Box - DO NOT CLICK BEFORE THE COMMAND HAS FINISHED!<br>(Wait for &quot;FINISHED&quot;.)"
   },
   "view": {
     "view": "Image viewer",
