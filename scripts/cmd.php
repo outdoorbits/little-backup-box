@@ -43,7 +43,6 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= "";
 		$CMD_ARGUMENTS		= "CMD=update";
 		$PASSWORD_REQ		= True;
-		$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
 		break;
 
 	case 'format':
@@ -52,7 +51,6 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= L::cmd_format_description.": <ul class='danger'><li>" . L::cmd_format_header . ": $PARAM1 &rarr; $PARAM2</li></ul>";
 		$CMD_ARGUMENTS		= "CMD=format&PARAM1=$PARAM1&PARAM2=$PARAM2";
 		$PASSWORD_REQ		= True;
-		$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
 		break;
 
 	case 'f3':
@@ -61,7 +59,6 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= "";
 		$CMD_ARGUMENTS		= "";
 		$PASSWORD_REQ		= False;
-		$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
 
 		switch($PARAM2) {
 			case 'f3probe_non_destructive':
@@ -70,7 +67,6 @@ switch($CMD) {
 				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": $PARAM1 &rarr; " . L::cmd_f3_description_non_destructive . "</li></ul>";
 				$CMD_ARGUMENTS		= "CMD=f3&PARAM1=$PARAM1&PARAM2=$PARAM2";
 				$PASSWORD_REQ		= True;
-				$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
 				break;
 
 			case 'f3probe_destructive':
@@ -79,7 +75,6 @@ switch($CMD) {
 				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": $PARAM1 &rarr; " . L::cmd_f3_description_destructive . "</li></ul>";
 				$CMD_ARGUMENTS		= "CMD=f3&PARAM1=$PARAM1&PARAM2=$PARAM2";
 				$PASSWORD_REQ		= True;
-				$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
 				break;
 		}
 		break;
@@ -90,7 +85,6 @@ switch($CMD) {
 				$CMD_DESCRIPTION	= L::config_comitup_text;
 				$CMD_ARGUMENTS		= "CMD=comitup&PARAM1=reset";
 				$PASSWORD_REQ		= True;
-				$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
 				break;
 	default:
 		$CMD_HEADER			= L::cmd_no_cmd;
@@ -98,7 +92,6 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= "";
 		$CMD_ARGUMENTS		= "";
 		$PASSWORD_REQ		= False;
-		$CMD_LINK_TEXT_HOME	= L::cmd_link_text_home;
 }
 
 $PASSWORD_ASK	= false;

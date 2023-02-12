@@ -186,7 +186,9 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 							case 'comitup':
 									$MAIN_COMMAND	= "comitup-cli d";
 
-									$COMMAND_LINE	= "sudo $MAIN_COMMAND";
+									$COMMAND_LINE	= "echo 'sudo $MAIN_COMMAND'";
+									$COMMAND_LINE	.= ";echo ''";
+									$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 									$COMMAND_LINE	.= ";echo ''";
 									$COMMAND_LINE	.= ";echo 'FINISHED.'";
 									$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::config_comitup_section . "' 'reset'";
