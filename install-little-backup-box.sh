@@ -529,7 +529,7 @@ if [ "${SCRIPT_MODE}" = "update" ]; then
 	else
 		PASSWORD_MODE="set"
 	fi
-
+	echo "${const_WEB_ROOT_LBB}/password.sh" "${PASSWORD_MODE}" "${conf_PASSWORD}"
 	source "${const_WEB_ROOT_LBB}/password.sh" "${PASSWORD_MODE}" "${conf_PASSWORD}"
 fi
 
