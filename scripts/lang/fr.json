@@ -217,7 +217,8 @@
     },
     "password_repeat_label": "répéter:",
     "password_global_lbb_label": "Le mot de passe pour protéger votre Little-Backup-Box. Utilisé pour l'interface Web, le navigateur de fichiers, ssh et samba-Windows-shares. Le nom d'utilisateur dans tous les cas est lbb. Pour l'utilisateur Linux &quot;pi&quot; le mot de passe est également défini.",
-    "password_global_wifi_label": "Si le mot de passe a une longueur de 8 à 63 caractères, il sera également utilisé comme mot de passe WiFi en mode hotspot."
+    "password_global_wifi_label": "Si le mot de passe a une longueur de 8 à 63 caractères, il sera également utilisé comme mot de passe WiFi en mode hotspot.",
+    "alert_password_wifi_size_error": "Le mot de passe ne peut pas être utilisé pour le hotspot WiFi. Pour cela, la longueur devrait être de 8 à 63 caractères."
   },
   "tools": {
     "tools": "Outils",

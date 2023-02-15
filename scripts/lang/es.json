@@ -217,7 +217,8 @@
     },
     "password_repeat_label": "repetir:",
     "password_global_lbb_label": "La contraseña para proteger su Little-Backup-Box. Se utiliza para la interfaz web, el navegador de archivos, ssh y samba-Windows-share. El nombre de usuario en todos los casos es lbb. Para el usuario de linux & quot; pi & quot; la contraseña también está configurada.",
-    "password_global_wifi_label": "Si la contraseña tiene una longitud de 8 a 63 caracteres, también se utilizará como contraseña WiFi en el modo de punto de acceso."
+    "password_global_wifi_label": "Si la contraseña tiene una longitud de 8 a 63 caracteres, también se utilizará como contraseña WiFi en el modo de punto de acceso.",
+    "alert_password_wifi_size_error": "La contraseña no se puede utilizar para el punto de acceso WiFi. Para ello, la longitud tendría que ser de 8 a 63 caracteres."
   },
   "tools": {
     "tools": "Herramientas",

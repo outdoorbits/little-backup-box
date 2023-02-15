@@ -141,12 +141,15 @@ function write_config()
 	if (isset($conf_PASSWORD_REMOVE)) {
 		$conf_PASSWORD_LINE="conf_PASSWORD=''";
 		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh remove");
-		popup($title . "\n" . L::config_alert_password_change_after_reboot_remove,true);
+		popup(L::config_alert_password_change_after_reboot_remove,true);
 	} elseif (isset($conf_PASSWORD_1)) {
 		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
 			$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
 			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh set '" . $conf_PASSWORD_1 . "'");
-			popup($title . "\n" . L::config_alert_password_change_after_reboot_set,true);
+			if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
+				popup(L::config_alert_password_wifi_size_error,true);
+			}
+			popup(L::config_alert_password_change_after_reboot_set,true);
 		}
 	}
 

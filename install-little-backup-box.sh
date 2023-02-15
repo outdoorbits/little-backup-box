@@ -522,6 +522,16 @@ EOM
 	esac
 fi
 
+# re-establish passwords
+if [ "${SCRIPT_MODE}" = "update" ]; then
+	if [ -z "${conf_PASSWORD}" ]; then
+		PASSWORD_MODE="remove"
+	else
+		PASSWORD_MODE="set"
+	fi
+
+	source "${const_WEB_ROOT_LBB}/password.sh" "${PASSWORD_MODE}" "${conf_PASSWORD}"
+fi
 
 # post-install-information
 ## load network library
