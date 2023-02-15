@@ -139,7 +139,13 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl dialog php php-cli minidlna samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin
+		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl dialog php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin
+
+# Remove packages not needed anymore
+if [ "${SCRIPT_MODE}" = "update" ]; then
+	sudo DEBIAN_FRONTEND=noninteractive \
+		apt purge minidlna -y
+fi
 
 # Remove obsolete packages
 sudo DEBIAN_FRONTEND=noninteractive \
@@ -217,19 +223,6 @@ sudo chown -R ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_MEDIA_DIR}"
 sudo chmod -R 777 "${const_MEDIA_DIR}"
 sudo setfacl -Rdm u:${USER_WWW_DATA}:rwX,g:${USER_WWW_DATA}:rwX "${const_MEDIA_DIR}"
 sudo setfacl -Rdm u:${USER_SAMBA}:rwX,g:${USER_SAMBA}:rwX "${const_MEDIA_DIR}"
-
-# Configure miniDLNA
-echo "Configure miniDLNA"
-if [ "${SCRIPT_MODE}" = "install" ]; then
-	sudo cp "/etc/minidlna.conf" "/etc/minidlna.conf.orig"
-else
-	sudo rm "/etc/minidlna.conf"
-	sudo cp "/etc/minidlna.conf.orig" "/etc/minidlna.conf"
-fi
-sudo sed -i 's|'media_dir=/var/lib/minidlna'|'media_dir="${const_USB_TARGET_MOUNT_POINT}"'|' /etc/minidlna.conf
-sudo sed -i 's/^#friendly_name=.*/friendly_name=little-backup-box/' /etc/minidlna.conf
-sudo sh -c "echo 'media_dir=${const_INTERNAL_BACKUP_DIR}' >> /etc/minidlna.conf"
-sudo service minidlna start
 
 # add user www-data to sudoers
 sudo usermod -aG sudo ${USER_WWW_DATA}

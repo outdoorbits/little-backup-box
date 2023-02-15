@@ -105,16 +105,14 @@ $(l 'box_cronip_mail_description_https'):
 $(l 'box_cronip_mail_main'): https://${IP}
 
 $(l 'box_cronip_mail_desription_http'):
-$(l 'box_cronip_mail_main'): http://${IP}:8000
-miniDLNA: http://${IP}:8200"
+$(l 'box_cronip_mail_main'): http://${IP}:8000"
 
 	TEXT_HTML="
 <b>$(l 'box_cronip_mail_description_https'):</b><br>
 $(l 'box_cronip_mail_main'): <a href='https://${IP}'>https://${IP}</a><br>
 <br>
 <b>$(l 'box_cronip_mail_desription_http'):</b><br>
-$(l 'box_cronip_mail_main'): <a href='http://${IP}:8000'>http://${IP}:8000</a><br>
-miniDLNA: <a href='http://${IP}:8200'>http://${IP}:8200</a><br>"
+$(l 'box_cronip_mail_main'): <a href='http://${IP}:8000'>http://${IP}:8000</a><br>"
 
 		TEXT_PLAIN="${TEXT_PLAIN}
 

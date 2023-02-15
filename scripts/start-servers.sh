@@ -34,9 +34,5 @@ source "$CONFIG"
 #load DEVICES library
 . "${WORKING_DIR}/lib-devices.sh"
 
-## start minidlna
-sudo minidlnad -R
-sudo service minidlna start
-
 ##start rclone web-gui
 source "${WORKING_DIR}/start-rclone-gui.sh"

@@ -29,7 +29,8 @@ These languages are already available. Do you want to maintain or create a trans
 <br>
 <h2>NEWS</h2>
 <ul>
-	<li>2023/02/15: Settings: Use global password as WiFi-password in comitup-hotspot-mode.</li>
+	<li>2023/02/15: Remove miniDLNA due to security concerns</li>
+	<li>2023/02/15: Settings: Use global password as WiFi-password in comitup-hotspot-mode</li>
 	<li>2022/12/12: View got magnifying glass-function. This allows quick ratings with improved evidence.</li>
 	<li>2022/12/03: Rating function supports writing of EXIF-data into media-files. This allows to use the ratings in futher processing (e.g. in <a href="https://www.darktable.org/">darktable</a>).</li>
 	<li>2022/11/19: Image-viewer &quot;View&quot; now can handle videos and audios! <b>IMPORTANT: ALL THUMBNAILS HAVE TO BE CREATED AGAIN AFTER THIS UPDATE! PLEASE DELETE ALL TIMS-FOLDERS ON YOUR STORAGE.</b></li>

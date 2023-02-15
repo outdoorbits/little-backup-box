@@ -34,13 +34,6 @@ sub expects from calling script:
 		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
 				<li class="nav-item"><a class="nav-link" href="/files" target="_blank"><?php echo L::mainmenue_filebrowser; ?></a></li>
-				<?php
-					if (strpos($_SERVER['SERVER_PORT'], "443") !== false) {
-						echo ("<li class=\"nav-item\"><a class=\"nav-link\" href='http://" . $_SERVER['SERVER_ADDR'] . ":8200' target='_blank'>" . L::mainmenue_minidlna . "</a></li>");
-					} else {
-						echo ("<li class=\"nav-item\"><a class=\"nav-link\" href='http://" . str_replace(":" . $_SERVER['SERVER_PORT'], ":8200", $HTTP_HOST) ."' target='_blank'>" . L::mainmenue_minidlna . "</a></li>");
-					}
-				?>
 			</ul>
 		</div>
 
