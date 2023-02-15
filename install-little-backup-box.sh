@@ -189,6 +189,7 @@ fi
 CONFIG="${const_WEB_ROOT_LBB}/config.cfg"
 
 if [ "${SCRIPT_MODE}" = "update" ]; then
+	echo "Load old settings"
 	source "${CONFIG}"
 fi
 
@@ -447,12 +448,6 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 fi
 sudo service vsftpd restart
 
-# Restore password protection
-if [ "${SCRIPT_MODE}" = "update" ] && [ ! -z "${conf_PASSWORD}" ]; then
-	echo "Restore password-protection"
-	sudo "${const_WEB_ROOT_LBB}/password.sh" set "${conf_PASSWORD}"
-fi
-
 # install comitup
 ## re-install (update) if installed
 if [ "$(dpkg-query -W --showformat='${db:Status-Status}' "comitup" 2>&1)" = "installed" ]; then
@@ -524,6 +519,8 @@ fi
 
 # re-establish passwords
 if [ "${SCRIPT_MODE}" = "update" ]; then
+	echo "Restore password-protection"
+
 	if [ -z "${conf_PASSWORD}" ]; then
 		PASSWORD_MODE="remove"
 	else
