@@ -94,8 +94,6 @@
     "rsync_password_label": "Contraseña para el servidor rsync",
     "password_section": "Contraseña global",
     "password_header": "Nueva contraseña global",
-    "password_label1": "La contraseña para proteger su Little-Backup-Box. Se utiliza para la interfaz web, el navegador de archivos, ssh y samba-Windows-share. El nombre de usuario en todos los casos es lbb. Para el usuario de linux & quot; pi & quot; la contraseña también está configurada.",
-    "password_label2": "repetir:",
     "password_remove_header": "Quitar contraseña",
     "password_remove_label": "Marque para quitar la protección por contraseña. Las contraseñas para usuarios de Linux (lbb, pi) no se eliminarán.",
     "save_button": "Guardar",
@@ -114,7 +112,7 @@
     "save_settings_download_header": "Descargar",
     "save_settings_upload_header": "Subir",
     "save_settings_upload_label": "Seleccione el archivo de configuración",
-    "alert_password_characters_not_allowed": "La contraseña no debe contener comillas (& quot;) ni barra invertida (& bsol;)",
+    "alert_password_characters_not_allowed": "La contraseña no puede contener comillas (&quot;), espacios ni barra invertida (&bsol;).",
     "alert_password_not_identical": "La contraseña repetida no es idéntica.",
     "alert_password_too_short": "La contraseña debe contener al menos 5 caracteres.",
     "alert_settings_upload_not_zip": "El archivo que está intentando cargar no es un archivo .zip. Inténtelo de nuevo.",
@@ -217,7 +215,10 @@
       "section": "comitup",
       "text": "Los datos de acceso WiFi guardados se eliminarán. Se interrumpe una conexión Wi-Fi existente y comitup entra en modo punto de acceso.<br>\nLuego, conéctese al punto de acceso WiFi \"little-backup-box-nnnn\". Ahora puede acceder a la confirmación en <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. Puede acceder a la WebUI de Little Backup Box aquí: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Eliminar credenciales de WiFi"
-    }
+    },
+    "password_repeat_label": "repetir:",
+    "password_global_lbb_label": "La contraseña para proteger su Little-Backup-Box. Se utiliza para la interfaz web, el navegador de archivos, ssh y samba-Windows-share. El nombre de usuario en todos los casos es lbb. Para el usuario de linux & quot; pi & quot; la contraseña también está configurada.",
+    "password_global_wifi_label": "Si la contraseña tiene una longitud de 8 a 63 caracteres, también se utilizará como contraseña WiFi en el modo de punto de acceso."
   },
   "tools": {
     "tools": "Herramientas",

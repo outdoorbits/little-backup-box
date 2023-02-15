@@ -94,8 +94,6 @@
     "rsync_password_label": "Passwort für den rsync-Server",
     "password_section": "Globales Passwort",
     "password_header": "Neues globales Passwort",
-    "password_label1": "Das Passwort zum Schutz Ihrer Little-Backup-Box: Es wird für das Webinterface, Filebrowser, ssh und Samba-Windows-Shares verwendet. Der Benutzername ist in all diesen Fällen &quot;lbb&quot;. Für den Linux-Benutzer &quot;pi&quot; wird dieses Passwort ebenfalls gesetzt.",
-    "password_label2": "Bitte wiederholen:",
     "password_remove_header": "Passwort entfernen",
     "password_remove_label": "Aktivieren Sie dieses Kontrollkästchen, um den Passwortschutz zu entfernen. Passwörter für Linux-Benutzer (lbb, pi) werden nicht entfernt.",
     "save_button": "Speichern",
@@ -114,7 +112,7 @@
     "save_settings_download_header": "Herunterladen",
     "save_settings_upload_header": "Hochladen",
     "save_settings_upload_label": "Wählen Sie die Einstellungsdatei",
-    "alert_password_characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&quot;) und Backslash (&bsol;) enthalten.",
+    "alert_password_characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&quot;), Leerzeichen oder Backslash (&bsol;) enthalten.",
     "alert_password_not_identical": "Wiederholtes Passwort ist nicht identisch.",
     "alert_password_too_short": "Das Passwort muss mindestens 5 Zeichen lang sein.",
     "alert_settings_upload_not_zip": "Die Datei, die Sie hochladen möchten, ist keine ZIP-Datei. Bitte versuche es erneut.",
@@ -217,7 +215,10 @@
       "section": "comitup",
       "text": "Gespeicherte WiFi-Zugangsdaten werden gelöscht. Eine bestehende WiFi-Verbindung wird unterbrochen und comitup geht in den Hotspot-Modus.<br>\nVerbinden Sie sich danach mit dem WiFi-Hotspot \"little-backup-box-nnnn\". Nun können Sie comitup unter <a href=\"http://10.41.0.1\">http://10.41.0.1</a> erreichen. Zur WebUI der Little Backup Box kommen Sie hier: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "WiFi-Zugangsdaten löschen"
-    }
+    },
+    "password_repeat_label": "Bitte wiederholen:",
+    "password_global_lbb_label": "Das Passwort zum Schutz Ihrer Little-Backup-Box: Es wird für das Webinterface, Filebrowser, ssh und Samba-Windows-Shares verwendet. Der Benutzername ist in all diesen Fällen &quot;lbb&quot;. Für den Linux-Benutzer &quot;pi&quot; wird dieses Passwort ebenfalls gesetzt.",
+    "password_global_wifi_label": "Falls das Passwort eine Länge von 8 bis 63 Zeichen hat, wird es auch als WiFi-Passwort im Hotspot-Modus verwendet."
   },
   "tools": {
     "tools": "Werkzeug",

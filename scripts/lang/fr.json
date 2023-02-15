@@ -94,8 +94,6 @@
     "rsync_password_label": "Mot de passe pour le serveur rsync",
     "password_section": "Mot de passe global",
     "password_header": "Nouveau mot de passe global",
-    "password_label1": "Le mot de passe pour protéger votre Little-Backup-Box. Utilisé pour l'interface Web, le navigateur de fichiers, ssh et samba-Windows-shares. Le nom d'utilisateur dans tous les cas est lbb. Pour l'utilisateur Linux &quot;pi&quot; le mot de passe est également défini.",
-    "password_label2": "répéter:",
     "password_remove_header": "Supprimer le mot de passe",
     "password_remove_label": "Cochez pour supprimer la protection par mot de passe. Les mots de passe des utilisateurs Linux (lbb, pi) ne seront pas supprimés.",
     "save_button": "Sauvegarder",
@@ -114,7 +112,7 @@
     "save_settings_download_header": "Télécharger",
     "save_settings_upload_header": "Télécharger",
     "save_settings_upload_label": "Sélectionnez le fichier de paramètres",
-    "alert_password_characters_not_allowed": "Le mot de passe ne doit pas contenir de guillemets (& quot;) ni de barre oblique inverse (& bsol;)",
+    "alert_password_characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&quot;), d'espaces ou de barre oblique inverse (&bsol;).",
     "alert_password_not_identical": "Le mot de passe répété n'est pas identique.",
     "alert_password_too_short": "Le mot de passe doit comporter au moins 5 caractères.",
     "alert_settings_upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",
@@ -217,7 +215,10 @@
       "section": "comitup",
       "text": "Les données d'accès WiFi enregistrées seront supprimées. Une connexion Wi-Fi existante est interrompue et comitup passe en mode point d'accès.<br>\nConnectez-vous ensuite au hotspot WiFi \"little-backup-box-nnnn\". Vous pouvez maintenant accéder à commitup sur <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. Vous pouvez accéder à l'interface Web de Little Backup Box ici : <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Supprimer les identifiants WiFi"
-    }
+    },
+    "password_repeat_label": "répéter:",
+    "password_global_lbb_label": "Le mot de passe pour protéger votre Little-Backup-Box. Utilisé pour l'interface Web, le navigateur de fichiers, ssh et samba-Windows-shares. Le nom d'utilisateur dans tous les cas est lbb. Pour l'utilisateur Linux &quot;pi&quot; le mot de passe est également défini.",
+    "password_global_wifi_label": "Si le mot de passe a une longueur de 8 à 63 caractères, il sera également utilisé comme mot de passe WiFi en mode hotspot."
   },
   "tools": {
     "tools": "Outils",

@@ -88,7 +88,11 @@ function check_new_password($title, $pwd_1, $pwd_2) {
 			popup($title . "\n" . L::config_alert_password_not_identical, true);
 		} elseif (strlen($pwd_1) < 5) {
 			popup($title . "\n" . L::config_alert_password_too_short, true);
-		} elseif (strpos("_" . $pwd_1,"\\") or strpos("_" . $pwd_1,"'")) {
+		} elseif (
+				strpos("_" . $pwd_1,"\\") or
+				strpos("_" . $pwd_1,"'") or
+				strpos("_" . $pwd_1," ")
+				  ) {
 			popup($title . "\n" . L::config_alert_password_characters_not_allowed, true);
 		} else {
 			$pwd_valid=true;
@@ -122,13 +126,13 @@ function write_config()
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
 
-	if ($conf_MAIL_PASSWORD != "") {
+	if (isset($conf_MAIL_PASSWORD)) {
 		if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
 			$conf_MAIL_PASSWORD	= "";
 		}
 	}
 
-	if ($conf_RSYNC_conf_PASSWORD != "") {
+	if (isset($conf_RSYNC_conf_PASSWORD)) {
 		if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_conf_PASSWORD, $conf_RSYNC_conf_PASSWORD)) {
 			$conf_RSYNC_conf_PASSWORD	= "";
 		}
@@ -138,7 +142,7 @@ function write_config()
 		$conf_PASSWORD_LINE="conf_PASSWORD=''";
 		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh remove");
 		popup($title . "\n" . L::config_alert_password_change_after_reboot_remove,true);
-	} elseif ($conf_PASSWORD_1 != "") {
+	} elseif (isset($conf_PASSWORD_1)) {
 		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
 			$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
 			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh set '" . $conf_PASSWORD_1 . "'");
@@ -591,9 +595,9 @@ function upload_settings() {
 
 				<h3><?php echo L::config_password_header; ?></h3>
 					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
-					<label for="conf_PASSWORD_1"><?php echo L::config_password_label1; ?></label><br>
+					<label for="conf_PASSWORD_1"><p><?php echo L::config_password_global_lbb_label . '</p><p style="text-decoration: underline;">' . L::config_password_global_wifi_label . '</p><p><b>' . L::config_alert_password_characters_not_allowed . '</b>'; ?></label></p>
 					<input type="password" id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
-					<label for="conf_PASSWORD_2"><?php echo L::config_password_label2; ?></label><br>
+					<label for="conf_PASSWORD_2"><?php echo L::config_password_repeat_label; ?></label><br>
 					<input type="password" id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">
 
 					<?php

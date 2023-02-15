@@ -17,6 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# define DIRs
+INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ ! "${INSTALLER_DIR}" =~ "little-backup-box" ]]; then
+    # in case it is called by regular install command (curl ...)
+    INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/little-backup-box"
+fi
+
 echo "Installing comitup..."
 
 # Installing comitup*: install comitup sources
@@ -55,9 +62,7 @@ sudo systemctl unmask dhcpcd.service
 sudo systemctl unmask wpa-supplicant.service
 
 # create config
-sudo echo "ap_name: little-backup-box-<nnnn>" | sudo tee "/etc/comitup.conf"
-sudo echo "web_service: apache2.service" | sudo tee -a "/etc/comitup.conf"
-sudo echo "external_callback: /var/www/little-backup-box/handle_port_80.sh" | sudo tee -a "/etc/comitup.conf"
+. "${INSTALLER_DIR}/scripts/comitup-conf.sh"
 
 echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
 echo "comitup will be available after reboot."

@@ -33,8 +33,6 @@ USER="lbb"
 MODE=$1
 conf_PASSWORD=$2
 
-echo "$MODE $conf_PASSWORD" | sudo tee -a "${const_WEB_ROOT_LBB}/pwd.log"
-
 if [ "${MODE}" = "remove" ]; then # Mode: remove #######################################################
 	log_message "General password removed."
 
@@ -45,6 +43,9 @@ if [ "${MODE}" = "remove" ]; then # Mode: remove ###############################
 	echo "guest ok = yes" | sudo tee "/etc/samba/login.conf"
 
 	sudo service smbd restart
+
+	#comitup
+	. "${WORKING_DIR}/comitup-conf.sh"
 
 elif [ "${MODE}" = "set" ]; then # Mode: set ###########################################################
 	log_message "General password changed."
@@ -72,4 +73,7 @@ EOF
 EOF
 
 	sudo service smbd restart
+
+		#comitup
+	. "${WORKING_DIR}/comitup-conf.sh" "${conf_PASSWORD}"
 fi

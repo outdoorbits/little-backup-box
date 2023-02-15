@@ -210,7 +210,7 @@
     "alert_password_global": "Global password",
     "alert_password_not_identical": "Repeated password is not identical.",
     "alert_password_too_short": "Password must be at least 5 characters long.",
-    "alert_password_characters_not_allowed": "The password must not contain quotes (&quot;) and backslash (&bsol;)",
+    "alert_password_characters_not_allowed": "The password cannot contain double quotes (&quot;), spaces or backslash (&bsol;).",
     "message_settings_saved": "config.cfg was written successfully.",
     "alert_settings_upload_not_zip": "The file you are trying to upload is not a .zip file. Please try again.",
     "alert_settings_upload_success": "Your settings file has been uploaded and this files have been installed:",
@@ -252,8 +252,6 @@
     "rsync_password_label": "Password for the rsync-server",
     "password_section": "Global Password",
     "password_header": "New global Password",
-    "password_label1": "The password to protect your Little-Backup-Box. Used for the web-interface, filebrowser, ssh and samba-Windows-shares. Username in all cases is lbb. For linux-user &quot;pi&quot; the password is set too.",
-    "password_label2": "repeat:",
     "password_remove_header": "Remove password",
     "password_remove_label": "Check to remove the password-protection. Passwords for linux-users (lbb, pi) will not be removed.",
     "save_button": "Save",
@@ -361,7 +359,10 @@
       "section": "comitup",
       "text": "Saved WiFi access data will be deleted. An existing WiFi connection is interrupted and comitup goes into hotspot mode.<br>\nThen connect to the \"little-backup-box-nnnn\" WiFi hotspot. Now you can reach commitup at <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. You can access the Little Backup Box WebUI here: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Delete WiFi credentials"
-    }
+    },
+    "password_repeat_label": "repeat:",
+    "password_global_lbb_label": "The password to protect your Little-Backup-Box. Used for the web-interface, filebrowser, ssh and samba-Windows-shares. Username in all cases is lbb. For linux-user &quot;pi&quot; the password is set too.",
+    "password_global_wifi_label": "If the password has a length of 8 to 63 characters, it will also be used as a WiFi password in hotspot mode."
   },
   "tools": {
     "tools": "Tools",
