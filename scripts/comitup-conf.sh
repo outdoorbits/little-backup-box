@@ -18,7 +18,7 @@
 #######################################################################
 
 # Arguments
-conf_PASSWORD="${1}"
+WiFi_PASSWORD="${1}"
 
 # create config
 sudo echo "ap_name: little-backup-box-<nnnn>" | sudo tee "/etc/comitup.conf"
@@ -26,6 +26,6 @@ sudo echo "web_service: apache2.service" | sudo tee -a "/etc/comitup.conf"
 sudo echo "external_callback: /var/www/little-backup-box/handle_port_80.sh" | sudo tee -a "/etc/comitup.conf"
 
 
-if [ ${#conf_PASSWORD} -ge 8 ] && [ ${#conf_PASSWORD} -le 63 ]; then
-	sudo echo "ap_password: ${conf_PASSWORD}" | sudo tee -a "/etc/comitup.conf"
+if [ ${#WiFi_PASSWORD} -ge 8 ] && [ ${#WiFi_PASSWORD} -le 63 ]; then
+	sudo echo "ap_password: ${WiFi_PASSWORD}" | sudo tee -a "/etc/comitup.conf"
 fi
