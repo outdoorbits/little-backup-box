@@ -69,7 +69,7 @@
 			</div>
 
 			<?php
-				$rsync_unconfigurated	= ($config['conf_RSYNC_SERVER']=='' or $config['conf_RSYNC_PORT']=='' or $config['conf_RSYNC_USER']=='' or $config['conf_RSYNC_conf_PASSWORD']=='' or $config['conf_RSYNC_SERVER_MODULE']=='');
+				$rsync_unconfigurated	= ($config['conf_RSYNC_SERVER']=='' or $config['conf_RSYNC_PORT']=='' or $config['conf_RSYNC_USER']=='' or $config['conf_RSYNC_PASSWORD']=='' or $config['conf_RSYNC_SERVER_MODULE']=='');
 
 				if (! $rsync_unconfigurated) {
 					echo "<div class='backupsection'>";

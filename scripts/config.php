@@ -126,15 +126,15 @@ function write_config()
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
 
-	if (isset($conf_MAIL_PASSWORD)) {
+	if ($conf_MAIL_PASSWORD != '') {
 		if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
 			$conf_MAIL_PASSWORD	= "";
 		}
 	}
 
-	if (isset($conf_RSYNC_conf_PASSWORD)) {
-		if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_conf_PASSWORD, $conf_RSYNC_conf_PASSWORD)) {
-			$conf_RSYNC_conf_PASSWORD	= "";
+	if ($conf_RSYNC_PASSWORD != '') {
+		if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_PASSWORD, $conf_RSYNC_PASSWORD)) {
+			$conf_RSYNC_PASSWORD	= "";
 		}
 	}
 
@@ -144,7 +144,7 @@ function write_config()
 		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh"); # remove password
 
 		popup(L::config_alert_password_change_after_reboot_remove,true);
-	} elseif (isset($conf_PASSWORD_1)) {
+	} elseif ($conf_PASSWORD_1 != '') {
 		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
 			$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
 
@@ -195,7 +195,7 @@ conf_MAIL_TO='$conf_MAIL_TO'
 conf_RSYNC_SERVER='$conf_RSYNC_SERVER'
 conf_RSYNC_PORT='$conf_RSYNC_PORT'
 conf_RSYNC_USER='$conf_RSYNC_USER'
-conf_RSYNC_conf_PASSWORD='$conf_RSYNC_conf_PASSWORD'
+conf_RSYNC_PASSWORD='$conf_RSYNC_PASSWORD'
 conf_RSYNC_SERVER_MODULE='$conf_RSYNC_SERVER_MODULE'
 conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
 $conf_PASSWORD_LINE
@@ -334,7 +334,7 @@ function upload_settings() {
 					<select name="BACKUP_MODE_2" id="BACKUP_MODE_2">
 						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
 							<?php
-								if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_conf_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
+								if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
 							?>
 									<option value="internal rsyncserver" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal rsyncserver"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
 									<option value="usb rsyncserver" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="usb rsyncserver"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
@@ -540,8 +540,8 @@ function upload_settings() {
 					<input type="text" id="conf_RSYNC_USER" name="conf_RSYNC_USER" size="20" value="<?php echo $config['conf_RSYNC_USER']; ?>">
 
 				<h3><?php echo L::config_rsync_password_header; ?></h3>
-					<label for="conf_RSYNC_conf_PASSWORD"><?php echo L::config_rsync_password_label; ?></label><br>
-					<input type="password" id="conf_RSYNC_conf_PASSWORD" name="conf_RSYNC_conf_PASSWORD" size="20" value="<?php echo $config['conf_RSYNC_conf_PASSWORD']; ?>">
+					<label for="conf_RSYNC_PASSWORD"><?php echo L::config_rsync_password_label; ?></label><br>
+					<input type="password" id="conf_RSYNC_PASSWORD" name="conf_RSYNC_PASSWORD" size="20" value="<?php echo $config['conf_RSYNC_PASSWORD']; ?>">
 
 				<h3><?php echo L::config_rsync_module_header; ?></h3>
 					<label for="conf_RSYNC_SERVER_MODULE"><?php echo L::config_rsync_module_label1 .  $config_standard['conf_RSYNC_SERVER_MODULE'] . L::config_rsync_module_label2; ?></label><br>

@@ -43,7 +43,7 @@ function log_message() {
 		fi
 
 		#remove passwords from log
-		for PWD in "${conf_PASSWORD}" "${conf_MAIL_PASSWORD}" "${conf_RSYNC_conf_PASSWORD}"; do
+		for PWD in "${conf_PASSWORD}" "${conf_MAIL_PASSWORD}" "${conf_RSYNC_PASSWORD}"; do
 			ESCAPED_PASSWORD=""
 
 			if [ ! -z "${PWD}" ]; then
