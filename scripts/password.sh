@@ -25,15 +25,14 @@ source "$CONFIG"
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 
-
 # Definitions
 USER="lbb"
 
 # Arguments
-MODE=$1
-conf_PASSWORD=$2
+new_PASSWORD="${1}"
 
-if [ "${MODE}" = "remove" ]; then # Mode: remove #######################################################
+if [ -z "${new_PASSWORD}" ]; then
+# remove password
 	log_message "General password removed."
 
 	# Apache
@@ -47,11 +46,12 @@ if [ "${MODE}" = "remove" ]; then # Mode: remove ###############################
 	#comitup
 	. "${WORKING_DIR}/comitup-conf.sh"
 
-elif [ "${MODE}" = "set" ]; then # Mode: set ###########################################################
+else
+# set password
 	log_message "General password changed."
 
 	# Apache
-	echo "${conf_PASSWORD}" | sudo htpasswd -ci "/etc/apache2/includes/htpasswd" "${USER}"
+	echo "${new_PASSWORD}" | sudo htpasswd -ci "/etc/apache2/includes/htpasswd" "${USER}"
 
 	cat <<EOF | sudo tee "/etc/apache2/includes/password.conf"
 Authtype Basic
@@ -61,11 +61,11 @@ Require valid-user
 EOF
 
 	# Linux
-	echo "pi:${conf_PASSWORD}" | sudo chpasswd
-	echo "${USER}:${conf_PASSWORD}" | sudo chpasswd
+	echo "pi:${new_PASSWORD}" | sudo chpasswd
+	echo "${USER}:${new_PASSWORD}" | sudo chpasswd
 
 	# Samba
-	echo -e "${conf_PASSWORD}\n${conf_PASSWORD}" | sudo smbpasswd -a -s "${USER}" # change/create smb-password
+	echo -e "${new_PASSWORD}\n${new_PASSWORD}" | sudo smbpasswd -a -s "${USER}" # change/create smb-password
 
 		cat <<EOF | sudo tee "/etc/samba/login.conf"
 		valid users = ${USER}
@@ -75,5 +75,5 @@ EOF
 	sudo service smbd restart
 
 		#comitup
-	. "${WORKING_DIR}/comitup-conf.sh" "${conf_PASSWORD}"
+	. "${WORKING_DIR}/comitup-conf.sh" "${new_PASSWORD}"
 fi
