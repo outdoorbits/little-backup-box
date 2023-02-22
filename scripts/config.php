@@ -17,6 +17,8 @@
 	include("get-cloudservices.php");
 
 	$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
+
+	$vpn_types		= array('OpenVPN','WireGuard');
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
@@ -101,13 +103,14 @@ function check_new_password($title, $pwd_1, $pwd_2) {
 	return($pwd_valid);
 }
 
-function write_config()
-{
+function write_config() {
 	# write config.cfg
 	extract ($_POST);
 
 	global $WORKING_DIR;
 	global $WIFI_COUNTRY;
+	global $constants;
+	global $vpn_types;
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
@@ -198,6 +201,8 @@ conf_RSYNC_USER='$conf_RSYNC_USER'
 conf_RSYNC_PASSWORD='$conf_RSYNC_PASSWORD'
 conf_RSYNC_SERVER_MODULE='$conf_RSYNC_SERVER_MODULE'
 conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
+conf_VPN_TYPE='$conf_VPN_TYPE'
+conf_VPN_TIMEOUT='$conf_VPN_TIMEOUT'
 $conf_PASSWORD_LINE
 
 CONFIGDATA;
@@ -205,13 +210,32 @@ CONFIGDATA;
 	fwrite($config_file_handle, $config_file_content);
 	fclose($config_file_handle);
 	exec ("dos2unix './" . $CONFIGFILE . "'");
+
+	# save vpn config file
+	if ($vpn_upload_type !== 'none') {
+		if(file_exists($_FILES["vpn_conf_file"]["tmp_name"])) {
+			exec ('sudo mkdir -p "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '"');
+			exec ('sudo mv "' . $_FILES["vpn_conf_file"]["tmp_name"] . '" "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
+			exec ('sudo chown root:root "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
+			exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
+		}
+	}
+
+	# remove vpn config file
+	foreach($vpn_types as $vpn_type) {
+		if (isset($_POST['vpn_remove_' . $vpn_type])) {
+			exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
+		}
+	}
+
+	# response
 	echo '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
 
 	shell_exec("sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'");
 }
 
 function upload_settings() {
-	global $WORKING_DIR, $config, $constants;
+	global $WORKING_DIR, $config, $constants, $vpn_types;
 
 	if($_FILES["settings_file"]["name"]) {
 		$filename = $_FILES["settings_file"]["name"];
@@ -257,10 +281,23 @@ function upload_settings() {
 						if (rename($targetdir."config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {$Files_Copied="\n* 'config.cfg'";}
 
 					}
+
 					if (file_exists($targetdir."rclone.conf")) {
 						@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
 						if (rename($targetdir."rclone.conf",$constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* 'rclone.cfg'";}
 					}
+
+					foreach($vpn_types as $vpn_type) {
+						if (file_exists($targetdir.$constants['const_VPN_FILENAME_' . $vpn_type])) {
+							exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
+							exec ('sudo mv "' . $targetdir.$constants['const_VPN_FILENAME_' . $vpn_type] . '" "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
+							$Files_Copied=$Files_Copied."\n* '" . $constants['const_VPN_FILENAME_' . $vpn_type] . "'";
+
+							## secure VPN config files
+							exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '" -R');
+						}
+					}
+
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
 
 					$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
@@ -285,7 +322,7 @@ function upload_settings() {
 ?>
 
 
-	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
 
 		<div class="card" style="margin-top: 2em;">
 			<?php echo '<button style="margin-top: 2em;" type="submit" name="save">' . L::config_save_button . '</button>'; ?>
@@ -588,6 +625,72 @@ function upload_settings() {
 
 		<div class="card" style="margin-top: 2em;">
 			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_vpn_section; ?> - DANGER ALPHA-LEVEL!</summary>
+
+				<h3><?php echo L::config_vpn_type_header; ?></h3>
+
+					<label for="conf_VPN_TYPE"><?php echo L::config_vpn_type_label; ?></label>
+					<select name="conf_VPN_TYPE" id="conf_VPN_TYPE">
+						<?php
+							echo "<option value='none'  " . ($config["conf_VPN_TYPE"] == ""?" selected":"") . ">" . L::config_vpn_type_none . "</option>";
+							foreach($vpn_types as $vpn_type) {
+								echo "<option value='" . $vpn_type . "' " . ($config["conf_VPN_TYPE"] == $vpn_type?" selected":"") . ">" . $vpn_type . "</option>";
+							}
+						?>
+					</select>
+
+				<h3><?php echo L::config_vpn_timeout_header; ?></h3>
+
+					<label for="conf_VPN_TIMEOUT"><?php echo L::config_vpn_timeout_label; ?></label><br>
+					<select name="conf_VPN_TIMEOUT" id="conf_VPN_TIMEOUT">
+						<?php
+							$vpn_timeouts	= array(5,10,20,30,40,50,60,90,120,300,600);
+							foreach($vpn_timeouts as $vpn_timeout) {
+								echo "<option value='" . $vpn_timeout . "' " . ($config["conf_VPN_TIMEOUT"] == $vpn_timeout?" selected":"") . ">" . $vpn_timeout . ' ' . L::seconds_short . "</option>";
+							}
+						?>
+					</select>
+
+				<h3><?php echo L::config_vpn_upload_header; ?></h3>
+
+					<label for="vpn_upload_type"><?php echo L::config_vpn_upload_type_label; ?></label>
+					<select name="vpn_upload_type" id="vpn_upload_type">
+						<?php
+							echo "<option value='none' selected>" . L::config_vpn_upload_type_none . "</option>";
+							foreach($vpn_types as $vpn_type) {
+								echo "<option value='" . $vpn_type . "'>" . $vpn_type . "</option>";
+							}
+						?>
+					</select>
+
+					<label for="vpn_conf_file"><?php echo L::config_vpn_upload_file_label; ?></label>
+					<input type="file" name="vpn_conf_file" id="vpn_conf_file">
+
+					<?php
+						$vpn_remove_section	= False;
+						foreach($vpn_types as $vpn_type) {
+							$vpn_file_exists[$vpn_type]	= exec('sudo -- bash -c "if [ -f \"' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '\" ]; then echo \"true\"; fi"')=="true";
+							if ($vpn_file_exists[$vpn_type]) {$vpn_remove_section = True;}
+						}
+						if ($vpn_remove_section) {
+								echo ('<h3>' . L::config_vpn_remove_header .'</h3>');
+
+									foreach($vpn_types as $vpn_type) {
+										if ($vpn_file_exists[$vpn_type]) {
+											echo "<p>";
+											echo ('<label for="vpn_remove_' . $vpn_type . '">' . $vpn_type . '</label><br>');
+											echo ('<input type="checkbox" id="vpn_remove_' . $vpn_type . '" name="vpn_remove_' . $vpn_type . '">');
+											echo "</p>";
+										}
+									}
+						}
+					?>
+
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_wifi_section; ?></summary>
 
 				<h3><?php echo L::config_wifi_country_header; ?></h3>
@@ -610,8 +713,10 @@ function upload_settings() {
 					<?php
 						if ($config['conf_PASSWORD'] != "") {
 							echo "<h3>" . L::config_password_remove_header . "</h3>";
+							echo "<p>";
 							echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label ."</label><br>";
-							echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">";
+							echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">&nbsp;";
+							echo "</p>";
 						}
 					?>
 			</details>
@@ -626,16 +731,17 @@ function upload_settings() {
 		<div class="card" style="margin-top: 2em;">
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_save_settings_section; ?></summary>
-					<h3><?php echo L::config_save_settings_download_header; ?></h3>
-						<p><?php echo L::config_save_settings_download_text; ?></p>
-						<a href="download-settings.php"><?php echo L::config_save_settings_download_link_text; ?></a>
 
-					<h3><?php echo L::config_save_settings_upload_header; ?></h3>
-						<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
-							<label for="settings_file"><?php echo L::config_save_settings_upload_label; ?></label>
-							<input type="file" name="settings_file" id="settings_file">
-							<button style="margin-top: 2em;" type="submit" name="upload_settings"><?php echo L::config_save_settings_upload_button; ?></button>
-						</form>
+				<h3><?php echo L::config_save_settings_download_header; ?></h3>
+					<p><?php echo L::config_save_settings_download_text; ?></p>
+					<a href="download-settings.php"><?php echo L::config_save_settings_download_link_text; ?></a>
+
+				<h3><?php echo L::config_save_settings_upload_header; ?></h3>
+					<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
+						<label for="settings_file"><?php echo L::config_save_settings_upload_label; ?></label>
+						<input type="file" name="settings_file" id="settings_file">
+						<button style="margin-top: 2em;" type="submit" name="upload_settings"><?php echo L::config_save_settings_upload_button; ?></button>
+					</form>
 
 			</details>
 		</div>

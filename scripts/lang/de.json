@@ -218,7 +218,20 @@
     "password_repeat_label": "Bitte wiederholen:",
     "password_global_lbb_label": "Das Passwort zum Schutz Ihrer Little-Backup-Box: Es wird für das Webinterface, Filebrowser, ssh und Samba-Windows-Shares verwendet. Der Benutzername ist in all diesen Fällen &quot;lbb&quot;. Für den Linux-Benutzer &quot;pi&quot; wird dieses Passwort ebenfalls gesetzt.",
     "password_global_wifi_label": "Falls das Passwort eine Länge von 8 bis 63 Zeichen hat, wird es auch als WiFi-Passwort im Hotspot-Modus verwendet.",
-    "alert_password_wifi_size_error": "Das Passwort kann nicht für den WiFi-Hotspot verwendet werden. Dazu müsste die Länge 8 bis 63 Zeichen betragen."
+    "alert_password_wifi_size_error": "Das Passwort kann nicht für den WiFi-Hotspot verwendet werden. Dazu müsste die Länge 8 bis 63 Zeichen betragen.",
+    "vpn": {
+      "section": "VPN",
+      "upload_header": "Konfigurationsdatei hochladen",
+      "upload_type_label": "Für welche VPN-Variante soll die Konfigurationsdatei verwendet werden?",
+      "upload_type_none": "Bitte auswählen",
+      "type_none": "VPN nicht verwenden",
+      "type_header": "Welches VPN soll aktiviert werden?",
+      "upload_file_label": "Konfigurationsdatei hochladen",
+      "type_label": "Welches VPN soll vor einer Datenübertragung zu einem Netzwerkdienst aktiviert werden? Vorsicht: Eventuell ist die Oberfläche der Little Backup Box nicht erreichbar, so lange das Backup läuft. Unter Umständen können Sie die Box unter der VPN-IP erreichen, wenn auch Ihr Endgerät im selben VPN angemeldet ist.",
+      "remove_header": "VPN-Konfigurationsdatei löschen",
+      "timeout_header": "VPN-Zeitüberschreitung",
+      "timeout_label": "Wie lange soll maximal auf den Aufbau der VPN-Verbindung gewartet werden?"
+    }
   },
   "tools": {
     "tools": "Werkzeug",
@@ -292,7 +305,8 @@
         "files_missing": "Dateien fehlen!",
         "lost_device": "Fehler. Gerät verloren!",
         "exception": "Ausnahme",
-        "error": "Fehler"
+        "error": "Fehler",
+        "backup_failed": "Backup fehlgeschlagen"
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",
@@ -330,7 +344,12 @@
       "generating_thumbnails": "Gen. Vorschaubilder",
       "updating_exif": "EXIF aktualisieren",
       "generating_database": "Synchr. Datenbank",
-      "mode_exif": "EXIF"
+      "mode_exif": "EXIF",
+      "vpn": {
+        "connecting_failed": "VPN-Fehler",
+        "connecting": "Verbinde VPN",
+        "disconnecting": "Trenne VPN"
+      }
     },
     "cronip": {
       "offline": "offline",

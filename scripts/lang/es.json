@@ -218,7 +218,20 @@
     "password_repeat_label": "repetir:",
     "password_global_lbb_label": "La contraseña para proteger su Little-Backup-Box. Se utiliza para la interfaz web, el navegador de archivos, ssh y samba-Windows-share. El nombre de usuario en todos los casos es lbb. Para el usuario de linux & quot; pi & quot; la contraseña también está configurada.",
     "password_global_wifi_label": "Si la contraseña tiene una longitud de 8 a 63 caracteres, también se utilizará como contraseña WiFi en el modo de punto de acceso.",
-    "alert_password_wifi_size_error": "La contraseña no se puede utilizar para el punto de acceso WiFi. Para ello, la longitud tendría que ser de 8 a 63 caracteres."
+    "alert_password_wifi_size_error": "La contraseña no se puede utilizar para el punto de acceso WiFi. Para ello, la longitud tendría que ser de 8 a 63 caracteres.",
+    "vpn": {
+      "section": "VPN",
+      "upload_header": "Subir archivo de configuración",
+      "upload_type_label": "¿Para qué variante de VPN se debe usar el archivo de configuración?",
+      "upload_type_none": "Por favor seleccione",
+      "type_none": "No use VPN",
+      "type_header": "¿Qué VPN activar?",
+      "upload_file_label": "Subir archivo de configuración",
+      "type_label": "¿Qué VPN se debe activar antes de transferir datos a un servicio de red? Precaución: Es posible que no se pueda acceder a la interfaz de Little Backup Box mientras se ejecuta la copia de seguridad. Es posible que pueda llegar al cuadro debajo de la IP de VPN si su dispositivo final también está registrado en la misma VPN.",
+      "remove_header": "Eliminar archivo de configuración de VPN",
+      "timeout_header": "Tiempo de espera de VPN",
+      "timeout_label": "¿Cuál es el tiempo máximo de espera para que se establezca la conexión VPN?"
+    }
   },
   "tools": {
     "tools": "Herramientas",
@@ -289,7 +302,8 @@
         "files_missing": "¡Faltan archivos!",
         "lost_device": "Err. Dispositivo perdido!",
         "exception": "Excepción",
-        "error": "Error"
+        "error": "Error",
+        "backup_failed": "Copia de seguridad fallida"
       },
       "try": "Intentar",
       "checking_old_files": "comparando",
@@ -330,7 +344,12 @@
       "generating_thumbnails": "Gen. de miniaturas",
       "updating_exif": "Actualización de EXIF",
       "generating_database": "Sincronizar base de datos",
-      "mode_exif": "EXIF"
+      "mode_exif": "EXIF",
+      "vpn": {
+        "connecting_failed": "VPN fallida",
+        "connecting": "Conectar VPN",
+        "disconnecting": "Desconectar VPN"
+      }
     },
     "cronip": {
       "offline": "desconectado",

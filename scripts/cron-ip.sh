@@ -50,12 +50,16 @@ INTERNET_STATUS=$(get_internet_status)
 #display online-status and IP
 IP=$(get_ip)
 
+#in case of multiple IPs: Print IPs in lines, reversed sequence
+IP_ARRAY=(${IP})
+IP_LINES=$(printf '%s\n' "${IP_ARRAY[@]}" | tac)
+
 if [ $conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
 	if ! grep -q "${IP}" "${FILE_OLED_OLD}"; then
 		if [ "${INTERNET_STATUS}" = "connected" ]; then
-			lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
+			lcd_message "IP ($(l 'box_cronip_online')):" "${IP_LINES}"
 		else
-			lcd_message "IP ($(l 'box_cronip_offline')):" "${IP}"
+			lcd_message "IP ($(l 'box_cronip_offline')):" "${IP_LINES}"
 		fi
 	fi
 fi
@@ -86,7 +90,7 @@ if [ ! -z $conf_MAIL_NOTIFICATIONS ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; t
 			if [ "${IP}" != "${IP_NEW}" ] || [ "${INTERNET_STATUS}" != "${INTERNET_STATUS_NEW}" ]; then
 				# IP changed
 				IP="${IP_NEW}"
-				lcd_message "IP ($(l 'box_cronip_online')):" "${IP}"
+				lcd_message "IP ($(l 'box_cronip_online')):" "${IP_LINES}"
 			fi
 		fi
 

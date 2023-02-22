@@ -8,8 +8,26 @@ $ZIP_FILE_NAME="lbb-settings.zip";
 $ZIP_FILE_PATH=$constants["const_WEB_ROOT_LBB"] . "/tmp/";
 
 //Files to zip into archive
-$FILES = array($constants["const_WEB_ROOT_LBB"]."/config.cfg", $constants["const_RCLONE_CONFIG_FILE"]);
+$FILES		= array(
+	$constants["const_WEB_ROOT_LBB"]."/config.cfg",
+	$constants["const_RCLONE_CONFIG_FILE"]
+);
 
+#VPN
+$vpn_types	= array('OpenVPN','WireGuard');
+foreach ($vpn_types as $vpn_type) {
+	$VPN_CONFIG_FILE=$constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type];
+
+	#make it visible, if exists
+	exec ('sudo chmod 755 "' . $constants['const_VPN_DIR_' . $vpn_type] . '"');
+	exec ('sudo chmod 755 "' . $VPN_CONFIG_FILE . '"');
+
+	if (file_exists($VPN_CONFIG_FILE)) {
+		$FILES[]	= $VPN_CONFIG_FILE;
+	}
+}
+
+# Create ZIP-Archive
 $zip = new ZipArchive();
 //create the file and throw the error if unsuccessful
 if ($zip->open($ZIP_FILE_PATH.$ZIP_FILE_NAME, ZIPARCHIVE::CREATE )!==TRUE) {
@@ -39,4 +57,14 @@ ob_end_flush();
 @readfile($ZIP_FILE_PATH.$ZIP_FILE_NAME);
 
 @unlink($ZIP_FILE_PATH.$ZIP_FILE_NAME);
+
+## secure VPN config files
+foreach ($vpn_types as $vpn_type) {
+	$VPN_CONFIG_FILE=$constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type];
+
+	if (file_exists($VPN_CONFIG_FILE)) {
+		exec ('sudo chmod 700 "' . $VPN_CONFIG_FILE . '"');
+	}
+}
+
 ?>

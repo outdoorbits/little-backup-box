@@ -139,7 +139,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl dialog php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin
+		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl dialog php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then

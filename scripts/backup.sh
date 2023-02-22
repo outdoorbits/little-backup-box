@@ -96,9 +96,10 @@ else
 	fi
 fi
 
-if [ "${SOURCE_MODE}" = "${TARGET_MODE}" ] && [ "${SOURCE_MODE}" != "usb" ]; then
+if [ "${SOURCE_MODE}" = "${TARGET_MODE}" ] && [ "${SOURCE_MODE}" != "usb" ] && [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
 	lcd_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')" ""
-	exit 1
+	TARGET_MODE='none'
+	SOURCE_MODE='none'
 fi
 
 # switch UUID_USB_1 and UUID_USB_2? (only relevant in secondary backup)
@@ -217,8 +218,11 @@ function calculate_files_to_sync() {
 		echo "" # dummy action
 	else
 		# no defined mode selected
-		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+2"
-		exit 1
+		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
+			lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+2"
+			TARGET_MODE='none'
+			SOURCE_MODE='none'
+		fi
 	fi
 
 	if [ -z "${FILES_TO_SYNC}" ]; then
@@ -396,7 +400,55 @@ function sync_return_code_decoder() {
 # Set the ACT LED to heartbeat
 	sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
-# Unmount devices
+#########################
+# START VPN             #
+#########################
+
+	if [[ " cloud rsyncserver " =~ " ${TARGET_MODE} " ]]; then # VPN for network-services only
+
+		VPN_CONFIG_FILE=$(eval echo "\${const_VPN_DIR_${conf_VPN_TYPE}}/\$const_VPN_FILENAME_${conf_VPN_TYPE}")
+
+		VPN_CONFIG_FILE_TRUNK=$(eval echo "\$const_VPN_FILENAME_${conf_VPN_TYPE}")
+		VPN_CONFIG_FILE_TRUNK="${VPN_CONFIG_FILE_TRUNK%.*}"
+
+		if [ "$(sudo -- bash -c "if [ -f \"${VPN_CONFIG_FILE}\" ]; then echo 'true'; fi")" = "true" ]; then
+			lcd_message "$(l 'box_backup_vpn_connecting')" "${conf_VPN_TYPE}"
+
+			if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
+				sudo openvpn --config "${VPN_CONFIG_FILE}"
+			elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
+				sudo wg-quick up "${VPN_CONFIG_FILE}"
+			fi
+
+
+			VPN_READY=false
+			VPN_START_TIME=$(get_uptime_seconds)
+			VPN_TIMEOUT_TIME=$((${VPN_START_TIME} + ${conf_VPN_TIMEOUT}))
+			while [ "${VPN_READY}" = false ] && [[ $(get_uptime_seconds) -lt ${VPN_TIMEOUT_TIME} ]]; do
+				sleep 1
+
+				if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
+					if [[ "$(sudo systemctl status openvpn\@${VPN_CONFIG_FILE_TRUNK})" =~ "Active: active" ]]; then $VPN_READY=true; fi
+				elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
+					if [[ "$(sudo systemctl status wg-quick\@${VPN_CONFIG_FILE_TRUNK})" =~ "Active: active" ]]; then $VPN_READY=true; fi
+				fi
+			done
+
+			if [ "${VPN_READY}" = false ]; then
+				if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
+					lcd_message "$(l 'box_backup_vpn_connecting_failed')"
+					TARGET_MODE='none'
+					SOURCE_MODE='none'
+				fi
+			fi
+		fi
+
+	fi
+
+#########################
+# Unmount devices       #
+#########################
+
 	umount_device "usb_1"
 	umount_device "usb_2"
 	umount_device "${const_IOS_MOUNT_POINT}"
@@ -405,8 +457,6 @@ function sync_return_code_decoder() {
 #########################
 # MANAGE STORAGE DEVICE #
 #########################
-
-	# START
 
 	# To define a new method, add an elif block (example below)
 
@@ -483,8 +533,11 @@ function sync_return_code_decoder() {
 
 	else
 		# no defined mode selected
-		lcd_message "$(l 'box_backup_no_valid_destination_mode_1')" "$(l 'box_backup_no_valid_destination_mode_2')" "$(l 'box_backup_no_valid_destination_mode_3')"
-		exit 1
+		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
+			lcd_message "$(l 'box_backup_no_valid_destination_mode_1')" "$(l 'box_backup_no_valid_destination_mode_2')" "$(l 'box_backup_no_valid_destination_mode_3')"
+			TARGET_MODE='none'
+			SOURCE_MODE='none'
+		fi
 	fi
 
 	# END
@@ -768,7 +821,11 @@ function sync_return_code_decoder() {
 
 	else
 		# no defined mode selected
-		lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+1"
+		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
+			lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+1"
+			TARGET_MODE='none'
+			SOURCE_MODE='none'
+		fi
 	fi
 
 	# Set the ACT LED to blink at 500ms to indicate that the source device has been mounted
@@ -930,8 +987,11 @@ function sync_return_code_decoder() {
 				echo "" # dummy action
 			else
 				# no defined mode selected
-				lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+3"
-				exit 1
+				if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
+					lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+3"
+					TARGET_MODE='none'
+					SOURCE_MODE='none'
+				fi
 			fi
 
 			SYNC_STOP_TIME=$(get_uptime_seconds)
@@ -1009,6 +1069,7 @@ function sync_return_code_decoder() {
 
 			if [ -z "${SYNC_ERROR_TMP}" ]; then
 				SYNC_ERROR_LAST=false
+
 				MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_backup_complete')."
 				MESSAGE_LCD="${MESSAGE_LCD}$(l 'box_backup_complete')."
 			else
@@ -1038,7 +1099,32 @@ function sync_return_code_decoder() {
 		done # retry
 	done # sources
 
-	# prepare message for mail and power off
+########################
+# STOP VPN             #
+########################
+
+if [[ " cloud rsyncserver " =~ " ${TARGET_MODE} " ]]; then
+
+	if [ $(sudo -- bash -c "if [ -f \"$VPN_CONFIG_FILE\" ]; then echo 'true'; fi") == "true" ]; then
+		lcd_message "$(l 'box_backup_vpn_disconnecting')" "${conf_VPN_TYPE}"
+
+		if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
+			sudo killall openvpn
+
+		elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
+			sudo wg-quick down "${VPN_CONFIG_FILE}"
+		fi
+
+	fi
+
+fi
+
+
+########################
+# Mail result          #
+########################
+
+	# prepare message for mail
 	#remove leading spaces
 	MESSAGE_MAIL="$(echo -e "${MESSAGE_MAIL}" | sed -e 's/^[[:space:]]*//')"
 	MESSAGE_LCD="$(echo -e "${MESSAGE_LCD}" | sed -e 's/^[[:space:]]*//')"
@@ -1048,13 +1134,16 @@ function sync_return_code_decoder() {
 	INTERNET_STATUS=$(get_internet_status)
 	if [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
 
-		if [ ${SYNC_ERROR_LAST} = true  ]; then
+		if [ ${SYNC_ERROR_LAST} = true  ] || [ "${TARGET_MODE}:${SOURCE_MODE}" = "none:none" ]; then
 			SUBJ_MSG="$(l 'box_backup_mail_error')"
 		else
 			SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
 		fi
 
-		BODY_MSG="$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}
+		if [ "${TARGET_MODE}:${SOURCE_MODE}" = "none:none" ]; then
+			BODY_MSG="$(l 'box_backup_mail_backup_failed')"
+		else
+			BODY_MSG="$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}
 ${SOURCE_IDENTIFIER}
 
 ${MESSAGE_MAIL}
@@ -1065,9 +1154,12 @@ $(l 'box_backup_mail_log'):
 ${SYNC_LOG}
 
 ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+		fi
 
 		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}"
+
 	fi
+
 
 ########################
 # SYNCHRONISE DATABASE #

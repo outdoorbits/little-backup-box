@@ -64,7 +64,8 @@
         "lost_device": "Err.Lost device!",
         "files_missing": "Files missing!",
         "exception": "Exception",
-        "error": "Error"
+        "error": "Error",
+        "backup_failed": "Backup failed"
       },
       "storage_filesystem_short": "FS",
       "exception": "Unknown error",
@@ -95,7 +96,12 @@
       "generating_thumbnails": "Gen. thumbnails",
       "updating_exif": "Updating EXIF",
       "generating_database": "Sync database",
-      "mode_exif": "EXIF"
+      "mode_exif": "EXIF",
+      "vpn": {
+        "connecting_failed": "VPN failed",
+        "connecting": "Connect VPN",
+        "disconnecting": "Disconnect VPN"
+      }
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -362,7 +368,20 @@
     "password_repeat_label": "repeat:",
     "password_global_lbb_label": "The password to protect your Little-Backup-Box. Used for the web-interface, filebrowser, ssh and samba-Windows-shares. Username in all cases is lbb. For linux-user &quot;pi&quot; the password is set too.",
     "password_global_wifi_label": "If the password has a length of 8 to 63 characters, it will also be used as a WiFi password in hotspot mode.",
-    "alert_password_wifi_size_error": "The password cannot be used for the WiFi hotspot. For this, the length would have to be 8 to 63 characters."
+    "alert_password_wifi_size_error": "The password cannot be used for the WiFi hotspot. For this, the length would have to be 8 to 63 characters.",
+    "vpn": {
+      "section": "VPN",
+      "upload_header": "Upload configuration file",
+      "upload_type_label": "For which VPN variant should the configuration file be used?",
+      "upload_type_none": "Please select",
+      "type_none": "Don't use VPN",
+      "type_header": "Which VPN to activate?",
+      "upload_file_label": "Upload configuration file",
+      "type_label": "Which VPN should be activated before transferring data to a network service? Caution: The Little Backup Box interface may not be accessible while the backup is running. You may be able to reach the box under the VPN IP if your end device is also registered in the same VPN.",
+      "remove_header": "Delete VPN configuration file",
+      "timeout_header": "VPN timeout",
+      "timeout_label": "What is the maximum time to wait for the VPN connection to be established?"
+    }
   },
   "tools": {
     "tools": "Tools",
