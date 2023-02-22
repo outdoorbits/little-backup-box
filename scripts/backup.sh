@@ -415,11 +415,10 @@ function sync_return_code_decoder() {
 			lcd_message "$(l 'box_backup_vpn_connecting')" "${conf_VPN_TYPE}"
 
 			if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
-				sudo openvpn --config "${VPN_CONFIG_FILE}"
+ 				sudo openvpn --config "${VPN_CONFIG_FILE}" &
 			elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
 				sudo wg-quick up "${VPN_CONFIG_FILE}"
 			fi
-
 
 			VPN_READY=false
 			VPN_START_TIME=$(get_uptime_seconds)
@@ -435,12 +434,15 @@ function sync_return_code_decoder() {
 			done
 
 			if [ "${VPN_READY}" = false ]; then
+
 				if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
 					lcd_message "$(l 'box_backup_vpn_connecting_failed')"
 					TARGET_MODE='none'
 					SOURCE_MODE='none'
 				fi
+
 			fi
+
 		fi
 
 	fi
