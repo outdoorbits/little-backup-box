@@ -151,6 +151,9 @@ fi
 sudo DEBIAN_FRONTEND=noninteractive \
 	apt autoremove -y
 
+# disable services
+sudo systemctl disable openvpn.service
+
 # General raspi-config settings
 sudo raspi-config nonint do_boot_wait 1 # wait for network on boot: disable
 
