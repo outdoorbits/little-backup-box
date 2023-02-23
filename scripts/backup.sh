@@ -401,7 +401,7 @@ function sync_return_code_decoder() {
 	sudo sh -c "echo heartbeat > /sys/class/leds/led0/trigger"
 
 #########################
-# START VPN             #
+# VPN START             #
 #########################
 
 	if [[ " cloud rsyncserver " =~ " ${TARGET_MODE} " ]]; then # VPN for network-services only
@@ -414,6 +414,9 @@ function sync_return_code_decoder() {
 		if [ "$(sudo -- bash -c "if [ -f \"${VPN_CONFIG_FILE}\" ]; then echo 'true'; fi")" = "true" ]; then
 			lcd_message "$(l 'box_backup_vpn_connecting')" "${conf_VPN_TYPE}"
 
+			# remember IP before VPN-connection
+			IP="$(get_ip)"
+
 			if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
  				sudo openvpn --config "${VPN_CONFIG_FILE}" &
 			elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
@@ -424,13 +427,15 @@ function sync_return_code_decoder() {
 			VPN_START_TIME=$(get_uptime_seconds)
 			VPN_TIMEOUT_TIME=$((${VPN_START_TIME} + ${conf_VPN_TIMEOUT}))
 			while [ "${VPN_READY}" = false ] && [[ $(get_uptime_seconds) -lt ${VPN_TIMEOUT_TIME} ]]; do
-				sleep 1
 
 				if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
-					if [[ "$(sudo systemctl status openvpn\@${VPN_CONFIG_FILE_TRUNK})" =~ "Active: active" ]]; then $VPN_READY=true; fi
+					if [ "$(ip tuntap show)" != "" ] && [ "${IP}" != "$(get_ip)" ]; then VPN_READY=true; fi
 				elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
-					if [[ "$(sudo systemctl status wg-quick\@${VPN_CONFIG_FILE_TRUNK})" =~ "Active: active" ]]; then $VPN_READY=true; fi
+					if [[ "$(sudo wg show ${VPN_CONFIG_FILE_TRUNK})" =~ "${VPN_CONFIG_FILE_TRUNK}" ]] && [ "${IP}" != "$(get_ip)" ]; then VPN_READY=true; fi
 				fi
+
+				sleep 1
+
 			done
 
 			if [ "${VPN_READY}" = false ]; then
@@ -1102,7 +1107,7 @@ function sync_return_code_decoder() {
 	done # sources
 
 ########################
-# STOP VPN             #
+# VPN STOP             #
 ########################
 
 if [[ " cloud rsyncserver " =~ " ${TARGET_MODE} " ]]; then
