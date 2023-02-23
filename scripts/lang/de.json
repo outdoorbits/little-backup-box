@@ -227,10 +227,12 @@
       "type_none": "VPN nicht verwenden",
       "type_header": "Welches VPN soll aktiviert werden?",
       "upload_file_label": "Konfigurationsdatei hochladen",
-      "type_label": "Welches VPN soll vor einer Datenübertragung zu einem Netzwerkdienst aktiviert werden? Vorsicht: Eventuell ist die Oberfläche der Little Backup Box nicht erreichbar, so lange das Backup läuft. Unter Umständen können Sie die Box unter der VPN-IP erreichen, wenn auch Ihr Endgerät im selben VPN angemeldet ist.",
       "remove_header": "VPN-Konfigurationsdatei löschen",
       "timeout_header": "VPN-Zeitüberschreitung",
-      "timeout_label": "Wie lange soll maximal auf den Aufbau der VPN-Verbindung gewartet werden?"
+      "timeout_label": "Wie lange soll maximal auf den Aufbau der VPN-Verbindung gewartet werden?",
+      "type_cloud_label": "Für Cloud-Services",
+      "type_rsync_label": "Für rsync-Server-Backup",
+      "type_desc": "Welches VPN soll vor einer Datenübertragung zu einem Netzwerkdienst aktiviert werden? Vorsicht: Eventuell ist die Oberfläche der Little Backup Box nicht erreichbar, so lange das Backup läuft. Unter Umständen können Sie die Box unter der VPN-IP erreichen, wenn auch Ihr Endgerät im selben VPN angemeldet ist."
     }
   },
   "tools": {
@@ -348,7 +350,8 @@
       "vpn": {
         "connecting_failed": "VPN-Fehler",
         "connecting": "Verbinde VPN",
-        "disconnecting": "Trenne VPN"
+        "disconnecting": "Trenne VPN",
+        "connecting_success": "VPN verbunden"
       }
     },
     "cronip": {

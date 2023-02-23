@@ -227,10 +227,12 @@
       "type_none": "No use VPN",
       "type_header": "¿Qué VPN activar?",
       "upload_file_label": "Subir archivo de configuración",
-      "type_label": "¿Qué VPN se debe activar antes de transferir datos a un servicio de red? Precaución: Es posible que no se pueda acceder a la interfaz de Little Backup Box mientras se ejecuta la copia de seguridad. Es posible que pueda llegar al cuadro debajo de la IP de VPN si su dispositivo final también está registrado en la misma VPN.",
       "remove_header": "Eliminar archivo de configuración de VPN",
       "timeout_header": "Tiempo de espera de VPN",
-      "timeout_label": "¿Cuál es el tiempo máximo de espera para que se establezca la conexión VPN?"
+      "timeout_label": "¿Cuál es el tiempo máximo de espera para que se establezca la conexión VPN?",
+      "type_cloud_label": "Para servicios en la nube",
+      "type_rsync_label": "Para la copia de seguridad del servidor rsync",
+      "type_desc": "¿Qué VPN se debe activar antes de transferir datos a un servicio de red? Precaución: Es posible que no se pueda acceder a la interfaz de Little Backup Box mientras se ejecuta la copia de seguridad. Es posible que pueda llegar al cuadro debajo de la IP de VPN si su dispositivo final también está registrado en la misma VPN."
     }
   },
   "tools": {
@@ -348,7 +350,8 @@
       "vpn": {
         "connecting_failed": "VPN fallida",
         "connecting": "Conectar VPN",
-        "disconnecting": "Desconectar VPN"
+        "disconnecting": "Desconectar VPN",
+        "connecting_success": "VPN conectado"
       }
     },
     "cronip": {

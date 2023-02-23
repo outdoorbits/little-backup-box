@@ -227,10 +227,12 @@
       "type_none": "N'utilisez pas de VPN",
       "type_header": "Quel VPN activer ?",
       "upload_file_label": "Télécharger le fichier de configuration",
-      "type_label": "Quel VPN doit être activé avant de transférer des données vers un service réseau ? Attention : L'interface de Little Backup Box peut ne pas être accessible pendant l'exécution de la sauvegarde. Vous pourrez peut-être accéder à la boîte sous l'IP VPN si votre terminal est également enregistré dans le même VPN.",
       "remove_header": "Supprimer le fichier de configuration VPN",
       "timeout_header": "Délai d'expiration du VPN",
-      "timeout_label": "Quel est le temps maximum d'attente pour que la connexion VPN soit établie ?"
+      "timeout_label": "Quel est le temps maximum d'attente pour que la connexion VPN soit établie ?",
+      "type_cloud_label": "Pour les services cloud",
+      "type_rsync_label": "Pour la sauvegarde du serveur rsync",
+      "type_desc": "Quel VPN doit être activé avant de transférer des données vers un service réseau ? Attention : L'interface de Little Backup Box peut ne pas être accessible pendant l'exécution de la sauvegarde. Vous pourrez peut-être accéder à la boîte sous l'IP VPN si votre terminal est également enregistré dans le même VPN."
     }
   },
   "tools": {
@@ -348,7 +350,8 @@
       "vpn": {
         "connecting_failed": "Échec du VPN",
         "connecting": "Connecter le VPN",
-        "disconnecting": "Déconnecter le VPN"
+        "disconnecting": "Déconnecter le VPN",
+        "connecting_success": "VPN connecté"
       }
     },
     "cronip": {

@@ -17,6 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# requires
+# lib-time.sh
+
 function get_ip() {
 	hostname -I | awk '{$1=$1};1' # trims the result
 }
@@ -30,4 +33,84 @@ function get_internet_status() {
 	else
 		echo "disconnected"
 	fi
+}
+
+function vpn_status() {
+	local VPN_TYPE="${1}"
+	local VPN_CONFIG_FILE="${2}"  # for WireGuard only
+
+	local VPN_CONFIG_FILE_TRUNK=$(basename "${VPN_CONFIG_FILE}")
+	VPN_CONFIG_FILE_TRUNK="${VPN_CONFIG_FILE_TRUNK%.*}"
+
+	local VPN_STATUS="down"
+
+	if [ "${VPN_TYPE}" = "OpenVPN" ]; then
+		if [ "$(ip tuntap show)" != "" ]; then VPN_CONNECTED="up"; fi
+	elif [ "${VPN_TYPE}" = "WireGuard" ]; then
+		if [[ "$(sudo wg show ${VPN_CONFIG_FILE_TRUNK})" =~ "${VPN_CONFIG_FILE_TRUNK}" ]]; then VPN_CONNECTED="up"; fi
+	fi
+
+	echo "${VPN_STATUS}"
+}
+
+function vpn_stop() {
+
+	local VPN_TYPE="${1}"
+	local VPN_CONFIG_FILE="${2}"  # for WireGuard only
+
+	local VPN_CONFIG_FILE_TRUNK=$(basename "${VPN_CONFIG_FILE}")
+	VPN_CONFIG_FILE_TRUNK="${VPN_CONFIG_FILE_TRUNK%.*}"
+
+	if [ "${VPN_TYPE}" = "OpenVPN" ]; then
+		if [ $(vpn_status "${VPN_TYPE}") = "up" ]; then
+			sudo killall openvpn
+		fi
+
+	elif [ "${VPN_TYPE}" = "WireGuard" ]; then
+		if [ $(vpn_status "${VPN_TYPE}" "${VPN_CONFIG_FILE}") = "up" ]; then
+			sudo wg-quick down "${VPN_CONFIG_FILE_TRUNK}"
+		fi
+	fi
+}
+
+function vpn_start() {
+
+	local VPN_TYPE="${1}"
+	local VPN_CONFIG_FILE="${2}"
+	local VPN_TIMEOUT="${3}"
+
+	local VPN_CONFIG_FILE_TRUNK=$(basename "${VPN_CONFIG_FILE}")
+	VPN_CONFIG_FILE_TRUNK="${VPN_CONFIG_FILE_TRUNK%.*}"
+
+	local VPN_CONNECTED="false"
+
+	if [ "$(sudo -- bash -c "if [ -f \"${VPN_CONFIG_FILE}\" ]; then echo 'true'; fi")" = "true" ]; then
+
+		# remember IP before VPN-connection
+		local IP="$(get_ip)"
+
+		if [ "${VPN_TYPE}" = "OpenVPN" ]; then
+			sudo bash -c "openvpn --config '${VPN_CONFIG_FILE}' &"
+		elif [ "${VPN_TYPE}" = "WireGuard" ]; then
+			sudo wg-quick up "${VPN_CONFIG_FILE}"
+		fi
+
+		local VPN_START_TIME=$(get_uptime_seconds)
+		local VPN_TIMEOUT_TIME=$((${VPN_START_TIME} + ${VPN_TIMEOUT}))
+
+		while [ "${VPN_CONNECTED}" = "false" ] && [[ $(get_uptime_seconds) -lt ${VPN_TIMEOUT_TIME} ]]; do
+
+			if [ "${VPN_TYPE}" = "OpenVPN" ]; then
+				if [ "$(vpn_status "${VPN_TYPE}" "${VPN_CONFIG_FILE}")" != "" ] && [ "${IP}" != "$(get_ip)" ]; then VPN_CONNECTED="true"; fi
+			elif [ "${VPN_TYPE}" = "WireGuard" ]; then
+				if [[ "$(sudo wg show ${VPN_CONFIG_FILE_TRUNK})" =~ "${VPN_CONFIG_FILE_TRUNK}" ]] && [ "${IP}" != "$(get_ip)" ]; then VPN_CONNECTED="true"; fi
+			fi
+
+			sleep 1
+
+		done
+
+	fi
+
+	return "${VPN_CONNECTED}"
 }

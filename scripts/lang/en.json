@@ -100,7 +100,8 @@
       "vpn": {
         "connecting_failed": "VPN failed",
         "connecting": "Connect VPN",
-        "disconnecting": "Disconnect VPN"
+        "disconnecting": "Disconnect VPN",
+        "connecting_success": "VPN connected"
       }
     },
     "poweroff": {
@@ -377,10 +378,12 @@
       "type_none": "Don't use VPN",
       "type_header": "Which VPN to activate?",
       "upload_file_label": "Upload configuration file",
-      "type_label": "Which VPN should be activated before transferring data to a network service? Caution: The Little Backup Box interface may not be accessible while the backup is running. You may be able to reach the box under the VPN IP if your end device is also registered in the same VPN.",
       "remove_header": "Delete VPN configuration file",
       "timeout_header": "VPN timeout",
-      "timeout_label": "What is the maximum time to wait for the VPN connection to be established?"
+      "timeout_label": "What is the maximum time to wait for the VPN connection to be established?",
+      "type_cloud_label": "For cloud services",
+      "type_rsync_label": "For rsync server backup",
+      "type_desc": "Which VPN should be activated before transferring data to a network service? Caution: The Little Backup Box interface may not be accessible while the backup is running. You may be able to reach the box under the VPN IP if your end device is also registered in the same VPN."
     }
   },
   "tools": {

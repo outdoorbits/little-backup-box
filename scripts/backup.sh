@@ -404,53 +404,36 @@ function sync_return_code_decoder() {
 # VPN START             #
 #########################
 
-	if [[ " cloud rsyncserver " =~ " ${TARGET_MODE} " ]]; then # VPN for network-services only
+	#stop VPN
+	lcd_message "$(l 'box_backup_vpn_disconnecting')"
 
-		VPN_CONFIG_FILE=$(eval echo "\${const_VPN_DIR_${conf_VPN_TYPE}}/\$const_VPN_FILENAME_${conf_VPN_TYPE}")
+	vpn_stop "OpenVPN"
+	vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
 
-		VPN_CONFIG_FILE_TRUNK=$(eval echo "\$const_VPN_FILENAME_${conf_VPN_TYPE}")
-		VPN_CONFIG_FILE_TRUNK="${VPN_CONFIG_FILE_TRUNK%.*}"
+	VPN_TYPE=""
+	if [ "${TARGET_MODE}" = "rsyncserver"  ]; then VPN_TYPE=${conf_VPN_TYPE_RSYNC}; fi
+	if [[ " ${TARGET_MODE} " =~ " cloud "  ]]; then VPN_TYPE=${conf_VPN_TYPE_CLOUD}; fi
 
-		if [ "$(sudo -- bash -c "if [ -f \"${VPN_CONFIG_FILE}\" ]; then echo 'true'; fi")" = "true" ]; then
-			lcd_message "$(l 'box_backup_vpn_connecting')" "${conf_VPN_TYPE}"
+	if [ ! -z "${VPN_TYPE}" ]; then
+		VPN_CONFIG_FILE=$(eval echo "\${const_VPN_DIR_${VPN_TYPE}}/\$const_VPN_FILENAME_${VPN_TYPE}")
 
-			# remember IP before VPN-connection
-			IP="$(get_ip)"
+		lcd_message "$(l 'box_backup_vpn_connecting')" "${VPN_TYPE}"
+		vpn_start "${VPN_TYPE}" "${VPN_CONFIG_FILE}" "${conf_VPN_TIMEOUT}"
+		VPN_CONNECTED=$?
 
-			if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
- 				sudo openvpn --config "${VPN_CONFIG_FILE}" &
-			elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
-				sudo wg-quick up "${VPN_CONFIG_FILE}"
-			fi
-
-			VPN_READY=false
-			VPN_START_TIME=$(get_uptime_seconds)
-			VPN_TIMEOUT_TIME=$((${VPN_START_TIME} + ${conf_VPN_TIMEOUT}))
-			while [ "${VPN_READY}" = false ] && [[ $(get_uptime_seconds) -lt ${VPN_TIMEOUT_TIME} ]]; do
-
-				if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
-					if [ "$(ip tuntap show)" != "" ] && [ "${IP}" != "$(get_ip)" ]; then VPN_READY=true; fi
-				elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
-					if [[ "$(sudo wg show ${VPN_CONFIG_FILE_TRUNK})" =~ "${VPN_CONFIG_FILE_TRUNK}" ]] && [ "${IP}" != "$(get_ip)" ]; then VPN_READY=true; fi
-				fi
-
-				sleep 1
-
-			done
-
-			if [ "${VPN_READY}" = false ]; then
-
-				if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-					lcd_message "$(l 'box_backup_vpn_connecting_failed')"
-					TARGET_MODE='none'
-					SOURCE_MODE='none'
-				fi
-
+		if [ "${VPN_CONNECTED}" = "false" ]; then
+			if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
+				lcd_message "$(l 'box_backup_vpn_connecting_failed')"
+				TARGET_MODE='none'
+				SOURCE_MODE='none'
+			else
+				lcd_message "$(l 'box_backup_vpn_connecting_success')" "${VPN_TYPE}"
 			fi
 
 		fi
 
 	fi
+
 
 #########################
 # Unmount devices       #
@@ -1110,21 +1093,11 @@ function sync_return_code_decoder() {
 # VPN STOP             #
 ########################
 
-if [[ " cloud rsyncserver " =~ " ${TARGET_MODE} " ]]; then
+	#stop VPN
+	lcd_message "$(l 'box_backup_vpn_disconnecting')" "${VPN_TYPE}"
 
-	if [ $(sudo -- bash -c "if [ -f \"$VPN_CONFIG_FILE\" ]; then echo 'true'; fi") == "true" ]; then
-		lcd_message "$(l 'box_backup_vpn_disconnecting')" "${conf_VPN_TYPE}"
-
-		if [ "${conf_VPN_TYPE}" = "OpenVPN" ]; then
-			sudo killall openvpn
-
-		elif [ "${conf_VPN_TYPE}" = "WireGuard" ]; then
-			sudo wg-quick down "${VPN_CONFIG_FILE}"
-		fi
-
-	fi
-
-fi
+	vpn_stop "OpenVPN"
+	vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
 
 
 ########################

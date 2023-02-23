@@ -201,7 +201,8 @@ conf_RSYNC_USER='$conf_RSYNC_USER'
 conf_RSYNC_PASSWORD='$conf_RSYNC_PASSWORD'
 conf_RSYNC_SERVER_MODULE='$conf_RSYNC_SERVER_MODULE'
 conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
-conf_VPN_TYPE='$conf_VPN_TYPE'
+conf_VPN_TYPE_RSYNC='$conf_VPN_TYPE_RSYNC'
+conf_VPN_TYPE_CLOUD='$conf_VPN_TYPE_CLOUD'
 conf_VPN_TIMEOUT='$conf_VPN_TIMEOUT'
 $conf_PASSWORD_LINE
 
@@ -629,12 +630,24 @@ function upload_settings() {
 
 				<h3><?php echo L::config_vpn_type_header; ?></h3>
 
-					<label for="conf_VPN_TYPE"><?php echo L::config_vpn_type_label; ?></label>
-					<select name="conf_VPN_TYPE" id="conf_VPN_TYPE">
+					<div><?php echo L::config_vpn_type_desc; ?></div>
+					<br>
+					<label for="conf_VPN_TYPE_RSYNC"><?php echo L::config_vpn_type_rsync_label; ?></label><br>
+					<select name="conf_VPN_TYPE_RSYNC" id="conf_VPN_TYPE_RSYNC">
 						<?php
-							echo "<option value='none'  " . ($config["conf_VPN_TYPE"] == ""?" selected":"") . ">" . L::config_vpn_type_none . "</option>";
-							foreach($vpn_types as $vpn_type) {
-								echo "<option value='" . $vpn_type . "' " . ($config["conf_VPN_TYPE"] == $vpn_type?" selected":"") . ">" . $vpn_type . "</option>";
+							echo "<option value='none'  " . ($config["conf_VPN_TYPE_RSYNC"] == ""?" selected":"") . ">" . L::config_vpn_type_none . "</option>";
+							foreach($vpn_types as $vpn_type_rsync) {
+								echo "<option value='" . $vpn_type_rsync . "' " . ($config["conf_VPN_TYPE_RSYNC"] == $vpn_type_rsync?" selected":"") . ">" . $vpn_type_rsync . "</option>";
+							}
+						?>
+					</select><br>
+
+					<label for="conf_VPN_TYPE_CLOUD"><?php echo L::config_vpn_type_cloud_label; ?></label><br>
+					<select name="conf_VPN_TYPE_CLOUD" id="conf_VPN_TYPE_CLOUD">
+						<?php
+							echo "<option value='none'  " . ($config["conf_VPN_TYPE_CLOUD"] == ""?" selected":"") . ">" . L::config_vpn_type_none . "</option>";
+							foreach($vpn_types as $vpn_type_cloud) {
+								echo "<option value='" . $vpn_type_cloud . "' " . ($config["conf_VPN_TYPE_CLOUD"] == $vpn_type_cloud?" selected":"") . ">" . $vpn_type_cloud . "</option>";
 							}
 						?>
 					</select>
