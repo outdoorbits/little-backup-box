@@ -424,17 +424,14 @@ function sync_return_code_decoder() {
 		VPN_CONNECTED=$?
 
 		if [ "${VPN_CONNECTED}" != "1" ]; then
-			if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-				lcd_message "$(l 'box_backup_vpn_connecting_failed')"
-				TARGET_MODE='none'
-				SOURCE_MODE='none'
-			else
-				lcd_message "$(l 'box_backup_vpn_connecting_success')" "${VPN_TYPE}"
-				sleep 1
-				source "${WORKING_DIR}/cron-ip.sh"
-				sleep 1
-			fi
-
+			lcd_message "$(l 'box_backup_vpn_connecting_failed')"
+			TARGET_MODE='none'
+			SOURCE_MODE='none'
+		else
+			lcd_message "$(l 'box_backup_vpn_connecting_success')" "${VPN_TYPE}"
+			sleep 1
+			sudo "${WORKING_DIR}/cron-ip.sh" 'force'
+			sleep 2
 		fi
 
 	fi
