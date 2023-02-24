@@ -45,9 +45,9 @@ function vpn_status() {
 	local VPN_STATUS="down"
 
 	if [ "${VPN_TYPE}" = "OpenVPN" ]; then
-		if [ "$(ip tuntap show)" != "" ]; then VPN_CONNECTED="up"; fi
+		if [ "$(sudo ip tuntap show)" != "" ]; then VPN_STATUS="up"; fi
 	elif [ "${VPN_TYPE}" = "WireGuard" ]; then
-		if [[ "$(sudo wg show ${VPN_CONFIG_FILE_TRUNK})" =~ "${VPN_CONFIG_FILE_TRUNK}" ]]; then VPN_CONNECTED="up"; fi
+		if [[ "$(sudo wg show ${VPN_CONFIG_FILE_TRUNK})" =~ "${VPN_CONFIG_FILE_TRUNK}" ]]; then VPN_STATUS="up"; fi
 	fi
 
 	echo "${VPN_STATUS}"
@@ -82,7 +82,7 @@ function vpn_start() {
 	local VPN_CONFIG_FILE_TRUNK=$(basename "${VPN_CONFIG_FILE}")
 	VPN_CONFIG_FILE_TRUNK="${VPN_CONFIG_FILE_TRUNK%.*}"
 
-	local VPN_CONNECTED="false"
+	local VPN_CONNECTED="0"
 
 	if [ "$(sudo -- bash -c "if [ -f \"${VPN_CONFIG_FILE}\" ]; then echo 'true'; fi")" = "true" ]; then
 
@@ -90,20 +90,20 @@ function vpn_start() {
 		local IP="$(get_ip)"
 
 		if [ "${VPN_TYPE}" = "OpenVPN" ]; then
-			sudo bash -c "openvpn --config '${VPN_CONFIG_FILE}' &"
+			sudo bash -c "openvpn --config '${VPN_CONFIG_FILE}' 2>&1 &"
 		elif [ "${VPN_TYPE}" = "WireGuard" ]; then
-			sudo wg-quick up "${VPN_CONFIG_FILE}"
+			sudo wg-quick up "${VPN_CONFIG_FILE}" 2>&1
 		fi
 
 		local VPN_START_TIME=$(get_uptime_seconds)
 		local VPN_TIMEOUT_TIME=$((${VPN_START_TIME} + ${VPN_TIMEOUT}))
 
-		while [ "${VPN_CONNECTED}" = "false" ] && [[ $(get_uptime_seconds) -lt ${VPN_TIMEOUT_TIME} ]]; do
+		while [ "${VPN_CONNECTED}" = "0" ] && [[ $(get_uptime_seconds) -lt ${VPN_TIMEOUT_TIME} ]]; do
 
 			if [ "${VPN_TYPE}" = "OpenVPN" ]; then
-				if [ "$(vpn_status "${VPN_TYPE}" "${VPN_CONFIG_FILE}")" != "" ] && [ "${IP}" != "$(get_ip)" ]; then VPN_CONNECTED="true"; fi
+				if [ "$(vpn_status "${VPN_TYPE}" "${VPN_CONFIG_FILE}")" != "" ] && [ "${IP}" != "$(get_ip)" ]; then VPN_CONNECTED="1"; fi
 			elif [ "${VPN_TYPE}" = "WireGuard" ]; then
-				if [[ "$(sudo wg show ${VPN_CONFIG_FILE_TRUNK})" =~ "${VPN_CONFIG_FILE_TRUNK}" ]] && [ "${IP}" != "$(get_ip)" ]; then VPN_CONNECTED="true"; fi
+				if [[ "$(sudo wg show ${VPN_CONFIG_FILE_TRUNK})" =~ "${VPN_CONFIG_FILE_TRUNK}" ]] && [ "${IP}" != "$(get_ip)" ]; then VPN_CONNECTED="1"; fi
 			fi
 
 			sleep 1

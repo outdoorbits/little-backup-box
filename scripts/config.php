@@ -635,9 +635,9 @@ function upload_settings() {
 					<label for="conf_VPN_TYPE_RSYNC"><?php echo L::config_vpn_type_rsync_label; ?></label><br>
 					<select name="conf_VPN_TYPE_RSYNC" id="conf_VPN_TYPE_RSYNC">
 						<?php
-							echo "<option value='none'  " . ($config["conf_VPN_TYPE_RSYNC"] == ""?" selected":"") . ">" . L::config_vpn_type_none . "</option>";
-							foreach($vpn_types as $vpn_type_rsync) {
-								echo "<option value='" . $vpn_type_rsync . "' " . ($config["conf_VPN_TYPE_RSYNC"] == $vpn_type_rsync?" selected":"") . ">" . $vpn_type_rsync . "</option>";
+							echo "<option value='none'  " . ($config["conf_VPN_TYPE_RSYNC"] == "none"?" selected":"") . ">" . L::config_vpn_type_none . "</option>";
+							foreach($vpn_types as $vpn_type) {
+								echo "<option value='" . $vpn_type . "' " . ($config["conf_VPN_TYPE_RSYNC"] == $vpn_type?" selected":"") . ">" . $vpn_type . "</option>";
 							}
 						?>
 					</select><br>
@@ -645,9 +645,9 @@ function upload_settings() {
 					<label for="conf_VPN_TYPE_CLOUD"><?php echo L::config_vpn_type_cloud_label; ?></label><br>
 					<select name="conf_VPN_TYPE_CLOUD" id="conf_VPN_TYPE_CLOUD">
 						<?php
-							echo "<option value='none'  " . ($config["conf_VPN_TYPE_CLOUD"] == ""?" selected":"") . ">" . L::config_vpn_type_none . "</option>";
-							foreach($vpn_types as $vpn_type_cloud) {
-								echo "<option value='" . $vpn_type_cloud . "' " . ($config["conf_VPN_TYPE_CLOUD"] == $vpn_type_cloud?" selected":"") . ">" . $vpn_type_cloud . "</option>";
+							echo "<option value='none'  " . ($config["conf_VPN_TYPE_CLOUD"] == "none"?" selected":"") . ">" . L::config_vpn_type_none . "</option>";
+							foreach($vpn_types as $vpn_type) {
+								echo "<option value='" . $vpn_type . "' " . ($config["conf_VPN_TYPE_CLOUD"] == $vpn_type?" selected":"") . ">" . $vpn_type . "</option>";
 							}
 						?>
 					</select>

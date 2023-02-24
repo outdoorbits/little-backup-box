@@ -404,12 +404,14 @@ function sync_return_code_decoder() {
 # VPN START             #
 #########################
 
-	#stop VPN
-	lcd_message "$(l 'box_backup_vpn_disconnecting')"
+	#stop old VPN connections
+	if [ $(vpn_status "OpenVPN") = "up" ] || [ $(vpn_status "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard") = "up" ]; then
+		lcd_message "$(l 'box_backup_vpn_disconnecting')"
+		vpn_stop "OpenVPN"
+		vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
+	fi
 
-	vpn_stop "OpenVPN"
-	vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
-
+	#start VPN
 	VPN_TYPE=""
 	if [ "${TARGET_MODE}" = "rsyncserver"  ]; then VPN_TYPE=${conf_VPN_TYPE_RSYNC}; fi
 	if [[ " ${TARGET_MODE} " =~ " cloud "  ]]; then VPN_TYPE=${conf_VPN_TYPE_CLOUD}; fi
@@ -421,13 +423,16 @@ function sync_return_code_decoder() {
 		vpn_start "${VPN_TYPE}" "${VPN_CONFIG_FILE}" "${conf_VPN_TIMEOUT}"
 		VPN_CONNECTED=$?
 
-		if [ "${VPN_CONNECTED}" = "false" ]; then
+		if [ "${VPN_CONNECTED}" != "1" ]; then
 			if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
 				lcd_message "$(l 'box_backup_vpn_connecting_failed')"
 				TARGET_MODE='none'
 				SOURCE_MODE='none'
 			else
 				lcd_message "$(l 'box_backup_vpn_connecting_success')" "${VPN_TYPE}"
+				sleep 1
+				source "${WORKING_DIR}/cron-ip.sh"
+				sleep 1
 			fi
 
 		fi
@@ -914,6 +919,8 @@ function sync_return_code_decoder() {
 				FILES_COUNT_STORAGE_PRE=$(find $BACKUP_PATH -type f | wc -l)
 			fi
 
+			lcd_message "$(l "box_backup_working")..."
+
 			FILES_TO_SYNC="$(calculate_files_to_sync "${SOURCE_PATH}")"
 			log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
@@ -1094,11 +1101,11 @@ function sync_return_code_decoder() {
 ########################
 
 	#stop VPN
-	lcd_message "$(l 'box_backup_vpn_disconnecting')" "${VPN_TYPE}"
-
-	vpn_stop "OpenVPN"
-	vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
-
+	if [ $(vpn_status "OpenVPN") = "up" ] || [ $(vpn_status "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard") = "up" ]; then
+		lcd_message "$(l 'box_backup_vpn_disconnecting')"
+		vpn_stop "OpenVPN"
+		vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
+	fi
 
 ########################
 # Mail result          #
