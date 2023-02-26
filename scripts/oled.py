@@ -16,13 +16,14 @@
 #######################################################################
 
 import time
-import subprocess
 import sys
 
-from board import SCL, SDA
-import busio
-from PIL import Image, ImageDraw, ImageFont
-import adafruit_ssd1306
+from luma.core.interface.serial import i2c, spi, pcf8574
+from luma.core.interface.parallel import bitbang_6800
+from luma.core.render import canvas
+from luma.oled.device import ssd1306, ssd1309, ssd1325, ssd1331, sh1106, sh1107, ws0010
+
+from PIL import Image, ImageFont
 
 # get arguments
 # accepts 5 pairs of arguments: Format ("pos" or "neg") and Line (Text)
@@ -32,118 +33,119 @@ Line    = ["","","","","",""] # elements 0..4 (we need indexes 1..5)
 
 I2C_ADDRESS=int(sys.argv[1], 16)
 
+#I2C
+serial = i2c(port=1, address=0x3C)
+# substitute ssd1331(...) or sh1106(...) below if using that device
+device = ssd1306(serial)
+
+device.persist = True
+
+#SPI
+#serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
+#device = pcd8544(serial)
+
 for n in range(1,6):
 	Format[n]	= sys.argv[(n-1)*2+2]
 	Line[n]		= sys.argv[(n-1)*2+3]
 
-# Create the I2C interface.
-i2c = busio.I2C(SCL, SDA)
+def main(device):
+	if Line[1][0:6] == "IMAGE:":
+		# PRINT IMAGE FROM FILE
+		# Only the first line can be interpreted as image. In This case no further text will be printed.
+		# FORMAT: "IMAGE:filename"
+		ImageLine = Line[1].split(":")
 
-# Create the SSD1306 OLED class.
-# The first two parameters are the pixel width and pixel height.  Change these
-# to the right size for your display!
-disp = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c,addr=I2C_ADDRESS)
+		ImageFilename = ImageLine[1]
 
-# Clear display
-disp.poweron() # resets display (just in case of black frozen screen)
-disp.fill(0)
+		image = Image.open(ImageFilename)
+		image = image.convert('1')
 
-# Create blank image for drawing.
-# Make sure to create image with mode '1' for 1-bit color.
-width = disp.width
-height = disp.height
+		device.display(image)
 
-if Line[1][0:6] == "IMAGE:":
-	# PRINT IMAGE FROM FILE
-	# Only the first line can be interpreted as image. In This case no further text will be printed.
-	# FORMAT: "IMAGE:filename"
-	ImageLine = Line[1].split(":")
+	else:
+		# define constants
+		top = 0
 
-	ImageFilename = ImageLine[1]
+		# define font
+		font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+		FONT = ImageFont.truetype(font_path, 12)
 
-	image = Image.open(ImageFilename)
-	image = image.convert('1')
+		x = 0
+		line_height = int((device.height - top)/5)
+		y_shift = 0
 
-	draw = ImageDraw.Draw(image)
+		# clear screen
+		#device.clear()
 
-else:
-	# PRINT TEXT LINES OR SPECIAL LINES
-	image = Image.new("1", (width, height))
+		# Write lines
+		with canvas(device) as draw:
+			for n in range(1,6):
+				if Format[n] == "pos":
+					fg_fill	= 255
+					bg_fill	= 0
+				else:
+					fg_fill	= 0
+					bg_fill	= 255
 
-	# Get drawing object to draw on image.
-	draw = ImageDraw.Draw(image)
+				y	= (n-1)*line_height
 
-	# define constants
-	top = 0
+				# Draw a filled box in case of inverted output
+				if Format[n] == "neg":
+					draw.rectangle((x, top + y + y_shift, device.width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
 
-	# define font
-	font = ImageFont.load_default()
-	# Alternatively load a TTF font.  Make sure the .ttf font file is in the
-	# same directory as the python script!
-	# Some other nice fonts to try: http://www.dafont.com/bitmap.php
-	font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 12)
-	# Move left to right keeping track of the current x position for drawing shapes.
-	x			= 0
-	line_height	= int((height - top)/5)
-	y_shift		= 0
+				if Line[n][0:6] == "PGBAR:":
+					try:
+						progress	= float(Line[n][6:])
+					except ValueError:
+						progress	= 0
 
-	# Write lines
-	for n in range(1,6):
-		if Format[n] == "pos":
-			fg_fill	= 255
-			bg_fill	= 0
-		else:
-			fg_fill	= 0
-			bg_fill	= 255
+					progress	= int(progress * 10 + 0.5) / 10
 
-		y	= (n-1)*line_height
+					if progress >= 100:
+						# no decimals on 100%
+						progress	= int(progress + 0.5)
 
-		# Draw a filled box to clear the image-line.
-		draw.rectangle((x, top + y + y_shift, width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
+					# draw progressbar
+					pg_y_space	= 2
+					pgbar_x_l	= x + 42
+					pgbar_x_r	= device.width - 2
+					pgbar_y_u	= top + y + y_shift + pg_y_space
+					pgbar_y_d	= top + y + y_shift + line_height - pg_y_space
 
-		if Line[n][0:6] == "PGBAR:":
-			try:
-				progress	= float(Line[n][6:])
-			except ValueError:
-				progress	= 0
+					## draw outer frame
+					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=fg_fill, fill=bg_fill)
 
-			progress	= int(progress * 10 + 0.5) / 10
+					## draw inner frame
+					pgbar_x_l	= pgbar_x_l + 1
+					pgbar_x_r	= pgbar_x_r - 1
+					pgbar_y_u	= pgbar_y_u + 1
+					pgbar_y_d	= pgbar_y_d - 1
 
-			if progress >= 100:
-				# no decimals on 100%
-				progress	= int(progress + 0.5)
+					pgbar_x_r	= pgbar_x_l + (pgbar_x_r - pgbar_x_l) * progress / 100
 
-			# draw progressbar
-			pg_y_space	= 2
-			pgbar_x_l	= x + 42
-			pgbar_x_r	= width - 2
-			pgbar_y_u	= top + y + y_shift + pg_y_space
-			pgbar_y_d	= top + y + y_shift + line_height - pg_y_space
+					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
 
-			## draw outer frame
-			draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=fg_fill, fill=bg_fill)
+					# define text to print
+					Line[n]	= str(progress) + "%"
 
-			## draw inner frame
-			pgbar_x_l	= pgbar_x_l + 1
-			pgbar_x_r	= pgbar_x_r - 1
-			pgbar_y_u	= pgbar_y_u + 1
-			pgbar_y_d	= pgbar_y_d - 1
+				# Write text
+				draw.text((x + 2, top + y), Line[n], font=FONT, fill=fg_fill)
 
-			pgbar_x_r	= pgbar_x_l + (pgbar_x_r - pgbar_x_l) * progress / 100
+				y_shift	+= 1
 
-			draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
+	# save image ### for documentation only
+	#image.save("/media/internal/{}.gif".format(time.time()))
 
-			# define text to print
-			Line[n]	= str(progress) + "%"
+if __name__ == "__main__":
+	try:
+		serial = i2c(port=1, address=0x3C)
 
-		# Write text
-		draw.text((x + 2, top + y), Line[n], font=font, fill=fg_fill)
+		device = ssd1306(serial)
+		device.capabilities(128,64,0,mode='1')
+		device.persist = True
 
-		y_shift	+= 1
 
-# save image ### for documentation only
-#image.save("/media/internal/{}.gif".format(time.time()))
+		main(device)
 
-# Display image.
-disp.image(image)
-disp.show()
+	except KeyboardInterrupt:
+		pass
