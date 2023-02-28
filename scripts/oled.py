@@ -160,7 +160,7 @@ if __name__ == "__main__":
 		if (os.path.isfile(const_DISPLAY_CONTENT_FILE)):
 			FileTimeNew=os.path.getmtime(const_DISPLAY_CONTENT_FILE)
 
-		if(FileTimeNew > (FileTime + 1)):
+		if(FileTimeNew > (FileTime + 0.1)):
 
 			FileTime = FileTimeNew
 
