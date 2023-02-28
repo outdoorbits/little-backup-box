@@ -17,6 +17,7 @@
 
 import time
 import sys
+import os
 
 from luma.core.interface.serial import i2c, spi, pcf8574
 from luma.core.interface.parallel import bitbang_6800
@@ -25,35 +26,20 @@ from luma.oled.device import ssd1306, ssd1309, ssd1325, ssd1331, sh1106, sh1107,
 
 from PIL import Image, ImageFont
 
-# get arguments
-# accepts 5 pairs of arguments: Format ("pos" or "neg") and Line (Text)
-# for progressbar use the Line-pattern "PGBAR:PERCENT", e.g. "PGBAR:61"
-Format  = ["","","","","",""] # elements 0..4 (we need indexes 1..5)
-Line    = ["","","","","",""] # elements 0..4 (we need indexes 1..5)
-
 I2C_ADDRESS=int(sys.argv[1], 16)
-
-#I2C
-serial = i2c(port=1, address=0x3C)
-# substitute ssd1331(...) or sh1106(...) below if using that device
-device = ssd1306(serial)
-
-device.persist = True
 
 #SPI
 #serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
 #device = pcd8544(serial)
 
-for n in range(1,6):
-	Format[n]	= sys.argv[(n-1)*2+2]
-	Line[n]		= sys.argv[(n-1)*2+3]
+def main(device, Lines):
 
-def main(device):
-	if Line[1][0:6] == "IMAGE:":
+	if Lines[0][1:7] == "IMAGE:":
 		# PRINT IMAGE FROM FILE
 		# Only the first line can be interpreted as image. In This case no further text will be printed.
 		# FORMAT: "IMAGE:filename"
-		ImageLine = Line[1].split(":")
+
+		ImageLine = Lines[0].split(":")
 
 		ImageFilename = ImageLine[1]
 
@@ -74,28 +60,31 @@ def main(device):
 		line_height = int((device.height - top)/5)
 		y_shift = 0
 
-		# clear screen
-		#device.clear()
-
 		# Write lines
 		with canvas(device) as draw:
-			for n in range(1,6):
-				if Format[n] == "pos":
+
+			for n in range(0,5):
+
+				if Lines[n][0] == "+":
 					fg_fill	= 255
 					bg_fill	= 0
 				else:
 					fg_fill	= 0
 					bg_fill	= 255
 
-				y	= (n-1)*line_height
+				y	= (n)*line_height
 
 				# Draw a filled box in case of inverted output
-				if Format[n] == "neg":
+				if Lines[n][0] == "-":
 					draw.rectangle((x, top + y + y_shift, device.width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
 
-				if Line[n][0:6] == "PGBAR:":
+				if Lines[n][1:7] == "IMAGE:":
+					# it's not first line (else it would be catched above), just extract filename
+					Lines[n] = ''
+
+				if Lines[n][1:7] == "PGBAR:":
 					try:
-						progress	= float(Line[n][6:])
+						progress	= float(Lines[n][7:])
 					except ValueError:
 						progress	= 0
 
@@ -104,6 +93,9 @@ def main(device):
 					if progress >= 100:
 						# no decimals on 100%
 						progress	= int(progress + 0.5)
+
+					# define text to print
+					Lines[n]	= " {}%".format(str(progress))
 
 					# draw progressbar
 					pg_y_space	= 2
@@ -125,11 +117,8 @@ def main(device):
 
 					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
 
-					# define text to print
-					Line[n]	= str(progress) + "%"
-
 				# Write text
-				draw.text((x + 2, top + y), Line[n], font=FONT, fill=fg_fill)
+				draw.text((x + 2, top + y), Lines[n][1:], font=FONT, fill=fg_fill)
 
 				y_shift	+= 1
 
@@ -139,13 +128,38 @@ def main(device):
 if __name__ == "__main__":
 	try:
 		serial = i2c(port=1, address=0x3C)
-
 		device = ssd1306(serial)
-		device.capabilities(128,64,0,mode='1')
-		device.persist = True
-
-
-		main(device)
-
-	except KeyboardInterrupt:
+	except:
 		pass
+
+	device.capabilities(128,64,0,mode='1')
+	device.persist = True
+
+	const_DISPLAY_CONTENT_FILE = '/var/www/little-backup-box/tmp/display-content.txt'
+
+	# wait for file changed
+	FileTime=0
+	FileTimeNew=2
+
+	while(True):
+		if (os.path.isfile(const_DISPLAY_CONTENT_FILE)):
+			FileTimeNew=os.path.getmtime(const_DISPLAY_CONTENT_FILE)
+
+		if(FileTimeNew > (FileTime + 1)):
+
+			FileTime = FileTimeNew
+
+			Lines = ["+","+","+","+","+"]
+			n=0
+			with open(const_DISPLAY_CONTENT_FILE, 'r') as f:
+				for Line in f:
+					if n < 5:
+						Lines[n] = Line.replace("\n", "")
+					n = n + 1
+
+			main(device,Lines)
+
+		time.sleep(0.5)
+
+
+

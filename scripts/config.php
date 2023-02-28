@@ -45,6 +45,9 @@
 				exec("sudo $WORKING_DIR/start-rclone-gui.sh update_gui > /dev/null 2>/dev/null &");
 				echo '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
 			}
+
+			exec("sudo pkill -f ${WORKING_DIR}/oled.py");
+			exec("sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "' > /dev/null 2>&1 &");
 		};
 
 		// Upload settings
@@ -231,8 +234,6 @@ CONFIGDATA;
 
 	# response
 	echo '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
-
-	shell_exec("sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'");
 }
 
 function upload_settings() {

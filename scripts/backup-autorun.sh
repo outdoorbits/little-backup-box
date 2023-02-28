@@ -23,14 +23,16 @@ CONFIG="${WORKING_DIR}/config.cfg"
 CONFIG_STANDARDS="${WORKING_DIR}/config-standards.cfg"
 source "$CONFIG"
 
-#load language library
+# load language library
 . "${WORKING_DIR}/lib-language.sh"
 
 # delete IP_MAIL_SENT_MARKERFILE
 IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 sudo rm "${IP_MAIL_SENT_MARKERFILE}"
 
-echo "" | sudo tee "${FILE_OLED_OLD}"
+# delete const_DISPLAY_CONTENT_FILE
+sudo rm "${const_DISPLAY_CONTENT_FILE}"
+
 echo "Little Backup Box" | sudo tee "${const_LOGFILE}"
 echo "" | sudo tee "${const_LOGFILE_SYNC}"
 
@@ -76,9 +78,8 @@ sudo rm "${const_CMD_RUNNER_LOCKFILE}" > /dev/null 2>&1
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"
 
-
 # Hello
-lcd_message "IMAGE:${WORKING_DIR}/little-backup-box.bmp" "Little" "Backup" "Box"
+lcd_message "IMAGE:${WORKING_DIR}/little-backup-box.bmp"
 sleep 1
 
 # Display IP

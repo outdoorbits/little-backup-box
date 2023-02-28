@@ -31,30 +31,34 @@ function lcd_message () {
 # leading "-" is interpreted as "force to print inverted"
 # leading "+" is interpreted as "force to print normal"
 
-	#Arguments:
-	LineCount=$#
-	Lines=( "$@" )
+	# Arguments:
+	local LineCount=$#
+	local Lines=( "$@" )
 
-	#Wait for Lockfile
-	while [ -f "${const_DISPLAY_LOCKFILE}" ];
-	do
-		DispayLockFileTime=$(sudo head -n 1 ${const_DISPLAY_LOCKFILE})
-		ActualTime=$(date +%s.%N )
-		TimeDiff=$(echo "${ActualTime} - ${DispayLockFileTime}" | bc)
+# 	#Wait for Lockfile
+# 	while [ -f "${const_DISPLAY_LOCKFILE}" ];
+# 	do
+# 		DispayLockFileTime=$(sudo head -n 1 ${const_DISPLAY_LOCKFILE})
+# 		ActualTime=$(date +%s.%N )
+# 		TimeDiff=$(echo "${ActualTime} - ${DispayLockFileTime}" | bc)
+#
+# 		# if lockfile is older than defined seconds, it must be lost and can be removed
+# 		if (( $(echo "${TimeDiff} > 2" | bc -l) )); then
+# 			rm "${const_DISPLAY_LOCKFILE}"
+# 		fi
+#
+# 		sleep 1
+# 	done
 
-		# if lockfile is older than defined seconds, it must be lost and can be removed
-		if (( $(echo "${TimeDiff} > 2" | bc -l) )); then
-			rm "${const_DISPLAY_LOCKFILE}"
-		fi
-
-		sleep 1
-	done
-
+	# make sure, oled.py is up
+	if [ $conf_DISP = true ] && [ -z "$(pgrep -af "python3" | grep "${WORKING_DIR}/oled.py")" ]; then
+		sudo bash -c "nohup python3 ${WORKING_DIR}/oled.py '${conf_DISP_I2C_ADDRESS}' &"
+	fi
 
 	# write lockfile of this process
 	date +%s.%N | tee "${const_DISPLAY_LOCKFILE}" > /dev/null 2>&1
 
-	# clear screen
+	# define clean screen
 	if [ "${LineCount}" -eq "0" ];
 	then
 		LineCount=5
@@ -66,100 +70,105 @@ function lcd_message () {
 		done
 	fi
 
-	#fifo display
-	if [ -f "${const_DISPLAY_CONTENT_OLD_FILE}" ]; then
-		readarray -t OLED_OLD < "${const_DISPLAY_CONTENT_OLD_FILE}"
+	# fifo display: if space left print old lines
+	if [ -f "${const_DISPLAY_CONTENT_FILE}" ]; then
+		readarray -t OLED_OLD < "${const_DISPLAY_CONTENT_FILE}"
 	fi
 
-	n=$LineCount
+	n=${LineCount}
 	while [ "${n}" -lt 5 ]
 	do
-		Lines[$n]=${OLED_OLD[$(expr $n - $LineCount)]}
+		Lines[${n}]=${OLED_OLD[$(expr ${n} - $LineCount)]}
+
+		# remove format from old strings
+		if [ "${Lines[${n}]:0:1}" = "+" ] || [ "${Lines[${n}]:0:1}" = "-" ]; then
+			Lines[${n}]="${Lines[${n}]:1}"
+		fi
+
 		n=$(expr $n + 1)
 	done
 
-	#define OldLines for file, will be modified later
-	OldLines=("${Lines[@]}")
+	# format
+	local FORCE_FORMAT
 
-	#display
-	LogLines=""
 	n=0
-
 	while [ "${n}" -lt 5 ]
 	do
-		LINE="${Lines[$n]}"
-
-		FORCE_FORMAT[$n]="standard"
+		FORCE_FORMAT=""
 
 		# read first letter for pos or neg text
-		case "${LINE:0:1}" in
+		case "${Lines[${n}]:0:1}" in
 			"+")
-				FORCE_FORMAT[$n]="pos"
-				LINE=${LINE:1}
+				FORCE_FORMAT="+"
+				Lines[${n}]=${Lines[${n}]:1}
 				;;
 			"-")
-				FORCE_FORMAT[$n]="neg"
-				LINE=${LINE:1}
+				FORCE_FORMAT="-"
+				Lines[${n}]=${Lines[${n}]:1}
 				;;
 		esac
 
 		# print negativ: new lines and as negative defined lines
-		if [ "${n}" -lt "${LineCount}" ] || [ "${FORCE_FORMAT[$n]}" = "neg" ];
-		then
-			if [ "${FORCE_FORMAT[$n]}" != "pos" ]; then
-				FORCE_FORMAT[$n]="neg"
+		if [ "${n}" -lt "${LineCount}" ] || [ "${FORCE_FORMAT}" = "-" ]; then
+			if [ "${FORCE_FORMAT}" != "+" ]; then
+				FORCE_FORMAT="-"
 			fi
+		else
+			FORCE_FORMAT="+"
 		fi
 
-		# definitive format: standard=pos
-		if [ "${FORCE_FORMAT[$n]}" != "neg" ]; then
-			FORCE_FORMAT[$n]="pos"
-		fi
+		Lines[${n}]="${FORCE_FORMAT}${Lines[${n}]}"
 
-		# get LINE into Lines-Array
-		Lines[$n]=${LINE}
+		n=$(expr $n + 1)
+	done
 
-		# modify LINE for logging
-		if [[ "${LINE}" == "PGBAR:"* ]]; then
-			OldLines[$n]=""
 
-			PERCENT=${LINE#"PGBAR:"}
+	# logging
+	local LogLines=""
+	local Progressbar_active=false
 
-			if [ -z "${PERCENT}" ]; then
-				PERCENT=0
+	n=0
+	while [ "${n}" -lt 5 ]
+	do
+		LOG_LINE="${Lines[$n]:1}" # remove format
+
+		# modify LOG_LINE for logging
+		if [[ "${LOG_LINE}" == "PGBAR:"* ]]; then
+			if [ "${Progressbar_active}" == false ]; then
+				Progressbar_active=true
+
+				PERCENT=${LOG_LINE#"PGBAR:"}
+
+				if [ -z "${PERCENT}" ]; then
+					PERCENT=0
+				fi
+
+				PROGRESSBAR_LENGTH=20
+				PROGRESSBAR_DONE_LENGTH=$(echo "$PROGRESSBAR_LENGTH * $PERCENT / 100" | bc)
+				PROGRESSBAR_TODO_LENGTH=$(echo "$PROGRESSBAR_LENGTH - $PROGRESSBAR_DONE_LENGTH" | bc)
+				PROGRESSBAR="$(printf %${PROGRESSBAR_DONE_LENGTH}s | tr " " ">")$(printf %${PROGRESSBAR_TODO_LENGTH}s | tr " " "_")"
+				LOG_LINE="${PERCENT}% ${PROGRESSBAR}"
+			else
+				# don't print more than one progressbar
+				LOG_LINE=''
 			fi
-
-			PROGRESSBAR_LENGTH=20
-			PROGRESSBAR_DONE_LENGTH=$(echo "$PROGRESSBAR_LENGTH * $PERCENT / 100" | bc)
-			PROGRESSBAR_TODO_LENGTH=$(echo "$PROGRESSBAR_LENGTH - $PROGRESSBAR_DONE_LENGTH" | bc)
-			PROGRESSBAR="$(printf %${PROGRESSBAR_DONE_LENGTH}s | tr " " ">")$(printf %${PROGRESSBAR_TODO_LENGTH}s | tr " " "_")"
- 			LINE="${PERCENT}% ${PROGRESSBAR}"
-		fi
-
-		if [[ "${LINE}" == "IMAGE:"* ]]; then
-			OldLines[$n]=""
-
-			LINE=$(echo "${LINE}" | cut -d":" -f3)
 		fi
 
 		# create log-text
 		if [ ! -z "${LogLines}" ]; then
 			LogLines="${LogLines}\n"
 		fi
-		LogLines="${LogLines}| ${LINE}"
+		LogLines="${LogLines}| ${LOG_LINE}"
 
 		n=$(expr $n + 1)
 	done
 
 
 
-	# output to lcd
+	# output to display via file
 	if [ $conf_DISP = true ]; then
-		sudo python3 ${WORKING_DIR}/oled.py "${conf_DISP_I2C_ADDRESS}" "${FORCE_FORMAT[0]}" "${Lines[0]}" "${FORCE_FORMAT[1]}" "${Lines[1]}" "${FORCE_FORMAT[2]}" "${Lines[2]}" "${FORCE_FORMAT[3]}" "${Lines[3]}" "${FORCE_FORMAT[4]}" "${Lines[4]}"
+		sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}\n${Lines[4]}' > '${const_DISPLAY_CONTENT_FILE}'"
 	fi
-
-	#save Lines to file
-	sudo bash -c "echo -en '${OldLines[0]}\n${OldLines[1]}\n${OldLines[2]}\n${OldLines[3]}\n${OldLines[4]}' > '${const_DISPLAY_CONTENT_OLD_FILE}'"
 
 	# log
 	if [ ! -z "${LogLines}" ];
