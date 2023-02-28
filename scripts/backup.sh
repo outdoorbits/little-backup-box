@@ -429,9 +429,10 @@ function sync_return_code_decoder() {
 			SOURCE_MODE='none'
 		else
 			lcd_message "$(l 'box_backup_vpn_connecting_success')" "${VPN_TYPE}"
-			sleep 1
+			sleep $(( ${const_DISPLAY_HOLD_SEC} / 2 ))
+
 			sudo "${WORKING_DIR}/cron-ip.sh" 'force'
-			sleep 2
+			sleep ${const_DISPLAY_HOLD_SEC}
 		fi
 
 	fi
@@ -1039,7 +1040,7 @@ function sync_return_code_decoder() {
 					SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Err.Lost device!"
 					log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
 
-					sleep 2
+					sleep ${const_DISPLAY_HOLD_SEC}
 
 					log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 					log_message "$(get_abnormal_system_conditions)" 1
@@ -1097,11 +1098,15 @@ function sync_return_code_decoder() {
 # VPN STOP             #
 ########################
 
-	#stop VPN
 	if [ $(vpn_status "OpenVPN") = "up" ] || [ $(vpn_status "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard") = "up" ]; then
 		lcd_message "$(l 'box_backup_vpn_disconnecting')"
 		vpn_stop "OpenVPN"
 		vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
+
+		sleep $(( ${const_DISPLAY_HOLD_SEC} / 2 ))
+
+		sudo "${WORKING_DIR}/cron-ip.sh" 'force'
+		sleep ${const_DISPLAY_HOLD_SEC}
 	fi
 
 ########################

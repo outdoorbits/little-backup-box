@@ -676,7 +676,7 @@ function upload_settings() {
 
 		<div class="card" style="margin-top: 2em;">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_vpn_section; ?> - DANGER ALPHA-LEVEL!</summary>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_vpn_section; ?></summary>
 
 				<h3><?php echo L::config_vpn_type_header; ?></h3>
 
