@@ -412,11 +412,11 @@ function sync_return_code_decoder() {
 	fi
 
 	#start VPN
-	VPN_TYPE=""
+	VPN_TYPE="none"
 	if [ "${TARGET_MODE}" = "rsyncserver"  ]; then VPN_TYPE=${conf_VPN_TYPE_RSYNC}; fi
 	if [[ " ${TARGET_MODE} " =~ " cloud "  ]]; then VPN_TYPE=${conf_VPN_TYPE_CLOUD}; fi
 
-	if [ ! -z "${VPN_TYPE}" ]; then
+	if [ "${VPN_TYPE}" != "none" ]; then
 		VPN_CONFIG_FILE=$(eval echo "\${const_VPN_DIR_${VPN_TYPE}}/\$const_VPN_FILENAME_${VPN_TYPE}")
 
 		lcd_message "$(l 'box_backup_vpn_connecting')" "${VPN_TYPE}"
