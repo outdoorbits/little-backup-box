@@ -29,6 +29,8 @@ These languages are already available. Do you want to maintain or create a trans
 <br>
 <h2>NEWS</h2>
 <ul>
+	<li>2023/02/28: Add support for multiple displays, I2C and SPI</li>
+	<li>2023/02/24: Add VPN support for WireGuard and OpenVPN</li>
 	<li>2023/02/15: Remove miniDLNA due to security concerns</li>
 	<li>2023/02/15: Settings: Use global password as WiFi-password in comitup-hotspot-mode</li>
 	<li>2022/12/12: View got magnifying glass-function. This allows quick ratings with improved evidence.</li>

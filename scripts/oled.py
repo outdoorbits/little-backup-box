@@ -145,7 +145,7 @@ if __name__ == "__main__":
 			exit()
 
 	except:
-		pass
+		exit()
 
 	device.capabilities(128,64,0,mode='1')
 	device.persist = True
