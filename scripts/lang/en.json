@@ -291,8 +291,6 @@
       "update_exif_header": "Automatically adjust EXIF data of media files on import",
       "update_exif_label": "New media without their own rating receive the standard rating. If possible, this is written to the original file."
     },
-    "disp_black_on_power_off_header": "Display off when shutting down",
-    "disp_black_on_power_off_label": "Do you want the display to turn off on shutdown?",
     "backup_usb_usb": "USB-source-storage &rarr; USB-target-storage",
     "backup_usb_internal": "USB-source storage &rarr; internal storage",
     "backup_camera_usb": "Camera &rarr; USB-target-storage",
@@ -332,9 +330,6 @@
     "cloud_restart_label": "An internet connection is mandatory.",
     "rclone_gui_restarted": "The rclone UI has been restarted.",
     "behavior": {
-      "disp_ip_header": "Repeat IP on display",
-      "disp_ip_label": "If display is activated, print IP every minute.",
-      "display_header": "Display",
       "display_label": "Output to display.",
       "log_sync_protokoll_header": "Log sync-protocol",
       "log_sync_protokoll_label": "Log sync-details?",
@@ -351,12 +346,9 @@
       "power_off_idle_time_header": "Power down after idle-time",
       "power_off_idle_time_label": "Select the idle time after which the system should be stopped.",
       "power_off_idle_time_none": "never",
-      "section": "Behavior",
-      "display_address_header": "i2c address of the display",
-      "display_address_label": "Please choose"
+      "section": "Behavior"
     },
     "view": {
-      "device_available": "Device detected",
       "bg_image_header": "Background-image"
     },
     "display_message_settings_saved_1": "Settings",
@@ -384,6 +376,22 @@
       "type_cloud_label": "For cloud services",
       "type_rsync_label": "For rsync server backup",
       "type_desc": "Which VPN should be activated before transferring data to a network service? Caution: The Little Backup Box interface may not be accessible while the backup is running. You may be able to reach the box under the VPN IP if your end device is also registered in the same VPN."
+    },
+    "display": {
+      "section": "Display",
+      "activate_label": "Is a display connected and should it be used?",
+      "connection_header": "Interface for the display",
+      "connection_label": "Which interface should be used?",
+      "i2c_address_label": "i2c address of the display",
+      "i2c_header": "I2C display configuration",
+      "ip_label": "If display is activated, print IP every minute.",
+      "black_on_power_off_label": "Display off when shutting down",
+      "device_available": "Device detected",
+      "behavior_header": "Display behavior",
+      "spi_header": "SPI display configuration",
+      "spi_port_label": "SPI port",
+      "driver_header": "Hardware",
+      "driver_label": "Display driver"
     }
   },
   "tools": {

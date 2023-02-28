@@ -27,10 +27,6 @@
 
 function lcd_message () {
 
-# takes up to 5 arguments (lines of the display)
-# leading "-" is interpreted as "force to print inverted"
-# leading "+" is interpreted as "force to print normal"
-
 	# Arguments:
 	local LineCount=$#
 	local Lines=( "$@" )
@@ -52,7 +48,7 @@ function lcd_message () {
 
 	# make sure, oled.py is up
 	if [ $conf_DISP = true ] && [ -z "$(pgrep -af "python3" | grep "${WORKING_DIR}/oled.py")" ]; then
-		sudo bash -c "nohup python3 ${WORKING_DIR}/oled.py '${conf_DISP_I2C_ADDRESS}' &"
+		sudo bash -c "nohup python3 ${WORKING_DIR}/oled.py '${conf_DISP_CONNECTION}' '${conf_DISP_DRIVER}' '${conf_DISP_I2C_ADDRESS}' '${conf_DISP_SPI_PORT}' &"
 	fi
 
 	# write lockfile of this process

@@ -140,8 +140,6 @@
       "update_exif_header": "Ajuste automáticamente los datos EXIF ​​​​de los archivos multimedia al importar",
       "update_exif_label": "Los nuevos medios sin calificación propia reciben la calificación estándar. Si es posible, esto se escribe en el archivo original."
     },
-    "disp_black_on_power_off_header": "Apague la pantalla al apagar",
-    "disp_black_on_power_off_label": "¿Desea que la pantalla se apague al apagar?",
     "backup_usb_usb": "USB almacenar &rarr; USB almacenamiento",
     "backup_usb_internal": "USB Almacenar &rarr; almacenamiento interno",
     "backup_camera_usb": "Cámara &rarr; USB almacenamiento",
@@ -181,9 +179,6 @@
     "cloud_restart_label": "Una conexión a Internet es obligatoria.",
     "rclone_gui_restarted": "La interfaz de usuario de rclone se ha reiniciado.",
     "behavior": {
-      "disp_ip_header": "Mostrar IP en pantalla",
-      "disp_ip_label": "Si la pantalla está activada, imprimir IP cada minuto.",
-      "display_header": "Monitor",
       "display_label": "Puerto de salida.",
       "log_sync_protokoll_header": "Protocolo de sincronización de registros",
       "log_sync_protokoll_label": "¿Registrar detalles de sincronización?",
@@ -200,12 +195,9 @@
       "power_off_idle_time_header": "Apagar después de un tiempo de inactividad",
       "power_off_idle_time_label": "Seleccione el tiempo de inactividad después del cual se debe detener el sistema.",
       "power_off_idle_time_none": "Nunca",
-      "section": "Comportamiento",
-      "display_address_header": "Dirección i2c de la pantalla",
-      "display_address_label": "Por favor elige"
+      "section": "Comportamiento"
     },
     "view": {
-      "device_available": "Dispositivo detectado",
       "bg_image_header": "Imagen de fondo"
     },
     "display_message_settings_saved_1": "Ajustes",
@@ -233,6 +225,22 @@
       "type_cloud_label": "Para servicios en la nube",
       "type_rsync_label": "Para la copia de seguridad del servidor rsync",
       "type_desc": "¿Qué VPN se debe activar antes de transferir datos a un servicio de red? Precaución: Es posible que no se pueda acceder a la interfaz de Little Backup Box mientras se ejecuta la copia de seguridad. Es posible que pueda llegar al cuadro debajo de la IP de VPN si su dispositivo final también está registrado en la misma VPN."
+    },
+    "display": {
+      "section": "Pantalla",
+      "activate_label": "¿Hay una pantalla conectada y debería usarse?",
+      "connection_header": "Interfaz para la pantalla",
+      "connection_label": "¿Qué interfaz se debe utilizar?",
+      "i2c_address_label": "Dirección i2c de la pantalla",
+      "i2c_header": "Configuración de pantalla I2C",
+      "ip_label": "Si la pantalla está activada, imprimir IP cada minuto.",
+      "black_on_power_off_label": "Apague la pantalla al apagar",
+      "device_available": "Dispositivo detectado",
+      "behavior_header": "Comportamiento de visualización",
+      "spi_header": "Configuración de pantalla SPI",
+      "spi_port_label": "Port SPI",
+      "driver_header": "Hardware",
+      "driver_label": "Controlador de pantalla"
     }
   },
   "tools": {

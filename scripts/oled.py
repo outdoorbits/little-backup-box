@@ -26,11 +26,10 @@ from luma.oled.device import ssd1306, ssd1309, ssd1325, ssd1331, sh1106, sh1107,
 
 from PIL import Image, ImageFont
 
-I2C_ADDRESS=int(sys.argv[1], 16)
-
-#SPI
-#serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
-#device = pcd8544(serial)
+DISP_CONNECTION			= sys.argv[1]
+DISP_DRIVER				= sys.argv[2]
+DISP_I2C_ADDRESS		= int(sys.argv[3], 16)
+DISP_SPI_PORT			= sys.argv[4]
 
 def main(device, Lines):
 
@@ -127,8 +126,24 @@ def main(device, Lines):
 
 if __name__ == "__main__":
 	try:
-		serial = i2c(port=1, address=0x3C)
-		device = ssd1306(serial)
+		if DISP_CONNECTION == 'I2C':
+			serial = i2c(port=1, address=DISP_I2C_ADDRESS)
+		elif DISP_CONNECTION == 'SPI':
+				serial = spi(port=DISP_SPI_PORT, device=0)
+		else:
+			exit ()
+
+		if DISP_DRIVER == "SSD1306":
+			device = ssd1306(serial)
+		elif DISP_DRIVER == "SSD1309":
+			device = ssd1309(serial)
+		elif DISP_DRIVER == "SSD1322":
+			device = ssd1322(serial)
+		elif DISP_DRIVER == "SH1106":
+			device = sh1106(serial)
+		else:
+			exit()
+
 	except:
 		pass
 

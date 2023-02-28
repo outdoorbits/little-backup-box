@@ -140,8 +140,6 @@
       "update_exif_header": "Ajustez automatiquement les données EXIF ​​​​des fichiers multimédias lors de l'importation",
       "update_exif_label": "Les nouveaux médias sans leur propre classement reçoivent le classement standard. Si possible, ceci est écrit dans le fichier d'origine."
     },
-    "disp_black_on_power_off_header": "Éteignez l'écran lors de l'arrêt",
-    "disp_black_on_power_off_label": "Voulez-vous que l'écran s'éteigne à l'arrêt ?",
     "backup_usb_usb": "USB stockage &rarr; USB stockage",
     "backup_usb_internal": "USB Stockage source &rarr; stockage interne",
     "backup_camera_usb": "Caméra &rarr; USB stockage",
@@ -181,9 +179,6 @@
     "cloud_restart_label": "Une connexion internet est obligatoire.",
     "rclone_gui_restarted": "L'interface utilisateur rclone a été redémarrée.",
     "behavior": {
-      "disp_ip_header": "Répéter l'IP sur l'écran",
-      "disp_ip_label": "Si l'affichage est activé, imprimez l'IP toutes les minutes.",
-      "display_header": "Affichage",
       "display_label": "Sortie à afficher.",
       "log_sync_protokoll_header": "Protocole de synchronisation des journaux",
       "log_sync_protokoll_label": "Détails de la synchronisation du journal ?",
@@ -200,12 +195,9 @@
       "power_off_idle_time_header": "Mise hors tension après une période d'inactivité",
       "power_off_idle_time_label": "Sélectionnez le temps d'inactivité après lequel le système doit être arrêté.",
       "power_off_idle_time_none": "Certainement pas",
-      "section": "Comportement",
-      "display_address_header": "Adresse i2c de l'écran",
-      "display_address_label": "Choisissez s'il vous plaît"
+      "section": "Comportement"
     },
     "view": {
-      "device_available": "Périphérique détecté",
       "bg_image_header": "Image de fond"
     },
     "display_message_settings_saved_1": "Les paramètres",
@@ -233,6 +225,22 @@
       "type_cloud_label": "Pour les services cloud",
       "type_rsync_label": "Pour la sauvegarde du serveur rsync",
       "type_desc": "Quel VPN doit être activé avant de transférer des données vers un service réseau ? Attention : L'interface de Little Backup Box peut ne pas être accessible pendant l'exécution de la sauvegarde. Vous pourrez peut-être accéder à la boîte sous l'IP VPN si votre terminal est également enregistré dans le même VPN."
+    },
+    "display": {
+      "section": "Filtrer",
+      "activate_label": "Un écran est-il connecté et doit-il être utilisé ?",
+      "connection_header": "Interface pour l'affichage",
+      "connection_label": "Quelle interface utiliser ?",
+      "i2c_address_label": "Adresse i2c de l'écran",
+      "i2c_header": "Configuration de l'affichage I2C",
+      "ip_label": "Si l'affichage est activé, imprimez l'IP toutes les minutes.",
+      "black_on_power_off_label": "Éteignez l'écran lors de l'arrêt",
+      "device_available": "Périphérique détecté",
+      "behavior_header": "Comportement d'affichage",
+      "spi_header": "Configuration de l'affichage SPI",
+      "spi_port_label": "Port SPI",
+      "driver_header": "Matériel",
+      "driver_label": "Pilote d'affichage"
     }
   },
   "tools": {

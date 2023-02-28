@@ -48,7 +48,7 @@
 
 			exec("sudo pkill -f ${WORKING_DIR}/oled.py");
 			exec("sudo $WORKING_DIR/lib-lcd-helper.sh '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "' > /dev/null 2>&1 &");
-		};
+		}
 
 		// Upload settings
 		if (isset($_POST['upload_settings'])) {
@@ -176,7 +176,10 @@ conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
 conf_BACKUP_TARGET_BASEDIR_CLOUD='$conf_BACKUP_TARGET_BASEDIR_CLOUD'
 conf_POWER_OFF=$conf_POWER_OFF
 conf_DISP=$conf_DISP
+conf_DISP_CONNECTION='$conf_DISP_CONNECTION'
+conf_DISP_DRIVER='$conf_DISP_DRIVER'
 conf_DISP_I2C_ADDRESS='$conf_DISP_I2C_ADDRESS'
+conf_DISP_SPI_PORT='$conf_DISP_SPI_PORT'
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_THEME=$conf_THEME
@@ -446,27 +449,69 @@ function upload_settings() {
 				<h3><?php echo L::config_view_bg_image_header; ?></h3>
 					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo "img/backgrounds" ;?>&quot;.</label><br>
 						<select name="conf_BACKGROUND_IMAGE" id="conf_BACKGROUND_IMAGE">
-						<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
-						<?php
-							$bg_images=array();
-							exec ("find 'img/backgrounds' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
-							foreach($bg_images as $bg_image) {
-								$bg_image = basename($bg_image);
-								echo "<option value='" . $bg_image . "' " . ($config["conf_BACKGROUND_IMAGE"] == $bg_image?" selected":"") . ">" . $bg_image . "</option>";
-							}
-						?>
-					</select>
+							<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
+							<?php
+								$bg_images=array();
+								exec ("find 'img/backgrounds' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
+								foreach($bg_images as $bg_image) {
+									$bg_image = basename($bg_image);
+									echo "<option value='" . $bg_image . "' " . ($config["conf_BACKGROUND_IMAGE"] == $bg_image?" selected":"") . ">" . $bg_image . "</option>";
+								}
+							?>
+						</select>
 
 				<h3><?php echo L::config_view_popup_header; ?></h3>
 					<label for="conf_POPUP_MESSAGES"><?php echo L::config_view_popup_label; ?></label><br>
 					<input type="checkbox" id="conf_POPUP_MESSAGES" name="conf_POPUP_MESSAGES" <?php echo $config['conf_POPUP_MESSAGES']=="1"?"checked":""; ?>>
 
-				<h3><?php echo L::config_behavior_display_header; ?></h3>
-					<label for="conf_DISP"><?php echo L::config_behavior_display_label; ?></label><br>
-					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+			</details>
+		</div>
 
-				<h3><?php echo L::config_behavior_display_address_header; ?></h3>
-					<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_behavior_display_address_label; ?></label><br>
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_display_section; ?></summary>
+
+				<h3><?php echo L::config_display_behavior_header; ?></h3>
+					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+					<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br>
+
+
+					<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+					<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
+
+					<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
+					<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_display_black_on_power_off_label; ?></label>
+
+				<h3><?php echo L::config_display_connection_header; ?></h3>
+					<label for="conf_DISP"><?php echo L::config_display_connection_label; ?></label><br>
+						<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
+							<?php
+								$display_connections_array=array("I2C","SPI");
+								foreach($display_connections_array as $display_connection) {
+									echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
+								}
+							?>
+						</select>
+
+				<h3><?php echo L::config_display_driver_header; ?></h3>
+					<label for="conf_DISP_DRIVER"><?php echo L::config_display_driver_label; ?></label><br>
+
+						<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
+							<?php
+								$display_drivers_array=array(
+									"SSD1306",
+									"SSD1309",
+									"SSD1322",
+									"SH1106"
+								);
+								foreach($display_drivers_array as $display_driver) {
+									echo "<option value='" . $display_driver . "' " . ($config["conf_DISP_DRIVER"] == $display_driver?" selected":"") . ">" . $display_driver . "</option>";
+								}
+							?>
+						</select>
+
+				<h3><?php echo L::config_display_i2c_header; ?></h3>
+					<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_display_i2c_address_label; ?></label><br>
 
 					<?php
 						$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
@@ -475,18 +520,22 @@ function upload_settings() {
 						foreach($I2C_LIST as $I2C) {
 					?>
 							<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
-							<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_view_device_available:""; ?></label><br>
+							<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br>
 					<?php
 						}
 					?>
 
-				<h3><?php echo L::config_behavior_disp_ip_header; ?></h3>
-					<label for="conf_DISP_IP_REPEAT"><?php echo L::config_behavior_disp_ip_label; ?></label><br>
-					<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+				<h3><?php echo L::config_display_spi_header; ?></h3>
+					<label for="conf_DISP_SPI_PORT"><?php echo L::config_display_spi_port_label; ?></label><br>
 
-				<h3><?php echo L::config_disp_black_on_power_off_header; ?></h3>
-					<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_disp_black_on_power_off_label; ?></label><br>
-					<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
+						<select name="conf_DISP_SPI_PORT" id="conf_DISP_SPI_PORT">
+							<?php
+								$spi_ports_array=array("0","1");
+								foreach($spi_ports_array as $spi_port) {
+									echo "<option value='" . $spi_port . "' " . ($config["conf_DISP_SPI_PORT"] == $spi_port?" selected":"") . ">" . $spi_port . "</option>";
+								}
+							?>
+						</select>
 
 			</details>
 		</div>

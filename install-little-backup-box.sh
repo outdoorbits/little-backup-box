@@ -240,6 +240,11 @@ sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R
 sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 
 # Display
+
+## activate i2c and spi
+sudo raspi-config nonint do_i2c 0
+sudo raspi-config nonint do_spi 0
+
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
 		-o "Dpkg::Options::=--force-confold" \
@@ -248,9 +253,6 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		python3 python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5 i2c-tools
 
 		sudo -H pip3 install luma.oled
-
-sudo raspi-config nonint do_i2c 0
-sleep 2
 
 # Enable OLED screen support if available
 ## append new line to config-file
