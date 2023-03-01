@@ -240,7 +240,15 @@
       "spi_header": "Configuración de pantalla SPI",
       "spi_port_label": "Port SPI",
       "driver_header": "Hardware",
-      "driver_label": "Controlador de pantalla"
+      "driver_label": "Controlador de pantalla",
+      "characteristics_header": "Características",
+      "resolution_x_label": "Resolución horizontal (píxeles)",
+      "resolution_y_label": "Resolución vertical (píxeles)",
+      "color_model_label": "Color",
+      "color_model_1": "Blanco y negro",
+      "color_model_RGB": "RGB",
+      "color_model_RGBA": "RGBA (RGB con transparencia)",
+      "font_size_label": "Tamaño de fuente"
     }
   },
   "tools": {

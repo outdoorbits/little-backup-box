@@ -19,6 +19,8 @@ import time
 import sys
 import os
 
+from configobj import ConfigObj
+
 from luma.core.interface.serial import i2c, spi, pcf8574
 from luma.core.interface.parallel import bitbang_6800
 from luma.core.render import canvas
@@ -26,12 +28,9 @@ from luma.oled.device import ssd1306, ssd1309, ssd1325, ssd1331, sh1106, sh1107,
 
 from PIL import Image, ImageFont
 
-DISP_CONNECTION			= sys.argv[1]
-DISP_DRIVER				= sys.argv[2]
-DISP_I2C_ADDRESS		= int(sys.argv[3], 16)
-DISP_SPI_PORT			= sys.argv[4]
+WORKING_DIR = os.path.dirname(__file__)
 
-def main(device, Lines):
+def main(device, FontSize, Lines):
 
 	if Lines[0][1:7] == "IMAGE:":
 		# PRINT IMAGE FROM FILE
@@ -48,21 +47,34 @@ def main(device, Lines):
 		device.display(image)
 
 	else:
-		# define constants
-		top = 0
-
-		# define font
-		font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
-		FONT = ImageFont.truetype(font_path, 12)
-
-		x = 0
-		line_height = int((device.height - top)/5)
-		y_shift = 0
-
 		# Write lines
 		with canvas(device) as draw:
 
-			for n in range(0,5):
+			# define constants
+			x = 0
+			y_shift = 0
+
+			# define font
+			font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+			FONT = ImageFont.truetype(font_path, FontSize)
+
+			# calculate size of text
+			(left, top, right, bottom) = draw.textbbox((0,0),"gG",font=FONT)
+			line_height = bottom - top
+
+			maxLines = int(device.height / line_height)
+			if maxLines > 5:
+				maxLines = 5
+
+			y_space = 0
+			if maxLines > 1:
+				Spare_Y = device.height - maxLines * line_height
+				y_space = int (Spare_Y / (maxLines - 1))
+
+
+
+
+			for n in range(0,maxLines):
 
 				if Lines[n][0] == "+":
 					fg_fill	= 255
@@ -71,11 +83,11 @@ def main(device, Lines):
 					fg_fill	= 0
 					bg_fill	= 255
 
-				y	= (n)*line_height
+				y	= (n)*line_height + y_shift - 1 + y_space
 
 				# Draw a filled box in case of inverted output
 				if Lines[n][0] == "-":
-					draw.rectangle((x, top + y + y_shift, device.width, top + y + y_shift + line_height), outline=bg_fill, fill=bg_fill)
+					draw.rectangle((x, y, device.width, y + line_height), outline=bg_fill, fill=bg_fill)
 
 				if Lines[n][1:7] == "IMAGE:":
 					# it's not first line (else it would be catched above), just extract filename
@@ -96,12 +108,15 @@ def main(device, Lines):
 					# define text to print
 					Lines[n]	= " {}%".format(str(progress))
 
+					(left, top, right, bottom) = draw.textbbox((0,0),"100%:",font=FONT)
+					pgbar_text_length = right - left
+
 					# draw progressbar
-					pg_y_space	= 2
-					pgbar_x_l	= x + 42
-					pgbar_x_r	= device.width - 2
-					pgbar_y_u	= top + y + y_shift + pg_y_space
-					pgbar_y_d	= top + y + y_shift + line_height - pg_y_space
+					pg_space	= 2
+					pgbar_x_l	= x + pgbar_text_length
+					pgbar_x_r	= device.width - pg_space
+					pgbar_y_u	= y + pg_space
+					pgbar_y_d	= y + line_height - pg_space
 
 					## draw outer frame
 					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=fg_fill, fill=bg_fill)
@@ -117,40 +132,54 @@ def main(device, Lines):
 					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
 
 				# Write text
-				draw.text((x + 2, top + y), Lines[n][1:], font=FONT, fill=fg_fill)
-
-				y_shift	+= 1
+				draw.text((x + 1, y), Lines[n][1:], font=FONT, fill=fg_fill)
 
 	# save image ### for documentation only
 	#image.save("/media/internal/{}.gif".format(time.time()))
 
 if __name__ == "__main__":
-	try:
-		if DISP_CONNECTION == 'I2C':
-			serial = i2c(port=1, address=DISP_I2C_ADDRESS)
-		elif DISP_CONNECTION == 'SPI':
-				serial = spi(port=DISP_SPI_PORT, device=0)
-		else:
-			exit ()
+	#try:
+	config = ConfigObj('{}/config.cfg'.format(WORKING_DIR))
+	conf_DISP_CONNECTION			= config['conf_DISP_CONNECTION']
+	conf_DISP_DRIVER				= config['conf_DISP_DRIVER']
+	conf_DISP_I2C_ADDRESS			= int(config['conf_DISP_I2C_ADDRESS'], 16)
+	conf_DISP_SPI_PORT				= int(config['conf_DISP_SPI_PORT'])
+	conf_DISP_RESOLUTION_X			= int(config['conf_DISP_RESOLUTION_X'])
+	conf_DISP_RESOLUTION_Y			= int(config['conf_DISP_RESOLUTION_Y'])
+	conf_DISP_COLOR_MODEL			= str(config['conf_DISP_COLOR_MODEL'])
+	conf_DISP_FONT_SIZE				= int(config['conf_DISP_FONT_SIZE'])
+	conf_DISP_BLACK_ON_POWER_OFF	= config['conf_DISP_BLACK_ON_POWER_OFF'] == "true"
 
-		if DISP_DRIVER == "SSD1306":
+	if conf_DISP_CONNECTION == 'I2C':
+		serial = i2c(port=1, address=conf_DISP_I2C_ADDRESS)
+	elif conf_DISP_CONNECTION == 'SPI':
+		serial = spi(port=conf_DISP_SPI_PORT, device=0)
+	else:
+		exit ('Error: No valid connection type for display')
+	#except:
+		#exit('Error reading config file.')
+
+	try:
+		if conf_DISP_DRIVER == "SSD1306":
 			device = ssd1306(serial)
-		elif DISP_DRIVER == "SSD1309":
+		elif conf_DISP_DRIVER == "SSD1309":
 			device = ssd1309(serial)
-		elif DISP_DRIVER == "SSD1322":
+		elif conf_DISP_DRIVER == "SSD1322":
 			device = ssd1322(serial)
-		elif DISP_DRIVER == "SH1106":
+		elif conf_DISP_DRIVER == "SH1106":
 			device = sh1106(serial)
 		else:
-			exit()
+			exit('Error: No valid display driver')
 
 	except:
-		exit()
+		exit('Error connecting display.')
 
-	device.capabilities(128,64,0,mode='1')
-	device.persist = True
+	device.capabilities(conf_DISP_RESOLUTION_X,conf_DISP_RESOLUTION_Y,0,mode=conf_DISP_COLOR_MODEL)
 
-	const_DISPLAY_CONTENT_FILE = '/var/www/little-backup-box/tmp/display-content.txt'
+	if conf_DISP_BLACK_ON_POWER_OFF:
+		device.persist = True
+
+	const_DISPLAY_CONTENT_FILE = '{}/tmp/display-content.txt'.format(WORKING_DIR)
 
 	# wait for file changed
 	FileTime=0
@@ -172,7 +201,7 @@ if __name__ == "__main__":
 						Lines[n] = Line.replace("\n", "")
 					n = n + 1
 
-			main(device,Lines)
+			main(device,conf_DISP_FONT_SIZE,Lines)
 
 		time.sleep(0.5)
 

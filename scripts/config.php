@@ -180,6 +180,10 @@ conf_DISP_CONNECTION='$conf_DISP_CONNECTION'
 conf_DISP_DRIVER='$conf_DISP_DRIVER'
 conf_DISP_I2C_ADDRESS='$conf_DISP_I2C_ADDRESS'
 conf_DISP_SPI_PORT='$conf_DISP_SPI_PORT'
+conf_DISP_RESOLUTION_X=$conf_DISP_RESOLUTION_X
+conf_DISP_RESOLUTION_Y=$conf_DISP_RESOLUTION_Y
+conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
+conf_DISP_FONT_SIZE=$conf_DISP_FONT_SIZE
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_THEME=$conf_THEME
@@ -470,6 +474,56 @@ function upload_settings() {
 		<div class="card" style="margin-top: 2em;">
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_display_section; ?></summary>
+
+				<h3><?php echo L::config_display_characteristics_header; ?></h3>
+					<div>
+						<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br>
+							<select name="conf_DISP_RESOLUTION_X" id="conf_DISP_RESOLUTION_X">
+								<?php
+									$display_resolutions_array=array("128");
+									foreach($display_resolutions_array as $display_resolution) {
+										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_X"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_RESOLUTION_Y"><?php echo L::config_display_resolution_y_label; ?></label><br>
+							<select name="conf_DISP_RESOLUTION_Y" id="conf_DISP_RESOLUTION_Y">
+								<?php
+									$display_resolutions_array=array("64","32");
+									foreach($display_resolutions_array as $display_resolution) {
+										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_COLOR_MODEL"><?php echo L::config_display_color_model_label; ?></label><br>
+							<select name="conf_DISP_COLOR_MODEL" id="conf_DISP_COLOR_MODEL">
+								<?php
+									$display_color_models_array=array("1","RGB","RGBA");
+									foreach($display_color_models_array as $display_color_model) {
+										$display_color_model_entity="config_display_color_model_" . $display_color_model;
+										echo "<option value='" . $display_color_model . "' " . ($config["conf_DISP_COLOR_MODEL"] == $display_color_model?" selected":"") . ">" . L::{"$display_color_model_entity"}() . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_FONT_SIZE"><?php echo L::config_display_font_size_label; ?></label><br>
+							<select name="conf_DISP_FONT_SIZE" id="conf_DISP_FONT_SIZE">
+								<?php
+									$display_font_sizes_array=array(12,14,16);
+									foreach($display_font_sizes_array as $display_font_size) {
+										echo "<option value='" . $display_font_size . "' " . ($config["conf_DISP_FONT_SIZE"] == $display_font_size?" selected":"") . ">" . $display_font_size . "</option>";
+									}
+								?>
+							</select>
+					</div>
 
 				<h3><?php echo L::config_display_behavior_header; ?></h3>
 					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>

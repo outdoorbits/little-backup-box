@@ -391,7 +391,15 @@
       "spi_header": "SPI display configuration",
       "spi_port_label": "SPI port",
       "driver_header": "Hardware",
-      "driver_label": "Display driver"
+      "driver_label": "Display driver",
+      "characteristics_header": "Characteristics",
+      "resolution_x_label": "Horizontal resolution (pixels)",
+      "resolution_y_label": "Vertical resolution (pixels)",
+      "color_model_label": "Color",
+      "color_model_1": "Black-and-white",
+      "color_model_RGB": "RGB",
+      "color_model_RGBA": "RGBA (RGB with transparency)",
+      "font_size_label": "Font size"
     }
   },
   "tools": {
