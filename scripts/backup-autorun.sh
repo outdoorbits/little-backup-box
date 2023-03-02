@@ -21,7 +21,7 @@ WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
 CONFIG_STANDARDS="${WORKING_DIR}/config-standards.cfg"
-source "$CONFIG"
+source "${CONFIG}"
 
 # load language library
 . "${WORKING_DIR}/lib-language.sh"
@@ -50,6 +50,9 @@ do
 		fi
 	fi
 done < "${CONFIG_STANDARDS}"
+
+sudo chown www-data:www-data "${CONFIG}"
+sudo chmod 775 "${CONFIG}"
 
 unset IFS
 
