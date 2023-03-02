@@ -268,9 +268,7 @@
 
 	if (isset($_POST['stopbackup'])) {
 		popup(L::main_stopbackup_m,$config["conf_POPUP_MESSAGES"]);
-
 		exec('sudo pkill -f "backup*"');
-		exec('sudo ./lib-lcd-helper.sh "' . L::main_backup_break1 . '" "' . L::main_backup_break2 . '" "+" "+" "+"');
 	}
 	?>
 </body>
