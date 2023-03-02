@@ -28,7 +28,7 @@ from luma.oled.device import ssd1306, ssd1309, ssd1325, ssd1331, sh1106, sh1107,
 
 from PIL import Image, ImageFont
 
-WORKING_DIR = os.path.dirname(__file__)
+WORKING_DIR = '/var/www/little-backup-box'
 
 def main(device, FontSize, Lines):
 
@@ -139,7 +139,7 @@ def main(device, FontSize, Lines):
 
 if __name__ == "__main__":
 	#try:
-	config = ConfigObj('{}/config.cfg'.format(WORKING_DIR))
+	config = ConfigObj("{}/config.cfg".format(WORKING_DIR))
 	conf_DISP_CONNECTION			= config['conf_DISP_CONNECTION']
 	conf_DISP_DRIVER				= config['conf_DISP_DRIVER']
 	conf_DISP_I2C_ADDRESS			= int(config['conf_DISP_I2C_ADDRESS'], 16)
@@ -179,7 +179,7 @@ if __name__ == "__main__":
 	if conf_DISP_BLACK_ON_POWER_OFF:
 		device.persist = True
 
-	const_DISPLAY_CONTENT_FILE = '{}/tmp/display-content.txt'.format(WORKING_DIR)
+	const_DISPLAY_CONTENT_FILE = "{}/tmp/display-content.txt".format(WORKING_DIR)
 
 	# wait for file changed
 	FileTime=0
