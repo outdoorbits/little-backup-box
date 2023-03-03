@@ -475,6 +475,28 @@ function upload_settings() {
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_display_section; ?></summary>
 
+				<h3><?php echo L::config_display_behavior_header; ?></h3>
+					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+					<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br>
+
+
+					<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+					<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
+
+					<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
+					<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_display_black_on_power_off_label; ?></label>
+
+				<h3><?php echo L::config_display_connection_header; ?></h3>
+					<label for="conf_DISP"><?php echo L::config_display_connection_label; ?></label><br>
+						<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
+							<?php
+								$display_connections_array=array("I2C","SPI");
+								foreach($display_connections_array as $display_connection) {
+									echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
+								}
+							?>
+						</select>
+
 				<h3><?php echo L::config_display_characteristics_header; ?></h3>
 					<div>
 						<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br>
@@ -524,28 +546,6 @@ function upload_settings() {
 								?>
 							</select>
 					</div>
-
-				<h3><?php echo L::config_display_behavior_header; ?></h3>
-					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
-					<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br>
-
-
-					<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
-					<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
-
-					<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
-					<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_display_black_on_power_off_label; ?></label>
-
-				<h3><?php echo L::config_display_connection_header; ?></h3>
-					<label for="conf_DISP"><?php echo L::config_display_connection_label; ?></label><br>
-						<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
-							<?php
-								$display_connections_array=array("I2C","SPI");
-								foreach($display_connections_array as $display_connection) {
-									echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
-								}
-							?>
-						</select>
 
 				<h3><?php echo L::config_display_driver_header; ?></h3>
 					<label for="conf_DISP_DRIVER"><?php echo L::config_display_driver_label; ?></label><br>
