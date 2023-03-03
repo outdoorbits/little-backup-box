@@ -264,7 +264,10 @@ I2C_DETECT=$(sudo i2cdetect -y 1)
 I2C_LIST=("3c" "3d")
 for I2C in "${I2C_LIST[@]}"; do
 	if [[ "${I2C_DETECT}" =~ " ${I2C}" ]]; then
+		sudo sed -i '/conf_DISP=/d' "${CONFIG}"
 		echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
+
+		sudo sed -i '/conf_DISP_I2C_ADDRESS=/d' "${CONFIG}"
 		echo -e "conf_DISP_I2C_ADDRESS=\"${I2C}\"" | sudo tee -a "${CONFIG}"
 		break
 	fi
@@ -318,7 +321,10 @@ else
 	fi
 fi
 
+sudo sed -i '/conf_BACKUP_DEFAULT_SOURCE=/d' "${CONFIG}"
 echo "conf_BACKUP_DEFAULT_SOURCE=\"${conf_BACKUP_DEFAULT_SOURCE}\"" | sudo tee -a "${CONFIG}"
+
+sudo sed -i '/conf_BACKUP_DEFAULT_TARGET=/d' "${CONFIG}"
 echo "conf_BACKUP_DEFAULT_TARGET=\"${conf_BACKUP_DEFAULT_TARGET}\"" | sudo tee -a "${CONFIG}"
 
 # set the default SECONDARY backup mode
@@ -338,7 +344,10 @@ else
 	fi
 fi
 
+sudo sed -i '/conf_BACKUP_DEFAULT_SOURCE2=/d' "${CONFIG}"
 echo "conf_BACKUP_DEFAULT_SOURCE2=\"${conf_BACKUP_DEFAULT_SOURCE2}\"" | sudo tee -a "${CONFIG}"
+
+sudo sed -i '/conf_BACKUP_DEFAULT_TARGET2=/d' "${CONFIG}"
 echo "conf_BACKUP_DEFAULT_TARGET2=\"${conf_BACKUP_DEFAULT_TARGET2}\"" | sudo tee -a "${CONFIG}"
 
 # remove all from crontab
