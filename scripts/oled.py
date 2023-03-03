@@ -138,7 +138,7 @@ def main(device, FontSize, Lines):
 	#image.save("/media/internal/{}.gif".format(time.time()))
 
 if __name__ == "__main__":
-	#try:
+
 	config = ConfigObj("{}/config.cfg".format(WORKING_DIR))
 	conf_DISP_CONNECTION			= config['conf_DISP_CONNECTION']
 	conf_DISP_DRIVER				= config['conf_DISP_DRIVER']
@@ -156,23 +156,17 @@ if __name__ == "__main__":
 		serial = spi(port=conf_DISP_SPI_PORT, device=0)
 	else:
 		exit ('Error: No valid connection type for display')
-	#except:
-		#exit('Error reading config file.')
 
-	try:
-		if conf_DISP_DRIVER == "SSD1306":
-			device = ssd1306(serial)
-		elif conf_DISP_DRIVER == "SSD1309":
-			device = ssd1309(serial)
-		elif conf_DISP_DRIVER == "SSD1322":
-			device = ssd1322(serial)
-		elif conf_DISP_DRIVER == "SH1106":
-			device = sh1106(serial)
-		else:
-			exit('Error: No valid display driver')
-
-	except:
-		exit('Error connecting display.')
+	if conf_DISP_DRIVER == "SSD1306":
+		device = ssd1306(serial)
+	elif conf_DISP_DRIVER == "SSD1309":
+		device = ssd1309(serial)
+	elif conf_DISP_DRIVER == "SSD1322":
+		device = ssd1322(serial)
+	elif conf_DISP_DRIVER == "SH1106":
+		device = sh1106(serial)
+	else:
+		exit('Error: No valid display driver')
 
 	device.capabilities(conf_DISP_RESOLUTION_X,conf_DISP_RESOLUTION_Y,0,mode=conf_DISP_COLOR_MODEL)
 
