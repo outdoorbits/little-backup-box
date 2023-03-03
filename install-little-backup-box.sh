@@ -258,20 +258,24 @@ sudo DEBIAN_FRONTEND=noninteractive \
 ## append new line to config-file
 echo -e '' | sudo tee -a "${CONFIG}"
 
-## activate display if detected (Only works in updates, i2c is not available on primary install.)
-I2C_DETECT=$(sudo i2cdetect -y 1)
+## activate display if detected (may not works in install-mode, i2c is not always available on primary install.)
+if [ "${SCRIPT_MODE}" = "install" ]; then
 
-I2C_LIST=("3c" "3d")
-for I2C in "${I2C_LIST[@]}"; do
-	if [[ "${I2C_DETECT}" =~ " ${I2C}" ]]; then
-		sudo sed -i '/conf_DISP=/d' "${CONFIG}"
-		echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
+	I2C_DETECT=$(sudo i2cdetect -y 1)
 
-		sudo sed -i '/conf_DISP_I2C_ADDRESS=/d' "${CONFIG}"
-		echo -e "conf_DISP_I2C_ADDRESS=\"${I2C}\"" | sudo tee -a "${CONFIG}"
-		break
-	fi
-done
+	I2C_LIST=("3c" "3d")
+	for I2C in "${I2C_LIST[@]}"; do
+		if [[ "${I2C_DETECT}" =~ " ${I2C}" ]]; then
+			sudo sed -i '/conf_DISP=/d' "${CONFIG}"
+			echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
+
+			sudo sed -i '/conf_DISP_I2C_ADDRESS=/d' "${CONFIG}"
+			echo -e "conf_DISP_I2C_ADDRESS=\"${I2C}\"" | sudo tee -a "${CONFIG}"
+			break
+		fi
+	done
+
+fi
 
 # set the default backup mode
 if [ "${SCRIPT_MODE}" = "install" ]; then
