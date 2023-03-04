@@ -477,18 +477,35 @@ function upload_settings() {
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_display_section; ?></summary>
 
 				<h3><?php echo L::config_display_behavior_header; ?></h3>
-					<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
-					<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br>
+					<div>
+						<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br>
+						<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+					</div>
 
+					<div>
+						<label for="conf_DISP_FRAME_TIME"><?php echo L::config_display_frame_time_label; ?></label><br>
+							<select name="conf_DISP_FRAME_TIME" id="conf_DISP_FRAME_TIME">
+								<?php
+									$display_frame_times_array=array("0.5","1","2","3");
+									foreach($display_frame_times_array as $display_frame_time) {
+										echo "<option value='" . $display_frame_time . "' " . ($config["conf_DISP_FRAME_TIME"] == $display_frame_time?" selected":"") . ">" . $display_frame_time . "</option>";
+									}
+								?>
+							</select>
+					</div>
 
-					<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
-					<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
+					<div>
+						<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
+						<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+					</div>
 
-					<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
-					<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_display_black_on_power_off_label; ?></label>
+					<div>
+						<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_display_black_on_power_off_label; ?></label><br>
+						<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
+					</div>
 
 				<h3><?php echo L::config_display_connection_header; ?></h3>
-					<label for="conf_DISP"><?php echo L::config_display_connection_label; ?></label><br>
+					<label for="conf_DISP_CONNECTION"><?php echo L::config_display_connection_label; ?></label><br>
 						<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
 							<?php
 								$display_connections_array=array("I2C","SPI");
@@ -497,8 +514,6 @@ function upload_settings() {
 								}
 							?>
 						</select>
-
-				<input type='hidden' name='conf_DISP_FRAME_TIME' value='<?php echo $config["conf_DISP_FRAME_TIME"]; ?>'>
 
 				<h3><?php echo L::config_display_characteristics_header; ?></h3>
 					<div>

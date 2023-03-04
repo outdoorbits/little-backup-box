@@ -330,7 +330,6 @@
     "cloud_restart_label": "An internet connection is mandatory.",
     "rclone_gui_restarted": "The rclone UI has been restarted.",
     "behavior": {
-      "display_label": "Output to display.",
       "log_sync_protokoll_header": "Log sync-protocol",
       "log_sync_protokoll_label": "Log sync-details?",
       "loglevel_header": "Log-Level",
@@ -399,7 +398,8 @@
       "color_model_1": "Black-and-white",
       "color_model_RGB": "RGB",
       "color_model_RGBA": "RGBA (RGB with transparency)",
-      "font_size_label": "Font size"
+      "font_size_label": "Font size",
+      "frame_time_label": "Minimum display time per frame in seconds"
     }
   },
   "tools": {

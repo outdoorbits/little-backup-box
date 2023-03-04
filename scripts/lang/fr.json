@@ -179,7 +179,6 @@
     "cloud_restart_label": "Une connexion internet est obligatoire.",
     "rclone_gui_restarted": "L'interface utilisateur rclone a été redémarrée.",
     "behavior": {
-      "display_label": "Sortie à afficher.",
       "log_sync_protokoll_header": "Protocole de synchronisation des journaux",
       "log_sync_protokoll_label": "Détails de la synchronisation du journal ?",
       "loglevel_header": "Log-Niveau",
@@ -248,7 +247,8 @@
       "color_model_1": "Noir et blanc",
       "color_model_RGB": "RGB",
       "color_model_RGBA": "RGBA (RVB avec transparence)",
-      "font_size_label": "Taille de police"
+      "font_size_label": "Taille de police",
+      "frame_time_label": "Temps d'affichage minimum par image en secondes"
     }
   },
   "tools": {
