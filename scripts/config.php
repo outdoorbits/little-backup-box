@@ -184,6 +184,7 @@ conf_DISP_RESOLUTION_X=$conf_DISP_RESOLUTION_X
 conf_DISP_RESOLUTION_Y=$conf_DISP_RESOLUTION_Y
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
 conf_DISP_FONT_SIZE=$conf_DISP_FONT_SIZE
+conf_DISP_FRAME_TIME=$conf_DISP_FRAME_TIME
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_THEME=$conf_THEME
@@ -496,6 +497,8 @@ function upload_settings() {
 								}
 							?>
 						</select>
+
+				<input type='hidden' name='conf_DISP_FRAME_TIME' value='<?php echo $config["conf_DISP_FRAME_TIME"]; ?>'>
 
 				<h3><?php echo L::config_display_characteristics_header; ?></h3>
 					<div>
