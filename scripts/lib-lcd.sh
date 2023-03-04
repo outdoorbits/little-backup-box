@@ -22,6 +22,7 @@
 # - source config.cfg
 # - source constants.sh
 # - source lib-log.sh
+# - source lib-time.sh
 
 # Definitions
 
@@ -67,8 +68,8 @@ function lcd_message () {
 	fi
 
 	# fifo display: if space left print old lines
-	if [ -f "${const_DISPLAY_CONTENT_FILE}" ]; then
-		readarray -t OLED_OLD < "${const_DISPLAY_CONTENT_FILE}"
+	if [ -f "${const_DISPLAY_CONTENT_OLD_FILE}" ]; then
+		readarray -t OLED_OLD < "${const_DISPLAY_CONTENT_OLD_FILE}"
 	fi
 
 	n=${LineCount}
@@ -163,7 +164,8 @@ function lcd_message () {
 
 	# output to display via file
 	if [ $conf_DISP = true ]; then
-		sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}\n${Lines[4]}' > '${const_DISPLAY_CONTENT_FILE}'"
+		sudo mkdir -p "${const_DISPLAY_CONTENT_FOLDER}"
+		sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}\n${Lines[4]}' > '${const_DISPLAY_CONTENT_FOLDER}/$(get_uptime_miliseconds).txt'"
 	fi
 
 	# log

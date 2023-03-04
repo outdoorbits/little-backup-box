@@ -23,6 +23,9 @@ CONFIG="${WORKING_DIR}/config.cfg"
 # dos2unix "$CONFIG"
 source "$CONFIG"
 
+#load time library
+. "${WORKING_DIR}/lib-time.sh"
+
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 

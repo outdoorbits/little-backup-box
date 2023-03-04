@@ -18,5 +18,9 @@
 #######################################################################
 
 function get_uptime_seconds() {
-	awk '{print int($1)}' /proc/uptime
+	awk '{OFMT="%f";print int($1)}' /proc/uptime
+}
+
+function get_uptime_miliseconds() {
+	awk '{OFMT="%f";print int($1*1000)}' /proc/uptime
 }

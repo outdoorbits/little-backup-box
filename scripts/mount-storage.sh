@@ -26,6 +26,9 @@ source "$CONFIG"
 MODE=${1} # "mount", "umount" or "check"
 DEVICE=${2} # "usb_1" or "usb_2"
 
+#load time library
+. "${WORKING_DIR}/lib-time.sh"
+
 # Load Language library
 . "${WORKING_DIR}/lib-language.sh"
 

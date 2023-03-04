@@ -30,8 +30,9 @@ source "${CONFIG}"
 IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 sudo rm "${IP_MAIL_SENT_MARKERFILE}"
 
-# delete const_DISPLAY_CONTENT_FILE
-sudo rm "${const_DISPLAY_CONTENT_FILE}"
+# delete DISPLAY CONTENT FILES
+sudo rm -R "${const_DISPLAY_CONTENT_FOLDER}/"*
+sudo rm "${const_DISPLAY_CONTENT_OLD_FILE}"
 
 echo "Little Backup Box" | sudo tee "${const_LOGFILE}"
 echo "" | sudo tee "${const_LOGFILE_SYNC}"
@@ -111,6 +112,9 @@ sudo rm "${const_CMD_RUNNER_LOCKFILE}" > /dev/null 2>&1
 
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
+
+# Load time library
+. "${WORKING_DIR}/lib-time.sh"
 
 # Load LCD library
 . "${WORKING_DIR}/lib-lcd.sh"

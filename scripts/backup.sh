@@ -110,6 +110,9 @@ if [ ! -z "${UUID_USB_1}" ] && [[ " rsyncserver cloud " =~ " ${TARGET_MODE} " ]]
 	UUID_USB_2="${UUID_USB_temp}"
 fi
 
+#load time library
+. "${WORKING_DIR}/lib-time.sh"
+
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 
@@ -133,9 +136,6 @@ fi
 
 #load database library
 . "${WORKING_DIR}/lib-db.sh"
-
-#load time library
-. "${WORKING_DIR}/lib-time.sh"
 
 #load network library
 . "${WORKING_DIR}/lib-network.sh"

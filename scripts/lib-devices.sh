@@ -22,6 +22,7 @@
 # - source constants.sh
 # - source lib-language.sh
 # - source lib-log.sh
+# - source lib-time.sh
 # - source lib-lcd.sh
 
 function mount_device() {

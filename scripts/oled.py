@@ -149,6 +149,11 @@ if __name__ == "__main__":
 	conf_DISP_COLOR_MODEL			= str(config['conf_DISP_COLOR_MODEL'])
 	conf_DISP_FONT_SIZE				= int(config['conf_DISP_FONT_SIZE'])
 	conf_DISP_BLACK_ON_POWER_OFF	= config['conf_DISP_BLACK_ON_POWER_OFF'] == "true"
+	conf_DISP_FRAME_TIME			= float(config['conf_DISP_FRAME_TIME'])
+
+	constants = ConfigObj("{}/constants.sh".format(WORKING_DIR))
+	const_DISPLAY_CONTENT_FOLDER	= constants['const_DISPLAY_CONTENT_FOLDER']
+	const_DISPLAY_CONTENT_OLD_FILE	= constants['const_DISPLAY_CONTENT_OLD_FILE']
 
 	if conf_DISP_CONNECTION == 'I2C':
 		serial = i2c(port=1, address=conf_DISP_I2C_ADDRESS)
@@ -173,31 +178,26 @@ if __name__ == "__main__":
 	if conf_DISP_BLACK_ON_POWER_OFF:
 		device.persist = True
 
-	const_DISPLAY_CONTENT_FILE = "{}/tmp/display-content.txt".format(WORKING_DIR)
-
-	# wait for file changed
-	FileTime=0
-	FileTimeNew=2
-
 	while(True):
-		if (os.path.isfile(const_DISPLAY_CONTENT_FILE)):
-			FileTimeNew=os.path.getmtime(const_DISPLAY_CONTENT_FILE)
+		ContenFileList	= os.listdir(const_DISPLAY_CONTENT_FOLDER)
+		if len(ContenFileList):
 
-		if(FileTimeNew > (FileTime + 0.1)):
-
-			FileTime = FileTimeNew
+			ContenFileList.sort()
+			ContentFile = "{}/{}".format(const_DISPLAY_CONTENT_FOLDER,ContenFileList[0])
 
 			Lines = ["+","+","+","+","+"]
 			n=0
-			with open(const_DISPLAY_CONTENT_FILE, 'r') as f:
+			with open(ContentFile, 'r') as f:
 				for Line in f:
 					if n < 5:
 						Lines[n] = Line.replace("\n", "")
 					n = n + 1
 
+			os.replace(ContentFile,const_DISPLAY_CONTENT_OLD_FILE)
+
 			main(device,conf_DISP_FONT_SIZE,Lines)
 
-		time.sleep(0.5)
+		time.sleep(conf_DISP_FRAME_TIME)
 
 
 
