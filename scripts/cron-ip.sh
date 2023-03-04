@@ -56,7 +56,7 @@ IP=$(get_ip)
 IP_ARRAY=(${IP})
 IP_LINES=$(printf '%s\n' "${IP_ARRAY[@]}" | tac)
 
-if [ $conf_DISP_IP_REPEAT = true ] || [ ! -z "${FORCE_DISPLAY}" ]; then
+if ([ $conf_DISP_IP_REPEAT = true ]  || [ ! -z "${FORCE_DISPLAY}" ]) &&  [ ! -z "${IP_LINES}" ]; then
 	if ! grep -q "${IP}" "${const_DISPLAY_CONTENT_OLD_FILE}"; then
 		if [ "${INTERNET_STATUS}" = "connected" ]; then
 			lcd_message "IP ($(l 'box_cronip_online')):" "${IP_LINES}"

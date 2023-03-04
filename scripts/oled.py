@@ -108,7 +108,7 @@ def main(device, FontSize, Lines):
 					# define text to print
 					Lines[n]	= " {}%".format(str(progress))
 
-					(left, top, right, bottom) = draw.textbbox((0,0),"100%:",font=FONT)
+					(left, top, right, bottom) = draw.textbbox((0,0),"100%::",font=FONT)
 					pgbar_text_length = right - left
 
 					# draw progressbar
