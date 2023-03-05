@@ -1054,8 +1054,11 @@ function sync_return_code_decoder() {
 
 
 			# prepare message for mail and power off
-
-			MESSAGE_LCD="${MESSAGE_LCD}+${SOURCE_FOLDER_NUMBER}: "
+			if [ "${#SOURCE_PATHS[@]}" -gt "1" ]; then
+				MESSAGE_LCD="${MESSAGE_LCD}+${SOURCE_FOLDER_NUMBER}: "
+			else
+				MESSAGE_LCD="${MESSAGE_LCD}+"
+			fi
 
 			if [ -z "${SYNC_ERROR_TMP}" ]; then
 				SYNC_ERROR_FINAL_RUN=false
@@ -1081,7 +1084,7 @@ function sync_return_code_decoder() {
 				fi
 			fi
 
-			MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} \n"
+			MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}\n"
 
 		done # retry
 
@@ -1428,7 +1431,7 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 		#remove leading spaces
 		MESSAGE_LCD="$(echo -e "${MESSAGE_LCD}" | sed -e 's/^[[:space:]]*//')"
 
-		source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_LCD::-2}" "${TRANSFER_INFO_DISP::-2}"
+		source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_LCD}" "${TRANSFER_INFO_DISP::-2}"
 	fi
 
 exit 0
