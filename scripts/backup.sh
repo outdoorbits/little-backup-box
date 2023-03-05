@@ -363,9 +363,14 @@ function sync_return_code_decoder() {
 
 	ERROR_TEXT=()
 
+	if [ -z "${code}" ]; then
+		code=-1
+		ERROR_TEXT[$code]="-"
+	fi
+
 	if [ "${mode}" == "camera" ]; then
 		#gphoto2-codes
-		echo "" # dummy action
+		ERROR_TEXT[1]="Error: No camera found."
 	else
 		#rsync-codes
 		ERROR_TEXT[0]="Success"
@@ -391,7 +396,7 @@ function sync_return_code_decoder() {
 	fi
 
 	if [ ! -z "${ERROR_TEXT[$code]}" ]; then
-		echo " $code=${ERROR_TEXT[$code]}"
+		echo "$(l 'box_backup_error_code') ${code}, ${ERROR_TEXT[$code]}"
 	else
 		echo "$code"
 	fi
@@ -825,58 +830,49 @@ function sync_return_code_decoder() {
 	sudo sh -c "echo 500 > /sys/class/leds/led0/delay_on"
 
 
-	# In case of SYNC_ERROR retry
 	TRIES_MAX=5
-	SYNC_ERROR=""
 	FILES_TO_SYNC=0
 	SYNC_LOG=""
-	TRANSFER_INFO=""
+	declare -A MAIL_SOURCE_PATHS
+	declare -A TRIES_DONE
+	declare -A TRANSFER_INFO
+
 	TRANSFER_INFO_DISP=""
 	SOURCE_FOLDER_NUMBER=""
-	SOURCE_FOLDER_INFO=""
-	SOURCE_FOLDER_NUMBER_FORMATED=""
-	SOURCE_PATH_LEGEND_STAR=""
-	SOURCE_PATHS_LEGEND=""
-	MESSAGE_MAIL=""
 	MESSAGE_LCD=""
-	SYNC_ERROR_LAST=false
+	SYNC_ERROR_FINAL_RUN=false
+	SYNC_ERROR_NOT_SOLVED=false
 
 	#sourcepaths-loop
 	for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
 
 		#SOURCE_FOLDER_NUMBER
-		if [ "${#SOURCE_PATHS[@]}" -gt "1" ]; then
-			if [ "${SOURCE_FOLDER_NUMBER}" == "" ]; then
-				SOURCE_FOLDER_NUMBER=1
-			else
-				SOURCE_FOLDER_NUMBER=$(($SOURCE_FOLDER_NUMBER + 1))
-			fi
-			SOURCE_FOLDER_INFO="${SOURCE_FOLDER_NUMBER}/${#SOURCE_PATHS[@]}"
+		if [ -z "${SOURCE_FOLDER_NUMBER}" ]; then
+			SOURCE_FOLDER_NUMBER=1
+		else
+			SOURCE_FOLDER_NUMBER=$(($SOURCE_FOLDER_NUMBER + 1))
 		fi
+		SOURCE_FOLDER_INFO="${SOURCE_FOLDER_NUMBER}/${#SOURCE_PATHS[@]}"
 
-		if [ "${SOURCE_FOLDER_NUMBER}" != "" ]; then
-			SOURCE_FOLDER_NUMBER_FORMATED="${SOURCE_FOLDER_NUMBER}: "
-			SOURCE_PATH_LEGEND_STAR="*${SOURCE_FOLDER_NUMBER}, "
-			SOURCE_PATHS_LEGEND="${SOURCE_PATHS_LEGEND}\n*${SOURCE_FOLDER_NUMBER}: ${SOURCE_FOLDER_NUMBER}='${SOURCE_PATH}'"
-		fi
+		MAIL_SOURCE_PATHS[${SOURCE_FOLDER_NUMBER}]="'${SOURCE_PATH}'"
 
 		#retry-loop
-		TRIES_DONE=0
+		TRIES_DONE[$SOURCE_FOLDER_NUMBER]=0
 		SYNC_ERROR_TMP="-" # not empty!
 
-		while [[ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]] && [[ "${SYNC_ERROR_TMP}" != "" ]]; do
+		while [[ "${TRIES_MAX}" -gt "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" ]] && [[ "${SYNC_ERROR_TMP}" != "" ]]; do
 
 			# RETRIES
-			TRIES_DONE=$((TRIES_DONE+1))
+			TRIES_DONE[$SOURCE_FOLDER_NUMBER]=$((TRIES_DONE[$SOURCE_FOLDER_NUMBER]+1))
 
 			if [ ! -z "${SYNC_LOG}" ]; then
 				SYNC_LOG="${SYNC_LOG}\n"
 			fi
 
-			SYNC_LOG="${SYNC_LOG}---- $(l 'box_backup_try') ${TRIES_DONE} ----"
+			SYNC_LOG="${SYNC_LOG}---- $(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} ${SOURCE_PATH} ----"
 
-			if [ "${TRIES_DONE}" -gt "1" ]; then
-				lcd_message "$(l 'box_backup_try_backup') ${TRIES_DONE} $(l 'box_backup_of') ${TRIES_MAX}"
+			if [ "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" -gt "1" ]; then
+				lcd_message "$(l 'box_backup_try_backup') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_of') ${TRIES_MAX}"
 				sleep 5 # time to stabilize the system after device-lost
 			fi
 
@@ -1009,10 +1005,10 @@ function sync_return_code_decoder() {
 			if [ "${FILES_TO_SYNC}" != "" ] && [ "${FILES_TO_SYNC_NEW}" != "" ]; then
 				FILES_TRANSFERRED=$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW}))
 				if [ "${FILES_TRANSFERRED}" -lt "0" ]; then FILES_TRANSFERRED=$(l "box_backup_unknown"); fi
-				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied"). (${SOURCE_PATH_LEGEND_STAR}$(l "box_backup_try") ${TRIES_DONE})\n"
+				TRANSFER_INFO[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied").\n"
 				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}+${SOURCE_FOLDER_NUMBER}. $FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied")\n"
 			else
-				TRANSFER_INFO="${TRANSFER_INFO}${SOURCE_FOLDER_NUMBER_FORMATED}$(l "box_backup_result_suspect"). (${SOURCE_PATH_LEGEND_STAR}$(l "box_backup_try") ${TRIES_DONE})\n"
+				TRANSFER_INFO[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l "box_backup_result_suspect").\n"
 				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}+${SOURCE_FOLDER_NUMBER}. $(l "box_backup_result_suspect")\n"
 				FILES_TO_SYNC=0
 			fi
@@ -1051,7 +1047,7 @@ function sync_return_code_decoder() {
 			SYNC_TIME=$(($SYNC_STOP_TIME - $SYNC_START_TIME))
 			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}"); SYNC_TIME: ${SYNC_TIME}" 3
 
-			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE}" ]; then
+			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" ]; then
 					lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')" ""
 					sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
 			fi
@@ -1059,39 +1055,37 @@ function sync_return_code_decoder() {
 
 			# prepare message for mail and power off
 
-			MESSAGE_MAIL="${MESSAGE_MAIL}${SOURCE_FOLDER_NUMBER_FORMATED}."
-			MESSAGE_LCD="${MESSAGE_LCD}+${SOURCE_FOLDER_NUMBER_FORMATED}."
+			MESSAGE_LCD="${MESSAGE_LCD}+${SOURCE_FOLDER_NUMBER}: "
 
 			if [ -z "${SYNC_ERROR_TMP}" ]; then
-				SYNC_ERROR_LAST=false
+				SYNC_ERROR_FINAL_RUN=false
 
-				MESSAGE_MAIL="${MESSAGE_MAIL} $(l 'box_backup_mail_backup_complete').\n"
+				MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_backup_complete')."
 				MESSAGE_LCD="${MESSAGE_LCD} $(l 'box_backup_complete').\n"
 			else
-				SYNC_ERROR_LAST=true
+				SYNC_ERROR_FINAL_RUN=true
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]]; then
-					MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_lost_device')\n"
+					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_lost_device')"
 					MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_lost_device')\n"
 				fi
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Files missing!" ]]; then
-					MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_files_missing')\n"
+					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_files_missing')"
 					MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_files_missing')\n"
 				fi
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Exception" ]]; then
-					MESSAGE_MAIL="${MESSAGE_MAIL}$(l 'box_backup_mail_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")\n"
+					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")"
 					MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")\n"
 				fi
 			fi
 
-			MESSAGE_MAIL="${MESSAGE_MAIL} (${SOURCE_PATH_LEGEND_STAR}$(l 'box_backup_try') ${TRIES_DONE})\n"
-			MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_try') ${TRIES_DONE} \n"
-
-			SYNC_ERROR="${SYNC_ERROR} ${SYNC_ERROR_TMP}"
+			MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} \n"
 
 		done # retry
+
+		if [ $SYNC_ERROR_FINAL_RUN = true ]; then SYNC_ERROR_NOT_SOLVED=true; fi
 	done # sources
 
 ########################
@@ -1114,16 +1108,29 @@ function sync_return_code_decoder() {
 ########################
 
 	# prepare message for mail
-	#remove leading spaces
-	MESSAGE_MAIL="$(echo -e "${MESSAGE_MAIL}" | sed -e 's/^[[:space:]]*//')"
-	MESSAGE_LCD="$(echo -e "${MESSAGE_LCD}" | sed -e 's/^[[:space:]]*//')"
+
+	# create mail summary
+
+	MailSummary=""
+	for (( i=1; i<=$SOURCE_FOLDER_NUMBER; i++ )); do
+		if [ ! -z "${MailSummary}" ]; then
+			MailSummary="${MailSummary}\n"
+		fi
+
+		MailSummary="${MailSummary}$i.: ${MAIL_SOURCE_PATHS[${SOURCE_FOLDER_NUMBER}]}\n"
+		for (( j=1; j<=${TRIES_DONE[$i]}; j++ )); do
+			MailSummary="${MailSummary}  ${j}. $(l 'box_backup_try')\n"
+			MailSummary="${MailSummary}    ${MESSAGE_MAIL[$i,$j]}\n"
+			MailSummary="${MailSummary}    ${TRANSFER_INFO[$i,$j]}\n"
+		done
+	done
 
 	# Check internet connection and send
 	# a notification by mail if the conf_MAIL_NOTIFICATIONS option is enabled
 	INTERNET_STATUS=$(get_internet_status)
 	if [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
 
-		if [ ${SYNC_ERROR_LAST} = true  ] || [ "${TARGET_MODE}:${SOURCE_MODE}" = "none:none" ]; then
+		if [ ${SYNC_ERROR_NOT_SOLVED} = true  ] || [ "${TARGET_MODE}:${SOURCE_MODE}" = "none:none" ]; then
 			SUBJ_MSG="$(l 'box_backup_mail_error')"
 		else
 			SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
@@ -1135,14 +1142,12 @@ function sync_return_code_decoder() {
 			BODY_MSG="$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}
 ${SOURCE_IDENTIFIER}
 
-${MESSAGE_MAIL}
-
-${TRANSFER_INFO}${SOURCE_PATHS_LEGEND}
+${MailSummary}
 
 $(l 'box_backup_mail_log'):
 ${SYNC_LOG}
 
-${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
+${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 		fi
 
 		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}"
@@ -1420,6 +1425,10 @@ ${TRIES_DONE} $(l 'box_backup_mail_tries_needed')."
 
 # Power off
 	if [ "${SECONDARY_BACKUP_FOLLOWS}" = "false" ]; then
-		source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_LCD::-1}" "${TRANSFER_INFO_DISP::-1}"
+		#remove leading spaces
+		MESSAGE_LCD="$(echo -e "${MESSAGE_LCD}" | sed -e 's/^[[:space:]]*//')"
+
+		source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_LCD::-2}" "${TRANSFER_INFO_DISP::-2}"
 	fi
 
+exit 0

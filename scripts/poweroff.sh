@@ -45,7 +45,7 @@ MESSAGE="${3}"
 TRANSFER_INFO="${4}"
 
 TRANSFER_INFO_MOD="${TRANSFER_INFO}"
-if [ -z ${TRANSFER_INFO_MOD} ]; then
+if [ -z "${TRANSFER_INFO_MOD}" ]; then
 	TRANSFER_INFO_MOD="+"
 fi
 

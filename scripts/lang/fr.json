@@ -368,7 +368,8 @@
         "connecting": "Connecter le VPN",
         "disconnecting": "Déconnecter le VPN",
         "connecting_success": "VPN connecté"
-      }
+      },
+      "error_code": "Code d'erreur"
     },
     "cronip": {
       "offline": "hors ligne",

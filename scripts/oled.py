@@ -134,8 +134,6 @@ def main(device, FontSize, Lines):
 				# Write text
 				draw.text((x + 1, y), Lines[n][1:], font=FONT, fill=fg_fill)
 
-	# save image ### for documentation only
-	#image.save("/media/internal/{}.gif".format(time.time()))
 
 if __name__ == "__main__":
 
