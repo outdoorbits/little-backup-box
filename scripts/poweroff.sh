@@ -29,8 +29,8 @@ source "$CONFIG"
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 
-# Load LCD library
-. "${WORKING_DIR}/lib-lcd.sh"
+# Load DISPLAY library
+. "${WORKING_DIR}/lib-display.sh"
 
 #load DEVICES library
 . "${WORKING_DIR}/lib-devices.sh"
@@ -46,7 +46,7 @@ TRANSFER_INFO="${4}"
 
 TRANSFER_INFO_MOD="${TRANSFER_INFO}"
 if [ -z "${TRANSFER_INFO_MOD}" ]; then
-	TRANSFER_INFO_MOD="+"
+	TRANSFER_INFO_MOD="s=b:"
 fi
 
 # predefined values?
@@ -61,19 +61,19 @@ if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 	sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}"
 
 	if [ ! -z "${MESSAGE}" ]; then
-		lcd_message "${MESSAGE}" "+" "+" "+" "+"
+		disp_message "${MESSAGE}" "s=b:" "s=b:" "s=b:" "s=b:"
 		sleep ${const_DISPLAY_HOLD_SEC}
 	fi
 
 	if [ ! -z "${TRANSFER_INFO}" ]; then
-		lcd_message "${TRANSFER_INFO}" "+" "+" "+" "+"
+		disp_message "${TRANSFER_INFO_MOD}" "s=b:" "s=b:" "s=b:" "s=b:"
 		sleep ${const_DISPLAY_HOLD_SEC}
 	fi
 
 	if [ "${ACTION}" = "poweroff" ]; then
-		lcd_message "+$(l 'box_poweroff_poweroff')" "+$(l 'box_poweroff_do_not_unplug')" "+$(l 'box_poweroff_while_act_led_on_1')" "+$(l 'box_poweroff_while_act_led_on_2')" "${TRANSFER_INFO_MOD}" "+"
+		disp_message "s=b:$(l 'box_poweroff_poweroff')" "s=b:$(l 'box_poweroff_do_not_unplug')" "s=b:$(l 'box_poweroff_while_act_led_on_1')" "s=b:$(l 'box_poweroff_while_act_led_on_2')" "${TRANSFER_INFO_MOD}" "s=b:"
 	elif [ "${ACTION}" = "reboot" ]; then
-		lcd_message  "+$(l 'box_poweroff_rebooting')..." "+$(l 'box_poweroff_do_not_unplug')!" "${TRANSFER_INFO_MOD}" "+" "+" "+"
+		disp_message "s=b:$(l 'box_poweroff_rebooting')..." "s=b:$(l 'box_poweroff_do_not_unplug')!" "${TRANSFER_INFO_MOD}" "s=b:" "s=b:" "s=b:"
 	fi
 
 	# cleanup
@@ -83,7 +83,7 @@ if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 	if [ "${ACTION}" = "poweroff" ]; then
 	if [ "${conf_DISP_BLACK_ON_POWER_OFF}" = "true" ]; then
 			sleep 4
-			lcd_message "+" "+" "+" "+" "+"
+			disp_message "s=b:" "s=b:" "s=b:" "s=b:" "s=b:"
 			sleep 1
 		fi
 		sudo halt
@@ -94,18 +94,18 @@ if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 else
 	# notify the backup status
 	if [ ! -z "${MESSAGE}" ]; then
-		lcd_message "${MESSAGE}" "+" "+" "+" "+"
+		disp_message "${MESSAGE}" "s=b:" "s=b:" "s=b:" "s=b:"
 		sleep ${const_DISPLAY_HOLD_SEC}
 	fi
 
 	if [ ! -z "${TRANSFER_INFO}" ]; then
-		lcd_message "${TRANSFER_INFO}" "+" "+" "+" "+"
+		disp_message "${TRANSFER_INFO_MOD}" "s=b:" "s=b:" "s=b:" "s=b:"
 		sleep ${const_DISPLAY_HOLD_SEC}
 	fi
 
 	if [ -z "${MESSAGE}" ]; then
-		lcd_message "+$(l 'box_backup_complete')." "+$(l 'box_poweroff_do_not_unplug')!" "+$(l 'box_poweroff_power_down_via_gui_1')" "+$(l 'box_poweroff_power_down_via_gui_2')" "${TRANSFER_INFO_MOD}" "+"
+		disp_message "s=b:$(l 'box_backup_complete')." "s=b:$(l 'box_poweroff_do_not_unplug')!" "s=b:$(l 'box_poweroff_power_down_via_gui_1')" "s=b:$(l 'box_poweroff_power_down_via_gui_2')" "${TRANSFER_INFO_MOD}" "s=b:"
 	else
-		lcd_message "+$(l 'box_poweroff_do_not_unplug')!" "+$(l 'box_poweroff_power_down_via_gui_1')" "+$(l 'box_poweroff_power_down_via_gui_2')" "${TRANSFER_INFO_MOD}" "+" "+"
+		disp_message "s=b:$(l 'box_poweroff_do_not_unplug')!" "s=b:$(l 'box_poweroff_power_down_via_gui_1')" "s=b:$(l 'box_poweroff_power_down_via_gui_2')" "${TRANSFER_INFO_MOD}" "s=b:" "s=b:"
 	fi
 fi

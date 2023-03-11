@@ -97,7 +97,7 @@ else
 fi
 
 if [ "${SOURCE_MODE}" = "${TARGET_MODE}" ] && [ "${SOURCE_MODE}" != "usb" ] && [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-	lcd_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')" ""
+	disp_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')" ""
 	TARGET_MODE='none'
 	SOURCE_MODE='none'
 fi
@@ -119,8 +119,8 @@ fi
 # Load Mail library
 . "${WORKING_DIR}/lib-mail.sh"
 
-# Load LCD library
-. "${WORKING_DIR}/lib-lcd.sh"
+# Load DISPLAY library
+. "${WORKING_DIR}/lib-display.sh"
 
 #load DEVICES library
 . "${WORKING_DIR}/lib-devices.sh"
@@ -141,7 +141,7 @@ fi
 . "${WORKING_DIR}/lib-network.sh"
 
 # log
-lcd_message "$(l "box_backup_mode_${SOURCE_MODE}")" " > $(l "box_backup_mode_${TARGET_MODE}")" "   ${CLOUDSERVICE}"
+disp_message "$(l "box_backup_mode_${SOURCE_MODE}")" " > $(l "box_backup_mode_${TARGET_MODE}")" "   ${CLOUDSERVICE}"
 
 log_message "Source: ${SOURCE_MODE}"
 log_message "Destination: ${TARGET_MODE} ${CLOUDSERVICE}"
@@ -219,7 +219,7 @@ function calculate_files_to_sync() {
 	else
 		# no defined mode selected
 		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-			lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+2"
+			disp_message "s=b:$(l 'box_backup_no_valid_source_mode_1')" "s=b:$(l 'box_backup_no_valid_source_mode_2')" "s=b:$(l 'box_backup_no_valid_source_mode_3')" "" "s=b:2"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		fi
@@ -257,13 +257,13 @@ function progressmonitor() {
 	if [ "${PRGMON_ABS_COUNT}" -gt "0" ]; then
 		if [ "${PRGMON_PRG_COUNT}" -gt "0" ]; then
 			PRGMON_FINISHED_PERCENT=$(echo "scale=1; 100 * ${PRGMON_PRG_COUNT} / ${PRGMON_ABS_COUNT}" | bc)
-			PRGMON_LCD5="PGBAR:${PRGMON_FINISHED_PERCENT}"
+			PRGMON_LCD5="PGBAR=${PRGMON_FINISHED_PERCENT}"
 		else
 			PRGMON_LCD5="$(l 'box_backup_checking_old_files')..."
 		fi
 	else
 		PRGMON_FINISHED_PERCENT="?"
-		PRGMON_LCD5="PGBAR:0"
+		PRGMON_LCD5="PGBAR=0"
 	fi
 
 	if ([ "${PRGMON_PRG_COUNT}" != "${PRGMON_PRG_COUNT_OLD}" ] || [ "${PRGMON_LCD1}" != "${PRGMON_LCD1_OLD}" ]) && ([ $(($(get_uptime_seconds) - ${PRGMON_LAST_MESSAGE_TIME})) -ge "${const_PROGRESS_DISPLAY_WAIT_SEC}" ] || [ "${PRGMON_PRG_COUNT}" == "0" ] || [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]); then
@@ -283,7 +283,7 @@ function progressmonitor() {
 		fi
 
 		PRGMON_LCD4="$(l "box_backup_time_remaining"): ${PRGMON_TIME_REMAINING_FORMATED}"
-		lcd_message "+${PRGMON_LCD1}" "+${PRGMON_LCD2}" "+${PRGMON_LCD3}" "+${PRGMON_LCD4}" "+${PRGMON_LCD5}"
+		disp_message "s=b:${PRGMON_LCD1}" "s=b:${PRGMON_LCD2}" "s=b:${PRGMON_LCD3}" "s=b:${PRGMON_LCD4}" "s=b:${PRGMON_LCD5}"
 
 		PRGMON_LAST_MESSAGE_TIME=$(get_uptime_seconds)
 	fi
@@ -296,8 +296,6 @@ function syncprogress() {
 	local MODE="${1}"
 	local SOURCE_FOLDER_NUMBER="${2}"
 
-# 	local TIMER_START=$(get_uptime_seconds)
-
 	local SPEED=""
 	local START_TIME=$(get_uptime_seconds)
 	local TIME_RUN=0
@@ -309,10 +307,10 @@ function syncprogress() {
 	local LCD2=" > $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}" # header2
 	local LCD3="0 $(l 'box_backup_of') ${FILES_TO_SYNC}" # filescount, speed
 	local LCD4="$(l "box_backup_time_remaining"): ?" # time remaining
-	local LCD5="PGBAR:0" # progressbar
+	local LCD5="PGBAR=0" # progressbar
 
 	# start screen
-	lcd_message "+${LCD1}" "+${LCD2}" "+${LCD3}" "+${LCD4}" "+${LCD5}"
+	disp_message "s=b:${LCD1}" "s=b:${LCD2}" "s=b:${LCD3}" "s=b:${LCD4}" "s=b:${LCD5}"
 
 	local LAST_MESSAGE_TIME=0
 	local FILESCOUNT=0
@@ -354,7 +352,6 @@ function syncprogress() {
 		sleep "${const_DISPLAY_HOLD_SEC}"
 	fi
 
-# 	log_message "Backup-time: $(echo "$(get_uptime_seconds) - ${TIMER_START}" | bc) seconds" 3
 }
 
 function sync_return_code_decoder() {
@@ -411,7 +408,7 @@ function sync_return_code_decoder() {
 
 	#stop old VPN connections
 	if [ $(vpn_status "OpenVPN") = "up" ] || [ $(vpn_status "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard") = "up" ]; then
-		lcd_message "$(l 'box_backup_vpn_disconnecting')"
+		disp_message ":$(l 'box_backup_vpn_disconnecting')"
 		vpn_stop "OpenVPN"
 		vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
 	fi
@@ -424,16 +421,16 @@ function sync_return_code_decoder() {
 	if [ "${VPN_TYPE}" != "none" ]; then
 		VPN_CONFIG_FILE=$(eval echo "\${const_VPN_DIR_${VPN_TYPE}}/\$const_VPN_FILENAME_${VPN_TYPE}")
 
-		lcd_message "$(l 'box_backup_vpn_connecting')" "${VPN_TYPE}"
+		disp_message ":$(l 'box_backup_vpn_connecting')" ":${VPN_TYPE}"
 		vpn_start "${VPN_TYPE}" "${VPN_CONFIG_FILE}" "${conf_VPN_TIMEOUT}"
 		VPN_CONNECTED=$?
 
 		if [ "${VPN_CONNECTED}" != "1" ]; then
-			lcd_message "$(l 'box_backup_vpn_connecting_failed')"
+			disp_message ":$(l 'box_backup_vpn_connecting_failed')"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		else
-			lcd_message "$(l 'box_backup_vpn_connecting_success')" "${VPN_TYPE}"
+			disp_message ":$(l 'box_backup_vpn_connecting_success')" ":${VPN_TYPE}"
 			sleep $(( ${const_DISPLAY_HOLD_SEC} / 2 ))
 
 			sudo "${WORKING_DIR}/cron-ip.sh" 'force'
@@ -462,7 +459,7 @@ function sync_return_code_decoder() {
 		# External mode
 		# If display support is enabled, display the specified message
 
-		lcd_message "$(l 'box_backup_insert_target_1')" "$(l 'box_backup_insert_target_2')"
+		disp_message ":$(l 'box_backup_insert_target_1')" ":$(l 'box_backup_insert_target_2')"
 
 		# Wait for a USB usb device (e.g., a USB flash drive)
 		UUID_USB_1=$(mount_device "usb_1" true "${UUID_USB_1}" "${UUID_USB_2}")
@@ -483,7 +480,7 @@ function sync_return_code_decoder() {
 
 		unset IFS
 
-		lcd_message "$(l 'box_backup_usb_target_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
+		disp_message ":$(l 'box_backup_usb_target_ok')" ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FREE}" ":${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
 			sleep "${const_DISPLAY_HOLD_SEC}"
@@ -506,7 +503,7 @@ function sync_return_code_decoder() {
 		unset IFS
 
 		# If display support is enabled, notify that the usb device has been mounted
-		lcd_message "$(l 'box_backup_int_storage_ok')" "${STOR_SIZE}" "${STOR_USED}" "${STOR_FREE}" "${STOR_FSTYPE}"
+		disp_message ":$(l 'box_backup_int_storage_ok')" ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FREE}" ":${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
 			sleep "${const_DISPLAY_HOLD_SEC}"
@@ -517,14 +514,14 @@ function sync_return_code_decoder() {
 			TARGET_PATH="${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
 
 	elif [ "${TARGET_MODE}" = "cloud" ]; then
-			lcd_message "$(l 'box_backup_waiting_for_cloud_1')" "$(l 'box_backup_waiting_for_cloud_2')" "${CLOUDSERVICE}"
+			disp_message ":$(l 'box_backup_waiting_for_cloud_1')" ":$(l 'box_backup_waiting_for_cloud_2')" ":${CLOUDSERVICE}"
 
 			TARGET_PATH="${const_CLOUD_MOUNT_POINT}/${conf_BACKUP_TARGET_BASEDIR_CLOUD}"
 
 			mount_cloud "${CLOUDSERVICE}" "${const_CLOUD_MOUNT_POINT}"
 
 	# elif [ "${TARGET_MODE}" = "NEW_STORAGE_DEFINITION" ]; then
-	#         lcd_message "+$(l 'box_backup__1')" "+$(l 'box_backup__2')"
+	#         disp_message ":$(l 'box_backup__1')" ":$(l 'box_backup__2')"
 	#         ...
 	#         # Set usb path
 	#         TARGET_PATH
@@ -532,7 +529,7 @@ function sync_return_code_decoder() {
 	else
 		# no defined mode selected
 		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-			lcd_message "$(l 'box_backup_no_valid_destination_mode_1')" "$(l 'box_backup_no_valid_destination_mode_2')" "$(l 'box_backup_no_valid_destination_mode_3')"
+			disp_message ":$(l 'box_backup_no_valid_destination_mode_1')" ":$(l 'box_backup_no_valid_destination_mode_2')" ":$(l 'box_backup_no_valid_destination_mode_3')"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		fi
@@ -555,7 +552,7 @@ function sync_return_code_decoder() {
 	if [ "${SOURCE_MODE}" = "usb" ]; then
 
 		# If display support is enabled, display the specified message
-		lcd_message "$(l 'box_backup_insert_source_1')" "$(l 'box_backup_insert_source_2')"
+		disp_message ":$(l 'box_backup_insert_source_1')" ":$(l 'box_backup_insert_source_2')"
 
 		# Source device
 		UUID_USB_2=$(mount_device "usb_2" true "${UUID_USB_1}" "${UUID_USB_2}")
@@ -574,7 +571,7 @@ function sync_return_code_decoder() {
 
 		unset IFS
 
-		lcd_message "$(l 'box_backup_usb_source_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
+		disp_message ":$(l 'box_backup_usb_source_ok')" ":$(l 'box_backup_working')..." ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
 			sleep "${const_DISPLAY_HOLD_SEC}"
@@ -597,14 +594,14 @@ function sync_return_code_decoder() {
 		SOURCE_IDENTIFIER="Source ID: ${ID}"
 
 	elif [ "${SOURCE_MODE}" = "ios" ]; then
-		lcd_message "$(l 'box_backup_connect_ios_1')" "$(l 'box_backup_connect_ios_2')" "$(l 'box_backup_connect_ios_3')"
+		disp_message ":$(l 'box_backup_connect_ios_1')" ":$(l 'box_backup_connect_ios_2')" ":$(l 'box_backup_connect_ios_3')"
 
 		# Try to mount the iOS device
 		ifuse ${const_IOS_MOUNT_POINT} -o allow_other
 
 		# Waiting for the iOS device to be mounted
 		until [ ! -z "$(ls -A ${const_IOS_MOUNT_POINT})" ]; do
-			lcd_message "$(l 'box_backup_no_ios_waiting_1')" "$(l 'box_backup_no_ios_waiting_2')..."
+			disp_message ":$(l 'box_backup_no_ios_waiting_1')" ":$(l 'box_backup_no_ios_waiting_2')..."
 			sleep 5
 			sudo ifuse ${const_IOS_MOUNT_POINT} -o allow_other
 		done
@@ -643,7 +640,7 @@ function sync_return_code_decoder() {
 
 		unset IFS
 
-		lcd_message "$(l 'box_backup_int_storage_ok')" "$(l 'box_backup_working')..." "${STOR_SIZE}" "${STOR_USED}" "${STOR_FSTYPE}"
+		disp_message ":$(l 'box_backup_int_storage_ok')" ":$(l 'box_backup_working')..." ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FSTYPE}"
 
 		if [ $conf_DISP = true ]; then
 			sleep "${const_DISPLAY_HOLD_SEC}"
@@ -668,7 +665,7 @@ function sync_return_code_decoder() {
 	elif [ "${SOURCE_MODE}" = "camera" ]; then
 		# Source camera
 		# If display support is enabled, display the specified message
-		lcd_message "$(l 'box_backup_connect_camera_1')" "$(l 'box_backup_connect_camera_2')"
+		disp_message ":$(l 'box_backup_connect_camera_1')" ":$(l 'box_backup_connect_camera_2')"
 
 		# Wait for camera
 		DEVICE=$(sudo gphoto2 --auto-detect | grep usb | cut -b 36-42 | sed 's/,/\//')
@@ -678,7 +675,7 @@ function sync_return_code_decoder() {
 		done
 
 		# If display support is enabled, notify that the camera is detected
-		lcd_message "$(l 'box_backup_camera_ok')" "$(l 'box_backup_working')..."
+		disp_message ":$(l 'box_backup_camera_ok')" ":$(l 'box_backup_working')..."
 
 		# Obtain camera model
 		# Create the target directory with the camera model as its name
@@ -698,7 +695,7 @@ function sync_return_code_decoder() {
 			CAMERA_SERIAL_FORMATED="...${CAMERA_SERIAL: -10}"
 		fi
 
-		lcd_message "${CAMERA}" "${MANUFACTURER}" "SN: ${CAMERA_SERIAL_FORMATED}"
+		disp_message ":${CAMERA}" ":${MANUFACTURER}" ":SN: ${CAMERA_SERIAL_FORMATED}"
 
 		CAMERA_SERIAL_PATH_EXTENSION=""
 		if [ "${CAMERA_SERIAL}" != "" ]; then
@@ -746,7 +743,7 @@ function sync_return_code_decoder() {
 						if [ $CAMERA_STORAGE_EXISTS = true ]; then
 							SOURCE_PATHS+=("${MaskSetFolder:1}")
 						else
-							lcd_message "$(l 'box_backup_camera_storage_not_exists_1')" "${MaskSetFolder:1}" "$(l 'box_backup_camera_storage_not_exists_2')"
+							disp_message ":$(l 'box_backup_camera_storage_not_exists_1')" ":${MaskSetFolder:1}" ":$(l 'box_backup_camera_storage_not_exists_2')"
 						fi
 
 					elif [ ! -z "${MaskSetFolder}" ]; then
@@ -759,7 +756,7 @@ function sync_return_code_decoder() {
 
 		# only if Camera_Search_Folders has no values yet
 		if [ ${#SOURCE_PATHS[@]} -eq 0 ]; then
-			lcd_message "$(l 'box_backup_camera_scanning_folders')"
+			disp_message ":$(l 'box_backup_camera_scanning_folders')"
 			Camera_Folders=( $(sudo gphoto2 --list-folders | cut -d"'" -f2 | grep "^/") )
 
 			for Camera_Folder in "${Camera_Folders[@]}"; do
@@ -810,7 +807,7 @@ function sync_return_code_decoder() {
 
 	# elif [ "${SOURCE_MODE}" = "NEW_SOURCE_DEFINITION" ]; then
 	#
-	#         lcd_message "Ready" "Insert NEW_SOURCE_TYPE"
+	#         disp_message ":Ready" ":Insert NEW_SOURCE_TYPE"
 	#         ...
 	#         # Specify backup path and source identifier
 	#         SOURCE_PATH
@@ -820,7 +817,7 @@ function sync_return_code_decoder() {
 	else
 		# no defined mode selected
 		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-			lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+1"
+			disp_message ":$(l 'box_backup_no_valid_source_mode_1')" ":$(l 'box_backup_no_valid_source_mode_2')" ":$(l 'box_backup_no_valid_source_mode_3')" "" ":1"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		fi
@@ -839,7 +836,7 @@ function sync_return_code_decoder() {
 
 	TRANSFER_INFO_DISP=""
 	SOURCE_FOLDER_NUMBER=""
-	MESSAGE_LCD=""
+	MESSAGE_DISPLAY=""
 	SYNC_ERROR_FINAL_RUN=false
 	SYNC_ERROR_NOT_SOLVED=false
 
@@ -872,7 +869,7 @@ function sync_return_code_decoder() {
 			SYNC_LOG="${SYNC_LOG}---- $(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} ${SOURCE_PATH} ----"
 
 			if [ "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" -gt "1" ]; then
-				lcd_message "$(l 'box_backup_try_backup') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_of') ${TRIES_MAX}"
+				disp_message ":$(l 'box_backup_try_backup') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_of') ${TRIES_MAX}"
 				sleep 5 # time to stabilize the system after device-lost
 			fi
 
@@ -913,7 +910,7 @@ function sync_return_code_decoder() {
 				FILES_COUNT_STORAGE_PRE=$(find $BACKUP_PATH -type f | wc -l)
 			fi
 
-			lcd_message "$(l "box_backup_working")..."
+			disp_message ":$(l "box_backup_working")..."
 
 			FILES_TO_SYNC="$(calculate_files_to_sync "${SOURCE_PATH}")"
 			log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
@@ -979,7 +976,7 @@ function sync_return_code_decoder() {
 			else
 				# no defined mode selected
 				if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-					lcd_message "+$(l 'box_backup_no_valid_source_mode_1')" "+$(l 'box_backup_no_valid_source_mode_2')" "+$(l 'box_backup_no_valid_source_mode_3')" "" "+3"
+					disp_message ":$(l 'box_backup_no_valid_source_mode_1')" ":$(l 'box_backup_no_valid_source_mode_2')" ":$(l 'box_backup_no_valid_source_mode_3')" ":" ":3"
 					TARGET_MODE='none'
 					SOURCE_MODE='none'
 				fi
@@ -1006,10 +1003,10 @@ function sync_return_code_decoder() {
 				FILES_TRANSFERRED=$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW}))
 				if [ "${FILES_TRANSFERRED}" -lt "0" ]; then FILES_TRANSFERRED=$(l "box_backup_unknown"); fi
 				TRANSFER_INFO[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied").\n"
-				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}+${SOURCE_FOLDER_NUMBER}. $FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied")\n"
+				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}s=b:${SOURCE_FOLDER_NUMBER}. $FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied")\n"
 			else
 				TRANSFER_INFO[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l "box_backup_result_suspect").\n"
-				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}+${SOURCE_FOLDER_NUMBER}. $(l "box_backup_result_suspect")\n"
+				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}s=b:${SOURCE_FOLDER_NUMBER}. $(l "box_backup_result_suspect")\n"
 				FILES_TO_SYNC=0
 			fi
 			FILES_TO_SYNC="${FILES_TO_SYNC_NEW}"
@@ -1048,43 +1045,43 @@ function sync_return_code_decoder() {
 			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}"); SYNC_TIME: ${SYNC_TIME}" 3
 
 			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" ]; then
-					lcd_message "$(l 'box_backup_error_cooling_1')" "$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." "$(l 'box_backup_error_cooling_3')" "$(l 'box_backup_error_cooling_4')" ""
+					disp_message ":$(l 'box_backup_error_cooling_1')" ":$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." ":$(l 'box_backup_error_cooling_3')" ":$(l 'box_backup_error_cooling_4')" ":"
 					sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
 			fi
 
 
 			# prepare message for mail and power off
 			if [ "${#SOURCE_PATHS[@]}" -gt "1" ]; then
-				MESSAGE_LCD="${MESSAGE_LCD}+${SOURCE_FOLDER_NUMBER}: "
+				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:${SOURCE_FOLDER_NUMBER}: "
 			else
-				MESSAGE_LCD="${MESSAGE_LCD}+"
+				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:"
 			fi
 
 			if [ -z "${SYNC_ERROR_TMP}" ]; then
 				SYNC_ERROR_FINAL_RUN=false
 
 				MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_backup_complete')."
-				MESSAGE_LCD="${MESSAGE_LCD} $(l 'box_backup_complete').\n"
+				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_complete').\n"
 			else
 				SYNC_ERROR_FINAL_RUN=true
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]]; then
 					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_lost_device')"
-					MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_lost_device')\n"
+					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_lost_device')\n"
 				fi
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Files missing!" ]]; then
 					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_files_missing')"
-					MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_files_missing')\n"
+					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_files_missing')\n"
 				fi
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Exception" ]]; then
 					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")"
-					MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")\n"
+					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")\n"
 				fi
 			fi
 
-			MESSAGE_LCD="${MESSAGE_LCD}+$(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}\n"
+			MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}\n"
 
 		done # retry
 
@@ -1096,7 +1093,7 @@ function sync_return_code_decoder() {
 ########################
 
 	if [ $(vpn_status "OpenVPN") = "up" ] || [ $(vpn_status "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard") = "up" ]; then
-		lcd_message "$(l 'box_backup_vpn_disconnecting')"
+		disp_message ":$(l 'box_backup_vpn_disconnecting')"
 		vpn_stop "OpenVPN"
 		vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
 
@@ -1201,7 +1198,7 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 		sudo sqlite3 "${DB}" "VACUUM;"
 
 		# import preexisting tims into database
-		lcd_message "$(l "box_backup_generating_database_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_database_finding_images3")" ""
+		disp_message ":$(l "box_backup_generating_database_finding_images1")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")" ":$(l "box_backup_generating_database_finding_images3")" ":"
 
 		# find all tims and convert their filename to the estimated original filename:
 		## 1. replace space by substitute of space ##**##
@@ -1253,7 +1250,7 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 		# prepare database
 		db_setup
 
-		lcd_message "$(l "box_backup_generating_thumbnails_finding_images1")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "$(l "box_backup_generating_thumbnails_finding_images3")" ""
+		disp_message ":$(l "box_backup_generating_thumbnails_finding_images1")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")" ":$(l "box_backup_generating_thumbnails_finding_images3")" ":"
 
 		#find all images; replace "space" by substitute of space "##**##"
 		INAMES=""
@@ -1386,7 +1383,7 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 		# prepare database
 		db_setup
 
-		lcd_message "$(l "box_backup_updating_exif")" "$(l "box_backup_mode_${TARGET_MODE}")" "$(l "box_backup_counting_images")" "" ""
+		disp_message ":$(l "box_backup_updating_exif")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")" ":" ":"
 
 
 		# select directory and filename as DirFile and replace spaces by placeholder
@@ -1429,9 +1426,9 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 # Power off
 	if [ "${SECONDARY_BACKUP_FOLLOWS}" = "false" ]; then
 		#remove leading spaces
-		MESSAGE_LCD="$(echo -e "${MESSAGE_LCD}" | sed -e 's/^[[:space:]]*//')"
+		MESSAGE_DISPLAY="$(echo -e "${MESSAGE_DISPLAY}" | sed -e 's/^[[:space:]]*//')"
 
-		source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_LCD}" "${TRANSFER_INFO_DISP::-2}"
+		source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_DISPLAY}" "${TRANSFER_INFO_DISP::-2}"
 	fi
 
 exit 0

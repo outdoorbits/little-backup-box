@@ -116,11 +116,11 @@ sudo rm "${const_CMD_RUNNER_LOCKFILE}" > /dev/null 2>&1
 # Load time library
 . "${WORKING_DIR}/lib-time.sh"
 
-# Load LCD library
-. "${WORKING_DIR}/lib-lcd.sh"
+# Load DISPLAY library
+. "${WORKING_DIR}/lib-display.sh"
 
 # Hello
-lcd_message "IMAGE:${WORKING_DIR}/little-backup-box.bmp"
+disp_message "IMAGE=${WORKING_DIR}/little-backup-box.bmp"
 sleep 1
 
 # Display IP
@@ -135,7 +135,7 @@ fi
 ## default backup 1
 if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET}" != "none" ]; then
 	if [ "${SECONDARY_BACKUP_FOLLOWS}" == "true" ]; then
-		lcd_message "$(l 'box_backup_primary')"
+		disp_message "$(l 'box_backup_primary')"
 		sleep 1
 	fi
 
@@ -144,7 +144,7 @@ fi
 
 ## default-backup 2
 if [ "${SECONDARY_BACKUP_FOLLOWS}" == "true" ]; then
-	lcd_message "$(l 'box_backup_secondary')"
+	disp_message "$(l 'box_backup_secondary')"
 	sleep 1
 
 	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE2}" "${conf_BACKUP_DEFAULT_TARGET2}"

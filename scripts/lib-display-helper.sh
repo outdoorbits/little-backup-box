@@ -30,12 +30,15 @@ source "$CONFIG"
 . "${WORKING_DIR}/lib-time.sh"
 
 # Load Log library
-. "${WORKING_DIR}/lib-lcd.sh"
+. "${WORKING_DIR}/lib-log.sh"
+
+# Load DISPLAY library
+. "${WORKING_DIR}/lib-display.sh"
 
 #Arguments:
 LineCount=$#
 Lines=( "$@" )
 
-lcd_message "${Lines[0]}" "${Lines[1]}" "${Lines[2]}" "${Lines[3]}" "${Lines[4]}"
+disp_message "${Lines[0]}" "${Lines[1]}" "${Lines[2]}" "${Lines[3]}" "${Lines[4]}"
 
 exit 0

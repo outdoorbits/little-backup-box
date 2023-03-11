@@ -15,6 +15,30 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# Display messages are read from const_DISPLAY_CONTENT_FOLDER
+#
+# format:
+# FORMAT-OPTIONS:TEXT
+#
+# multiple format options can be separated by "," (without spaces)
+#
+# for standard-format just use ":"
+#
+## s: style
+# s=b: BASIC
+# s=h: HIGHLIGHT
+# s=a: ALERT
+#
+## u: underline
+#
+## PGBAR
+# s=b:PGBAR=20
+#
+## IMAGE
+# IMAGE=PATH
+
+
+
 import time
 import sys
 import os
@@ -30,15 +54,16 @@ from PIL import Image, ImageFont
 
 WORKING_DIR = os.path.dirname(__file__)
 
-def main(device, FontSize, Lines):
+def main(device, color_model, FontSize, Lines):
 
-	if Lines[0][1:7] == "IMAGE:":
+	if ":IMAGE=" in Lines[0]:
 		# PRINT IMAGE FROM FILE
 		# Only the first line can be interpreted as image. In This case no further text will be printed.
-		# FORMAT: "IMAGE:filename"
+		# FORMAT: "IMAGE=filename"
 
-		ImageLine = Lines[0].split(":")
+		Formatstring, Content = Lines[0].split(':',1)
 
+		ImageLine = Content.split("=",1)
 		ImageFilename = ImageLine[1]
 
 		image = Image.open(ImageFilename)
@@ -63,39 +88,93 @@ def main(device, FontSize, Lines):
 			line_height = bottom - top
 
 			maxLines = int(device.height / line_height)
-			if maxLines > 5:
-				maxLines = 5
+			if maxLines > CONST_DISPLAY_LINES_LIMIT:
+				maxLines = CONST_DISPLAY_LINES_LIMIT
 
 			y_space = 0
 			if maxLines > 1:
 				Spare_Y = device.height - maxLines * line_height
 				y_space = int (Spare_Y / (maxLines - 1))
 
+			for n in range(0, maxLines):
 
+				Line = Lines[n]
 
-
-			for n in range(0,maxLines):
-
-				if Lines[n][0] == "+":
+				# basic color settings
+				if color_model == "1":
+					# black and white
 					fg_fill	= 255
 					bg_fill	= 0
-				else:
-					fg_fill	= 0
-					bg_fill	= 255
+
+				elif color_model == "RGB":
+					# RGB
+					fg_fill	= 65535
+					bg_fill	= 0
+
+				elif color_model == "RGBA":
+					# RGBA
+					fg_fill	= 255
+					bg_fill	= 0
+
+				# basic text decoration settings
+				inverted = False
+				underline = False
+
+				Formatstring, Content = Line.split(':',1)
+				Formats = Formatstring.split(',')
+
+				for Format in Formats:
+
+					if '=' in Format:
+						FormatType, FormatValue = Format.split('=',1)
+					else:
+						FormatType = Format
+
+					if FormatType == 's':
+						if color_model == '1':
+							# black and white
+							if FormatValue == 'h':
+								fg_fill = 0
+								bg_fill = 255
+								inverted = True
+
+						elif color_model == "RGB":
+							# RGB
+							if FormatValue == 'h':
+								fg_fill = (0,0,255)
+								bg_fill = (0,0,0)
+								inverted = False
+							elif FormatValue == 'a':
+								fg_fill = (0,0,0)
+								bg_fill = (255,0,0)
+								inverted = True
+
+						elif color_model == "RGBA":
+							# RGBA
+							if FormatValue == 'h':
+								fg_fill = (0,0,255,1)
+								bg_fill = (0,0,0,1)
+								inverted = False
+							elif FormatValue == 'a':
+								fg_fill = (0,0,0,0)
+								bg_fill = (255,0,0,1)
+								inverted = True
+
+					if FormatType == 'u':
+						underline = True
 
 				y	= (n)*line_height + y_shift - 1 + y_space
 
 				# Draw a filled box in case of inverted output
-				if Lines[n][0] == "-":
+				if inverted:
 					draw.rectangle((x, y, device.width, y + line_height), outline=bg_fill, fill=bg_fill)
 
-				if Lines[n][1:7] == "IMAGE:":
-					# it's not first line (else it would be catched above), just extract filename
-					Lines[n] = ''
+				if Content[0:6] == "IMAGE=":
+					Content = ''
 
-				if Lines[n][1:7] == "PGBAR:":
+				if Content[0:6] == "PGBAR=":
 					try:
-						progress	= float(Lines[n][7:])
+						progress	= float(Content[6:])
 					except ValueError:
 						progress	= 0
 
@@ -106,7 +185,7 @@ def main(device, FontSize, Lines):
 						progress	= int(progress + 0.5)
 
 					# define text to print
-					Lines[n]	= " {}%".format(str(progress))
+					Content	= "{}%".format(str(progress))
 
 					(left, top, right, bottom) = draw.textbbox((0,0),"100%::",font=FONT)
 					pgbar_text_length = right - left
@@ -132,7 +211,12 @@ def main(device, FontSize, Lines):
 					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
 
 				# Write text
-				draw.text((x + 1, y), Lines[n][1:], font=FONT, fill=fg_fill)
+				draw.text((x + 1, y), Content, font=FONT, fill=fg_fill)
+
+				if underline:
+					(left, top, right, bottom) = draw.textbbox((0,0),Content,font=FONT)
+					draw.line((x + 1, y + line_height - 1, x + 1 + right - left, y + line_height - 1), fill=255, width=2)
+
 
 
 if __name__ == "__main__":
@@ -152,6 +236,7 @@ if __name__ == "__main__":
 	constants = ConfigObj("{}/constants.sh".format(WORKING_DIR))
 	const_DISPLAY_CONTENT_FOLDER	= constants['const_DISPLAY_CONTENT_FOLDER']
 	const_DISPLAY_CONTENT_OLD_FILE	= constants['const_DISPLAY_CONTENT_OLD_FILE']
+	CONST_DISPLAY_LINES_LIMIT		= int(constants['CONST_DISPLAY_LINES_LIMIT'])
 
 	if conf_DISP_CONNECTION == 'I2C':
 		serial = i2c(port=1, address=conf_DISP_I2C_ADDRESS)
@@ -183,19 +268,39 @@ if __name__ == "__main__":
 			ContenFileList.sort()
 			ContentFile = "{}/{}".format(const_DISPLAY_CONTENT_FOLDER,ContenFileList[0])
 
-			Lines = ["+","+","+","+","+"]
-			n=0
-			with open(ContentFile, 'r') as f:
-				for Line in f:
-					if n < 5:
-						Lines[n] = Line.replace("\n", "")
-					n = n + 1
+			Lines = []
+			# read new lines
+			with open(ContentFile, 'r') as CF:
+				for Line in CF:
+					if len (Lines) < CONST_DISPLAY_LINES_LIMIT:
+						Line = Line.replace("\n", "")
+
+						if Line:
+							if (Line[0:1] == ':'):
+									Line = "s=h{}".format(Line)
+							elif ":" not in Line:
+								Line = "s=h:{}".format(Line)
+
+							Lines.append(Line)
+
+			# read old lines
+			if len(Lines) < CONST_DISPLAY_LINES_LIMIT and os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
+				with open(const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
+					for Line in oCF:
+						if len (Lines) < CONST_DISPLAY_LINES_LIMIT:
+							Line = Line.replace("\n", "")
+							Line = Line.split(':',1)[-1]
+							if Line:
+								Line = "s=b:{}".format(Line)
+								Lines.append(Line)
+
+			# fill line count to CONST_DISPLAY_LINES_LIMIT
+			while len(Lines) < CONST_DISPLAY_LINES_LIMIT:
+				Lines.append("s=b:")
+
 
 			os.replace(ContentFile,const_DISPLAY_CONTENT_OLD_FILE)
 
-			main(device,conf_DISP_FONT_SIZE,Lines)
+			main(device,conf_DISP_COLOR_MODEL,conf_DISP_FONT_SIZE,Lines)
 
 		time.sleep(conf_DISP_FRAME_TIME)
-
-
-

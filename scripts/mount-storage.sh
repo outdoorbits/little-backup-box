@@ -35,8 +35,8 @@ DEVICE=${2} # "usb_1" or "usb_2"
 # Load Log library
 . "${WORKING_DIR}/lib-log.sh"
 
-# Load LCD library
-. "${WORKING_DIR}/lib-lcd.sh"
+# Load DISPLAY library
+. "${WORKING_DIR}/lib-display.sh"
 
 # Load Device library
 . "${WORKING_DIR}/lib-devices.sh"

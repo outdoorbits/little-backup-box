@@ -23,7 +23,7 @@
 # - source lib-language.sh
 # - source lib-log.sh
 # - source lib-time.sh
-# - source lib-lcd.sh
+# - source lib-display.sh
 
 function mount_device() {
 	# mounts the device, if WAIT_FOR_MOUNT=true, waits until the device is available
@@ -165,7 +165,7 @@ function mount_device() {
 				local RET=""
 
 				if [ ! -z "${MOUNT_DEVICE}" ]; then
-					lcd_message "$(l "box_backup_mount"):" "$(l "box_backup_${MOUNT_DEVICE}")"
+					disp_message ":$(l "box_backup_mount"):" ":$(l "box_backup_${MOUNT_DEVICE}")"
 				fi
 
 				if [[ " fat vfat exfat ntfs " =~ " ${DEVICE_CHOSEN_FSTYPE} " ]]; then
@@ -287,7 +287,7 @@ function umount_device() {
 		fi
 
 		if [ ! -z "${MOUNT_DEVICE}" ]; then
-			lcd_message "$(l "box_backup_umount"):" "$(l "box_backup_${MOUNT_DEVICE}")"
+			disp_message ":$(l "box_backup_umount"):" ":$(l "box_backup_${MOUNT_DEVICE}")"
 		fi
 
 		sudo service smbd start

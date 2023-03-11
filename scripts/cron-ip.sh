@@ -34,8 +34,8 @@ IP_MAIL_SENT_MARKERFILE="${WORKING_DIR}/tmp/ip-sent.txt"
 # Load Mail library
 . "${WORKING_DIR}/lib-mail.sh"
 
-# Load LCD library
-. "${WORKING_DIR}/lib-lcd.sh"
+# Load DISPLAY library
+. "${WORKING_DIR}/lib-display.sh"
 
 #load language library
 . "${WORKING_DIR}/lib-language.sh"
@@ -59,9 +59,9 @@ IP_LINES=$(printf '%s\n' "${IP_ARRAY[@]}" | tac)
 if ([ $conf_DISP_IP_REPEAT = true ]  || [ ! -z "${FORCE_DISPLAY}" ]) &&  [ ! -z "${IP_LINES}" ]; then
 	if ! grep -q "${IP}" "${const_DISPLAY_CONTENT_OLD_FILE}"; then
 		if [ "${INTERNET_STATUS}" = "connected" ]; then
-			lcd_message "IP ($(l 'box_cronip_online')):" "${IP_LINES}"
+			disp_message ":IP ($(l 'box_cronip_online')):" ":${IP_LINES}"
 		else
-			lcd_message "IP ($(l 'box_cronip_offline')):" "${IP_LINES}"
+			disp_message ":IP ($(l 'box_cronip_offline')):" ":${IP_LINES}"
 		fi
 	fi
 fi
@@ -92,7 +92,7 @@ if [ ! -z $conf_MAIL_NOTIFICATIONS ] && [ ! -f "${IP_MAIL_SENT_MARKERFILE}" ]; t
 			if [ "${IP}" != "${IP_NEW}" ] || [ "${INTERNET_STATUS}" != "${INTERNET_STATUS_NEW}" ]; then
 				# IP changed
 				IP="${IP_NEW}"
-				lcd_message "IP ($(l 'box_cronip_online')):" "${IP_LINES}"
+				disp_message ":IP ($(l 'box_cronip_online')):" ":${IP_LINES}"
 			fi
 		fi
 
