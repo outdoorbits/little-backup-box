@@ -1052,9 +1052,7 @@ function sync_return_code_decoder() {
 
 			# prepare message for mail and power off
 			if [ "${#SOURCE_PATHS[@]}" -gt "1" ]; then
-				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:${SOURCE_FOLDER_NUMBER}: "
-			else
-				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:"
+				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:${SOURCE_FOLDER_NUMBER}:"
 			fi
 
 			if [ -z "${SYNC_ERROR_TMP}" ]; then

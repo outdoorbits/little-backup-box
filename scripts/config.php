@@ -483,6 +483,18 @@ function upload_settings() {
 					</div>
 
 					<div>
+						<label for="conf_DISP_FONT_SIZE"><?php echo L::config_display_font_size_label; ?></label><br>
+							<select name="conf_DISP_FONT_SIZE" id="conf_DISP_FONT_SIZE">
+								<?php
+									$display_font_sizes_array=array(12,14,16);
+									foreach($display_font_sizes_array as $display_font_size) {
+										echo "<option value='" . $display_font_size . "' " . ($config["conf_DISP_FONT_SIZE"] == $display_font_size?" selected":"") . ">" . $display_font_size . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
 						<label for="conf_DISP_FRAME_TIME"><?php echo L::config_display_frame_time_label; ?></label><br>
 							<select name="conf_DISP_FRAME_TIME" id="conf_DISP_FRAME_TIME">
 								<?php
@@ -504,23 +516,31 @@ function upload_settings() {
 						<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
 					</div>
 
-				<h3><?php echo L::config_display_connection_header; ?></h3>
-					<label for="conf_DISP_CONNECTION"><?php echo L::config_display_connection_label; ?></label><br>
-						<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
-							<?php
-								$display_connections_array=array("I2C","SPI");
-								foreach($display_connections_array as $display_connection) {
-									echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
-								}
-							?>
-						</select>
+				<h3><?php echo L::config_display_hardware_header; ?></h3>
 
-				<h3><?php echo L::config_display_characteristics_header; ?></h3>
+					<div>
+						<label for="conf_DISP_DRIVER"><?php echo L::config_display_driver_label; ?></label><br>
+							<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
+								<?php
+									$display_drivers_array=array(
+										"SSD1306",
+										"SSD1309",
+										"SSD1322",
+										"SSD1331",
+										"SH1106"
+									);
+									foreach($display_drivers_array as $display_driver) {
+										echo "<option value='" . $display_driver . "' " . ($config["conf_DISP_DRIVER"] == $display_driver?" selected":"") . ">" . $display_driver . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
 					<div>
 						<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br>
 							<select name="conf_DISP_RESOLUTION_X" id="conf_DISP_RESOLUTION_X">
 								<?php
-									$display_resolutions_array=array("128");
+									$display_resolutions_array=array(96,128);
 									foreach($display_resolutions_array as $display_resolution) {
 										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_X"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
 									}
@@ -554,60 +574,49 @@ function upload_settings() {
 					</div>
 
 					<div>
-						<label for="conf_DISP_FONT_SIZE"><?php echo L::config_display_font_size_label; ?></label><br>
-							<select name="conf_DISP_FONT_SIZE" id="conf_DISP_FONT_SIZE">
-								<?php
-									$display_font_sizes_array=array(12,14,16);
-									foreach($display_font_sizes_array as $display_font_size) {
-										echo "<option value='" . $display_font_size . "' " . ($config["conf_DISP_FONT_SIZE"] == $display_font_size?" selected":"") . ">" . $display_font_size . "</option>";
-									}
-								?>
-							</select>
+						<h4><?php echo L::config_display_connection_header; ?></h4>
+							<label for="conf_DISP_CONNECTION"><?php echo L::config_display_connection_label; ?></label><br>
+								<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
+									<?php
+										$display_connections_array=array("I2C","SPI");
+										foreach($display_connections_array as $display_connection) {
+											echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
+										}
+									?>
+								</select>
 					</div>
 
-				<h3><?php echo L::config_display_driver_header; ?></h3>
-					<label for="conf_DISP_DRIVER"><?php echo L::config_display_driver_label; ?></label><br>
+					<div>
+						<h4><?php echo L::config_display_i2c_header; ?></h4>
+							<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_display_i2c_address_label; ?></label><br>
 
-						<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
 							<?php
-								$display_drivers_array=array(
-									"SSD1306",
-									"SSD1309",
-									"SSD1322",
-									"SH1106"
-								);
-								foreach($display_drivers_array as $display_driver) {
-									echo "<option value='" . $display_driver . "' " . ($config["conf_DISP_DRIVER"] == $display_driver?" selected":"") . ">" . $display_driver . "</option>";
+								$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
+
+								$I2C_LIST=array("3c","3d");
+								foreach($I2C_LIST as $I2C) {
+							?>
+									<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
+									<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br>
+							<?php
 								}
 							?>
-						</select>
+					</div>
 
-				<h3><?php echo L::config_display_i2c_header; ?></h3>
-					<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_display_i2c_address_label; ?></label><br>
+					<div>
+						<h4><?php echo L::config_display_spi_header; ?></h4>
+							<label for="conf_DISP_SPI_PORT"><?php echo L::config_display_spi_port_label; ?></label><br>
 
-					<?php
-						$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
-
-						$I2C_LIST=array("3c","3d");
-						foreach($I2C_LIST as $I2C) {
-					?>
-							<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
-							<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br>
-					<?php
-						}
-					?>
-
-				<h3><?php echo L::config_display_spi_header; ?></h3>
-					<label for="conf_DISP_SPI_PORT"><?php echo L::config_display_spi_port_label; ?></label><br>
-
-						<select name="conf_DISP_SPI_PORT" id="conf_DISP_SPI_PORT">
+									<?php
+										$spi_ports_array=array("0","1");
+										foreach($spi_ports_array as $spi_port) {
+							?>
+									<input type="radio" id="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>" name="conf_DISP_SPI_PORT" value="<?php echo $spi_port; ?>" <?php echo strcasecmp($config['conf_DISP_SPI_PORT'],$spi_port)==0?"checked":""; ?>>
+									<label for="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>"><?php echo $spi_port; ?></label><br>
 							<?php
-								$spi_ports_array=array("0","1");
-								foreach($spi_ports_array as $spi_port) {
-									echo "<option value='" . $spi_port . "' " . ($config["conf_DISP_SPI_PORT"] == $spi_port?" selected":"") . ">" . $spi_port . "</option>";
 								}
 							?>
-						</select>
+					</div>
 
 			</details>
 		</div>

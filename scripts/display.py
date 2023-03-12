@@ -141,23 +141,23 @@ def main(device, color_model, FontSize, Lines):
 						elif color_model == "RGB":
 							# RGB
 							if FormatValue == 'h':
-								fg_fill = (0,0,255)
-								bg_fill = (0,0,0)
+								fg_fill = (255, 255, 000)
+								bg_fill = (000, 000, 000)
 								inverted = False
 							elif FormatValue == 'a':
-								fg_fill = (0,0,0)
-								bg_fill = (255,0,0)
+								fg_fill = (255, 000, 000)
+								bg_fill = (255, 255, 255)
 								inverted = True
 
 						elif color_model == "RGBA":
 							# RGBA
 							if FormatValue == 'h':
-								fg_fill = (0,0,255,1)
-								bg_fill = (0,0,0,1)
+								fg_fill = (255, 255, 000, 255)
+								bg_fill = (000, 000, 000, 255)
 								inverted = False
 							elif FormatValue == 'a':
-								fg_fill = (0,0,0,0)
-								bg_fill = (255,0,0,1)
+								fg_fill = (255, 000, 000, 255)
+								bg_fill = (255, 255, 255, 255)
 								inverted = True
 
 					if FormatType == 'u':
@@ -251,6 +251,8 @@ if __name__ == "__main__":
 		device = ssd1309(serial)
 	elif conf_DISP_DRIVER == "SSD1322":
 		device = ssd1322(serial)
+	elif conf_DISP_DRIVER == "SSD1331":
+		device = ssd1331(serial)
 	elif conf_DISP_DRIVER == "SH1106":
 		device = sh1106(serial)
 	else:

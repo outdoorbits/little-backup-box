@@ -238,9 +238,7 @@
       "behavior_header": "Comportement d'affichage",
       "spi_header": "Configuration de l'affichage SPI",
       "spi_port_label": "Port SPI",
-      "driver_header": "Matériel",
       "driver_label": "Pilote d'affichage",
-      "characteristics_header": "Caractéristiques",
       "resolution_x_label": "Résolution horizontale (pixels)",
       "resolution_y_label": "Résolution verticale (pixels)",
       "color_model_label": "Couleur",
@@ -248,7 +246,8 @@
       "color_model_RGB": "RGB",
       "color_model_RGBA": "RGBA (RVB avec transparence)",
       "font_size_label": "Taille de police",
-      "frame_time_label": "Temps d'affichage minimum par image en secondes"
+      "frame_time_label": "Temps d'affichage minimum par image en secondes",
+      "hardware_header": "Matériel"
     }
   },
   "tools": {

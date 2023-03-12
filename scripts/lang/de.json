@@ -238,9 +238,7 @@
       "behavior_header": "Display-Verhalten",
       "spi_header": "SPI-Display-Konfiguration",
       "spi_port_label": "SPI-Port",
-      "driver_header": "Hardware",
       "driver_label": "Bildschirmtreiber",
-      "characteristics_header": "Eigenschaften",
       "resolution_x_label": "Horizontale Auflösung (Pixel)",
       "resolution_y_label": "Vertikale Auflösung (Pixel)",
       "color_model_label": "Farbe",
@@ -248,7 +246,8 @@
       "color_model_RGB": "RGB",
       "color_model_RGBA": "RGBA (RGB mit Transparenz)",
       "font_size_label": "Schriftgröße",
-      "frame_time_label": "Minimale Anzeigedauer pro Bild in Sekunden"
+      "frame_time_label": "Minimale Anzeigedauer pro Bild in Sekunden",
+      "hardware_header": "Hardware"
     }
   },
   "tools": {
