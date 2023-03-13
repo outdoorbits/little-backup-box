@@ -869,7 +869,7 @@ function sync_return_code_decoder() {
 			SYNC_LOG="${SYNC_LOG}---- $(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} ${SOURCE_PATH} ----"
 
 			if [ "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" -gt "1" ]; then
-				disp_message ":$(l 'box_backup_try_backup') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_of') ${TRIES_MAX}"
+				disp_message "a:$(l 'box_backup_try_backup') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_of') ${TRIES_MAX}"
 				sleep 5 # time to stabilize the system after device-lost
 			fi
 
@@ -1045,7 +1045,7 @@ function sync_return_code_decoder() {
 			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}"); SYNC_TIME: ${SYNC_TIME}" 3
 
 			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" ]; then
-					disp_message ":$(l 'box_backup_error_cooling_1')" ":$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." ":$(l 'box_backup_error_cooling_3')" ":$(l 'box_backup_error_cooling_4')" ":"
+					disp_message "a:$(l 'box_backup_error_cooling_1')" ":$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." ":$(l 'box_backup_error_cooling_3')" ":$(l 'box_backup_error_cooling_4')" ":"
 					sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
 			fi
 

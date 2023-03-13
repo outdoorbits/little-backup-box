@@ -54,7 +54,7 @@ from PIL import Image, ImageFont
 
 WORKING_DIR = os.path.dirname(__file__)
 
-def main(device, color_model, FontSize, Lines):
+def main(device, color_model, color_text, color_high, color_alert, color_bg, FontSize, Lines):
 
 	if ":IMAGE=" in Lines[0]:
 		# PRINT IMAGE FROM FILE
@@ -88,8 +88,8 @@ def main(device, color_model, FontSize, Lines):
 			line_height = bottom - top
 
 			maxLines = int(device.height / line_height)
-			if maxLines > CONST_DISPLAY_LINES_LIMIT:
-				maxLines = CONST_DISPLAY_LINES_LIMIT
+			if maxLines > const_DISPLAY_LINES_LIMIT:
+				maxLines = const_DISPLAY_LINES_LIMIT
 
 			y_space = 0
 			if maxLines > 1:
@@ -101,23 +101,10 @@ def main(device, color_model, FontSize, Lines):
 				Line = Lines[n]
 
 				# basic color settings
-				if color_model == "1":
-					# black and white
-					fg_fill	= 255
-					bg_fill	= 0
-
-				elif color_model == "RGB":
-					# RGB
-					fg_fill	= 65535
-					bg_fill	= 0
-
-				elif color_model == "RGBA":
-					# RGBA
-					fg_fill	= 255
-					bg_fill	= 0
+				fg_fill	= color_text
+				bg_fill	= color_bg
 
 				# basic text decoration settings
-				inverted = False
 				underline = False
 
 				Formatstring, Content = Line.split(':',1)
@@ -134,31 +121,22 @@ def main(device, color_model, FontSize, Lines):
 						if color_model == '1':
 							# black and white
 							if FormatValue == 'h':
-								fg_fill = 0
-								bg_fill = 255
-								inverted = True
-
-						elif color_model == "RGB":
-							# RGB
+								fg_fill = color_bg
+								bg_fill = color_text
+							if FormatValue == 'a':
+								underline = True
+						else:
+							# RGB(a)
 							if FormatValue == 'h':
-								fg_fill = (255, 255, 000)
-								bg_fill = (000, 000, 000)
-								inverted = False
+								fg_fill = color_high
 							elif FormatValue == 'a':
-								fg_fill = (255, 000, 000)
-								bg_fill = (255, 255, 255)
-								inverted = True
-
-						elif color_model == "RGBA":
-							# RGBA
-							if FormatValue == 'h':
-								fg_fill = (255, 255, 000, 255)
-								bg_fill = (000, 000, 000, 255)
-								inverted = False
-							elif FormatValue == 'a':
-								fg_fill = (255, 000, 000, 255)
-								bg_fill = (255, 255, 255, 255)
-								inverted = True
+								if color_alert != color_text and color_alert != color_high:
+									fg_fill = color_alert
+								elif color_alert != color_high:
+									fg_fill = color_alert
+									bg_fill = color_high
+								else:
+									underline = True
 
 					if FormatType == 'u':
 						underline = True
@@ -166,7 +144,7 @@ def main(device, color_model, FontSize, Lines):
 				y	= (n)*line_height + y_shift - 1 + y_space
 
 				# Draw a filled box in case of inverted output
-				if inverted:
+				if bg_fill != color_bg:
 					draw.rectangle((x, y, device.width, y + line_height), outline=bg_fill, fill=bg_fill)
 
 				if Content[0:6] == "IMAGE=":
@@ -229,6 +207,9 @@ if __name__ == "__main__":
 	conf_DISP_RESOLUTION_X			= int(config['conf_DISP_RESOLUTION_X'])
 	conf_DISP_RESOLUTION_Y			= int(config['conf_DISP_RESOLUTION_Y'])
 	conf_DISP_COLOR_MODEL			= str(config['conf_DISP_COLOR_MODEL'])
+	conf_DISP_COLOR_TEXT			= str(config['conf_DISP_COLOR_TEXT'])
+	conf_DISP_COLOR_HIGH			= str(config['conf_DISP_COLOR_HIGH'])
+	conf_DISP_COLOR_ALERT			= str(config['conf_DISP_COLOR_ALERT'])
 	conf_DISP_FONT_SIZE				= int(config['conf_DISP_FONT_SIZE'])
 	conf_DISP_BLACK_ON_POWER_OFF	= config['conf_DISP_BLACK_ON_POWER_OFF'] == "true"
 	conf_DISP_FRAME_TIME			= float(config['conf_DISP_FRAME_TIME'])
@@ -236,7 +217,34 @@ if __name__ == "__main__":
 	constants = ConfigObj("{}/constants.sh".format(WORKING_DIR))
 	const_DISPLAY_CONTENT_FOLDER	= constants['const_DISPLAY_CONTENT_FOLDER']
 	const_DISPLAY_CONTENT_OLD_FILE	= constants['const_DISPLAY_CONTENT_OLD_FILE']
-	CONST_DISPLAY_LINES_LIMIT		= int(constants['CONST_DISPLAY_LINES_LIMIT'])
+	const_DISPLAY_LINES_LIMIT		= int(constants['const_DISPLAY_LINES_LIMIT'])
+
+	#define colors
+	color = {}
+	color['blue'] = (000, 000, 255)
+	color['green'] = (000, 255, 000)
+	color['red'] = (255, 000, 000)
+	color['white'] = (255, 255, 255)
+	color['yellow'] = (255, 255, 000)
+	color['black'] = (000, 000, 000)
+
+	if conf_DISP_COLOR_MODEL == '1':
+		color_text = 255
+		color_high = 255
+		color_alert = 255
+		color_bg = 0
+	else:
+		color_text = color[conf_DISP_COLOR_TEXT]
+		color_high = color[conf_DISP_COLOR_HIGH]
+		color_alert = color[conf_DISP_COLOR_ALERT]
+		color_bg = color['black']
+
+		if conf_DISP_COLOR_MODEL == 'RGBA':
+			# add alpha-channel
+			color_text = (*color_text, 255)
+			color_high = (*color_high, 255)
+			color_alert = (*color_alert, 255)
+			color_bg = (*color_bg, 255)
 
 	if conf_DISP_CONNECTION == 'I2C':
 		serial = i2c(port=1, address=conf_DISP_I2C_ADDRESS)
@@ -274,7 +282,7 @@ if __name__ == "__main__":
 			# read new lines
 			with open(ContentFile, 'r') as CF:
 				for Line in CF:
-					if len (Lines) < CONST_DISPLAY_LINES_LIMIT:
+					if len (Lines) < const_DISPLAY_LINES_LIMIT:
 						Line = Line.replace("\n", "")
 
 						if Line:
@@ -286,23 +294,23 @@ if __name__ == "__main__":
 							Lines.append(Line)
 
 			# read old lines
-			if len(Lines) < CONST_DISPLAY_LINES_LIMIT and os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
+			if len(Lines) < const_DISPLAY_LINES_LIMIT and os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
 				with open(const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
 					for Line in oCF:
-						if len (Lines) < CONST_DISPLAY_LINES_LIMIT:
+						if len (Lines) < const_DISPLAY_LINES_LIMIT:
 							Line = Line.replace("\n", "")
 							Line = Line.split(':',1)[-1]
 							if Line:
 								Line = "s=b:{}".format(Line)
 								Lines.append(Line)
 
-			# fill line count to CONST_DISPLAY_LINES_LIMIT
-			while len(Lines) < CONST_DISPLAY_LINES_LIMIT:
+			# fill line count to const_DISPLAY_LINES_LIMIT
+			while len(Lines) < const_DISPLAY_LINES_LIMIT:
 				Lines.append("s=b:")
 
 
 			os.replace(ContentFile,const_DISPLAY_CONTENT_OLD_FILE)
 
-			main(device,conf_DISP_COLOR_MODEL,conf_DISP_FONT_SIZE,Lines)
+			main(device, conf_DISP_COLOR_MODEL, color_text, color_high, color_alert, color_bg, conf_DISP_FONT_SIZE, Lines)
 
 		time.sleep(conf_DISP_FRAME_TIME)

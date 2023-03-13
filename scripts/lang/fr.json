@@ -247,7 +247,18 @@
       "color_model_RGBA": "RGBA (RVB avec transparence)",
       "font_size_label": "Taille de police",
       "frame_time_label": "Temps d'affichage minimum par image en secondes",
-      "hardware_header": "Matériel"
+      "hardware_header": "Matériel",
+      "colors_header": "Sélection des couleurs lors de l'utilisation d'un écran couleur",
+      "color": {
+        "white": "blanc",
+        "yellow": "jaune",
+        "green": "vert",
+        "blue": "bleu",
+        "red": "rouge"
+      },
+      "color_text_label": "Couleur de police par défaut",
+      "color_alert_label": "Couleur de la police des avertissements",
+      "color_high_label": "Couleur de police pour le texte en surbrillance"
     }
   },
   "tools": {

@@ -183,6 +183,9 @@ conf_DISP_SPI_PORT='$conf_DISP_SPI_PORT'
 conf_DISP_RESOLUTION_X=$conf_DISP_RESOLUTION_X
 conf_DISP_RESOLUTION_Y=$conf_DISP_RESOLUTION_Y
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
+conf_DISP_COLOR_TEXT='$conf_DISP_COLOR_TEXT'
+conf_DISP_COLOR_HIGH='$conf_DISP_COLOR_HIGH'
+conf_DISP_COLOR_ALERT='$conf_DISP_COLOR_ALERT'
 conf_DISP_FONT_SIZE=$conf_DISP_FONT_SIZE
 conf_DISP_FRAME_TIME=$conf_DISP_FRAME_TIME
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
@@ -568,6 +571,46 @@ function upload_settings() {
 									foreach($display_color_models_array as $display_color_model) {
 										$display_color_model_entity="config_display_color_model_" . $display_color_model;
 										echo "<option value='" . $display_color_model . "' " . ($config["conf_DISP_COLOR_MODEL"] == $display_color_model?" selected":"") . ">" . L::{"$display_color_model_entity"}() . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<h4><?php echo L::config_display_colors_header; ?></h4>
+							<label for="conf_DISP_COLOR_TEXT"><?php echo L::config_display_color_text_label; ?></label><br>
+								<select name="conf_DISP_COLOR_TEXT" id="conf_DISP_COLOR_TEXT">
+									<?php
+										$display_colors_array=array('blue','green','red','white','yellow');
+										foreach($display_colors_array as $display_color) {
+											$display_color_entity="config_display_color_" . $display_color;
+											echo "<option value='" . $display_color . "' " . ($config["conf_DISP_COLOR_TEXT"] == $display_color?" selected":"") . ">" . L::{"$display_color_entity"}() . "</option>";
+										}
+									?>
+								</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_COLOR_HIGH"><?php echo L::config_display_color_high_label; ?></label><br>
+							<select name="conf_DISP_COLOR_HIGH" id="conf_DISP_COLOR_HIGH">
+								<?php
+									$display_colors_array=array('blue','green','red','white','yellow');
+									foreach($display_colors_array as $display_color) {
+										$display_color_entity="config_display_color_" . $display_color;
+										echo "<option value='" . $display_color . "' " . ($config["conf_DISP_COLOR_HIGH"] == $display_color?" selected":"") . ">" . L::{"$display_color_entity"}() . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_COLOR_ALERT"><?php echo L::config_display_color_alert_label; ?></label><br>
+							<select name="conf_DISP_COLOR_ALERT" id="conf_DISP_COLOR_ALERT">
+								<?php
+									$display_colors_array=array('blue','green','red','white','yellow');
+									foreach($display_colors_array as $display_color) {
+										$display_color_entity="config_display_color_" . $display_color;
+										echo "<option value='" . $display_color . "' " . ($config["conf_DISP_COLOR_ALERT"] == $display_color?" selected":"") . ">" . L::{"$display_color_entity"}() . "</option>";
 									}
 								?>
 							</select>

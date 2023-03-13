@@ -247,7 +247,18 @@
       "color_model_RGBA": "RGBA (RGB con transparencia)",
       "font_size_label": "Tamaño de fuente",
       "frame_time_label": "Tiempo mínimo de visualización por cuadro en segundos",
-      "hardware_header": "Hardware"
+      "hardware_header": "Hardware",
+      "colors_header": "Selección de color cuando se utiliza una pantalla a color",
+      "color": {
+        "white": "blanco",
+        "yellow": "amarillo",
+        "green": "verde",
+        "blue": "azul",
+        "red": "rojo"
+      },
+      "color_text_label": "Color de fuente predeterminado",
+      "color_alert_label": "Color de fuente para advertencias",
+      "color_high_label": "Color de fuente para el texto resaltado"
     }
   },
   "tools": {

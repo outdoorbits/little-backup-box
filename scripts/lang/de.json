@@ -247,7 +247,18 @@
       "color_model_RGBA": "RGBA (RGB mit Transparenz)",
       "font_size_label": "Schriftgröße",
       "frame_time_label": "Minimale Anzeigedauer pro Bild in Sekunden",
-      "hardware_header": "Hardware"
+      "hardware_header": "Hardware",
+      "colors_header": "Farbauswahl beim Einsatz eines Farb-Displays",
+      "color": {
+        "white": "weiß",
+        "yellow": "gelb",
+        "green": "grün",
+        "blue": "blau",
+        "red": "rot"
+      },
+      "color_text_label": "Standard-Schriftfarbe",
+      "color_alert_label": "Schriftfarbe für Warnungen",
+      "color_high_label": "Schriftfarbe für hervorgehobenen Text"
     }
   },
   "tools": {

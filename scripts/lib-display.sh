@@ -70,7 +70,7 @@ function disp_message () {
 	LinesCount=${#Lines[@]}
 
 	n=0
-	while [ ${n} -lt $CONST_DISPLAY_LINES_LIMIT ] && [ ${n} -lt $LinesCount ];  do
+	while [ ${n} -lt $const_DISPLAY_LINES_LIMIT ] && [ ${n} -lt $LinesCount ];  do
 
 		LogLine="${Lines[$n]}"
 

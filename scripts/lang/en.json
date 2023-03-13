@@ -399,7 +399,18 @@
       "color_model_RGBA": "RGBA (RGB with transparency)",
       "font_size_label": "Font size",
       "frame_time_label": "Minimum display time per frame in seconds",
-      "hardware_header": "Hardware"
+      "hardware_header": "Hardware",
+      "colors_header": "Color selection when using a color display",
+      "color": {
+        "white": "white",
+        "yellow": "yellow",
+        "green": "green",
+        "blue": "blue",
+        "red": "red"
+      },
+      "color_text_label": "Default font color",
+      "color_alert_label": "Font color for warnings",
+      "color_high_label": "Font color for highlighted text"
     }
   },
   "tools": {
