@@ -73,7 +73,7 @@ if [ "${POWER_OFF}" = "" ]; then POWER_OFF="${conf_POWER_OFF}"; fi
 if [ "${SECONDARY_BACKUP_FOLLOWS}" != "true" ]; then
 	SECONDARY_BACKUP_FOLLOWS="false"
 fi
-
+echo "aaa $SECONDARY_BACKUP_FOLLOWS"
 # Source definition
 if [[ " usb internal camera ios thumbnails database exif " =~ " ${SOURCE_ARG} " ]]; then
 	SOURCE_MODE="${SOURCE_ARG}"
@@ -1051,31 +1051,33 @@ function sync_return_code_decoder() {
 
 
 			# prepare message for mail and power off
-			if [ "${#SOURCE_PATHS[@]}" -gt "1" ]; then
-				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:${SOURCE_FOLDER_NUMBER}:"
-			fi
+			SOURCE_FOLDER_MESSAGE_INFO="${SOURCE_FOLDER_INFO}: "
 
 			if [ -z "${SYNC_ERROR_TMP}" ]; then
 				SYNC_ERROR_FINAL_RUN=false
 
 				MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_backup_complete')."
-				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_complete').\n"
+				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:${SOURCE_FOLDER_MESSAGE_INFO}$(l 'box_backup_complete').\n"
+				SOURCE_FOLDER_MESSAGE_INFO=''
 			else
 				SYNC_ERROR_FINAL_RUN=true
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]]; then
 					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_lost_device')"
-					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_lost_device')\n"
+					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=a:${SOURCE_FOLDER_MESSAGE_INFO}$(l 'box_backup_lost_device')\n"
+					SOURCE_FOLDER_MESSAGE_INFO=''
 				fi
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Files missing!" ]]; then
 					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_files_missing')"
-					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_files_missing')\n"
+					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=a:${SOURCE_FOLDER_MESSAGE_INFO}$(l 'box_backup_files_missing')\n"
+					SOURCE_FOLDER_MESSAGE_INFO=''
 				fi
 
 				if [[ "${SYNC_ERROR_TMP}" =~ "Exception" ]]; then
 					MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")"
-					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")\n"
+					MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=a:${SOURCE_FOLDER_MESSAGE_INFO}$(l 'box_backup_exception'):$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")\n"
+					SOURCE_FOLDER_MESSAGE_INFO=''
 				fi
 			fi
 
@@ -1428,5 +1430,3 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 
 		source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_DISPLAY}" "${TRANSFER_INFO_DISP::-2}"
 	fi
-
-exit 0

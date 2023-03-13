@@ -44,11 +44,6 @@ FORCE="${2}"
 MESSAGE="${3}"
 TRANSFER_INFO="${4}"
 
-TRANSFER_INFO_MOD="${TRANSFER_INFO}"
-if [ -z "${TRANSFER_INFO_MOD}" ]; then
-	TRANSFER_INFO_MOD="s=b:"
-fi
-
 # predefined values?
 if [ "${POWER_OFF}" = "" ]; then POWER_OFF="${conf_POWER_OFF}"; fi
 
@@ -66,14 +61,14 @@ if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 	fi
 
 	if [ ! -z "${TRANSFER_INFO}" ]; then
-		disp_message "${TRANSFER_INFO_MOD}" "s=b:" "s=b:" "s=b:" "s=b:"
+		disp_message "${TRANSFER_INFO}" "s=b:" "s=b:" "s=b:" "s=b:"
 		sleep ${const_DISPLAY_HOLD_SEC}
 	fi
 
 	if [ "${ACTION}" = "poweroff" ]; then
-		disp_message "s=b:$(l 'box_poweroff_poweroff')" "s=b:$(l 'box_poweroff_do_not_unplug')" "s=b:$(l 'box_poweroff_while_act_led_on_1')" "s=b:$(l 'box_poweroff_while_act_led_on_2')" "${TRANSFER_INFO_MOD}" "s=b:"
+		disp_message "s=b:$(l 'box_poweroff_poweroff')" "s=b:$(l 'box_poweroff_do_not_unplug')" "s=b:$(l 'box_poweroff_while_act_led_on_1')" "s=b:$(l 'box_poweroff_while_act_led_on_2')" "${TRANSFER_INFO}" "s=b:"
 	elif [ "${ACTION}" = "reboot" ]; then
-		disp_message "s=b:$(l 'box_poweroff_rebooting')..." "s=b:$(l 'box_poweroff_do_not_unplug')!" "${TRANSFER_INFO_MOD}" "s=b:" "s=b:" "s=b:"
+		disp_message "s=b:$(l 'box_poweroff_rebooting')..." "s=b:$(l 'box_poweroff_do_not_unplug')!" "${TRANSFER_INFO}" "s=b:" "s=b:" "s=b:"
 	fi
 
 	# cleanup
@@ -99,13 +94,13 @@ else
 	fi
 
 	if [ ! -z "${TRANSFER_INFO}" ]; then
-		disp_message "${TRANSFER_INFO_MOD}" "s=b:" "s=b:" "s=b:" "s=b:"
+		disp_message "${TRANSFER_INFO}" "s=b:" "s=b:" "s=b:" "s=b:"
 		sleep ${const_DISPLAY_HOLD_SEC}
 	fi
 
 	if [ -z "${MESSAGE}" ]; then
-		disp_message "s=b:$(l 'box_backup_complete')." "s=b:$(l 'box_poweroff_do_not_unplug')!" "s=b:$(l 'box_poweroff_power_down_via_gui_1')" "s=b:$(l 'box_poweroff_power_down_via_gui_2')" "${TRANSFER_INFO_MOD}" "s=b:"
+		disp_message "s=b:$(l 'box_backup_complete')." "s=b:$(l 'box_poweroff_do_not_unplug')!" "s=b:$(l 'box_poweroff_power_down_via_gui_1')" "s=b:$(l 'box_poweroff_power_down_via_gui_2')" "${TRANSFER_INFO}" "s=b:"
 	else
-		disp_message "s=b:$(l 'box_poweroff_do_not_unplug')!" "s=b:$(l 'box_poweroff_power_down_via_gui_1')" "s=b:$(l 'box_poweroff_power_down_via_gui_2')" "${TRANSFER_INFO_MOD}" "s=b:" "s=b:"
+		disp_message "s=b:$(l 'box_poweroff_do_not_unplug')!" "s=b:$(l 'box_poweroff_power_down_via_gui_1')" "s=b:$(l 'box_poweroff_power_down_via_gui_2')" "${TRANSFER_INFO}" "s=b:" "s=b:"
 	fi
 fi

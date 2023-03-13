@@ -127,23 +127,23 @@ sleep 1
 source "${WORKING_DIR}/cron-ip.sh" "force_display" &
 
 # Default backup
-SECONDARY_BACKUP_FOLLOWS="false"
+SECONDARY_BACKUP_CONFIGURED="false"
 if [ "${conf_BACKUP_DEFAULT_SOURCE2}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET2}" != "none" ]; then
-	SECONDARY_BACKUP_FOLLOWS="true"
+	SECONDARY_BACKUP_CONFIGURED="true"
 fi
 
 ## default backup 1
 if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TARGET}" != "none" ]; then
-	if [ "${SECONDARY_BACKUP_FOLLOWS}" == "true" ]; then
+	if [ "${SECONDARY_BACKUP_CONFIGURED}" == "true" ]; then
 		disp_message "$(l 'box_backup_primary')"
 		sleep 1
 	fi
 
-	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" '' '' '' "${SECONDARY_BACKUP_FOLLOWS}"
+ 	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" '' '' '' "${SECONDARY_BACKUP_CONFIGURED}"
 fi
 
 ## default-backup 2
-if [ "${SECONDARY_BACKUP_FOLLOWS}" == "true" ]; then
+if [ "${SECONDARY_BACKUP_CONFIGURED}" == "true" ]; then
 	disp_message "$(l 'box_backup_secondary')"
 	sleep 1
 
