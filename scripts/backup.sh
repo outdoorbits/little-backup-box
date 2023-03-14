@@ -73,7 +73,7 @@ if [ "${POWER_OFF}" = "" ]; then POWER_OFF="${conf_POWER_OFF}"; fi
 if [ "${SECONDARY_BACKUP_FOLLOWS}" != "true" ]; then
 	SECONDARY_BACKUP_FOLLOWS="false"
 fi
-echo "aaa $SECONDARY_BACKUP_FOLLOWS"
+
 # Source definition
 if [[ " usb internal camera ios thumbnails database exif " =~ " ${SOURCE_ARG} " ]]; then
 	SOURCE_MODE="${SOURCE_ARG}"
