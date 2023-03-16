@@ -43,7 +43,7 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= "";
 		$CMD_ARGUMENTS		= "CMD=update";
 		$PASSWORD_REQ		= True;
-		$ALLOW_MAIL_RESULT	= True;
+		$ALLOW_MAIL_RESULT	= False;
 		break;
 
 	case 'format':
