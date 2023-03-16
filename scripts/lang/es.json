@@ -460,7 +460,9 @@
     },
     "password_input_info": "No se ha establecido ninguna contraseña global. No puedes continuar. Primero configure una contraseña global.",
     "password_set_link": "Establecer contraseña global",
-    "link_text_home_running": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE EL COMANDO HAYA TERMINADO!<br>(Espera &quot;FINISHED&quot;.)"
+    "link_text_home_running": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE EL COMANDO HAYA TERMINADO!<br>(Espera &quot;FINISHED&quot;.)",
+    "mail_result": "Resultado del correo electrónico",
+    "reset": "reiniciar"
   },
   "view": {
     "view": "Visor de imágenes",

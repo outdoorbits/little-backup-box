@@ -460,7 +460,9 @@
     },
     "password_input_info": "Aucun mot de passe global n'a été défini. Vous ne pouvez pas continuer. Veuillez d'abord configurer un mot de passe global.",
     "password_set_link": "Définir le mot de passe global",
-    "link_text_home_running": "Retour à Little Backup Box - NE CLIQUEZ PAS AVANT QUE LA COMMANDE SOIT TERMINÉE !<br>(Attendez &quot;FINISHED&quot;.)"
+    "link_text_home_running": "Retour à Little Backup Box - NE CLIQUEZ PAS AVANT QUE LA COMMANDE SOIT TERMINÉE !<br>(Attendez &quot;FINISHED&quot;.)",
+    "mail_result": "Résultat par e-mail",
+    "reset": "réinitialiser"
   },
   "view": {
     "view": "Visionneuse d'images",

@@ -460,7 +460,9 @@
     },
     "password_input_info": "Es wurde kein globales Passwort festgelegt. Sie können nicht fortfahren. Richten Sie bitte zuerst ein globales Passwort ein.",
     "password_set_link": "Globales Passwort setzen",
-    "link_text_home_running": "Zurück zu Little Backup Box - NICHT KLICKEN, BEVOR DER VORGANG ABGESCHLOSSEN IST!<br>(Auf &quot;FINISHED&quot; warten.)"
+    "link_text_home_running": "Zurück zu Little Backup Box - NICHT KLICKEN, BEVOR DER VORGANG ABGESCHLOSSEN IST!<br>(Auf &quot;FINISHED&quot; warten.)",
+    "mail_result": "Ergebnis mailen",
+    "reset": "zurücksetzen"
   },
   "view": {
     "view": "Bildbetrachter",

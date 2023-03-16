@@ -23,10 +23,24 @@
 # - source lib-log.sh
 # - source lib-network
 
-function send_email () {
+function mail_configured() {
+	if [ ! -z "${conf_SMTP_SERVER}" ] && \
+	   [ ! -z "${conf_SMTP_PORT}" ] && \
+	   [ ! -z "${conf_MAIL_SECURITY}" ] && \
+	   [ ! -z "${conf_MAIL_USER}" ] && \
+	   [ ! -z "${conf_MAIL_PASSWORD}" ] && \
+	   [ ! -z "${conf_MAIL_FROM}" ] && \
+	   [ ! -z "${conf_MAIL_TO}" ]; then
+		echo 'true'
+	else
+		echo 'false'
+	fi
+}
+
+function send_email() {
 
 # Takes up to 3 arguments:
-# sendmail "$Subject" "$Text_plain" "$Text_HTML (optional)"
+# send_email "$Subject" "$Text_plain" "$Text_HTML (optional)"
 
 	# Arguments
 	SUBJECT="${1}"

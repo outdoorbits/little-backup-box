@@ -37,7 +37,7 @@
 			write_config();
 
 			if (isset($_POST['send_testmail'])) {
-				shell_exec("$WORKING_DIR/testmail.sh");
+				shell_exec("$WORKING_DIR/lib-mail-helper.sh '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "'");
 				echo '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
 			}
 

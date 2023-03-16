@@ -22,6 +22,8 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 		<?php
 			extract($_GET);
 
+			if (!isset($MAIL_RESULT)) {$MAIL_RESULT=False;}
+
 			if ((strpos($_SERVER["HTTP_REFERER"],"/cmd.php") !== False) and isset($CMD)) {
 
 				switch($CMD) {
@@ -191,7 +193,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 									$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 									$COMMAND_LINE	.= ";echo ''";
 									$COMMAND_LINE	.= ";echo 'FINISHED.'";
-									$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh '" . L::config_comitup_section . "' 'reset'";
+									$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh '" . L::config_comitup_section . "' '" . L::cmd_reset . "'";
 								break;
 					default:
 						$COMMAND_LINE	= "";
@@ -219,8 +221,10 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 					echo '<pre>';
 					if (is_resource($process)) {
+						$RESULT = '';
 						while ($s = fgets($pipes[1])) {
 							print $s;
+							$RESULT .= $s . '\n';
 						}
 					}
 					echo '</pre>';
@@ -230,6 +234,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 			} else {
 				echo "NOT AUTHORISED";
 			}
+			shell_exec('sudo ' . $WORKING_DIR . '/lib-mail-helper.sh "' . $CMD . ' ' . $PARAM1 . ' ' . $PARAM2 . '" "' . $RESULT . '" "' . str_replace('\n','<br>\n',$RESULT) . '"');
 		?>
 
 	</body>

@@ -43,6 +43,7 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= "";
 		$CMD_ARGUMENTS		= "CMD=update";
 		$PASSWORD_REQ		= True;
+		$ALLOW_MAIL_RESULT	= True;
 		break;
 
 	case 'format':
@@ -51,6 +52,7 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= L::cmd_format_description.": <ul class='danger'><li>" . L::cmd_format_header . ": $PARAM1 &rarr; $PARAM2</li></ul>";
 		$CMD_ARGUMENTS		= "CMD=format&PARAM1=$PARAM1&PARAM2=$PARAM2";
 		$PASSWORD_REQ		= True;
+		$ALLOW_MAIL_RESULT	= True;
 		break;
 
 	case 'f3':
@@ -59,6 +61,7 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= "";
 		$CMD_ARGUMENTS		= "";
 		$PASSWORD_REQ		= False;
+		$ALLOW_MAIL_RESULT	= False;
 
 		switch($PARAM2) {
 			case 'f3probe_non_destructive':
@@ -67,6 +70,7 @@ switch($CMD) {
 				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": $PARAM1 &rarr; " . L::cmd_f3_description_non_destructive . "</li></ul>";
 				$CMD_ARGUMENTS		= "CMD=f3&PARAM1=$PARAM1&PARAM2=$PARAM2";
 				$PASSWORD_REQ		= True;
+				$ALLOW_MAIL_RESULT	= True;
 				break;
 
 			case 'f3probe_destructive':
@@ -75,6 +79,7 @@ switch($CMD) {
 				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": $PARAM1 &rarr; " . L::cmd_f3_description_destructive . "</li></ul>";
 				$CMD_ARGUMENTS		= "CMD=f3&PARAM1=$PARAM1&PARAM2=$PARAM2";
 				$PASSWORD_REQ		= True;
+				$ALLOW_MAIL_RESULT	= True;
 				break;
 		}
 		break;
@@ -85,6 +90,7 @@ switch($CMD) {
 				$CMD_DESCRIPTION	= L::config_comitup_text;
 				$CMD_ARGUMENTS		= "CMD=comitup&PARAM1=reset";
 				$PASSWORD_REQ		= True;
+				$ALLOW_MAIL_RESULT	= True;
 				break;
 	default:
 		$CMD_HEADER			= L::cmd_no_cmd;
@@ -92,6 +98,7 @@ switch($CMD) {
 		$CMD_DESCRIPTION	= "";
 		$CMD_ARGUMENTS		= "";
 		$PASSWORD_REQ		= False;
+		$ALLOW_MAIL_RESULT	= False;
 }
 
 $PASSWORD_ASK	= false;
@@ -121,8 +128,26 @@ if ($PASSWORD_REQ) {
 				<input type="hidden" name="PARAM1" value="<?php echo $PARAM1; ?>">
 				<input type="hidden" name="PARAM2" value="<?php echo $PARAM2; ?>">
 				<div class="card" style="margin-top: 2em;">
+
+					<?php
+						if (
+						($ALLOW_MAIL_RESULT) and
+							(strlen($config['conf_SMTP_SERVER']) > 0) and
+							(strlen($config['conf_SMTP_PORT']) > 0) and
+							(strlen($config['conf_MAIL_SECURITY']) > 0) and
+							(strlen($config['conf_MAIL_USER']) > 0) and
+							(strlen($config['conf_MAIL_PASSWORD']) > 0) and
+							(strlen($config['conf_MAIL_FROM']) > 0) and
+							(strlen($config['conf_MAIL_TO']) > 0)
+						) {
+							echo '<input type="checkbox" name="MAIL_RESULT" id="MAIL_RESULT" checked>&nbsp;';
+							echo '<label for="MAIL_RESULT">' . L::cmd_mail_result . ':</label><br>';
+						}
+					?>
+
 					<label for="PWD"><?php echo L::cmd_input_password; ?>:</label>
 					<input type="password" size="20" name="PWD" id="PWD"><br>
+
 					<button style="margin-top: 2em;" type="submit" name="upload_settings"><?php echo L::cmd_execute; ?></button>
 				</div>
 			</form>
@@ -141,6 +166,7 @@ if ($PASSWORD_REQ) {
 			<?php
 		} elseif ($CMD_ARGUMENTS != "") { ?>
 <!-- 			run command -->
+		<?php if ($MAIL_RESULT) {$CMD_ARGUMENTS = $CMD_ARGUMENTS . '&MAIL_RESULT=true';} ?>
 		<iframe id="cmdmonitor" src="/cmd-runner.php?<?php echo $CMD_ARGUMENTS; ?>" width="100%" height="500" style="background: #FFFFFF;"></iframe>
 		<p>
 			<a href="/"><?php echo L::cmd_link_text_home_running; ?></a>
