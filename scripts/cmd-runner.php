@@ -234,7 +234,9 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 			} else {
 				echo "NOT AUTHORISED";
 			}
-			shell_exec('sudo ' . $WORKING_DIR . '/lib-mail-helper.sh "' . $CMD . ' ' . $PARAM1 . ' ' . $PARAM2 . '" "' . $RESULT . '" "' . str_replace('\n','<br>\n',$RESULT) . '"');
+			if ($MAIL_RESULT) {
+				shell_exec('sudo ' . $WORKING_DIR . '/lib-mail-helper.sh "' . $CMD . ' ' . $PARAM1 . ' ' . $PARAM2 . '" "' . $RESULT . '" "' . str_replace('\n','<br>\n',$RESULT) . '"');
+			}
 		?>
 
 	</body>
