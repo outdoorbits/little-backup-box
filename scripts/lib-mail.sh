@@ -78,8 +78,7 @@ ${TEXT_HTML}
 
 	# Check internet connection and send
 	# a notification if the conf_MAIL_NOTIFICATIONS option is enabled
-	INTERNET_STATUS=$(get_internet_status)
-	if [ $conf_MAIL_NOTIFICATIONS = true ] || [ "${INTERNET_STATUS}" = "connected" ]; then
+	if [ "${conf_MAIL_NOTIFICATIONS}" = "true" ] && [ "$(mail_configured)" = "true" ] && [ "$(get_internet_status)" = "connected" ]; then
 
 		MAIL_CONTENT_FILE="${WORKING_DIR}/tmp/email.txt"
 
