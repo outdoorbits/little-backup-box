@@ -42,7 +42,7 @@
 						}
 						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
 
-						$page	= intval($select_offset / $filter_images_per_page) + 1;
+						$page	= intval(($select_offset + 2) / $filter_images_per_page) + 1;
 						$pages	= intval($imagecount / $filter_images_per_page) + 1;
 						echo "&nbsp;&nbsp;&nbsp;&nbsp;" . L::view_images_page . ' ' . $page . '/' . $pages;
 					?>
