@@ -20,18 +20,14 @@
 	}
 
 
-	function navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$imagecount,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate,$label_id) {
+	function navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate,$label_id) {
 		if ($view_mode == "grid") {
-			$offset_left	= $offset >= $filter_images_per_page?$offset-$filter_images_per_page:0;
-			$offset_end		= $imagecount > $filter_images_per_page?intval($imagecount / $filter_images_per_page) * $filter_images_per_page:0;
-			$offset_end		= $offset_end==$imagecount?$offset_end-$filter_images_per_page:$offset_end;
-			$offset_right	= $offset + $filter_images_per_page < $imagecount?$offset+$filter_images_per_page:$offset_end;
 			?>
 			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
 				<div style="float:left;width: 50%;padding: 5px;">
-					<a href="<?php echo $GET_PARAMETER . "&offset=0"; ?>">&lt;&lt;</a>
+					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_FIRST; ?>">&lt;&lt;</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="<?php echo $GET_PARAMETER . "&offset=" . $offset_left; ?>">&lt;</a>
+					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_PRE; ?>">&lt;</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;
 					<?php
 
@@ -46,7 +42,7 @@
 						}
 						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
 
-						$page	= intval($offset / $filter_images_per_page) + 1;
+						$page	= intval($select_offset / $filter_images_per_page) + 1;
 						$pages	= intval($imagecount / $filter_images_per_page) + 1;
 						echo "&nbsp;&nbsp;&nbsp;&nbsp;" . L::view_images_page . ' ' . $page . '/' . $pages;
 					?>
@@ -80,9 +76,9 @@
 						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
 					?>
 					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="<?php echo $GET_PARAMETER . "&offset=".$offset_right; ?>">&gt;</a>
+					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_POST; ?>">&gt;</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="<?php echo $GET_PARAMETER . "&offset=".$offset_end; ?>">&gt;&gt;</a>
+					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_LAST; ?>">&gt;&gt;</a>
 				</div>
 
 				<div style="display: flow-root;width: 100%">
@@ -107,7 +103,7 @@
 			?>
 			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
 				<div style="float:left;width: 50%;padding: 5px;">
-					<a href="<?php echo $GET_PARAMETER . '&view_mode=grid'; ?>">
+					<a href="<?php echo $GET_PARAMETER . '&view_mode=grid&ID=' . $IMAGE_ID; ?>">
 						<?php echo L::view_images_back_to_grid; ?>
 					</a>
 				</div>
@@ -187,14 +183,16 @@
 	$filter_camera_model_name		= "all";
 	$filter_variable_field			= "";
 	$filter_variable_value			= "";
-	$offset							= 0;
 	$ID								= 0;
 	$IMAGE_ID						= 0;
 	$IMAGE_ID_PRE					= 0;
 	$IMAGE_ID_POST					= 0;
+	$IMAGE_ID_FIRST					= 0;
+	$IMAGE_ID_LAST					= 0;
 	$imagecount						= 0;
 	$order_by          				= "Create_Date";
 	$order_dir						= "DESC";
+	$select_offset					= 0;
 
 	$FIELDS_BLOCKED_ARRAY	= array(
 		"ID",
@@ -210,7 +208,6 @@
 		$filter_images_per_page	= $IMAGES_PER_PAGE_OPTIONS[0];
 	}
 
-	$offset		= intval($offset);
 	$ID			= intval($ID);
 
 	if (! in_array($order_by,array('File_Name','Create_Date','ID'))) {$order_by='Create_Date';}
@@ -278,9 +275,8 @@
 		if (($filter_variable_field != "") and ($filter_variable_value != "")) {add_to_where($filter_variable_field . "='" . $filter_variable_value . "'",array('images','directories','dates','ratings','file_type_extensions','camera_model_name'));}
 	}
 
-	# generate select_offset
-	$select_offset	= "offset " . ($offset > 0 ? $offset - 2 : 0);
-	$select_limit	=  "limit " . ($filter_images_per_page + 3);
+	# generate select_limit
+	$select_limit	=  $filter_images_per_page + 3;
 
 	# define path of the database-file
 	$STORAGE_PATH	= "";
@@ -349,50 +345,26 @@
 			}
 
 			# database-queries
-			$statement				= $db->prepare("SELECT * FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . " " . $select_limit . " " . $select_offset . ";");
-			$IMAGES_QUERY			= $statement->execute();
+			$statement				= $db->prepare("SELECT ID FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . ";");
+			$IMAGES_ALL			= $statement->execute();
 
-			$IMAGES_ARRAY_ALL	= array();
-			while ($FETCH_IMAGE = $IMAGES_QUERY->fetchArray(SQLITE3_ASSOC)) {
-				$IMAGES_ARRAY_ALL[]	= $FETCH_IMAGE;
+			#get first and last ID, define offset
+			$n = 0;
+			while ($FETCH_IMAGE = $IMAGES_ALL->fetchArray(SQLITE3_ASSOC)) {
+				$n += 1;
+				if ($n == 1) {
+					$IMAGE_ID_FIRST = $FETCH_IMAGE['ID'];
+				}
+				if ($FETCH_IMAGE['ID'] == $ID) {
+					$select_offset = intdiv($n,$filter_images_per_page) * $filter_images_per_page - 2;
+				}
+				$IMAGE_ID_LAST = $FETCH_IMAGE['ID'];
 			}
 
-			$IMAGES_ARRAY = array();
-			if ($view_mode == "grid") {
-				$n = 0;
-				foreach ($IMAGES_ARRAY_ALL as $IMAGE) {
-					$n += 1;
-					if ((($n > 2) or ($offset == 0)) and ($n <= $filter_images_per_page + ($offset == 0 ? 0 : 2))) {
-						$IMAGES_ARRAY[] = $IMAGE;
-					}
-				}
-			} elseif ($view_mode == "single") {
-				$IMAGE_ID	= $ID;
-				$ID_OLD = 0;
+			$imagecount = $n;
 
-				$n = 0;
-				$offset_add = 0;
-				foreach ($IMAGES_ARRAY_ALL as $IMAGE) {
-					$n += 1;
-					if ($IMAGE['ID'] == $IMAGE_ID) {
-						$IMAGE_ID_PRE = $ID_OLD;
-						$IMAGES_ARRAY[] = $IMAGE;
-						if ($n <= ($offset == 0 ? 0 : 2)) {
-							$offset_add = - $filter_images_per_page;
-						} elseif ($n > $filter_images_per_page + ($offset == 0 ? 0 : 2)) {
-							$offset_add = $filter_images_per_page;
-						}
-					} elseif ($ID_OLD == $IMAGE_ID) {
-						$IMAGE_ID_POST = $IMAGE['ID'];
-					}
-					$ID_OLD = $IMAGE['ID'];
-				}
-				$offset += $offset_add;
-			}
-
-			$statement				= $db->prepare("SELECT count(ID) as IMAGECOUNT FROM EXIF_DATA " . $WHERE['images'] . ";");
-			$IMAGECOUNTER			= $statement->execute();
-			$imagecount				= $IMAGECOUNTER->fetchArray(SQLITE3_ASSOC)['IMAGECOUNT'];
+			$statement				= $db->prepare("SELECT * FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . " limit " . $select_limit . " offset " . $select_offset . ";");
+			$IMAGES_PAGE			= $statement->execute();
 
 			$statement				= $db->prepare("SELECT Directory, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['directories'] . " group by Directory order by Directory;");
 			$DIRECTORIES			= $statement->execute();
@@ -417,6 +389,46 @@
 				$VAR_VALUES	= $statement->execute();
 			}
 
+						$IMAGES_ARRAY_ALL	= array();
+			while ($FETCH_IMAGE = $IMAGES_PAGE->fetchArray(SQLITE3_ASSOC)) {
+				$IMAGES_ARRAY_ALL[]	= $FETCH_IMAGE;
+			}
+
+			#manage images
+			$IMAGES_ARRAY = array();
+			if ($view_mode == "grid") {
+				$n = 0;
+				foreach ($IMAGES_ARRAY_ALL as $IMAGE) {
+					$n += 1;
+					if (($n == 1) and ($select_offset > 0)) {
+						$IMAGE_ID_PRE = $IMAGE['ID'];
+					} elseif ($n == ($select_offset <= 0 ? 1 : 3)) {
+						$IMAGE_ID = $IMAGE['ID'];
+					} elseif ($n == $filter_images_per_page + ($select_offset <= 0 ? 1 : 3)) {
+						$IMAGE_ID_POST = $IMAGE['ID'];
+					}
+
+					if ((($n > 2) or ($select_offset <= 0)) and ($n <= $filter_images_per_page + ($select_offset <= 0 ? 0 : 2))) {
+						$IMAGES_ARRAY[] = $IMAGE;
+					}
+				}
+			} elseif ($view_mode == "single") {
+				$IMAGE_ID	= $ID;
+				$ID_OLD = 0;
+
+				$n = 0;
+				foreach ($IMAGES_ARRAY_ALL as $IMAGE) {
+					$n += 1;
+					if ($IMAGE['ID'] == $IMAGE_ID) {
+						$IMAGE_ID_PRE = $ID_OLD;
+						$IMAGES_ARRAY[] = $IMAGE;
+					} elseif ($ID_OLD == $IMAGE_ID) {
+						$IMAGE_ID_POST = $IMAGE['ID'];
+					}
+					$ID_OLD = $IMAGE['ID'];
+				}
+			}
+
 			$DATABASE_CONNECTED=true;
 		} catch (Error $e) {
 			$DATABASE_CONNECTED=false;
@@ -429,7 +441,6 @@
 	$GET_PARAMETER	.= "&view_mode=$view_mode";
 	$GET_PARAMETER	.= "&order_by=$order_by";
 	$GET_PARAMETER	.= "&order_dir=$order_dir";
-	$GET_PARAMETER	.= "&offset=$offset";
 	$GET_PARAMETER	.= "&filter_images_per_page=$filter_images_per_page";
 	if ($filter_directory != "") {$GET_PARAMETER	.= "&filter_directory=" . str_replace("=","+",base64_encode($filter_directory));}
 	if ($filter_date != "") {$GET_PARAMETER	.= "&filter_date=" . $filter_date;}
@@ -439,13 +450,11 @@
 	if ($filter_variable_field != "") {$GET_PARAMETER	.= "&filter_variable_field=$filter_variable_field";}
 	if ($filter_variable_value != "") {$GET_PARAMETER	.= "&filter_variable_value=" . str_replace("=","+",base64_encode($filter_variable_value));}
 
-
 	# define hidden HIDDEN_INPUTS
 	$HIDDEN_INPUTS	="<input type=\"hidden\" name=\"filter_medium\" value=\"" . $filter_medium . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"view_mode\" value=\"" . $view_mode . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_by\" value=\"" . $order_by . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_dir\" value=\"" . $order_dir . "\">";
-	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"offset\" value=\"" . $offset . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_images_per_page\" value=\"" . $filter_images_per_page . "\">";
 	if ($filter_directory != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_directory\" value=\"" . str_replace("=","+",base64_encode($filter_directory)) . "\">";}
 	if ($filter_date != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_date\" value=\"" . $filter_date . "\">";}
@@ -623,7 +632,7 @@
 
 		<?php
 			echo $HIDDEN_INPUTS;
-			navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id);
+			navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id);
 		?>
 
 		<div class="card" style="margin-top: 2em;display: inline-block">
@@ -817,7 +826,7 @@
 
 		</div>
 
-		<?php navigator($view_mode,$filter_images_per_page,$filter_rating,$offset,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$imagecount,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id); ?>
+		<?php navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id); ?>
 
 	</form>
 
