@@ -54,7 +54,7 @@ from PIL import Image, ImageFont
 
 WORKING_DIR = os.path.dirname(__file__)
 
-def main(device, color_model, color_text, color_high, color_alert, color_bg, FontSize, Lines):
+def main(device, color_text, color_high, color_alert, color_bg, FontSize, Lines):
 
 	if ":IMAGE=" in Lines[0]:
 		# PRINT IMAGE FROM FILE
@@ -66,8 +66,7 @@ def main(device, color_model, color_text, color_high, color_alert, color_bg, Fon
 		ImageLine = Content.split("=",1)
 		ImageFilename = ImageLine[1]
 
-		image = Image.open(ImageFilename)
-		image = image.convert('1')
+		image = Image.open(ImageFilename).convert(device.mode).resize((device.width, device.height))
 
 		device.display(image)
 
@@ -118,7 +117,7 @@ def main(device, color_model, color_text, color_high, color_alert, color_bg, Fon
 						FormatType = Format
 
 					if FormatType == 's':
-						if color_model == '1':
+						if device.mode == '1':
 							# black and white
 							if FormatValue == 'h':
 								fg_fill = color_bg
@@ -126,7 +125,7 @@ def main(device, color_model, color_text, color_high, color_alert, color_bg, Fon
 							if FormatValue == 'a':
 								underline = True
 						else:
-							# RGB(a)
+							# RGB(A)
 							if FormatValue == 'h':
 								fg_fill = color_high
 							elif FormatValue == 'a':
@@ -311,6 +310,6 @@ if __name__ == "__main__":
 
 			os.replace(ContentFile,const_DISPLAY_CONTENT_OLD_FILE)
 
-			main(device, conf_DISP_COLOR_MODEL, color_text, color_high, color_alert, color_bg, conf_DISP_FONT_SIZE, Lines)
+			main(device, color_text, color_high, color_alert, color_bg, conf_DISP_FONT_SIZE, Lines)
 
 		time.sleep(conf_DISP_FRAME_TIME)

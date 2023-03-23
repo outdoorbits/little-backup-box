@@ -489,7 +489,7 @@ function upload_settings() {
 						<label for="conf_DISP_FONT_SIZE"><?php echo L::config_display_font_size_label; ?></label><br>
 							<select name="conf_DISP_FONT_SIZE" id="conf_DISP_FONT_SIZE">
 								<?php
-									$display_font_sizes_array=array(12,14,16);
+									$display_font_sizes_array=array(10,12,14,16);
 									foreach($display_font_sizes_array as $display_font_size) {
 										echo "<option value='" . $display_font_size . "' " . ($config["conf_DISP_FONT_SIZE"] == $display_font_size?" selected":"") . ">" . $display_font_size . "</option>";
 									}
