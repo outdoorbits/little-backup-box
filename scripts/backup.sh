@@ -283,7 +283,7 @@ function progressmonitor() {
 		fi
 
 		PRGMON_LCD4="$(l "box_backup_time_remaining"): ${PRGMON_TIME_REMAINING_FORMATED}"
-		disp_message "s=b:${PRGMON_LCD1}" "s=b:${PRGMON_LCD2}" "s=b:${PRGMON_LCD3}" "s=b:${PRGMON_LCD4}" "s=b:${PRGMON_LCD5}"
+		disp_message "s=hc:${PRGMON_LCD1}" "s=hc:${PRGMON_LCD2}" "s=hc:${PRGMON_LCD3}" "s=hc:${PRGMON_LCD4}" "s=hc:${PRGMON_LCD5}" "s=b: " "s=b: " "s=b: "
 
 		PRGMON_LAST_MESSAGE_TIME=$(get_uptime_seconds)
 	fi
@@ -310,7 +310,7 @@ function syncprogress() {
 	local LCD5="PGBAR=0" # progressbar
 
 	# start screen
-	disp_message "s=b:${LCD1}" "s=b:${LCD2}" "s=b:${LCD3}" "s=b:${LCD4}" "s=b:${LCD5}"
+	disp_message "s=hc:${LCD1}" "s=hc:${LCD2}" "s=hc:${LCD3}" "s=hc:${LCD4}" "s=hc:${LCD5}" "s=b: " "s=b: " "s=b: "
 
 	local LAST_MESSAGE_TIME=0
 	local FILESCOUNT=0

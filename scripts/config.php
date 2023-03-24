@@ -578,10 +578,12 @@ function upload_settings() {
 
 					<div>
 						<h4><?php echo L::config_display_colors_header; ?></h4>
+
+						<?php $display_colors_array=array('blue','green','red','white','yellow','orange','lightgrey','grey'); ?>
+
 							<label for="conf_DISP_COLOR_TEXT"><?php echo L::config_display_color_text_label; ?></label><br>
 								<select name="conf_DISP_COLOR_TEXT" id="conf_DISP_COLOR_TEXT">
 									<?php
-										$display_colors_array=array('blue','green','red','white','yellow');
 										foreach($display_colors_array as $display_color) {
 											$display_color_entity="config_display_color_" . $display_color;
 											echo "<option value='" . $display_color . "' " . ($config["conf_DISP_COLOR_TEXT"] == $display_color?" selected":"") . ">" . L::{"$display_color_entity"}() . "</option>";
@@ -594,7 +596,6 @@ function upload_settings() {
 						<label for="conf_DISP_COLOR_HIGH"><?php echo L::config_display_color_high_label; ?></label><br>
 							<select name="conf_DISP_COLOR_HIGH" id="conf_DISP_COLOR_HIGH">
 								<?php
-									$display_colors_array=array('blue','green','red','white','yellow');
 									foreach($display_colors_array as $display_color) {
 										$display_color_entity="config_display_color_" . $display_color;
 										echo "<option value='" . $display_color . "' " . ($config["conf_DISP_COLOR_HIGH"] == $display_color?" selected":"") . ">" . L::{"$display_color_entity"}() . "</option>";
@@ -607,7 +608,6 @@ function upload_settings() {
 						<label for="conf_DISP_COLOR_ALERT"><?php echo L::config_display_color_alert_label; ?></label><br>
 							<select name="conf_DISP_COLOR_ALERT" id="conf_DISP_COLOR_ALERT">
 								<?php
-									$display_colors_array=array('blue','green','red','white','yellow');
 									foreach($display_colors_array as $display_color) {
 										$display_color_entity="config_display_color_" . $display_color;
 										echo "<option value='" . $display_color . "' " . ($config["conf_DISP_COLOR_ALERT"] == $display_color?" selected":"") . ">" . L::{"$display_color_entity"}() . "</option>";

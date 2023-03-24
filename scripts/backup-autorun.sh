@@ -120,8 +120,11 @@ sudo rm "${const_CMD_RUNNER_LOCKFILE}" > /dev/null 2>&1
 . "${WORKING_DIR}/lib-display.sh"
 
 # Hello
-disp_message "IMAGE=${WORKING_DIR}/little-backup-box.bmp"
-sleep 1
+if [ "${conf_DISP_COLOR_MODEL}" = "1" ]; then
+	disp_message ":IMAGE=${WORKING_DIR}/little-backup-box.bmp"
+else
+	disp_message ":IMAGE=${WORKING_DIR}/little-backup-box.jpg"
+fi
 
 # Display IP
 source "${WORKING_DIR}/cron-ip.sh" "force_display" &

@@ -122,7 +122,18 @@ function disp_message () {
 	# output to display via file
 	if [ $conf_DISP = true ]; then
 		sudo mkdir -p "${const_DISPLAY_CONTENT_FOLDER}"
-		sudo bash -c "echo -en '${Lines[0]}\n${Lines[1]}\n${Lines[2]}\n${Lines[3]}\n${Lines[4]}' > '${const_DISPLAY_CONTENT_FOLDER}/$(get_uptime_miliseconds).txt'"
+
+		n=0
+		DISPLAY_LINES=''
+		while [ ${n} -lt ${#Lines[@]} ];  do
+			if [ ! -z "${DISPLAY_LINES}" ]; then
+				DISPLAY_LINES="${DISPLAY_LINES}\n"
+			fi
+			DISPLAY_LINES="${DISPLAY_LINES}${Lines[$n]}"
+			n=$(expr $n + 1)
+		done
+
+		sudo bash -c "echo -en '${DISPLAY_LINES}' > '${const_DISPLAY_CONTENT_FOLDER}/$(get_uptime_miliseconds).txt'"
 	fi
 
 	# log

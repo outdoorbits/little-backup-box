@@ -254,7 +254,10 @@
         "yellow": "amarillo",
         "green": "verde",
         "blue": "azul",
-        "red": "rojo"
+        "red": "rojo",
+        "grey": "gris",
+        "lightgrey": "gris claro",
+        "orange": "naranja"
       },
       "color_text_label": "Color de fuente predeterminado",
       "color_alert_label": "Color de fuente para advertencias",

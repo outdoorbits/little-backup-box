@@ -119,16 +119,16 @@ def main(device, color_text, color_high, color_alert, color_bg, FontSize, Lines)
 					if FormatType == 's':
 						if device.mode == '1':
 							# black and white
-							if FormatValue == 'h':
+							if FormatValue == 'h': # highlight
 								fg_fill = color_bg
 								bg_fill = color_text
-							if FormatValue == 'a':
+							if FormatValue == 'a': # alert
 								underline = True
 						else:
 							# RGB(A)
-							if FormatValue == 'h':
+							if FormatValue == 'h' or FormatValue == 'hc': # highlight or highlight color
 								fg_fill = color_high
-							elif FormatValue == 'a':
+							elif FormatValue == 'a': # alert
 								if color_alert != color_text and color_alert != color_high:
 									fg_fill = color_alert
 								elif color_alert != color_high:
@@ -220,12 +220,15 @@ if __name__ == "__main__":
 
 	#define colors
 	color = {}
-	color['blue'] = (000, 000, 255)
-	color['green'] = (000, 255, 000)
-	color['red'] = (255, 000, 000)
+	color['blue'] = (0, 0, 255)
+	color['green'] = (0, 255, 0)
+	color['red'] = (255, 0, 0)
+	color['yellow'] = (255, 255, 0)
+	color['orange'] = (255, 94, 14)
 	color['white'] = (255, 255, 255)
-	color['yellow'] = (255, 255, 000)
-	color['black'] = (000, 000, 000)
+	color['black'] = (0, 0, 0)
+	color['lightgrey'] = (127, 127, 127)
+	color['grey'] = (70, 70, 70)
 
 	if conf_DISP_COLOR_MODEL == '1':
 		color_text = 255

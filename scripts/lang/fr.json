@@ -254,7 +254,10 @@
         "yellow": "jaune",
         "green": "vert",
         "blue": "bleu",
-        "red": "rouge"
+        "red": "rouge",
+        "grey": "gris",
+        "lightgrey": "gris clair",
+        "orange": "orange"
       },
       "color_text_label": "Couleur de police par défaut",
       "color_alert_label": "Couleur de la police des avertissements",

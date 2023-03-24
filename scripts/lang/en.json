@@ -406,7 +406,10 @@
         "yellow": "yellow",
         "green": "green",
         "blue": "blue",
-        "red": "red"
+        "red": "red",
+        "grey": "grey",
+        "lightgrey": "light grey",
+        "orange": "orange"
       },
       "color_text_label": "Default font color",
       "color_alert_label": "Font color for warnings",

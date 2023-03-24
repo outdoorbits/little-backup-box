@@ -254,7 +254,10 @@
         "yellow": "gelb",
         "green": "grün",
         "blue": "blau",
-        "red": "rot"
+        "red": "rot",
+        "grey": "grau",
+        "lightgrey": "hellgrau",
+        "orange": "orange"
       },
       "color_text_label": "Standard-Schriftfarbe",
       "color_alert_label": "Schriftfarbe für Warnungen",
