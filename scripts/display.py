@@ -296,6 +296,7 @@ if __name__ == "__main__":
 							Lines.append(Line)
 
 			# read old lines
+			oLines = []
 			if len(Lines) < const_DISPLAY_LINES_LIMIT and os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
 				with open(const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
 					for Line in oCF:
@@ -305,6 +306,7 @@ if __name__ == "__main__":
 							if Line:
 								Line = "s=b:{}".format(Line)
 								Lines.append(Line)
+								oLines.append(Line)
 
 			# fill line count to const_DISPLAY_LINES_LIMIT
 			while len(Lines) < const_DISPLAY_LINES_LIMIT:
@@ -312,6 +314,9 @@ if __name__ == "__main__":
 
 
 			os.replace(ContentFile,const_DISPLAY_CONTENT_OLD_FILE)
+			with open(const_DISPLAY_CONTENT_OLD_FILE, 'a') as oCF:
+				for Line in oLines:
+					oCF.write("\n{}".format(Line))
 
 			main(device, color_text, color_high, color_alert, color_bg, conf_DISP_FONT_SIZE, Lines)
 

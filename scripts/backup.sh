@@ -43,9 +43,6 @@ MOUNTED_DEVICES=()
 
 CLOUDSERVICE=""
 
-SYNC_TIME_OVERHEATING_ESTIMATED_SEC=120
-SYNC_TIME_OVERHEATING_WAIT_SEC=60
-
 #####################################
 # SOURCE AND DESTINATION DEFINTIONS #
 #####################################
@@ -283,7 +280,7 @@ function progressmonitor() {
 		fi
 
 		PRGMON_LCD4="$(l "box_backup_time_remaining"): ${PRGMON_TIME_REMAINING_FORMATED}"
-		disp_message "s=hc:${PRGMON_LCD1}" "s=hc:${PRGMON_LCD2}" "s=hc:${PRGMON_LCD3}" "s=hc:${PRGMON_LCD4}" "s=hc:${PRGMON_LCD5}" "s=b: " "s=b: " "s=b: "
+		disp_message "s=hc:${PRGMON_LCD1}" "s=hc:${PRGMON_LCD2}" "s=hc:${PRGMON_LCD3}" "s=hc:${PRGMON_LCD4}" "s=hc:${PRGMON_LCD5}" "s=b:" "s=b:" "s=b:"
 
 		PRGMON_LAST_MESSAGE_TIME=$(get_uptime_seconds)
 	fi
@@ -310,7 +307,7 @@ function syncprogress() {
 	local LCD5="PGBAR=0" # progressbar
 
 	# start screen
-	disp_message "s=hc:${LCD1}" "s=hc:${LCD2}" "s=hc:${LCD3}" "s=hc:${LCD4}" "s=hc:${LCD5}" "s=b: " "s=b: " "s=b: "
+	disp_message "s=hc:${LCD1}" "s=hc:${LCD2}" "s=hc:${LCD3}" "s=hc:${LCD4}" "s=hc:${LCD5}" "s=b:" "s=b:" "s=b:"
 
 	local LAST_MESSAGE_TIME=0
 	local FILESCOUNT=0
@@ -348,6 +345,7 @@ function syncprogress() {
 		progressmonitor "${START_TIME}" "${FILES_TO_SYNC}" "${FILESCOUNT}" "${LCD1}" "${LCD2}" "${SPEED}"
 	done
 
+	# no need to check again earlier
 	if [ $conf_DISP = true ]; then
 		sleep "${const_DISPLAY_HOLD_SEC}"
 	fi
@@ -431,10 +429,7 @@ function sync_return_code_decoder() {
 			SOURCE_MODE='none'
 		else
 			disp_message ":$(l 'box_backup_vpn_connecting_success')" ":${VPN_TYPE}"
-			sleep $(( ${const_DISPLAY_HOLD_SEC} / 2 ))
-
 			sudo "${WORKING_DIR}/cron-ip.sh" 'force'
-			sleep ${const_DISPLAY_HOLD_SEC}
 		fi
 
 	fi
@@ -482,10 +477,6 @@ function sync_return_code_decoder() {
 
 		disp_message ":$(l 'box_backup_usb_target_ok')" ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FREE}" ":${STOR_FSTYPE}"
 
-		if [ $conf_DISP = true ]; then
-			sleep "${const_DISPLAY_HOLD_SEC}"
-		fi
-
 	elif [ "${TARGET_MODE}" = "internal" ]; then
 		# Internal mode
 		TARGET_PATH="${const_INTERNAL_BACKUP_DIR}"
@@ -504,10 +495,6 @@ function sync_return_code_decoder() {
 
 		# If display support is enabled, notify that the usb device has been mounted
 		disp_message ":$(l 'box_backup_int_storage_ok')" ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FREE}" ":${STOR_FSTYPE}"
-
-		if [ $conf_DISP = true ]; then
-			sleep "${const_DISPLAY_HOLD_SEC}"
-		fi
 
 	elif [ "${TARGET_MODE}" = "rsyncserver" ]; then
 			RSYNC_CONNECTION="rsync://${conf_RSYNC_USER}@${conf_RSYNC_SERVER}:${conf_RSYNC_PORT}/${conf_RSYNC_SERVER_MODULE}"
@@ -573,10 +560,6 @@ function sync_return_code_decoder() {
 
 		disp_message ":$(l 'box_backup_usb_source_ok')" ":$(l 'box_backup_working')..." ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FSTYPE}"
 
-		if [ $conf_DISP = true ]; then
-			sleep "${const_DISPLAY_HOLD_SEC}"
-		fi
-
 		# Create  a .id random identifier file if doesn't exist
 		cd "${SOURCE_PATHS[0]}"
 		if [ ! -f *.id ]; then
@@ -602,7 +585,7 @@ function sync_return_code_decoder() {
 		# Waiting for the iOS device to be mounted
 		until [ ! -z "$(ls -A ${const_IOS_MOUNT_POINT})" ]; do
 			disp_message ":$(l 'box_backup_no_ios_waiting_1')" ":$(l 'box_backup_no_ios_waiting_2')..."
-			sleep 5
+			sleep 2
 			sudo ifuse ${const_IOS_MOUNT_POINT} -o allow_other
 		done
 
@@ -641,10 +624,6 @@ function sync_return_code_decoder() {
 		unset IFS
 
 		disp_message ":$(l 'box_backup_int_storage_ok')" ":$(l 'box_backup_working')..." ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FSTYPE}"
-
-		if [ $conf_DISP = true ]; then
-			sleep "${const_DISPLAY_HOLD_SEC}"
-		fi
 
 		# Create  a .id random identifier file if doesn't exist
 		cd "${SOURCE_PATHS[0]}"
@@ -1033,8 +1012,6 @@ function sync_return_code_decoder() {
 					SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Err.Lost device!"
 					log_message "Lost device '${MOUNTED_DEVICE}': DEVICE LOST"
 
-					sleep ${const_DISPLAY_HOLD_SEC}
-
 					log_exec "Lost device" "sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE" 3
 					log_message "$(get_abnormal_system_conditions)" 1
 				fi
@@ -1044,11 +1021,10 @@ function sync_return_code_decoder() {
 			SYNC_TIME=$(($SYNC_STOP_TIME - $SYNC_START_TIME))
 			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}"); SYNC_TIME: ${SYNC_TIME}" 3
 
-			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${SYNC_TIME_OVERHEATING_ESTIMATED_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" ]; then
-					disp_message "a:$(l 'box_backup_error_cooling_1')" ":$(l 'box_backup_error_cooling_2') ${SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." ":$(l 'box_backup_error_cooling_3')" ":$(l 'box_backup_error_cooling_4')" ":"
-					sleep ${SYNC_TIME_OVERHEATING_WAIT_SEC}
+			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" ]; then
+					disp_message "a:$(l 'box_backup_error_cooling_1')" ":$(l 'box_backup_error_cooling_2') ${const_SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." ":$(l 'box_backup_error_cooling_3')" ":$(l 'box_backup_error_cooling_4')" ":"
+					sleep ${const_SYNC_TIME_OVERHEATING_WAIT_SEC}
 			fi
-
 
 			# prepare message for mail and power off
 			SOURCE_FOLDER_MESSAGE_INFO="${SOURCE_FOLDER_INFO}: "
@@ -1097,10 +1073,7 @@ function sync_return_code_decoder() {
 		vpn_stop "OpenVPN"
 		vpn_stop "WireGuard" "${const_VPN_DIR_WireGuard}/$const_VPN_FILENAME_WireGuard"
 
-		sleep $(( ${const_DISPLAY_HOLD_SEC} / 2 ))
-
 		sudo "${WORKING_DIR}/cron-ip.sh" 'force'
-		sleep ${const_DISPLAY_HOLD_SEC}
 	fi
 
 ########################

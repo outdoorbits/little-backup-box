@@ -27,3 +27,5 @@ const_VPN_DIR_OpenVPN='/etc/openvpn'
 const_VPN_DIR_WireGuard='/etc/wireguard'
 const_VPN_FILENAME_OpenVPN='openvpn.conf'
 const_VPN_FILENAME_WireGuard='wg0.conf'
+const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC=120
+const_SYNC_TIME_OVERHEATING_WAIT_SEC=60
