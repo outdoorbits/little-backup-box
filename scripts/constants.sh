@@ -8,7 +8,6 @@ const_WEB_ROOT_LBB="/var/www/little-backup-box"
 const_LOGFILE="/var/www/little-backup-box/tmp/little-backup-box.log"
 const_LOGFILE_SYNC="/var/www/little-backup-box/tmp/sync.log"
 const_DISPLAY_LINES_LIMIT=10
-const_DISPLAY_HOLD_SEC=2
 const_DISPLAY_CONTENT_FOLDER="/var/www/little-backup-box/tmp/display-content"
 const_DISPLAY_CONTENT_OLD_FILE="/var/www/little-backup-box/tmp/display-content-old.txt"
 const_RCLONE_CONFIG_FILE="/media/rclone.conf"

@@ -347,7 +347,7 @@ function syncprogress() {
 
 	# no need to check again earlier
 	if [ $conf_DISP = true ]; then
-		sleep "${const_DISPLAY_HOLD_SEC}"
+		sleep "${conf_DISP_FRAME_TIME}"
 	fi
 
 }

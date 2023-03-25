@@ -57,12 +57,12 @@ if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 
 	if [ ! -z "${MESSAGE}" ]; then
 		disp_message "${MESSAGE}" "s=b:" "s=b:" "s=b:" "s=b:"
-		sleep ${const_DISPLAY_HOLD_SEC}
+		sleep ${conf_DISP_FRAME_TIME}
 	fi
 
 	if [ ! -z "${TRANSFER_INFO}" ]; then
 		disp_message "${TRANSFER_INFO}" "s=b:" "s=b:" "s=b:" "s=b:"
-		sleep ${const_DISPLAY_HOLD_SEC}
+		sleep ${conf_DISP_FRAME_TIME}
 	fi
 
 	if [ "${ACTION}" = "poweroff" ]; then
@@ -90,12 +90,12 @@ else
 	# notify the backup status
 	if [ ! -z "${MESSAGE}" ]; then
 		disp_message "${MESSAGE}" "s=b:" "s=b:" "s=b:" "s=b:"
-		sleep ${const_DISPLAY_HOLD_SEC}
+		sleep ${conf_DISP_FRAME_TIME}
 	fi
 
 	if [ ! -z "${TRANSFER_INFO}" ]; then
 		disp_message "${TRANSFER_INFO}" "s=b:" "s=b:" "s=b:" "s=b:"
-		sleep ${const_DISPLAY_HOLD_SEC}
+		sleep ${conf_DISP_FRAME_TIME}
 	fi
 
 	if [ -z "${MESSAGE}" ]; then

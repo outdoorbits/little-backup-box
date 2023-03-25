@@ -312,7 +312,6 @@ if __name__ == "__main__":
 			while len(Lines) < const_DISPLAY_LINES_LIMIT:
 				Lines.append("s=b:")
 
-
 			os.replace(ContentFile,const_DISPLAY_CONTENT_OLD_FILE)
 			with open(const_DISPLAY_CONTENT_OLD_FILE, 'a') as oCF:
 				for Line in oLines:
