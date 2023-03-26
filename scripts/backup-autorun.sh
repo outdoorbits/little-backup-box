@@ -121,9 +121,9 @@ sudo rm "${const_CMD_RUNNER_LOCKFILE}" > /dev/null 2>&1
 
 # Hello
 if [ "${conf_DISP_COLOR_MODEL}" = "1" ]; then
-	disp_message ":IMAGE=${WORKING_DIR}/little-backup-box.bmp"
+	disp_message "set:time=2" ":IMAGE=${WORKING_DIR}/little-backup-box.bmp"
 else
-	disp_message ":IMAGE=${WORKING_DIR}/little-backup-box.jpg"
+	disp_message "set:time=2" ":IMAGE=${WORKING_DIR}/little-backup-box.jpg"
 fi
 
 # Display IP

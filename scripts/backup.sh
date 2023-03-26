@@ -280,7 +280,7 @@ function progressmonitor() {
 		fi
 
 		PRGMON_LCD4="$(l "box_backup_time_remaining"): ${PRGMON_TIME_REMAINING_FORMATED}"
-		disp_message "s=hc:${PRGMON_LCD1}" "s=hc:${PRGMON_LCD2}" "s=hc:${PRGMON_LCD3}" "s=hc:${PRGMON_LCD4}" "s=hc:${PRGMON_LCD5}" "s=b:" "s=b:" "s=b:"
+		disp_message "set:clear" "s=hc:${PRGMON_LCD1}" "s=hc:${PRGMON_LCD2}" "s=hc:${PRGMON_LCD3}" "s=hc:${PRGMON_LCD4}" "s=hc:${PRGMON_LCD5}"
 
 		PRGMON_LAST_MESSAGE_TIME=$(get_uptime_seconds)
 	fi
@@ -307,7 +307,7 @@ function syncprogress() {
 	local LCD5="PGBAR=0" # progressbar
 
 	# start screen
-	disp_message "s=hc:${LCD1}" "s=hc:${LCD2}" "s=hc:${LCD3}" "s=hc:${LCD4}" "s=hc:${LCD5}" "s=b:" "s=b:" "s=b:"
+	disp_message "set:clear" "s=hc:${LCD1}" "s=hc:${LCD2}" "s=hc:${LCD3}" "s=hc:${LCD4}" "s=hc:${LCD5}"
 
 	local LAST_MESSAGE_TIME=0
 	local FILESCOUNT=0
@@ -475,7 +475,7 @@ function sync_return_code_decoder() {
 
 		unset IFS
 
-		disp_message ":$(l 'box_backup_usb_target_ok')" ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FREE}" ":${STOR_FSTYPE}"
+		disp_message "set:clear" ":$(l 'box_backup_usb_target_ok')" ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FREE}" ":${STOR_FSTYPE}"
 
 	elif [ "${TARGET_MODE}" = "internal" ]; then
 		# Internal mode
@@ -494,7 +494,7 @@ function sync_return_code_decoder() {
 		unset IFS
 
 		# If display support is enabled, notify that the usb device has been mounted
-		disp_message ":$(l 'box_backup_int_storage_ok')" ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FREE}" ":${STOR_FSTYPE}"
+		disp_message "set:clear" ":$(l 'box_backup_int_storage_ok')" ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FREE}" ":${STOR_FSTYPE}"
 
 	elif [ "${TARGET_MODE}" = "rsyncserver" ]; then
 			RSYNC_CONNECTION="rsync://${conf_RSYNC_USER}@${conf_RSYNC_SERVER}:${conf_RSYNC_PORT}/${conf_RSYNC_SERVER_MODULE}"
@@ -558,7 +558,7 @@ function sync_return_code_decoder() {
 
 		unset IFS
 
-		disp_message ":$(l 'box_backup_usb_source_ok')" ":$(l 'box_backup_working')..." ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FSTYPE}"
+		disp_message "set:clear" ":$(l 'box_backup_usb_source_ok')" ":$(l 'box_backup_working')..." ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FSTYPE}"
 
 		# Create  a .id random identifier file if doesn't exist
 		cd "${SOURCE_PATHS[0]}"
@@ -623,7 +623,7 @@ function sync_return_code_decoder() {
 
 		unset IFS
 
-		disp_message ":$(l 'box_backup_int_storage_ok')" ":$(l 'box_backup_working')..." ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FSTYPE}"
+		disp_message "set:clear" ":$(l 'box_backup_int_storage_ok')" ":$(l 'box_backup_working')..." ":${STOR_SIZE}" ":${STOR_USED}" ":${STOR_FSTYPE}"
 
 		# Create  a .id random identifier file if doesn't exist
 		cd "${SOURCE_PATHS[0]}"

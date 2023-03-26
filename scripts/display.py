@@ -36,8 +36,11 @@
 #
 ## IMAGE
 # IMAGE=PATH
-
-
+#
+#
+# To set global parameters you can use a 'set:'-line:
+# multiple options can be separated by "," (without spaces)
+# set:clear,time=1.5
 
 import time
 import sys
@@ -98,6 +101,8 @@ def main(device, color_text, color_high, color_alert, color_bg, FontSize, Lines)
 			for n in range(0, maxLines):
 
 				Line = Lines[n]
+
+				Line = Line.strip()
 
 				# basic color settings
 				fg_fill	= color_text
@@ -192,7 +197,7 @@ def main(device, color_text, color_high, color_alert, color_bg, FontSize, Lines)
 
 				if underline:
 					(left, top, right, bottom) = draw.textbbox((0,0),Content,font=FONT)
-					draw.line((x + 1, y + line_height - 1, x + 1 + right - left, y + line_height - 1), fill=255, width=2)
+					draw.line((x + 1, y + line_height + y_space, x + 1 + right - left, y + line_height + y_space), fill=fg_fill, width=1)
 
 
 
@@ -274,6 +279,9 @@ if __name__ == "__main__":
 		device.persist = True
 
 	while(True):
+		frame_time = conf_DISP_FRAME_TIME
+		import_old_file = True
+
 		ContenFileList	= os.listdir(const_DISPLAY_CONTENT_FOLDER)
 		if len(ContenFileList):
 
@@ -284,7 +292,28 @@ if __name__ == "__main__":
 			# read new lines
 			with open(ContentFile, 'r') as CF:
 				for Line in CF:
-					if len (Lines) < const_DISPLAY_LINES_LIMIT:
+
+					Line = Line.strip()
+
+					if Line[0:4] == 'set:': # global settings line
+
+						settingStr = Line[4:]
+						settings = settingStr.split(',')
+
+						for setting in settings:
+
+							if '=' in setting:
+								SettingType, SettingValue = setting.split('=',1)
+							else:
+								SettingType = setting
+
+							if SettingType == 'clear':
+								import_old_file = False
+
+							if SettingType == 'time' and float(SettingValue) >= 0:
+								frame_time = float(SettingValue)
+
+					elif len (Lines) < const_DISPLAY_LINES_LIMIT: # content line
 						Line = Line.replace("\n", "")
 
 						if Line:
@@ -296,27 +325,29 @@ if __name__ == "__main__":
 							Lines.append(Line)
 
 			# read old lines
-			oLines = []
-			if len(Lines) < const_DISPLAY_LINES_LIMIT and os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
-				with open(const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
-					for Line in oCF:
-						if len (Lines) < const_DISPLAY_LINES_LIMIT:
-							Line = Line.replace("\n", "")
-							Line = Line.split(':',1)[-1]
-							if Line:
-								Line = "s=b:{}".format(Line)
-								Lines.append(Line)
-								oLines.append(Line)
+			if import_old_file:
+				if len(Lines) < const_DISPLAY_LINES_LIMIT and os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
+					with open(const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
+						for Line in oCF:
+							if len (Lines) < const_DISPLAY_LINES_LIMIT:
+								Line = Line.replace("\n", "")
+								Line = Line.split(':',1)[-1]
+								if Line:
+									Line = "s=b:{}".format(Line)
+									Lines.append(Line)
 
 			# fill line count to const_DISPLAY_LINES_LIMIT
 			while len(Lines) < const_DISPLAY_LINES_LIMIT:
 				Lines.append("s=b:")
 
-			os.replace(ContentFile,const_DISPLAY_CONTENT_OLD_FILE)
-			with open(const_DISPLAY_CONTENT_OLD_FILE, 'a') as oCF:
-				for Line in oLines:
-					oCF.write("\n{}".format(Line))
+			# remove content file
+			os.remove(ContentFile)
+
+			# move lines to old lines file
+			with open(const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
+				oCF.write("\n".join(Lines))
+				print("\n".join(Lines))
 
 			main(device, color_text, color_high, color_alert, color_bg, conf_DISP_FONT_SIZE, Lines)
 
-		time.sleep(conf_DISP_FRAME_TIME)
+		time.sleep(frame_time)
