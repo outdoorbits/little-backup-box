@@ -94,7 +94,7 @@ else
 fi
 
 if [ "${SOURCE_MODE}" = "${TARGET_MODE}" ] && [ "${SOURCE_MODE}" != "usb" ] && [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-	disp_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')" ""
+	disp_message "$(l 'box_backup_invalid_mode_combination_1')" "$(l 'box_backup_invalid_mode_combination_2')" "$(l 'box_backup_invalid_mode_combination_3')"
 	TARGET_MODE='none'
 	SOURCE_MODE='none'
 fi
@@ -216,7 +216,7 @@ function calculate_files_to_sync() {
 	else
 		# no defined mode selected
 		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-			disp_message "s=b:$(l 'box_backup_no_valid_source_mode_1')" "s=b:$(l 'box_backup_no_valid_source_mode_2')" "s=b:$(l 'box_backup_no_valid_source_mode_3')" "" "s=b:2"
+			disp_message "s=b:$(l 'box_backup_no_valid_source_mode_1')" "s=b:$(l 'box_backup_no_valid_source_mode_2')" "s=b:$(l 'box_backup_no_valid_source_mode_3')" "s=b:2"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		fi
@@ -796,7 +796,7 @@ function sync_return_code_decoder() {
 	else
 		# no defined mode selected
 		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-			disp_message ":$(l 'box_backup_no_valid_source_mode_1')" ":$(l 'box_backup_no_valid_source_mode_2')" ":$(l 'box_backup_no_valid_source_mode_3')" "" ":1"
+			disp_message ":$(l 'box_backup_no_valid_source_mode_1')" ":$(l 'box_backup_no_valid_source_mode_2')" ":$(l 'box_backup_no_valid_source_mode_3')" ":1"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		fi
@@ -982,10 +982,10 @@ function sync_return_code_decoder() {
 				FILES_TRANSFERRED=$((${FILES_TO_SYNC} - ${FILES_TO_SYNC_NEW}))
 				if [ "${FILES_TRANSFERRED}" -lt "0" ]; then FILES_TRANSFERRED=$(l "box_backup_unknown"); fi
 				TRANSFER_INFO[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied").\n"
-				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}s=b:${SOURCE_FOLDER_NUMBER}. $FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied")\n"
+				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}:${SOURCE_FOLDER_NUMBER}. $FILES_TRANSFERRED $(l "box_backup_of") ${FILES_TO_SYNC} $(l "box_backup_files_copied")\n"
 			else
 				TRANSFER_INFO[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l "box_backup_result_suspect").\n"
-				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}s=b:${SOURCE_FOLDER_NUMBER}. $(l "box_backup_result_suspect")\n"
+				TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP}:${SOURCE_FOLDER_NUMBER}. $(l "box_backup_result_suspect")\n"
 				FILES_TO_SYNC=0
 			fi
 			FILES_TO_SYNC="${FILES_TO_SYNC_NEW}"
@@ -1022,7 +1022,7 @@ function sync_return_code_decoder() {
 			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}"); SYNC_TIME: ${SYNC_TIME}" 3
 
 			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" ]; then
-					disp_message "a:$(l 'box_backup_error_cooling_1')" ":$(l 'box_backup_error_cooling_2') ${const_SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." ":$(l 'box_backup_error_cooling_3')" ":$(l 'box_backup_error_cooling_4')" ":"
+					disp_message "a:$(l 'box_backup_error_cooling_1')" ":$(l 'box_backup_error_cooling_2') ${const_SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." ":$(l 'box_backup_error_cooling_3')" ":$(l 'box_backup_error_cooling_4')"
 					sleep ${const_SYNC_TIME_OVERHEATING_WAIT_SEC}
 			fi
 
@@ -1033,7 +1033,7 @@ function sync_return_code_decoder() {
 				SYNC_ERROR_FINAL_RUN=false
 
 				MESSAGE_MAIL[${SOURCE_FOLDER_NUMBER},${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}]="$(l 'box_backup_mail_backup_complete')."
-				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:${SOURCE_FOLDER_MESSAGE_INFO}$(l 'box_backup_complete').\n"
+				MESSAGE_DISPLAY="${MESSAGE_DISPLAY}:${SOURCE_FOLDER_MESSAGE_INFO}$(l 'box_backup_complete').\n"
 				SOURCE_FOLDER_MESSAGE_INFO=''
 			else
 				SYNC_ERROR_FINAL_RUN=true
@@ -1057,7 +1057,7 @@ function sync_return_code_decoder() {
 				fi
 			fi
 
-			MESSAGE_DISPLAY="${MESSAGE_DISPLAY}s=b:$(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}\n"
+			MESSAGE_DISPLAY="${MESSAGE_DISPLAY}:$(l 'box_backup_try') ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}\n"
 
 		done # retry
 
@@ -1164,14 +1164,14 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 				sudo sqlite3 "${DB}" "DELETE from EXIF_DATA WHERE ID=${ID};"
 				log_message "DELETE from EXIF_DATA WHERE ID=${ID};" 3
 			fi
-			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}" ""
+			progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "${i}" "${LCD1}" "${LCD2}"
 		done
 
 		# vacuum database
 		sudo sqlite3 "${DB}" "VACUUM;"
 
 		# import preexisting tims into database
-		disp_message ":$(l "box_backup_generating_database_finding_images1")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")" ":$(l "box_backup_generating_database_finding_images3")" ":"
+		disp_message "set:clear" ":$(l "box_backup_generating_database_finding_images1")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")" ":$(l "box_backup_generating_database_finding_images3")"
 
 		# find all tims and convert their filename to the estimated original filename:
 		## 1. replace space by substitute of space ##**##
@@ -1223,7 +1223,7 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 		# prepare database
 		db_setup
 
-		disp_message ":$(l "box_backup_generating_thumbnails_finding_images1")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")" ":$(l "box_backup_generating_thumbnails_finding_images3")" ":"
+		disp_message "set:clear" ":$(l "box_backup_generating_thumbnails_finding_images1")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")" ":$(l "box_backup_generating_thumbnails_finding_images3")"
 
 		#find all images; replace "space" by substitute of space "##**##"
 		INAMES=""
@@ -1356,7 +1356,7 @@ ${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 		# prepare database
 		db_setup
 
-		disp_message ":$(l "box_backup_updating_exif")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")" ":" ":"
+		disp_message "set:clear" ":$(l "box_backup_updating_exif")" ":$(l "box_backup_mode_${TARGET_MODE}")" ":$(l "box_backup_counting_images")"
 
 
 		# select directory and filename as DirFile and replace spaces by placeholder

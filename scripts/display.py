@@ -102,8 +102,6 @@ def main(device, color_text, color_high, color_alert, color_bg, FontSize, Lines)
 
 				Line = Lines[n]
 
-				Line = Line.strip()
-
 				# basic color settings
 				fg_fill	= color_text
 				bg_fill	= color_bg
@@ -314,7 +312,6 @@ if __name__ == "__main__":
 								frame_time = float(SettingValue)
 
 					elif len (Lines) < const_DISPLAY_LINES_LIMIT: # content line
-						Line = Line.replace("\n", "")
 
 						if Line:
 							if (Line[0:1] == ':'):
@@ -329,8 +326,10 @@ if __name__ == "__main__":
 				if len(Lines) < const_DISPLAY_LINES_LIMIT and os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
 					with open(const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
 						for Line in oCF:
-							if len (Lines) < const_DISPLAY_LINES_LIMIT:
-								Line = Line.replace("\n", "")
+
+							Line = Line.strip()
+
+							if len(Lines) < const_DISPLAY_LINES_LIMIT:
 								Line = Line.split(':',1)[-1]
 								if Line:
 									Line = "s=b:{}".format(Line)
