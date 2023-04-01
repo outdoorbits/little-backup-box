@@ -86,6 +86,8 @@ function get_device_selector($name) {
 						<option value="NTFS (no compression)">NTFS (compression disabled) (Windows&#174;)</option>
 						<option value="Ext4">Ext4 (Linux)</option>
 						<option value="Ext3">Ext3 (Linux)</option>
+						<option value="HFS Plus">HFS Plus (Mac)</option>
+						<option value="HFS">HFS (Mac)</option>
 					</select>
 					<br>
 					<?php
@@ -162,11 +164,8 @@ function get_device_selector($name) {
 
 			popup($device . l::tools_fsck_check_m,$config["conf_POPUP_MESSAGES"]);
 
-			$command = "sudo umount /dev/${device}";
-			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
-
-			$command = "sudo fsck /dev/${device}";
-			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
+			$command = "sudo ${WORKING_DIR}/tools-fsck.sh '${device}' 'check'";
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\" \"false\"");
 	}
 	if (isset($_POST['fsck_autorepair'])) {
 
@@ -174,11 +173,8 @@ function get_device_selector($name) {
 
 			popup($device . l::tools_fsck_autorepair_m,$config["conf_POPUP_MESSAGES"]);
 
-			$command = "sudo umount /dev/${device}";
-			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
-
-			$command = "sudo fsck -a /dev/${device}";
-			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
+			$command = "sudo ${WORKING_DIR}/tools-fsck.sh '${device}' 'repair'";
+			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\" \"false\"");
 	}
 
 	if (isset($_POST['format'])) {

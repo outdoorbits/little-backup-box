@@ -29,12 +29,13 @@ JOB="${1}" # log_message, log_exec or log_pick_file
 MESSAGE="${2}"
 COMMAND="${3}" # command or filename
 LOGLEVEL="${4}"
+LOG_COMMAND_LINE="${5}" # optional, default 'true', if 'false' the command itself will not be logged
 
-if [ "${JOB}" = "log_message" ]; then
+if   [ "${JOB}" = "log_message" ]; then
 	log_message "${MESSAGE}" "${LOGLEVEL}"
 elif [ "${JOB}" = "log_exec" ]; then
-	log_exec "${MESSAGE}" "${COMMAND}" "${LOGLEVEL}"
-elif [ "${JOB}" = "log_exec" ]; then
+	log_exec "${MESSAGE}" "${COMMAND}" "${LOGLEVEL}" "${LOG_COMMAND_LINE}"
+elif [ "${JOB}" = "log_pick_file" ]; then
 	log_pick_file "${COMMAND}"
 fi
 

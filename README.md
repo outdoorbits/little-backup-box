@@ -29,6 +29,7 @@ These languages are already available. Do you want to maintain or create a trans
 <br>
 <h2>NEWS</h2>
 <ul>
+	<li>2023/04/01: Add support for Apple file systems HFS and HFS Plus. Supported file systems now are Ext2, Ext3, Ext4, FAT, vFAT, exFAT, NTFS, HFS and HFS Plus.</li>
 	<li>2023/02/28: Add support for multiple displays, I2C and SPI</li>
 	<li>2023/02/24: Add VPN support for WireGuard and OpenVPN</li>
 	<li>2023/02/15: Remove miniDLNA due to security concerns</li>

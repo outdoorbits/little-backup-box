@@ -53,7 +53,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 								$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_stop1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_stop2 . "'";
 							}
 
-							if ($PARAM2 == "exFAT") {
+							elseif ($PARAM2 == "exFAT") {
 								$MAIN_COMMAND	= "mkfs.exfat /dev/$PARAM1";
 
 								$COMMAND_LINE	= "sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_start1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_start2 . "'";
@@ -72,7 +72,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 								$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_stop1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_stop2 . "'";
 							}
 
-							if ($PARAM2 == "NTFS (compression enabled)") {
+							elseif ($PARAM2 == "NTFS (compression enabled)") {
 								$MAIN_COMMAND	= "mkfs.ntfs --enable-compression --force --verbose /dev/$PARAM1";
 
 								$COMMAND_LINE	= "sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_start1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_start2 . "'";
@@ -91,7 +91,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 								$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_stop1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_stop2 . "'";
 							}
 
-							if ($PARAM2 == "NTFS (no compression)") {
+							elseif ($PARAM2 == "NTFS (no compression)") {
 								$MAIN_COMMAND	= "mkfs.ntfs --force --verbose /dev/$PARAM1";
 
 								$COMMAND_LINE	= "sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_start1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_start2 . "'";
@@ -110,7 +110,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 								$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_stop1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_stop2 . "'";
 							}
 
-							if ($PARAM2 == "Ext4") {
+							elseif ($PARAM2 == "Ext4") {
 								$MAIN_COMMAND	= "mkfs.ext4 -v -F /dev/$PARAM1";
 
 								$COMMAND_LINE	= "sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_start1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_start2 . "'";
@@ -129,7 +129,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 								$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_stop1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_stop2 . "'";
 							}
 
-							if ($PARAM2 == "Ext3") {
+							elseif ($PARAM2 == "Ext3") {
 								$MAIN_COMMAND	= "mkfs.ext3 -v -F /dev/$PARAM1";
 
 								$COMMAND_LINE	= "sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_start1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_start2 . "'";
@@ -147,6 +147,45 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 								$COMMAND_LINE	.= ";echo 'FINISHED.'";
 								$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_stop1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_stop2 . "'";
 							}
+
+							elseif ($PARAM2 == "HFS Plus") {
+								$MAIN_COMMAND	= "mkfs.hfsplus /dev/$PARAM1";
+
+								$COMMAND_LINE	= "sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_start1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_start2 . "'";
+								$COMMAND_LINE	.= ";sudo umount /dev/$PARAM1";
+								$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";sudo fdisk -l /dev/$PARAM1";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";lsblk -f /dev/$PARAM1";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";sudo fsck.hfsplus /dev/$PARAM1";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";echo 'FINISHED.'";
+								$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_stop1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_stop2 . "'";
+							}
+
+							elseif ($PARAM2 == "HFS") {
+								$MAIN_COMMAND	= "mkfs.hfs /dev/$PARAM1";
+
+								$COMMAND_LINE	= "sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_start1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_start2 . "'";
+								$COMMAND_LINE	.= ";sudo umount /dev/$PARAM1";
+								$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";sudo fdisk -l /dev/$PARAM1";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";lsblk -f /dev/$PARAM1";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";sudo fsck.hfs /dev/$PARAM1";
+								$COMMAND_LINE	.= ";echo ''";
+								$COMMAND_LINE	.= ";echo 'FINISHED.'";
+								$COMMAND_LINE	.= ";sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_format_stop1 . "' ':$PARAM1: $PARAM2' ':" . L::box_cmd_format_stop2 . "'";
+							}
+
 						} else {
 							$COMMAND_LINE	= "";
 						}

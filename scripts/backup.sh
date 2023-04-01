@@ -216,7 +216,7 @@ function calculate_files_to_sync() {
 	else
 		# no defined mode selected
 		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-			disp_message "s=b:$(l 'box_backup_no_valid_source_mode_1')" "s=b:$(l 'box_backup_no_valid_source_mode_2')" "s=b:$(l 'box_backup_no_valid_source_mode_3')" "s=b:2"
+			disp_message "s=b:$(l 'box_backup_no_valid_source_mode_1')" "s=b:$(l 'box_backup_no_valid_source_mode_2')" "s=b:$(l 'box_backup_no_valid_source_mode_3')" "s=b:1"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		fi
@@ -516,7 +516,7 @@ function sync_return_code_decoder() {
 	else
 		# no defined mode selected
 		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-			disp_message ":$(l 'box_backup_no_valid_destination_mode_1')" ":$(l 'box_backup_no_valid_destination_mode_2')" ":$(l 'box_backup_no_valid_destination_mode_3')"
+			disp_message ":$(l 'box_backup_no_valid_destination_mode_1')" ":$(l 'box_backup_no_valid_destination_mode_2')" ":$(l 'box_backup_no_valid_destination_mode_3')" "s=b:2"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		fi
@@ -796,7 +796,7 @@ function sync_return_code_decoder() {
 	else
 		# no defined mode selected
 		if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-			disp_message ":$(l 'box_backup_no_valid_source_mode_1')" ":$(l 'box_backup_no_valid_source_mode_2')" ":$(l 'box_backup_no_valid_source_mode_3')" ":1"
+			disp_message ":$(l 'box_backup_no_valid_source_mode_1')" ":$(l 'box_backup_no_valid_source_mode_2')" ":$(l 'box_backup_no_valid_source_mode_3')" "s=b:3"
 			TARGET_MODE='none'
 			SOURCE_MODE='none'
 		fi
@@ -955,7 +955,7 @@ function sync_return_code_decoder() {
 			else
 				# no defined mode selected
 				if [ "${TARGET_MODE}:${SOURCE_MODE}" != "none:none" ]; then
-					disp_message ":$(l 'box_backup_no_valid_source_mode_1')" ":$(l 'box_backup_no_valid_source_mode_2')" ":$(l 'box_backup_no_valid_source_mode_3')" ":" ":3"
+					disp_message ":$(l 'box_backup_no_valid_source_mode_1')" ":$(l 'box_backup_no_valid_source_mode_2')" ":$(l 'box_backup_no_valid_source_mode_3')" "s=b:4"
 					TARGET_MODE='none'
 					SOURCE_MODE='none'
 				fi
