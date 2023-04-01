@@ -81,6 +81,13 @@ if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 		if [ "${conf_DISP_BLACK_ON_POWER_OFF}" = "true" ]; then
 			sleep ${conf_DISP_FRAME_TIME}
 			disp_message "set:clear"
+
+			remaining_pages=$(ls -1 ${const_DISPLAY_CONTENT_FOLDER} | wc -l)
+			if [ "${remaining_pages}" -gt "0" ]; then
+				sleep $((${remaining_pages} * ${conf_DISP_FRAME_TIME}))
+			fi
+
+			sudo pkill -f "${WORKING_DIR}/display.py"
 		fi
 		sudo halt
 	elif [ "${ACTION}" = "reboot" ]; then

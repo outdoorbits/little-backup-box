@@ -46,6 +46,7 @@ function db_setup() {
 	DB_SETUP_ARRAY+=("DEPRECATED") # keep array-keys for correct update-status, keyword "DEPRECATED" will be ignored to execute
 	DB_SETUP_ARRAY+=("DEPRECATED") # keep array-keys for correct update-status, keyword "DEPRECATED" will be ignored to execute
 	DB_SETUP_ARRAY+=("alter table EXIF_DATA add column LbbRating integer default 2;")
+	DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Rating integer;")
 
 	DB_VERSION=0
 
