@@ -74,6 +74,11 @@ function disp_message () {
 
 		LogLine="${Lines[$n]}"
 
+		# do not log set-commands
+		if [[ "${LogLine}" = "set:"* ]]; then
+			LogLine=""
+		fi
+
 		if [ ! -z "${LogLine}" ]; then
 
 			# remove format separated by ":"
@@ -82,7 +87,7 @@ function disp_message () {
 			fi
 
 			# modify LogLine for logging
-			if [[ "${LogLine}" == "PGBAR="* ]]; then
+			if [[ "${LogLine}" = "PGBAR="* ]]; then
 				if [ "${Progressbar_active}" == false ]; then
 					Progressbar_active=true
 

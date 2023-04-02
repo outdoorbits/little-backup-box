@@ -393,7 +393,7 @@ function sync_return_code_decoder() {
 	if [ ! -z "${ERROR_TEXT[$code]}" ]; then
 		echo "$(l 'box_backup_error_code') ${code}, ${ERROR_TEXT[$code]}"
 	else
-		echo "$code"
+		echo "$(l 'box_backup_error_code') ${code}"
 	fi
 }
 
@@ -940,7 +940,7 @@ function sync_return_code_decoder() {
 				if [ $conf_LOG_SYNC = true ]; then
 					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 				fi
-				log_message "gphoto2 --filename \"%F/%f.%C\" --get-all-files --folder \"${SOURCE_PATH}\"  --skip-existing:\nexitcode=${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")\n" 3
+				log_message "gphoto2 --filename \"%F/%f.%C\" --get-all-files --folder \"${SOURCE_PATH}\"  --skip-existing:\n$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")" 3
 
 				cd
 			elif [ "${SOURCE_MODE}" = "thumbnails" ]; then
@@ -999,7 +999,7 @@ function sync_return_code_decoder() {
 
 			if [ "${SYNC_RETURN_CODE}" != "0" ]; then
 				SYNC_ERROR_TMP="${SYNC_ERROR_TMP} Exception"
-				log_message "Exception: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")"
+				log_message "Exception: $(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}")"
 				log_message "$(get_abnormal_system_conditions)" 1
 			fi
 
@@ -1019,7 +1019,7 @@ function sync_return_code_decoder() {
 
 			# Controller- overheating-error?
 			SYNC_TIME=$(($SYNC_STOP_TIME - $SYNC_START_TIME))
-			log_message "SYNC_RETURN_CODE: ${SYNC_RETURN_CODE}$(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}"); SYNC_TIME: ${SYNC_TIME}" 3
+			log_message "SYNC RETURN: $(sync_return_code_decoder "${SOURCE_MODE}" "${SYNC_RETURN_CODE}"); SYNC_TIME: ${SYNC_TIME}" 3
 
 			if [[ "${SYNC_ERROR_TMP}" =~ "Err.Lost device!" ]] && [ "${SYNC_RETURN_CODE}" -gt "0" ] && [ "${SYNC_TIME}" -ge "${const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC}" ] && [ "${TRIES_MAX}" -gt "${TRIES_DONE[$SOURCE_FOLDER_NUMBER]}" ]; then
 					disp_message "a:$(l 'box_backup_error_cooling_1')" ":$(l 'box_backup_error_cooling_2') ${const_SYNC_TIME_OVERHEATING_WAIT_SEC} $(l 'seconds_short') ..." ":$(l 'box_backup_error_cooling_3')" ":$(l 'box_backup_error_cooling_4')"
