@@ -208,6 +208,7 @@ if __name__ == "__main__":
 	conf_DISP_SPI_PORT				= int(config['conf_DISP_SPI_PORT'])
 	conf_DISP_RESOLUTION_X			= int(config['conf_DISP_RESOLUTION_X'])
 	conf_DISP_RESOLUTION_Y			= int(config['conf_DISP_RESOLUTION_Y'])
+	conf_DISP_CONTRAST				= int(config['conf_DISP_CONTRAST'])
 	conf_DISP_COLOR_MODEL			= str(config['conf_DISP_COLOR_MODEL'])
 	conf_DISP_COLOR_TEXT			= str(config['conf_DISP_COLOR_TEXT'])
 	conf_DISP_COLOR_HIGH			= str(config['conf_DISP_COLOR_HIGH'])
@@ -272,6 +273,8 @@ if __name__ == "__main__":
 		exit('Error: No valid display driver')
 
 	device.capabilities(conf_DISP_RESOLUTION_X,conf_DISP_RESOLUTION_Y,0,mode=conf_DISP_COLOR_MODEL)
+
+	device.contrast(conf_DISP_CONTRAST)
 
 	if conf_DISP_BLACK_ON_POWER_OFF:
 		device.persist = True

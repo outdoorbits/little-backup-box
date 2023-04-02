@@ -261,7 +261,8 @@
       },
       "color_text_label": "Color de fuente predeterminado",
       "color_alert_label": "Color de fuente para advertencias",
-      "color_high_label": "Color de fuente para el texto resaltado"
+      "color_high_label": "Color de fuente para el texto resaltado",
+      "contrast_label": "Contraste"
     }
   },
   "tools": {

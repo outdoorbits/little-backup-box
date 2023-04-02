@@ -182,6 +182,7 @@ conf_DISP_I2C_ADDRESS='$conf_DISP_I2C_ADDRESS'
 conf_DISP_SPI_PORT='$conf_DISP_SPI_PORT'
 conf_DISP_RESOLUTION_X=$conf_DISP_RESOLUTION_X
 conf_DISP_RESOLUTION_Y=$conf_DISP_RESOLUTION_Y
+conf_DISP_CONTRAST=$conf_DISP_CONTRAST
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
 conf_DISP_COLOR_TEXT='$conf_DISP_COLOR_TEXT'
 conf_DISP_COLOR_HIGH='$conf_DISP_COLOR_HIGH'
@@ -507,6 +508,11 @@ function upload_settings() {
 									}
 								?>
 							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_CONTRAST"><?php echo L::config_display_contrast_label; ?></label><br>
+						<input type="range" id="conf_DISP_CONTRAST" name="conf_DISP_CONTRAST" style="width: 50%;" min="1" max="255" step="1" value="<?php echo $config['conf_DISP_CONTRAST']; ?>">
 					</div>
 
 					<div>
