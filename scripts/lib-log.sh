@@ -76,7 +76,7 @@ function log_exec() {
 	local MESSAGE="${1}"
 	local COMMAND="${2}"
     local LEVEL="${3}"
-    local LOG_COMMAND_LINE="${4}" # 'true'/'false', default if 'true'
+    local LOG_COMMAND_LINE="${4}" # 'true'/'false', default is 'true'
 
     if [ "${LOG_COMMAND_LINE}" != 'false' ]; then
 		COMMAND_LOG="$COMMAND:\n"

@@ -895,17 +895,25 @@ function sync_return_code_decoder() {
 			log_message "Files to sync before backup: ${FILES_TO_SYNC}" 3
 
 			if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
-				# If source is usb, internal or ios
+				# If source is usb, internal or ios (local drives)
+
+				if [[ " usb internal  " =~ " ${TARGET_MODE} " ]]; then
+					# sync to local storage
+					RSYNC_MOD=" --inplace"
+				else
+					# sync to cloud storage
+					RSYNC_MOD="z"
+				fi
 
 				if [ "${TARGET_MODE}" = "rsyncserver" ]; then
 					# to rsyncserver
 					if [ $conf_LOG_SYNC = true ]; then
-						sudo sshpass -p "${conf_RSYNC_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
+						sudo sshpass -p "${conf_RSYNC_PASSWORD}" rsync -avh${RSYNC_MOD} --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}/" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 						SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 						log_pick_file "${const_LOGFILE_SYNC}"
 					else
-						sudo sshpass -p "${conf_RSYNC_PASSWORD}" rsync -avh --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
+						sudo sshpass -p "${conf_RSYNC_PASSWORD}" rsync -avh${RSYNC_MOD} --info=FLIST0,PROGRESS2 --mkpath --no-perms --stats --min-size=1 --exclude "*.id" --exclude "*tims/" "${SOURCE_PATH}/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${RSYNC_CONNECTION}/${BACKUP_PATH}/" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 					fi
 
@@ -913,12 +921,12 @@ function sync_return_code_decoder() {
 					# not to rsyncserver
 					sudo mkdir -p "${BACKUP_PATH}"
 					if [ $conf_LOG_SYNC = true ]; then
-						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
+						sudo rsync -avh${RSYNC_MOD} --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 						SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 						log_pick_file "${const_LOGFILE_SYNC}"
 					else
-						sudo rsync -avh --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
+						sudo rsync -avh${RSYNC_MOD} --info=FLIST0,PROGRESS2 --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 						SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 					fi
 				fi
