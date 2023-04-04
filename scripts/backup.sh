@@ -322,12 +322,12 @@ function syncprogress() {
 	while read PIPE; do
 
 		if [ "${MODE}" = "rsync" ]; then
-			PIPE="$(echo "${PIPE}" | tr -cd '[:alnum:]()\/\%\ ._-' | sed 's/   */ /g')"
+			PIPE="$(echo "${PIPE}" | tr -cd '[:alnum:]()[]{}$€\/\%\ .\_\-\+' | sed 's/   */ /g')"
 
 			if  [ "${PIPE:0:1}" = " " ]; then
 				# get transfer data
 				PIPE_TRANSFER_DATA="${PIPE}"
-			elif  [ "${PIPE:0:1}" != " " ] && [ -f "${SOURCE_PATH}/${PIPE}" ]; then
+			elif  [ -f "${SOURCE_PATH}/${PIPE}" ]; then
 				# new file processing
 				FILESCOUNT=$((FILESCOUNT + 1))
 				SPEED="$(echo "${PIPE_TRANSFER_DATA}" | cut -d ' ' -f4)"
@@ -1129,14 +1129,14 @@ if [[ ! " exif database thumbnails " =~ " ${SOURCE_MODE} " ]]; then
 			BODY_MSG="$(l 'box_backup_mail_backup_failed')"
 		else
 			BODY_MSG="$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}
-	${SOURCE_IDENTIFIER}
+${SOURCE_IDENTIFIER}
 
-	${MailSummary}
+${MailSummary}
 
-	$(l 'box_backup_mail_log'):
-	${SYNC_LOG}
+$(l 'box_backup_mail_log'):
+${SYNC_LOG}
 
-	${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
+${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
 		fi
 
 		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}"
