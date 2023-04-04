@@ -48,30 +48,28 @@ function db_setup() {
 	DB_SETUP_ARRAY+=("alter table EXIF_DATA add column LbbRating integer default 2;")
 	DB_SETUP_ARRAY+=("alter table EXIF_DATA add column Rating integer;")
 
-	DB_VERSION=0
-
 	# try to get version of existing db
-
 	if [ -f "${DB}" ]; then
-		DB_VERSION=$(sqlite3 "${DB}" "select VERSION from CONFIG;")
+		DB_VERSION=$(sqlite3 "${DB}" "select VERSION from CONFIG ORDER BY VERSION DESC LIMIT 1;")
 	#  	echo "VERSION: ${DB_VERSION}"
 	fi
 
-	if [ "${DB_VERSION}" == "" ]; then
+	if [ -z "${DB_VERSION}" ]; then
 		DB_VERSION=0
 	fi
 
 	# update if necessary
 	if [ -z "${DB_VERSION}" ] || [ "${DB_VERSION}" -lt "${#DB_SETUP_ARRAY[@]}" ]; then
-		for ((i = 0; i < ${#DB_SETUP_ARRAY[@]}; i++)); do
+		DB_VERSION_NEW=0
+		for ((i = 1; i <= ${#DB_SETUP_ARRAY[@]}; i++)); do
 			if [ "${i}" -ge "${DB_VERSION}" ]; then
-				if [ "${DB_SETUP_ARRAY[$i]}" != "DEPRECATED" ]; then
-	# 	  			echo "UPDATE: ${DB_SETUP_ARRAY[$i]}"
-					sqlite3 "${DB}" "${DB_SETUP_ARRAY[$i]}"
+				if [ "${DB_SETUP_ARRAY[$(( $i - 1 ))]}" != "DEPRECATED" ]; then
+					sqlite3 "${DB}" "${DB_SETUP_ARRAY[$(( $i - 1 ))]}"
+					DB_VERSION_NEW=$i
 				fi
 			fi
 		done
-		sqlite3 "${DB}" "update CONFIG set VERSION = $(($i + 1));"
+		sqlite3 "${DB}" "update CONFIG set VERSION = $DB_VERSION_NEW;"
 	fi
 
 	#export EXIF_COLUMNS_ARRAY

@@ -44,6 +44,10 @@ FORCE="${2}"
 MESSAGE="${3}"
 TRANSFER_INFO="${4}"
 
+# Set the PWR LED ON to indicate that the no backup is active
+sudo sh -c "echo 'none' >/sys/class/leds/PWR/trigger"
+sudo sh -c "echo 1 >/sys/class/leds/PWR/brightness"
+
 # predefined values?
 if [ "${POWER_OFF}" = "" ]; then POWER_OFF="${conf_POWER_OFF}"; fi
 

@@ -311,8 +311,9 @@ function syncprogress() {
 
 	local LAST_MESSAGE_TIME=0
 	local FILESCOUNT=0
+	local FILESCOUNT_OLD=-1
 	local FINISHED_PERCENT="?"
-	local FILENAME=""
+	local PIPE_TRANSFER_DATA=""
 
 	if [ "${MODE}" = "gphoto2" ]; then
 		touch "${const_LOGFILE_SYNC}"
@@ -321,34 +322,29 @@ function syncprogress() {
 	while read PIPE; do
 
 		if [ "${MODE}" = "rsync" ]; then
-			PIPE="$(echo "${PIPE}" | tr -cd '[:alnum:]\/\%\ ._-' | sed 's/   */ /g')"
-			if  [ "${PIPE:0:1}" = " " ] && [ ! -z "${FILENAME}" ]; then
-				if [ -f "${SOURCE_PATH}/${FILENAME}" ]; then
-					FILESCOUNT=$((FILESCOUNT+1))
-					SPEED="$(echo "${PIPE}" | cut -d ' ' -f4)"
+			PIPE="$(echo "${PIPE}" | tr -cd '[:alnum:]()\/\%\ ._-' | sed 's/   */ /g')"
 
-					FILENAME=""
-
-				fi
-			elif  [ "${PIPE:0:1}" != " " ]; then
-				FILENAME="${PIPE}";
+			if  [ "${PIPE:0:1}" = " " ]; then
+				# get transfer data
+				PIPE_TRANSFER_DATA="${PIPE}"
+			elif  [ "${PIPE:0:1}" != " " ] && [ -f "${SOURCE_PATH}/${PIPE}" ]; then
+				# new file processing
+				FILESCOUNT=$((FILESCOUNT + 1))
+				SPEED="$(echo "${PIPE_TRANSFER_DATA}" | cut -d ' ' -f4)"
 			fi
 
 		elif [ "${MODE}" = "gphoto2" ]; then
 			if [ "${PIPE:0:6}" = "Saving" ] || [ "${PIPE:0:4}" = "Skip" ]; then
-				FILESCOUNT=$((FILESCOUNT+1))
-
+				FILESCOUNT=$((FILESCOUNT + 1))
 				echo "${PIPE}" | tee -a "${const_LOGFILE_SYNC}"
 			fi
 		fi
 
-		progressmonitor "${START_TIME}" "${FILES_TO_SYNC}" "${FILESCOUNT}" "${LCD1}" "${LCD2}" "${SPEED}"
+		if [ "${FILESCOUNT}" -gt "${FILESCOUNT_OLD}" ]; then
+			FILESCOUNT_OLD=$FILESCOUNT
+			progressmonitor "${START_TIME}" "${FILES_TO_SYNC}" "${FILESCOUNT}" "${LCD1}" "${LCD2}" "${SPEED}"
+		fi
 	done
-
-	# no need to check again earlier
-	if [ $conf_DISP = true ]; then
-		sleep "${conf_DISP_FRAME_TIME}"
-	fi
 
 }
 
@@ -452,9 +448,10 @@ sudo fusermount -uz "${const_CLOUD_MOUNT_POINT}" 2>/dev/null
 
 # To define a new method, add an elif block (example below)
 
-# Set the PWR LED to blink at 1000ms to indicate waiting for the target device
+# Set the PWR LED to blink short to indicate waiting for the target device
 sudo sh -c "echo timer > /sys/class/leds/PWR/trigger"
-sudo sh -c "echo 1000 > /sys/class/leds/PWR/delay_on"
+sudo sh -c "echo 250 > /sys/class/leds/PWR/delay_on"
+sudo sh -c "echo 750 > /sys/class/leds/PWR/delay_off"
 
 if [ "${TARGET_MODE}" = "usb" ]; then
 	# External mode
@@ -530,9 +527,11 @@ fi
 
 # END
 
-# Set the PWR LED to blink at 250ms to indicate waiting for the source device
+# Set the PWR LED to blink long to indicate waiting for the source device
 sudo sh -c "echo timer > /sys/class/leds/PWR/trigger"
-sudo sh -c "echo 250 > /sys/class/leds/PWR/delay_on"
+sudo sh -c "echo 750 > /sys/class/leds/PWR/delay_on"
+sudo sh -c "echo 250 > /sys/class/leds/PWR/delay_off"
+
 
 ########################
 # MANAGE SOURCE DEVICE #
@@ -1100,49 +1099,50 @@ fi
 
 # create mail summary
 
-MailSummary=""
-for (( i=1; i<=$SOURCE_FOLDER_NUMBER; i++ )); do
-	if [ ! -z "${MailSummary}" ]; then
-		MailSummary="${MailSummary}\n"
-	fi
+if [[ ! " exif database thumbnails " =~ " ${SOURCE_MODE} " ]]; then
+	MailSummary=""
+	for (( i=1; i <= $SOURCE_FOLDER_NUMBER; i++ )); do
+		if [ ! -z "${MailSummary}" ]; then
+			MailSummary="${MailSummary}\n"
+		fi
 
-	MailSummary="${MailSummary}$i.: ${MAIL_SOURCE_PATHS[${SOURCE_FOLDER_NUMBER}]}\n"
-	for (( j=1; j<=${TRIES_DONE[$i]}; j++ )); do
-		MailSummary="${MailSummary}  ${j}. $(l 'box_backup_try')\n"
-		MailSummary="${MailSummary}    ${MESSAGE_MAIL[$i,$j]}\n"
-		MailSummary="${MailSummary}    ${TRANSFER_INFO[$i,$j]}\n"
+		MailSummary="${MailSummary}$i.: ${MAIL_SOURCE_PATHS[${SOURCE_FOLDER_NUMBER}]}\n"
+		for (( j=1; j <= ${TRIES_DONE[$i]}; j++ )); do
+			MailSummary="${MailSummary}  ${j}. $(l 'box_backup_try')\n"
+			MailSummary="${MailSummary}    ${MESSAGE_MAIL[$i,$j]}\n"
+			MailSummary="${MailSummary}    ${TRANSFER_INFO[$i,$j]}\n"
+		done
 	done
-done
 
-# Check internet connection and send
-# a notification by mail if the conf_MAIL_NOTIFICATIONS option is enabled
-INTERNET_STATUS=$(get_internet_status)
-if [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
+	# Check internet connection and send
+	# a notification by mail if the conf_MAIL_NOTIFICATIONS option is enabled
+	INTERNET_STATUS=$(get_internet_status)
+	if [[ ! " database thumbnails exif " =~ " ${SOURCE_MODE} " ]]; then
 
-	if [ ${SYNC_ERROR_NOT_SOLVED} = true  ] || [ "${TARGET_MODE}:${SOURCE_MODE}" = "none:none" ]; then
-		SUBJ_MSG="$(l 'box_backup_mail_error')"
-	else
-		SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
+		if [ ${SYNC_ERROR_NOT_SOLVED} = true  ] || [ "${TARGET_MODE}:${SOURCE_MODE}" = "none:none" ]; then
+			SUBJ_MSG="$(l 'box_backup_mail_error')"
+		else
+			SUBJ_MSG="$(l 'box_backup_mail_backup_complete')"
+		fi
+
+		if [ "${TARGET_MODE}:${SOURCE_MODE}" = "none:none" ]; then
+			BODY_MSG="$(l 'box_backup_mail_backup_failed')"
+		else
+			BODY_MSG="$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}
+	${SOURCE_IDENTIFIER}
+
+	${MailSummary}
+
+	$(l 'box_backup_mail_log'):
+	${SYNC_LOG}
+
+	${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
+		fi
+
+		send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}"
+
 	fi
-
-	if [ "${TARGET_MODE}:${SOURCE_MODE}" = "none:none" ]; then
-		BODY_MSG="$(l 'box_backup_mail_backup_failed')"
-	else
-		BODY_MSG="$(l 'box_backup_mail_backup_type'): $(l "box_backup_mode_${SOURCE_MODE}") $(l 'box_backup_mail_to') $(l "box_backup_mode_${TARGET_MODE}") ${CLOUDSERVICE}
-${SOURCE_IDENTIFIER}
-
-${MailSummary}
-
-$(l 'box_backup_mail_log'):
-${SYNC_LOG}
-
-${TRIES_DONE[$SOURCE_FOLDER_NUMBER]} $(l 'box_backup_mail_tries_needed')."
-	fi
-
-	send_email "Little Backup Box: ${SUBJ_MSG}" "${BODY_MSG}"
-
 fi
-
 
 ########################
 # SYNCHRONISE DATABASE #
@@ -1163,6 +1163,7 @@ if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${GENERATE_THU
 
 	# select directory and filename as DirFile and replace spaces by placeholder
 	DB_STR=$(sudo sqlite3 "${DB}" "select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA" | sed 's/\ /##\*\*##/g')
+
 	IFS=$'\n' read -rd '' -a DB_ARRAY <<<"${DB_STR}"
 	unset IFS
 
@@ -1172,11 +1173,11 @@ if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${GENERATE_THU
 
 	progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
-	for ((i=0; i < ${#DB_ARRAY[@]}; i++)); do
-		IMAGE_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
+	for ((i=1; i <= ${#DB_ARRAY[@]}; i++)); do
+		IMAGE_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$(($i - 1))]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
 
 		if [ ! -f "${IMAGE_FILENAME}" ]; then
-			ID="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f1)"
+			ID="$(echo ${DB_ARRAY[$(($i - 1))]} | cut -d'|' -f1)"
 			sudo sqlite3 "${DB}" "DELETE from EXIF_DATA WHERE ID=${ID};"
 			log_message "DELETE from EXIF_DATA WHERE ID=${ID};" 3
 		fi
@@ -1208,10 +1209,10 @@ if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${GENERATE_THU
 
 	progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
-	for ((i=0; i < ${#TIMS_ARRAY[@]}; i++)); do
+	for ((i=1; i <= ${#TIMS_ARRAY[@]}; i++)); do
 		# replace substitute of space by space
 
-		SOURCE_IMAGE_FILENAME=$(echo ${TIMS_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
+		SOURCE_IMAGE_FILENAME=$(echo ${TIMS_ARRAY[$(($i - 1))]} | sed 's/##\*\*##/\ /g')
 		File_Name=$(basename "${SOURCE_IMAGE_FILENAME}")
 		Directory=$(dirname "${SOURCE_IMAGE_FILENAME}")
 
@@ -1301,9 +1302,9 @@ if ([ "${GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "thumbnails" ]
 
 	progressmonitor "${START_TIME}" "${IMAGE_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
-	for ((i=0; i < ${#IMAGES_ARRAY[@]}; i++)); do
+	for ((i=1; i <= ${#IMAGES_ARRAY[@]}; i++)); do
 		#replace substitute of space by space
-		SOURCE_IMAGE_FILENAME=$(echo ${IMAGES_ARRAY[$i]} | sed 's/##\*\*##/\ /g')
+		SOURCE_IMAGE_FILENAME=$(echo ${IMAGES_ARRAY[$(($i - 1))]} | sed 's/##\*\*##/\ /g')
 
 		#extract extension from filename
 		SOURCE_IMAGE_FILENAME_EXTENSION="${SOURCE_IMAGE_FILENAME##*.}"
@@ -1391,11 +1392,11 @@ if ([ "${UPDATE_EXIF}" = "true" ] || [ "${SOURCE_MODE}" = "exif" ]) && [[ " usb 
 
 	progressmonitor "${START_TIME}" "${DB_COUNT}" "0" "${LCD1}" "${LCD2}" ""
 
-	for ((i=0; i < ${#DB_ARRAY[@]}; i++)); do
+	for ((i=1; i <= ${#DB_ARRAY[@]}; i++)); do
 		#replace substitute of space by space
-		MEDIA_ID="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f1)"
-		MEDIA_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$i]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
-		MEDIA_LBB_RATING="$(echo ${DB_ARRAY[$i]} | cut -d'|' -f3)"
+		MEDIA_ID="$(echo ${DB_ARRAY[$(($i - 1))]} | cut -d'|' -f1)"
+		MEDIA_FILENAME="${TARGET_PATH}/$(echo ${DB_ARRAY[$(($i - 1))]} | cut -d'|' -f2 | sed 's/##\*\*##/\ /g')"
+		MEDIA_LBB_RATING="$(echo ${DB_ARRAY[$(($i - 1))]} | cut -d'|' -f3)"
 
 		sudo exiftool -overwrite_original -Rating="${MEDIA_LBB_RATING}" "${MEDIA_FILENAME}"
 		sudo sqlite3 "${DB}" "update EXIF_DATA set Rating=${MEDIA_LBB_RATING} where ID=${MEDIA_ID};"
@@ -1421,5 +1422,10 @@ if [ "${SECONDARY_BACKUP_FOLLOWS}" = "false" ]; then
 	#remove leading spaces
 	MESSAGE_DISPLAY="$(echo -e "${MESSAGE_DISPLAY}" | sed -e 's/^[[:space:]]*//')"
 
-	source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_DISPLAY}" "${TRANSFER_INFO_DISP::-2}"
+	if [ "${#TRANSFER_INFO_DISP}" -ge "3" ]; then
+		TRANSFER_INFO_DISP="${TRANSFER_INFO_DISP::-2}"
+	else
+		TRANSFER_INFO_DISP=":"
+	fi
+	source "${WORKING_DIR}/poweroff.sh" "poweroff" "${POWER_OFF_FORCE}" "${MESSAGE_DISPLAY}" "${TRANSFER_INFO_DISP}"
 fi
