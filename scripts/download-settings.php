@@ -8,9 +8,16 @@ $ZIP_FILE_NAME="lbb-settings.zip";
 $ZIP_FILE_PATH=$constants["const_WEB_ROOT_LBB"] . "/tmp/";
 
 //Files to zip into archive
-$FILES		= array(
-	$constants["const_WEB_ROOT_LBB"]."/config.cfg",
-	$constants["const_RCLONE_CONFIG_FILE"]
+$FILES	= array();
+
+$FILES[]	= array(
+	file	=> $constants["const_WEB_ROOT_LBB"]."/config.cfg",
+	dir		=> '',
+);
+
+$FILES[]	= array(
+	file	=> $constants["const_RCLONE_CONFIG_FILE"],
+	dir		=> '',
 );
 
 #VPN
@@ -23,7 +30,22 @@ foreach ($vpn_types as $vpn_type) {
 	exec ('sudo chmod 755 "' . $VPN_CONFIG_FILE . '"');
 
 	if (file_exists($VPN_CONFIG_FILE)) {
-		$FILES[]	= $VPN_CONFIG_FILE;
+		$FILES[]	= array(
+			file	=> $VPN_CONFIG_FILE,
+			dir		=> '',
+		);
+	}
+}
+
+#Background images
+$background_images	= scandir($constants["const_BACKGROUND_IMAGES_DIR"]);
+foreach ($background_images as $BACKGROUND_IMAGE) {
+	$BACKGROUND_IMAGE = $constants["const_BACKGROUND_IMAGES_DIR"] . '/' . $BACKGROUND_IMAGE;
+	if (is_file($BACKGROUND_IMAGE)) {
+		$FILES[]	= array(
+			file	=> $BACKGROUND_IMAGE,
+			dir		=> 'bg-images',
+		);
 	}
 }
 
@@ -36,8 +58,8 @@ if ($zip->open($ZIP_FILE_PATH.$ZIP_FILE_NAME, ZIPARCHIVE::CREATE )!==TRUE) {
 //add each files of $FILE array to archive
 foreach($FILES as $FILE)
 {
-	if (file_exists($FILE)) {
-		$zip->addFile($FILE,basename($FILE));
+	if (file_exists($FILE['file'])) {
+		$zip->addFile($FILE['file'],$FILE['dir'] . '/' . basename($FILE['file']));
 	}
 }
 $zip->close();

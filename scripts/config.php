@@ -10,7 +10,7 @@
 	$constants = parse_ini_file("constants.sh", false);
 
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-popup.php");
 
@@ -270,11 +270,9 @@ function upload_settings() {
 			popup(L::config_alert_settings_upload_not_zip,true);
 		} else {
 			/* PHP current path */
-			$filenoext = basename ($filename, '.zip');
-			$filenoext = basename ($filenoext, '.ZIP');
 
-			$targetdir = $constants["const_WEB_ROOT_LBB"].'/tmp/unzip/';
-			$targetzip = $targetdir . $filename;
+			$targetdir = $constants["const_WEB_ROOT_LBB"].'/tmp/unzip';
+			$targetzip = $targetdir . '/' . $filename;
 			/* create directory if not exists' */
 			@mkdir($targetdir, 0777);
 
@@ -290,27 +288,38 @@ function upload_settings() {
 					unlink($targetzip);
 					$Files_Copied="";
 
-					if (file_exists($targetdir."config.cfg")) {
+					if (file_exists($targetdir."/config.cfg")) {
 						@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
-						if (rename($targetdir."config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {$Files_Copied="\n* 'config.cfg'";}
+						if (rename($targetdir."/config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {$Files_Copied="\n* 'config.cfg'";}
 
 					}
 
-					if (file_exists($targetdir."rclone.conf")) {
+					if (file_exists($targetdir."/rclone.conf")) {
 						@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
-						if (rename($targetdir."rclone.conf",$constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* 'rclone.cfg'";}
+						if (rename($targetdir."/rclone.conf",$constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* 'rclone.cfg'";}
 					}
 
 					foreach($vpn_types as $vpn_type) {
-						if (file_exists($targetdir.$constants['const_VPN_FILENAME_' . $vpn_type])) {
+						if (file_exists($targetdir.'/'.$constants['const_VPN_FILENAME_' . $vpn_type])) {
 							exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
-							exec ('sudo mv "' . $targetdir.$constants['const_VPN_FILENAME_' . $vpn_type] . '" "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
+							exec ('sudo mv "' . $targetdir.'/'.$constants['const_VPN_FILENAME_' . $vpn_type] . '" "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
 							$Files_Copied=$Files_Copied."\n* '" . $constants['const_VPN_FILENAME_' . $vpn_type] . "'";
 
 							## secure VPN config files
 							exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '" -R');
 						}
 					}
+
+					#Background images
+					$background_images	= scandir($targetdir.'/bg-images');
+					foreach ($background_images as $BACKGROUND_IMAGE) {
+						if (is_file($targetdir . '/bg-images/' . $BACKGROUND_IMAGE)) {
+							$Files_Copied=$Files_Copied."\n* '" . $BACKGROUND_IMAGE . "'";
+						}
+					}
+
+					exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
+					exec ("sudo chown www-data:www-data '" . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
 
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
 
@@ -461,9 +470,9 @@ function upload_settings() {
 							<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
 							<?php
 								$bg_images=array();
-								exec ("find 'img/backgrounds' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
+								exec ("find '" . $constants["const_BACKGROUND_IMAGES_DIR"] . "' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
 								foreach($bg_images as $bg_image) {
-									$bg_image = basename($bg_image);
+									$bg_image = str_replace($constants["const_BACKGROUND_IMAGES_DIR"] . '/','',$bg_image);
 									echo "<option value='" . $bg_image . "' " . ($config["conf_BACKGROUND_IMAGE"] == $bg_image?" selected":"") . ">" . $bg_image . "</option>";
 								}
 							?>

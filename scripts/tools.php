@@ -1,27 +1,27 @@
 <!doctype html>
 
 <?php
-$WORKING_DIR=dirname(__FILE__);
-$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
-$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
+	$WORKING_DIR=dirname(__FILE__);
+	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
-$theme = $config["conf_THEME"];
-$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$theme = $config["conf_THEME"];
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-include("sub-popup.php");
+	include("sub-popup.php");
 
-function get_device_selector($name) {
-	exec("ls /dev/sd* | xargs -n 1 basename", $devices);
+	function get_device_selector($name) {
+		exec("ls /dev/sd* | xargs -n 1 basename", $devices);
 
-	$selector	= '<select name="' . $name . '">\n';
-	$selector .= "<option value='-'>-</option>\n";
-	foreach ($devices as $n => $device) {
-		$selector .= "<option value='$device'>$device</option>\n";
+		$selector	= '<select name="' . $name . '">\n';
+		$selector .= "<option value='-'>-</option>\n";
+		foreach ($devices as $n => $device) {
+			$selector .= "<option value='$device'>$device</option>\n";
+		}
+		$selector .= "</select>";
+		return($selector);
 	}
-	$selector .= "</select>";
-	return($selector);
-}
-?>
+	?>
 
 <html lang="en" data-theme="<?php echo $theme; ?>">
 <!-- Author: Stefan Saam github@saams.de, Dmitri Popov, dmpop@linux.com

@@ -183,7 +183,7 @@ fi
 
 # install little-backup-box-files
 sudo mkdir -p "${const_WEB_ROOT_LBB}"
-yes | sudo cp -Rf ${INSTALLER_DIR}/scripts/* ${const_WEB_ROOT_LBB}/
+yes | sudo cp -Rf "${INSTALLER_DIR}/scripts/"* "${const_WEB_ROOT_LBB}/"
 
 if [ ! -f "${const_WEB_ROOT_LBB}/config.cfg" ]; then
 	sudo cp "${const_WEB_ROOT_LBB}/config-standards.cfg" "${const_WEB_ROOT_LBB}/config.cfg"
@@ -213,20 +213,23 @@ sudo mkdir -p "${const_MEDIA_DIR}"
 
 sudo umount "${const_USB_SOURCE_MOUNT_POINT}" > /dev/null 2>&1
 sudo umount "${const_USB_TARGET_MOUNT_POINT}" > /dev/null 2>&1
-sudo umount "${const_INTERNAL_BACKUP_DIR}" > /dev/null 2>&1
 sudo umount "${const_IOS_MOUNT_POINT}" > /dev/null 2>&1
 sudo umount "${const_CLOUD_MOUNT_POINT}" > /dev/null 2>&1
 
 sudo mkdir -p "${const_USB_SOURCE_MOUNT_POINT}"
 sudo mkdir -p "${const_USB_TARGET_MOUNT_POINT}"
-sudo mkdir -p "${const_INTERNAL_BACKUP_DIR}"
 sudo mkdir -p "${const_IOS_MOUNT_POINT}"
 sudo mkdir -p "${const_CLOUD_MOUNT_POINT}"
+sudo mkdir -p "${const_INTERNAL_BACKUP_DIR}"
+sudo mkdir -p "${const_BACKGROUND_IMAGES_DIR}/lbb"
 
 sudo chown -R ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_MEDIA_DIR}"
 sudo chmod -R 777 "${const_MEDIA_DIR}"
 sudo setfacl -Rdm u:${USER_WWW_DATA}:rwX,g:${USER_WWW_DATA}:rwX "${const_MEDIA_DIR}"
 sudo setfacl -Rdm u:${USER_SAMBA}:rwX,g:${USER_SAMBA}:rwX "${const_MEDIA_DIR}"
+
+# move background images in place
+mv "${INSTALLER_DIR}/scripts/img/backgrounds/"* "${const_BACKGROUND_IMAGES_DIR}/lbb/"
 
 # add user www-data to sudoers
 sudo usermod -aG sudo ${USER_WWW_DATA}

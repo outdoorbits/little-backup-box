@@ -8,7 +8,7 @@
 	$config = parse_ini_file("config.cfg", false);
 	$constants = parse_ini_file("constants.sh", false);
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-popup.php");
 

@@ -9,7 +9,7 @@
 	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	if (isset($_POST['form_sent'])) {
 		$generate_thumbnails	= isset($_POST['generate_thumbnails'])?"true":"false";
