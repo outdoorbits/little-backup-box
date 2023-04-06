@@ -11,13 +11,13 @@ $ZIP_FILE_PATH=$constants["const_WEB_ROOT_LBB"] . "/tmp/";
 $FILES	= array();
 
 $FILES[]	= array(
-	file	=> $constants["const_WEB_ROOT_LBB"]."/config.cfg",
-	dir		=> '',
+	'file'	=> $constants["const_WEB_ROOT_LBB"]."/config.cfg",
+	'dir'	=> '',
 );
 
 $FILES[]	= array(
-	file	=> $constants["const_RCLONE_CONFIG_FILE"],
-	dir		=> '',
+	'file'	=> $constants["const_RCLONE_CONFIG_FILE"],
+	'dir'	=> '',
 );
 
 #VPN
@@ -31,8 +31,8 @@ foreach ($vpn_types as $vpn_type) {
 
 	if (file_exists($VPN_CONFIG_FILE)) {
 		$FILES[]	= array(
-			file	=> $VPN_CONFIG_FILE,
-			dir		=> '',
+			'file'	=> $VPN_CONFIG_FILE,
+			'dir'	=> '',
 		);
 	}
 }
@@ -43,8 +43,8 @@ foreach ($background_images as $BACKGROUND_IMAGE) {
 	$BACKGROUND_IMAGE = $constants["const_BACKGROUND_IMAGES_DIR"] . '/' . $BACKGROUND_IMAGE;
 	if (is_file($BACKGROUND_IMAGE)) {
 		$FILES[]	= array(
-			file	=> $BACKGROUND_IMAGE,
-			dir		=> 'bg-images',
+			'file'	=> $BACKGROUND_IMAGE,
+			'dir'	=> 'bg-images',
 		);
 	}
 }

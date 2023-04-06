@@ -311,20 +311,28 @@ function upload_settings() {
 					}
 
 					#Background images
-					$background_images	= scandir($targetdir.'/bg-images');
-					foreach ($background_images as $BACKGROUND_IMAGE) {
-						if (is_file($targetdir . '/bg-images/' . $BACKGROUND_IMAGE)) {
-							$Files_Copied=$Files_Copied."\n* '" . $BACKGROUND_IMAGE . "'";
+					if (is_dir($targetdir.'/bg-images')){
+
+						exec ("sudo mkdir -p '" . $constants['const_BACKGROUND_IMAGES_DIR'] . "'");
+						exec ("sudo chown www-data:www-data '" . $constants['const_BACKGROUND_IMAGES_DIR'] ."' -R");
+
+						$background_images	= scandir($targetdir.'/bg-images');
+						foreach ($background_images as $BACKGROUND_IMAGE) {
+							if (is_file($targetdir . '/bg-images/' . $BACKGROUND_IMAGE)) {
+								$Files_Copied=$Files_Copied."\n* '" . $BACKGROUND_IMAGE . "'";
+							}
 						}
+						exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
+						exec ("sudo chown www-data:www-data '" . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
 					}
 
-					exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
-					exec ("sudo chown www-data:www-data '" . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
-
+					# Feedback files in place
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
 
+					# reload config
 					$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
 
+					# set new password
 					if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
 						exec("sudo $WORKING_DIR/password.sh '" . $config["conf_PASSWORD"] . "'");
 						popup(L::config_alert_password_change_after_reboot_set,true);
@@ -465,7 +473,7 @@ function upload_settings() {
 					</select>
 
 				<h3><?php echo L::config_view_bg_image_header; ?></h3>
-					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo "img/backgrounds" ;?>&quot;.</label><br>
+					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo $constants['const_BACKGROUND_IMAGES_DIR'] ;?>&quot;.</label><br>
 						<select name="conf_BACKGROUND_IMAGE" id="conf_BACKGROUND_IMAGE">
 							<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
 							<?php
