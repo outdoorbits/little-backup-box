@@ -11,6 +11,7 @@ const_LOGFILE_SYNC="/var/www/little-backup-box/tmp/sync.log"
 const_DISPLAY_LINES_LIMIT=10
 const_DISPLAY_CONTENT_FOLDER="/var/www/little-backup-box/tmp/display-content"
 const_DISPLAY_CONTENT_OLD_FILE="/var/www/little-backup-box/tmp/display-content-old.txt"
+const_MENU_TIMEOUT_SEC=15
 const_RCLONE_CONFIG_FILE="/media/rclone.conf"
 const_STORAGE_DEV_MASK="sd"
 const_CMD_RUNNER_LOCKFILE="/var/www/little-backup-box/cmd-runner.lock"

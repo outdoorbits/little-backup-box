@@ -425,7 +425,29 @@
         "probe_non_destructive": "erhaltend",
         "probe_destructive": "destruktiv"
       }
-    }
+    },
+    "menu": {
+      "backup": "Backup",
+      "backup_local": "Lokales Backup",
+      "backup_cloud": "Cloud-Backup",
+      "confirm": "Bestätigung?",
+      "yes": "Ja >",
+      "to": "->",
+      "backup_mode_camera": "Kamera",
+      "backup_mode_cloud": "Cloud",
+      "backup_mode_internal": "Int.",
+      "backup_mode_ios": "iOS",
+      "backup_mode_rsyncserver": "rsync",
+      "backup_mode_usb": "USB",
+      "backup_stop": "STOP Backup",
+      "ip": "IP-Adresse",
+      "power_shutdown": "Ausschalten",
+      "power_reboot": "Neustart",
+      "system": "System",
+      "network": "Netzwerk",
+      "comitup_reset": "Reset Comitup"
+    },
+    "backup_local": "Backup lokal"
   },
   "seconds_short": "s",
   "sysconditions": {

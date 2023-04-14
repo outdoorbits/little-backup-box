@@ -39,6 +39,11 @@ source "$CONFIG"
 LineCount=$#
 Lines=( "$@" )
 
-disp_message "${Lines[0]}" "${Lines[1]}" "${Lines[2]}" "${Lines[3]}" "${Lines[4]}"
+ARGUMENT=''
 
+for LINE in "${Lines[@]}"; do
+	ARGUMENT="${ARGUMENT} '${LINE}' "
+done
+
+eval "disp_message ${ARGUMENT}"
 exit 0

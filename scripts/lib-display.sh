@@ -118,7 +118,7 @@ function disp_message () {
 
 		fi
 
-		n=$(expr $n + 1)
+		n=$(($n + 1))
 
 	done
 
@@ -135,7 +135,7 @@ function disp_message () {
 				DISPLAY_LINES="${DISPLAY_LINES}\n"
 			fi
 			DISPLAY_LINES="${DISPLAY_LINES}${Lines[$n]}"
-			n=$(expr $n + 1)
+			n=$(($n + 1))
 		done
 
 		sudo bash -c "echo -en '${DISPLAY_LINES}' > '${const_DISPLAY_CONTENT_FOLDER}/$(get_uptime_miliseconds).txt'"

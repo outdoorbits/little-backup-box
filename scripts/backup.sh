@@ -280,7 +280,13 @@ function progressmonitor() {
 		fi
 
 		PRGMON_LCD4="$(l "box_backup_time_remaining"): ${PRGMON_TIME_REMAINING_FORMATED}"
-		disp_message "set:clear" "s=hc:${PRGMON_LCD1}" "s=hc:${PRGMON_LCD2}" "s=hc:${PRGMON_LCD3}" "s=hc:${PRGMON_LCD4}" "s=hc:${PRGMON_LCD5}"
+
+		local frame_time=${conf_DISP_FRAME_TIME}
+		if [ "${PRGMON_FINISHED_PERCENT}" = "100.0" ]; then
+			frame_time=$(echo "${conf_DISP_FRAME_TIME} * 2" | bc)
+		fi
+
+		disp_message "set:clear,time=${frame_time}" "s=hc:${PRGMON_LCD1}" "s=hc:${PRGMON_LCD2}" "s=hc:${PRGMON_LCD3}" "s=hc:${PRGMON_LCD4}" "s=hc:${PRGMON_LCD5}"
 
 		PRGMON_LAST_MESSAGE_TIME=$(get_uptime_seconds)
 	fi

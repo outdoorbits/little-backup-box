@@ -85,10 +85,10 @@ if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 		if [ "${conf_DISP_BLACK_ON_POWER_OFF}" = "true" ]; then
 
 			remaining_pages=$(ls -1 ${const_DISPLAY_CONTENT_FOLDER} | wc -l)
-			sleep $(( (${remaining_pages} + 3) * ${conf_DISP_FRAME_TIME} ))
+			sleep  $(echo "(${remaining_pages} + 3) * ${conf_DISP_FRAME_TIME}" | bc)
 
 			disp_message "set:clear"
-			sleep $(( ${conf_DISP_FRAME_TIME} + 1 ))
+			sleep $(echo "${conf_DISP_FRAME_TIME} + 1" | bc)
 		fi
 		sudo halt
 	elif [ "${ACTION}" = "reboot" ]; then
