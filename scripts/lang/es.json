@@ -128,7 +128,7 @@
     "rsync_module_label2": "). <br> El nombre del módulo se define en el lado del servidor en rsyncd.conf y se establece entre [corchetes]. También tenga en cuenta <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
     "backup_camera_folder_mask_header": "Directorios para respaldar desde los teléfonos inteligentes y cámaras",
     "backup_camera_folder_mask_label": "Aquí puede especificar qué directorios deben ser respaldados desde las cámaras o teléfonos inteligentes. <br>\nLas entradas aquí tienen la forma: <br>\n&quot;CÁMARA: RUTA&quot; <br>\nEl nombre de una cámara conectada se puede encontrar en la página &quot; Sistema &quot; en \"Cámara/Smartphone\". <br>\nSi una instrucción se aplica a todas las cámaras, &quot;*&quot; (sin más adiciones) se puede utilizar como comodín para todos los dispositivos. <br>\nNo es necesario especificar la ruta en su totalidad. Es suficiente usar una identificación única. <br>\nEjemplos: <br>\n\"*: DCIM\" (todas las cámaras: todas las carpetas que contienen &quot; DCIM &quot;) <br>\n\"*: DCIM; MyCamera: IMÁGENES\" (también desde la cámara &quot; MyCamera &quot;: todas las carpetas que contienen &quot;IMÁGENES&quot;) <br>\n&quot;&quot; (El campo permanece vacío: Copia de seguridad de todas las carpetas de todas las cámaras.) <br>\n<br>\nEn lugar de buscar un patrón, también se pueden especificar rutas absolutas. Estos siempre deben estar marcados con &quot;!/&quot; comienzo:\n&quot;MyCamera:!/store_00020002/DCIM&quot; <br>\nTan pronto como se aplica una carpeta absoluta a una cámara, ya no hay que buscar un patrón para ella. Esto ahorra tiempo.\nMás información en <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\"> wiki </a>",
-    "backup_header2": "Modo de copia de seguridad secundario predeterminado",
+    "backup_header2": "Modo de respaldo secundario predeterminado (solo respaldos de red)",
     "backup_label2": "Seleccione un modo de copia de seguridad predeterminado secundario para ejecutar después del principal:",
     "update_linktext": "Actualizar ahora",
     "wifi_section": "Configuración WiFi",
@@ -138,7 +138,8 @@
       "generate_thumbnails_header": "Miniaturas",
       "generate_thumbnails_label": "¿Crear miniaturas para View después de la copia de seguridad? (Solo para almacenamiento local)",
       "update_exif_header": "Ajuste automáticamente los datos EXIF ​​​​de los archivos multimedia al importar",
-      "update_exif_label": "Los nuevos medios sin calificación propia reciben la calificación estándar. Si es posible, esto se escribe en el archivo original."
+      "update_exif_label": "Los nuevos medios sin calificación propia reciben la calificación estándar. Si es posible, esto se escribe en el archivo original.",
+      "default_settings_header": "Configuración para la copia de seguridad estándar principal"
     },
     "backup_usb_usb": "USB almacenar &rarr; USB almacenamiento",
     "backup_usb_internal": "USB Almacenar &rarr; almacenamiento interno",
@@ -149,7 +150,7 @@
       "convert_heic_header": "Convertir imágenes heic a jpeg",
       "convert_heic_label": "Cree imágenes jpeg a partir de imágenes en formato heic (heif)",
       "write_rating_exif_label": "Las calificaciones se ingresan inmediatamente en los archivos originales y se pueden usar en un procesamiento posterior. Alternativamente, estos también se pueden transferir más tarde desde la base de datos a los archivos (página de copia de seguridad).",
-      "write_rating_exif_header": "Escribir calificaciones inmediatamente en los archivos originales"
+      "write_rating_exif_header": "Escriba las calificaciones modificadas en los archivos originales inmediatamente"
     },
     "mail": {
       "password_header": "Contraseña",

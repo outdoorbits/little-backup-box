@@ -117,18 +117,21 @@ function write_config() {
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
-	$conf_POWER_OFF						= isset($conf_POWER_OFF)?"true":"false";
-	$conf_MAIL_NOTIFICATIONS						= isset($conf_MAIL_NOTIFICATIONS)?"true":"false";
-	$conf_MAIL_HTML						= isset($conf_MAIL_HTML)?"true":"false";
-	$conf_DISP							= isset($conf_DISP)?"true":"false";
-	$conf_DISP_BLACK_ON_POWER_OFF		= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
-	$conf_DISP_IP_REPEAT				= isset($conf_DISP_IP_REPEAT)?"true":"false";
-	$conf_LOG_SYNC						= isset($conf_LOG_SYNC)?"true":"false";
-	$conf_POPUP_MESSAGES				= isset($conf_POPUP_MESSAGES)?"true":"false";
-	$conf_BACKUP_GENERATE_THUMBNAILS	= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
-	$conf_BACKUP_UPDATE_EXIF		= isset($conf_BACKUP_UPDATE_EXIF)?"true":"false";
-	$conf_VIEW_CONVERT_HEIC				= isset($conf_VIEW_CONVERT_HEIC)?"true":"false";
-	$conf_VIEW_WRITE_RATING_EXIF		= isset($conf_VIEW_WRITE_RATING_EXIF)?"true":"false";
+
+	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?"true":"false";
+	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?"true":"false";
+	$conf_POWER_OFF								= isset($conf_POWER_OFF)?"true":"false";
+	$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?"true":"false";
+	$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?"true":"false";
+	$conf_DISP									= isset($conf_DISP)?"true":"false";
+	$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
+	$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?"true":"false";
+	$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?"true":"false";
+	$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?"true":"false";
+	$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
+	$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?"true":"false";
+	$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?"true":"false";
+	$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?"true":"false";
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
 
@@ -170,6 +173,8 @@ function write_config() {
 conf_LANGUAGE='$conf_LANGUAGE'
 conf_BACKUP_DEFAULT_SOURCE='$conf_BACKUP_DEFAULT_SOURCE'
 conf_BACKUP_DEFAULT_TARGET='$conf_BACKUP_DEFAULT_TARGET'
+conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS=$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS
+conf_BACKUP_DEFAULT_UPDATE_EXIF=$conf_BACKUP_DEFAULT_UPDATE_EXIF
 conf_BACKUP_DEFAULT_SOURCE2='$conf_BACKUP_DEFAULT_SOURCE2'
 conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
 conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
@@ -396,6 +401,15 @@ function upload_settings() {
 						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?" selected":""; ?>><?php echo L::config_backup_ios_internal; ?></option>
 					</select>
 
+				<h4><?php echo L::config_backup_default_settings_header; ?></h4>
+					<h5><?php echo L::config_backup_generate_thumbnails_header; ?></h5>
+						<label for="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" name="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
+
+					<h5><?php echo L::config_backup_update_exif_header; ?></h5>
+						<label for="conf_BACKUP_DEFAULT_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_UPDATE_EXIF" name="conf_BACKUP_DEFAULT_UPDATE_EXIF" <?php echo $config['conf_BACKUP_DEFAULT_UPDATE_EXIF']=="1"?"checked":""; ?>>
+
 				<h3><?php echo L::config_backup_header2; ?></h3>
 					<label for="BACKUP_MODE_2"><?php echo L::config_backup_label2; ?></label><br>
 
@@ -424,7 +438,7 @@ function upload_settings() {
 
 				<h3><?php echo L::config_backup_power_off_header; ?></h3>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
-					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="true"?"checked":""; ?>>
 			</details>
 		</div>
 
@@ -699,13 +713,13 @@ function upload_settings() {
 					<label for="conf_VIEW_CONVERT_HEIC"><?php echo L::config_imageviewer_convert_heic_label; ?></label><br>
 					<input type="checkbox" id="conf_VIEW_CONVERT_HEIC" name="conf_VIEW_CONVERT_HEIC" <?php echo $config['conf_VIEW_CONVERT_HEIC']=="1"?"checked":""; ?>>
 
-				<h3><?php echo L::config_imageviewer_write_rating_exif_header; ?></h3>
-					<label for="conf_VIEW_WRITE_RATING_EXIF"><?php echo L::config_imageviewer_write_rating_exif_label; ?></label><br>
-					<input type="checkbox" id="conf_VIEW_WRITE_RATING_EXIF" name="conf_VIEW_WRITE_RATING_EXIF" <?php echo $config['conf_VIEW_WRITE_RATING_EXIF']=="1"?"checked":""; ?>>
-
 				<h3><?php echo L::config_backup_update_exif_header; ?></h3>
 					<label for="conf_BACKUP_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br>
 					<input type="checkbox" id="conf_BACKUP_UPDATE_EXIF" name="conf_BACKUP_UPDATE_EXIF" <?php echo $config['conf_BACKUP_UPDATE_EXIF']=="1"?"checked":""; ?>>
+
+				<h3><?php echo L::config_imageviewer_write_rating_exif_header; ?></h3>
+					<label for="conf_VIEW_WRITE_RATING_EXIF"><?php echo L::config_imageviewer_write_rating_exif_label; ?></label><br>
+					<input type="checkbox" id="conf_VIEW_WRITE_RATING_EXIF" name="conf_VIEW_WRITE_RATING_EXIF" <?php echo $config['conf_VIEW_WRITE_RATING_EXIF']=="1"?"checked":""; ?>>
 
 			</details>
 		</div>

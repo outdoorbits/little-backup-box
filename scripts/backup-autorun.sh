@@ -142,7 +142,7 @@ if [ "${conf_BACKUP_DEFAULT_SOURCE}" != "none" ] && [ "${conf_BACKUP_DEFAULT_TAR
 		sleep 1
 	fi
 
- 	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" '' '' '' "${SECONDARY_BACKUP_CONFIGURED}"
+ 	. "${WORKING_DIR}/backup.sh" "${conf_BACKUP_DEFAULT_SOURCE}" "${conf_BACKUP_DEFAULT_TARGET}" "${conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS}" "${conf_BACKUP_DEFAULT_UPDATE_EXIF}" '' "${SECONDARY_BACKUP_CONFIGURED}"
 fi
 
 ## default-backup 2

@@ -128,7 +128,7 @@
     "rsync_module_label2": ").<br>Der Modulname ist serverseitig in rsyncd.conf definiert und in [eckige Klammern] gesetzt. Beachten Sie auch <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'>readme_rsync.md</a>.",
     "backup_camera_folder_mask_header": "Zu sichernde Verzeichnisse auf Smartphones und Kameras",
     "backup_camera_folder_mask_label": "Hier kann vorgegeben werden, welche Verzeichnisse von welchen Kameras oder Smartphones gesichert werden.<br>\nEinträge hier haben das Format: <br>\n&quot;KAMERA:PFAD&quot;<br>\nDen Namen einer angeschlossenen Kamera finden Sie auf der Seite &quot;System&quot; unter &quot;Kamera/Smartphone&quot;.<br>\nWenn eine Anweisung für alle Kameras gelten soll, wird &quot;*&quot; (ohne weitere Zusätze) als Joker für alle Geräte nutzbar.<br>\nDer Pfad muss nicht vollständig angegeben werden. Es reicht aus, einen eindeutigen Teil davon zu verwenden. <br>\nBeispiele: <br>\n&quot;*:DCIM&quot; (alle Kameras: alle Ordner, die &quot;DCIM&quot; enthalten)<br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; (zusätzlich von der Kamera &quot;MyCamera&quot;: alle Ordner, die im Namen &quot;IMAGES&quot; enthalten)<br>\n&quot;&quot; (Feld bleibt leer: Alle Ordner aller Kameras sichern.)<br>\n<br>\nStatt einem Muster, können auch absolute Pfade angegeben werden. Diese müssen immer mit &quot;!/&quot; beginnen:\n&quot;MyCamera:!/store_00020002/DCIM&quot;<br>\nSobald ein absoluter Ordner für eine Kamera definiert ist, erfolgt für diese Kamera keine Suche nach Mustern mehr. Dies spart beispielsweise bei Smartphones sehr viel Zeit, da hier sehr viele Ordner zu durchsuchen wären.<br>\nWeitere Informationen im <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">Wiki</a>.",
-    "backup_header2": "Standardmäßiger sekundärer Sicherungsmodus",
+    "backup_header2": "Standardmäßiger sekundärer Sicherungsmodus (nur Netzwerk-Backups)",
     "backup_label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:",
     "update_linktext": "Update starten",
     "wifi_section": "WLAN-Einstellungen",
@@ -138,7 +138,8 @@
       "generate_thumbnails_header": "Vorschaubilder",
       "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)",
       "update_exif_header": "EXIF-Daten von Mediendateien beim Import automatisch anpassen",
-      "update_exif_label": "Neue Medien ohne eigene Bewertung erhalten die Standardbewertung. Diese wird - wenn möglich - in die Originaldatei geschrieben."
+      "update_exif_label": "Neue Medien ohne eigene Bewertung erhalten die Standardbewertung. Diese wird - wenn möglich - in die Originaldatei geschrieben.",
+      "default_settings_header": "Einstellung für das primäre Standard-Backup"
     },
     "backup_usb_usb": "USB-Quellspeicher &rarr; USB-Zielspeicher",
     "backup_usb_internal": "USB-Quellspeicher &rarr; internem Speicher",
@@ -149,7 +150,7 @@
       "convert_heic_header": "heic-Bilder in jpeg konvertieren",
       "convert_heic_label": "Von Bildern im Format heic (heif) jpeg-Bilder erstellen",
       "write_rating_exif_label": "Bewertungen werden sofort in die Original-Dateien eingetragen und können in der Weiterbearbeitung genutzt werden. Alternativ können diese auch später aus der Datenbank auf die Dateien übertragen werden (Backup-Seite).",
-      "write_rating_exif_header": "Bewertungen sofort in Originaldateien schreiben"
+      "write_rating_exif_header": "Geänderte Bewertungen sofort in Originaldateien schreiben"
     },
     "mail": {
       "password_header": "Passwort",

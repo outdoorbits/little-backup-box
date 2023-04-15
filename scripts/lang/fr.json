@@ -128,7 +128,7 @@
     "rsync_module_label2": "). <br> Le nom du module est défini côté serveur dans rsyncd.conf et est mis entre [crochets]. Notez également <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
     "backup_camera_folder_mask_header": "Répertoires à sauvegarder sur les smartphones et les caméras",
     "backup_camera_folder_mask_label": "Des instructions pour le comportement de sauvegarde pour certains appareils photo ou smartphones peuvent être données ici.<br>\nLes entrées ici ont la forme : <br>\n&quot;CAMERA:CHEMIN&quot; <br>\nLe nom d'une caméra connectée se trouve sur la page &quot;Système&quot; sur &quot;Appareil photo/Smartphone&quot;.<br>\nSi une instruction doit s'appliquer à toutes les caméras, &quot;*&quot; (sans autres ajouts) peut être utilisé comme joker pour tous les appareils.<br>\nLe chemin n'a pas besoin d'être spécifié en entier. Il suffit d'en utiliser une partie importante. <br>\nExemples : <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Le champ reste vide, sauvegardez tous les dossiers de toutes les caméras.)<br>\nPlus d'informations sur le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
-    "backup_header2": "Mode de sauvegarde secondaire par défaut",
+    "backup_header2": "Mode de sauvegarde secondaire par défaut (sauvegardes réseau uniquement)",
     "backup_label2": "Sélectionnez un mode de sauvegarde secondaire par défaut à exécuter après le principal :",
     "update_linktext": "Mettez à jour maintenant",
     "wifi_section": "Paramètres Wifi",
@@ -138,7 +138,8 @@
       "generate_thumbnails_header": "Vignettes",
       "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)",
       "update_exif_header": "Ajustez automatiquement les données EXIF ​​​​des fichiers multimédias lors de l'importation",
-      "update_exif_label": "Les nouveaux médias sans leur propre classement reçoivent le classement standard. Si possible, ceci est écrit dans le fichier d'origine."
+      "update_exif_label": "Les nouveaux médias sans leur propre classement reçoivent le classement standard. Si possible, ceci est écrit dans le fichier d'origine.",
+      "default_settings_header": "Paramètre pour la sauvegarde standard principale"
     },
     "backup_usb_usb": "USB stockage &rarr; USB stockage",
     "backup_usb_internal": "USB Stockage source &rarr; stockage interne",
@@ -149,7 +150,7 @@
       "convert_heic_header": "Convertir des images heic en jpeg",
       "convert_heic_label": "Créer des images jpeg à partir d'images au format heic (heif)",
       "write_rating_exif_label": "Les notations sont immédiatement saisies dans les fichiers d'origine et peuvent être utilisées dans un traitement ultérieur. Alternativement, ceux-ci peuvent également être transférés ultérieurement de la base de données vers les fichiers (page de sauvegarde).",
-      "write_rating_exif_header": "Ecrire immédiatement les évaluations dans les fichiers d'origine"
+      "write_rating_exif_header": "Écrivez immédiatement les notes modifiées dans les fichiers d'origine"
     },
     "mail": {
       "password_header": "Mot de passe",

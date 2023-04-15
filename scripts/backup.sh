@@ -164,12 +164,18 @@ function calculate_files_to_sync() {
 	if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
 		# Source usb ios internal
 
+		if [[ " usb internal " =~ " ${TARGET_MODE}" ]]; then
+			excludeTIMS=''
+		else
+			excludeTIMS='--exclude "*tims/"'
+		fi
+
 		for SOURCE_PATH in "${SOURCE_PATHS_ARRAY[@]}"; do
 
 			if [ ${TARGET_MODE} = "rsyncserver" ]; then
 				FILES_TO_SYNC_PATH=$(sudo sshpass -p "${conf_RSYNC_PASSWORD}" rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${RSYNC_CONNECTION}/${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 			else
-				FILES_TO_SYNC_PATH=$(sudo rsync -avh --stats --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
+				FILES_TO_SYNC_PATH=$(eval sudo rsync -avh --stats --min-size=1 --exclude "*.id" ${excludeTIMS} --exclude "${const_IMAGE_DATABASE_FILENAME}" --dry-run "${SOURCE_PATH}"/ "${BACKUP_PATH}" | awk '{for(i=1;i<=NF;i++)if ($i " " $(i+1) " " $(i+2) " " $(i+3) " " $(i+4)=="Number of regular files transferred:"){print $(i+5)}}' | sed s/,//g)
 			fi
 
 			if [ -z "${FILES_TO_SYNC_PATH}" ]; then
@@ -908,6 +914,12 @@ for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
 		if [[ " usb internal ios " =~ " ${SOURCE_MODE} " ]]; then
 			# If source is usb, internal or ios (local drives)
 
+			if [[ " usb internal " =~ " ${TARGET_MODE} " ]]; then
+				excludeTIMS=''
+			else
+				excludeTIMS='--exclude "*tims/"'
+			fi
+
 			# generate rsync-options depending on target
 			RSYNC_OPTIONS="-avh --info=FLIST0,PROGRESS2 --stats --no-owner --no-group --no-perms"
 			if [[ " usb internal  " =~ " ${TARGET_MODE} " ]]; then
@@ -934,12 +946,12 @@ for SOURCE_PATH in "${SOURCE_PATHS[@]}"; do
 				# not to rsyncserver
 				sudo mkdir -p "${BACKUP_PATH}"
 				if [ $conf_LOG_SYNC = true ]; then
-					sudo rsync ${RSYNC_OPTIONS} --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
+					eval sudo rsync ${RSYNC_OPTIONS} --min-size=1 --exclude "*.id" ${excludeTIMS} --exclude "${const_IMAGE_DATABASE_FILENAME}" --log-file="${const_LOGFILE_SYNC}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 					SYNC_LOG="${SYNC_LOG}\n$(<"${const_LOGFILE_SYNC}")"
 					log_pick_file "${const_LOGFILE_SYNC}"
 				else
-					sudo rsync ${RSYNC_OPTIONS} --min-size=1 --exclude "*.id" --exclude "*tims/" --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
+					eval sudo rsync ${RSYNC_OPTIONS} --min-size=1 --exclude "*.id" ${excludeTIMS} --exclude "${const_IMAGE_DATABASE_FILENAME}" "${SOURCE_PATH}"/ "${BACKUP_PATH}" | syncprogress "rsync" "${SOURCE_FOLDER_INFO}"
 					SYNC_RETURN_CODE="${PIPESTATUS[0]}"
 				fi
 			fi
