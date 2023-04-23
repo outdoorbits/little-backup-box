@@ -187,6 +187,7 @@ conf_DISP_I2C_ADDRESS='$conf_DISP_I2C_ADDRESS'
 conf_DISP_SPI_PORT='$conf_DISP_SPI_PORT'
 conf_DISP_RESOLUTION_X=$conf_DISP_RESOLUTION_X
 conf_DISP_RESOLUTION_Y=$conf_DISP_RESOLUTION_Y
+conf_DISP_ROTATE='$conf_DISP_ROTATE'
 conf_DISP_CONTRAST=$conf_DISP_CONTRAST
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
 conf_DISP_COLOR_TEXT='$conf_DISP_COLOR_TEXT'
@@ -595,6 +596,21 @@ function upload_settings() {
 									$display_resolutions_array=array("64","32");
 									foreach($display_resolutions_array as $display_resolution) {
 										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_ROTATE"><?php echo L::config_display_rotate_label; ?></label><br>
+							<select name="conf_DISP_ROTATE" id="conf_DISP_ROTATE">
+								<?php
+									$display_rotate_array=array(
+										'0' => '0°',
+										'2' => '180°',
+									);
+									foreach($display_rotate_array as $display_rotate_code => $display_rotate_text) {
+										echo "<option value='" . $display_rotate_code . "' " . ($config["conf_DISP_ROTATE"] == $display_rotate_code?" selected":"") . ">" . $display_rotate_text . "</option>";
 									}
 								?>
 							</select>

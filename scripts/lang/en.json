@@ -437,7 +437,8 @@
       "color_text_label": "Default font color",
       "color_alert_label": "Font color for warnings",
       "color_high_label": "Font color for highlighted text",
-      "contrast_label": "Contrast"
+      "contrast_label": "Contrast",
+      "rotate_label": "Display rotation"
     }
   },
   "tools": {

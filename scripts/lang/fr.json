@@ -263,7 +263,8 @@
       "color_text_label": "Couleur de police par défaut",
       "color_alert_label": "Couleur de la police des avertissements",
       "color_high_label": "Couleur de police pour le texte en surbrillance",
-      "contrast_label": "Contraste"
+      "contrast_label": "Contraste",
+      "rotate_label": "Rotation de l'affichage"
     }
   },
   "tools": {

@@ -70,6 +70,7 @@ class DISPLAY(object):
 		self.conf_DISP_SPI_PORT				= int(config['conf_DISP_SPI_PORT'])
 		self.conf_DISP_RESOLUTION_X			= int(config['conf_DISP_RESOLUTION_X'])
 		self.conf_DISP_RESOLUTION_Y			= int(config['conf_DISP_RESOLUTION_Y'])
+		self.conf_DISP_ROTATE				= int(config['conf_DISP_ROTATE'])
 		self.conf_DISP_CONTRAST				= int(config['conf_DISP_CONTRAST'])
 		self.conf_DISP_COLOR_MODEL			= str(config['conf_DISP_COLOR_MODEL'])
 		self.conf_DISP_COLOR_TEXT			= str(config['conf_DISP_COLOR_TEXT'])
@@ -135,7 +136,7 @@ class DISPLAY(object):
 		else:
 			sys.exit('Error: No valid display driver')
 
-		self.device.capabilities(self.conf_DISP_RESOLUTION_X,self.conf_DISP_RESOLUTION_Y,0,mode=self.conf_DISP_COLOR_MODEL)
+		self.device.capabilities(self.conf_DISP_RESOLUTION_X,self.conf_DISP_RESOLUTION_Y,self.conf_DISP_ROTATE,mode=self.conf_DISP_COLOR_MODEL)
 
 		self.device.contrast(self.conf_DISP_CONTRAST)
 

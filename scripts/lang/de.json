@@ -263,7 +263,8 @@
       "color_text_label": "Standard-Schriftfarbe",
       "color_alert_label": "Schriftfarbe für Warnungen",
       "color_high_label": "Schriftfarbe für hervorgehobenen Text",
-      "contrast_label": "Kontrast"
+      "contrast_label": "Kontrast",
+      "rotate_label": "Display-Rotation"
     }
   },
   "tools": {
