@@ -265,6 +265,20 @@
       "color_high_label": "Couleur de police pour le texte en surbrillance",
       "contrast_label": "Contraste",
       "rotate_label": "Rotation de l'affichage"
+    },
+    "menu": {
+      "section": "Afficher le menu et les boutons matériels",
+      "enable_header": "Activer le menu d'affichage",
+      "enable_label": "Le menu d'affichage doit-il être activé ?",
+      "button_combination_header": "Configuration des boutons de commande",
+      "button_combination_label": "Veuillez sélectionner une variante à l'aide du tableau",
+      "button_combination_variant": "Variante",
+      "button_up": "haut",
+      "button_down": "bas",
+      "button_right": "droite",
+      "button_left": "gauche",
+      "button_bouncetime_header": "Temps de rebond des boutons",
+      "button_bouncetime_label": "Le temps de rebond (en millisecondes) indique la rapidité avec laquelle un bouton atteint un état stable. Après une action, un bouton est bloqué pendant ce temps."
     }
   },
   "tools": {

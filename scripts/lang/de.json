@@ -265,6 +265,20 @@
       "color_high_label": "Schriftfarbe für hervorgehobenen Text",
       "contrast_label": "Kontrast",
       "rotate_label": "Display-Rotation"
+    },
+    "menu": {
+      "section": "Display-Menü und Hardware-Tasten",
+      "enable_header": "Display-Menu aktivieren",
+      "enable_label": "Soll das Display-Menü aktiviert werden?",
+      "button_combination_header": "Konfiguration der Steuer-Taster",
+      "button_combination_label": "Bitte wählen Sie eine Variante mit Hilfe der Tabelle",
+      "button_combination_variant": "Variante",
+      "button_up": "aufwärts",
+      "button_down": "abwärts",
+      "button_right": "rechts",
+      "button_left": "links",
+      "button_bouncetime_header": "Prellzeit der Taster",
+      "button_bouncetime_label": "Die Prellzeit (in Millisekunden) gibt an, wie schnell ein Taster einen stabilen Einschaltzustand erreicht. Nach einer Aktion wird ein Taster für diese Zeit blockiert."
     }
   },
   "tools": {

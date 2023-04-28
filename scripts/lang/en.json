@@ -439,6 +439,20 @@
       "color_high_label": "Font color for highlighted text",
       "contrast_label": "Contrast",
       "rotate_label": "Display rotation"
+    },
+    "menu": {
+      "section": "Display menu and hardware buttons",
+      "enable_header": "Activate display menu",
+      "enable_label": "Should the display menu be activated?",
+      "button_combination_header": "Configuration of the control buttons",
+      "button_combination_label": "Please select a variant using the table",
+      "button_combination_variant": "Variant",
+      "button_up": "up",
+      "button_down": "down",
+      "button_right": "right",
+      "button_left": "left",
+      "button_bouncetime_header": "Bounce time of the buttons",
+      "button_bouncetime_label": "The bounce time (in milliseconds) indicates how quickly a button reaches a stable on state. After an action, a button is blocked for this time."
     }
   },
   "tools": {

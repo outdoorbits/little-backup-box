@@ -265,6 +265,20 @@
       "color_high_label": "Color de fuente para el texto resaltado",
       "contrast_label": "Contraste",
       "rotate_label": "Rotación de pantalla"
+    },
+    "menu": {
+      "section": "Mostrar menú y botones de hardware",
+      "enable_header": "Activar menú de visualización",
+      "enable_label": "¿Se debe activar el menú de visualización?",
+      "button_combination_header": "Configuración de los botones de control",
+      "button_combination_label": "Seleccione una variante usando la tabla",
+      "button_combination_variant": "Variante",
+      "button_up": "arriba",
+      "button_down": "abajo",
+      "button_right": "derecha",
+      "button_left": "izquierda",
+      "button_bouncetime_header": "Tiempo de rebote de los botones",
+      "button_bouncetime_label": "El tiempo de rebote (en milisegundos) indica qué tan rápido un botón alcanza un estado estable. Después de una acción, un botón se bloquea por este tiempo."
     }
   },
   "tools": {

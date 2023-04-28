@@ -76,9 +76,10 @@ class DISPLAY(object):
 		self.conf_DISP_COLOR_TEXT			= str(config['conf_DISP_COLOR_TEXT'])
 		self.conf_DISP_COLOR_HIGH			= str(config['conf_DISP_COLOR_HIGH'])
 		self.conf_DISP_COLOR_ALERT			= str(config['conf_DISP_COLOR_ALERT'])
-		self.conf_DISP_FONT_SIZE				= int(config['conf_DISP_FONT_SIZE'])
+		self.conf_DISP_FONT_SIZE			= int(config['conf_DISP_FONT_SIZE'])
 		self.conf_DISP_BLACK_ON_POWER_OFF	= config['conf_DISP_BLACK_ON_POWER_OFF'] == "true"
 		self.conf_DISP_FRAME_TIME			= float(config['conf_DISP_FRAME_TIME'])
+		self.conf_MENU_ENABLED				= config['conf_MENU_ENABLED'] == "true"
 
 		constants = ConfigObj("{}/constants.sh".format(WORKING_DIR))
 
@@ -151,7 +152,8 @@ class DISPLAY(object):
 		self.calculate_LineSize()
 
 		## start display menu
-		DISPLAYMENU	= displaymenu.menu(self.maxLines)
+		if self.conf_MENU_ENABLED:
+			DISPLAYMENU	= displaymenu.menu(self.maxLines)
 
 	def calculate_LineSize(self):
 		# calculate size of text
@@ -334,8 +336,6 @@ class DISPLAY(object):
 
 								if SettingType == 'time' and float(SettingValue) >= 0:
 									frame_time = float(SettingValue)
-									if frame_time < 0.2:
-										frame_time = 0.2
 
 						elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
 

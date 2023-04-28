@@ -126,6 +126,7 @@ function write_config() {
 	$conf_DISP									= isset($conf_DISP)?"true":"false";
 	$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
 	$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?"true":"false";
+	$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?"true":"false";
 	$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?"true":"false";
 	$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?"true":"false";
 	$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
@@ -197,6 +198,9 @@ conf_DISP_FONT_SIZE=$conf_DISP_FONT_SIZE
 conf_DISP_FRAME_TIME=$conf_DISP_FRAME_TIME
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
+conf_MENU_ENABLED=$conf_MENU_ENABLED
+conf_MENU_BUTTON_COMBINATION='$conf_MENU_BUTTON_COMBINATION'
+conf_MENU_BUTTON_BOUNCETIME=$conf_MENU_BUTTON_BOUNCETIME
 conf_THEME=$conf_THEME
 conf_BACKGROUND_IMAGE=$conf_BACKGROUND_IMAGE
 conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
@@ -712,6 +716,93 @@ function upload_settings() {
 							<?php
 								}
 							?>
+					</div>
+
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_menu_section; ?></summary>
+
+				<h3><?php echo L::config_menu_enable_header; ?></h3>
+					<div>
+						<label for="conf_MENU_ENABLED"><?php echo L::config_menu_enable_label; ?></label><br>
+						<input type="checkbox" id="conf_MENU_ENABLED" name="conf_MENU_ENABLED" <?php echo $config['conf_MENU_ENABLED']=="1"?"checked":""; ?>>
+					</div>
+
+				<h3><?php echo L::config_menu_button_combination_header; ?></h3>
+
+					<div>
+						<label for="conf_MENU_BUTTON_COMBINATION"><?php echo L::config_menu_button_combination_label; ?></label><br>
+							<select name="conf_MENU_BUTTON_COMBINATION" id="conf_MENU_BUTTON_COMBINATION">
+								<?php
+									$button_combinations_array=array(
+										'1' => array(
+												'up' 	=> 'PIN 29, GPIO 5',
+												'down'	=> 'PIN 31, GPIO 6',
+												'left' 	=> 'PIN 11, GPIO 17',
+												'right'	=> 'PIN 13, GPIO 27'
+											),
+										'2' => array(
+												'up' 	=> 'PIN 31, GPIO 6',
+												'down'	=> 'PIN 33, GPIO 13',
+												'left' 	=> 'PIN 35, GPIO 19',
+												'right'	=> 'PIN 37, GPIO 26'
+											)
+									);
+									foreach($button_combinations_array as $variant => $button_combination) {
+										echo "<option value='" . $variant . "' " . ($config["conf_MENU_BUTTON_COMBINATION"] == $variant?" selected":"") . ">" . $variant . "</option>";
+									}
+								?>
+							</select>
+
+							<table style="width: 100%;">
+								<tr style="border: thin solid;">
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_combination_variant; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_up; ?>
+									</th>
+									<th>
+										<?php echo L::config_menu_button_down; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_left; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_right; ?>
+									</th>
+								</tr>
+
+								<?php
+									foreach($button_combinations_array as $variant => $button_combination) {
+										echo("<tr style=\"border: thin solid;\"><td>$variant</td>");
+										foreach($button_combination as $direction => $PIN) {
+											?>
+												<td style="border: thin solid;">
+													<?php echo $PIN; ?>
+												</td>
+											<?php
+										}
+										echo("</tr>");
+									}
+								?>
+							</table>
+					</div>
+
+				<h3><?php echo L::config_menu_button_bouncetime_header; ?></h3>
+					<div>
+						<label for="conf_MENU_BUTTON_BOUNCETIME"><?php echo L::config_menu_button_bouncetime_label; ?></label><br>
+							<select name="conf_MENU_BUTTON_BOUNCETIME" id="conf_MENU_BUTTON_BOUNCETIME">
+								<?php
+									$button_bouncetimes_array=array(25,50,100,200,300,400,500);
+									foreach($button_bouncetimes_array as $button_bouncetime) {
+										echo "<option value='" . $button_bouncetime . "' " . ($config["conf_MENU_BUTTON_BOUNCETIME"] == $button_bouncetime?" selected":"") . ">" . $button_bouncetime . "</option>";
+									}
+								?>
+							</select>
 					</div>
 
 			</details>
