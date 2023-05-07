@@ -108,8 +108,8 @@ else
 	# 	dialog
 fi
 
-printf "Installer directory is: %s" "$INSTALLER_DIR"
-printf "Script mode is: %s" "$SCRIPT_MODE"
+printf "Installer directory is: %s\n" "$INSTALLER_DIR"
+printf "Script mode is: %s\n" "$SCRIPT_MODE"
 exit
 
 # Do all user-interactions
