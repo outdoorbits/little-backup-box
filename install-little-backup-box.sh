@@ -44,6 +44,41 @@ fi
 USER_WWW_DATA="www-data"
 USER_SAMBA="lbb"
 
+# installation parameters
+_SOURCEURL="https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh"
+_SOURCEBRANCH="main"
+_SOURCEREPO="little-backup-box"
+_SOURCEOWNER="outdoorbits"
+_SOURCESCRIPT="install.sh"
+function getInstallCommand() {
+    OIFS=$IFS
+    IN=$1
+    #IN="$(tail -n -1 "$HOME/.bash_history")"
+    #IN="curl -sSL https://raw.githubusercontent.com/shield61/little-backup-box/development/install-little-backup-box.sh | bash  2> install-error.log"
+    IFS=' ' read -r -a CMDLINE <<< "$IN"
+    for x in "${CMDLINE[@]}"
+    do
+        if [[ "$x" = *"github"* ]] ; then
+            _SOURCEURL=$x
+            IFS='/' read -r -a URL <<< "$x"
+            _SOURCESCRIPT=${URL[-1]}
+            _SOURCEBRANCH=${URL[-2]}
+            _SOURCEREPO=${URL[-3]}
+            _SOURCEOWNER=${URL[-4]}
+        fi
+        continue
+    done
+    IFS=$OIFS
+}
+
+getInstallCommand "$1"
+
+echo "URL:" "${_SOURCEURL}"
+echo "SCRIPTNAME:" "${_SOURCESCRIPT}"
+echo "BRANCH:" "${_SOURCEBRANCH}"
+echo "REPOSITORY:" "${_SOURCEREPO}"
+echo "OWNER:" "${_SOURCEOWNER}"
+
 # change into actual user-dir
 cd
 
@@ -65,13 +100,17 @@ if [ -d "${const_WEB_ROOT_LBB}" ]; then
 else
 	SCRIPT_MODE="install"
 	echo "Installer-script running as INSTALLER"
-	sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
-		-o "Dpkg::Options::=--force-confold" \
-		-o "Dpkg::Options::=--force-confdef" \
-		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		dialog
+	# sudo DEBIAN_FRONTEND=noninteractive \
+	# 	apt \
+	# 	-o "Dpkg::Options::=--force-confold" \
+	# 	-o "Dpkg::Options::=--force-confdef" \
+	# 	install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+	# 	dialog
 fi
+
+printf "Installer directory is: %s" "$INSTALLER_DIR"
+printf "Script mode is: %s" "$SCRIPT_MODE"
+exit
 
 # Do all user-interactions
 
