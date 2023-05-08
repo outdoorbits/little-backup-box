@@ -232,11 +232,13 @@ CONFIG="${const_WEB_ROOT_LBB}/config.cfg"
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "Loading old settings from ${CONFIG}"
 	source "${CONFIG}"
-else
-	# Write new URL to update from into config
-	sudo sed -i '/conf_INSTALLER_URL=/d' "${CONFIG}"
-	echo "conf_INSTALLER_URL=\"${_SOURCEURL}\"" | sudo tee -a "${CONFIG}"
 fi
+
+# Write new URL to update from into config
+## append new line to config-file
+echo -e '' | sudo tee -a "${CONFIG}"
+sudo sed -i '/conf_INSTALLER_URL=/d' "${CONFIG}"
+echo "conf_INSTALLER_URL=\"${_SOURCEURL}\"" | sudo tee -a "${CONFIG}"
 
 # Install rclone
 curl https://rclone.org/install.sh | sudo bash
