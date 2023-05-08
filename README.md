@@ -131,6 +131,10 @@ As there is no manual available anymore, the github-wiki should replace it one d
 	<li>
 		Run the following command on the Raspberry Pi:<br>
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code><br>
+		For testing development branches and/or from a forked repository please use:
+		<code>curl -sSL -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/<owner>/<repo>/<branch>/install-little-backup-box.sh | bash -s https://raw.githubusercontent.com/<owner>/<repo>/<branch>/install-little-backup-box.sh
+
+		</code><br>
 		Errors are reported into ./install-error.log
 	</li>
 	<li>

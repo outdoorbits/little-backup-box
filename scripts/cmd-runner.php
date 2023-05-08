@@ -29,7 +29,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 				switch($CMD) {
 					case 'update':
 						$COMMAND_LINE	= "sudo $WORKING_DIR/lib-display-helper.sh ':" . L::box_cmd_update_start1 . "' ':" . L::box_cmd_update_start2 . "'";
-						$COMMAND_LINE	.= ";cd ~pi; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | sudo -u pi bash";
+						$COMMAND_LINE	.= ";cd ~pi; curl -sSL -H 'Cache-Control: no-cache'" . $config["conf_INSTALLER_URL"] . " | sudo -u pi bash -s " . $config["conf_INSTALLER_URL"];
 						break;
 
 					case 'format':

@@ -100,17 +100,16 @@ if [ -d "${const_WEB_ROOT_LBB}" ]; then
 else
 	SCRIPT_MODE="install"
 	echo "Installer-script running as INSTALLER"
-	# sudo DEBIAN_FRONTEND=noninteractive \
-	# 	apt \
-	# 	-o "Dpkg::Options::=--force-confold" \
-	# 	-o "Dpkg::Options::=--force-confdef" \
-	# 	install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-	# 	dialog
+	sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		dialog
 fi
 
 printf "Installer directory is: %s\n" "$INSTALLER_DIR"
 printf "Script mode is: %s\n" "$SCRIPT_MODE"
-exit
 
 # Do all user-interactions
 
@@ -201,10 +200,10 @@ echo "Cloning Little Backup Box"
 cd
 
 sudo rm -R ${INSTALLER_DIR}
-git clone https://github.com/outdoorbits/little-backup-box.git
+git clone https://github.com/"$(_SOURCEOWNER)"/"$(_SOURCEREPO)".git
 GIT_CLONE=$?
 if [ "${GIT_CLONE}" -gt 0 ]; then
-	echo "Cloning little-backup-box from github.com failed. Please try again later."
+	echo "Cloning $(_SOURCEOWNER)/$(_SOURCEREPO) from github.com failed. Please try again later."
 	exit 0
 fi
 
@@ -233,6 +232,10 @@ CONFIG="${const_WEB_ROOT_LBB}/config.cfg"
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "Loading old settings from ${CONFIG}"
 	source "${CONFIG}"
+else
+	# Write new URL to update from into config
+	sudo sed -i '/conf_INSTALLER_URL=/d' "${CONFIG}"
+	echo "conf_INSTALLER_URL=\"${_SOURCEURL}\"" | sudo tee -a "${CONFIG}"
 fi
 
 # Install rclone
