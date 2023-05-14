@@ -218,7 +218,7 @@ if [ "${SCRIPT_MODE}" = "update" ]; then
 
 	sudo rm -R ${const_WEB_ROOT_LBB}/*
 fi
-
+exit 23
 # install little-backup-box-files
 sudo mkdir -p "${const_WEB_ROOT_LBB}"
 yes | sudo cp -Rf "${INSTALLER_DIR}/scripts/"* "${const_WEB_ROOT_LBB}/"
