@@ -197,14 +197,14 @@ sudo raspi-config nonint do_boot_wait 1 # wait for network on boot: disable
 
 # Clone Little Backup Box
 echo "Cloning Little Backup Box"
-cd
+cd || exit
 
-sudo rm -R ${INSTALLER_DIR}
-_CLONEREPOCMD="git clone https://github.com/$_SOURCEOWNER/$_SOURCEBRANCH/$_SOURCEREPO.git"
-${_CLONEREPOCMD}
-GIT_CLONE=$?
-if [ "${GIT_CLONE}" -gt 0 ]; then
-	echo "Cloning $_SOURCEOWNER/$_SOURCEBRANCH/$_SOURCEREPO from github.com failed. Please try again later."
+sudo rm -R "${INSTALLER_DIR}"
+_GITCMD="git clone -b $_SOURCEBRANCH --single-branch https://github.com/$_SOURCEOWNER/little-backup-box.git"
+${_GITCMD}
+GIT_RESULT=$?
+if [ "${GIT_RESULT}" -gt 0 ]; then
+	echo "Cloning branch $_SOURCEBRANCH of $_SOURCEOWNER/little-backup-box.git from github.com failed. Please try again later."
 	exit 0
 fi
 
