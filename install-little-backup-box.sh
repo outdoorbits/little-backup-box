@@ -200,10 +200,11 @@ echo "Cloning Little Backup Box"
 cd
 
 sudo rm -R ${INSTALLER_DIR}
-git clone https://github.com/"$_SOURCEOWNER"/"$_SOURCEREPO".git
+_CLONEREPOCMD="git clone https://github.com/$_SOURCEOWNER/$_SOURCEBRANCH/$_SOURCEREPO.git"
+${_CLONEREPOCMD}
 GIT_CLONE=$?
 if [ "${GIT_CLONE}" -gt 0 ]; then
-	echo "Cloning $_SOURCEOWNER/$_SOURCEREPO from github.com failed. Please try again later."
+	echo "Cloning $_SOURCEOWNER/$_SOURCEBRANCH/$_SOURCEREPO from github.com failed. Please try again later."
 	exit 0
 fi
 
