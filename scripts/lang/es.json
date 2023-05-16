@@ -248,7 +248,7 @@
       "color_model_RGBA": "RGBA (RGB con transparencia)",
       "font_size_label": "Tamaño de fuente",
       "frame_time_label": "Tiempo mínimo de visualización por cuadro en segundos",
-      "hardware_header": "Hardware",
+      "hardware_header": "Pantalla",
       "colors_header": "Selección de color cuando se utiliza una pantalla a color",
       "color": {
         "white": "blanco",
@@ -267,7 +267,7 @@
       "rotate_label": "Rotación de pantalla"
     },
     "menu": {
-      "section": "Mostrar menú y botones de hardware",
+      "section": "Mostrar menú",
       "enable_header": "Activar menú de visualización",
       "enable_label": "¿Se debe activar el menú de visualización?",
       "button_combination_header": "Configuración de los botones de control",
@@ -279,6 +279,15 @@
       "button_left": "izquierda",
       "button_bouncetime_header": "Tiempo de rebote de los botones",
       "button_bouncetime_label": "El tiempo de rebote (en milisegundos) indica qué tan rápido un botón alcanza un estado estable. Después de una acción, un botón se bloquea por este tiempo."
+    },
+    "hardware": {
+      "section": "Hardware",
+      "fan": {
+        "always_on": "permanentemente encendido",
+        "gpio_label": "GPIO para control de ventilador PWM",
+        "header": "Control del ventilador",
+        "temp_label": "Umbral de temperatura"
+      }
     }
   },
   "tools": {
@@ -303,7 +312,6 @@
       "b": "prueba de inicio"
     }
   },
-  "minutes_long": "minutos",
   "box": {
     "backup": {
       "insert_source_1": "Listo",
@@ -544,5 +552,9 @@
     "ratings_save_button": "Guardar",
     "ratings_1_delete_button": "Eliminar archivos multimedia",
     "date_format": "d.m.Y"
+  },
+  "units": {
+    "minutes_long": "minutos",
+    "celsius": "°C"
   }
 }

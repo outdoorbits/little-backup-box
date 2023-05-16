@@ -542,8 +542,11 @@ fi
 # re-establish passwords
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "Restore password-protection"
-	source "${const_WEB_ROOT_LBB}/password.sh" "${conf_PASSWORD}"
+	source "${const_WEB_ROOT_LBB}/set_password.sh" "${conf_PASSWORD}"
 fi
+
+# setup hardware
+	source "${const_WEB_ROOT_LBB}/set_hardware.sh"
 
 # post-install-information
 ## load network library

@@ -2,7 +2,6 @@
   "help": "Help",
   "right_arrow": " &rarr; ",
   "seconds_short": "s",
-  "minutes_long": "minutes",
   "log": {
     "logmonitor": "Log monitor",
     "refresh_button": "Refresh",
@@ -422,7 +421,7 @@
       "color_model_RGBA": "RGBA (RGB with transparency)",
       "font_size_label": "Font size",
       "frame_time_label": "Minimum display time per frame in seconds",
-      "hardware_header": "Hardware",
+      "hardware_header": "Display",
       "colors_header": "Color selection when using a color display",
       "color": {
         "white": "white",
@@ -441,7 +440,7 @@
       "rotate_label": "Display rotation"
     },
     "menu": {
-      "section": "Display menu and hardware buttons",
+      "section": "Display menu",
       "enable_header": "Activate display menu",
       "enable_label": "Should the display menu be activated?",
       "button_combination_header": "Configuration of the control buttons",
@@ -453,6 +452,15 @@
       "button_left": "left",
       "button_bouncetime_header": "Bounce time of the buttons",
       "button_bouncetime_label": "The bounce time (in milliseconds) indicates how quickly a button reaches a stable on state. After an action, a button is blocked for this time."
+    },
+    "hardware": {
+      "section": "Hardware",
+      "fan": {
+        "always_on": "permanently on",
+        "gpio_label": "GPIO for PWM fan control",
+        "header": "Fan control",
+        "temp_label": "Temperature threshold"
+      }
     }
   },
   "tools": {
@@ -544,5 +552,9 @@
     "ratings_save_button": "Save",
     "ratings_1_delete_button": "Delete media files",
     "date_format": "Y/m/d"
+  },
+  "units": {
+    "minutes_long": "minutes",
+    "celsius": "°C"
   }
 }

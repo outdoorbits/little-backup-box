@@ -248,7 +248,7 @@
       "color_model_RGBA": "RGBA (RGB mit Transparenz)",
       "font_size_label": "Schriftgröße",
       "frame_time_label": "Minimale Anzeigedauer pro Bild in Sekunden",
-      "hardware_header": "Hardware",
+      "hardware_header": "Display",
       "colors_header": "Farbauswahl beim Einsatz eines Farb-Displays",
       "color": {
         "white": "weiß",
@@ -267,7 +267,7 @@
       "rotate_label": "Display-Rotation"
     },
     "menu": {
-      "section": "Display-Menü und Hardware-Tasten",
+      "section": "Display-Menü",
       "enable_header": "Display-Menu aktivieren",
       "enable_label": "Soll das Display-Menü aktiviert werden?",
       "button_combination_header": "Konfiguration der Steuer-Taster",
@@ -279,6 +279,15 @@
       "button_left": "links",
       "button_bouncetime_header": "Prellzeit der Taster",
       "button_bouncetime_label": "Die Prellzeit (in Millisekunden) gibt an, wie schnell ein Taster einen stabilen Einschaltzustand erreicht. Nach einer Aktion wird ein Taster für diese Zeit blockiert."
+    },
+    "hardware": {
+      "section": "Hardware",
+      "fan": {
+        "always_on": "dauerhaft ein",
+        "gpio_label": "GPIO für die PWM-Lüftersteuerung",
+        "header": "Lüftersteuerung",
+        "temp_label": "Temperaturschwelle"
+      }
     }
   },
   "tools": {
@@ -303,7 +312,6 @@
       "b": "Test starten"
     }
   },
-  "minutes_long": "Minuten",
   "box": {
     "backup": {
       "insert_source_1": "Bereit",
@@ -544,5 +552,9 @@
     "ratings_save_button": "Speichern",
     "ratings_1_delete_button": "Mediendateien löschen",
     "date_format": "d.m.Y"
+  },
+  "units": {
+    "minutes_long": "Minuten",
+    "celsius": "°C"
   }
 }
