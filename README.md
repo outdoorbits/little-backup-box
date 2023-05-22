@@ -2,7 +2,7 @@
 
 <h2>About</h2>
 <div style="display: flex; align-items: center;">
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" style="float: right; margin-left: 10px;" width="320">
+	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" style="float: right; margin-left: 10px;" width="600">
 	<div style="font-style: italic;">
 		Little Backup Box in it's <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a>
 	</div>
