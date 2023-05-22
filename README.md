@@ -1,13 +1,9 @@
 <h1>Little Backup Box</h1>
 
 <h2>About</h2>
-<div style="display: flex; align-items: center;">
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" style="float: right; margin-left: 10px;" width="600">
-	<div style="font-style: italic;">
-		Little Backup Box in it's <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a>
-	</div>
-</div>
-
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" style="float: right; margin-left: 10px;" width="600"><br>
+Little Backup Box in it's <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br>
+<br>
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br>
 Especially for digital photography, this is the solution for backing up images and media files on mass storage devices when traveling or at events.<br>
 Media content can be viewed and rated for the subsequent process.<br>
