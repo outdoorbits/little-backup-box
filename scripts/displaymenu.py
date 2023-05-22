@@ -177,7 +177,7 @@ class menu(object):
 			{
 				'type':		'item',
 				'title':	'box_menu_power_shutdown',
-				'action':	self.create_confirmed_shell_action('box_menu_power_reboot',[['sudo','{}/poweroff.sh'.format(self.WORKING_DIR),'poweroff','force']]),
+				'action':	self.create_confirmed_shell_action('box_menu_power_shutdown',[['sudo','{}/poweroff.sh'.format(self.WORKING_DIR),'poweroff','force']]),
 			},
 		]
 

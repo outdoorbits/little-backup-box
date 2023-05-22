@@ -1,4 +1,7 @@
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb_display.jpg" align="right" width="320" height="213">
+<figure align="right">
+	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" width="320">
+	<figcaption>Little Backup Box in it's <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a></figcaption>
+</figure>
 
 <h1>Little Backup Box</h1>
 
