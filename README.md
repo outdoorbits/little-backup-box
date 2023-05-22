@@ -1,8 +1,6 @@
 <div align="right">
-	<figure>
-		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" width="320">
-		<figcaption>Little Backup Box in it's <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a></figcaption>
-	</figure>
+		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" width="320"><br>
+		Little Backup Box in it's <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a>
 </div>
 
 <h1>Little Backup Box</h1>
