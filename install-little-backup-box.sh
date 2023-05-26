@@ -124,8 +124,8 @@ EOM
 	clear
 fi
 
-
 # Update source and perform the full system upgrade
+echo "apt update..."
 sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
@@ -134,6 +134,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Install the required packages
+echo "apt install..."
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
 		-o "Dpkg::Options::=--force-confold" \
@@ -143,6 +144,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
+	echo "apt purge..."
 	sudo DEBIAN_FRONTEND=noninteractive \
 		apt purge minidlna -y
 fi
