@@ -58,6 +58,9 @@ if [[ ! "${INSTALLER_DIR}" =~ "little-backup-box" ]]; then
     INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/little-backup-box"
 fi
 
+#configure unconfigured/broken packages (=safety)
+sudo dpkg --configure -a
+
 # running as installer or as updater?
 if [ -d "${const_WEB_ROOT_LBB}" ]; then
 	SCRIPT_MODE="update"
