@@ -10,8 +10,13 @@
 
 	include("sub-popup.php");
 
-	function get_device_selector($name) {
-		exec("ls /dev/sd* | xargs -n 1 basename", $devices);
+	function get_device_selector($name, $list_partitions=true) {
+		if ($list_partitions) {
+			exec("ls /dev/sd* | xargs -n 1 basename", $devices);
+		} else {
+			exec("sudo fdisk -l 2>/dev/null |awk '/^Disk \//{print substr($2,0,length($2)-1)}' | grep ^/dev/sd", $devices);
+			$devices=str_replace("/dev/",'',$devices);
+		}
 
 		$selector	= '<select name="' . $name . '">\n';
 		$selector .= "<option value='-'>-</option>\n";
@@ -103,7 +108,7 @@
 					<label for="PARAM1"><?php echo l::tools_select_partition; ?>:</label>
 					<br>
 					<?php
-					print(get_device_selector("PARAM1"));
+					print(get_device_selector("PARAM1",false));
 					?>
 					<br>
 					<label for="PARAM2"><?php echo l::tools_f3_select_action; ?>:</label>
