@@ -14,8 +14,7 @@
 		if ($list_partitions) {
 			exec("ls /dev/sd* | xargs -n 1 basename", $devices);
 		} else {
-			exec("sudo fdisk -l 2>/dev/null |awk '/^Disk \//{print substr($2,0,length($2)-1)}' | grep ^/dev/sd", $devices);
-			$devices=str_replace("/dev/",'',$devices);
+			exec("ls /dev/sd* | xargs -n 1 basename | grep -v '[0123456789]'", $devices);
 		}
 
 		$selector	= '<select name="' . $name . '">\n';
