@@ -40,9 +40,9 @@
     "exif_header": "EXIF-Daten (Bewertungen) in die Original-Dateien schreiben",
     "database_button": "Datenbank",
     "exif_button": "EXIF",
-    "backup_update_exif_checkbox_label": "EXIF-Daten in die Original-Dateien schreiben (Nur für lokale Speicher)",
+    "backup_update_exif_checkbox_label": "EXIF-Daten in die Original-Dateien schreiben (nur für lokale Speicher)",
     "backup_power_off_checkbox_label": "Ausschalten nach Durchlauf",
-    "backup_generate_thumbnails_checkbox_label": "Vorschaubilder erzeugen und in Datenbank einlesen (Nur für lokale Speicher)",
+    "backup_generate_thumbnails_checkbox_label": "Vorschaubilder erzeugen und in Datenbank einlesen (nur für lokale Speicher)",
     "backup_modifications": "Modifikationen"
   },
   "sysinfo": {

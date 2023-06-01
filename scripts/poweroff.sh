@@ -90,8 +90,16 @@ if [ "${POWER_OFF}" = "true" ] || [ "${FORCE}" = "force" ]; then
 			disp_message "set:clear"
 			sleep $(echo "${conf_DISP_FRAME_TIME} + 1" | bc)
 		fi
+
+		# Set the PWR LED BLINKING to indicate that the system is shutting down
+		sudo sh -c "echo 'timer' >/sys/class/leds/PWR/trigger"
+
 		sudo halt
 	elif [ "${ACTION}" = "reboot" ]; then
+
+		# Set the PWR LED BLINKING to indicate that the system is rebooting
+		sudo sh -c "echo 'timer' >/sys/class/leds/PWR/trigger"
+
 		sudo reboot
 	fi
 

@@ -322,7 +322,7 @@ class menu(object):
 
 	def get_INFO(self,action):
 		if action == 'ip':
-			IP		= subprocess.check_output(['bash','-c',"source {}/lib-network.sh; get_ip".format(self.WORKING_DIR)]).decode('UTF-8').strip()
+			IP		= subprocess.check_output(['bash','-c',"source {}/lib-network.sh; get_ip".format(self.WORKING_DIR)]).decode('UTF-8').strip().replace(' ','\ns=b:')
 			STATUS	= subprocess.check_output(['bash','-c',"source {}/lib-network.sh; get_internet_status".format(self.WORKING_DIR)]).decode('UTF-8').strip()
 			return('"s=b:{}" "s=b:{}"'.format(IP, STATUS))
 
