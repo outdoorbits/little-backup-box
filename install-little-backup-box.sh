@@ -460,6 +460,7 @@ sudo a2enmod proxy_http
 sudo a2dissite 000-default
 sudo a2ensite little-backup-box
 
+sudo systemctl daemon-reload
 sudo systemctl reload apache2
 
 # Configure Samba
