@@ -1,8 +1,9 @@
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb_display.jpg" align="right" width="320" height="213">
-
 <h1>Little Backup Box</h1>
 
 <h2>About</h2>
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" style="float: right; margin-left: 10px;" width="600"><br>
+Little Backup Box in it's <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br>
+<br>
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br>
 Especially for digital photography, this is the solution for backing up images and media files on mass storage devices when traveling or at events.<br>
 Media content can be viewed and rated for the subsequent process.<br>
@@ -29,6 +30,7 @@ These languages are already available. Do you want to maintain or create a trans
 <br>
 <h2>NEWS</h2>
 <ul>
+	<li>2023/05/15: There is a printable case now! Look at <a href="https://github.com/outdoorbits/case-for-little-backup-box">outdoorbits/case-for-little-backup-box</a></li>
 	<li>2023/04/14: Introducing support for hardware-buttons including a display-menu to control a wide range of lbb's functions. Read more in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu">Wiki</a>.</li>
 	<li>2023/04/01: Add support for Apple file systems HFS and HFS Plus. Supported file systems now are Ext2, Ext3, Ext4, FAT, vFAT, exFAT, NTFS, HFS and HFS Plus.</li>
 	<li>2023/02/28: Add support for multiple displays, I2C and SPI</li>

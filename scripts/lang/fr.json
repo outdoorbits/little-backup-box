@@ -248,7 +248,7 @@
       "color_model_RGBA": "RGBA (RVB avec transparence)",
       "font_size_label": "Taille de police",
       "frame_time_label": "Temps d'affichage minimum par image en secondes",
-      "hardware_header": "Matériel",
+      "hardware_header": "Écran",
       "colors_header": "Sélection des couleurs lors de l'utilisation d'un écran couleur",
       "color": {
         "white": "blanc",
@@ -263,7 +263,31 @@
       "color_text_label": "Couleur de police par défaut",
       "color_alert_label": "Couleur de la police des avertissements",
       "color_high_label": "Couleur de police pour le texte en surbrillance",
-      "contrast_label": "Contraste"
+      "contrast_label": "Contraste",
+      "rotate_label": "Rotation de l'affichage"
+    },
+    "menu": {
+      "section": "Afficher le menu",
+      "enable_header": "Activer le menu d'affichage",
+      "enable_label": "Le menu d'affichage doit-il être activé ?",
+      "button_combination_header": "Configuration des boutons de commande",
+      "button_combination_label": "Veuillez sélectionner une variante à l'aide du tableau",
+      "button_combination_variant": "Variante",
+      "button_up": "haut",
+      "button_down": "bas",
+      "button_right": "droite",
+      "button_left": "gauche",
+      "button_bouncetime_header": "Temps de rebond des boutons",
+      "button_bouncetime_label": "Le temps de rebond (en millisecondes) indique la rapidité avec laquelle un bouton atteint un état stable. Après une action, un bouton est bloqué pendant ce temps."
+    },
+    "hardware": {
+      "section": "Matériel",
+      "fan": {
+        "always_on": "allumé en permanence",
+        "gpio_label": "GPIO pour le contrôle du ventilateur PWM",
+        "header": "Contrôle du ventilateur",
+        "temp_label": "Seuil de température"
+      }
     }
   },
   "tools": {
@@ -288,7 +312,6 @@
       "b": "commencer l'essai"
     }
   },
-  "minutes_long": "minutes",
   "box": {
     "backup": {
       "insert_source_1": "Prêt",
@@ -529,5 +552,9 @@
     "ratings_save_button": "Sauvegarder",
     "ratings_1_delete_button": "Supprimer des fichiers multimédias",
     "date_format": "d.m.Y"
+  },
+  "units": {
+    "minutes_long": "minutes",
+    "celsius": "°C"
   }
 }

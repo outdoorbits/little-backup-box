@@ -1,3 +1,6 @@
+<!-- Author: Stefan Saam, github@saams.de
+         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
+
 <!--
 sub expects from calling script:
 - included language

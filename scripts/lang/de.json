@@ -40,9 +40,9 @@
     "exif_header": "EXIF-Daten (Bewertungen) in die Original-Dateien schreiben",
     "database_button": "Datenbank",
     "exif_button": "EXIF",
-    "backup_update_exif_checkbox_label": "EXIF-Daten in die Original-Dateien schreiben (Nur für lokale Speicher)",
+    "backup_update_exif_checkbox_label": "EXIF-Daten in die Original-Dateien schreiben (nur für lokale Speicher)",
     "backup_power_off_checkbox_label": "Ausschalten nach Durchlauf",
-    "backup_generate_thumbnails_checkbox_label": "Vorschaubilder erzeugen und in Datenbank einlesen (Nur für lokale Speicher)",
+    "backup_generate_thumbnails_checkbox_label": "Vorschaubilder erzeugen und in Datenbank einlesen (nur für lokale Speicher)",
     "backup_modifications": "Modifikationen"
   },
   "sysinfo": {
@@ -248,7 +248,7 @@
       "color_model_RGBA": "RGBA (RGB mit Transparenz)",
       "font_size_label": "Schriftgröße",
       "frame_time_label": "Minimale Anzeigedauer pro Bild in Sekunden",
-      "hardware_header": "Hardware",
+      "hardware_header": "Display",
       "colors_header": "Farbauswahl beim Einsatz eines Farb-Displays",
       "color": {
         "white": "weiß",
@@ -263,7 +263,31 @@
       "color_text_label": "Standard-Schriftfarbe",
       "color_alert_label": "Schriftfarbe für Warnungen",
       "color_high_label": "Schriftfarbe für hervorgehobenen Text",
-      "contrast_label": "Kontrast"
+      "contrast_label": "Kontrast",
+      "rotate_label": "Display-Rotation"
+    },
+    "menu": {
+      "section": "Display-Menü",
+      "enable_header": "Display-Menu aktivieren",
+      "enable_label": "Soll das Display-Menü aktiviert werden?",
+      "button_combination_header": "Konfiguration der Steuer-Taster",
+      "button_combination_label": "Bitte wählen Sie eine Variante mit Hilfe der Tabelle",
+      "button_combination_variant": "Variante",
+      "button_up": "aufwärts",
+      "button_down": "abwärts",
+      "button_right": "rechts",
+      "button_left": "links",
+      "button_bouncetime_header": "Prellzeit der Taster",
+      "button_bouncetime_label": "Die Prellzeit (in Millisekunden) gibt an, wie schnell ein Taster einen stabilen Einschaltzustand erreicht. Nach einer Aktion wird ein Taster für diese Zeit blockiert."
+    },
+    "hardware": {
+      "section": "Hardware",
+      "fan": {
+        "always_on": "dauerhaft ein",
+        "gpio_label": "GPIO für die PWM-Lüftersteuerung",
+        "header": "Lüftersteuerung",
+        "temp_label": "Temperaturschwelle"
+      }
     }
   },
   "tools": {
@@ -288,7 +312,6 @@
       "b": "Test starten"
     }
   },
-  "minutes_long": "Minuten",
   "box": {
     "backup": {
       "insert_source_1": "Bereit",
@@ -529,5 +552,9 @@
     "ratings_save_button": "Speichern",
     "ratings_1_delete_button": "Mediendateien löschen",
     "date_format": "d.m.Y"
+  },
+  "units": {
+    "minutes_long": "Minuten",
+    "celsius": "°C"
   }
 }

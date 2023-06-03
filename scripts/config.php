@@ -126,6 +126,7 @@ function write_config() {
 	$conf_DISP									= isset($conf_DISP)?"true":"false";
 	$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
 	$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?"true":"false";
+	$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?"true":"false";
 	$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?"true":"false";
 	$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?"true":"false";
 	$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
@@ -150,14 +151,14 @@ function write_config() {
 	if (isset($conf_PASSWORD_REMOVE)) {
 		$conf_PASSWORD_LINE="conf_PASSWORD=''";
 
-		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh"); # remove password
+		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/set_password.sh"); # remove password
 
 		popup(L::config_alert_password_change_after_reboot_remove,true);
 	} elseif ($conf_PASSWORD_1 != '') {
 		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
 			$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
 
-			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/password.sh '" . $conf_PASSWORD_1 . "'");
+			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/set_password.sh '" . $conf_PASSWORD_1 . "'");
 
 			if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
 				popup(L::config_alert_password_wifi_size_error,true);
@@ -187,6 +188,7 @@ conf_DISP_I2C_ADDRESS='$conf_DISP_I2C_ADDRESS'
 conf_DISP_SPI_PORT='$conf_DISP_SPI_PORT'
 conf_DISP_RESOLUTION_X=$conf_DISP_RESOLUTION_X
 conf_DISP_RESOLUTION_Y=$conf_DISP_RESOLUTION_Y
+conf_DISP_ROTATE='$conf_DISP_ROTATE'
 conf_DISP_CONTRAST=$conf_DISP_CONTRAST
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
 conf_DISP_COLOR_TEXT='$conf_DISP_COLOR_TEXT'
@@ -196,6 +198,11 @@ conf_DISP_FONT_SIZE=$conf_DISP_FONT_SIZE
 conf_DISP_FRAME_TIME=$conf_DISP_FRAME_TIME
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
+conf_MENU_ENABLED=$conf_MENU_ENABLED
+conf_MENU_BUTTON_COMBINATION='$conf_MENU_BUTTON_COMBINATION'
+conf_MENU_BUTTON_BOUNCETIME=$conf_MENU_BUTTON_BOUNCETIME
+conf_FAN_PWM_TEMP_C=$conf_FAN_PWM_TEMP_C
+conf_FAN_PWM_GPIO=$conf_FAN_PWM_GPIO
 conf_THEME=$conf_THEME
 conf_BACKGROUND_IMAGE=$conf_BACKGROUND_IMAGE
 conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
@@ -248,6 +255,9 @@ CONFIGDATA;
 			exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
 		}
 	}
+
+	# write hardware-settings
+	exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/set_hardware.sh");
 
 	# response
 	echo '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
@@ -339,10 +349,10 @@ function upload_settings() {
 
 					# set new password
 					if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
-						exec("sudo $WORKING_DIR/password.sh '" . $config["conf_PASSWORD"] . "'");
+						exec("sudo $WORKING_DIR/set_password.sh '" . $config["conf_PASSWORD"] . "'");
 						popup(L::config_alert_password_change_after_reboot_set,true);
 					} else {
-						exec("sudo $WORKING_DIR/password.sh");
+						exec("sudo $WORKING_DIR/set_password.sh");
 						popup(L::config_alert_password_change_after_reboot_remove,true);
 					}
 				}
@@ -465,7 +475,7 @@ function upload_settings() {
 						<?php
 							$IDLE_TIME_OPTIONS=array(0,2,5,10,15,20,30);
 							foreach($IDLE_TIME_OPTIONS as $IDLE_TIME_OPTION) {
-								echo "<option value=\"" . $IDLE_TIME_OPTION ."\"". ($config["conf_POWER_OFF_IDLE_TIME"]==$IDLE_TIME_OPTION?" selected":"") . ">" . ($IDLE_TIME_OPTION=="0"?L::config_behavior_power_off_idle_time_none:$IDLE_TIME_OPTION . " " . L::minutes_long) ."</option>";
+								echo "<option value=\"" . $IDLE_TIME_OPTION ."\"". ($config["conf_POWER_OFF_IDLE_TIME"]==$IDLE_TIME_OPTION?" selected":"") . ">" . ($IDLE_TIME_OPTION=="0"?L::config_behavior_power_off_idle_time_none:$IDLE_TIME_OPTION . " " . L::units_minutes_long) ."</option>";
 							}
 						?>
 
@@ -556,63 +566,6 @@ function upload_settings() {
 						<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
 					</div>
 
-				<h3><?php echo L::config_display_hardware_header; ?></h3>
-
-					<div>
-						<label for="conf_DISP_DRIVER"><?php echo L::config_display_driver_label; ?></label><br>
-							<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
-								<?php
-									$display_drivers_array=array(
-										"SSD1306",
-										"SSD1309",
-										"SSD1322",
-										"SSD1331",
-										"SH1106"
-									);
-									foreach($display_drivers_array as $display_driver) {
-										echo "<option value='" . $display_driver . "' " . ($config["conf_DISP_DRIVER"] == $display_driver?" selected":"") . ">" . $display_driver . "</option>";
-									}
-								?>
-							</select>
-					</div>
-
-					<div>
-						<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br>
-							<select name="conf_DISP_RESOLUTION_X" id="conf_DISP_RESOLUTION_X">
-								<?php
-									$display_resolutions_array=array(96,128);
-									foreach($display_resolutions_array as $display_resolution) {
-										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_X"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
-									}
-								?>
-							</select>
-					</div>
-
-					<div>
-						<label for="conf_DISP_RESOLUTION_Y"><?php echo L::config_display_resolution_y_label; ?></label><br>
-							<select name="conf_DISP_RESOLUTION_Y" id="conf_DISP_RESOLUTION_Y">
-								<?php
-									$display_resolutions_array=array("64","32");
-									foreach($display_resolutions_array as $display_resolution) {
-										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
-									}
-								?>
-							</select>
-					</div>
-
-					<div>
-						<label for="conf_DISP_COLOR_MODEL"><?php echo L::config_display_color_model_label; ?></label><br>
-							<select name="conf_DISP_COLOR_MODEL" id="conf_DISP_COLOR_MODEL">
-								<?php
-									$display_color_models_array=array("1","RGB","RGBA");
-									foreach($display_color_models_array as $display_color_model) {
-										$display_color_model_entity="config_display_color_model_" . $display_color_model;
-										echo "<option value='" . $display_color_model . "' " . ($config["conf_DISP_COLOR_MODEL"] == $display_color_model?" selected":"") . ">" . L::{"$display_color_model_entity"}() . "</option>";
-									}
-								?>
-							</select>
-					</div>
-
 					<div>
 						<h4><?php echo L::config_display_colors_header; ?></h4>
 
@@ -653,49 +606,17 @@ function upload_settings() {
 							</select>
 					</div>
 
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_menu_section; ?></summary>
+
+				<h3><?php echo L::config_menu_enable_header; ?></h3>
 					<div>
-						<h4><?php echo L::config_display_connection_header; ?></h4>
-							<label for="conf_DISP_CONNECTION"><?php echo L::config_display_connection_label; ?></label><br>
-								<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
-									<?php
-										$display_connections_array=array("I2C","SPI");
-										foreach($display_connections_array as $display_connection) {
-											echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
-										}
-									?>
-								</select>
-					</div>
-
-					<div>
-						<h4><?php echo L::config_display_i2c_header; ?></h4>
-							<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_display_i2c_address_label; ?></label><br>
-
-							<?php
-								$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
-
-								$I2C_LIST=array("3c","3d");
-								foreach($I2C_LIST as $I2C) {
-							?>
-									<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
-									<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br>
-							<?php
-								}
-							?>
-					</div>
-
-					<div>
-						<h4><?php echo L::config_display_spi_header; ?></h4>
-							<label for="conf_DISP_SPI_PORT"><?php echo L::config_display_spi_port_label; ?></label><br>
-
-									<?php
-										$spi_ports_array=array("0","1");
-										foreach($spi_ports_array as $spi_port) {
-							?>
-									<input type="radio" id="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>" name="conf_DISP_SPI_PORT" value="<?php echo $spi_port; ?>" <?php echo strcasecmp($config['conf_DISP_SPI_PORT'],$spi_port)==0?"checked":""; ?>>
-									<label for="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>"><?php echo $spi_port; ?></label><br>
-							<?php
-								}
-							?>
+						<label for="conf_MENU_ENABLED"><?php echo L::config_menu_enable_label; ?></label><br>
+						<input type="checkbox" id="conf_MENU_ENABLED" name="conf_MENU_ENABLED" <?php echo $config['conf_MENU_ENABLED']=="1"?"checked":""; ?>>
 					</div>
 
 			</details>
@@ -920,6 +841,228 @@ function upload_settings() {
 				<h3><?php echo L::config_wifi_country_header; ?></h3>
 					<label for="conf_WIFI_COUNTRY"><?php echo L::config_wifi_country_label; ?></label><br>
 					<?php echo get_wifi_country_selector("conf_WIFI_COUNTRY","conf_WIFI_COUNTRY"); ?>
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_hardware_section; ?></summary>
+
+				<h3><?php echo L::config_display_hardware_header; ?></h3>
+
+					<div>
+						<label for="conf_DISP_DRIVER"><?php echo L::config_display_driver_label; ?></label><br>
+							<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
+								<?php
+									$display_drivers_array=array(
+										"SSD1306",
+										"SSD1309",
+										"SSD1322",
+										"SSD1331",
+										"SH1106"
+									);
+									foreach($display_drivers_array as $display_driver) {
+										echo "<option value='" . $display_driver . "' " . ($config["conf_DISP_DRIVER"] == $display_driver?" selected":"") . ">" . $display_driver . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+<div>
+						<h4><?php echo L::config_display_connection_header; ?></h4>
+							<label for="conf_DISP_CONNECTION"><?php echo L::config_display_connection_label; ?></label><br>
+								<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
+									<?php
+										$display_connections_array=array("I2C","SPI");
+										foreach($display_connections_array as $display_connection) {
+											echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
+										}
+									?>
+								</select>
+					</div>
+
+					<div>
+						<h4><?php echo L::config_display_i2c_header; ?></h4>
+							<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_display_i2c_address_label; ?></label><br>
+
+							<?php
+								$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
+
+								$I2C_LIST=array("3c","3d");
+								foreach($I2C_LIST as $I2C) {
+							?>
+									<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
+									<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br>
+							<?php
+								}
+							?>
+					</div>
+
+					<div>
+						<h4><?php echo L::config_display_spi_header; ?></h4>
+							<label for="conf_DISP_SPI_PORT"><?php echo L::config_display_spi_port_label; ?></label><br>
+
+									<?php
+										$spi_ports_array=array("0","1");
+										foreach($spi_ports_array as $spi_port) {
+							?>
+									<input type="radio" id="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>" name="conf_DISP_SPI_PORT" value="<?php echo $spi_port; ?>" <?php echo strcasecmp($config['conf_DISP_SPI_PORT'],$spi_port)==0?"checked":""; ?>>
+									<label for="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>"><?php echo $spi_port; ?></label><br>
+							<?php
+								}
+							?>
+					</div>
+
+					<div>
+						<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br>
+							<select name="conf_DISP_RESOLUTION_X" id="conf_DISP_RESOLUTION_X">
+								<?php
+									$display_resolutions_array=array(96,128);
+									foreach($display_resolutions_array as $display_resolution) {
+										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_X"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_RESOLUTION_Y"><?php echo L::config_display_resolution_y_label; ?></label><br>
+							<select name="conf_DISP_RESOLUTION_Y" id="conf_DISP_RESOLUTION_Y">
+								<?php
+									$display_resolutions_array=array("64","32");
+									foreach($display_resolutions_array as $display_resolution) {
+										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_ROTATE"><?php echo L::config_display_rotate_label; ?></label><br>
+							<select name="conf_DISP_ROTATE" id="conf_DISP_ROTATE">
+								<?php
+									$display_rotate_array=array(
+										'0' => '0°',
+										'2' => '180°',
+									);
+									foreach($display_rotate_array as $display_rotate_code => $display_rotate_text) {
+										echo "<option value='" . $display_rotate_code . "' " . ($config["conf_DISP_ROTATE"] == $display_rotate_code?" selected":"") . ">" . $display_rotate_text . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_COLOR_MODEL"><?php echo L::config_display_color_model_label; ?></label><br>
+							<select name="conf_DISP_COLOR_MODEL" id="conf_DISP_COLOR_MODEL">
+								<?php
+									$display_color_models_array=array("1","RGB","RGBA");
+									foreach($display_color_models_array as $display_color_model) {
+										$display_color_model_entity="config_display_color_model_" . $display_color_model;
+										echo "<option value='" . $display_color_model . "' " . ($config["conf_DISP_COLOR_MODEL"] == $display_color_model?" selected":"") . ">" . L::{"$display_color_model_entity"}() . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+				<h3><?php echo L::config_menu_button_combination_header; ?></h3>
+
+					<div>
+						<label for="conf_MENU_BUTTON_COMBINATION"><?php echo L::config_menu_button_combination_label; ?></label><br>
+							<select name="conf_MENU_BUTTON_COMBINATION" id="conf_MENU_BUTTON_COMBINATION">
+								<?php
+									$button_combinations_array=array(
+										'1' => array(
+												'up' 	=> 'PIN 29, GPIO 5',
+												'down'	=> 'PIN 31, GPIO 6',
+												'left' 	=> 'PIN 11, GPIO 17',
+												'right'	=> 'PIN 13, GPIO 27'
+											),
+										'2' => array(
+												'up' 	=> 'PIN 31, GPIO 6',
+												'down'	=> 'PIN 33, GPIO 13',
+												'left' 	=> 'PIN 35, GPIO 19',
+												'right'	=> 'PIN 37, GPIO 26'
+											)
+									);
+									foreach($button_combinations_array as $variant => $button_combination) {
+										echo "<option value='" . $variant . "' " . ($config["conf_MENU_BUTTON_COMBINATION"] == $variant?" selected":"") . ">" . $variant . "</option>";
+									}
+								?>
+							</select>
+
+							<table style="width: 100%;">
+								<tr style="border: thin solid;">
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_combination_variant; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_up; ?>
+									</th>
+									<th>
+										<?php echo L::config_menu_button_down; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_left; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_right; ?>
+									</th>
+								</tr>
+
+								<?php
+									foreach($button_combinations_array as $variant => $button_combination) {
+										echo("<tr style=\"border: thin solid;\"><td>$variant</td>");
+										foreach($button_combination as $direction => $PIN) {
+											?>
+												<td style="border: thin solid;">
+													<?php echo $PIN; ?>
+												</td>
+											<?php
+										}
+										echo("</tr>");
+									}
+								?>
+							</table>
+					</div>
+
+				<h3><?php echo L::config_menu_button_bouncetime_header; ?></h3>
+					<div>
+						<label for="conf_MENU_BUTTON_BOUNCETIME"><?php echo L::config_menu_button_bouncetime_label; ?></label><br>
+							<select name="conf_MENU_BUTTON_BOUNCETIME" id="conf_MENU_BUTTON_BOUNCETIME">
+								<?php
+									$button_bouncetimes_array=array(25,50,100,200,300,400,500);
+									foreach($button_bouncetimes_array as $button_bouncetime) {
+										echo "<option value='" . $button_bouncetime . "' " . ($config["conf_MENU_BUTTON_BOUNCETIME"] == $button_bouncetime?" selected":"") . ">" . $button_bouncetime . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+				<h3><?php echo L::config_hardware_fan_header; ?></h3>
+					<div>
+					<label for="conf_FAN_PWM_TEMP_C"><?php echo L::config_hardware_fan_temp_label; ?></label><br>
+						<select name="conf_FAN_PWM_TEMP_C" id="conf_FAN_PWM_TEMP_C">
+							<?php
+								$conf_FAN_PWM_TEMP_Cs=array(0,60,65,70,75,80);# allowed 60..120 °C
+								foreach($conf_FAN_PWM_TEMP_Cs as $conf_FAN_PWM_TEMP_C) {
+									echo "<option value=\"" . $conf_FAN_PWM_TEMP_C ."\"". ($config["conf_FAN_PWM_TEMP_C"]==$conf_FAN_PWM_TEMP_C?" selected":"") . ">" . ($conf_FAN_PWM_TEMP_C=="0"?L::config_hardware_fan_always_on:$conf_FAN_PWM_TEMP_C . " " . L::units_celsius) . "</option>";
+								}
+							?>
+						</select>
+					</div>
+
+					<div>
+						<label for="conf_FAN_PWM_GPIO"><?php echo L::config_hardware_fan_gpio_label; ?></label><br>
+						<select name="conf_FAN_PWM_GPIO" id="conf_FAN_PWM_GPIO">
+							<?php
+								$conf_FAN_PWM_GPIOs=array('-','14','15','18','23','24'); # allowed 2..27
+								foreach($conf_FAN_PWM_GPIOs as $conf_FAN_PWM_GPIO) {
+									echo "<option value=\"" . $conf_FAN_PWM_GPIO ."\"". ($config["conf_FAN_PWM_GPIO"]==$conf_FAN_PWM_GPIO?" selected":"") . ">" . $conf_FAN_PWM_GPIO . "</option>";
+								}
+							?>
+						</select>
+					</div>
 			</details>
 		</div>
 

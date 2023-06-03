@@ -35,13 +35,14 @@ class menu(object):
 		self.WORKING_DIR = os.path.dirname(__file__)
 
 		config = ConfigObj("{}/config.cfg".format(self.WORKING_DIR))
-		self.conf_DISP_FRAME_TIME		= float(config['conf_DISP_FRAME_TIME'])
-		self.conf_RSYNC_SERVER			= config['conf_RSYNC_SERVER']
-		self.conf_RSYNC_PORT			= config['conf_RSYNC_PORT']
-		self.conf_RSYNC_USER			= config['conf_RSYNC_USER']
-		self.conf_RSYNC_PASSWORD		= config['conf_RSYNC_PASSWORD']
-		self.conf_RSYNC_SERVER_MODULE	= config['conf_RSYNC_SERVER_MODULE']
-
+		self.conf_DISP_FRAME_TIME			= float(config['conf_DISP_FRAME_TIME'])
+		self.conf_RSYNC_SERVER				= config['conf_RSYNC_SERVER']
+		self.conf_RSYNC_PORT				= config['conf_RSYNC_PORT']
+		self.conf_RSYNC_USER				= config['conf_RSYNC_USER']
+		self.conf_RSYNC_PASSWORD			= config['conf_RSYNC_PASSWORD']
+		self.conf_RSYNC_SERVER_MODULE		= config['conf_RSYNC_SERVER_MODULE']
+		self.conf_MENU_BUTTON_COMBINATION	= config['conf_MENU_BUTTON_COMBINATION']
+		self.conf_MENU_BUTTON_BOUNCETIME 	= int(config['conf_MENU_BUTTON_BOUNCETIME'])
 
 		constants = ConfigObj("{}/constants.sh".format(self.WORKING_DIR))
 		self.const_RCLONE_CONFIG_FILE	= constants['const_RCLONE_CONFIG_FILE']
@@ -60,44 +61,44 @@ class menu(object):
 			{
 				'type':		'item',
 				'title':	'box_menu_backup_mode_usb|box_menu_to|box_menu_backup_mode_usb',
-				'action':	self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh usb usb'.format(self.WORKING_DIR,self.WORKING_DIR)),
+				'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),'usb','usb']]),
 			},
 
 			{
 				'type':		'item',
 				'title':	'box_menu_backup_mode_usb|box_menu_to|box_menu_backup_mode_internal',
-				'action':	self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh usb internal'.format(self.WORKING_DIR,self.WORKING_DIR)),
+				'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),'usb','internal']]),
 			},
 
 						{
 				'type':		'item',
 				'title':	'box_menu_backup_mode_internal|box_menu_to|box_menu_backup_mode_usb',
-				'action':	self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh internal usb'.format(self.WORKING_DIR,self.WORKING_DIR)),
+				'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),'internal','usb']]),
 			},
 
 			#camera
 			{
 				'type':		'item',
 				'title':	'box_menu_backup_mode_camera|box_menu_to|box_menu_backup_mode_usb',
-				'action':		self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh camera usb'.format(self.WORKING_DIR,self.WORKING_DIR)),
+				'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),'camera','usb']]),
 			},
 
 			{
 				'type':		'item',
 				'title':	'box_menu_backup_mode_camera|box_menu_to|box_menu_backup_mode_internal',
-				'action':		self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh camera internal'.format(self.WORKING_DIR,self.WORKING_DIR)),
+				'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),'camera','internal']]),
 			},
 
 			{
 				'type':		'item',
 				'title':	'box_menu_backup_mode_ios|box_menu_to|box_menu_backup_mode_usb',
-				'action':		self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh ios usb'.format(self.WORKING_DIR,self.WORKING_DIR)),
+				'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),'ios','usb']]),
 			},
 
 			{
 				'type':		'item',
 				'title':	'box_menu_backup_mode_ios|box_menu_to|box_menu_backup_mode_internal',
-				'action':		self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh ios internal'.format(self.WORKING_DIR,self.WORKING_DIR)),
+				'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),'ios','internal']]),
 			},
 		]
 
@@ -110,7 +111,7 @@ class menu(object):
 					{
 						'type':		'item',
 						'title':	'box_menu_backup_mode_{}|box_menu_to|box_menu_backup_mode_rsyncserver'.format(device),
-						'action':	self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh {} rsyncserver'.format(self.WORKING_DIR,self.WORKING_DIR,device)),
+						'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),device,'rsyncserver']]),
 					}
 				)
 
@@ -122,7 +123,7 @@ class menu(object):
 						{
 							'type':		'item',
 							'title':	'box_menu_backup_mode_{}|box_menu_to|{}'.format(device,cloudservice),
-							'action':	self.create_shell_action('sudo pkill -f "{}/backup*";sudo {}/backup.sh {} cloud_{}'.format(self.WORKING_DIR,self.WORKING_DIR,device,cloudservice)),
+							'action':	self.create_shell_action([['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)],['sudo','{}/backup.sh'.format(self.WORKING_DIR),device,'cloud_{}'.format(cloudservice)]]),
 						}
 					)
 
@@ -142,7 +143,7 @@ class menu(object):
 			{
 				'type':		'menu',
 				'title':	'box_menu_backup_stop',
-				'action':	self.create_confirmed_shell_action('box_menu_backup_stop', 'sudo pkill -f "{}/backup*"'.format(self.WORKING_DIR)),
+				'action':	self.create_confirmed_shell_action('box_menu_backup_stop',[['sudo','pkill','-f','"{}/backup*"'.format(self.WORKING_DIR)]]),
 			},
 		]
 
@@ -162,7 +163,7 @@ class menu(object):
 			{
 				'type':		'item',
 				'title':	'box_menu_comitup_reset',
-				'action':	self.create_confirmed_shell_action('box_menu_comitup_reset','sudo comitup-cli d'),
+				'action':	self.create_confirmed_shell_action('box_menu_comitup_reset',[['sudo','comitup-cli','d']]),
 			},
 		]
 
@@ -170,13 +171,13 @@ class menu(object):
 			{
 				'type':		'item',
 				'title':	'box_menu_power_reboot',
-				'action':	self.create_confirmed_shell_action('box_menu_power_reboot','sudo {}/poweroff.sh reboot force'.format(self.WORKING_DIR)),
+				'action':	self.create_confirmed_shell_action('box_menu_power_reboot',[['sudo','{}/poweroff.sh'.format(self.WORKING_DIR),'reboot','force']]),
 			},
 
 			{
 				'type':		'item',
 				'title':	'box_menu_power_shutdown',
-				'action':	self.create_confirmed_shell_action('box_menu_power_shutdown','sudo {}/poweroff.sh poweroff force'.format(self.WORKING_DIR)),
+				'action':	self.create_confirmed_shell_action('box_menu_power_shutdown',[['sudo','{}/poweroff.sh'.format(self.WORKING_DIR),'poweroff','force']]),
 			},
 		]
 
@@ -204,53 +205,66 @@ class menu(object):
 		# define menu variables an (re-)set them
 		self.reset()
 
-		self.Bouncetime = 100
-
 		self.GPIO_init()
 
 	def GPIO_init(self):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 
-		buttons	= {
-				5:'up',
-				6:'down',
-				17:'left',
-				27:'right'
+		button_combinations	= {
+			'1':	{
+					'up':		5,
+					'down':		6,
+					'left':		17,
+					'right':	27
+				},
+			'2':	{
+					'up':		6,
+					'down':		13,
+					'left':		19,
+					'right':	26
 				}
+			}
+
+		if self.conf_MENU_BUTTON_COMBINATION in button_combinations:
+			buttons	= button_combinations[self.conf_MENU_BUTTON_COMBINATION]
+		else:
+			first_key	= list(button_combinations.keys())[0]
+			buttons	= button_combinations[first_key]
 
 		self.buttonevent_timestamp = {}
 
-		for pin in buttons.keys():
-			self.GPIO_start_button(pin,buttons[pin])
-			self.buttonevent_timestamp[pin] = 0
+		for button in buttons.keys():
+			self.GPIO_config_button(button,buttons[button])
+			self.buttonevent_timestamp[buttons[button]] = 0
 
-	def bouncing(self,channel):
-		# GPIO bouncetime not always works as expected. This function filters bouncing.
-		if channel == 0:
-			return(False)
-
-		if abs(time.time() - self.buttonevent_timestamp[channel]) >= self.Bouncetime/1000:
-			self.buttonevent_timestamp[channel]	= time.time()
-			return(False)
-		else:
-			return(True)
-
-
-	def GPIO_start_button(self,pin,button):
+	def GPIO_config_button(self,button,pin):
 		GPIO.setup(pin, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 		GPIO.remove_event_detect(pin)
 
 		if button == 'up':
-			GPIO.add_event_detect(pin, GPIO.RISING, callback = self.move_up, bouncetime=self.Bouncetime)
+			GPIO.add_event_detect(pin, GPIO.RISING, callback = self.move_up, bouncetime=self.conf_MENU_BUTTON_BOUNCETIME)
 		elif button == 'down':
-			GPIO.add_event_detect(pin, GPIO.RISING, callback = self.move_down, bouncetime=self.Bouncetime)
+			GPIO.add_event_detect(pin, GPIO.RISING, callback = self.move_down, bouncetime=self.conf_MENU_BUTTON_BOUNCETIME)
 		elif button == 'left':
-			GPIO.add_event_detect(pin, GPIO.RISING, callback = self.move_left, bouncetime=self.Bouncetime)
+			GPIO.add_event_detect(pin, GPIO.RISING, callback = self.move_left, bouncetime=self.conf_MENU_BUTTON_BOUNCETIME)
 		elif button == 'right':
-			GPIO.add_event_detect(pin, GPIO.RISING, callback = self.move_right, bouncetime=self.Bouncetime)
+			GPIO.add_event_detect(pin, GPIO.RISING, callback = self.move_right, bouncetime=self.conf_MENU_BUTTON_BOUNCETIME)
 
+	def bouncing(self,channel):
+		# GPIO bouncetime not always works as expected. This function filters bouncing.
+
+		if channel == 0:
+			self.buttonevent_timestamp[channel]	= time.time()
+			return(True)
+
+		if abs(time.time() - self.buttonevent_timestamp[channel]) >= self.conf_MENU_BUTTON_BOUNCETIME/1000:
+			self.buttonevent_timestamp[channel]	= time.time()
+			return(False)
+		else:
+			self.buttonevent_timestamp[channel]	= time.time()
+			return(True)
 
 	def __del__(self):
 		GPIO.cleanup()
@@ -308,19 +322,18 @@ class menu(object):
 
 	def get_INFO(self,action):
 		if action == 'ip':
-			IP		= subprocess.check_output(['bash','-c',"source {}/lib-network.sh; get_ip".format(self.WORKING_DIR)]).decode('UTF-8').strip()
+			IP		= subprocess.check_output(['bash','-c',"source {}/lib-network.sh; get_ip".format(self.WORKING_DIR)]).decode('UTF-8').strip().replace(' ','\ns=b:')
 			STATUS	= subprocess.check_output(['bash','-c',"source {}/lib-network.sh; get_internet_status".format(self.WORKING_DIR)]).decode('UTF-8').strip()
 			return('"s=b:{}" "s=b:{}"'.format(IP, STATUS))
 
-	def display(self):
+	def display(self,channel):
 		self.check_timeout()
 
 		self.set_shift()
 
-		frame_time	= 0
-
-		LINES = ''
-		n	= 0
+		frame_time			= 0
+		LINES 				= ''
+		n					= 0
 
 		# define title
 		self.HEAD_LINES = 0
@@ -349,16 +362,16 @@ class menu(object):
 					break
 
 				elif self.MENU[self.MENU_LEVEL][n]['type'] == 'shell':
-					print(self.MENU[self.MENU_LEVEL][self.MENU_POS[self.MENU_LEVEL]]['action'])
-					commands	= self.MENU[self.MENU_LEVEL][self.MENU_POS[self.MENU_LEVEL]]['action'].split(';')
-					for command in commands:
-						print(command)
-						subprocess.Popen(command, shell=True)
+
+					for command in self.MENU[self.MENU_LEVEL][n]['action']:
+						subprocess.Popen(command, shell=False)
 
 					self.reset()
+					LINES	= ''
 					break
 
 				elif self.MENU[self.MENU_LEVEL][n]['type'] == 'info':
+
 					LINES	= '{}"s=h:{}" {}'.format(LINES,TITLE,self.get_INFO(self.MENU[self.MENU_LEVEL][n]['action']))
 					frame_time = self.conf_DISP_FRAME_TIME * 4
 
@@ -385,6 +398,8 @@ class menu(object):
 
 		os.system("eval '{}/lib-display-helper.sh 'set:clear,time={}' {}'".format(self.WORKING_DIR,frame_time,LINES))
 
+		self.buttonevent_timestamp[channel]	= time.time()
+
 	def move_down(self,channel):
 		if not self.bouncing(channel):
 
@@ -393,7 +408,7 @@ class menu(object):
 			else:
 				self.MENU_POS[self.MENU_LEVEL] = 0
 
-			self.display()
+			self.display(channel)
 
 	def move_up(self,channel):
 		if not self.bouncing(channel):
@@ -401,7 +416,7 @@ class menu(object):
 				self.MENU_POS[self.MENU_LEVEL] += -1
 			elif (len(self.MENU[self.MENU_LEVEL]) > 0):
 				self.MENU_POS[self.MENU_LEVEL] = len(self.MENU[self.MENU_LEVEL]) - 1
-			self.display()
+			self.display(channel)
 
 	def move_right(self,channel):
 		if not self.bouncing(channel):
@@ -418,23 +433,31 @@ class menu(object):
 				self.MENU_POS.append(0)
 				self.MENU_SHIFT.append(0)
 
-			self.display()
+			self.display(channel)
 
 	def move_left(self,channel):
 		if not self.bouncing(channel):
 			if self.MENU_LEVEL > 0:
 				self.MENU_LEVEL += -1
-			self.display()
+			self.display(channel)
 
 ##debug
 #if __name__ == "__main__":
-	#menuobj	= menu(5)
-	##menuobj.move_right(0)#debug
+	#menuobj	= menu(10)
+
+	#menuobj.move_right(27)#debug
+	#time.sleep (0.5)
+	#menuobj.move_right(27)#debug
+	#time.sleep (0.5)
+	#menuobj.move_right(27)#debug
+	#time.sleep (0.5)
+	#menuobj.move_right(27)#debug
+
 	#menuobj.move_down(0)#debug
 	#menuobj.move_down(0)#debug
+	#menuobj.move_right(0)#debug
+	#menuobj.move_down(0)#debug
 	##menuobj.move_right(0)#debug
-	##menuobj.move_down(0)#debug
-	###menuobj.move_right(0)#debug
-	###menuobj.move_right(0)#debug
-	#time.sleep(10)
+	##menuobj.move_right(0)#debug
+	#time.sleep(20)
 	#print('End.')

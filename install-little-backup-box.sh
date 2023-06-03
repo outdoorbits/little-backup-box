@@ -93,6 +93,9 @@ if [[ ! "${INSTALLER_DIR}" =~ "little-backup-box" ]]; then
     INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/little-backup-box"
 fi
 
+# configure unconfigured/broken packages (=safety)
+sudo dpkg --configure -a
+
 # running as installer or as updater?
 if [ -d "${const_WEB_ROOT_LBB}" ]; then
 	SCRIPT_MODE="update"
@@ -162,8 +165,8 @@ EOM
 	clear
 fi
 
-
 # Update source and perform the full system upgrade
+echo "apt update..."
 sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
@@ -172,15 +175,17 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Install the required packages
+echo "apt install..."
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs
+		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
+	echo "apt purge..."
 	sudo DEBIAN_FRONTEND=noninteractive \
 		apt purge minidlna -y
 fi
@@ -586,8 +591,11 @@ fi
 # re-establish passwords
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "Restore password-protection"
-	source "${const_WEB_ROOT_LBB}/password.sh" "${conf_PASSWORD}"
+	source "${const_WEB_ROOT_LBB}/set_password.sh" "${conf_PASSWORD}"
 fi
+
+# setup hardware
+	source "${const_WEB_ROOT_LBB}/set_hardware.sh"
 
 # post-install-information
 ## load network library
