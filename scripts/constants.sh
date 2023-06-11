@@ -24,6 +24,7 @@ const_FILE_EXTENSIONS_LIST_VIDEO="avi lrv mp4"
 const_FILE_EXTENSIONS_LIST_AUDIO="mp3 wav"
 const_VIEW_GRID_COLUMNS=3
 const_VIEW_MAGNIFYING_GLASS_ZOOM=10
+const_VIEW_BANNED_PATHS='*/$recycle.bin/* */.trash/*'
 const_VPN_DIR_OpenVPN='/etc/openvpn'
 const_VPN_DIR_WireGuard='/etc/wireguard'
 const_VPN_FILENAME_OpenVPN='openvpn.conf'

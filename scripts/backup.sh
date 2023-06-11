@@ -405,6 +405,22 @@ function sync_return_code_decoder() {
 	fi
 }
 
+
+function get_banned_ipaths_view() {
+	# create list of banned paths
+	BANNED_IPATHS_VIEW=''
+
+	local BANNED_PATH=''
+
+	IFS=$' ' read -rd '' -a BANNED_IPATHS_VIEW_ARRAY <<<"${const_VIEW_BANNED_PATHS}"
+	unset IFS
+
+	for BANNED_PATH in "${BANNED_IPATHS_VIEW_ARRAY[@]}";do
+		BANNED_PATH=$(echo -n "${BANNED_PATH}")
+		BANNED_IPATHS_VIEW="${BANNED_IPATHS_VIEW} -not -ipath '${BANNED_PATH}'"
+	done
+}
+
 # Set the PWR LED ON to indicate that the backup has not yet started
 sudo sh -c "echo 'none' >/sys/class/leds/PWR/trigger"
 sudo sh -c "echo 1 >/sys/class/leds/PWR/brightness"
@@ -1212,7 +1228,10 @@ if ([ ! -f "${DB}" ] || [ "${SOURCE_MODE}" = "database" ]) && ([ "${GENERATE_THU
 	## 1. replace space by substitute of space ##**##
 	## 2. replace only last '/tims/' by '/'
 	## 3. remove last part of file extension
-	TIMS_STR=$(sudo find "$TARGET_PATH" -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*'  | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#' | sed 's/\.[^.]*$//')
+
+	get_banned_ipaths_view
+
+	TIMS_STR=$(eval "sudo find '$TARGET_PATH' -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' ${BANNED_IPATHS_VIEW} | sed 's/\ /##\*\*##/g' | sed -E 's#(.*)/tims/#\1/#' | sed 's/\.[^.]*$//'")
 	IFS=$'\n' read -rd '' -a TIMS_ARRAY <<<"${TIMS_STR}"
 	unset IFS
 
@@ -1271,10 +1290,14 @@ if ([ "${GENERATE_THUMBNAILS}" = "true" ] || [ "${SOURCE_MODE}" = "thumbnails" ]
 		if [ ! -z "${INAMES}" ]; then
 			INAMES="${INAMES} -o "
 		fi
+
+		extension=$(echo -n "${extension}")
 		INAMES="${INAMES} -iname '*.${extension}'"
 	done
 
-	IMAGES_STR=$(eval "sudo find \"$TARGET_PATH\" -type f \( ${INAMES} \) -not -path '*/tims/*' | sed 's/\ /##\*\*##/g'") # temporarily replace spaces
+	get_banned_ipaths_view
+
+	IMAGES_STR=$(eval "sudo find \"$TARGET_PATH\" -type f \( ${INAMES} \) -not -path '*/tims/*' ${BANNED_IPATHS_VIEW} | sed 's/\ /##\*\*##/g'") # temporarily replace spaces
 	IFS=$'\n' read -rd '' -a IMAGES_ARRAY <<<"${IMAGES_STR}"
 	unset IFS
 
