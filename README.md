@@ -2,7 +2,7 @@
 
 <h2>About</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" style="float: right; margin-left: 10px;" width="600"><br>
-Little Backup Box in it's <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br>
+Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br>
 <br>
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br>
 Especially for digital photography, this is the solution for backing up images and media files on mass storage devices when traveling or at events.<br>
@@ -31,7 +31,7 @@ These languages are already available. Do you want to maintain or create a trans
 <h2>NEWS</h2>
 <ul>
 	<li>2023/05/15: There is a printable case now! Look at <a href="https://github.com/outdoorbits/case-for-little-backup-box">outdoorbits/case-for-little-backup-box</a></li>
-	<li>2023/04/14: Introducing support for hardware-buttons including a display-menu to control a wide range of lbb's functions. Read more in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu">Wiki</a>.</li>
+	<li>2023/04/14: Introducing support for hardware buttons including a display-menu to control a wide range of lbb's functions. Read more in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu">Wiki</a>.</li>
 	<li>2023/04/01: Add support for Apple file systems HFS and HFS Plus. Supported file systems now are Ext2, Ext3, Ext4, FAT, vFAT, exFAT, NTFS, HFS and HFS Plus.</li>
 	<li>2023/02/28: Add support for multiple displays, I2C and SPI</li>
 	<li>2023/02/24: Add VPN support for WireGuard and OpenVPN</li>
@@ -75,14 +75,14 @@ These languages are already available. Do you want to maintain or create a trans
 	</table>
 </figure>
 
-<h3>Some major developement-steps:</h3>
+<h3>Some major development steps:</h3>
 <ul>
-	<li>Image-viewer mejiro is replaced by a integrated solution offering much faster options to find images.</li>
-	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> at the settings.</li>
+	<li>Image-viewer mejiro is replaced by an integrated solution offering much faster options to find images.</li>
+	<li>Multiple cloud-services can be used as storage. Check for <b>rclone</b> in the settings.</li>
 	<li>Mounting devices is managed by UUIDs. If a device disconnects*2, it can be automatically reconnected. The backup-process becomes much more robust.</li>
 	<li>Some tools are added (check device, repair device)</li>
 	<li>Installation of comitup is automated</li>
-	<li>It has a full powered webserver now, ssl as standard</li>
+	<li>It has a full powered webserver now, TLS as standard</li>
 	<li>Setup is form-based</li>
 	<li>Setup can be ex- and imported as zip-file.</li>
 	<li>Web interface and Samba-Server can be configured for password-protection</li>
