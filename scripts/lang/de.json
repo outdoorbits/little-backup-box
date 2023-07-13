@@ -139,7 +139,7 @@
       "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)",
       "update_exif_header": "EXIF-Daten von Mediendateien beim Import automatisch anpassen",
       "update_exif_label": "Neue Medien ohne eigene Bewertung erhalten die Standardbewertung. Diese wird - wenn möglich - in die Originaldatei geschrieben.",
-      "default_settings_header": "Einstellung für das primäre Standard-Backup"
+      "default_settings_header": "Einstellungen für das primäre Standard-Backup"
     },
     "backup_usb_usb": "USB-Quellspeicher &rarr; USB-Zielspeicher",
     "backup_usb_internal": "USB-Quellspeicher &rarr; internem Speicher",

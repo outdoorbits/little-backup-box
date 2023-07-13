@@ -312,7 +312,7 @@
       "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)",
       "update_exif_header": "Automatically adjust EXIF data of media files on import",
       "update_exif_label": "New media without their own rating receive the standard rating. If possible, this is written to the original file.",
-      "default_settings_header": "Setting for the primary standard backup"
+      "default_settings_header": "Settings for the primary standard backup"
     },
     "backup_usb_usb": "USB-source-storage &rarr; USB-target-storage",
     "backup_usb_internal": "USB-source storage &rarr; internal storage",

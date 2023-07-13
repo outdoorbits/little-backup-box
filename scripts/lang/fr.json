@@ -139,7 +139,7 @@
       "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)",
       "update_exif_header": "Ajustez automatiquement les données EXIF ​​​​des fichiers multimédias lors de l'importation",
       "update_exif_label": "Les nouveaux médias sans leur propre classement reçoivent le classement standard. Si possible, ceci est écrit dans le fichier d'origine.",
-      "default_settings_header": "Paramètre pour la sauvegarde standard principale"
+      "default_settings_header": "Paramètres de la sauvegarde standard principale"
     },
     "backup_usb_usb": "USB stockage &rarr; USB stockage",
     "backup_usb_internal": "USB Stockage source &rarr; stockage interne",

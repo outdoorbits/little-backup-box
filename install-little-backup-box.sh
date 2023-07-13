@@ -247,6 +247,12 @@ sudo chmod 777 ${INSTALLER_DIR}/*.sh
 sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R
 sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 
+# prevent SSH freeze
+if [ -z "$(cat /etc/ssh/sshd_config | grep 'IPQos cs0 cs0')" ]; then
+	echo 'IPQos cs0 cs0' | sudo tee -a /etc/ssh/sshd_config
+fi
+
+
 # Display
 
 ## activate i2c and spi
