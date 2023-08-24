@@ -30,6 +30,7 @@ These languages are already available. Do you want to maintain or create a trans
 <br>
 <h2>NEWS</h2>
 <ul>
+	<li>2023/08/24: Little Backup Box core files are nearly totally rewritten in python. This is a major step and the new version is considered as not stable yet. In <a href="#installation"><b>Jump to installation instructions</b></a> you find how to get this version. Please test and report. Thank you!</li>
 	<li>2023/05/15: There is a printable case now! Look at <a href="https://github.com/outdoorbits/case-for-little-backup-box">outdoorbits/case-for-little-backup-box</a></li>
 	<li>2023/04/14: Introducing support for hardware buttons including a display-menu to control a wide range of lbb's functions. Read more in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu">Wiki</a>.</li>
 	<li>2023/04/01: Add support for Apple file systems HFS and HFS Plus. Supported file systems now are Ext2, Ext3, Ext4, FAT, vFAT, exFAT, NTFS, HFS and HFS Plus.</li>
@@ -133,7 +134,11 @@ As there is no manual available anymore, the github-wiki should replace it one d
 	<li>
 		Run the following command on the Raspberry Pi:<br>
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code><br>
-		Errors are reported into ./install-error.log
+		<br>
+		To install the development branch run this command an the Raspberry Pi:<br />
+		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/development/install-little-backup-box.sh | bash -s -- development 2> install-error.log</code><br />
+		<br />
+		Errors are reported into ./install-error.log.
 	</li>
 	<li>
 		You will be asked for the default backup mode.<br>
