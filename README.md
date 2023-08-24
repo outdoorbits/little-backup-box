@@ -30,7 +30,7 @@ These languages are already available. Do you want to maintain or create a trans
 <br>
 <h2>NEWS</h2>
 <ul>
-	<li>2023/08/24: Little Backup Box core files are nearly totally rewritten in python. This is a major step and the new version is considered as not stable yet. In <a href="#installation"><b>Jump to installation instructions</b></a> you find how to get this version. Please test and report. Thank you!</li>
+	<li>2023/08/24: Little Backup Box core files are nearly totally rewritten in python. This is a major step and the new version is considered as not stable yet. In <a href="#installation"><b>installation instructions</b></a> you find how to get this version. Please test and report. Thank you!</li>
 	<li>2023/05/15: There is a printable case now! Look at <a href="https://github.com/outdoorbits/case-for-little-backup-box">outdoorbits/case-for-little-backup-box</a></li>
 	<li>2023/04/14: Introducing support for hardware buttons including a display-menu to control a wide range of lbb's functions. Read more in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu">Wiki</a>.</li>
 	<li>2023/04/01: Add support for Apple file systems HFS and HFS Plus. Supported file systems now are Ext2, Ext3, Ext4, FAT, vFAT, exFAT, NTFS, HFS and HFS Plus.</li>
