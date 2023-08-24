@@ -135,7 +135,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 		Run the following command on the Raspberry Pi:<br>
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash  2> install-error.log</code><br>
 		<br>
-		To install the development branch run this command an the Raspberry Pi:<br />
+		To install the development branch run this command on the Raspberry Pi:<br />
 		<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/development/install-little-backup-box.sh | bash -s -- development 2> install-error.log</code><br />
 		<br />
 		Errors are reported into ./install-error.log.
@@ -193,7 +193,7 @@ If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.
 <h2>Update</h2>
 <ul>
 	<li>Updates can be carried out quickly and easily via the WebUI. Just follow the instructions in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.</li>
-	<li>Alternatively just login via ssh an execute the installation-command from above. It will run in update-mode.</li>
+	<li>Alternatively just login via ssh and execute the installation-command from above. It will run in update-mode.</li>
 </ul>
 
 
