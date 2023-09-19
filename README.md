@@ -1,7 +1,7 @@
 <h1>Little Backup Box</h1>
 
 <h2>Announcement</h2>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.png" width="50px" align="left">
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
 The version of the “main” branch is expected to be replaced by the current “development” branch on Monday, October 9th, 2023.<br />
 The core files of the new version have been almost completely rewritten from bash to python3. This results in significant advantages for function, stability and also for troubleshooting. This now makes it possible, for example, to automatically back up several devices one after the other.<br />
 What's important now? **TESTS, TESTS and TESTS!!!** Please help with your feedback to make this version the most stable and versatile ever!<br />
