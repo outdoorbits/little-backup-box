@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
 # Author: Stefan Saam, github@saams.de
 
@@ -17,20 +17,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-source "${WORKING_DIR}/constants.sh"
-CONFIG="${WORKING_DIR}/config.cfg"
-source "$CONFIG"
+from datetime import datetime
+import sys
 
-# Definitions
-raspi_config="/boot/config.txt"
 
-# fan control
-dtoverlay=gpio-fan,gpiopin=18,temp=60000
-if [ ! "${conf_FAN_PWM_GPIO}" = "-" ] && [ ! "${conf_FAN_PWM_TEMP_C}" = "0" ]; then
-	# activate fan control
-	raspi-config nonint do_fan 0 ${conf_FAN_PWM_GPIO} ${conf_FAN_PWM_TEMP_C}
-else
-	# inactivate fan control
-	raspi-config nonint do_fan 1
-fi
+class debug(object):
+	def __init__(self):
+		self.debugbasetime=int(datetime.now().timestamp())
+
+	def d(self,debugstring):
+		Message	= f"{int(datetime.now().timestamp()) - self.debugbasetime}\t{__name__}\t{debugstring}"
+		print(Message,file=sys.stderr)
+
+		with open('/var/www/little-backup-box/lbb.log','a') as f:
+			f.write(f"{Message}\n")

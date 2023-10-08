@@ -8,5 +8,5 @@ defines $CloudServices as array
 
 <?php
 	$CloudServices=array();
-	exec("sudo rclone config show --config \"" . $constants["const_RCLONE_CONFIG_FILE"] . "\" | grep '^\[.*\]$' | sed 's/^\[//' | sed 's/\]$//'",$CloudServices);
+	exec("sudo rclone config show --config \"" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"] . "\" | grep '^\[.*\]$' | sed 's/^\[//' | sed 's/\]$//'",$CloudServices);
 ?>

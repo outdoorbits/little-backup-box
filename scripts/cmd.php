@@ -3,12 +3,17 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 <!doctype html>
 
 <?php
+	ini_set("session.use_only_cookies", 0);
+	ini_set("session.use_trans_sid", 1);
+
+	session_start();
+
 	$WORKING_DIR=dirname(__FILE__);
 	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
 	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . "/" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 # expected parameters:
 # CMD: "update", "format", "f3"
@@ -29,28 +34,51 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 <?php
 
 if (count($_GET) > 0) {
-	extract($_GET);
+	$INPUT	= $_GET;
 } else {
-	extract($_POST);
+	$INPUT	= $_POST;
 }
+// allowed parameters
+$PWD						= isset($INPUT['PWD']) ? $INPUT['PWD'] : '';
+$MAIL_ASKED					= isset($INPUT['MAIL_ASKED']) ? $INPUT['MAIL_ASKED'] : '';
 
-if (! isset($CMD)) {$CMD	= "";}
+$_SESSION['MAIL_RESULT']	= isset($INPUT['MAIL_RESULT']);
 
-switch($CMD) {
+$_SESSION['CMD']			= isset($INPUT['CMD']) ? $INPUT['CMD'] : '';
+$_SESSION['PARAM1']			= isset($INPUT['PARAM1']) ? $INPUT['PARAM1'] : '';
+$_SESSION['PARAM2']			= isset($INPUT['PARAM2']) ? $INPUT['PARAM2'] : '';
+
+session_write_close();
+
+switch($_SESSION['CMD']) {
 	case 'update':
 		$CMD_HEADER			= L::cmd_update_header;
 		$INFO_TEXT			= L::cmd_update_warning;
 		$CMD_DESCRIPTION	= "";
-		$CMD_ARGUMENTS		= "CMD=update";
 		$PASSWORD_REQ		= True;
 		$ALLOW_MAIL_RESULT	= False;
+		break;
+
+	case 'update_development':
+		$CMD_HEADER			= L::cmd_update_development_header;
+		$INFO_TEXT			= L::cmd_update_development_warning;
+		$CMD_DESCRIPTION	= "";
+		$PASSWORD_REQ		= True;
+		$ALLOW_MAIL_RESULT	= False;
+		break;
+
+	case 'fsck':
+		$CMD_HEADER			= L::cmd_fsck_header;
+		$INFO_TEXT			= L::cmd_fsck_warning;
+		$CMD_DESCRIPTION	= "";
+		$PASSWORD_REQ		= ($_SESSION['PARAM2'] == 'repair');
+		$ALLOW_MAIL_RESULT	= True;
 		break;
 
 	case 'format':
 		$CMD_HEADER			= L::cmd_format_header;
 		$INFO_TEXT			= L::cmd_format_warning;
-		$CMD_DESCRIPTION	= L::cmd_format_description.": <ul class='danger'><li>" . L::cmd_format_header . ": $PARAM1 &rarr; $PARAM2</li></ul>";
-		$CMD_ARGUMENTS		= "CMD=format&PARAM1=$PARAM1&PARAM2=$PARAM2";
+		$CMD_DESCRIPTION	= L::cmd_format_description.": <ul class='danger'><li>" . L::cmd_format_header . ": " . $_SESSION['PARAM1'] . " &rarr; " . $_SESSION['PARAM2'] . "</li></ul>";
 		$PASSWORD_REQ		= True;
 		$ALLOW_MAIL_RESULT	= True;
 		break;
@@ -59,16 +87,14 @@ switch($CMD) {
 		$CMD_HEADER			= L::cmd_no_cmd;
 		$INFO_TEXT			= "";
 		$CMD_DESCRIPTION	= "";
-		$CMD_ARGUMENTS		= "";
 		$PASSWORD_REQ		= False;
 		$ALLOW_MAIL_RESULT	= False;
 
-		switch($PARAM2) {
+		switch($_SESSION['PARAM2']) {
 			case 'f3probe_non_destructive':
 				$CMD_HEADER			= L::cmd_f3_header;
 				$INFO_TEXT			= L::cmd_f3_warning_non_destructive;
-				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": $PARAM1 &rarr; " . L::cmd_f3_description_non_destructive . "</li></ul>";
-				$CMD_ARGUMENTS		= "CMD=f3&PARAM1=$PARAM1&PARAM2=$PARAM2";
+				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": " . $_SESSION['PARAM1'] . " &rarr; " . L::cmd_f3_description_non_destructive . "</li></ul>";
 				$PASSWORD_REQ		= True;
 				$ALLOW_MAIL_RESULT	= True;
 				break;
@@ -76,8 +102,7 @@ switch($CMD) {
 			case 'f3probe_destructive':
 				$CMD_HEADER			= L::cmd_f3_header;
 				$INFO_TEXT			= L::cmd_f3_warning_destructive;
-				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": $PARAM1 &rarr; " . L::cmd_f3_description_destructive . "</li></ul>";
-				$CMD_ARGUMENTS		= "CMD=f3&PARAM1=$PARAM1&PARAM2=$PARAM2";
+				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": " . $_SESSION['PARAM1'] . " &rarr; " . L::cmd_f3_description_destructive . "</li></ul>";
 				$PASSWORD_REQ		= True;
 				$ALLOW_MAIL_RESULT	= True;
 				break;
@@ -88,7 +113,6 @@ switch($CMD) {
 				$CMD_HEADER			= L::config_comitup_section;
 				$INFO_TEXT			= '';
 				$CMD_DESCRIPTION	= L::config_comitup_text;
-				$CMD_ARGUMENTS		= "CMD=comitup&PARAM1=reset";
 				$PASSWORD_REQ		= True;
 				$ALLOW_MAIL_RESULT	= True;
 				break;
@@ -96,19 +120,33 @@ switch($CMD) {
 		$CMD_HEADER			= L::cmd_no_cmd;
 		$INFO_TEXT			= "";
 		$CMD_DESCRIPTION	= "";
-		$CMD_ARGUMENTS		= "";
 		$PASSWORD_REQ		= False;
 		$ALLOW_MAIL_RESULT	= False;
 }
 
 $PASSWORD_ASK	= false;
 if ($PASSWORD_REQ) {
-	if (isset($PWD)) {
+	if ($PWD !== '') {
 		$PASSWORD_ASK	= ($PWD !== $config['conf_PASSWORD']);
 	} else {
 		$PASSWORD_ASK	= true;
 	}
 }
+
+$MAIL_ASK = false;
+if ($ALLOW_MAIL_RESULT and ($MAIL_ASKED == '')) {
+	$MAIL_ASK	= (
+		(strlen($config['conf_SMTP_SERVER']) > 0) and
+		(strlen($config['conf_SMTP_PORT']) > 0) and
+		(strlen($config['conf_MAIL_SECURITY']) > 0) and
+		(strlen($config['conf_MAIL_USER']) > 0) and
+		(strlen($config['conf_MAIL_PASSWORD']) > 0) and
+		(strlen($config['conf_MAIL_FROM']) > 0) and
+		(strlen($config['conf_MAIL_TO']) > 0)
+	);
+}
+
+if (isset($CMD_HEADER)) {
 ?>
 
 	<h1><?php echo $CMD_HEADER; ?></h1>
@@ -119,34 +157,31 @@ if ($PASSWORD_REQ) {
 	</p>
 
 	<?php
-		if ($PASSWORD_ASK) {
+		if ($PASSWORD_ASK or $MAIL_ASK) {
 // 			password check necessary
 			if ($config['conf_PASSWORD'] != "") {
 	?>
 			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-				<input type="hidden" name="CMD" value="<?php echo $CMD; ?>">
-				<input type="hidden" name="PARAM1" value="<?php echo $PARAM1; ?>">
-				<input type="hidden" name="PARAM2" value="<?php echo $PARAM2; ?>">
+				<input type="hidden" name="CMD" value="<?php echo $_SESSION['CMD']; ?>">
+				<input type="hidden" name="PARAM1" value="<?php echo $_SESSION['PARAM1']; ?>">
+				<input type="hidden" name="PARAM2" value="<?php echo $_SESSION['PARAM2']; ?>">
+
 				<div class="card" style="margin-top: 2em;">
 
 					<?php
-						if (
-						($ALLOW_MAIL_RESULT) and
-							(strlen($config['conf_SMTP_SERVER']) > 0) and
-							(strlen($config['conf_SMTP_PORT']) > 0) and
-							(strlen($config['conf_MAIL_SECURITY']) > 0) and
-							(strlen($config['conf_MAIL_USER']) > 0) and
-							(strlen($config['conf_MAIL_PASSWORD']) > 0) and
-							(strlen($config['conf_MAIL_FROM']) > 0) and
-							(strlen($config['conf_MAIL_TO']) > 0)
-						) {
+						if ($MAIL_ASK) {
+							echo '<input type="hidden" name="MAIL_ASKED" value="1">';
 							echo '<input type="checkbox" name="MAIL_RESULT" id="MAIL_RESULT" checked>&nbsp;';
 							echo '<label for="MAIL_RESULT">' . L::cmd_mail_result . ':</label><br>';
 						}
 					?>
 
-					<label for="PWD"><?php echo L::cmd_input_password; ?>:</label>
-					<input type="password" size="20" name="PWD" id="PWD"><br>
+					<?php
+						if ($PASSWORD_ASK) {
+							echo '<label for="PWD">' . L::cmd_input_password . ':</label>';
+							echo '<input type="password" size="20" name="PWD" id="PWD"><br>';
+						}
+					?>
 
 					<button style="margin-top: 2em;" type="submit" name="upload_settings"><?php echo L::cmd_execute; ?></button>
 				</div>
@@ -164,14 +199,18 @@ if ($PASSWORD_REQ) {
 					<a href="/"><?php echo L::cmd_link_text_home; ?></a>
 				</p>
 			<?php
-		} elseif ($CMD_ARGUMENTS != "") { ?>
+		} elseif (isset($_SESSION['CMD'])) {
+			?>
 <!-- 			run command -->
-		<?php if ($MAIL_RESULT) {$CMD_ARGUMENTS = $CMD_ARGUMENTS . '&MAIL_RESULT=true';} ?>
-		<iframe id="cmdmonitor" src="/cmd-runner.php?<?php echo $CMD_ARGUMENTS; ?>" width="100%" height="500" style="background: #FFFFFF;"></iframe>
+
+		<iframe id="cmdmonitor" src="/cmd-runner.php?<?php echo htmlspecialchars(SID); ?>" width="100%" height="500" style="background: #FFFFFF;"></iframe>
 		<p>
 			<a href="/"><?php echo L::cmd_link_text_home_running; ?></a>
 		</p>
-	<?php } ?>
+	<?php
+		}
+}
+	?>
 </body>
 </html>
 

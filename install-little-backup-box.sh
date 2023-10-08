@@ -32,6 +32,14 @@ if [[ $EUID -eq 0 ]]; then
     exit 1
 fi
 
+# check arguments
+if [ $# -gt 0 ]; then
+	branch=${1}
+else
+	branch="main"
+fi
+echo "Selected branch: ${branch}"
+
 # internet-connection required
 ping -c1 google.com &>/dev/null
 INTERNET_STATUS=$?
@@ -87,8 +95,6 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		3 "USB-source -> internal storage"
 		4 "Camera -> USB-target storage"
 		5 "Camera -> internal storage"
-		6 "iOS -> usb-target storage"
-		7 "iOS -> internal storage"
 	)
 
 	CHOICE_BACKUP_MODE=$(dialog --clear \
@@ -143,7 +149,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3
+		acl git-core screen rsync exfat-fuse exfat-utils ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -167,17 +173,20 @@ echo "Cloning Little Backup Box"
 cd
 
 sudo rm -R ${INSTALLER_DIR}
-git clone https://github.com/outdoorbits/little-backup-box.git
+git clone --branch "${branch}" https://github.com/outdoorbits/little-backup-box.git
 GIT_CLONE=$?
 if [ "${GIT_CLONE}" -gt 0 ]; then
 	echo "Cloning little-backup-box from github.com failed. Please try again later."
 	exit 0
 fi
 
+#write branch into constants
+echo "const_SOFTWARE_VERSION='${branch}'" | sudo tee -a "${INSTALLER_DIR}/scripts/constants.sh"
+
 # read new constants
 source "${INSTALLER_DIR}/scripts/constants.sh"
 
-# define run-mode
+# keep config file
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "keep config..."
 	yes | sudo cp -f "${const_WEB_ROOT_LBB}/config.cfg" "${INSTALLER_DIR}/scripts/"
@@ -190,16 +199,13 @@ fi
 sudo mkdir -p "${const_WEB_ROOT_LBB}"
 yes | sudo cp -Rf "${INSTALLER_DIR}/scripts/"* "${const_WEB_ROOT_LBB}/"
 
-if [ ! -f "${const_WEB_ROOT_LBB}/config.cfg" ]; then
-	sudo cp "${const_WEB_ROOT_LBB}/config-standards.cfg" "${const_WEB_ROOT_LBB}/config.cfg"
-fi
+# rewrite config files
+python3 "${const_WEB_ROOT_LBB}/lib_setup.py"
 
+# read config file
 CONFIG="${const_WEB_ROOT_LBB}/config.cfg"
-
-if [ "${SCRIPT_MODE}" = "update" ]; then
-	echo "Loading old settings from ${CONFIG}"
-	source "${CONFIG}"
-fi
+cho "Loading old settings from ${CONFIG}"
+source "${CONFIG}"
 
 # Install rclone
 curl https://rclone.org/install.sh | sudo bash
@@ -216,17 +222,17 @@ echo "Creating the required media-directories"
 
 sudo mkdir -p "${const_MEDIA_DIR}"
 
-sudo umount "${const_USB_SOURCE_MOUNT_POINT}" > /dev/null 2>&1
-sudo umount "${const_USB_TARGET_MOUNT_POINT}" > /dev/null 2>&1
-sudo umount "${const_IOS_MOUNT_POINT}" > /dev/null 2>&1
-sudo umount "${const_CLOUD_MOUNT_POINT}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" > /dev/null 2>&1
 
-sudo mkdir -p "${const_USB_SOURCE_MOUNT_POINT}"
-sudo mkdir -p "${const_USB_TARGET_MOUNT_POINT}"
-sudo mkdir -p "${const_IOS_MOUNT_POINT}"
-sudo mkdir -p "${const_CLOUD_MOUNT_POINT}"
-sudo mkdir -p "${const_INTERNAL_BACKUP_DIR}"
-sudo mkdir -p "${const_BACKGROUND_IMAGES_DIR}/lbb"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_TARGET}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_BACKGROUND_IMAGES_DIR}/lbb"
 
 sudo chown -R ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_MEDIA_DIR}"
 sudo chmod -R 777 "${const_MEDIA_DIR}"
@@ -234,7 +240,7 @@ sudo setfacl -Rdm u:${USER_WWW_DATA}:rwX,g:${USER_WWW_DATA}:rwX "${const_MEDIA_D
 sudo setfacl -Rdm u:${USER_SAMBA}:rwX,g:${USER_SAMBA}:rwX "${const_MEDIA_DIR}"
 
 # move background images in place
-mv "${INSTALLER_DIR}/scripts/img/backgrounds/"* "${const_BACKGROUND_IMAGES_DIR}/lbb/"
+mv "${INSTALLER_DIR}/scripts/img/backgrounds/"* "${const_MEDIA_DIR}/${const_BACKGROUND_IMAGES_DIR}/lbb/"
 
 # add user www-data to sudoers
 sudo usermod -aG sudo ${USER_WWW_DATA}
@@ -251,7 +257,6 @@ sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 if [ -z "$(cat /etc/ssh/sshd_config | grep 'IPQos cs0 cs0')" ]; then
 	echo 'IPQos cs0 cs0' | sudo tee -a /etc/ssh/sshd_config
 fi
-
 
 # Display
 
@@ -321,14 +326,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 			conf_BACKUP_DEFAULT_SOURCE="camera"
 			conf_BACKUP_DEFAULT_TARGET="internal"
 		;;
-	6)
-			conf_BACKUP_DEFAULT_SOURCE="ios"
-			conf_BACKUP_DEFAULT_TARGET="usb"
-		;;
-	7)
-			conf_BACKUP_DEFAULT_SOURCE="ios"
-			conf_BACKUP_DEFAULT_TARGET="internal"
-		;;
+
 	esac
 else
 	if [ -z "${conf_BACKUP_DEFAULT_SOURCE}" ]; then
@@ -374,22 +372,22 @@ crontab -r
 # write basic crontab
 crontab -l | {
     cat
-    echo "@reboot sudo ${const_WEB_ROOT_LBB}/backup-autorun.sh"
+    echo "@reboot sudo python3 ${const_WEB_ROOT_LBB}/backup-autorun.py"
 } | crontab
 
 crontab -l | {
     cat
-    echo "@reboot sudo ${const_WEB_ROOT_LBB}/start-servers.sh"
+    echo "@reboot sudo python3 ${const_WEB_ROOT_LBB}/start-rclone-gui.py"
 } | crontab
 
 crontab -l | {
     cat
-    echo "*/1 * * * * sudo ${const_WEB_ROOT_LBB}/cron-ip.sh"
+    echo "*/1 * * * * sudo python3 ${const_WEB_ROOT_LBB}/lib_cron_ip.py"
 } | crontab
 
 crontab -l | {
     cat
-    echo "*/1 * * * * sudo ${const_WEB_ROOT_LBB}/cron-idletime.sh"
+    echo "*/1 * * * * sudo python3 ${const_WEB_ROOT_LBB}/cron_idletime.py"
 } | crontab
 
 # tinyfilemanager
@@ -438,20 +436,34 @@ sudo sh -c "echo 'wide links = yes' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'unix extensions = no' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'dns proxy = no' >> /etc/samba/smb.conf"
 sudo sh -c "echo '' >> /etc/samba/smb.conf"
+
 sudo sh -c "echo '### Debugging/Accounting ###' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'log file = /var/log/samba/log.%m' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'max log size = 1000' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'syslog = 0' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'panic action = /usr/share/samba/panic-action %d' >> /etc/samba/smb.conf"
 sudo sh -c "echo '' >> /etc/samba/smb.conf"
+
 sudo sh -c "echo '### Authentication ###' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'security = user' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'map to guest = Bad User' >> /etc/samba/smb.conf"
 sudo sh -c "echo 'guest account = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
 sudo sh -c "echo '' >> /etc/samba/smb.conf"
+
+sudo sh -c "echo '### Better Mac OS X support ###' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'vfs objects = fruit streams_xattr' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'fruit:metadata = stream' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'fruit:model = MacSamba' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'fruit:posix_rename = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'fruit:veto_appledouble = no' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'fruit:nfs_aces = no' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'fruit:wipe_intentionally_left_blank_rfork = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo 'fruit:delete_empty_adfiles = yes' >> /etc/samba/smb.conf"
+sudo sh -c "echo '' >> /etc/samba/smb.conf"
+
 sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
 
-DIRECTORIES=("${const_USB_SOURCE_MOUNT_POINT}" "${const_USB_TARGET_MOUNT_POINT}" "${const_INTERNAL_BACKUP_DIR}" "${const_IOS_MOUNT_POINT}")
+DIRECTORIES=("${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}")
 for DIRECTORY in "${DIRECTORIES[@]}"; do
     PATHNAME=$(basename ${DIRECTORY})
 
@@ -553,17 +565,14 @@ fi
 # re-establish passwords
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "Restore password-protection"
-	source "${const_WEB_ROOT_LBB}/set_password.sh" "${conf_PASSWORD}"
+	sudo python3 "${const_WEB_ROOT_LBB}/lib_password.py" "${conf_PASSWORD}"
 fi
 
 # setup hardware
 	source "${const_WEB_ROOT_LBB}/set_hardware.sh"
 
 # post-install-information
-## load network library
-. "${const_WEB_ROOT_LBB}/lib-network.sh"
-
-IP=$(get_ip)
+IP=$(python3 "${const_WEB_ROOT_LBB}/lib_network.py" ip)
 
 echo ""
 echo "********************************************************************************************"
@@ -593,4 +602,4 @@ date | tee -a "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
 # reboot
 echo "All done! Rebooting..."
 sleep 3
-sudo "${const_WEB_ROOT_LBB}/poweroff.sh" reboot force
+sudo python3 "${const_WEB_ROOT_LBB}/lib_poweroff.py" reboot

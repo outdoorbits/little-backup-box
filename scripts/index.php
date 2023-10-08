@@ -9,21 +9,42 @@
 	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	if (isset($_POST['form_sent'])) {
-		$generate_thumbnails	= isset($_POST['generate_thumbnails'])?"true":"false";
-		$update_exif			= isset($_POST['update_exif'])?"true":"false";
-		$power_off_force		= isset($_POST['power_off'])?"true":"false";
+		$generate_thumbnails	= isset($_POST['generate_thumbnails'])?"True":"False";
+		$update_exif			= isset($_POST['update_exif'])?"True":"False";
+		$power_off_force		= isset($_POST['power_off'])?"True":"False";
 	} else {
-		$generate_thumbnails	= $config['conf_BACKUP_GENERATE_THUMBNAILS']?"true":"false";
-		$update_exif			= $config['conf_BACKUP_UPDATE_EXIF']?"true":"false";
-		$power_off_force		= $config['conf_POWER_OFF']?"true":"false";
+		$generate_thumbnails	= $config['conf_BACKUP_GENERATE_THUMBNAILS']?"True":"False";
+		$update_exif			= $config['conf_BACKUP_UPDATE_EXIF']?"True":"False";
+		$power_off_force		= $config['conf_POWER_OFF']?"True":"False";
 	}
 
 	include("sub-popup.php");
 
+	$LocalServices	= array('usb','internal');
+
+	$CameraServices	= array('camera');
+
 	include("get-cloudservices.php");
+	$CloudServices_marked	= array();
+	foreach($CloudServices as $CloudService) {
+		$CloudServices_marked[]	= 'cloud:' . $CloudService;
+	}
+
+	$SourceServices	= array(
+		'usb'		=> $LocalServices,
+		'camera'	=> $CameraServices,
+		'cloud'		=> $CloudServices_marked
+	);
+
+	$rsync_unconfigurated	= ($config['conf_RSYNC_SERVER']=='' or $config['conf_RSYNC_PORT']=='' or $config['conf_RSYNC_USER']=='' or $config['conf_RSYNC_PASSWORD']=='' or $config['conf_RSYNC_SERVER_MODULE']=='');
+	if ($rsync_unconfigurated == false) {
+		$CloudServices_marked	=array_merge(['cloud_rsync'],$CloudServices_marked);
+	}
+
+	$TargetServices	= array_merge($LocalServices, $CloudServices_marked);
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
@@ -31,6 +52,26 @@
 <head>
 	<?php include "sub-standards-header-loader.php"; ?>
 	<script src="js/refresh_iframe.js"></script>
+
+	<script>
+		function HideDisallowedButtons(ActiveSource) {
+			let TargetServices = [<?php $Separator = ''; foreach ($TargetServices as $TargetService) {print($Separator . "'" . $TargetService . "'"); $Separator = ', ';}; ?>];
+
+			for (i in TargetServices) {
+				let TargetService = TargetServices[i];
+
+// 				find disallowed combinations
+				if (
+					((TargetService === ActiveSource.value) && (TargetService !== 'usb')) ||
+					((ActiveSource.value === 'camera') && (TargetService === 'cloud_rsync'))
+				) {
+					document.getElementById("Target_" + TargetService).disabled = true;
+				} else {
+					document.getElementById("Target_" + TargetService).disabled = false;
+				}
+			}
+		}
+    </script>
 </head>
 
 <body onload="refreshIFrame()" <?php echo $background; ?>>
@@ -51,43 +92,65 @@
 		<input type="hidden" name="form_sent" value="1">
 
 		<div class="card">
+			<div class="row" style="width:100%; float: left; display: block;">
+				<div class="column" style="display: block;">
+					<?php
+						print("<h3>" . l::main_source . "</h3>" . l::main_source_select);
+						foreach($SourceServices as $ButtonClass => $Group) {
+							print("<div class='radio-$ButtonClass'>");
+								foreach($Group as $Storage) {
+									$LabelNameExplode		= explode(':', $Storage, 2);
+									$LabelName				= end($LabelNameExplode);
 
-			<div class='backupsection'>
-				<button name="backup_usb_usb" class="usb"><?php echo L::main_usb_button . L::right_arrow . L::main_usb_button; ?></button>
-				<button name="backup_usb_internal" class="usb"><?php echo L::main_usb_button . L::right_arrow . L::main_internal_button; ?></button>
-				<button name="backup_internal_usb" class="usb"><?php echo L::main_internal_button . L::right_arrow . L::main_usb_button; ?></button>
+									if ($LabelName == 'usb') {
+										$LabelName		= l::box_backup_mode_usbs;
+									}
+									elseif ($LabelName == 'camera') {
+										$LabelName		= l::box_backup_mode_cameras;
+									}
+									elseif ($LabelName == 'cloud_rsync') {
+										$LabelName		= l::box_backup_mode_cloud_rsync;
+									}
+									$OldSource = isset($_POST['SourceDevice']) ? $_POST['SourceDevice'] : 'usb';
+									print("<input type='radio' name='SourceDevice' value='$Storage' id='Source_$Storage' onchange='HideDisallowedButtons(this)' " . ($Storage == $OldSource ? 'checked' : '') . ">");
+									print("<label for='Source_$Storage'>$LabelName</label></br>");
+								}
+							print("</div>");
+						}
+					?>
+				</div>
+				<div class="column" style="display: block;">
+					<?php
+						print("<h3>" . l::main_target . "</h3>" . l::main_target_execute);
+							print("<div class='backup-buttons'>");
+							foreach($TargetServices as $Storage) {
+								$LabelNameExplode		= explode(':', $Storage, 2);
+								$LabelName				= end($LabelNameExplode);
+								if (@substr_compare($Storage, 'cloud:', 0, strlen('cloud:'))==0) { /* use "@" to supress error messages*/
+									$ButtonClass	= 'cloud';
+								}
+								elseif ($LabelName == 'cloud_rsync') {
+									$ButtonClass	= 'cloud';
+									$LabelName		= l::box_backup_mode_cloud_rsync;
+								}
+								elseif ($LabelName == 'usb') {
+									$ButtonClass	= 'usb';
+									$LabelName		= l::tools_mount_usb;
+								}
+								elseif ($LabelName == 'camera') {
+									$ButtonClass	= 'camera';
+									$LabelName		= l::box_backup_mode_camera;
+								}
+
+								print("<button class='$ButtonClass' name='TargetDevice' value='$Storage' id='Target_$Storage'>$LabelName</button></br>");
+
+							}
+							print("</div>");
+
+
+					?>
+				</div>
 			</div>
-
-			<div class='backupsection'>
-				<button name="backup_camera_usb" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_usb_button; ?></button>
-				<button name="backup_camera_internal" class="camera"><?php echo L::main_camera_button . L::right_arrow . L::main_internal_button; ?></button>
-			</div>
-
-			<div class='backupsection'>
-				<button name="backup_ios_usb" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_usb_button; ?></button>
-				<button name="backup_ios_internal" class="ios"><?php echo L::main_ios_button . L::right_arrow . L::main_internal_button; ?></button>
-			</div>
-
-			<?php
-				$rsync_unconfigurated	= ($config['conf_RSYNC_SERVER']=='' or $config['conf_RSYNC_PORT']=='' or $config['conf_RSYNC_USER']=='' or $config['conf_RSYNC_PASSWORD']=='' or $config['conf_RSYNC_SERVER_MODULE']=='');
-
-				if (! $rsync_unconfigurated) {
-					echo "<div class='backupsection'>";
-						echo "<button name=\"backup_usb_server\" class=\"cloud\">" . L::main_usb_button . L::right_arrow . L::main_rsync_button ."</button>";
-						echo "<button name=\"backup_internal_server\" class=\"cloud\">" . L::main_internal_button . L::right_arrow . L::main_rsync_button ."</button>";
-					echo "</div>";
-				}
-			?>
-
-			<?php
-
-				foreach($CloudServices as $CloudService) {
-					echo "<div class='backupsection'>";
-						echo "<button name=\"backup_usb_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_usb_button . L::right_arrow ." " . $CloudService . "</button>";
-						echo "<button name=\"backup_internal_cloud_" . $CloudService . "\" class=\"cloud\">" . L::main_internal_button . L::right_arrow ." " . $CloudService . "</button>";
-					echo "</div>";
-				}
-			?>
 
 			<div class='backupsection'>
 				<button name="stopbackup" class="danger"><?php echo L::main_stopbackup_button; ?>
@@ -103,7 +166,7 @@
 					<table style='border: 0;'>
 						<tr>
 							<td style='padding-right: 10pt;'>
-								<input type="checkbox" id="generate_thumbnails" name="generate_thumbnails" <?php echo $generate_thumbnails=="true"?"checked":""; ?>>
+								<input type="checkbox" id="generate_thumbnails" name="generate_thumbnails" <?php echo $generate_thumbnails=="True"?"checked":""; ?>>
 							</td>
 							<td>
 								<label for="generate_thumbnails"><?php echo L::main_backup_generate_thumbnails_checkbox_label; ?></label>
@@ -112,7 +175,7 @@
 
 						<tr>
 							<td style='padding-right: 10pt;'>
-								<input type="checkbox" id="update_exif" name="update_exif" <?php echo $update_exif=="true"?"checked":""; ?>>
+								<input type="checkbox" id="update_exif" name="update_exif" <?php echo $update_exif=="True"?"checked":""; ?>>
 							</td>
 							<td>
 								<label for="update_exif"><?php echo L::main_backup_update_exif_checkbox_label; ?></label>
@@ -121,7 +184,7 @@
 
 						<tr>
 							<td style='padding-right: 10pt;'>
-								<input type="checkbox" id="power_off" name="power_off" <?php echo $power_off_force=="true"?"checked":""; ?>>
+								<input type="checkbox" id="power_off" name="power_off" <?php echo $power_off_force=="True"?"checked":""; ?>>
 							</td>
 							<td>
 								<label for="power_off"><?php echo L::main_backup_power_off_checkbox_label; ?></label>
@@ -139,28 +202,26 @@
 
 				<div class='backupsection'>
 					<h3><?php echo L::main_thumbnails_header; ?></h3>
-					<button name="backup_thumbnails_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
-					<button name="backup_thumbnails_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+					<button name="backup_function_thumbnails_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
+					<button name="backup_function_thumbnails_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
 				</div>
 
 				<div class='backupsection'>
 					<h3><?php echo L::main_database_header; ?></h3>
-					<button name="backup_database_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
-					<button name="backup_database_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+					<button name="backup_function_database_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
+					<button name="backup_function_database_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
 				</div>
 
 				<div class='backupsection'>
 					<h3><?php echo L::main_exif_header; ?></h3>
-					<button name="backup_exif_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
-					<button name="backup_exif_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+					<button name="backup_function_exif_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
+					<button name="backup_function_exif_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
 				</div>
 
 			</details>
 		</div>
 
 	</form>
-
-
 
 	<?php include "sub-logmonitor.php"; ?>
 
@@ -176,99 +237,51 @@
 	exec("mkdir -p tmp");
 	exec("sudo chown www-data:www-data ./tmp -R");
 
-	if (isset($_POST['backup_usb_usb'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh usb usb '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_usb_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	if (isset($_POST['backup_usb_internal'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh usb internal '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_usb_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	if (isset($_POST['backup_internal_usb'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh internal usb '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_internal_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	if (isset($_POST['backup_camera_usb'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh camera usb '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_camera_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	if (isset($_POST['backup_camera_internal'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh camera internal '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_camera_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	if (isset($_POST['backup_ios_usb'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh ios usb '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_ios_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	if (isset($_POST['backup_ios_internal'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh ios internal '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_ios_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	if (isset($_POST['backup_usb_server'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh usb rsyncserver '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_usb_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	if (isset($_POST['backup_internal_server'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh internal rsyncserver '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-		popup(L::main_backup_backup . " " . L::main_internal_button . " " . L::main_backup_to . " " . L::main_rsync_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-	}
-	foreach (['usb','internal'] as $Source) {
-		foreach ($CloudServices as $CloudService) {
-			if (isset($_POST['backup_' . $Source . '_cloud_' . $CloudService])) {
-				exec('sudo pkill -f "backup*"');
-				$SourceDevice=$Source === "usb"?"usb":"internal";
-				exec("sudo ./backup.sh " . $SourceDevice . " cloud_" . $CloudService . " '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
-
-				popup(L::main_backup_backup . " " . ($Source=="usb"?L::main_usb_button:L::main_internal_button) . " " . L::main_backup_to . " " . L::main_cloudservice . " " . $CloudService . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
-			}
-		}
+// 	Backup
+	if (isset($_POST['TargetDevice'])) {
+		exec("sudo pkill -f '$WORKING_DIR/backup*'");
+		exec("sudo python3 $WORKING_DIR/backup.py " . $_POST['SourceDevice'] . " " . $_POST['TargetDevice'] . " 'False' '$generate_thumbnails' '$update_exif' '' '' '$power_off_force'> /dev/null 2>&1 & echo $!");
+		popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 
-	if (isset($_POST['backup_thumbnails_usb'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh thumbnails usb '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
+	// 	Functions
+	if (isset($_POST['backup_function_thumbnails_usb'])) {
+		exec("sudo pkill -f '$WORKING_DIR/backup*'");
+		exec("sudo python3 $WORKING_DIR/backup.py thumbnails usb 'False' 'True' 'False' '' '' '$power_off_force'> /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	if (isset($_POST['backup_thumbnails_internal'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh thumbnails internal '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
+	if (isset($_POST['backup_function_thumbnails_internal'])) {
+		exec("sudo pkill -f '$WORKING_DIR/backup*'");
+		exec("sudo python3 $WORKING_DIR/backup.py thumbnails internal 'False' 'True' 'False' '' '' '$power_off_force'> /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 
-	if (isset($_POST['backup_database_usb'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh database usb '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
+	if (isset($_POST['backup_function_database_usb'])) {
+		exec("sudo pkill -f '$WORKING_DIR/backup*'");
+		exec("sudo python3 $WORKING_DIR/backup.py database usb 'True' 'False' 'False' '' '' '$power_off_force'> /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	if (isset($_POST['backup_database_internal'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh database internal '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
+	if (isset($_POST['backup_function_database_internal'])) {
+		exec("sudo pkill -f '$WORKING_DIR/backup*'");
+		exec("sudo python3 $WORKING_DIR/backup.py database internal 'True' 'False' 'False' '' '' '$power_off_force'> /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 
-	if (isset($_POST['backup_exif_usb'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh exif usb '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
+	if (isset($_POST['backup_function_exif_usb'])) {
+		exec("sudo pkill -f '$WORKING_DIR/backup*'");
+		exec("sudo python3 $WORKING_DIR/backup.py exif usb 'False' 'False' 'True' '' '' '$power_off_force'> /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
-	if (isset($_POST['backup_exif_internal'])) {
-		exec('sudo pkill -f "backup*"');
-		exec("sudo ./backup.sh exif internal '$generate_thumbnails' '$update_exif' '$power_off_force' > /dev/null 2>&1 & echo $!");
+	if (isset($_POST['backup_function_exif_internal'])) {
+		exec("sudo pkill -f '$WORKING_DIR/backup*'");
+		exec("sudo python3 $WORKING_DIR/backup.py exif internal 'False' 'False' 'True' '' '' '$power_off_force'> /dev/null 2>&1 & echo $!");
 		popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 	}
 
 	if (isset($_POST['stopbackup'])) {
 		popup(L::main_stopbackup_m,$config["conf_POPUP_MESSAGES"]);
-		exec('sudo pkill -f "backup*"');
+		exec("sudo python3 $WORKING_DIR/lib_display.py 'Backup stopped.'");
+		exec("sudo pkill -f '$WORKING_DIR/backup*'");
 	}
 	?>
 </body>

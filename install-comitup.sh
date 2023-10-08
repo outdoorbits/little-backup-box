@@ -62,7 +62,7 @@ sudo systemctl unmask dhcpcd.service
 sudo systemctl unmask wpa-supplicant.service
 
 # create config
-. "${INSTALLER_DIR}/scripts/comitup-conf.sh"
+sudo python3 "${INSTALLER_DIR}/scripts/lib_comitup.py"
 
 echo "All done. Connect to the little-backup-box-<nn> network and open http://10.41.0.1/"
 echo "comitup will be available after reboot."

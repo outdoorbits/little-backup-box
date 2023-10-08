@@ -17,7 +17,6 @@
   "main": {
     "internal_button": "Almacenamiento int.",
     "camera_button": "cámara",
-    "ios_button": "iOS",
     "rsync_button": "rsync-servidor",
     "reboot_button": "Reiniciar",
     "shutdown_button": "Apagar",
@@ -43,7 +42,11 @@
     "backup_update_exif_checkbox_label": "Escribir datos EXIF ​​en los archivos originales (solo para almacenamiento local)",
     "backup_power_off_checkbox_label": "Apagar después de ejecutar",
     "backup_generate_thumbnails_checkbox_label": "Genere miniaturas y lea en la base de datos (solo para almacenamiento local)",
-    "backup_modifications": "Modificaciones"
+    "backup_modifications": "Modificaciones",
+    "source": "Fuente",
+    "target": "Objetivo",
+    "source_select": "seleccionar opción",
+    "target_execute": "ejecutar"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
@@ -61,7 +64,6 @@
   },
   "config": {
     "config": "Ajustes",
-    "lang_section": "Idioma / Language",
     "lang_header": "Seleccione el idioma/Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
     "lang_browser_detect": "Detección del navegador/Browser detect",
@@ -70,7 +72,6 @@
     "backup_label": "Seleccione el modo de copia de seguridad predeterminado:",
     "backup_none": "sin respaldo automático",
     "backup_camera_internal": "Cámara &rarr; almacenamiento interno",
-    "backup_ios_internal": "iOS &rarr; almacenamiento interno",
     "backup_power_off_header": "Apagado",
     "backup_power_off_label": "Apagar después de la copia de seguridad",
     "view_section": "Apariencia",
@@ -130,7 +131,6 @@
     "backup_camera_folder_mask_label": "Aquí puede especificar qué directorios deben ser respaldados desde las cámaras o teléfonos inteligentes. <br>\nLas entradas aquí tienen la forma: <br>\n&quot;CÁMARA: RUTA&quot; <br>\nEl nombre de una cámara conectada se puede encontrar en la página &quot; Sistema &quot; en \"Cámara/Smartphone\". <br>\nSi una instrucción se aplica a todas las cámaras, &quot;*&quot; (sin más adiciones) se puede utilizar como comodín para todos los dispositivos. <br>\nNo es necesario especificar la ruta en su totalidad. Es suficiente usar una identificación única. <br>\nEjemplos: <br>\n\"*: DCIM\" (todas las cámaras: todas las carpetas que contienen &quot; DCIM &quot;) <br>\n\"*: DCIM; MyCamera: IMÁGENES\" (también desde la cámara &quot; MyCamera &quot;: todas las carpetas que contienen &quot;IMÁGENES&quot;) <br>\n&quot;&quot; (El campo permanece vacío: Copia de seguridad de todas las carpetas de todas las cámaras.) <br>\n<br>\nEn lugar de buscar un patrón, también se pueden especificar rutas absolutas. Estos siempre deben estar marcados con &quot;!/&quot; comienzo:\n&quot;MyCamera:!/store_00020002/DCIM&quot; <br>\nTan pronto como se aplica una carpeta absoluta a una cámara, ya no hay que buscar un patrón para ella. Esto ahorra tiempo.\nMás información en <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\"> wiki </a>",
     "backup_header2": "Modo de respaldo secundario predeterminado (solo respaldos de red)",
     "backup_label2": "Seleccione un modo de copia de seguridad predeterminado secundario para ejecutar después del principal:",
-    "update_linktext": "Actualizar ahora",
     "wifi_section": "Configuración WiFi",
     "wifi_country_label": "Seleccione el país en el que se utilizará esta Little Backup Box",
     "wifi_country_header": "País WLAN",
@@ -144,7 +144,6 @@
     "backup_usb_usb": "USB almacenar &rarr; USB almacenamiento",
     "backup_usb_internal": "USB Almacenar &rarr; almacenamiento interno",
     "backup_camera_usb": "Cámara &rarr; USB almacenamiento",
-    "backup_ios_usb": "iOS &rarr; USB almacenamiento",
     "imageviewer": {
       "section": "Visor de imágenes View",
       "convert_heic_header": "Convertir imágenes heic a jpeg",
@@ -264,21 +263,27 @@
       "color_alert_label": "Color de fuente para advertencias",
       "color_high_label": "Color de fuente para el texto resaltado",
       "contrast_label": "Contraste",
-      "rotate_label": "Rotación de pantalla"
+      "rotate_label": "Rotación de pantalla",
+      "rotate_header": "Girar pantalla"
     },
     "menu": {
       "section": "Mostrar menú",
       "enable_header": "Activar menú de visualización",
       "enable_label": "¿Se debe activar el menú de visualización?",
-      "button_combination_header": "Configuración de los botones de control",
       "button_combination_label": "Seleccione una variante usando la tabla",
       "button_combination_variant": "Variante",
       "button_up": "arriba",
       "button_down": "abajo",
       "button_right": "derecha",
       "button_left": "izquierda",
-      "button_bouncetime_header": "Tiempo de rebote de los botones",
-      "button_bouncetime_label": "El tiempo de rebote (en milisegundos) indica qué tan rápido un botón alcanza un estado estable. Después de una acción, un botón se bloquea por este tiempo."
+      "button_bouncetime_label": "El tiempo de rebote (en milisegundos) indica qué tan rápido un botón alcanza un estado estable. Después de una acción, un botón se bloquea por este tiempo.",
+      "button_rotate_label": "Rotación del botón",
+      "button_header": "Botones de control",
+      "rotate_header": "Rotar mapeo de botones",
+      "button_edge_detection_label": "Detección de borde de botón",
+      "button_resitor_pull_label": "Pull resistor",
+      "button_comment": "Comentario",
+      "button_edit_custom_configfile": "Editar archivo de configuración personalizado"
     },
     "hardware": {
       "section": "Hardware",
@@ -288,12 +293,17 @@
         "header": "Control del ventilador",
         "temp_label": "Umbral de temperatura"
       }
+    },
+    "lang_time_section": "Idioma / Language y zona horaria",
+    "time_zone_label": "Zona de tiempo",
+    "time_zone_header": "Por favor seleccione su zona horaria",
+    "update": {
+      "development_linktext": "Actualizar ahora - development branch",
+      "linktext": "Actualizar ahora"
     }
   },
   "tools": {
     "tools": "Herramientas",
-    "mount_header": "Montar dispositivo de almacenamiento",
-    "mount_b": "Montar",
     "umount_b": "Eliminar",
     "repair": "Reparar",
     "select_partition": "Seleccionar partición",
@@ -310,13 +320,19 @@
       "probe_non_destructive": "tratar de mantener los datos (lento)",
       "probe_destructive": "BORRAR datos (más rápido)",
       "b": "prueba de inicio"
+    },
+    "mount": {
+      "b": "Montar",
+      "header": "Montar dispositivo de almacenamiento",
+      "target": "Objetivo",
+      "source": "Origen",
+      "usb": "USB"
     }
   },
   "box": {
     "backup": {
       "insert_source_1": "Listo",
-      "insert_source_2": "Insertar origen",
-      "int_storage_ok": "Almacenamiento int. o.k.",
+      "insert_source_2": "Insertar orígenes",
       "invalid_mode_combination_1": "Modo",
       "invalid_mode_combination_2": "de combinacion",
       "invalid_mode_combination_3": "no válido",
@@ -334,18 +350,13 @@
       "camera_ok": "Cámara o.k.",
       "complete": "Copia completada",
       "connect_camera_1": "Listo",
-      "connect_camera_2": "Conectar la camara",
-      "connect_ios_1": "Listo",
-      "connect_ios_2": "Conectar",
-      "connect_ios_3": "dispositivo iOS",
+      "connect_camera_2": "Conectar cámaras",
       "error_cooling_1": "¡Error!",
       "error_cooling_2": "Enfriamiento",
       "error_cooling_3": "Sospecha de",
       "error_cooling_4": "sobrecalentamiento",
       "files_missing": "¡Faltan archivos!",
       "lost_device": "Err. Dispositivo perdido!",
-      "no_ios_waiting_1": "Sin dispositivo iOS",
-      "no_ios_waiting_2": "Espera",
       "of": "de",
       "try_backup": "Prueba copia",
       "working": "Trabajando",
@@ -369,25 +380,19 @@
       "mode_camera": "Cámara",
       "mode_cloud": "Nube",
       "mode_internal": "Int. almacenamiento",
-      "mode_ios": "iOS",
-      "mode_rsyncserver": "rsync",
       "storage_filesystem_short": "FS",
       "exception": "Error desconocido",
       "time_remaining": "Tiempo",
       "mount": "Desmontar",
       "umount": "Desmontar",
-      "usb_ios": "USB iOS",
-      "result_suspect": "Exito poco claro.",
       "files_copied": "arch. copiado",
       "generating_thumbnails_finding_images1": "Gen. de miniaturas",
       "generating_thumbnails_finding_images3": "Sólo un momento...",
       "insert_target_1": "Listo",
-      "insert_target_2": "Insertar destino USB",
+      "insert_target_2": "Insertar destino",
       "usb_target_ok": "Almacenamiento ext. o.k.",
-      "mode_usb": "USB Almacenamiento",
+      "mode_usb": "Almacenamiento USB",
       "usb_source_ok": "Origen o.k.",
-      "usb_1": "Destino USB",
-      "usb_2": "Fuente USB",
       "mode_thumbnails": "De miniaturas",
       "camera_storage_not_exists_2": "no existe.",
       "camera_storage_not_exists_1": "Cámara-almacenamiento",
@@ -396,7 +401,6 @@
       "mode_database": "Base de datos",
       "cleaning_database": "Base de datos de limpieza",
       "counting_images": "Contando imágenes.",
-      "unknown": "número desconocido (error)",
       "generating_thumbnails": "Gen. de miniaturas",
       "updating_exif": "Actualización de EXIF",
       "generating_database": "Sincronizar base de datos",
@@ -407,7 +411,19 @@
         "disconnecting": "Desconectar VPN",
         "connecting_success": "VPN conectado"
       },
-      "error_code": "Código de error"
+      "error_code": "Código de error",
+      "usb_target": "Destino USB",
+      "usb_source": "Fuente USB",
+      "cloud": "Nube",
+      "cloud_ok": "Cloud o.k.",
+      "internal_ok": "Almacenamiento int. o.k.",
+      "serial": "Número de serie",
+      "source_id": "ID de fuente",
+      "usb": "USB",
+      "mode_cloud_rsync": "Servidor rsync",
+      "mode_cameras": "Cámaras",
+      "mode_usbs": "Almacenamientos USB",
+      "folder": "Carpeta"
     },
     "cronip": {
       "offline": "desconectado",
@@ -448,6 +464,12 @@
         "probe_stop2": "terminado",
         "probe_non_destructive": "no destructivo",
         "probe_destructive": "destructivo"
+      },
+      "fsck": {
+        "start1": "Iniciar sistema",
+        "start2": "de archivos",
+        "stop1": "Sale del sist.",
+        "stop2": "de archivos"
       }
     },
     "menu": {
@@ -460,8 +482,6 @@
       "backup_mode_camera": "Cámara",
       "backup_mode_cloud": "Nube",
       "backup_mode_internal": "Int.",
-      "backup_mode_ios": "iOS",
-      "backup_mode_rsyncserver": "rsync",
       "backup_mode_usb": "USB",
       "backup_stop": "DETENER copia",
       "ip": "dirección IP",
@@ -469,9 +489,12 @@
       "power_reboot": "Reiniciar",
       "system": "Sistema",
       "network": "Red",
-      "comitup_reset": "Restablecer Comitup"
+      "comitup_reset": "Restablecer Comitup",
+      "backup_mode_cloud_rsync": "Servidor rsync",
+      "vpn_stop": "Desconectar VPN"
     },
-    "backup_local": "localmente"
+    "backup_local": "localmente",
+    "finished": "finalizado"
   },
   "seconds_short": "s",
   "sysconditions": {
@@ -491,7 +514,9 @@
     "update": {
       "warning": "¡NO SE DETENGA ni recargue mientras corre!",
       "return_link": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE TERMINE LA ACTUALIZACIÓN!",
-      "header": "Little Backup Box Actualizador"
+      "header": "Little Backup Box Actualizador",
+      "development_header": "Little Backup Box Actualizador - development-branch",
+      "development_warning": "¡NO SE DETENGA ni recargue mientras corre!"
     },
     "no_cmd": "No se ha dado ningún comando válido.",
     "link_text_home": "Regrese a Little Backup Box",
@@ -512,17 +537,19 @@
     "password_set_link": "Establecer contraseña global",
     "link_text_home_running": "Regrese a Little Backup Box - ¡NO HAGA CLIC ANTES DE QUE EL COMANDO HAYA TERMINADO!<br>(Espera &quot;FINISHED&quot;.)",
     "mail_result": "Resultado del correo electrónico",
-    "reset": "reiniciar"
+    "reset": "reiniciar",
+    "fsck": {
+      "header": "Comprobación del sistema de archivos",
+      "warning": "¡El sistema de archivos podría estar dañado!"
+    }
   },
   "view": {
     "view": "Visor de imágenes",
     "filter": {
       "medium": "Medio de almacenamiento",
-      "medium_usb_storage": "Destino USB",
       "section": "Filtrar",
       "images_per_page": "Imágenes por página",
       "medium_internal": "Almacenamiento int.",
-      "medium_usb_source": "USB-Origen",
       "directory": "Carpeta",
       "no_medium": "No se ha seleccionado ningún medio válido.",
       "date": "Fecha",
@@ -534,7 +561,10 @@
       "variable": "Valores EXIF",
       "order_by_id": "ID",
       "file_type_extension": "Extensión de tipo de archivo",
-      "camera_model_name": "Cámara"
+      "camera_model_name": "Cámara",
+      "medium_target_local": "Destino local",
+      "medium_source_local": "Origen local",
+      "file_type": "Tipo de archivo"
     },
     "images": {
       "download": "Descargar originales",

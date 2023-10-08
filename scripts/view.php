@@ -8,7 +8,11 @@
 	$config = parse_ini_file("config.cfg", false);
 	$constants = parse_ini_file("constants.sh", false);
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+
+	# read parameters
+	extract ($_POST,EXTR_SKIP);
+	extract ($_GET,EXTR_SKIP);
 
 	include("sub-popup.php");
 
@@ -19,6 +23,14 @@
 		symlink("/media", "./media");
 	}
 
+
+	function urlencode_keep_slashes($href) {
+		return(
+			str_replace('//','/',
+				str_replace('%2F','/',rawurlencode($href))
+			)
+		);
+	}
 
 	function navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate,$label_id) {
 		if ($view_mode == "grid") {
@@ -173,35 +185,32 @@
 	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5,$constants['const_VIEW_GRID_COLUMNS']*10,$constants['const_VIEW_GRID_COLUMNS']*20,$constants['const_VIEW_GRID_COLUMNS']*50);
 
 	# standard values
-	$filter_medium					= "-";
-	$view_mode						= "grid";
-	$filter_images_per_page			= $IMAGES_PER_PAGE_OPTIONS[1];
-	$filter_directory				= "";
-	$filter_date					= "all";
-	$filter_rating					= "all";
-	$filter_file_type_extension		= "all";
-	$filter_camera_model_name		= "all";
-	$filter_variable_field			= "";
-	$filter_variable_value			= "";
-	$ID								= 0;
-	$IMAGE_ID						= 0;
-	$IMAGE_ID_PRE					= 0;
-	$IMAGE_ID_POST					= 0;
-	$IMAGE_ID_FIRST					= 0;
-	$IMAGE_ID_LAST					= 0;
-	$imagecount						= 0;
-	$order_by          				= "Create_Date";
-	$order_dir						= "DESC";
-	$select_offset					= 0;
+	$filter_medium					= isset($filter_medium) ? $filter_medium : "-";
+	$view_mode						= isset($view_mode) ? $view_mode :  "grid";
+	$filter_images_per_page			= isset($filter_images_per_page) ? $filter_images_per_page :  $IMAGES_PER_PAGE_OPTIONS[1];
+	$filter_directory				= isset($filter_directory) ? $filter_directory :  "";
+	$filter_date					= isset($filter_date) ? $filter_date :  "all";
+	$filter_rating					= isset($filter_rating) ? $filter_rating :  "all";
+	$filter_file_type				= isset($filter_file_type) ? $filter_file_type :  "all";
+	$filter_file_type_extension		= isset($filter_file_type_extension) ? $filter_file_type_extension :  "all";
+	$filter_camera_model_name		= isset($filter_camera_model_name) ? $filter_camera_model_name :  "all";
+	$filter_variable_field			= isset($filter_variable_field) ? $filter_variable_field :  "";
+	$filter_variable_value			= isset($filter_variable_value) ? $filter_variable_value :  "";
+	$ID								= isset($ID) ? $ID :  0;
+	$IMAGE_ID						= isset($IMAGE_ID) ? $IMAGE_ID :  0;
+	$IMAGE_ID_PRE					= isset($IMAGE_ID_PRE) ? $IMAGE_ID_PRE :  0;
+	$IMAGE_ID_POST					= isset($IMAGE_ID_POST) ? $IMAGE_ID_POST :  0;
+	$IMAGE_ID_FIRST					= isset($IMAGE_ID_FIRST) ? $IMAGE_ID_FIRST :  0;
+	$IMAGE_ID_LAST					= isset($IMAGE_ID_LAST) ? $IMAGE_ID_LAST :  0;
+	$imagecount						= isset($imagecount) ? $imagecount :  0;
+	$order_by          				= isset($order_by) ? $order_by :  "Create_Date";
+	$order_dir						= isset($order_dir) ? $order_dir :  "DESC";
+	$select_offset					= isset($select_offset) ? $select_offset :  0;
 
 	$FIELDS_BLOCKED_ARRAY	= array(
 		"ID",
 		"ExifTool_Version_Number"
 	);
-
-	# read parameters
-	extract ($_POST);
-	extract ($_GET);
 
 	## security-checks
 	if (! in_array($filter_images_per_page,$IMAGES_PER_PAGE_OPTIONS)) {
@@ -221,6 +230,7 @@
 		}
 	}
 
+
 	# ratings-preparation
 	$RATINGS_ARRAY=array();
 	foreach ($_POST as $key=>$val) {
@@ -236,9 +246,8 @@
 		exec("df -h", $mounted_devices_array);
 
 		$mounted_devices	= implode("|",$mounted_devices_array);
-
-		if (strpos($mounted_devices,$constants['const_USB_TARGET_MOUNT_POINT'])!== false) {$filter_medium="usb_storage";}
-		elseif (strpos($mounted_devices,$constants['const_USB_SOURCE_MOUNT_POINT'])!== false) {$filter_medium="usb_source";}
+		if (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_TARGET'])) {$filter_medium="target_local";}
+		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE'])) {$filter_medium="source_local";}
 		else {$filter_medium="internal";}
 	}
 
@@ -247,6 +256,7 @@
 	$WHERE['directories']			= "";
 	$WHERE['dates']					= "";
 	$WHERE['ratings']				= "";
+	$WHERE['file_types']			= "";
 	$WHERE['file_type_extensions']	= "";
 	$WHERE['camera_model_name']		= "";
 	$WHERE['variable']				= "";
@@ -255,18 +265,20 @@
 		$filter_directory	= str_replace("+","=",$filter_directory);
 		$filter_directory	= base64_decode($filter_directory);
 
-		add_to_where("Directory='" . $filter_directory . "'",array('images','dates','ratings','file_type_extensions','camera_model_name','variable'));
+		add_to_where("Directory='" . $filter_directory . "'",array('images','dates','ratings','file_types','file_type_extensions','camera_model_name','variable'));
 	}
 
-	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'",array('images','directories','ratings','file_type_extensions','camera_model_name','variable'));}
+	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'",array('images','directories','ratings','file_types','file_type_extensions','camera_model_name','variable'));}
 
 	if (isset($delete_ratings_1)) {$filter_rating="all";} # after delete remove rating-filter
 
-	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating,array('images','dates','file_type_extensions','camera_model_name','directories'));}
+	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating,array('images','dates','file_types','file_type_extensions','camera_model_name','directories'));}
 
-	if ($filter_file_type_extension != "all") {add_to_where("File_Type_Extension = '" . $filter_file_type_extension . "'",array('images','dates','ratings','camera_model_name','directories'));}
+	if ($filter_file_type != "all") {add_to_where("File_Type = '" . $filter_file_type . "'",array('images','dates','ratings','file_type_extensions','camera_model_name','directories'));}
 
-	if ($filter_camera_model_name != "all") {add_to_where("Camera_Model_Name = '" . $filter_camera_model_name . "'",array('images','dates','ratings','file_type_extensions','directories'));}
+	if ($filter_file_type_extension != "all") {add_to_where("File_Type_Extension = '" . $filter_file_type_extension . "'",array('images','dates','ratings','file_types','camera_model_name','directories'));}
+
+	if ($filter_camera_model_name != "all") {add_to_where("Camera_Model_Name = '" . $filter_camera_model_name . "'",array('images','dates','ratings','file_types','file_type_extensions','directories'));}
 
 	if ($filter_variable_value != "") {
 		$filter_variable_value	= str_replace("+","=",$filter_variable_value);
@@ -280,26 +292,35 @@
 
 	# define path of the database-file
 	$STORAGE_PATH	= "";
-	if ($filter_medium == "usb_storage") {
-		$STORAGE_PATH	=$constants['const_USB_TARGET_MOUNT_POINT'];
+	if ($filter_medium == "target_local") {
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_TARGET'];
 	}
-	elseif ($filter_medium == "usb_source") {
-		$STORAGE_PATH	=$constants['const_USB_SOURCE_MOUNT_POINT'];
+	elseif ($filter_medium == "source_local") {
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE'];
 	}
 	elseif ($filter_medium == "internal") {
-		$STORAGE_PATH	=$constants['const_INTERNAL_BACKUP_DIR'];
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_INTERNAL_BACKUP_DIR'];
 	}
 
 	# Database-query
-	$DATABASE_CONNECTED=false;
+	$DATABASE_CONNECTED=true;
 	$DATABASE_FILE	= "";
 	if ($STORAGE_PATH != "") {
 		$DATABASE_FILE	= $STORAGE_PATH . '/' . $constants['const_IMAGE_DATABASE_FILENAME'];
 
-		try {
-			shell_exec("sudo chown www-data:www-data '" . $DATABASE_FILE ."'");
-			$db = new SQLite3($DATABASE_FILE);
+		if (file_exists($DATABASE_FILE)) {
+			try {
 
+				shell_exec("sudo chown www-data:www-data '" . $DATABASE_FILE ."'");
+				$db = new SQLite3($DATABASE_FILE);
+			} catch (Exception $e) {
+				$DATABASE_CONNECTED=false;
+			}
+		} else {
+			$DATABASE_CONNECTED=false;
+		}
+
+		if ($DATABASE_CONNECTED) {
 			# save ratings
 			foreach($RATINGS_ARRAY as $key=>$val) {
 				$key	= intval($key);
@@ -375,6 +396,9 @@
 			$statement				= $db->prepare("SELECT substr(replace(Create_Date,':','-'),1,10) as Create_Day, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['dates'] . " group by Create_Day order by Create_Day desc;");
 			$DATES					= $statement->execute();
 
+			$statement				= $db->prepare("SELECT File_Type, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['file_types'] . " group by File_Type order by File_Type;");
+			$FILE_TYPES				= $statement->execute();
+
 			$statement				= $db->prepare("SELECT File_Type_Extension, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['file_type_extensions'] . " group by File_Type_Extension order by File_Type_Extension;");
 			$FILE_TYPE_EXTENSIONS	= $statement->execute();
 
@@ -428,12 +452,7 @@
 					$ID_OLD = $IMAGE['ID'];
 				}
 			}
-
-			$DATABASE_CONNECTED=true;
-		} catch (Error $e) {
-			$DATABASE_CONNECTED=false;
 		}
-
 	}
 
 	# define GET_PARAMETER
@@ -492,8 +511,8 @@
 						<label for="filter_medium"><?php echo L::view_filter_medium; ?></label><br>
 
 							<select name="filter_medium" id="filter_medium" onchange="this.form.submit()">
-								<option value="usb_storage" <?php echo ($filter_medium == "usb_storage"?" selected":""); ?>><?php echo L::view_filter_medium_usb_storage; ?></option>";
-								<option value="usb_source" <?php echo ($filter_medium == "usb_source"?" selected":""); ?>><?php echo L::view_filter_medium_usb_source; ?></option>";
+								<option value="target_local" <?php echo ($filter_medium == "target_local"?" selected":""); ?>><?php echo L::view_filter_medium_target_local; ?></option>";
+								<option value="source_local" <?php echo ($filter_medium == "source_local"?" selected":""); ?>><?php echo L::view_filter_medium_source_local; ?></option>";
 								<option value="internal" <?php echo ($filter_medium == "internal"?" selected":""); ?>><?php echo L::view_filter_medium_internal; ?></option>";
 							</select>
 					</div>
@@ -541,6 +560,20 @@
 				</div>
 
 				<div style="display: flow-root">
+					<?php if ($DATABASE_CONNECTED) { ?>
+						<div style="float:left;padding: 5px;">
+							<label for="filter_file_type"><?php echo L::view_filter_file_type; ?></label><br>
+								<select name="filter_file_type" id="filter_file_type" onchange="this.form.submit()">
+									<option value="all" <?php echo ($filter_file_type == ""?" selected":""); ?>>-</option>
+									<?php
+										while ($FILE_TYPE = $FILE_TYPES->fetchArray(SQLITE3_ASSOC)) {
+											echo "<option value=\"" . $FILE_TYPE['File_Type'] . "\" " . ($filter_file_type == $FILE_TYPE['File_Type']?" selected":"") . ">" . $FILE_TYPE['File_Type'] . " (" . $FILE_TYPE['FILECOUNT'] . ")</option>";
+										}
+									?>
+								</select>
+						</div>
+					<?php } ?>
+
 					<?php if ($DATABASE_CONNECTED) { ?>
 						<div style="float:left;padding: 5px;">
 							<label for="filter_file_type_extension"><?php echo L::view_filter_file_type_extension; ?></label><br>
@@ -649,10 +682,14 @@
 						foreach ($IMAGES_ARRAY as $IMAGE) {
 
 							$i	+= 1;
+							$interpretedDate	= date_create($IMAGE['Create_Date']);
+							if ($interpretedDate == false) {
+								$DateExplode	= explode('_',$IMAGE['Create_Date']);
+								$interpretedDate=date_create($DateExplode[0] . '-' . $DateExplode[1] . '-' . $DateExplode[2] . ' ' . $DateExplode[3] . ':' .  $DateExplode[4] . ':' . $DateExplode[5]);
+							}
+							$IMAGE_DATE	= date_format($interpretedDate,L::view_date_format);
 
-							$IMAGE_DATE	= date_format(date_create($IMAGE['Create_Date']),L::view_date_format);
-
-							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
+							$Directory				= $STORAGE_PATH . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
 							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
 							?>
@@ -667,7 +704,7 @@
 											}
 										?>
 										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . ($IMAGE['ID']); ?>">
-											<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $IMAGE_FILENAME_TIMS; ?>">
+											<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_TIMS); ?>">
 										</a>
 									</div>
 
@@ -689,8 +726,7 @@
 					elseif ($view_mode == "single") {
 // SINGLE
 						$IMAGE = $IMAGES_ARRAY[0];
-
-						$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
+						$Directory				= $STORAGE_PATH . $IMAGE['Directory'];
 						$IMAGE_ID				= $IMAGE['ID'];
 						$IMAGE_FILENAME			= $Directory . '/' . $IMAGE['File_Name'];
 						$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
@@ -700,11 +736,10 @@
 
 						<div style="float:left;width: 100%;padding: 5px;">
 							<?php
-
-								if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " " . $constants['const_FILE_EXTENSIONS_LIST_HEIC'] . " " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+								if (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_WEB_IMAGES'] . ";" . $constants['const_FILE_EXTENSIONS_LIST_HEIC'] . ";" . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . ";" . $constants['const_FILE_EXTENSIONS_LIST_TIF'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
 // 										image-file
 
-									if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_JPG'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+									if (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_WEB_IMAGES'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
 										$FILENAME_DISPLAY	= $IMAGE_FILENAME;
 									} else {
 										$FILENAME_DISPLAY	= $IMAGE_FILENAME_TIMS;
@@ -713,14 +748,14 @@
 									<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 
 										<div class="img-magnifier-container">
-											<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%;border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo $FILENAME_DISPLAY; ?>">
+											<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%;border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($FILENAME_DISPLAY); ?>">
 										</div>
 
 									</div>
 
 									<?php
-										if (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
-// 											RAW-image
+										if (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . ";" . $constants['const_FILE_EXTENSIONS_LIST_TIF'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
+// 											RAW-image or TIF image
 											echo "<div style=\"width: 100%\">";
 												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_image . "</p>";
 											echo "</div>";
@@ -733,7 +768,7 @@
 										</div>
 
 										<div style="float:left;width: 34%;text-align: center;padding: 0;">
-											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+											<a href="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" target="_blank">
 												<?php echo L::view_images_download; ?>
 											</a>
 										</div>
@@ -744,7 +779,7 @@
 									</div>
 
 							<?php
-								} elseif (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_VIDEO'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+								} elseif (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_VIDEO'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
 // 										video-file
 									$IMAGE_FILENAME_PREVIEW	= $IMAGE_FILENAME;
 									$LOW_RES	= false;
@@ -759,7 +794,7 @@
 									?>
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 											<video width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
-												<source src="<?php echo $IMAGE_FILENAME_PREVIEW; ?>" type="video/<?php echo $IMAGE_TYPE; ?>"></source>
+												<source src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_PREVIEW); ?>" type="video/<?php echo $IMAGE_TYPE; ?>"></source>
 											</video>
 
 											<?php
@@ -773,25 +808,25 @@
 										<div padding: 5px;font-size:0.8em;">
 											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
 
-											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+											<a href="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" target="_blank">
 												<?php echo L::view_images_download; ?>
 											</a>
 										</div>
 
 									<?php
-								} elseif (strpos(" " . $constants['const_FILE_EXTENSIONS_LIST_AUDIO'] . " "," " . strtolower($IMAGE_FILENAME_PARTS['extension']) . " ") !== false ) {
+								} elseif (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_AUDIO'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
 // 										audio-file
 									?>
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 											<audio width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
-												<source src="<?php echo $IMAGE_FILENAME; ?>" type="audio/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>">">
+												<source src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" type="audio/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>">">
 											</audio>
 										</div>
 
 										<div padding: 5px;font-size:0.8em;">
 											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
 
-											<a href="<?php echo $IMAGE_FILENAME; ?>" target="_blank">
+											<a href="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" target="_blank">
 												<?php echo L::view_images_download; ?>
 											</a>
 										</div>

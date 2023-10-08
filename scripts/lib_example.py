@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
 # Author: Stefan Saam, github@saams.de
 
@@ -17,20 +17,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-source "${WORKING_DIR}/constants.sh"
-CONFIG="${WORKING_DIR}/config.cfg"
-source "$CONFIG"
+import lib_setup
 
-# Definitions
-raspi_config="/boot/config.txt"
+import datetime
+import os
 
-# fan control
-dtoverlay=gpio-fan,gpiopin=18,temp=60000
-if [ ! "${conf_FAN_PWM_GPIO}" = "-" ] && [ ! "${conf_FAN_PWM_TEMP_C}" = "0" ]; then
-	# activate fan control
-	raspi-config nonint do_fan 0 ${conf_FAN_PWM_GPIO} ${conf_FAN_PWM_TEMP_C}
-else
-	# inactivate fan control
-	raspi-config nonint do_fan 1
-fi
+import subprocess
+
+
+class display(object):
+
+	def __init__(self):
+		self.WORKING_DIR = os.path.dirname(__file__)
+
+		self.setup	= lib_setup.setup()
+
+
+if __name__ == "__main__":
+	pass

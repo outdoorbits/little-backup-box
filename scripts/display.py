@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Author: Stefan Saam, github@saams.de
 
 #######################################################################
@@ -46,7 +48,7 @@ import time
 import sys
 import os
 
-from configobj import ConfigObj
+import lib_setup
 
 from luma.core.interface.serial import i2c, spi, pcf8574
 from luma.core.interface.parallel import bitbang_6800
@@ -62,30 +64,28 @@ WORKING_DIR = os.path.dirname(__file__)
 class DISPLAY(object):
 
 	def __init__(self):
-		config = ConfigObj("{}/config.cfg".format(WORKING_DIR))
+		self.__setup	= lib_setup.setup()
 
-		self.conf_DISP_CONNECTION			= config['conf_DISP_CONNECTION']
-		self.conf_DISP_DRIVER				= config['conf_DISP_DRIVER']
-		self.conf_DISP_I2C_ADDRESS			= int(config['conf_DISP_I2C_ADDRESS'], 16)
-		self.conf_DISP_SPI_PORT				= int(config['conf_DISP_SPI_PORT'])
-		self.conf_DISP_RESOLUTION_X			= int(config['conf_DISP_RESOLUTION_X'])
-		self.conf_DISP_RESOLUTION_Y			= int(config['conf_DISP_RESOLUTION_Y'])
-		self.conf_DISP_ROTATE				= int(config['conf_DISP_ROTATE'])
-		self.conf_DISP_CONTRAST				= int(config['conf_DISP_CONTRAST'])
-		self.conf_DISP_COLOR_MODEL			= str(config['conf_DISP_COLOR_MODEL'])
-		self.conf_DISP_COLOR_TEXT			= str(config['conf_DISP_COLOR_TEXT'])
-		self.conf_DISP_COLOR_HIGH			= str(config['conf_DISP_COLOR_HIGH'])
-		self.conf_DISP_COLOR_ALERT			= str(config['conf_DISP_COLOR_ALERT'])
-		self.conf_DISP_FONT_SIZE			= int(config['conf_DISP_FONT_SIZE'])
-		self.conf_DISP_BLACK_ON_POWER_OFF	= config['conf_DISP_BLACK_ON_POWER_OFF'] == "true"
-		self.conf_DISP_FRAME_TIME			= float(config['conf_DISP_FRAME_TIME'])
-		self.conf_MENU_ENABLED				= config['conf_MENU_ENABLED'] == "true"
+		self.conf_DISP_CONNECTION			= self.__setup.get_val('conf_DISP_CONNECTION')
+		self.conf_DISP_DRIVER				= self.__setup.get_val('conf_DISP_DRIVER')
+		self.conf_DISP_I2C_ADDRESS			= self.__setup.get_val('conf_DISP_I2C_ADDRESS')
+		self.conf_DISP_SPI_PORT				= self.__setup.get_val('conf_DISP_SPI_PORT')
+		self.conf_DISP_RESOLUTION_X			= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		self.conf_DISP_RESOLUTION_Y			= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		self.conf_DISP_ROTATE				= self.__setup.get_val('conf_DISP_ROTATE')
+		self.conf_DISP_CONTRAST				= self.__setup.get_val('conf_DISP_CONTRAST')
+		self.conf_DISP_COLOR_MODEL			= self.__setup.get_val('conf_DISP_COLOR_MODEL')
+		self.conf_DISP_COLOR_TEXT			= self.__setup.get_val('conf_DISP_COLOR_TEXT')
+		self.conf_DISP_COLOR_HIGH			= self.__setup.get_val('conf_DISP_COLOR_HIGH')
+		self.conf_DISP_COLOR_ALERT			= self.__setup.get_val('conf_DISP_COLOR_ALERT')
+		self.conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
+		self.conf_DISP_BLACK_ON_POWER_OFF	= self.__setup.get_val('conf_DISP_BLACK_ON_POWER_OFF')
+		self.conf_DISP_FRAME_TIME			= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.conf_MENU_ENABLED				= self.__setup.get_val('conf_MENU_ENABLED')
 
-		constants = ConfigObj("{}/constants.sh".format(WORKING_DIR))
-
-		self.const_DISPLAY_CONTENT_FOLDER	= constants['const_DISPLAY_CONTENT_FOLDER']
-		self.const_DISPLAY_CONTENT_OLD_FILE	= constants['const_DISPLAY_CONTENT_OLD_FILE']
-		self.const_DISPLAY_LINES_LIMIT		= int(constants['const_DISPLAY_LINES_LIMIT'])
+		self.const_DISPLAY_CONTENT_FOLDER	= self.__setup.get_val('const_DISPLAY_CONTENT_FOLDER')
+		self.const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		self.const_DISPLAY_LINES_LIMIT		= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
 
 		#define colors
 		color = {}
@@ -153,7 +153,7 @@ class DISPLAY(object):
 
 		## start display menu
 		if self.conf_MENU_ENABLED:
-			DISPLAYMENU	= displaymenu.menu(self.maxLines)
+			DISPLAYMENU	= displaymenu.menu(self.maxLines,self.__setup)
 
 	def calculate_LineSize(self):
 		# calculate size of text
@@ -231,7 +231,7 @@ class DISPLAY(object):
 								if FormatValue == 'h' or FormatValue == 'hc': # highlight or highlight color
 									fg_fill = self.color_high
 								elif FormatValue == 'a': # alert
-									if color_alert != color_text and color_alert != color_high:
+									if self.color_alert not in [self.color_text, self.color_high]:
 										fg_fill = self.color_alert
 									elif self.color_alert != self.color_high:
 										fg_fill = self.color_alert
@@ -303,77 +303,91 @@ class DISPLAY(object):
 		# start endless loop to display content
 		while(True):
 			import_old_file = True
+			frame_time = self.conf_DISP_FRAME_TIME / 4
 
-			ContenFileList	= os.listdir(self.const_DISPLAY_CONTENT_FOLDER)
-			if len(ContenFileList):
+			try:
+				ContentFileList	= os.listdir(self.const_DISPLAY_CONTENT_FOLDER)
+			except:
+				ContentFileList	= []
 
-				ContenFileList.sort()
-				ContentFile = "{}/{}".format(self.const_DISPLAY_CONTENT_FOLDER,ContenFileList[0])
+			if len(ContentFileList):
 
-				frame_time = self.conf_DISP_FRAME_TIME
+				ContentFileList.sort()
 
-				Lines = []
-				# read new lines
-				with open(ContentFile, 'r') as CF:
-					for Line in CF:
+				ContentFile	= ''
+				for ContentFile in ContentFileList:
+					ContentFile = "{}/{}".format(self.const_DISPLAY_CONTENT_FOLDER,ContentFile)
+					if os.path.isfile(ContentFile):
+						break
 
-						Line = Line.strip()
+				if ContentFile:
 
-						if Line[0:4] == 'set:': # global settings line
+					# file could be in writing process, wait for minimal file age
+					if time.time() - os.stat(ContentFile).st_mtime < 0.2:
+						time.sleep(0.2)
 
-							settingStr = Line[4:]
-							settings = settingStr.split(',')
+					Lines = []
+					# read new lines
+					with open(ContentFile, 'r') as CF:
+						for Line in CF:
+							frame_time = self.conf_DISP_FRAME_TIME
 
-							for setting in settings:
+							Line = Line.strip()
 
-								if '=' in setting:
-									SettingType, SettingValue = setting.split('=',1)
-								else:
-									SettingType = setting
+							if Line[0:4] == 'set:': # global settings line
 
-								if SettingType == 'clear':
-									import_old_file = False
+								settingStr = Line[4:]
+								settings = settingStr.split(',')
 
-								if SettingType == 'time' and float(SettingValue) >= 0:
-									frame_time = float(SettingValue)
+								for setting in settings:
 
-						elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
+									if '=' in setting:
+										SettingType, SettingValue = setting.split('=',1)
+									else:
+										SettingType = setting
 
-							if Line:
-								if (Line[0:1] == ':'):
-										Line = "s=h{}".format(Line)
-								elif ":" not in Line:
-									Line = "s=h:{}".format(Line)
+									if SettingType == 'clear':
+										import_old_file = False
 
-								Lines.append(Line)
+									if SettingType == 'time' and float(SettingValue) >= 0:
+										frame_time = float(SettingValue)
 
-				# read old lines
-				if import_old_file:
-					if len(Lines) < self.const_DISPLAY_LINES_LIMIT and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
-						with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
-							for Line in oCF:
+							elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
 
-								Line = Line.strip()
+								if Line:
+									if (Line[0:1] == ':'):
+											Line = "s=h{}".format(Line)
+									elif ":" not in Line:
+										Line = "s=h:{}".format(Line)
 
-								if len(Lines) < self.const_DISPLAY_LINES_LIMIT:
-									Line = Line.split(':',1)[-1]
-									if Line:
-										Line = "s=b:{}".format(Line)
-										Lines.append(Line)
+									Lines.append(Line)
 
-				# fill line count to const_DISPLAY_LINES_LIMIT
-				while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
-					Lines.append("s=b:")
+					# read old lines
+					if import_old_file:
+						if len(Lines) < self.const_DISPLAY_LINES_LIMIT and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
+							with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
+								for Line in oCF:
 
-				# remove content file
-				os.remove(ContentFile)
+									Line = Line.strip()
 
-				# move lines to old lines file
-				with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
-					oCF.write("\n".join(Lines))
-					print("\n".join(Lines))
+									if len(Lines) < self.const_DISPLAY_LINES_LIMIT:
+										Line = Line.split(':',1)[-1]
+										if Line:
+											Line = "s=b:{}".format(Line)
+											Lines.append(Line)
 
-				self.show(Lines)
+					# fill line count to const_DISPLAY_LINES_LIMIT
+					while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
+						Lines.append("s=b:")
+
+					# remove content file
+					os.remove(ContentFile)
+
+					# move lines to old lines file
+					with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
+						oCF.write("\n".join(Lines))
+
+					self.show(Lines)
 
 			time.sleep(frame_time)
 

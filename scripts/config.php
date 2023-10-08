@@ -10,11 +10,13 @@
 	$constants = parse_ini_file("constants.sh", false);
 
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] .'/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-popup.php");
 
 	include("get-cloudservices.php");
+
+	$TIME_ZONE_old	= $config["conf_TIME_ZONE"];
 
 	$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
 
@@ -37,17 +39,17 @@
 			write_config();
 
 			if (isset($_POST['send_testmail'])) {
-				shell_exec("$WORKING_DIR/lib-mail-helper.sh '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "'");
+				shell_exec("sudo python3 $WORKING_DIR/lib_mail.py '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "'");
 				echo '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
 			}
 
 			if (isset($_POST['restart_rclone_gui'])) {
-				exec("sudo $WORKING_DIR/start-rclone-gui.sh update_gui > /dev/null 2>/dev/null &");
+				exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null 2>/dev/null &");
 				echo '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
 			}
 
 			exec("sudo pkill -f ${WORKING_DIR}/display.py");
-			exec("sudo $WORKING_DIR/lib-display-helper.sh '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "' > /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "' > /dev/null 2>&1 &");
 		}
 
 		// Upload settings
@@ -57,6 +59,11 @@
 
 		// read (new) config
 		$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
+
+		# set timezone
+		if ($TIME_ZONE_old !== $config["conf_TIME_ZONE"]) {
+			shell_exec("sudo raspi-config nonint do_change_timezone ".$config["conf_TIME_ZONE"]);
+		}
 
 		# write wifi country-code from config.cfg
 		if (($WIFI_COUNTRY !== $config["conf_WIFI_COUNTRY"]) and ($config["conf_WIFI_COUNTRY"] !== "")) {
@@ -108,12 +115,13 @@ function check_new_password($title, $pwd_1, $pwd_2) {
 
 function write_config() {
 	# write config.cfg
-	extract ($_POST);
 
 	global $WORKING_DIR;
 	global $WIFI_COUNTRY;
 	global $constants;
 	global $vpn_types;
+
+	extract ($_POST,EXTR_SKIP);
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
@@ -151,14 +159,14 @@ function write_config() {
 	if (isset($conf_PASSWORD_REMOVE)) {
 		$conf_PASSWORD_LINE="conf_PASSWORD=''";
 
-		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/set_password.sh"); # remove password
+		exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py"); # remove password
 
 		popup(L::config_alert_password_change_after_reboot_remove,true);
 	} elseif ($conf_PASSWORD_1 != '') {
 		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
 			$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
 
-			exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/set_password.sh '" . $conf_PASSWORD_1 . "'");
+			exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $conf_PASSWORD_1 . "'");
 
 			if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
 				popup(L::config_alert_password_wifi_size_error,true);
@@ -172,6 +180,7 @@ function write_config() {
 
 	$config_file_content = <<<CONFIGDATA
 conf_LANGUAGE='$conf_LANGUAGE'
+conf_TIME_ZONE='$conf_TIME_ZONE'
 conf_BACKUP_DEFAULT_SOURCE='$conf_BACKUP_DEFAULT_SOURCE'
 conf_BACKUP_DEFAULT_TARGET='$conf_BACKUP_DEFAULT_TARGET'
 conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS=$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS
@@ -200,7 +209,10 @@ conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_MENU_ENABLED=$conf_MENU_ENABLED
 conf_MENU_BUTTON_COMBINATION='$conf_MENU_BUTTON_COMBINATION'
+conf_MENU_BUTTON_ROTATE='$conf_MENU_BUTTON_ROTATE'
 conf_MENU_BUTTON_BOUNCETIME=$conf_MENU_BUTTON_BOUNCETIME
+conf_MENU_BUTTON_EDGE_DETECTION='$conf_MENU_BUTTON_EDGE_DETECTION'
+conf_MENU_BUTTON_RESISTOR_PULL='$conf_MENU_BUTTON_RESISTOR_PULL'
 conf_FAN_PWM_TEMP_C=$conf_FAN_PWM_TEMP_C
 conf_FAN_PWM_GPIO=$conf_FAN_PWM_GPIO
 conf_THEME=$conf_THEME
@@ -230,7 +242,7 @@ conf_RSYNC_SERVER_MODULE='$conf_RSYNC_SERVER_MODULE'
 conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
 conf_VPN_TYPE_RSYNC='$conf_VPN_TYPE_RSYNC'
 conf_VPN_TYPE_CLOUD='$conf_VPN_TYPE_CLOUD'
-conf_VPN_TIMEOUT='$conf_VPN_TIMEOUT'
+conf_VPN_TIMEOUT=$conf_VPN_TIMEOUT
 $conf_PASSWORD_LINE
 
 CONFIGDATA;
@@ -239,6 +251,13 @@ CONFIGDATA;
 	fclose($config_file_handle);
 	exec ("dos2unix './" . $CONFIGFILE . "'");
 
+	# remove vpn config file
+	foreach($vpn_types as $vpn_type) {
+		if (isset($_POST['vpn_remove_' . $vpn_type])) {
+			exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
+		}
+	}
+
 	# save vpn config file
 	if ($vpn_upload_type !== 'none') {
 		if(file_exists($_FILES["vpn_conf_file"]["tmp_name"])) {
@@ -246,13 +265,6 @@ CONFIGDATA;
 			exec ('sudo mv "' . $_FILES["vpn_conf_file"]["tmp_name"] . '" "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
 			exec ('sudo chown root:root "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
 			exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
-		}
-	}
-
-	# remove vpn config file
-	foreach($vpn_types as $vpn_type) {
-		if (isset($_POST['vpn_remove_' . $vpn_type])) {
-			exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
 		}
 	}
 
@@ -309,9 +321,12 @@ function upload_settings() {
 
 					}
 
-					if (file_exists($targetdir."/rclone.conf")) {
-						@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
-						if (rename($targetdir."/rclone.conf",$constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* 'rclone.cfg'";}
+					if (file_exists($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"])) {
+						if (rename($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* '".$constants["const_RCLONE_CONFIG_FILE"]."'";}
+					}
+
+					if (file_exists($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {
+						if (rename($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* '".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"]."'";}
 					}
 
 					foreach($vpn_types as $vpn_type) {
@@ -328,8 +343,8 @@ function upload_settings() {
 					#Background images
 					if (is_dir($targetdir.'/bg-images')){
 
-						exec ("sudo mkdir -p '" . $constants['const_BACKGROUND_IMAGES_DIR'] . "'");
-						exec ("sudo chown www-data:www-data '" . $constants['const_BACKGROUND_IMAGES_DIR'] ."' -R");
+						exec ("sudo mkdir -p '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] . "'");
+						exec ("sudo chown www-data:www-data '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ."' -R");
 
 						$background_images	= scandir($targetdir.'/bg-images');
 						foreach ($background_images as $BACKGROUND_IMAGE) {
@@ -337,8 +352,8 @@ function upload_settings() {
 								$Files_Copied=$Files_Copied."\n* '" . $BACKGROUND_IMAGE . "'";
 							}
 						}
-						exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
-						exec ("sudo chown www-data:www-data '" . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
+						exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
+						exec ("sudo chown www-data:www-data '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
 					}
 
 					# Feedback files in place
@@ -349,10 +364,10 @@ function upload_settings() {
 
 					# set new password
 					if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
-						exec("sudo $WORKING_DIR/set_password.sh '" . $config["conf_PASSWORD"] . "'");
+						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $config["conf_PASSWORD"] . "'");
 						popup(L::config_alert_password_change_after_reboot_set,true);
 					} else {
-						exec("sudo $WORKING_DIR/set_password.sh");
+						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py");
 						popup(L::config_alert_password_change_after_reboot_remove,true);
 					}
 				}
@@ -376,21 +391,37 @@ function upload_settings() {
 
 		<div class="card" style="margin-top: 2em;">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_lang_section; ?></summary>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_lang_time_section; ?></summary>
 
-				<h3><?php echo L::config_lang_header; ?></h3>
-					<label for="conf_LANGUAGE"><?php echo L::config_lang_label; ?></label><br>
-						<select name="conf_LANGUAGE" id="conf_LANGUAGE">
-						<?php
-							echo "<option value='' " . ($config["conf_LANGUAGE"] == ""?" selected":"") . ">" . L::config_lang_browser_detect . "</option>";
-							$languages=array();
-							exec ("find 'lang'/*.json -type f ",$languages);
-							foreach($languages as $language) {
-								$language = basename($language, ".json");
-								echo "<option value='" . $language . "' " . ($config["conf_LANGUAGE"] == $language?" selected":"") . ">" . $language . "</option>";
-							}
-						?>
-					</select>
+				<div>
+					<h3><?php echo L::config_lang_header; ?></h3>
+						<label for="conf_LANGUAGE"><?php echo L::config_lang_label; ?></label><br>
+							<select name="conf_LANGUAGE" id="conf_LANGUAGE">
+							<?php
+								echo "<option value='' " . ($config["conf_LANGUAGE"] == ""?" selected":"") . ">" . L::config_lang_browser_detect . "</option>";
+								$languages=array();
+								exec ("find 'lang'/*.json -type f ",$languages);
+								foreach($languages as $language) {
+									$language = basename($language, ".json");
+									echo "<option value='" . $language . "' " . ($config["conf_LANGUAGE"] == $language?" selected":"") . ">" . $language . "</option>";
+								}
+							?>
+						</select>
+				</div>
+
+				<div>
+					<h3><?php echo L::config_time_zone_header; ?></h3>
+						<label for="conf_TIME_ZONE"><?php echo L::config_time_zone_label; ?></label><br>
+							<select name="conf_TIME_ZONE" id="conf_TIME_ZONE">
+								<?php
+									$time_zones=array();
+									exec ("timedatectl list-timezones",$time_zones);
+									foreach($time_zones as $time_zone) {
+										echo "<option value='" . $time_zone . "' " . ($config["conf_TIME_ZONE"] == $time_zone?" selected":"") . ">" . $time_zone . "</option>";
+									}
+								?>
+							</select>
+					</div>
 			</details>
 		</div>
 
@@ -407,8 +438,21 @@ function upload_settings() {
 						<option value="usb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb internal"?" selected":""; ?>><?php echo L::config_backup_usb_internal; ?></option>
 						<option value="camera usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera usb"?" selected":""; ?>><?php echo L::config_backup_camera_usb; ?></option>
 						<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::config_backup_camera_internal; ?></option>
-						<option value="ios usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios usb"?" selected":""; ?>><?php echo L::config_backup_ios_usb; ?></option>
-						<option value="ios internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ios internal"?" selected":""; ?>><?php echo L::config_backup_ios_internal; ?></option>
+						<?php
+							if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
+						?>
+								<option value="internal cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
+								<option value="usb cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
+						<?php
+							}
+
+							foreach($CloudServices as $CloudService) {
+						?>
+								<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
+								<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
+						<?php
+							}
+						?>
 					</select>
 
 				<h4><?php echo L::config_backup_default_settings_header; ?></h4>
@@ -428,15 +472,15 @@ function upload_settings() {
 							<?php
 								if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
 							?>
-									<option value="internal rsyncserver" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal rsyncserver"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
-									<option value="usb rsyncserver" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="usb rsyncserver"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
+									<option value="internal cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
+									<option value="usb cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
 							<?php
 								}
 
 								foreach($CloudServices as $CloudService) {
 							?>
-									<option value="internal cloud_<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal cloud_${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
-									<option value="usb cloud_<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="usb cloud_${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
+									<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
+									<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
 							<?php
 								}
 							?>
@@ -497,14 +541,14 @@ function upload_settings() {
 					</select>
 
 				<h3><?php echo L::config_view_bg_image_header; ?></h3>
-					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo $constants['const_BACKGROUND_IMAGES_DIR'] ;?>&quot;.</label><br>
+					<label for="conf_BACKGROUND_IMAGE"><?php echo L::config_view_bg_image_label; ?> &quot;<?php echo $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ;?>&quot;.</label><br>
 						<select name="conf_BACKGROUND_IMAGE" id="conf_BACKGROUND_IMAGE">
 							<option value="" <?php echo $config["conf_BACKGROUND_IMAGE"] ==""?" selected":""; ?>>none</option>
 							<?php
 								$bg_images=array();
-								exec ("find '" . $constants["const_BACKGROUND_IMAGES_DIR"] . "' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
+								exec ("find '" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "' -type f -exec file --mime-type {} \+ | awk -F: '{if ($2 ~/image\//) print $1}'",$bg_images);
 								foreach($bg_images as $bg_image) {
-									$bg_image = str_replace($constants["const_BACKGROUND_IMAGES_DIR"] . '/','',$bg_image);
+									$bg_image = str_replace($constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . '/','',$bg_image);
 									echo "<option value='" . $bg_image . "' " . ($config["conf_BACKGROUND_IMAGE"] == $bg_image?" selected":"") . ">" . $bg_image . "</option>";
 								}
 							?>
@@ -606,6 +650,23 @@ function upload_settings() {
 							</select>
 					</div>
 
+					<div>
+						<h4><?php echo L::config_display_rotate_header; ?></h4>
+
+						<label for="conf_DISP_ROTATE"><?php echo L::config_display_rotate_label; ?></label><br>
+							<select name="conf_DISP_ROTATE" id="conf_DISP_ROTATE">
+								<?php
+									$display_rotate_array=array(
+										'0' => '0°',
+										'2' => '180°',
+									);
+									foreach($display_rotate_array as $display_rotate_code => $display_rotate_text) {
+										echo "<option value='" . $display_rotate_code . "' " . ($config["conf_DISP_ROTATE"] == $display_rotate_code?" selected":"") . ">" . $display_rotate_text . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
 			</details>
 		</div>
 
@@ -617,6 +678,22 @@ function upload_settings() {
 					<div>
 						<label for="conf_MENU_ENABLED"><?php echo L::config_menu_enable_label; ?></label><br>
 						<input type="checkbox" id="conf_MENU_ENABLED" name="conf_MENU_ENABLED" <?php echo $config['conf_MENU_ENABLED']=="1"?"checked":""; ?>>
+					</div>
+
+				<h3><?php echo L::config_menu_rotate_header; ?></h3>
+					<div>
+						<label for="conf_MENU_BUTTON_ROTATE"><?php echo L::config_menu_button_rotate_label; ?></label><br>
+							<select name="conf_MENU_BUTTON_ROTATE" id="conf_MENU_BUTTON_ROTATE">
+								<?php
+									$button_rotate_array=array(
+										'2' => '0°',
+										'0' => '180°',
+									);
+									foreach($button_rotate_array as $button_rotate_code => $button_rotate_text) {
+										echo "<option value='" . $button_rotate_code . "' " . ($config["conf_MENU_BUTTON_ROTATE"] == $button_rotate_code?" selected":"") . ">" . $button_rotate_text . "</option>";
+									}
+								?>
+							</select>
 					</div>
 
 			</details>
@@ -702,7 +779,7 @@ function upload_settings() {
 					<input type="text" id="conf_RSYNC_SERVER" name="conf_RSYNC_SERVER" size="6" value="<?php echo $config['conf_RSYNC_SERVER']; ?>">
 
 				<h3><?php echo L::config_rsync_port_header; ?></h3>
-					<label for="conf_RSYNC_PORT"><?php echo L::config_rsync_port_label . " " . $config_standard["conf_RSYNC_PORT"]; ?>)</label><br>
+					<label for="conf_RSYNC_PORT"><?php echo L::config_rsync_port_label . " " . $config_standard['conf_RSYNC_PORT']; ?>)</label><br>
 					<input type="text" id="conf_RSYNC_PORT" name="conf_RSYNC_PORT" size="20" value="<?php echo $config['conf_RSYNC_PORT']; ?>">
 
 				<h3><?php echo L::config_rsync_user_header; ?></h3>
@@ -888,8 +965,11 @@ function upload_settings() {
 							<?php
 								$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
 
-								$I2C_LIST=array("3c","3d");
+								$I2C_LIST=array("0x3c","0x3d");
 								foreach($I2C_LIST as $I2C) {
+									if (! in_array($config['conf_DISP_I2C_ADDRESS'], $I2C_LIST)) {
+										$config['conf_DISP_I2C_ADDRESS']	= $I2C;
+									}
 							?>
 									<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
 									<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br>
@@ -938,21 +1018,6 @@ function upload_settings() {
 					</div>
 
 					<div>
-						<label for="conf_DISP_ROTATE"><?php echo L::config_display_rotate_label; ?></label><br>
-							<select name="conf_DISP_ROTATE" id="conf_DISP_ROTATE">
-								<?php
-									$display_rotate_array=array(
-										'0' => '0°',
-										'2' => '180°',
-									);
-									foreach($display_rotate_array as $display_rotate_code => $display_rotate_text) {
-										echo "<option value='" . $display_rotate_code . "' " . ($config["conf_DISP_ROTATE"] == $display_rotate_code?" selected":"") . ">" . $display_rotate_text . "</option>";
-									}
-								?>
-							</select>
-					</div>
-
-					<div>
 						<label for="conf_DISP_COLOR_MODEL"><?php echo L::config_display_color_model_label; ?></label><br>
 							<select name="conf_DISP_COLOR_MODEL" id="conf_DISP_COLOR_MODEL">
 								<?php
@@ -965,28 +1030,76 @@ function upload_settings() {
 							</select>
 					</div>
 
-				<h3><?php echo L::config_menu_button_combination_header; ?></h3>
+				<h3><?php echo L::config_menu_button_header; ?></h3>
 
 					<div>
 						<label for="conf_MENU_BUTTON_COMBINATION"><?php echo L::config_menu_button_combination_label; ?></label><br>
+
+							<?php
+								$button_combinations	= array();
+
+								$button_config_files	= array(
+									$WORKING_DIR.'/'.$constants['const_BUTTONS_CONFIG_FILE'],
+									$constants['const_MEDIA_DIR'].'/'.$constants['const_BUTTONS_PRIVATE_CONFIG_FILE']
+
+								);
+								$BasicLines	= 0;
+								foreach ($button_config_files as $button_config_file) {
+
+									if ($f = fopen($button_config_file, "r")) {
+										while(!feof($f)) {
+											$Line = trim(fgets($f));
+											if (! empty($Line)) {
+												if (substr($Line,0,1) != '#') {
+													$CombinationArray	= array(
+														'up' 		=> '',
+														'down'		=> '',
+														'left' 		=> '',
+														'right'		=> '',
+														'comment'	=> ''
+													);
+
+													$explodeLine	= explode(':',$Line,2);
+
+													if (count($explodeLine) > 1) {
+														$CombinationArray['comment']	= $explodeLine[1];
+													}
+
+													$PIN_Defs		= explode(',',$explodeLine[0]);
+
+													foreach($PIN_Defs as $PIN_Def) {
+														$explodePinDef	= explode('=', $PIN_Def);
+														if (count($explodePinDef) == 2) {
+															if (in_array($explodePinDef[1],array('up','down','left','right','comment'))) {
+																if (! empty($CombinationArray[$explodePinDef[1]])) {
+																	$CombinationArray[$explodePinDef[1]]	.= ', ';
+																}
+																$CombinationArray[$explodePinDef[1]]	.= $explodePinDef[0];
+															}
+														}
+													}
+
+													array_push($button_combinations,$CombinationArray);
+													if ($button_config_file == $button_config_files[0]) {
+														$BasicLines	+= 1;
+													}
+												}
+											}
+										}
+										fclose($f);
+									}
+								}
+
+							?>
 							<select name="conf_MENU_BUTTON_COMBINATION" id="conf_MENU_BUTTON_COMBINATION">
 								<?php
-									$button_combinations_array=array(
-										'1' => array(
-												'up' 	=> 'PIN 29, GPIO 5',
-												'down'	=> 'PIN 31, GPIO 6',
-												'left' 	=> 'PIN 11, GPIO 17',
-												'right'	=> 'PIN 13, GPIO 27'
-											),
-										'2' => array(
-												'up' 	=> 'PIN 31, GPIO 6',
-												'down'	=> 'PIN 33, GPIO 13',
-												'left' 	=> 'PIN 35, GPIO 19',
-												'right'	=> 'PIN 37, GPIO 26'
-											)
-									);
-									foreach($button_combinations_array as $variant => $button_combination) {
-										echo "<option value='" . $variant . "' " . ($config["conf_MENU_BUTTON_COMBINATION"] == $variant?" selected":"") . ">" . $variant . "</option>";
+									foreach($button_combinations as $variant => $button_combination) {
+										if ($variant < $BasicLines) {
+											$VariantOption	= $variant + 1;
+										} else {
+											$VariantOption	= 'c' . ($variant - $BasicLines + 1);
+										}
+										echo ("<option value='" . $VariantOption . "' " . ($config["conf_MENU_BUTTON_COMBINATION"] == $VariantOption?" selected":"") . ">" . $VariantOption . "</option>");
 									}
 								?>
 							</select>
@@ -1008,15 +1121,27 @@ function upload_settings() {
 									<th style="width: 20%;">
 										<?php echo L::config_menu_button_right; ?>
 									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_comment; ?>
+									</th>
 								</tr>
 
 								<?php
-									foreach($button_combinations_array as $variant => $button_combination) {
-										echo("<tr style=\"border: thin solid;\"><td>$variant</td>");
-										foreach($button_combination as $direction => $PIN) {
+									foreach($button_combinations as $variant => $button_combination) {
+										if ($variant < $BasicLines) {
+											$openerTAG		= '';
+											$closerTAG		= '';
+											$VariantOption	= $variant + 1;
+										} else {
+											$openerTAG		= '<b><i>';
+											$closerTAG		= '</i></b>';
+											$VariantOption	= 'c' . ($variant - $BasicLines + 1);
+										}
+										echo("<tr style=\"border: thin solid; vertical-align: top;\"><td>".$openerTAG.$VariantOption.$closerTAG."</td>");
+										foreach($button_combination as $column => $FIELD) {
 											?>
-												<td style="border: thin solid;">
-													<?php echo $PIN; ?>
+												<td style="border: thin solid; vertical-align: top;">
+													<?php echo ($openerTAG.$FIELD.$closerTAG); ?>
 												</td>
 											<?php
 										}
@@ -1024,9 +1149,9 @@ function upload_settings() {
 									}
 								?>
 							</table>
+							<a href="/files/index.php?p=&edit=buttons.private.cfg"><?php echo L::config_menu_button_edit_custom_configfile; ?></a>
 					</div>
 
-				<h3><?php echo L::config_menu_button_bouncetime_header; ?></h3>
 					<div>
 						<label for="conf_MENU_BUTTON_BOUNCETIME"><?php echo L::config_menu_button_bouncetime_label; ?></label><br>
 							<select name="conf_MENU_BUTTON_BOUNCETIME" id="conf_MENU_BUTTON_BOUNCETIME">
@@ -1034,6 +1159,26 @@ function upload_settings() {
 									$button_bouncetimes_array=array(25,50,100,200,300,400,500);
 									foreach($button_bouncetimes_array as $button_bouncetime) {
 										echo "<option value='" . $button_bouncetime . "' " . ($config["conf_MENU_BUTTON_BOUNCETIME"] == $button_bouncetime?" selected":"") . ">" . $button_bouncetime . "</option>";
+									}
+								?>
+							</select><br>
+
+						<label for="conf_MENU_BUTTON_EDGE_DETECTION"><?php echo L::config_menu_button_edge_detection_label; ?></label><br>
+							<select name="conf_MENU_BUTTON_EDGE_DETECTION" id="conf_MENU_BUTTON_EDGE_DETECTION">
+								<?php
+									$button_edge_detections_array=array('RISING','FALLING');
+									foreach($button_edge_detections_array as $button_edge_detection) {
+										echo "<option value='" . $button_edge_detection . "' " . ($config["conf_MENU_BUTTON_EDGE_DETECTION"] == $button_edge_detection?" selected":"") . ">" . $button_edge_detection . "</option>";
+									}
+								?>
+							</select><br>
+
+						<label for="conf_MENU_BUTTON_RESISTOR_PULL"><?php echo L::config_menu_button_resitor_pull_label; ?></label><br>
+							<select name="conf_MENU_BUTTON_RESISTOR_PULL" id="conf_MENU_BUTTON_RESISTOR_PULL">
+								<?php
+									$button_resitor_pulls_array=array('DOWN','UP');
+									foreach($button_resitor_pulls_array as $button_resitor_pull) {
+										echo "<option value='" . $button_resitor_pull . "' " . ($config["conf_MENU_BUTTON_RESISTOR_PULL"] == $button_resitor_pull?" selected":"") . ">" . $button_resitor_pull . "</option>";
 									}
 								?>
 							</select>
@@ -1128,7 +1273,18 @@ function upload_settings() {
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_update_section; ?></summary>
 				<?php echo L::config_update_text; ?>
-				<a href='/cmd.php?CMD=update'><?php echo L::config_update_linktext ?></a>
+				<ul>
+					<li>
+						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'main' ? '<b>' : ''); ?>
+							<a href='/cmd.php?CMD=update'><?php echo L::config_update_linktext ?></a>
+						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'main' ? '</b>' : ''); ?>
+					</li>
+					<li>
+						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '<b>' : ''); ?>
+							<a href='/cmd.php?CMD=update_development'><?php echo L::config_update_development_linktext ?></a>
+						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '<b>' : ''); ?>
+					</li>
+				</ul>
 			</details>
 		</div>
 

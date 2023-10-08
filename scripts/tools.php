@@ -6,9 +6,18 @@
 	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-popup.php");
+
+	$Roles	= array('target', 'source');
+	include("get-cloudservices.php");
+	$CloudServices_marked	= array();
+	foreach($CloudServices as $CloudService) {
+		$CloudServices_marked[]	= 'cloud:' . $CloudService;
+	}
+	$LocalServices	= array('usb');
+	$MountableStorages	= array_merge($LocalServices,$CloudServices_marked);
 
 	function get_device_selector($name, $list_partitions=true) {
 		if ($list_partitions) {
@@ -46,14 +55,36 @@
 		<hr>
 			<form class="text-center" style="margin-top: 1em;" method="POST">
 				<?php
-					$button = trim(shell_exec("./mount-storage.sh check usb_1"))==""?"<button name='mount_usb_1'>" . l::tools_mount_b . " USB 1</button>":"<button name='umount_usb_1'>" . l::tools_umount_b . " USB 1</button>";
-					echo ($button);
-					$button = trim(shell_exec("./mount-storage.sh check usb_2"))==""?"<button name='mount_usb_2'>" . l::tools_mount_b . " USB 2</button>":"<button name='umount_usb_2'>" . l::tools_umount_b . " USB 2</button>";
-					echo ($button);
+					$MountsList	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py get_mounts_list");
 
+					$l_Roles	= array(
+							'target'	=> l::tools_mount_target,
+							'source'	=> l::tools_mount_source
+					);
+					foreach($MountableStorages as $MountableStorage) {
+						print('<div class="backupsection">');
+						foreach($Roles as $Role) {
+							$Storage		= $Role . "_" . $MountableStorage;
+							$explodeMountableStorage	= explode(':',$MountableStorage,2);
+							$LabelName		= end($explodeMountableStorage);
+							if (@substr_compare($MountableStorage, 'cloud:', 0, strlen('cloud:'))==0) {
+								$ButtonClass	= 'cloud';
+							}
+							else {
+								$ButtonClass	= 'usb';
+								$LabelName		= l::tools_mount_usb;
+							}
+
+							$button = strpos($MountsList," $Storage ") !== false ? "<button class='$ButtonClass' name='umount' value='" . $Storage . "'>" . l::tools_umount_b . ": $LabelName " . $l_Roles[$Role] . "</button>" : "<button class='$ButtonClass' name='mount' value='" . $Storage . "'>" . l::tools_mount_b . ": $LabelName " . $l_Roles[$Role] . "</button>";
+							echo ($button);
+						}
+						print('</div>');
+					}
 				?>
 			</form>
 	</div>
+
+	<?php include "sub-logmonitor.php"; ?>
 
 	<div class="card" style="margin-top: 3em;">
 		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::tools_repair; ?></h3>
@@ -61,14 +92,12 @@
 			<form class="text-center" style="margin-top: 1em;" method="POST">
 					<label for="partition"><?php echo l::tools_select_partition ?></label>
 						<?php
-						print(get_device_selector("partition"));
+						print(get_device_selector("PARAM1"));
 						echo ("<button name='fsck_check'>" . l::tools_fsck_check_b . "</button>");
 						echo ("<button name='fsck_autorepair' class='danger'>" . l::tools_fsck_autorepair_b . "</button>");
 						?>
 			</form>
 	</div>
-
-	<?php include "sub-logmonitor.php"; ?>
 
 	<div class="card" style="margin-top: 3em;">
 		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::cmd_format_header; ?></h3>
@@ -134,66 +163,54 @@
 	<?php include "sub-footer.php"; ?>
 
 	<?php
-	if (isset($_POST['mount_usb_1'])) {
-			$command = "./mount-storage.sh mount usb_1";
-			shell_exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
-			echo "<script>";
-				echo "window.location = window.location.href;";
-			echo "</script>";
-	}
-	if (isset($_POST['umount_usb_1'])) {
-			$command = "./mount-storage.sh umount usb_1";
-			shell_exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
-			echo "<script>";
-				echo "window.location = window.location.href;";
-			echo "</script>";
-	}
-	if (isset($_POST['mount_usb_2'])) {
-			$command = "./mount-storage.sh mount usb_2";
-			shell_exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
-			echo "<script>";
-				echo "window.location = window.location.href;";
-			echo "</script>";
-	}
-	if (isset($_POST['umount_usb_2'])) {
-			$command = "./mount-storage.sh umount usb_2";
-			shell_exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\"");
-			echo "<script>";
-				echo "window.location = window.location.href;";
-			echo "</script>";
-	}
-	if (isset($_POST['fsck_check'])) {
+			if (isset($_POST['mount'])) {
+				[$Role,$Storage]	= explode('_',$_POST['mount'],2);
 
-			$device = $_POST['partition'];
+					$command = "sudo python3 $WORKING_DIR/lib_storage.py mount $Storage $Role";
+// 					print($command. '<br>');
+					shell_exec ("python3 lib_log.py 'execute' '' '${command}' '1'");
+					echo "<script>";
+						echo "window.location = window.location.href;";
+					echo "</script>";
+			}
+			if (isset($_POST['umount'])) {
+				[$Role,$Storage]	= explode('_',$_POST['umount'],2);
 
-			popup($device . l::tools_fsck_check_m,$config["conf_POPUP_MESSAGES"]);
+					$command = "sudo python3 $WORKING_DIR/lib_storage.py umount $Storage $Role";
+// 					print($command. '<br>');
+					shell_exec ("python3 lib_log.py 'execute' '' '${command}' '1'");
+					echo "<script>";
+						echo "window.location = window.location.href;";
+					echo "</script>";
+			}
+	if (isset($_POST['fsck_check']) or isset($_POST['fsck_autorepair'])) {
 
-			$command = "sudo ${WORKING_DIR}/tools-fsck.sh '${device}' 'check'";
-			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\" \"false\"");
-	}
-	if (isset($_POST['fsck_autorepair'])) {
+		$PARAM1 = $_POST['PARAM1'];
+		$PARAM2 = isset($_POST['fsck_check']) ? 'check' : 'repair';
 
-			$device = $_POST['partition'];
-
-			popup($device . l::tools_fsck_autorepair_m,$config["conf_POPUP_MESSAGES"]);
-
-			$command = "sudo ${WORKING_DIR}/tools-fsck.sh '${device}' 'repair'";
-			exec ("./lib-log-helper.sh \"log_exec\" \"\" \"${command}\" \"1\" \"false\"");
+		if (($PARAM1 !== "-") and ($PARAM2 !== "-")) {
+			?>
+			<script>
+					document.location.href="/cmd.php?CMD=fsck&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
+			</script>
+			<?php
+			exec ("python3 lib_log.py 'message' \"fsck ${PARAM1} ${PARAM2}\" \"1\"");
+		}
 	}
 
 	if (isset($_POST['format'])) {
 
-			$PARAM1 = $_POST['PARAM1'];
-			$PARAM2 = $_POST['PARAM2'];
+		$PARAM1 = $_POST['PARAM1'];
+		$PARAM2 = $_POST['PARAM2'];
 
-			if (($PARAM1 !== "-") and ($PARAM2 !== "-")) {
-				?>
-				<script>
-						document.location.href="/cmd.php?CMD=format&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
-				</script>
-				<?php
-				exec ("./lib-log-helper.sh \"log_message\" \"format ${PARAM1} ${PARAM2}\" \"1\"");
-			}
+		if (($PARAM1 !== "-") and ($PARAM2 !== "-")) {
+			?>
+			<script>
+					document.location.href="/cmd.php?CMD=format&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
+			</script>
+			<?php
+			exec ("python3 lib_log.py 'message' \"format ${PARAM1} ${PARAM2}\" \"1\"");
+		}
 	}
 
 	if (isset($_POST['f3'])) {
@@ -207,7 +224,7 @@
 						document.location.href="/cmd.php?CMD=f3&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
 				</script>
 				<?php
-				exec ("./lib-log-helper.sh \"log_message\" \"format ${PARAM1} ${PARAM2}\" \"1\"");
+				exec ("python3 lib_log.py 'message' \"format ${PARAM1} ${PARAM2}\" \"1\"");
 			}
 	}
 

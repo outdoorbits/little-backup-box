@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
 # Author: Stefan Saam, github@saams.de
 
@@ -17,20 +17,33 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-source "${WORKING_DIR}/constants.sh"
-CONFIG="${WORKING_DIR}/config.cfg"
-source "$CONFIG"
+import subprocess
+from urllib import request
+import sys
 
-# Definitions
-raspi_config="/boot/config.txt"
+def get_IP():
+	IP	= subprocess.check_output(['hostname','-I']).decode().replace(' ','\n').strip()
 
-# fan control
-dtoverlay=gpio-fan,gpiopin=18,temp=60000
-if [ ! "${conf_FAN_PWM_GPIO}" = "-" ] && [ ! "${conf_FAN_PWM_TEMP_C}" = "0" ]; then
-	# activate fan control
-	raspi-config nonint do_fan 0 ${conf_FAN_PWM_GPIO} ${conf_FAN_PWM_TEMP_C}
-else
-	# inactivate fan control
-	raspi-config nonint do_fan 1
-fi
+	return(IP)
+
+def get_internet_status():
+	try:
+		request.urlopen('https://google.com', timeout=5)
+		return(True)
+	except:
+		pass
+
+	return(False)
+
+if __name__ == "__main__":
+	Mode	= None
+	try:
+		Mode	= sys.argv[1]
+	except:
+		pass
+
+	if Mode == 'ip':
+		print (get_IP())
+
+	if Mode == 'internet_status':
+		print (get_internet_status())

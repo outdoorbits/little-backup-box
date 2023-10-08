@@ -16,7 +16,12 @@ $FILES[]	= array(
 );
 
 $FILES[]	= array(
-	'file'	=> $constants["const_RCLONE_CONFIG_FILE"],
+	'file'	=> $constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"],
+	'dir'	=> '',
+);
+
+$FILES[]	= array(
+	'file'	=> $constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"],
 	'dir'	=> '',
 );
 
@@ -38,9 +43,9 @@ foreach ($vpn_types as $vpn_type) {
 }
 
 #Background images
-$background_images	= scandir($constants["const_BACKGROUND_IMAGES_DIR"]);
+$background_images	= scandir($constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"]);
 foreach ($background_images as $BACKGROUND_IMAGE) {
-	$BACKGROUND_IMAGE = $constants["const_BACKGROUND_IMAGES_DIR"] . '/' . $BACKGROUND_IMAGE;
+	$BACKGROUND_IMAGE = $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . '/' . $BACKGROUND_IMAGE;
 	if (is_file($BACKGROUND_IMAGE)) {
 		$FILES[]	= array(
 			'file'	=> $BACKGROUND_IMAGE,

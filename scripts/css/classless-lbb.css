@@ -36,9 +36,9 @@ html[data-theme='light'], :root {
 	--cbg: #fff;
 	--cusb: #0F0;
 	--ccamera: #fca503;
-	--cios: #f700ff;
 	--ccloud: #00d0ff;
 	--cdanger: #f00;
+	--cdisabled: #cccccc;
 	--ornament: "‹‹‹ ›››";
 	--font-p: 13pt Arial, sans-serif;
 	--font-h: 13pt Arial, sans-serif;

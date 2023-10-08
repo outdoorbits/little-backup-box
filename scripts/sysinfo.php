@@ -6,7 +6,7 @@
 	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
 	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-popup.php");
 ?>
@@ -49,7 +49,7 @@
 		$mem_swap_all = shell_exec("free | grep Swap | awk '{print $2 / 1024}'");
 		$mem_swap = round($mem_swap_frac, 1) . " % * " . round($mem_swap_all) . " MB";
 
-		$abnormal_conditions = shell_exec("${WORKING_DIR}/system_conditions.sh 'abnormal_conditions'");
+		$abnormal_conditions = shell_exec("sudo python3 ${WORKING_DIR}/lib_system.py get_abnormal_system_conditions");
 
 			if (isset($temp) && is_numeric($temp)) {
 				echo "<p>" . L::sysinfo_temp . ": <strong>" . $temp . "°C</strong></p>";
@@ -72,7 +72,7 @@
 		<h3><?php echo L::sysinfo_devices; ?></h3>
 			<?php
 			echo '<pre>';
-			passthru("lsblk");
+			passthru("sudo lsblk");
 			echo '</pre>';
 			?>
 	</div>
@@ -81,7 +81,7 @@
 		<h3><?php echo L::sysinfo_diskspace; ?></h3>
 			<?php
 				echo '<pre>';
-				passthru("df -H");
+				passthru("sudo df -H");
 				echo '</pre>';
 			?>
 	</div>
