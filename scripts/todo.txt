@@ -1,3 +1,0 @@
-View: Audio files are missing in database. Check for other file types
-
- Web UI: refresh rate = conf_DISP_FRAME_TIME

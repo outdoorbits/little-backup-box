@@ -107,7 +107,6 @@ These languages are already available. Do you want to maintain or create a trans
 <h2>Developement status</h2>
 Little Backup Box is still under construction.<br />
 <b>Please test your Installation carefully before productive use!</b><br />
-Final tests offered minor bugs (fixed), it looks good for the moment!<br />
 Little Backup Box has undergone massive development over the past few months. At the moment, no further major innovations are planned. Instead, the focus should now be on finding and correcting any errors and making the system even more reliable.<br />
 Hence the request: Test, test, test!<br />
 Please give feedback on problems or translation errors but also on the successful use, if possible with details of your equipment.<br />
@@ -133,9 +132,6 @@ In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens
 <li>
 Run the following command on the Raspberry Pi:<br />
 <code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | bash -s -- main 2> install-error.log</code><br />
-<br />
-To install the development branch run this command on the Raspberry Pi:<br />
-<code>curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/development/install-little-backup-box.sh | bash -s -- development 2> install-error.log</code><br />
 <br />
 Errors are reported into ./install-error.log.
 </li>

@@ -1273,18 +1273,18 @@ function upload_settings() {
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_update_section; ?></summary>
 				<?php echo L::config_update_text; ?>
-				<ul>
-					<li>
+<!-- 				<ul> -->
+<!-- 					<li> -->
 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'main' ? '<b>' : ''); ?>
 							<a href='/cmd.php?CMD=update'><?php echo L::config_update_linktext ?></a>
 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'main' ? '</b>' : ''); ?>
-					</li>
-					<li>
-						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '<b>' : ''); ?>
-							<a href='/cmd.php?CMD=update_development'><?php echo L::config_update_development_linktext ?></a>
-						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '<b>' : ''); ?>
-					</li>
-				</ul>
+<!-- 					</li> -->
+<!-- 					<li> -->
+<!-- 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '<b>' : ''); ?> -->
+<!-- 							<a href='/cmd.php?CMD=update_development'><?php echo L::config_update_development_linktext ?></a> -->
+<!-- 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '</b>' : ''); ?> -->
+<!-- 					</li> -->
+<!-- 				</ul> -->
 			</details>
 		</div>
 
