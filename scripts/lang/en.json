@@ -56,7 +56,8 @@
         "files_missing": "Files missing!",
         "exception": "Exception",
         "error": "Error",
-        "backup_failed": "Backup failed"
+        "backup_failed": "Backup failed",
+        "summary": "Summary"
       },
       "storage_filesystem_short": "FS",
       "exception": "Unknown error",

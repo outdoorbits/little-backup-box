@@ -370,7 +370,8 @@
         "lost_device": "Err. Dispositivo perdido!",
         "exception": "Excepción",
         "error": "Error",
-        "backup_failed": "Copia de seguridad fallida"
+        "backup_failed": "Copia de seguridad fallida",
+        "summary": "Resumen"
       },
       "try": "Intentar",
       "checking_old_files": "comparando",

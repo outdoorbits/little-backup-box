@@ -373,7 +373,8 @@
         "lost_device": "Fehler. Gerät verloren!",
         "exception": "Ausnahme",
         "error": "Fehler",
-        "backup_failed": "Backup fehlgeschlagen"
+        "backup_failed": "Backup fehlgeschlagen",
+        "summary": "Zusammenfassung"
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",

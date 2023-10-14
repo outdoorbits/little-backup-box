@@ -370,7 +370,8 @@
         "lost_device": "Err.Périphérique perdu!",
         "exception": "Exception",
         "error": "Erreur",
-        "backup_failed": "La sauvegarde a échoué"
+        "backup_failed": "La sauvegarde a échoué",
+        "summary": "Résumé"
       },
       "try": "essayer",
       "checking_old_files": "comparant",

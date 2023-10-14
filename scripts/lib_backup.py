@@ -232,7 +232,9 @@ class reporter(object):
 		BackupComplete	= True
 
 		# mail content
-		self.mail_content_HTML	= f"<b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
+		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
+
+		self.mail_content_HTML	+= f"<b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
 		self.mail_content_HTML	+= f"\n<p style='{CSS_margins_left_1}'><b><u>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} {self.__SourceCloudService} {self.__SourceDeviceLbbDeviceID}</u> {self.__lan.l('box_backup_mail_to')} <u>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} {self.__TargetCloudService} {self.__TargetDeviceLbbDeviceID}</u></b></p></br>"
 
 		separator	= False
@@ -240,14 +242,13 @@ class reporter(object):
 
 			BackupComplete	= BackupComplete and (not self.__BackupReports[Folder][-1]['Errors'])
 
-			if len(self.__BackupReports) > 1:
+			if separator:
+				self.mail_content_HTML	+= '\n</br>\n<hr style="width:50%;">\n</br>\n'
 
-				if separator:
-					self.mail_content_HTML	+= '\n</br>\n<hr style="width:50%;">\n</br>\n'
+			separator	= True
 
-				separator	= True
-
-				self.mail_content_HTML	+= f"<h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
+			# folder
+			self.mail_content_HTML	+= f"<h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
 
 			# Tries
 			tryNumber	= len(self.__BackupReports[Folder]) + 1
@@ -280,19 +281,18 @@ class reporter(object):
 
 		# SyncLog
 		if self.__SyncLog:
-			self.mail_content_HTML	+= f"\n\n<br><h3>{self.__lan.l('box_backup_mail_log')}:</h3>"
+			self.mail_content_HTML	+= f"\n\n<br><h2>{self.__lan.l('box_backup_mail_log')}:</h2>"
 
 			separator	= False
 			for Folder in self.__BackupReports:
 
-				if len(self.__BackupReports) > 1:
+				if separator:
+					self.mail_content_HTML	+= '\n</br>\n<hr style="width:50%;">\n</br>\n'
 
-					if separator:
-						self.mail_content_HTML	+= '\n</br>\n<hr style="width:50%;">\n</br>\n'
+				separator	= True
 
-					separator	= True
-
-					self.mail_content_HTML	+= f"<h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
+				# folder
+				self.mail_content_HTML	+= f"<h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
 
 				# Tries
 				tryNumber	= len(self.__BackupReports[Folder]) + 1
