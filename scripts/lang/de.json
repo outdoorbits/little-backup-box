@@ -423,7 +423,9 @@
       "mode_cloud_rsync": "rsync Server",
       "mode_cameras": "Kameras",
       "mode_usbs": "USB-Speicher",
-      "folder": "Ordner"
+      "folder": "Ordner",
+      "files_just_copied": "soeben kopiert",
+      "failed_attempts": "Fehlversuche"
     },
     "cronip": {
       "offline": "offline",

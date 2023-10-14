@@ -71,7 +71,7 @@ class idletime(object):
 					(subprocess.run('pgrep rsync',shell=True).returncode > 0) and 	# no match
 					(subprocess.run('pgrep gphoto2',shell=True).returncode > 0)		# no match
 				):
-					lib_poweroff.poweroff(Action='poweroff', SummaryDisplay=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
+					lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
 
 if __name__ == "__main__":
 	idletime().check()

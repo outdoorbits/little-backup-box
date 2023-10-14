@@ -32,13 +32,12 @@ import lib_system
 
 class poweroff(object):
 
-	def __init__(self, Action='poweroff', TransferInfoDisplay=[], SummaryDisplay=[]):
+	def __init__(self, Action='poweroff', DisplayMessage=[]):
 		# Action:	['poweroff','reboot'] or anything else for no action
 
 		# Arguments
 		self.Action					= Action
-		self.TransferInfoDisplay	= TransferInfoDisplay
-		self.SummaryDisplay			= SummaryDisplay
+		self.DisplayMessage		= DisplayMessage
 
 		# objects
 		self.__setup		= lib_setup.setup()
@@ -66,23 +65,24 @@ class poweroff(object):
 					[
 						'set:clear'
 					] +
-					self.SummaryDisplay +
+					self.DisplayMessage +
 					[
 						f"s=hc:{self.__lan.l('box_poweroff_poweroff')}",
 						f"s=hc:{self.__lan.l('box_poweroff_do_not_unplug')}",
 						f"s=hc:{self.__lan.l('box_poweroff_while_act_led_on_1')}",
 						f"s=hc:{self.__lan.l('box_poweroff_while_act_led_on_2')}"
-					] +
-					self.TransferInfoDisplay
+					]
 				)
 			elif self.Action == 'reboot':
 				self.__display.message(
 					[
-						'set:clear',
+						'set:clear'
+					] +
+					self.DisplayMessage +
+					[
 						f"s=hc:{self.__lan.l('box_poweroff_rebooting')}...",
 						f"s=hc:{self.__lan.l('box_poweroff_do_not_unplug')}!"
-					] +
-					self.TransferInfoDisplay
+					]
 				)
 
 		# remaining display pages
@@ -114,46 +114,27 @@ class poweroff(object):
 				subprocess.run(['sudo', 'reboot'])
 
 		else:
-			if self.SummaryDisplay:
-				self.__display.message(
-					self.SummaryDisplay +
-					self.TransferInfoDisplay +
-					[
-						'set:clear',
-						f"s=hc:{self.__lan.l('box_poweroff_do_not_unplug')}!",
-						f"s=hc:{self.__lan.l('box_poweroff_power_down_via_gui_1')}",
-						f"s=hc:{self.__lan.l('box_poweroff_power_down_via_gui_2')}"
-					]
-				)
-			else:
-				self.__display.message(
-					[
-						'set:clear',
-						f":{self.__lan.l('box_backup_complete')}.",
-					] +
-					self.TransferInfoDisplay +
-					[
-						f"s=hc:{self.__lan.l('box_poweroff_do_not_unplug')}!",
-						f"s=hc:{self.__lan.l('box_poweroff_power_down_via_gui_1')}",
-						f"s=hc:{self.__lan.l('box_poweroff_power_down_via_gui_2')}"
-					]
-				)
+			self.__display.message(
+				self.DisplayMessage +
+				[
+					'set:clear',
+					f"s=hc:{self.__lan.l('box_poweroff_do_not_unplug')}!",
+					f"s=hc:{self.__lan.l('box_poweroff_power_down_via_gui_1')}",
+					f"s=hc:{self.__lan.l('box_poweroff_power_down_via_gui_2')}"
+				]
+			)
+
 
 if __name__ == "__main__":
 	if len(sys.argv) >= 2:
 		Action					= sys.argv[1]
 
 		try:
-			TransferInfoDisplay	= sys.argv[2].split('\n')
+			DisplayMessage	= sys.argv[2].split('\n')
 		except:
-			TransferInfoDisplay	= []
+			DisplayMessage	= []
 
-		try:
-			SummaryDisplay		= sys.argv[3].split('\n')
-		except:
-			SummaryDisplay		= []
-
-		poweroff(Action, TransferInfoDisplay, SummaryDisplay).poweroff()
+		poweroff(Action, DisplayMessage).poweroff()
 	else:
 		pass
 

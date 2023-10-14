@@ -56,9 +56,8 @@ class backup(object):
 		# DoSyncDatabase, DoGenerateThumbnails, DoUpdateEXIF	True/False
 
 		# Arguments
-		self.SourceName										= SourceName
-		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
-		TargetStorageType, TargetCloudService				= lib_storage.extractCloudService(TargetName)
+		self.SourceStorageType, CloudServiceSource			= lib_storage.extractCloudService(SourceName)
+		TargetStorageType, CloudServiceTarget				= lib_storage.extractCloudService(TargetName)
 		self.DoSyncDatabase									= DoSyncDatabase
 		self.DoGenerateThumbnails							= DoGenerateThumbnails
 		self.DoUpdateEXIF									= DoUpdateEXIF
@@ -79,7 +78,7 @@ class backup(object):
 		self.const_BACKUP_MAX_TRIES						= self.__setup.get_val('const_BACKUP_MAX_TRIES')
 
 		self.conf_MAIL_NOTIFICATIONS					= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
-		self.__conf_LOG_SYNC								= self.__setup.get_val('conf_LOG_SYNC')
+		conf_LOG_SYNC								= self.__setup.get_val('conf_LOG_SYNC')
 
 		if self.SourceStorageType == 'database':
 			self.DoSyncDatabase			= True
@@ -101,7 +100,7 @@ class backup(object):
 		self.__display	= lib_display.display()
 		self.__log		= lib_log.log()
 		self.__lan		= lib_language.language()
-		self.__reporter	= None
+		self.__reporter	= lib_backup.reporter(SyncLog=conf_LOG_SYNC)
 
 		# Common variables
 		self.SourceDevice		= None
@@ -120,10 +119,10 @@ class backup(object):
 		l_box_backup_mode_SOURCE_MODE	= f"box_backup_mode_{self.SourceStorageType}"
 		l_box_backup_mode_TARGET_MODE	= f"box_backup_mode_{TargetStorageType}"
 
-		self.__display.message([f":{self.__lan.l(l_box_backup_mode_SOURCE_MODE)} {self.SourceCloudService}", f": > {self.__lan.l(l_box_backup_mode_TARGET_MODE)} {TargetCloudService}"])
+		self.__display.message([f":{self.__lan.l(l_box_backup_mode_SOURCE_MODE)} {CloudServiceSource}", f": > {self.__lan.l(l_box_backup_mode_TARGET_MODE)} {CloudServiceTarget}"])
 
-		self.__log.message(f"Source: {self.SourceStorageType} {self.SourceCloudService}")
-		self.__log.message(f"Target: {TargetStorageType} {TargetCloudService}")
+		self.__log.message(f"Source: {self.SourceStorageType} {CloudServiceSource}")
+		self.__log.message(f"Target: {TargetStorageType} {CloudServiceTarget}")
 
 		# VPN start
 		VPN_Mode	= None
@@ -200,7 +199,7 @@ class backup(object):
 				lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
 				if self.SourceStorageType in ['usb', 'internal', 'camera', 'cloud', 'cloud_rsync']:
-					self.SourceDevice	= lib_storage.storage(self.SourceName, lib_storage.role_Source, True, self.DeviceIdentifierPresetSource, self.DeviceIdentifierPresetTarget)
+					self.SourceDevice	= lib_storage.storage(self.SourceStorageType, lib_storage.role_Source, True, self.DeviceIdentifierPresetSource, self.DeviceIdentifierPresetTarget)
 
 					self.SourceDevice.mount()
 
@@ -226,18 +225,6 @@ class backup(object):
 					sys.exit(104)
 
 				#run backup
-				self.__reporter	= lib_backup.reporter(
-					self.__lan,
-					self.SourceDevice.StorageType,
-					self.SourceDevice.CloudServiceName,
-					self.SourceDevice.LbbDeviceID,
-					self.TargetDevice.StorageType,
-					self.TargetDevice.CloudServiceName,
-					self.TargetDevice.LbbDeviceID,
-					self.TransferMode,
-					SyncLog=self.__conf_LOG_SYNC
-				)
-
 				lib_system.rpi_leds(trigger='heartbeat')
 
 				# define variables for backup
@@ -268,6 +255,7 @@ class backup(object):
 
 						self.__reporter.new_try()
 
+						self.__reporter.add_synclog("---- {} {} {} ----\n".format(self.__lan.l('box_backup_try'),TriesCount,SubPathAtSource))
 						if self.vpn:
 							self.__reporter.add_synclog(f"** VPN: {self.vpn.check_status(0)} **\n\n")
 
@@ -358,6 +346,7 @@ class backup(object):
 
 							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True)  as BackupProcess:
 
+								FilesProcessed	= 0
 								while True:
 									SyncOutputLine = BackupProcess.stdout.readline()
 									if not SyncOutputLine:
@@ -391,7 +380,7 @@ class backup(object):
 						# Re-calculate FilesToProcess
 						FilesToProcessPost	= 0
 						if self.SourceDevice.StorageType == 'camera':
-							FilesToProcessPost	= FilesToProcess - progress.CountProgress
+							FilesToProcessPost	= FilesToProcess - FilesProcessed
 						elif self.TargetDevice.mountable:
 							FilesCountStoragePost	= self.get_FilesCount(f"{self.TargetDevice.MountPoint}/{self.SourceDevice.SubPathAtTarget}")
 							FilesToProcessPost	= FilesToProcess - FilesCountStoragePost + FilesCountStoragePre
@@ -461,7 +450,7 @@ class backup(object):
 
 						self.__reporter.prepare_mail()
 
-						mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
+						mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content)
 
 				#end loop RepeatBackupNextSource
 				if (self.SourceDevice.StorageType in ['usb', 'camera']):
@@ -873,8 +862,6 @@ class backup(object):
 	def finish(self):
 		# Set the PWR LED ON to indicate that the backup has finished
 		lib_system.rpi_leds(trigger='none',brightness='1')
-
-		self.__reporter.prepare_display_summary()
 
 		if self.SecundaryBackupFollows:
 

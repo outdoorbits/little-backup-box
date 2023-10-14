@@ -423,7 +423,9 @@
       "mode_cloud_rsync": "Servidor rsync",
       "mode_cameras": "Cámaras",
       "mode_usbs": "Almacenamientos USB",
-      "folder": "Carpeta"
+      "folder": "Carpeta",
+      "files_just_copied": "recién copiado",
+      "failed_attempts": "intentos fallidos"
     },
     "cronip": {
       "offline": "desconectado",

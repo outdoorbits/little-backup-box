@@ -46,213 +46,6 @@ role_Target	= 'target'
 
 FS_Types_supported	= ['ext2','ext3','ext4','fat','vfat','exfat','ntfs','hfs','hfsplus']
 
-def umount(setup, MountPoints):
-	#setup:			setup-object
-	#MountPoints:	'all' or a MountPoint or an array of MountPoints
-	if type(MountPoints) != "<class 'list'>":
-		if MountPoints == 'all':
-			MountPoints	= [
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}",
-				setup.get_val('const_TECH_MOUNT_TARGET'),
-				setup.get_val('const_TECH_MOUNT_SOURCE')
-			]
-		else:
-			MountPoints	= [MountPoints]
-
-	for MountPoint in MountPoints:
-		try:
-			if getFS_Type(MountPoint) in ['hfs','hfsplus']:
-				subprocess.run(['fusermount','-uz',MountPoint], stderr=subprocess.DEVNULL)
-				os.rmdir(MountPoint)
-
-			else:
-				subprocess.run(['umount',MountPoint], stderr=subprocess.DEVNULL)
-				os.rmdir(MountPoint)
-		except:
-			pass
-
-def remove_all_mountpoints(setup):
-	umount(setup,'all')
-	#deletes all mountpoints and their content! For use directly after boot and before any mount only!!!
-	MountPoints	= [
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}",
-				setup.get_val('const_TECH_MOUNT_TARGET'),
-				setup.get_val('const_TECH_MOUNT_SOURCE')
-			]
-
-	for MountPoint in MountPoints:
-		Command	= ['rm','-R',MountPoint]
-		subprocess.run(Command)
-
-def get_mounts_list():
-	mountsList	= [] # space!
-
-	setup	= lib_setup.setup()
-
-	TargetLocal				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}"
-	SourceLocal				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}"
-	TargetCloud				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}"
-	SourceCloud				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}"
-
-	const_TECH_MOUNT_TARGET	= setup.get_val('const_TECH_MOUNT_TARGET')
-	const_TECH_MOUNT_SOURCE	= setup.get_val('const_TECH_MOUNT_SOURCE')
-
-	MountPointListLocal	= f"{TargetLocal}\|{SourceLocal}\|{const_TECH_MOUNT_TARGET}\|{const_TECH_MOUNT_SOURCE}"
-	MountPointListCloud	= f"{TargetCloud}\|{SourceCloud}"
-
-	SourceCommand	= ["mount"]
-	FilterCommand	= ["grep", MountPointListLocal]
-	try:
-		MountsLocal	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
-	except:
-		MountsLocal	= []
-
-	SourceCommand	= ["mount"]
-	FilterCommand	= ["grep", MountPointListCloud]
-	try:
-		MountsCloud	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
-	except:
-		MountsCloud	= []
-
-	for MountLocal in MountsLocal:
-		if (f" {TargetLocal} " in MountLocal) or (f" {const_TECH_MOUNT_TARGET} " in MountLocal):
-			mountsList.append('target_usb')
-		if (f" {SourceLocal} " in MountLocal) or (f" {const_TECH_MOUNT_SOURCE} " in MountLocal):
-			mountsList.append('source_usb')
-
-	for MountCloud in MountsCloud:
-		try:
-			CloudService	= MountCloud.split(':',1)[0]
-			if f" {TargetCloud} " in MountCloud:
-				mountsList.append(f'target_cloud:{CloudService}')
-			if f" {SourceCloud} " in MountCloud:
-				mountsList.append(f'source_cloud:{CloudService}')
-		except:
-			pass
-
-	mountsList	= list(dict.fromkeys(mountsList))
-	return(f" {' '.join(mountsList)} ")
-
-def get_available_partitions(setup,excludeTarget='',excludeSources=[]):
-
-	class continueUSB_DeviceListRaw(Exception):
-		pass
-
-	Exception_continueUSB_DeviceListRaw	= continueUSB_DeviceListRaw()
-
-	TargetDevice_lum_alpha	= ''
-
-	availablePartitions	= []
-
-	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '^PATH=\\\"/dev/{setup.get_val('const_STORAGE_DEV_MASK')}'"
-	try:
-		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
-		USB_DeviceListRaw = subprocess.check_output(Command,shell=True).decode().split('\n')
-	except:
-		USB_DeviceListRaw = []
-
-	# generate list of devices and properties
-	USB_DeviceList	= []
-	for USB_Device in USB_DeviceListRaw:
-
-		try:
-			lum			= USB_Device.split('PATH=',1)[1].split('"',2)[1]
-			lum_alpha	= lum.translate(str.maketrans('', '', digits))
-		except:
-			lum			= ''
-
-		try:
-			uuid		= USB_Device.split('UUID=',1)[1].split('"',2)[1]
-		except:
-			uuid		= ''
-
-		try:
-			fs_type		= Device_FS_Type = USB_Device.split('FSTYPE=',1)[1].split('"',2)[1]
-		except:
-			fs_type		= ''
-
-		USB_DeviceList.append(
-			{
-				'lum':			lum,
-				'lum_alpha':	lum_alpha,
-				'uuid':			uuid,
-				'fs_type':		fs_type
-			}
-		)
-
-		if excludeTarget and ((f"/dev/{excludeTarget}" in [lum, lum_alpha]) or (excludeTarget == f"--uuid {uuid}")):
-			TargetDevice_lum_alpha	= lum_alpha
-
-	# check devices
-	for USB_Device in USB_DeviceList:
-		# exclude empty lines
-		if (not USB_Device['uuid']) and (not USB_Device['lum']):
-			continue
-
-		# exclude not supported file systems
-		if (USB_Device['fs_type'] not in FS_Types_supported):
-			continue
-
-		# exclude all partitions at target device
-		if TargetDevice_lum_alpha == USB_Device['lum_alpha']:
-			continue
-
-		# exclude all excludeSources devices
-		if (USB_Device['lum'] in excludeSources) or (f"--uuid {USB_Device['uuid']}" in excludeSources):
-			continue
-
-		availablePartitions.append(f"--uuid {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
-
-	return(availablePartitions)
-
-def get_available_cameras():
-	SourceCommand	= ["gphoto2", "--auto-detect"]
-	FilterCommand	= ["grep", "usb"]
-
-	try:
-		Cameras	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
-	except:
-		return([])
-
-	available_cameras	= []
-	for Camera in Cameras:
-		Camera	= Camera.split('usb:')[0].strip()
-
-		if not Camera:
-			continue
-
-		if Camera in Cameras:
-			continue
-
-		available_cameras.append(Camera)
-
-	return(available_cameras)
-
-def getFS_Type(MountPoint):
-	SourceCommand	= ["lsblk", "-p", "-P", "-o", "PATH,MOUNTPOINT,UUID,FSTYPE"]
-	FilterCommand	= ["grep", f'MOUNTPOINT="{MountPoint}"']
-	try:
-		FS_Type	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('FSTYPE=',1)[1].split('"')[1]
-	except:
-		FS_Type	= ''
-
-	return(FS_Type)
-
-def extractCloudService(DeviceName):
-	DeviceSplit	= DeviceName.split(':',1)
-	DevicePart	= DeviceSplit[0]
-	if len(DeviceSplit) > 1:
-		CloudPart	= DeviceSplit[1]
-	else:
-		CloudPart	= ''
-
-	return(DevicePart, CloudPart)
 
 class storage(object):
 
@@ -1021,3 +814,212 @@ if __name__ == "__main__":
 
 
 
+############
+
+def umount(setup, MountPoints):
+	#setup:			setup-object
+	#MountPoints:	'all' or a MountPoint or an array of MountPoints
+	if type(MountPoints) != "<class 'list'>":
+		if MountPoints == 'all':
+			MountPoints	= [
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}",
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}",
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}",
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}",
+				setup.get_val('const_TECH_MOUNT_TARGET'),
+				setup.get_val('const_TECH_MOUNT_SOURCE')
+			]
+		else:
+			MountPoints	= [MountPoints]
+
+	for MountPoint in MountPoints:
+		try:
+			if getFS_Type(MountPoint) in ['hfs','hfsplus']:
+				subprocess.run(['fusermount','-uz',MountPoint], stderr=subprocess.DEVNULL)
+				os.rmdir(MountPoint)
+
+			else:
+				subprocess.run(['umount',MountPoint], stderr=subprocess.DEVNULL)
+				os.rmdir(MountPoint)
+		except:
+			pass
+
+def remove_all_mountpoints(setup):
+	umount(setup,'all')
+	#deletes all mountpoints and their content! For use directly after boot and before any mount only!!!
+	MountPoints	= [
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}",
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}",
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}",
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}",
+				setup.get_val('const_TECH_MOUNT_TARGET'),
+				setup.get_val('const_TECH_MOUNT_SOURCE')
+			]
+
+	for MountPoint in MountPoints:
+		Command	= ['rm','-R',MountPoint]
+		subprocess.run(Command)
+
+def get_mounts_list():
+	mountsList	= [] # space!
+
+	setup	= lib_setup.setup()
+
+	TargetLocal				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}"
+	SourceLocal				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}"
+	TargetCloud				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}"
+	SourceCloud				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}"
+
+	const_TECH_MOUNT_TARGET	= setup.get_val('const_TECH_MOUNT_TARGET')
+	const_TECH_MOUNT_SOURCE	= setup.get_val('const_TECH_MOUNT_SOURCE')
+
+	MountPointListLocal	= f"{TargetLocal}\|{SourceLocal}\|{const_TECH_MOUNT_TARGET}\|{const_TECH_MOUNT_SOURCE}"
+	MountPointListCloud	= f"{TargetCloud}\|{SourceCloud}"
+
+	SourceCommand	= ["mount"]
+	FilterCommand	= ["grep", MountPointListLocal]
+	try:
+		MountsLocal	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
+	except:
+		MountsLocal	= []
+
+	SourceCommand	= ["mount"]
+	FilterCommand	= ["grep", MountPointListCloud]
+	try:
+		MountsCloud	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
+	except:
+		MountsCloud	= []
+
+	for MountLocal in MountsLocal:
+		if (f" {TargetLocal} " in MountLocal) or (f" {const_TECH_MOUNT_TARGET} " in MountLocal):
+			mountsList.append('target_usb')
+		if (f" {SourceLocal} " in MountLocal) or (f" {const_TECH_MOUNT_SOURCE} " in MountLocal):
+			mountsList.append('source_usb')
+
+	for MountCloud in MountsCloud:
+		try:
+			CloudService	= MountCloud.split(':',1)[0]
+			if f" {TargetCloud} " in MountCloud:
+				mountsList.append(f'target_cloud:{CloudService}')
+			if f" {SourceCloud} " in MountCloud:
+				mountsList.append(f'source_cloud:{CloudService}')
+		except:
+			pass
+
+	mountsList	= list(dict.fromkeys(mountsList))
+	return(f" {' '.join(mountsList)} ")
+
+def get_available_partitions(setup,excludeTarget='',excludeSources=[]):
+
+	class continueUSB_DeviceListRaw(Exception):
+		pass
+
+	Exception_continueUSB_DeviceListRaw	= continueUSB_DeviceListRaw()
+
+	TargetDevice_lum_alpha	= ''
+
+	availablePartitions	= []
+
+	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '^PATH=\\\"/dev/{setup.get_val('const_STORAGE_DEV_MASK')}'"
+	try:
+		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
+		USB_DeviceListRaw = subprocess.check_output(Command,shell=True).decode().split('\n')
+	except:
+		USB_DeviceListRaw = []
+
+	# generate list of devices and properties
+	USB_DeviceList	= []
+	for USB_Device in USB_DeviceListRaw:
+
+		try:
+			lum			= USB_Device.split('PATH=',1)[1].split('"',2)[1]
+			lum_alpha	= lum.translate(str.maketrans('', '', digits))
+		except:
+			lum			= ''
+
+		try:
+			uuid		= USB_Device.split('UUID=',1)[1].split('"',2)[1]
+		except:
+			uuid		= ''
+
+		try:
+			fs_type		= Device_FS_Type = USB_Device.split('FSTYPE=',1)[1].split('"',2)[1]
+		except:
+			fs_type		= ''
+
+		USB_DeviceList.append(
+			{
+				'lum':			lum,
+				'lum_alpha':	lum_alpha,
+				'uuid':			uuid,
+				'fs_type':		fs_type
+			}
+		)
+
+		if excludeTarget and ((f"/dev/{excludeTarget}" in [lum, lum_alpha]) or (excludeTarget == f"--uuid {uuid}")):
+			TargetDevice_lum_alpha	= lum_alpha
+
+	# check devices
+	for USB_Device in USB_DeviceList:
+		# exclude empty lines
+		if (not USB_Device['uuid']) and (not USB_Device['lum']):
+			continue
+
+		# exclude not supported file systems
+		if (USB_Device['fs_type'] not in FS_Types_supported):
+			continue
+
+		# exclude all partitions at target device
+		if TargetDevice_lum_alpha == USB_Device['lum_alpha']:
+			continue
+
+		# exclude all excludeSources devices
+		if (USB_Device['lum'] in excludeSources) or (f"--uuid {USB_Device['uuid']}" in excludeSources):
+			continue
+
+		availablePartitions.append(f"--uuid {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
+
+	return(availablePartitions)
+
+def get_available_cameras():
+	SourceCommand	= ["gphoto2", "--auto-detect"]
+	FilterCommand	= ["grep", "usb"]
+
+	try:
+		Cameras	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
+	except:
+		return([])
+
+	available_cameras	= []
+	for Camera in Cameras:
+		Camera	= Camera.split('usb:')[0].strip()
+
+		if not Camera:
+			continue
+
+		if Camera in Cameras:
+			continue
+
+		available_cameras.append(Camera)
+
+	return(available_cameras)
+
+def getFS_Type(MountPoint):
+	SourceCommand	= ["lsblk", "-p", "-P", "-o", "PATH,MOUNTPOINT,UUID,FSTYPE"]
+	FilterCommand	= ["grep", f'MOUNTPOINT="{MountPoint}"']
+	try:
+		FS_Type	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('FSTYPE=',1)[1].split('"')[1]
+	except:
+		FS_Type	= ''
+
+	return(FS_Type)
+
+def extractCloudService(DeviceName):
+	DeviceSplit	= DeviceName.split(':',1)
+	DevicePart	= DeviceSplit[0]
+	if len(DeviceSplit) > 1:
+		CloudPart	= DeviceSplit[1]
+	else:
+		CloudPart	= ''
+
+	return(DevicePart, CloudPart)

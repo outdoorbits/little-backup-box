@@ -101,7 +101,9 @@
       "mode_cloud_rsync": "rsync server",
       "mode_cameras": "Cameras",
       "mode_usbs": "USB storages",
-      "folder": "Folder"
+      "folder": "Folder",
+      "files_just_copied": "just copied",
+      "failed_attempts": "failed attempts"
     },
     "poweroff": {
       "poweroff": "Power off",
