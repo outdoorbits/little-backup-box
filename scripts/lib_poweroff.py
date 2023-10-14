@@ -67,10 +67,10 @@ class poweroff(object):
 					] +
 					self.DisplayMessage +
 					[
-						f"s=hc:{self.__lan.l('box_poweroff_poweroff')}",
-						f"s=hc:{self.__lan.l('box_poweroff_do_not_unplug')}",
-						f"s=hc:{self.__lan.l('box_poweroff_while_act_led_on_1')}",
-						f"s=hc:{self.__lan.l('box_poweroff_while_act_led_on_2')}"
+						f"s=a:{self.__lan.l('box_poweroff_poweroff')}",
+						f"s=a:{self.__lan.l('box_poweroff_do_not_unplug')}",
+						f"s=a:{self.__lan.l('box_poweroff_while_act_led_on_1')}",
+						f"s=a:{self.__lan.l('box_poweroff_while_act_led_on_2')}"
 					]
 				)
 			elif self.Action == 'reboot':
@@ -80,8 +80,8 @@ class poweroff(object):
 					] +
 					self.DisplayMessage +
 					[
-						f"s=hc:{self.__lan.l('box_poweroff_rebooting')}...",
-						f"s=hc:{self.__lan.l('box_poweroff_do_not_unplug')}!"
+						f"s=a:{self.__lan.l('box_poweroff_rebooting')}...",
+						f"s=a:{self.__lan.l('box_poweroff_do_not_unplug')}!"
 					]
 				)
 
@@ -118,9 +118,9 @@ class poweroff(object):
 				self.DisplayMessage +
 				[
 					'set:clear',
-					f"s=hc:{self.__lan.l('box_poweroff_do_not_unplug')}!",
-					f"s=hc:{self.__lan.l('box_poweroff_power_down_via_gui_1')}",
-					f"s=hc:{self.__lan.l('box_poweroff_power_down_via_gui_2')}"
+					f"s=a:{self.__lan.l('box_poweroff_do_not_unplug')}!",
+					f"s=a:{self.__lan.l('box_poweroff_power_down_via_gui_1')}",
+					f"s=a:{self.__lan.l('box_poweroff_power_down_via_gui_2')}"
 				]
 			)
 
