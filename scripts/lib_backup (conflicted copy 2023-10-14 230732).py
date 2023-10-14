@@ -332,7 +332,7 @@ class reporter(object):
 	def prepare_display_summary(self):
 		# provides self.display_summary
 
-		FailedTriesCountAll	= 0
+		ReTriesCountAll	= 0
 		FilesToProcess	= 0
 		FilesProcessed	= 0
 		Errors			= []
@@ -346,6 +346,7 @@ class reporter(object):
 			for Report in (self.__BackupReports[Folder]):
 
 				TriesCount		+= 1
+				TriesCountAll	+= 1
 
 				if (TriesCount == 1) and (Report['FilesToProcess'] > 0):
 					FilesToProcess	+= Report['FilesToProcess']
@@ -353,11 +354,8 @@ class reporter(object):
 				if Report['FilesProcessed'] > 0:
 					FilesProcessed	+= Report['FilesProcessed']
 
-				if Report['Errors']:
-					FailedTriesCountAll	+= 1
-
-					for Error in Report['Errors']:
-						Errors	+= [f"{Report['SyncReturnCode']}:{Error}"]
+				for Error in Report['Errors']:
+					Errors	+= [f"{Report['SyncReturnCode']}:{Error}"]
 
 		if Completed:
 			self.display_summary.append(f":{self.__lan.l('box_backup_complete')}.")
@@ -376,7 +374,8 @@ class reporter(object):
 
 		self.display_summary.append(f":{FilesProcessed} {self.__lan.l('box_backup_of')} {FilesToProcess} {self.__lan.l('box_backup_files_copied')}")
 
-		self.display_summary.append(f":{FailedTriesCountAll} {self.__lan.l('box_backup_failed_attempts')}")
+		FailedAttemptsCount	= TriesCountAll - len(self.__BackupReports) # one try per folder is no retry
+		self.display_summary.append(f":{FailedAttemptsCount} {self.__lan.l('box_backup_failed_attempts')}")
 
 	def sync_return_code_decoder(self,Code):
 

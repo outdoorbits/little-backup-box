@@ -247,8 +247,6 @@ class backup(object):
 				FilesCountStoragePost	= 0
 				FilesToProcess			= 0
 
-				ErrorsOld				= []
-
 				# define specific parameters
 				RsyncOptions	= self.getRsyncOptions()
 				excludeTIMS		= self.get_excludeTIMS()
@@ -321,13 +319,7 @@ class backup(object):
 
 						# RUN BACKUP
 						## create target path if not exists and enter dir
-						try:
-							pathlib.Path(f"{self.TargetDevice.MountPoint}/{self.SourceDevice.SubPathAtTarget}").mkdir(parents=True, exist_ok=True)
-						except:
-							self.__reporter.add_error('Err.Lost device!')
-							ErrorsOld	= self.__reporter.get_errors()
-							continue
-
+						pathlib.Path(f"{self.TargetDevice.MountPoint}/{self.SourceDevice.SubPathAtTarget}").mkdir(parents=True, exist_ok=True)
 						self.TargetDevice.set_perms_mountpoint()
 
 	#					# gphoto2 backup
@@ -456,7 +448,8 @@ class backup(object):
 									])
 								time.sleep(self.const_SYNC_TIME_OVERHEATING_WAIT_SEC)
 
-						ErrorsOld	= self.__reporter.get_errors()
+						# prepare message for mail and for power off
+						SourceFolderFractureTmp	= f"{self.__lan.l('box_backup_folder')} {SourceFolderFracture}: " if SourceFolderFracture else ''
 
 						del progress
 
