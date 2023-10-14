@@ -188,13 +188,13 @@ class reporter(object):
 			'FilesProcessed':		None,
 			'FilesCopied'	:		None,
 			'FilesToProcessPost':	None,
+			'SyncReturnCode':		None,
 			'SyncLogs':				[],
 			'Results':				[],
-			'Errors':				[],
-			'SyncReturnCode':		''
+			'Errors':				[]
 		})
 
-	def set_values(self,FilesToProcess=None,FilesProcessed=None,FilesCopied=None,FilesToProcessPost=None):
+	def set_values(self,FilesToProcess=None,FilesProcessed=None,FilesCopied=None,FilesToProcessPost=None,SyncReturnCode=None):
 		if not FilesToProcess is None:
 			self.__BackupReports[self.__Folder][-1]['FilesToProcess']	= FilesToProcess
 
@@ -206,6 +206,9 @@ class reporter(object):
 
 		if not FilesToProcessPost is None:
 			self.__BackupReports[self.__Folder][-1]['FilesToProcessPost']	= FilesToProcessPost
+
+		if not SyncReturnCode is None:
+			self.__BackupReports[self.__Folder][-1]['SyncReturnCode']	= SyncReturnCode
 
 	def add_synclog(self,SyncLog=''):
 		SyncLog	= SyncLog.strip()
@@ -365,7 +368,7 @@ class reporter(object):
 				elif ErrorSign == 'Files missing!':
 					self.display_summary	+= [f":{self.__lan.l('box_backup_files_missing')}."]
 				elif ErrorSign == 'Exception':
-					self.display_summary	+= [f":{self.__lan.l('box_backup_exception')} {self.sync_return_code_decoder(Error.split(':',1)[0])}."]
+					self.display_summary	+= [f":{self.sync_return_code_decoder(Error.split(':',1)[0])}"]
 
 		self.display_summary.append(f":{FilesProcessed} {self.__lan.l('box_backup_of')} {FilesToProcess} {self.__lan.l('box_backup_files_copied')}")
 
@@ -380,29 +383,30 @@ class reporter(object):
 				Code: "-"
 			}
 
-		if self.__TransferMode == 'camera':
+		if self.__TransferMode == 'gphoto2':
 			#gphoto2-codes
 			ERROR_TEXT	= {
-				1:	'Error: No camera found.'
+				1:	'Err.: No camera found'
 			}
+
 		elif self.__TransferMode == 'rsync':
 			#rsync-codes
 			ERROR_TEXT	= {
 				0:	'Success',
 				1:	'Syntax or usage error',
 				2:	'Protocol incompatibility',
-				3:	'Errors selecting input/output files, dirs',
+				3:	'Err. selecting input/output files, dirs',
 				4:	'Requested action not supported: an attempt was made to manipulate 64-bit files on a platform that cannot support them or an option was specified that is supported by the client and not by the server.',
-				5:	'Error starting client-server protocol',
+				5:	'Err. starting client-server protocol',
 				6:	'Daemon unable to append to log-file',
-				10:	'Error in socket I/O',
-				11:	'Error in file I/O',
-				12:	'Error in rsync protocol data stream',
-				13:	'Errors with program diagnostics',
-				14:	'Error in IPC code',
+				10:	'Err. in socket I/O',
+				11:	'Err. in file I/O',
+				12:	'Err. in rsync protocol data stream',
+				13:	'Err. with program diagnostics',
+				14:	'Err. in IPC code',
 				20:	'Received SIGUSR1 or SIGINT',
 				21:	'Some error returned by waitpid()',
-				22:	'Error allocating core memory buffers',
+				22:	'Err. allocating core memory buffers',
 				23:	'Partial transfer due to error',
 				24:	'Partial transfer due to vanished source files',
 				25:	'The --max-delete limit stopped deletions',
@@ -411,8 +415,8 @@ class reporter(object):
 			}
 
 		try:
-			return(f"{self.__lan.l('box_backup_error_code')} '{Code}', {ERROR_TEXT[Code]}")
+			return(f"{ERROR_TEXT[int(Code)]}, {self.__lan.l('box_backup_error_code')} '{Code}'")
 		except:
-			return(f"{self.__lan.l('box_backup_error_code')} '{Code}'")
+			return(f"{self.__lan.l('box_backup_error_code')} '{Code}', {self.__lan.l('box_backup_exception')}")
 
 

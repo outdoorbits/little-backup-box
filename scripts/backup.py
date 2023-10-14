@@ -348,6 +348,7 @@ class backup(object):
 
 								BackupProcess.wait()
 								SyncReturnCode	= BackupProcess.returncode
+								self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
 
 							os.chdir(os.path.expanduser('~'))
 
@@ -373,6 +374,7 @@ class backup(object):
 
 								BackupProcess.wait()
 								SyncReturnCode	= BackupProcess.returncode
+								self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
 
 						SyncStopTime	= lib_system.get_uptime_sec()
 
