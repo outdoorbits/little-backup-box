@@ -320,11 +320,31 @@ class backup(object):
 						SyncStartTime	= lib_system.get_uptime_sec()
 
 						# RUN BACKUP
+						# Check for lost devices
+						lostTargetDevice	= False
+						if self.TargetDevice.mountable:
+							lostTargetDevice = not self.TargetDevice.mounted()
+							self.__log.message(f"Lost target device {self.TargetDevice.StorageType}? {lostTargetDevice}",3)
+
+						lostSourceDevice	= False
+						if self.SourceDevice.mountable:
+							lostSourceDevice = not self.SourceDevice.mounted()
+							self.__log.message(f"Lost source device {self.SourceDevice.StorageType}? {lostSourceDevice}",3)
+
+						if lostTargetDevice or lostSourceDevice:
+							self.__reporter.add_error('Err.Lost device!')
+							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
+							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
+
+							ErrorsOld	= self.__reporter.get_errors()
+							continue
+
 						## create target path if not exists and enter dir
 						try:
 							pathlib.Path(f"{self.TargetDevice.MountPoint}/{self.SourceDevice.SubPathAtTarget}").mkdir(parents=True, exist_ok=True)
 						except:
 							self.__reporter.add_error('Err.Lost device!')
+
 							ErrorsOld	= self.__reporter.get_errors()
 							continue
 
@@ -423,7 +443,7 @@ class backup(object):
 							self.__log.message(f"Exception: {self.__reporter.sync_return_code_decoder(SyncReturnCode)}")
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
-						# Check for lost devices
+						# Re-Check for lost devices
 						lostTargetDevice	= False
 						if self.TargetDevice.mountable:
 							lostTargetDevice = not self.TargetDevice.mounted()

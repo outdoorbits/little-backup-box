@@ -187,7 +187,7 @@ class reporter(object):
 			'FilesToProcess':		0,
 			'FilesProcessed':		0,
 			'FilesCopied'	:		0,
-			'FilesToProcessPost':	0,
+			'FilesToProcessPost':	None,
 			'SyncReturnCode':		0,
 			'SyncLogs':				[],
 			'Results':				[],
@@ -270,10 +270,11 @@ class reporter(object):
 					if 'Exception' in Report['Errors']:
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_exception')} {Report['SyncReturnCode']} ({self.sync_return_code_decoder(Report['SyncReturnCode'])}).</p>"
 
+				FilesCopiedAll	= Report['FilesToProcess'] - Report['FilesToProcessPost'] if not Report['FilesToProcessPost'] is None else '?'
 				if Report['FilesCopied'] == Report['FilesProcessed']:
-					self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{Report['FilesToProcess'] - Report['FilesToProcessPost']} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')}.</p>"
+					self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')}.</p>"
 				else:
-					self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{Report['FilesToProcess'] - Report['FilesToProcessPost']} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')} ({Report['FilesCopied']} {self.__lan.l('box_backup_files_just_copied')})</p>"
+					self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')} ({Report['FilesCopied']} {self.__lan.l('box_backup_files_just_copied')})</p>"
 
 			self.mail_content_HTML	+= f"<br>\n\n    <p style='{CSS_margins_left_1}'>{len(self.__BackupReports[Folder])} {self.__lan.l('box_backup_mail_tries_needed')}.</p>"
 
