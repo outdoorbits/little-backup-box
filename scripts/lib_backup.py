@@ -234,8 +234,8 @@ class reporter(object):
 		# mail content
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 
-		self.mail_content_HTML	+= f"<b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
-		self.mail_content_HTML	+= f"\n<p style='{CSS_margins_left_1}'><b><u>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} {self.__SourceCloudService} {self.__SourceDeviceLbbDeviceID}</u> {self.__lan.l('box_backup_mail_to')} <u>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} {self.__TargetCloudService} {self.__TargetDeviceLbbDeviceID}</u></b></p></br>"
+		self.mail_content_HTML	+= f"\n  <b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
+		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b><u>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} {self.__SourceCloudService} {self.__SourceDeviceLbbDeviceID}</u> {self.__lan.l('box_backup_mail_to')} <u>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} {self.__TargetCloudService} {self.__TargetDeviceLbbDeviceID}</u></b></p></br>\n"
 
 		separator	= False
 		for Folder in self.__BackupReports:
@@ -248,7 +248,7 @@ class reporter(object):
 			separator	= True
 
 			# folder
-			self.mail_content_HTML	+= f"<h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
+			self.mail_content_HTML	+= f"\n  <h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
 
 			# Tries
 			tryNumber	= len(self.__BackupReports[Folder]) + 1
@@ -256,7 +256,7 @@ class reporter(object):
 
 				tryNumber	+= -1
 
-				self.mail_content_HTML	+= f"\n\n  <h4>{tryNumber}. {self.__lan.l('box_backup_try')}</h4>\n"
+				self.mail_content_HTML	+= f"\n\n  <h4>{tryNumber}. {self.__lan.l('box_backup_try')}</h4>"
 
 
 				if not Report['Errors']:
@@ -292,7 +292,7 @@ class reporter(object):
 				separator	= True
 
 				# folder
-				self.mail_content_HTML	+= f"<h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
+				self.mail_content_HTML	+= f"\n  <h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
 
 				# Tries
 				tryNumber	= len(self.__BackupReports[Folder]) + 1
@@ -300,9 +300,9 @@ class reporter(object):
 
 					tryNumber	+= -1
 
-					self.mail_content_HTML	+= f"\n\n  <h4>{tryNumber}. {self.__lan.l('box_backup_try')}</h4>\n"
+					self.mail_content_HTML	+= f"\n\n  <h4>{tryNumber}. {self.__lan.l('box_backup_try')}</h4>"
 
-					self.mail_content_HTML	+= f'<p style="{CSS_margins_left_1}">    '
+					self.mail_content_HTML	+= f'\n<p style="{CSS_margins_left_1}">    '
 					self.mail_content_HTML	+= '</br>\n    '.join(Report['SyncLogs'])
 					self.mail_content_HTML	+= '</p>'
 

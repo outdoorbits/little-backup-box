@@ -289,8 +289,24 @@ class backup(object):
 								self.__log.message(f"remount source device {self.SourceDevice.StorageType} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
 								self.SourceDevice.mount()
 
-						# RUN BACKUP
-						SyncReturnCode	= 0
+						# Check for lost devices
+						lostTargetDevice	= False
+						if self.TargetDevice.mountable:
+							lostTargetDevice = not self.TargetDevice.mounted()
+							self.__log.message(f"Lost target device {self.TargetDevice.StorageType}? {lostTargetDevice}",3)
+
+						lostSourceDevice	= False
+						if self.SourceDevice.mountable:
+							lostSourceDevice = not self.SourceDevice.mounted()
+							self.__log.message(f"Lost source device {self.SourceDevice.StorageType}? {lostSourceDevice}",3)
+
+						if lostTargetDevice or lostSourceDevice:
+							self.__reporter.add_error('Err.Lost device!')
+							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
+							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
+
+							ErrorsOld	= self.__reporter.get_errors()
+							continue
 
 						if self.TargetDevice.mountable: # not cloud_rsync
 							FilesCountStoragePre = self.get_FilesCount(f"{self.TargetDevice.MountPoint}/{self.SourceDevice.SubPathAtTarget}")
@@ -320,24 +336,6 @@ class backup(object):
 						SyncStartTime	= lib_system.get_uptime_sec()
 
 						# RUN BACKUP
-						# Check for lost devices
-						lostTargetDevice	= False
-						if self.TargetDevice.mountable:
-							lostTargetDevice = not self.TargetDevice.mounted()
-							self.__log.message(f"Lost target device {self.TargetDevice.StorageType}? {lostTargetDevice}",3)
-
-						lostSourceDevice	= False
-						if self.SourceDevice.mountable:
-							lostSourceDevice = not self.SourceDevice.mounted()
-							self.__log.message(f"Lost source device {self.SourceDevice.StorageType}? {lostSourceDevice}",3)
-
-						if lostTargetDevice or lostSourceDevice:
-							self.__reporter.add_error('Err.Lost device!')
-							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
-							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
-
-							ErrorsOld	= self.__reporter.get_errors()
-							continue
 
 						## create target path if not exists and enter dir
 						try:
@@ -349,6 +347,8 @@ class backup(object):
 							continue
 
 						self.TargetDevice.set_perms_mountpoint()
+
+						SyncReturnCode	= 0
 
 	#					# gphoto2 backup
 						if self.SourceDevice.StorageType == 'camera':
