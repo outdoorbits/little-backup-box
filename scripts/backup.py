@@ -290,17 +290,7 @@ class backup(object):
 								self.SourceDevice.mount()
 
 						# Check for lost devices
-						lostTargetDevice	= False
-						if self.TargetDevice.mountable:
-							lostTargetDevice = not self.TargetDevice.mounted()
-							self.__log.message(f"Lost target device {self.TargetDevice.StorageType}? {lostTargetDevice}",3)
-
-						lostSourceDevice	= False
-						if self.SourceDevice.mountable:
-							lostSourceDevice = not self.SourceDevice.mounted()
-							self.__log.message(f"Lost source device {self.SourceDevice.StorageType}? {lostSourceDevice}",3)
-
-						if lostTargetDevice or lostSourceDevice:
+						if self.__checkLostDevice():
 							self.__reporter.add_error('Err.Lost device!')
 							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
@@ -444,17 +434,7 @@ class backup(object):
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
 						# Re-Check for lost devices
-						lostTargetDevice	= False
-						if self.TargetDevice.mountable:
-							lostTargetDevice = not self.TargetDevice.mounted()
-							self.__log.message(f"Lost target device {self.TargetDevice.StorageType}? {lostTargetDevice}",3)
-
-						lostSourceDevice	= False
-						if self.SourceDevice.mountable:
-							lostSourceDevice = not self.SourceDevice.mounted()
-							self.__log.message(f"Lost source device {self.SourceDevice.StorageType}? {lostSourceDevice}",3)
-
-						if lostTargetDevice or lostSourceDevice:
+						if self.__checkLostDevice():
 							self.__reporter.add_error('Err.Lost device!')
 							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
@@ -521,6 +501,19 @@ class backup(object):
 			del self.vpn
 			lib_cron_ip.display_ip()
 			lib_cron_ip.mail_ip()
+
+	def __checkLostDevice(self):
+		lostTargetDevice	= False
+		if self.TargetDevice.mountable:
+			lostTargetDevice = not self.TargetDevice.mounted()
+			self.__log.message(f"Lost target device {self.TargetDevice.StorageType}? {lostTargetDevice}",3)
+
+		lostSourceDevice	= False
+		if self.SourceDevice.mountable:
+			lostSourceDevice = not self.SourceDevice.mounted()
+			self.__log.message(f"Lost source device {self.SourceDevice.StorageType}? {lostSourceDevice}",3)
+
+		return (lostTargetDevice or lostSourceDevice)
 
 	def syncDatabase(self):
 		if self.TargetDevice:
