@@ -62,7 +62,7 @@
     "camera_identifier": "Identificación",
     "camera_model": "Modelo de cámara",
     "camera_serial": "Número de serie",
-    "camera": "Cámara/teléfono inteligente"
+    "cameras": "Cámaras/teléfonos inteligentes"
   },
   "config": {
     "config": "Ajustes",
