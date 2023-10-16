@@ -684,8 +684,13 @@
 							$i	+= 1;
 							$interpretedDate	= date_create($IMAGE['Create_Date']);
 							if ($interpretedDate == false) {
-								$DateExplode	= explode('_',$IMAGE['Create_Date']);
-								$interpretedDate=date_create($DateExplode[0] . '-' . $DateExplode[1] . '-' . $DateExplode[2] . ' ' . $DateExplode[3] . ':' .  $DateExplode[4] . ':' . $DateExplode[5]);
+								$Create_Date	= str_replace('-','_',$IMAGE['Create_Date']);
+								$Create_Date	= str_replace(':','_',$Create_Date);
+								$Create_Date	= str_replace(' ','_',$Create_Date);
+
+								$DateExplode		= explode('_', $Create_Date);
+
+								$interpretedDate	= date_create($DateExplode[0] . '-' . $DateExplode[1] . '-' . $DateExplode[2] . ' ' . $DateExplode[3] . ':' .  $DateExplode[4] . ':' . $DateExplode[5]);
 							}
 							$IMAGE_DATE	= date_format($interpretedDate,L::view_date_format);
 
