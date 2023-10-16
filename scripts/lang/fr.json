@@ -54,13 +54,15 @@
     "cpuload": "Charge CPU",
     "devices": "Dispositifs",
     "diskspace": "Espace disque",
-    "camera": "Appareil photo/smartphone",
     "conditions": "Conditions",
     "memory_ram": "RAM utilisé",
     "memory_swap": "SWAP utilisé",
-    "camera_serial": "Numéro de série",
     "camera_storages": "Chemins de stockage",
-    "refresh_button": "Rafraîchir"
+    "refresh_button": "Rafraîchir",
+    "camera_identifier": "Identifiant",
+    "camera_model": "Modèle de caméra",
+    "camera_serial": "Numéro de série",
+    "camera": "Appareil photo/smartphone"
   },
   "config": {
     "config": "Réglages",

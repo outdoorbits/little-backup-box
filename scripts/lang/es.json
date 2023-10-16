@@ -54,13 +54,15 @@
     "cpuload": "Uso del CPU",
     "devices": "Dispositivos",
     "diskspace": "Espacio del disco",
-    "camera": "Cámara / teléfono inteligente",
     "conditions": "Condiciones",
     "memory_ram": "RAM usado",
     "memory_swap": "SWAP usado",
-    "camera_serial": "Número de serie",
     "camera_storages": "Rutas de almacenamiento",
-    "refresh_button": "Actualizar"
+    "refresh_button": "Actualizar",
+    "camera_identifier": "Identificación",
+    "camera_model": "Modelo de cámara",
+    "camera_serial": "Número de serie",
+    "camera": "Cámara/teléfono inteligente"
   },
   "config": {
     "config": "Ajustes",

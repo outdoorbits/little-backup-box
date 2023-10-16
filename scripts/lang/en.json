@@ -226,12 +226,14 @@
     "conditions": "Conditions",
     "devices": "Devices",
     "diskspace": "Disk space",
-    "camera": "Camera / smartphone",
-    "camera_serial": "Serial number",
     "memory_ram": "RAM used",
     "memory_swap": "SWAP used",
     "camera_storages": "Storage paths",
-    "refresh_button": "Refresh"
+    "refresh_button": "Refresh",
+    "camera_identifier": "identification",
+    "camera_model": "Camera model",
+    "camera_serial": "Serial number",
+    "camera": "Camera/smartphone"
   },
   "sysconditions": {
     "under_voltage_cur": "The voltage is currently too low.",

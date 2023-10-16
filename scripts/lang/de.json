@@ -54,13 +54,15 @@
     "cpuload": "CPU-Last",
     "devices": "Geräte",
     "diskspace": "Festplattenplatz",
-    "camera": "Kamera / Smartphone",
     "conditions": "Bedingungen",
     "memory_ram": "RAM belegt",
     "memory_swap": "SWAP belegt",
-    "camera_serial": "Seriennummer",
     "camera_storages": "Speicherpfade",
-    "refresh_button": "aktualisieren"
+    "refresh_button": "aktualisieren",
+    "camera_identifier": "Identifikation",
+    "camera_model": "Kamera-Modell",
+    "camera_serial": "Seriennummer",
+    "camera": "Kamera/Smartphone"
   },
   "config": {
     "config": "Einstellungen",

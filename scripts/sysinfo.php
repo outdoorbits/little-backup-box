@@ -90,24 +90,53 @@
 		<h3><?php echo L::sysinfo_camera; ?></h3>
 			<?php
 				echo '<pre>';
+
+					echo '<h3>' . L::sysinfo_camera_identifier.'</h3>';
+					exec("sudo gphoto2 --auto-detect",$DEVICES);
+					if (count($DEVICES)>2) {
+						echo "<ul>";
+
+							$FirstColumnLength	= strpos($DEVICES[0],'Port');
+
+							$DEVICE	= substr($DEVICES[2],0,$FirstColumnLength);
+							$DEVICE	= trim($DEVICE);
+
+							echo "<li>$DEVICE</li>";
+
+						echo "</ul>";
+					}
+					else
+					{
+						echo "-";
+					}
+
+					echo '<h3>' . L::sysinfo_camera_model.'</h3>';
+					unset($DEVICES);
 					exec("sudo gphoto2 --summary | grep 'Model' | cut -d: -f2 | tr -d ' '",$DEVICES);
 					if (count($DEVICES)) {
 						echo "<ul>";
-							foreach ($DEVICES as $DEVICE) {
-								$DEVICE=mb_ereg_replace("([^a-zA-Z0-9-_\.])", '_', $DEVICE);
-								echo "<li>$DEVICE</li>";
-							}
+
+							$DEVICE	= mb_ereg_replace("([^a-zA-Z0-9-_\.])", '_', $DEVICES[0]);
+
+							echo "<li>$DEVICE</li>";
+
 						echo "</ul>";
+					}
+					else
+					{
+						echo "-";
 					}
 
 					echo '<h3>' . L::sysinfo_camera_serial.'</h3>';
 					exec("sudo gphoto2 --summary | grep 'Serial Number' | cut -d: -f2 | tr -d ' '",$SERIALS);
 					if (count($SERIALS)) {
 						echo "<ul>";
-							foreach ($SERIALS as $SERIAL) {
-								$SERIAL=mb_ereg_replace("([^a-zA-Z0-9-_\.])", '_', $SERIAL);
-								echo "<li>$SERIAL</li>";
-							}
+
+							$SERIAL	= mb_ereg_replace("([^a-zA-Z0-9-_\.])", '_', $SERIALS[0]);
+							$SERIAL	= ltrim($SERIAL, "0");
+
+							echo "<li>$SERIAL</li>";
+
 						echo "</ul>";
 					}
 					else
@@ -120,6 +149,7 @@
 					if (count($STORAGES)) {
 						echo "<ul>";
 							foreach ($STORAGES as $STORAGE) {
+
 								echo "<li>$STORAGE</li>";
 							}
 						echo "</ul>";
