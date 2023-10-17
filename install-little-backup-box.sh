@@ -201,12 +201,12 @@ fi
 sudo mkdir -p "${const_WEB_ROOT_LBB}"
 yes | sudo cp -Rf "${INSTALLER_DIR}/scripts/"* "${const_WEB_ROOT_LBB}/"
 
+# rewrite config files
+sudo python3 "${const_WEB_ROOT_LBB}/lib_setup.py"
+
 # set file permissions in const_WEB_ROOT_LBB
 sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R
 sudo chmod 777 ${const_WEB_ROOT_LBB}/*
-
-# rewrite config files
-python3 "${const_WEB_ROOT_LBB}/lib_setup.py"
 
 # read config file
 CONFIG="${const_WEB_ROOT_LBB}/config.cfg"
