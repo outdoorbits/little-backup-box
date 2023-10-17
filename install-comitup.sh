@@ -34,6 +34,7 @@ sudo apt-get install comitup
 
 # Installing comitup*: Allow NetworkManager to manage the wifi interfaces by removing references to them from /etc/network/interfaces
 sudo rm /etc/network/interfaces
+sudo systemctl mask dnsmasq.service
 
 # Installing comitup*: Rename or delete /etc/wpa_supplicant/wpa_supplicant.conf
 if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf.old" ]; then
