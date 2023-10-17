@@ -316,7 +316,7 @@ function upload_settings() {
 					$Files_Copied="";
 
 					if (file_exists($targetdir."/config.cfg")) {
-						@unlink($constants["const_WEB_ROOT_LBB"]/config.cfg);
+						@unlink($constants["const_WEB_ROOT_LBB"].'/config.cfg');
 						if (rename($targetdir."/config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {$Files_Copied="\n* 'config.cfg'";}
 
 					}

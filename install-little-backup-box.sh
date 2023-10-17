@@ -272,9 +272,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools
-
-sudo -H pip3 install luma.oled
+		libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools python3-luma.core python3-luma.emulator python3-luma.lcd python3-luma.led-matrix python3-luma.oled
 
 # Enable OLED screen support if available
 ## append new line to config-file
