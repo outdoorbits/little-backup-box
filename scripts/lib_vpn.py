@@ -69,10 +69,18 @@ class vpn(object):
 		if self.VPNMode in ['OpenVPN','WireGuard']:
 
 			if self.VPNMode == 'OpenVPN':
-				Status = (subprocess.check_output(['sudo','ip','tuntap','show']) != '') and (self.IP_pre_VPN != lib_network.get_IP())
+				Command	= ['sudo','ip','tuntap','show']
+				try:
+					Status	= (subprocess.check_output(Command) != '') and (self.IP_pre_VPN != lib_network.get_IP())
+				except:
+					Status	= False
+
 			elif self.VPNMode == "WireGuard":
 				Command	= ['sudo','wg','show',self.__VPN_FileName.split('.')[0]]
-				Status = (self.__VPN_FileName.split('.')[0] in subprocess.check_output(Command).decode()) and (self.IP_pre_VPN != lib_network.get_IP())
+				try:
+					Status = (self.__VPN_FileName.split('.')[0] in subprocess.check_output(Command).decode()) and (self.IP_pre_VPN != lib_network.get_IP())
+				except:
+					Status	= False
 
 			self.__status_check_time	= lib_system.get_uptime_sec()
 

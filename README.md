@@ -3,6 +3,7 @@
 <h2>Warning</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
 The installation routine has been adapted to Raspberry Pi OS lite version bookworm. Unfortunately, some essential packages were changed during this OS version change. An update from an installation before bookworm could fail. Please reinstall Little backup box on a native Raspberry Pi OS lite (bookworm version).<br />
+<b>Using Raspberry Pi OS version 11 (bullseye) is recommended. There are major issues using version 11 (bookworm)</b>
 <br />
 <h2>Announcement</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
@@ -120,7 +121,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 
 <h2 id="installation">Installation</h2>
 <ol>
-<li>Create a bootable SD card with the latest version of Raspberry Pi OS Lite (32 or 64 bit) for use with Little Backup Box.<br />
+<li>Create a bootable SD card with <s>the latest version</s> <b>version 11 (bullseye)</b> of Raspberry Pi OS Lite (32 or 64 bit) for use with Little Backup Box.<br />
 An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select "Raspberry Pi OS (other)" > "Raspberry Pi OS Lite (32-bit)" or "Raspberry Pi OS Lite (64-bit)".<br />
 In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens the options-dialog. Here you can ...
 <ul>
