@@ -188,9 +188,14 @@ source "${INSTALLER_DIR}/scripts/constants.sh"
 
 # keep config file
 if [ "${SCRIPT_MODE}" = "update" ]; then
-	echo "keep config..."
-	yes | sudo cp -f "${const_WEB_ROOT_LBB}/config.cfg" "${INSTALLER_DIR}/scripts/"
-	yes | sudo cp -f "${const_UPDATE_LOCKFILE}" "${INSTALLER_DIR}/scripts/"
+	if [ -f "${const_WEB_ROOT_LBB}/config.cfg" ]; then
+		echo "keep config..."
+		yes | sudo cp -f "${const_WEB_ROOT_LBB}/config.cfg" "${INSTALLER_DIR}/scripts/"
+	fi
+
+	if [ -f "${const_CMD_RUNNER_LOCKFILE}" ]; then
+		yes | sudo cp -f "${const_CMD_RUNNER_LOCKFILE}" "${INSTALLER_DIR}/scripts/"
+	fi
 
 	sudo rm -R ${const_WEB_ROOT_LBB}/*
 fi
@@ -198,6 +203,10 @@ fi
 # install little-backup-box-files
 sudo mkdir -p "${const_WEB_ROOT_LBB}"
 yes | sudo cp -Rf "${INSTALLER_DIR}/scripts/"* "${const_WEB_ROOT_LBB}/"
+
+# set file permissions in const_WEB_ROOT_LBB
+sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R
+sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 
 # rewrite config files
 python3 "${const_WEB_ROOT_LBB}/lib_setup.py"
@@ -247,11 +256,8 @@ sudo usermod -aG sudo ${USER_WWW_DATA}
 yes | sudo cp -f "${INSTALLER_DIR}/etc_sudoers_d_www-data" "/etc/sudoers.d/www-data"
 sudo chmod 0440 "/etc/sudoers.d/www-data"
 
-# change owner and make scripts executable
+# change owner and make installer scripts executable
 sudo chmod 777 ${INSTALLER_DIR}/*.sh
-
-sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R
-sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 
 # prevent SSH freeze
 if [ -z "$(cat /etc/ssh/sshd_config | grep 'IPQos cs0 cs0')" ]; then

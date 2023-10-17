@@ -26,6 +26,14 @@ fi
 
 echo "Installing comitup..."
 
+# install dependencies
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		dnsmasq systemd-resolved dhcpd dhcpcd wpasupplicant
+
 # Installing comitup*: install comitup sources
 wget https://davesteele.github.io/comitup/latest/davesteele-comitup-apt-source_latest.deb
 sudo dpkg -i --force-all davesteele-comitup-apt-source_latest.deb
