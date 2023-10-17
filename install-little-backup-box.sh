@@ -204,7 +204,7 @@ python3 "${const_WEB_ROOT_LBB}/lib_setup.py"
 
 # read config file
 CONFIG="${const_WEB_ROOT_LBB}/config.cfg"
-cho "Loading old settings from ${CONFIG}"
+echo "Loading old settings from ${CONFIG}"
 source "${CONFIG}"
 
 # Install rclone
@@ -269,9 +269,9 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		python3 python3-pip python3-pil python3-configobj libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5 i2c-tools
+		python3 python3-pip python3-pil python3-configobj libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools
 
-		sudo -H pip3 install luma.oled
+sudo -H pip3 install luma.oled
 
 # Enable OLED screen support if available
 ## append new line to config-file
@@ -598,6 +598,13 @@ echo ""
 echo "Little Backup Box: Setup finished." | tee "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
 echo "Mode=${SCRIPT_MODE}" | tee -a "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
 date | tee -a "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
+
+# show installation errors
+if [ -f './install-error.log' ]; then
+	echo 'Installation errors:'
+	echo "To see all error messages, please execute 'cat ./install-error.log'."
+	echo
+fi
 
 # reboot
 echo "All done! Rebooting..."
