@@ -149,7 +149,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3
+		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -164,9 +164,6 @@ sudo DEBIAN_FRONTEND=noninteractive \
 
 # disable services
 sudo systemctl disable openvpn.service
-
-# General raspi-config settings
-sudo raspi-config nonint do_boot_wait 1 # wait for network on boot: disable
 
 # Clone Little Backup Box
 echo "Cloning Little Backup Box"
@@ -275,7 +272,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		python3 python3-pip python3-pil python3-configobj libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools
+		libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools
 
 sudo -H pip3 install luma.oled
 
