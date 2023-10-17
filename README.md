@@ -1,5 +1,9 @@
 <h1>Little Backup Box</h1>
 
+<h2>Warning</h2>
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
+The installation routine has been adapted to Raspberry Pi OS lite version bookworm. Unfortunately, some essential packages were changed during this OS version change. An update from an installation before bookworm could fail. Please reinstall Little backup box on a native Raspberry Pi OS lite (bookworm version).<br />
+<br />
 <h2>Announcement</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
 <b>New version! The development version now replaces the old main version.</b><br />
