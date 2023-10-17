@@ -26,15 +26,25 @@ fi
 
 echo "Installing comitup..."
 
+# Installing comitup*: install comitup sources
+wget https://davesteele.github.io/comitup/latest/davesteele-comitup-apt-source_latest.deb
+sudo dpkg -i --force-all davesteele-comitup-apt-source_latest.deb
+sudo rm davesteele-comitup-apt-source_latest.deb
+sudo apt update
+
 # Enable and start NetworkManager
 sudo systemctl enable NetworkManager.service
 
 # Installing comitup*: install comitup
-sudo apt-get install comitup
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		comitup comitup-watch
 
 # Installing comitup*: Allow NetworkManager to manage the wifi interfaces by removing references to them from /etc/network/interfaces
 sudo rm /etc/network/interfaces
-sudo systemctl mask dnsmasq.service
 
 # Installing comitup*: Rename or delete /etc/wpa_supplicant/wpa_supplicant.conf
 if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf.old" ]; then
@@ -43,6 +53,13 @@ fi
 if [ -f "/etc/wpa_supplicant/wpa_supplicant.conf" ]; then
 	sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.old
 fi
+
+# Installing comitup*: The systemd.resolved service should be disabled and masked to avoid contention for providing DNS service. EDIT - there is a reported alternate method to keep the service from interfering.
+sudo systemctl mask dnsmasq.service
+sudo systemctl mask systemd-resolved.service
+sudo systemctl mask dhcpd.service
+sudo systemctl mask dhcpcd.service
+sudo systemctl mask wpa-supplicant.service
 
 # create config
 sudo python3 "${INSTALLER_DIR}/scripts/lib_comitup.py"
