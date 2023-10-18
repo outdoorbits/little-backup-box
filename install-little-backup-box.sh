@@ -146,13 +146,23 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Install the required packages
+## resolvconf: keep /etc/resolv.conf
+if [ -f "./resolv.conf" ]; then
+	sudo cp /etc/resolv.conf /tmp/resolv.conf
+fi
+
 echo "apt install..."
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj
+		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj resolvconf
+
+## resolvconf: Reinstall old /etc/resolv.conf
+if [ -f "./resolv.conf" ]; then
+	sudo mv /tmp/resolv.conf /etc/resolv.conf
+fi
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -586,15 +596,6 @@ fi
 
 # setup hardware
 	source "${const_WEB_ROOT_LBB}/set_hardware.sh"
-
-# wireguard expects resolvconf but it breaks the existing network configuration, installing late
-echo "apt install..."
-sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
-		-o "Dpkg::Options::=--force-confold" \
-		-o "Dpkg::Options::=--force-confdef" \
-		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		resolvconf
 
 # post-install-information
 IP=$(python3 "${const_WEB_ROOT_LBB}/lib_network.py" ip)
