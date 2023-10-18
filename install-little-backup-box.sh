@@ -152,10 +152,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj resolvconf
-
-# wireguard expects resolvconf but it breaks the existing network configuration
-sudo service resolvconf stop
+		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -624,6 +621,16 @@ if [ -f './install-error.log' ]; then
 	echo "To see all error messages, please execute 'cat ./install-error.log'."
 	echo
 fi
+
+# wireguard expects resolvconf but it breaks the existing network configuration
+# Install the required packages
+echo "apt install..."
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		resolvconf
 
 # reboot
 echo "All done! Rebooting..."
