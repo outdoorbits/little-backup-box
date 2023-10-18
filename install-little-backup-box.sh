@@ -160,7 +160,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj resolvconf
 
 ## resolvconf: Reinstall old /etc/resolv.conf
-if [ -f "./resolv.conf" ]; then
+if [ -f "/tmp/resolv.conf" ]; then
 	sudo mv /tmp/resolv.conf /etc/resolv.conf
 fi
 
