@@ -147,7 +147,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 
 # Install the required packages
 ## resolvconf: keep /etc/resolv.conf
-if [ -f "./resolv.conf" ]; then
+if [ -f "/etc/resolv.conf" ]; then
 	sudo cp /etc/resolv.conf /tmp/resolv.conf
 fi
 
