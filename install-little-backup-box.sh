@@ -587,6 +587,15 @@ fi
 # setup hardware
 	source "${const_WEB_ROOT_LBB}/set_hardware.sh"
 
+# wireguard expects resolvconf but it breaks the existing network configuration, installing late
+echo "apt install..."
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		resolvconf
+
 # post-install-information
 IP=$(python3 "${const_WEB_ROOT_LBB}/lib_network.py" ip)
 
@@ -621,16 +630,6 @@ if [ -f './install-error.log' ]; then
 	echo "To see all error messages, please execute 'cat ./install-error.log'."
 	echo
 fi
-
-# wireguard expects resolvconf but it breaks the existing network configuration
-# Install the required packages
-echo "apt install..."
-sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
-		-o "Dpkg::Options::=--force-confold" \
-		-o "Dpkg::Options::=--force-confdef" \
-		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		resolvconf
 
 # reboot
 echo "All done! Rebooting..."
