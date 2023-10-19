@@ -861,11 +861,13 @@ class backup(object):
 				self.__log.message(' '.join(SourceCommand),3)
 				self.__log.message(' '.join(FilterCommand),3)
 				try:
-					gphoto2	= lib_common.pipe(SourceCommand,FilterCommand).decode()
+					gphoto2			= lib_common.pipe(SourceCommand,FilterCommand).decode()
+					FilesToProcess	+= len(gphoto2.strip().split('\n'))
 				except:
 					gphoto2	= 'error'
+					FilesToProcess	= 0
 
-				FilesToProcess		+= len(gphoto2.strip().split('\n'))
+
 
 				self.__log.message(f"Files in folder '{SubPathAtSource}': {FilesToProcessPart}")
 
