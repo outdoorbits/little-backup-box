@@ -768,53 +768,7 @@ class storage(object):
 
 		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 2}", f":{l_drive_ok}", f":{storsize}", f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
 
-if __name__ == "__main__":
-	#storage('usb', 'source' , True, '', '').mount()
-	#print(subprocess.check_output('mount').decode())
-	#sys.exit()
-
-	if len(sys.argv) > 1:
-		Action					= sys.argv[1]
-
-		if Action in ['mount','umount','mounted'] and len(sys.argv) > 2:
-
-			StorageName				= sys.argv[2]
-
-			try:
-				Role				= sys.argv[3]
-			except:
-				Role		= ''
-
-			try:
-				WaitForDevice		= (sys.argv[4] == 'True')
-			except:
-				WaitForDevice		= True
-
-			try:
-				DeviceIdentifierPresetThis		= sys.argv[5]
-			except:
-				DeviceIdentifierPresetThis		= ''
-
-			try:
-				DeviceIdentifierPresetOther		= sys.argv[6]
-			except:
-				DeviceIdentifierPresetOther		= ''
-
-			if Action == 'mount':
-				storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).mount()
-
-			elif Action == 'umount':
-				storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).umount()
-
-			elif Action == 'mounted':
-				print(storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).mounted())
-
-		elif Action == 'get_mounts_list':
-			print(get_mounts_list())
-
-
-
-############
+#########################
 
 def umount(setup, MountPoints):
 	#setup:			setup-object
@@ -1023,3 +977,52 @@ def extractCloudService(DeviceName):
 		CloudPart	= ''
 
 	return(DevicePart, CloudPart)
+
+###########################
+
+if __name__ == "__main__":
+	#storage('usb', 'source' , True, '', '').mount()
+	#print(subprocess.check_output('mount').decode())
+	#sys.exit()
+
+	if len(sys.argv) > 1:
+		Action					= sys.argv[1]
+
+		if Action in ['mount','umount','mounted'] and len(sys.argv) > 2:
+
+			StorageName				= sys.argv[2]
+
+			try:
+				Role				= sys.argv[3]
+			except:
+				Role		= ''
+
+			try:
+				WaitForDevice		= (sys.argv[4] == 'True')
+			except:
+				WaitForDevice		= True
+
+			try:
+				DeviceIdentifierPresetThis		= sys.argv[5]
+			except:
+				DeviceIdentifierPresetThis		= ''
+
+			try:
+				DeviceIdentifierPresetOther		= sys.argv[6]
+			except:
+				DeviceIdentifierPresetOther		= ''
+
+			if Action == 'mount':
+				storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).mount()
+
+			elif Action == 'umount':
+				storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).umount()
+
+			elif Action == 'mounted':
+				print(storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).mounted())
+
+		elif Action == 'get_mounts_list':
+			print(get_mounts_list())
+
+
+

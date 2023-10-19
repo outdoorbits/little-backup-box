@@ -49,6 +49,7 @@
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo l::tools_tools; ?></h1>
 	<div class="card">
 		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::tools_mount_header; ?></h3>
@@ -163,11 +164,12 @@
 	<?php include "sub-footer.php"; ?>
 
 	<?php
+
 			if (isset($_POST['mount'])) {
 				[$Role,$Storage]	= explode('_',$_POST['mount'],2);
 
 					$command = "sudo python3 $WORKING_DIR/lib_storage.py mount $Storage $Role";
-// 					print($command. '<br>');
+// 					print($command . '<br>');
 					shell_exec ("python3 lib_log.py 'execute' '' '${command}' '1'");
 					echo "<script>";
 						echo "window.location = window.location.href;";
@@ -177,8 +179,9 @@
 				[$Role,$Storage]	= explode('_',$_POST['umount'],2);
 
 					$command = "sudo python3 $WORKING_DIR/lib_storage.py umount $Storage $Role";
-// 					print($command. '<br>');
+// 					print($command . '<br>');
 					shell_exec ("python3 lib_log.py 'execute' '' '${command}' '1'");
+
 					echo "<script>";
 						echo "window.location = window.location.href;";
 					echo "</script>";
