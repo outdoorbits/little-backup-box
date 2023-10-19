@@ -638,7 +638,7 @@ class backup(object):
 				ImagesList = [i.replace(self.TargetDevice.MountPoint,'',1) for i in ImagesList]
 
 				# find all tims
-				Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+				Command	= f"find '{self.TargetDevice.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 				TIMSList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 				TIMSList.sort()
 				#convert tims filesnames to original filenames
