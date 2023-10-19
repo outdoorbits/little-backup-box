@@ -603,7 +603,6 @@ class backup(object):
 				# prepare database
 				db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
 
-
 				self.__display.message([
 					"set:clear",
 					f":{self.__lan.l('box_backup_generating_thumbnails_finding_images1')}",
@@ -629,21 +628,19 @@ class backup(object):
 					if AllowedExtensionsOptions:
 						AllowedExtensionsOptions	+= ["-o"]
 
-					AllowedExtensionsOptions	+= ["-iname", f"*.{AllowedExtension}"]
+					AllowedExtensionsOptions	+= ["-iname", f"'*.{AllowedExtension}'"]
 
 				BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
-				Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(AllowedExtensionsOptions)} \) -not -path */tims/* {' '.join(BannedPathsViewCaseInsensitive)}"
+				Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(AllowedExtensionsOptions)} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 				ImagesList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 				ImagesList.sort()
-
 				ImagesList = [i.replace(self.TargetDevice.MountPoint,'',1) for i in ImagesList]
 
 				# find all tims
-				Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( -iname *.jpg -o -iname *.jpeg \) -path */tims/* {' '.join(BannedPathsViewCaseInsensitive)}"
+				Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 				TIMSList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 				TIMSList.sort()
-
 				#convert tims filesnames to original filenames
 				for i, TIMS in enumerate(TIMSList):
 					TIMSList[i]	= TIMS.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0] 			# remove self.TargetDevice.MountPoint and second extension
@@ -896,13 +893,17 @@ class backup(object):
 		# Set the PWR LED ON to indicate that the backup has finished
 		lib_system.rpi_leds(trigger='none',brightness='1')
 
-		self.__reporter.prepare_display_summary()
+		if self.__reporter is None:
+			display_summary	= []
+		else:
+			self.__reporter.prepare_display_summary()
+			display_summary	= self.__reporter.display_summary
 
 		if self.SecundaryBackupFollows:
 
 			lib_storage.umount(self.__setup,'all')
 
-			self.__display.message(self.__reporter.display_summary)
+			self.__display.message(display_summary)
 		else:
 			# Power off
 			if self.PowerOff:
@@ -910,26 +911,35 @@ class backup(object):
 			else:
 				Action	= 'None'
 
-			lib_poweroff.poweroff(Action, self.__reporter.display_summary).poweroff()
+			lib_poweroff.poweroff(Action, display_summary).poweroff()
 
 if __name__ == "__main__":
 	SourceName						= sys.argv[1]
 	TargetName						= sys.argv[2]
 
-	try:
-		DoSyncDatabase					= (sys.argv[3] == 'True')
-	except:
-		DoSyncDatabase					= False
+	if SourceName	== 'database':
+		DoSyncDatabase			= True
+	else:
+		try:
+			DoSyncDatabase					= (sys.argv[3] == 'True')
+		except:
+			DoSyncDatabase					= False
 
-	try:
-		DoGenerateThumbnails			= (sys.argv[4] == 'True')
-	except:
-		DoGenerateThumbnails			= 'setup'
+	if SourceName == 'thumbnails':
+		DoGenerateThumbnails	= True
+	else:
+		try:
+			DoGenerateThumbnails			= (sys.argv[4] == 'True')
+		except:
+			DoGenerateThumbnails			= 'setup'
 
-	try:
-		DoUpdateEXIF					= (sys.argv[5] == 'True')
-	except:
-		DoUpdateEXIF					= 'setup'
+	if SourceName == 'exif':
+		DoUpdateEXIF			= True
+	else:
+		try:
+			DoUpdateEXIF					= (sys.argv[5] == 'True')
+		except:
+			DoUpdateEXIF					= 'setup'
 
 	try:
 		DeviceIdentifierPresetSource	= sys.argv[6]
