@@ -21,6 +21,7 @@ import lib_log
 import lib_setup
 
 import os
+import re
 import sys
 
 import smtplib, ssl
@@ -62,7 +63,7 @@ class mail(object):
 				server = smtplib.SMTP_SSL(self.conf_SMTP_SERVER, self.conf_SMTP_PORT, context=context, timeout=self.const_MAIL_TIMEOUT)
 				server.login(self.conf_MAIL_USER, self.conf_MAIL_PASSWORD)
 			except Exception as e:
-				self.log.message(f"Error sending mail: {e}")
+				self.log.message(f"Mail error while defining SSL smtp server: {e}")
 
 		else:
 			# STARTTLS
@@ -74,7 +75,7 @@ class mail(object):
 				server.login(self.conf_MAIL_USER, self.conf_MAIL_PASSWORD)
 
 			except Exception as e:
-				self.log.message(f"Error sending mail: {e}")
+				self.log.message(f"Mail error while defining STARTTLS smtp server: {e}")
 
 		if self.conf_MAIL_HTML:
 			MailContent = MIMEMultipart("alternative")
@@ -92,7 +93,7 @@ class mail(object):
 			try:
 				server.sendmail(self.conf_MAIL_USER, self.conf_MAIL_TO, MailContent.as_string())
 			except Exception as e:
-				self.log.message(f"Error sending mail: {e}")
+				self.log.message(f"Error sending HTML mail: {e}")
 
 		else: # Plain text mail
 			MailContent = f"""\
@@ -103,15 +104,33 @@ Subject: {Subject}
 			try:
 				server.sendmail(self.conf_MAIL_USER, self.conf_MAIL_TO, MailContent)
 			except Exception as e:
-				self.log.message(f"Error sending mail: {e}")
+				self.log.message(f"Error sending plain text mail: {e}")
 
 		try:
 			server.quit()
 		except Exception as e:
-				self.log.message(f"Error sending mail: {e}")
+				self.log.message(f"Mail error while disconnecting from smtp server: {e}")
 
+################
 
+def remove_HTML_tags(HTML):
+	# translate HTML to text formatting
 
+	replaceings	= {
+		'<hr style="width:50%;">':			' *****',
+		'&quot;':							'"',
+	}
+
+	PLAIN	= HTML
+	for replaceing in replaceings:
+		PLAIN	= PLAIN.replace(replaceing, replaceings[replaceing])
+
+	#remove all HTML
+	PLAIN	= re.sub(re.compile('<.*?>'),'',PLAIN)
+
+	return(PLAIN)
+
+################
 
 if __name__ == "__main__":
 

@@ -18,8 +18,8 @@
 #######################################################################
 
 from datetime import datetime, timedelta
-import re
 
+import lib_mail
 import lib_system
 
 class progressmonitor(object):
@@ -306,29 +306,11 @@ class reporter(object):
 					self.mail_content_HTML	+= '</br>\n    '.join(Report['SyncLogs'])
 					self.mail_content_HTML	+= '</p>'
 
-		self.mail_content_PLAIN	= self.__reformat_PLAIN(self.mail_content_HTML)
+		self.mail_content_PLAIN	= lib_mail.remove_HTML_tags(self.mail_content_HTML)
 
 		# mail subject
 		self.mail_subject	= 'Little Backup Box: '
 		self.mail_subject	+= self.__lan.l('box_backup_mail_backup_complete') if BackupComplete else self.__lan.l('box_backup_mail_error')
-
-
-	def __reformat_PLAIN(self,HTML):
-		# translate HTML to text formatting
-
-		replaceings	= {
-			'<hr style="width:50%;">':			' *****',
-			'&quot;':							'"',
-		}
-
-		PLAIN	= HTML
-		for replaceing in replaceings:
-			PLAIN	= PLAIN.replace(replaceing, replaceings[replaceing])
-
-		#remove all HTML
-		PLAIN	= re.sub(re.compile('<.*?>'),'',PLAIN)
-
-		return(PLAIN)
 
 	def prepare_display_summary(self):
 		# provides self.display_summary
