@@ -51,7 +51,7 @@
 
 <head>
 	<?php include "sub-standards-header-loader.php"; ?>
-	<script src="js/refresh_iframe.js"></script>
+	<script type="text/javascript" src="js/refresh_iframe.js"></script>
 
 	<script>
 		function HideDisallowedButtons(ActiveSource) {
