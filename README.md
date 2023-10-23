@@ -57,7 +57,7 @@ These languages are already available. Do you want to maintain or create a trans
 <li>2023/02/15: Remove miniDLNA due to security concerns</li>
 <li>2023/02/15: Settings: Use global password as WiFi-password in comitup-hotspot-mode</li>
 <li>2022/12/12: View got magnifying glass-function. This allows quick ratings with improved evidence.</li>
-<li>2022/12/03: Rating function supports writing of EXIF-data into media-files. This allows to use the ratings in futher processing (e.g. in <a href="https://www.darktable.org/">darktable</a>).</li>
+<li>2022/12/03: Rating function supports writing of EXIF-data into media-files. This allows to use the ratings in further processing (e.g. in <a href="https://www.darktable.org/">darktable</a>).</li>
 <li>2022/11/19: Image-viewer "View" now can handle videos and audios!</li>
 <li>2022/11/14: Image-viewer "View" got a rating function. Images having one star only can be deleted.</li>
 <li>2022/11/08: Image-viewer mejiro is replaced by a integrated solution offering much faster options to find images.</li>
