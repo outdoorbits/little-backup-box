@@ -1,9 +1,8 @@
 <h1>Little Backup Box</h1>
 
-<h2>Warning</h2>
+<h2>Warning: Please still use Raspberry Pi OS (Legacy) Lite (bullseye)</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
-The installation routine has been adapted to Raspberry Pi OS lite version bookworm. Unfortunately, some essential packages were changed during this OS version change. An update from an installation before bookworm could fail. Please reinstall Little backup box on a native Raspberry Pi OS lite (bookworm version).<br />
-<b>Using <b>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</b> is strongly recommended. There are major issues using version 12 (bookworm)</b>
+Raspberry Pi OS bookworm doesn't meet dependencies of <a href="http://davesteele.github.io/comitup/">Comitup</a>. As the developer says, Comitup will be adapted to bookworm, but this is a major task and there is no timetable yet. This is why <b>Using <b>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</b> is strongly recommended.<br />
 <br />
 <h2>Announcement</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
