@@ -2,7 +2,7 @@
 
 <h2>Warning: Please still use Raspberry Pi OS (Legacy) Lite (bullseye)</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
-Raspberry Pi OS bookworm doesn't meet dependencies of <a href="http://davesteele.github.io/comitup/">Comitup</a>. As the developer says, Comitup will be adapted to bookworm, but this is a major task and there is no timetable yet. This is why <b>Using <u>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</u> is strongly recommended.</b><br />
+Raspberry Pi OS bookworm doesn't meet dependencies of <a href="http://davesteele.github.io/comitup/">Comitup</a>. As the developer says, Comitup will be adapted to bookworm, but this is a major task and there is no timetable yet. This is why <b>still using <u>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</u> is strongly recommended.</b><br />
 <br />
 <h2>Announcement</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
