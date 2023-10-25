@@ -273,9 +273,9 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 						break;
 
 					case 'comitup_reset':
-						$MAIN_COMMAND	= "comitup-cli d";
+						$MAIN_COMMAND	= "$WORKING_DIR/comitup-reset.sh";
 
-						$COMMAND_LINE	= "echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	= "cat $MAIN_COMMAND | grep '^[^# ]'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";

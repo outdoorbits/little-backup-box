@@ -17,40 +17,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-import os
 import subprocess
 import sys
 
-import lib_setup
+ApachePortsConf	= '/etc/apache2/ports.conf'
 
-class comitup_conf(object):
-	def __init__(self,Password=None):
-		#arguments
-		self.Password	= Password
+BasicPorts	= [
+	8000,
+	443,
+	81,
+	8443
+]
 
-		#config
-		self.configfile	= '/etc/comitup.conf'
+with open(ApachePortsConf,'w') as f:
+	for Port in BasicPorts:
+		f.write(f'Listen {Port}\n')
 
-	def run(self):
-		try:
-			with open(self.configfile,'w') as f:
-				f.write('ap_name: little-backup-box-<nnnn>\n')
-				f.write('web_service: apache2.service\n')
-				f.write('external_callback: /var/www/little-backup-box/apache_ports.sh\n')
-				if self.Password:
-					if (
-						(len(self.Password) >= 8) and
-						(len(self.Password) <= 63)
-					):
-						f.write(f'ap_password: {self.Password}\n')
-		except:
-			print("Error writing comitup config file.")
-
-
-
-if __name__ == "__main__":
-	Password	= None
 	if len(sys.argv) > 1:
-		Password	= sys.argv[1]
+		if sys.argv[1] == 'CONNECTED':
+			f.write(f'Listen 80\n')
 
-	comitup_conf(Password=Password).run()
+subprocess.run('service apache2 restart || service apache2 start', shell=True)
+
+

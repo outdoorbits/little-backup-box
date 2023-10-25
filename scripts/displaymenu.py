@@ -174,7 +174,7 @@ class menu(object):
 			{
 				'type':		'item',
 				'title':	self.__lan.l('box_menu_comitup_reset'),
-				'action':	self.create_confirmed_shell_action(self.__lan.l('box_menu_comitup_reset'),[['sudo','comitup-cli','d']]),
+				'action':	self.create_confirmed_shell_action(self.__lan.l('box_menu_comitup_reset'),[['sudo',f'{self.WORKING_DIR}/comitup-reset.sh']]),
 			},
 
 			{
