@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env bash
 
 # Author: Stefan Saam, github@saams.de
 
@@ -17,26 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-import subprocess
-import sys
+# catches the command from comitup and executes apache_ports.py
 
-ApachePortsConf	= '/etc/apache2/ports.conf'
-
-BasicPorts	= [
-	8000,
-	443,
-	81,
-	8443
-]
-
-with open(ApachePortsConf,'w') as f:
-	for Port in BasicPorts:
-		f.write(f'Listen {Port}\n')
-
-	if len(sys.argv) > 1:
-		if sys.argv[1] == 'CONNECTED':
-			f.write(f'Listen 80\n')
-
-subprocess.run('service apache2 restart || service apache2 start', shell=True)
-
-
+sudo python3 /var/www/little-backup-box/apache_ports.py "${1}"
