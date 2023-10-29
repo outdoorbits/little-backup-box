@@ -146,10 +146,6 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Install the required packages
-## resolvconf: keep /etc/resolv.conf
-if [ -f "/etc/resolv.conf" ]; then
-	sudo cp /etc/resolv.conf /tmp/resolv.conf
-fi
 
 echo "apt install..."
 sudo DEBIAN_FRONTEND=noninteractive \
@@ -157,12 +153,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj resolvconf
-
-## resolvconf: Reinstall old /etc/resolv.conf
-if [ -f "/tmp/resolv.conf" ]; then
-	sudo mv /tmp/resolv.conf /etc/resolv.conf
-fi
+		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
