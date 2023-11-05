@@ -302,7 +302,14 @@
     "update": {
       "development_linktext": "Actualizar ahora - development branch",
       "linktext": "Actualizar ahora"
-    }
+    },
+    "display_message_settings_uploaded_1": "Ajustes",
+    "display_message_settings_uploaded_2": "importados.",
+    "display_message_settings_upload_error_2": "importar la",
+    "display_message_settings_upload_error_3": "configuración.",
+    "display_message_settings_upload_error_1": "Error al",
+    "password_changed": "Contraseña cambiada.",
+    "password_removed": "Se eliminó la contraseña general."
   },
   "tools": {
     "tools": "Herramientas",

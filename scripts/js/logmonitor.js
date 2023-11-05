@@ -3,7 +3,7 @@
 // needs '<body onload="refreshLogMonitor()">'
 // and '<iframe id="logmonitor" ...'
 
-let i = 'undefined'
+let LogMonitorInterval = 'undefined'
 
 function refreshLogMonitor() {
 	var logmonitor = document.getElementById("logmonitor");
@@ -11,8 +11,8 @@ function refreshLogMonitor() {
 	if (!(logmonitor === document.activeElement)) {
 		logmonitor.contentWindow.location.reload();
 
-		if (i == 'undefined') {
-			i = setInterval('logmonitor.contentWindow.scrollTo(0, 999999)',200);
+		if (LogMonitorInterval == 'undefined') {
+			LogMonitorInterval = setInterval('logmonitor.contentWindow.scrollTo(0, 999999)',200);
 		}
 	} else {
 		clearIntervalLogMonitor();
@@ -22,8 +22,8 @@ function refreshLogMonitor() {
 }
 
 function clearIntervalLogMonitor() {
-	if (i !== 'undefined') {
-		clearInterval(i);
-		i = 'undefined'
+	if (LogMonitorInterval !== 'undefined') {
+		clearInterval(LogMonitorInterval);
+		LogMonitorInterval = 'undefined'
 	}
 }

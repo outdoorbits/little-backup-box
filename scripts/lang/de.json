@@ -302,7 +302,14 @@
     "update": {
       "development_linktext": "Update starten - development branch",
       "linktext": "Update starten"
-    }
+    },
+    "display_message_settings_uploaded_1": "Einstellungen",
+    "display_message_settings_uploaded_2": "importiert.",
+    "display_message_settings_upload_error_2": "konnten nicht",
+    "display_message_settings_upload_error_3": "importiert werden.",
+    "display_message_settings_upload_error_1": "Einstellungen",
+    "password_changed": "Passwort geändert.",
+    "password_removed": "Allgemeines Passwort entfernt."
   },
   "tools": {
     "tools": "Werkzeug",

@@ -484,7 +484,14 @@
     "update": {
       "development_linktext": "Update now - development branch",
       "linktext": "Update now"
-    }
+    },
+    "display_message_settings_uploaded_1": "Settings",
+    "display_message_settings_uploaded_2": "imported.",
+    "display_message_settings_upload_error_2": "import",
+    "display_message_settings_upload_error_3": "failed.",
+    "display_message_settings_upload_error_1": "Settings",
+    "password_changed": "Password changed.",
+    "password_removed": "General password removed."
   },
   "tools": {
     "tools": "Tools",

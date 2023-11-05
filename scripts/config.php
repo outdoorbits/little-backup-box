@@ -294,6 +294,7 @@ function upload_settings() {
 		}
 		$continue = ((strtolower($name[1]) == 'zip') and $FILETYPE_ZIP) ? true : false;
 		if(!$continue) {
+			exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_upload_error_1 . "' '" . L::config_display_message_settings_upload_error_2 . "' '" . L::config_display_message_settings_upload_error_3 . "' > /dev/null 2>&1 &");
 			popup(L::config_alert_settings_upload_not_zip,true);
 		} else {
 			/* PHP current path */
@@ -357,6 +358,7 @@ function upload_settings() {
 					}
 
 					# Feedback files in place
+					exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_uploaded_1 . "' '" . L::config_display_message_settings_uploaded_2 . "' > /dev/null 2>&1 &");
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
 
 					# reload config
@@ -373,6 +375,7 @@ function upload_settings() {
 				}
 
 			} else {
+				exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_upload_error_1 . "' '" . L::config_display_message_settings_upload_error_2 . "' '" . L::config_display_message_settings_upload_error_3 . "' > /dev/null 2>&1 &");
 				popup(L::config_alert_settings_upload_problem,$config["conf_POPUP_MESSAGES"]);
 			}
 

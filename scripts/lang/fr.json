@@ -201,7 +201,7 @@
     "view": {
       "bg_image_header": "Image de fond"
     },
-    "display_message_settings_saved_1": "Les paramètres",
+    "display_message_settings_saved_1": "L'importation",
     "display_message_settings_saved_2": "enregistré.",
     "comitup": {
       "section": "comitup",
@@ -302,7 +302,14 @@
     "update": {
       "development_linktext": "Mettez à jour maintenant - development branch",
       "linktext": "Mettez à jour maintenant"
-    }
+    },
+    "display_message_settings_uploaded_1": "Paramètres",
+    "display_message_settings_uploaded_2": "importés.",
+    "display_message_settings_upload_error_2": "des paramètres",
+    "display_message_settings_upload_error_3": "a échoué.",
+    "display_message_settings_upload_error_1": "Paramètres",
+    "password_changed": "Mot de passe changé.",
+    "password_removed": "Mot de passe général supprimé."
   },
   "tools": {
     "tools": "Outils",

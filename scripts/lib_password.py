@@ -24,6 +24,7 @@ import subprocess
 import sys
 
 import lib_comitup
+import lib_language
 import lib_log
 import lib_setup
 
@@ -31,6 +32,7 @@ class password(object):
 
 	def __init__(self):
 		self.__setup	= lib_setup.setup()
+		self.__lan		= lib_language.language()
 		self.__log		= lib_log.log()
 
 		self.user		= 'lbb'
@@ -38,8 +40,6 @@ class password(object):
 	def set_password(self,Password=''):
 		# prepare config files
 		if not Password:
-			self.__log.message('General password removed.')
-
 			#Apache
 			open('/etc/apache2/includes/password.conf','w').close()
 
@@ -50,9 +50,9 @@ class password(object):
 			#comitup
 			lib_comitup.comitup_conf(Password=None).run()
 
-		else:
-			self.__log.message('General password changed.')
+			self.__log.message(self.__lan.l('config_password_removed'))
 
+		else:
 			#Apache
 			with open('/etc/apache2/includes/password.conf','w') as f:
 				f.write('Authtype Basic\n')
@@ -75,6 +75,8 @@ class password(object):
 
 			#comitup
 			lib_comitup.comitup_conf(Password=Password).run()
+
+			self.__log.message(self.__lan.l('config_password_changed'))
 
 		# restart samba
 		subprocess.run('service smbd restart',shell=True)
