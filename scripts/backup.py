@@ -856,10 +856,9 @@ class backup(object):
 
 			for SubPathAtSource in checkPathsList:
 
-				SourceCommand	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--list-files", "--folder", f"{SubPathAtSource}"]
+				SourceCommand		= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--list-files", "--folder", f"{SubPathAtSource}"]
 				FilterCommand		= ["grep", "^#"]
-				self.__log.message(' '.join(SourceCommand),3)
-				self.__log.message(' '.join(FilterCommand),3)
+				self.__log.message(' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand),3)
 				try:
 					gphoto2			= lib_common.pipe(SourceCommand,FilterCommand).decode()
 					FilesToProcess	+= len(gphoto2.strip().split('\n'))

@@ -42,10 +42,10 @@
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
-	<script src="js/refresh_iframe.js"></script>
+	<script src="js/logmonitor.js"></script>
 </head>
 
-<body onload="refreshIFrame()" <?php echo $background; ?>>
+<body onload="refreshLogMonitor()" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>

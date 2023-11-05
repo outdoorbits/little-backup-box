@@ -17,11 +17,11 @@
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
-	<script src="js/refresh_iframe.js"></script>
+	<script src="js/logmonitor.js"></script>
 	<script src="js/refresh_site.js"></script>
 </head>
 
-<body onload="refreshIFrame(); refresh_site()" <?php echo $background; ?>>
+<body onload="refreshLogMonitor(); refresh_site()" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>

@@ -51,7 +51,7 @@
 
 <head>
 	<?php include "sub-standards-header-loader.php"; ?>
-	<script type="text/javascript" src="js/refresh_iframe.js"></script>
+	<script type="text/javascript" src="js/logmonitor.js"></script>
 
 	<script>
 		function HideDisallowedButtons(ActiveSource) {
@@ -74,7 +74,7 @@
     </script>
 </head>
 
-<body onload="refreshIFrame()" <?php echo $background; ?>>
+<body onload="refreshLogMonitor()" <?php echo $background; ?>>
 	<?php include "sub-standards-body-loader.php"; ?>
 	<?php include "sub-menu.php"; ?>
 
