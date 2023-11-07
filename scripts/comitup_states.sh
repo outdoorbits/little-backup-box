@@ -17,6 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# catches the command from comitup and executes apache_ports.py
+# catches the command from comitup and executes comitup_states.py
 
-sudo python3 /var/www/little-backup-box/apache_ports.py "${1}"
+sudo python3 /var/www/little-backup-box/comitup_states.py "${1}"

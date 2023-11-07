@@ -20,23 +20,39 @@
 import subprocess
 import sys
 
-ApachePortsConf	= '/etc/apache2/ports.conf'
+import lib_display
 
-BasicPorts	= [
-	8000,
-	443,
-	81,
-	8443
-]
+class comitup_states(object):
+	def __init__(self):
+		self.__display	= lib_display.display()
 
-with open(ApachePortsConf,'w') as f:
-	for Port in BasicPorts:
-		f.write(f'Listen {Port}\n')
+	def new_state(self,state):
+		# display new state
+		self.__display.message([':Comitup', f':{state}'])
 
+		# setup apache ports
+		ApachePortsConf	= '/etc/apache2/ports.conf'
+
+		BasicPorts	= [
+			8000,
+			443,
+			81,
+			8443
+		]
+
+		with open(ApachePortsConf,'w') as f:
+			for Port in BasicPorts:
+				f.write(f'Listen {Port}\n')
+
+			if len(sys.argv) > 1:
+				if state == 'CONNECTED':
+					f.write(f'Listen 80\n')
+
+		subprocess.run('service apache2 restart || service apache2 start', shell=True)
+
+if __name__ == "__main__":
+	state	= ''
 	if len(sys.argv) > 1:
-		if sys.argv[1] == 'CONNECTED':
-			f.write(f'Listen 80\n')
+		state = sys.argv[1]
 
-subprocess.run('service apache2 restart || service apache2 start', shell=True)
-
-
+	comitup_states().new_state(state)

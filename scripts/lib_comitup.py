@@ -21,8 +21,6 @@ import os
 import subprocess
 import sys
 
-import lib_setup
-
 class comitup_conf(object):
 	def __init__(self,Password=None):
 		#arguments
@@ -36,7 +34,7 @@ class comitup_conf(object):
 			with open(self.configfile,'w') as f:
 				f.write('ap_name: little-backup-box-<nnnn>\n')
 				f.write('web_service: apache2.service\n')
-				f.write('external_callback: /var/www/little-backup-box/apache_ports.sh\n')
+				f.write('external_callback: /var/www/little-backup-box/comitup_states.sh\n')
 				if self.Password:
 					if (
 						(len(self.Password) >= 8) and
