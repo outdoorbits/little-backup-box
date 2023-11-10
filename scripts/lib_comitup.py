@@ -21,34 +21,91 @@ import os
 import subprocess
 import sys
 
-class comitup_conf(object):
-	def __init__(self,Password=None):
-		#arguments
-		self.Password	= Password
+import lib_display
+import lib_setup
+
+
+class comitup(object):
+	def __init__(self):
 
 		#config
 		self.configfile	= '/etc/comitup.conf'
 
-	def run(self):
+		#objects
+		self.__setup	= lib_setup.setup()
+		self.__display	= lib_display.display()
+
+	def config(self, Password=None): # use general password if None is given
+
+		if Password is None:
+			Password	= self.__setup.get_val('conf_PASSWORD')
+
 		try:
 			with open(self.configfile,'w') as f:
 				f.write('ap_name: little-backup-box-<nnnn>\n')
 				f.write('web_service: apache2.service\n')
-				f.write('external_callback: /var/www/little-backup-box/comitup_states.sh\n')
-				if self.Password:
+				f.write('external_callback: /var/www/little-backup-box/comitup-states.sh\n')
+				if Password:
 					if (
-						(len(self.Password) >= 8) and
-						(len(self.Password) <= 63)
+						(len(Password) >= 8) and
+						(len(Password) <= 63)
 					):
-						f.write(f'ap_password: {self.Password}\n')
+						f.write(f'ap_password: {Password}\n')
 		except:
 			print("Error writing comitup config file.")
 
+	def new_status(self,status):
+		# display new status
+		if status:
+			self.__display.message([':Comitup:', f':{status}'])
+
+		# setup apache ports
+		ApachePortsConf	= '/etc/apache2/ports.conf'
+
+		BasicPorts	= [
+			8000,
+			443,
+			81,
+			8443
+		]
+
+		with open(ApachePortsConf,'w') as f:
+			for Port in BasicPorts:
+				f.write(f'Listen {Port}\n')
+
+			if len(sys.argv) > 1:
+				if status == 'CONNECTED':
+					f.write(f'Listen 80\n')
+
+		subprocess.run('service apache2 restart || service apache2 start', shell=True)
+
+	def reset(self):
+		subprocess.run(['sudo', 'comitup-cli', 'd'])
+		self.new_status('RESET')
 
 
 if __name__ == "__main__":
-	Password	= None
-	if len(sys.argv) > 1:
-		Password	= sys.argv[1]
+	try:
+		Mode	= sys.argv[1]
+	except:
+		Mode	= ''
 
-	comitup_conf(Password=Password).run()
+	if Mode == '--config':
+		try:
+			Password	= sys.argv[2]
+		except:
+			Password	= None
+
+		comitup().config(Password)
+
+	elif Mode == '--status':
+		try:
+			Status	= sys.argv[2]
+		except:
+			Status	= ''
+
+		if Status:
+			comitup().new_status(Status)
+
+	elif Mode == '--reset':
+		comitup().reset()

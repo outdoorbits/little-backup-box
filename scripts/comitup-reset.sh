@@ -19,5 +19,4 @@
 
 # resets the comitup wifi settings and reconfigures apache
 
-comitup-cli d
-sudo python3 /var/www/little-backup-box/comitup_states.py ${1}
+sudo python3 /var/www/little-backup-box/lib_comitup.py --reset

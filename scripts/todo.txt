@@ -1,0 +1,6 @@
+Tests:
+reset
+
+status
+
+installation from scratch

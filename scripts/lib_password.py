@@ -48,7 +48,7 @@ class password(object):
 				f.write('guest ok = yes')
 
 			#comitup
-			lib_comitup.comitup_conf(Password=None).run()
+			lib_comitup.comitup().config(Password='')
 
 			self.__log.message(self.__lan.l('config_password_removed'))
 
@@ -74,7 +74,7 @@ class password(object):
 				f.write('guest ok = no\n')
 
 			#comitup
-			lib_comitup.comitup_conf(Password=Password).run()
+			lib_comitup.comitup().config(Password=Password)
 
 			self.__log.message(self.__lan.l('config_password_changed'))
 

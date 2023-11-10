@@ -17,6 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# catches the command from comitup and executes comitup_states.py
+# catches the command from comitup and executes lib_comitup.py.py
 
-sudo python3 /var/www/little-backup-box/comitup_states.py "${1}"
+sudo python3 /var/www/little-backup-box/lib_comitup.py --status "${1}"
