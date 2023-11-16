@@ -1,18 +1,4 @@
 <h1>Little Backup Box</h1>
-
-<h2>Warning: Please still use Raspberry Pi OS (Legacy) Lite (bullseye)</h2>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
-Raspberry Pi OS bookworm doesn't meet dependencies of <a href="http://davesteele.github.io/comitup/">Comitup</a>. As the developer says, Comitup will be adapted to bookworm, but this is a major task and there is no timetable yet. This is why <b>still using <u>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</u> is strongly recommended.</b><br />
-<br />
-<h2>Announcement</h2>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
-<b>New version! The development version now replaces the old main version.</b><br />
-Little Backup Box was originally programmed in bash. As the variety of functions increased, this programming language became increasingly unwieldy and the code became more error-prone. Therefore, all core files have now been reprogrammed in python3.<br />
-This now allows more flexible handling of source and target data carriers. The new option of automatically backing up several cameras or data carriers one after the other was also created.<br />
-The development version has been thoroughly tested. It fixes some security issues and malfunctions in the old version and can therefore be considered at least as stable as its predecessor.<br />
-<br />
-Thanks for the help with debugging and thanks for future support!<br />
-<br />
 <h2>About</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" style="float: right; margin-left: 10px;" width="600"><br />
 Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br />
@@ -119,6 +105,10 @@ Please give feedback on problems or translation errors but also on the successfu
 As there is no manual available anymore, the github-wiki should replace it one day: <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not particularly detailed yet, but it can certainly help with the most common questions.
 
 <h2 id="installation">Installation</h2>
+<h3>Warning: Please still use Raspberry Pi OS (Legacy) Lite (bullseye)</h3>
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
+Raspberry Pi OS bookworm doesn't meet dependencies of <a href="http://davesteele.github.io/comitup/">Comitup</a>. As the developer says, Comitup will be adapted to bookworm, but this is a major task and there is no timetable yet. This is why <b>still using <u>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</u> is strongly recommended.</b><br />
+<br />
 <ol>
 <li>Create a bootable SD card with <b>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</b> for use with Little Backup Box.<br />
 An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select "Raspberry Pi OS (other)" > "Raspberry Pi OS Lite (32-bit)" or "Raspberry Pi OS Lite (64-bit)".<br />
