@@ -85,19 +85,15 @@ class poweroff(object):
 					]
 				)
 
-		# remaining display pages
-			remainingPages = 0
-			# Iterate directory
-			for Line in os.listdir(self.const_DISPLAY_CONTENT_FOLDER):
-				if os.path.isfile(os.path.join(self.const_DISPLAY_CONTENT_FOLDER, Line)):
-					remainingPages += 1
+			# remaining display pages
+			self.__display.wait_for_empty_stack()
 
-			time.sleep((remainingPages + 3) * self.conf_DISP_FRAME_TIME)
+			time.sleep(3 * self.conf_DISP_FRAME_TIME)
 
 			# cleanup
 			open(self.const_LOGFILE,'w').close()
 
-		# Power off
+			# Power off
 			if self.Action == 'poweroff':
 				if self.conf_DISP_BLACK_ON_POWER_OFF:
 					self.__display.message(['set:clear'])

@@ -64,8 +64,11 @@ WORKING_DIR = os.path.dirname(__file__)
 class DISPLAY(object):
 
 	def __init__(self):
-		self.__setup	= lib_setup.setup()
+		# objects
+		self.__setup		= lib_setup.setup()
+		self.__display_content_files	= display_content_files(self.__setup)
 
+		# setup
 		self.conf_DISP_CONNECTION			= self.__setup.get_val('conf_DISP_CONNECTION')
 		self.conf_DISP_DRIVER				= self.__setup.get_val('conf_DISP_DRIVER')
 		self.conf_DISP_I2C_ADDRESS			= self.__setup.get_val('conf_DISP_I2C_ADDRESS')
@@ -83,7 +86,6 @@ class DISPLAY(object):
 		self.conf_DISP_FRAME_TIME			= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.conf_MENU_ENABLED				= self.__setup.get_val('conf_MENU_ENABLED')
 
-		self.const_DISPLAY_CONTENT_FOLDER	= self.__setup.get_val('const_DISPLAY_CONTENT_FOLDER')
 		self.const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		self.const_DISPLAY_LINES_LIMIT		= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
 
@@ -296,100 +298,110 @@ class DISPLAY(object):
 						(left, top, right, bottom) = draw.textbbox((0,0),Content,font=self.FONT)
 						draw.line((x + 1, y + self.line_height + y_space, x + 1 + right - left, y + self.line_height + y_space), fill=fg_fill, width=1)
 
-
-
-
 	def main(self):
 		# start endless loop to display content
 		while(True):
 			import_old_file = True
 			frame_time = self.conf_DISP_FRAME_TIME / 4
 
-			try:
-				ContentFileList	= os.listdir(self.const_DISPLAY_CONTENT_FOLDER)
-			except:
-				ContentFileList	= []
+			ContentFile	= self.__display_content_files.get_next_file_name()
 
-			if len(ContentFileList):
+			if ContentFile:
 
-				ContentFileList.sort()
+				# file could be in writing process, wait for minimal file age
+				if time.time() - os.stat(ContentFile).st_mtime < 0.2:
+					time.sleep(0.2)
 
-				ContentFile	= ''
-				for ContentFile in ContentFileList:
-					ContentFile = "{}/{}".format(self.const_DISPLAY_CONTENT_FOLDER,ContentFile)
-					if os.path.isfile(ContentFile):
-						break
+				Lines = []
+				# read new lines
+				with open(ContentFile, 'r') as CF:
+					for Line in CF:
+						frame_time = self.conf_DISP_FRAME_TIME
 
-				if ContentFile:
+						Line = Line.strip()
 
-					# file could be in writing process, wait for minimal file age
-					if time.time() - os.stat(ContentFile).st_mtime < 0.2:
-						time.sleep(0.2)
+						if Line[0:4] == 'set:': # global settings line
 
-					Lines = []
-					# read new lines
-					with open(ContentFile, 'r') as CF:
-						for Line in CF:
-							frame_time = self.conf_DISP_FRAME_TIME
+							settingStr = Line[4:]
+							settings = settingStr.split(',')
 
-							Line = Line.strip()
+							for setting in settings:
 
-							if Line[0:4] == 'set:': # global settings line
+								if '=' in setting:
+									SettingType, SettingValue = setting.split('=',1)
+								else:
+									SettingType = setting
 
-								settingStr = Line[4:]
-								settings = settingStr.split(',')
+								if SettingType == 'clear':
+									import_old_file = False
 
-								for setting in settings:
+								if SettingType == 'time' and float(SettingValue) >= 0:
+									frame_time = float(SettingValue)
 
-									if '=' in setting:
-										SettingType, SettingValue = setting.split('=',1)
-									else:
-										SettingType = setting
+						elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
 
-									if SettingType == 'clear':
-										import_old_file = False
+							if Line:
+								if (Line[0:1] == ':'):
+										Line = "s=h{}".format(Line)
+								elif ":" not in Line:
+									Line = "s=h:{}".format(Line)
 
-									if SettingType == 'time' and float(SettingValue) >= 0:
-										frame_time = float(SettingValue)
+								Lines.append(Line)
 
-							elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
+				# read old lines
+				if import_old_file:
+					if len(Lines) < self.const_DISPLAY_LINES_LIMIT and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
+						with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
+							for Line in oCF:
 
-								if Line:
-									if (Line[0:1] == ':'):
-											Line = "s=h{}".format(Line)
-									elif ":" not in Line:
-										Line = "s=h:{}".format(Line)
+								Line = Line.strip()
 
-									Lines.append(Line)
+								if len(Lines) < self.const_DISPLAY_LINES_LIMIT:
+									Line = Line.split(':',1)[-1]
+									if Line:
+										Line = "s=b:{}".format(Line)
+										Lines.append(Line)
 
-					# read old lines
-					if import_old_file:
-						if len(Lines) < self.const_DISPLAY_LINES_LIMIT and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
-							with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
-								for Line in oCF:
+				# fill line count to const_DISPLAY_LINES_LIMIT
+				while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
+					Lines.append("s=b:")
 
-									Line = Line.strip()
+				# remove content file
+				os.remove(ContentFile)
 
-									if len(Lines) < self.const_DISPLAY_LINES_LIMIT:
-										Line = Line.split(':',1)[-1]
-										if Line:
-											Line = "s=b:{}".format(Line)
-											Lines.append(Line)
+				# move lines to old lines file
+				with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
+					oCF.write("\n".join(Lines))
 
-					# fill line count to const_DISPLAY_LINES_LIMIT
-					while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
-						Lines.append("s=b:")
-
-					# remove content file
-					os.remove(ContentFile)
-
-					# move lines to old lines file
-					with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
-						oCF.write("\n".join(Lines))
-
-					self.show(Lines)
+				self.show(Lines)
 
 			time.sleep(frame_time)
+
+class display_content_files(object):
+
+	def __init__(self, setup):
+		self.const_DISPLAY_CONTENT_FOLDER	= setup.get_val('const_DISPLAY_CONTENT_FOLDER')
+
+	def get_ContentFilesList(self):
+
+		# read ContentFilesList from folder
+		try:
+			ContentFilesList	= os.listdir(self.const_DISPLAY_CONTENT_FOLDER)
+		except:
+			ContentFilesList	= []
+
+		# keep files only in ContentFilesList
+		ContentFilesList	= [f"{self.const_DISPLAY_CONTENT_FOLDER}/{filename}" for filename in ContentFilesList if os.path.isfile(f"{self.const_DISPLAY_CONTENT_FOLDER}/{filename}")]
+
+		ContentFilesList.sort()
+
+		return(ContentFilesList)
+
+	def get_next_file_name(self):
+		ContentFilesList	= self.get_ContentFilesList()
+
+		if ContentFilesList:
+			return(ContentFilesList[0])
 
 if __name__ == "__main__":
 	display	= DISPLAY()

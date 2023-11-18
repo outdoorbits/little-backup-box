@@ -275,6 +275,9 @@ class backup(object):
 
 						if TriesCount > 1:
 							self.__display.message([f"s=a:{self.__lan.l('box_backup_try_backup')} {TriesCount} {self.__lan.l('box_backup_of')} {self.const_BACKUP_MAX_TRIES}"])
+
+							self.__display.wait_for_empty_stack()
+
 							time.sleep(2)
 
 						# Remount devices if "Err.Lost device"
@@ -296,6 +299,7 @@ class backup(object):
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
 							ErrorsOld	= self.__reporter.get_errors()
+
 							continue
 
 						if self.TargetDevice.mountable: # not cloud_rsync

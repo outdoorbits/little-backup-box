@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+from display import display_content_files
 import lib_log
 import lib_setup
 import lib_system
@@ -28,6 +29,7 @@ import re
 import sys
 import shutil
 import subprocess
+import time
 
 
 class display(object):
@@ -35,12 +37,16 @@ class display(object):
 	def __init__(self):
 		self.WORKING_DIR = os.path.dirname(__file__)
 
-		self.log = lib_log.log()
+		# objects
+		self.log 					= lib_log.log()
+		self.setup					= lib_setup.setup()
+		self.display_content_files	= display_content_files(self.setup)
 
-		self.setup	= lib_setup.setup()
+		# setup
 		self.conf_DISP						= self.setup.get_val('conf_DISP')
 		self.const_DISPLAY_CONTENT_FOLDER	= self.setup.get_val('const_DISPLAY_CONTENT_FOLDER')
 		self.const_DISPLAY_CONTENT_OLD_FILE	= self.setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		self.conf_DISP_FRAME_TIME			= self.setup.get_val('conf_DISP_FRAME_TIME')
 
 		self.python = shutil.which('python3')
 
@@ -106,14 +112,16 @@ class display(object):
 				LogMessage = '\n'.join(LogLines)
 				self.log.message(LogMessage)
 
-
-
+	def wait_for_empty_stack(self):
+		while self.display_content_files.get_ContentFilesList():
+			self.__start_display()
+			time.sleep(self.conf_DISP_FRAME_TIME / 2)
 
 if __name__ == "__main__":
 	#catch all arguments as lines to display
-	disp=display()
+	disp	= display()
 
-	Lines = sys.argv
+	Lines	= sys.argv
 	Lines.pop(0) # remove index 0 (script name)
 
 	disp.message(Lines)
