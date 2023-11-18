@@ -330,7 +330,7 @@ class reporter(object):
 
 				TriesCount		+= 1
 
-				if (TriesCount == 1) and (Report['FilesToProcess'] > 0):
+				if Report['FilesToProcess'] > 0:
 					FilesToProcess	+= Report['FilesToProcess']
 
 				if Report['FilesProcessed'] > 0:

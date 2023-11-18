@@ -281,7 +281,7 @@ class backup(object):
 							time.sleep(2)
 
 						# Remount devices if "Err.Lost device"
-						if "Err.Lost device" in ErrorsOld:
+						if "Err.Lost device!" in ErrorsOld:
 							self.__log.execute('Lost device: pre remount','lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE',3)
 
 							if not self.TargetDevice.mounted():

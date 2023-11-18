@@ -595,20 +595,21 @@ class storage(object):
 			return(self.__camera_connected)
 
 		##
-		# define MountPoint
+		# define MountPointSearch
 		if MountPoint:
-			MountPointSearch	= f" {MountPoint} " if self.__TechMountPoint else MountPoint
+			pass
 		elif self.MountPoint:
 			MountPoint	= self.MountPoint
-			MountPointSearch	= f" {MountPoint} \| {self.__TechMountPoint} " if self.__TechMountPoint else MountPoint
 		else:
 			return(False)
 
 		# prepare mount check
 		if (self.StorageType == 'cloud') and self.CloudServiceName:
+			MountPointSearch	= f" {MountPoint} "
 			Command	= f"mount -l | grep '{MountPointSearch}' | grep '{self.CloudServiceName}'"
 		else:
-			Command	= f"mount -l | grep '{MountPointSearch}'"
+			MountPointSearch	= f'MOUNTPOINT="{MountPoint}" \| MOUNTPOINT="{self.__TechMountPoint}"' if self.__TechMountPoint else f'MOUNTPOINT="{MountPoint}"'
+			Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{MountPointSearch}'"
 
 		# mount check
 		MOUNTED = True
