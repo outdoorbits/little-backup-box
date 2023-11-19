@@ -466,7 +466,6 @@ class menu(object):
 			self.display(channel)
 
 	def move_left(self,channel):
-		print('left xxx',file=sys.stderr)
 		if not self.bouncing(channel):
 			if self.MENU_LEVEL > 0:
 				self.MENU_LEVEL += -1
