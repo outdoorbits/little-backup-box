@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-from display import display_content_files
 import lib_log
 import lib_setup
 import lib_system
@@ -116,6 +115,32 @@ class display(object):
 		while self.display_content_files.get_ContentFilesList():
 			self.__start_display()
 			time.sleep(self.conf_DISP_FRAME_TIME / 2)
+
+class display_content_files(object):
+
+	def __init__(self, setup):
+		self.const_DISPLAY_CONTENT_FOLDER	= setup.get_val('const_DISPLAY_CONTENT_FOLDER')
+
+	def get_ContentFilesList(self):
+
+		# read ContentFilesList from folder
+		try:
+			ContentFilesList	= os.listdir(self.const_DISPLAY_CONTENT_FOLDER)
+		except:
+			ContentFilesList	= []
+
+		# keep files only in ContentFilesList
+		ContentFilesList	= [f"{self.const_DISPLAY_CONTENT_FOLDER}/{filename}" for filename in ContentFilesList if os.path.isfile(f"{self.const_DISPLAY_CONTENT_FOLDER}/{filename}")]
+
+		ContentFilesList.sort()
+
+		return(ContentFilesList)
+
+	def get_next_file_name(self):
+		ContentFilesList	= self.get_ContentFilesList()
+
+		if ContentFilesList:
+			return(ContentFilesList[0])
 
 if __name__ == "__main__":
 	#catch all arguments as lines to display

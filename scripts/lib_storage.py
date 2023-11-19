@@ -594,8 +594,7 @@ class storage(object):
 		if self.StorageType == 'camera':
 			return(self.__camera_connected)
 
-		##
-		# define MountPointSearch
+		# define relevant MountPoint
 		if MountPoint:
 			pass
 		elif self.MountPoint:
