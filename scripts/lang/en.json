@@ -191,9 +191,6 @@
     "rsync_button": "rsync-server",
     "reboot_button": "Reboot",
     "shutdown_button": "Power off",
-    "backup_backup": "Backup from",
-    "backup_to": "to",
-    "backup_initiated": "initiated",
     "cloudservice": "cloudservice",
     "stopbackup_button": "STOP",
     "stopbackup_m": "Stopping backup.",
@@ -201,8 +198,6 @@
     "shutdown_m": "Little Backup Box is powered off. You can close this page.",
     "help_txt": "<p class='text-center'>Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p>",
     "usb_button": "USB storage",
-    "backup_break1": "Backup",
-    "backup_break2": "aborted.",
     "view_database": "View-Database",
     "thumbnails_header": "Generate thumbnails and import them into the database",
     "database_header": "Synchronize and clean database",
@@ -210,14 +205,24 @@
     "exif_header": "Write EXIF data (ratings) into the original files",
     "database_button": "Database",
     "exif_button": "EXIF",
-    "backup_update_exif_checkbox_label": "Write EXIF data to the original files (only for local storage)",
-    "backup_power_off_checkbox_label": "Turn off after run",
-    "backup_generate_thumbnails_checkbox_label": "Generate thumbnails and read into database (only for local storage)",
-    "backup_modifications": "Modifications",
     "source": "Source",
     "target": "Target",
     "source_select": "select option",
-    "target_execute": "execute"
+    "target_execute": "execute",
+    "backup": {
+      "modifications": "Modifications",
+      "backup": "Backup from",
+      "break1": "Backup",
+      "break2": "aborted.",
+      "generate_thumbnails_checkbox_label": "Generate thumbnails and read into database (only for local storage)",
+      "initiated": "initiated",
+      "power_off_checkbox_label": "Turn off after run",
+      "to": "to",
+      "update_exif_checkbox_label": "Write EXIF data to the original files (only for local storage)",
+      "preset_target_label": "Set USB target partition",
+      "preset_source_label": "Set USB source partition",
+      "preset_partition_auto": "automatische Auswahl"
+    }
   },
   "sysinfo": {
     "sysinfo": "System info",
@@ -517,7 +522,8 @@
       "header": "Mount storage",
       "target": "target",
       "source": "source",
-      "usb": "USB"
+      "usb": "USB",
+      "select_partition_label": "Partition"
     }
   },
   "cmd": {

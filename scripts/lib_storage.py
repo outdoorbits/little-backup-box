@@ -52,7 +52,7 @@ class storage(object):
 # exit codes:
 # 101: storage type = usb but no role defined
 
-	def __init__(self, StorageName, Role ,WaitForDevice=True, DeviceIdentifierPresetThis=None, DeviceIdentifierPresetOther=None):
+	def __init__(self, StorageName, Role, WaitForDevice=True, DeviceIdentifierPresetThis=None, DeviceIdentifierPresetOther=None):
 		#StorageName: 					one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		#Role:							[lib_storage.role_Source, lib_storage.role_Target]
 		#DeviceIdentifierPresetThis:	['--uuid 123...', 'sda1', ...]
@@ -220,7 +220,7 @@ class storage(object):
 					if (
 						Device_FS_Type and
 						(self.DeviceIdentifierPresetOther != DeviceIdentifier) and
-						(USB_Device_lum_Alpha != USB_Device_other_lum_Alpha) and
+						((USB_Device_lum_Alpha != USB_Device_other_lum_Alpha) or (self.DeviceIdentifierPresetThis and self.DeviceIdentifierPresetOther)) and
 						((not self.DeviceIdentifierPresetThis) or (DeviceIdentifier == self.DeviceIdentifierPresetThis))
 						):
 							DeviceChosenIdentifier = DeviceIdentifier
@@ -863,7 +863,8 @@ def get_mounts_list():
 	mountsList	= list(dict.fromkeys(mountsList))
 	return(f" {' '.join(mountsList)} ")
 
-def get_available_partitions(setup,excludeTarget='',excludeSources=[]):
+def get_available_partitions(excludeTarget='', excludeSources=[], addLum=False, skipMounted=False):
+	setup	= lib_setup.setup()
 
 	class continueUSB_DeviceListRaw(Exception):
 		pass
@@ -874,7 +875,9 @@ def get_available_partitions(setup,excludeTarget='',excludeSources=[]):
 
 	availablePartitions	= []
 
-	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '^PATH=\\\"/dev/{setup.get_val('const_STORAGE_DEV_MASK')}'"
+	skipMounted_Command	= "| grep 'MOUNTPOINT=\"\"'" if skipMounted else ''
+	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE  {skipMounted_Command} | grep '^PATH=\\\"/dev/{setup.get_val('const_STORAGE_DEV_MASK')}'"
+
 	try:
 		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
 		USB_DeviceListRaw = subprocess.check_output(Command,shell=True).decode().split('\n')
@@ -931,7 +934,10 @@ def get_available_partitions(setup,excludeTarget='',excludeSources=[]):
 		if (USB_Device['lum'] in excludeSources) or (f"--uuid {USB_Device['uuid']}" in excludeSources):
 			continue
 
-		availablePartitions.append(f"--uuid {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
+		if addLum:
+			availablePartitions.append(f"{USB_Device['lum']}:--uuid {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
+		else:
+			availablePartitions.append(f"--uuid {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
 
 	return(availablePartitions)
 
@@ -1013,16 +1019,24 @@ if __name__ == "__main__":
 				DeviceIdentifierPresetOther		= ''
 
 			if Action == 'mount':
-				storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).mount()
+				storage(StorageName=StorageName, Role=Role, WaitForDevice=WaitForDevice, DeviceIdentifierPresetThis=DeviceIdentifierPresetThis, DeviceIdentifierPresetOther=DeviceIdentifierPresetOther).mount()
 
 			elif Action == 'umount':
-				storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).umount()
+				storage(StorageName=StorageName, Role=Role, WaitForDevice=WaitForDevice, DeviceIdentifierPresetThis=DeviceIdentifierPresetThis, DeviceIdentifierPresetOther=DeviceIdentifierPresetOther).umount()
 
 			elif Action == 'mounted':
-				print(storage(StorageName, Role ,WaitForDevice, DeviceIdentifierPresetThis, DeviceIdentifierPresetOther).mounted())
+				print(storage(StorageName=StorageName, Role=Role, WaitForDevice=WaitForDevice, DeviceIdentifierPresetThis=DeviceIdentifierPresetThis, DeviceIdentifierPresetOther=DeviceIdentifierPresetOther).mounted())
 
 		elif Action == 'get_mounts_list':
 			print(get_mounts_list())
+
+		elif Action == 'get_available_partitions':
+			try:
+				skipMounted		= (sys.argv[2] == 'True')
+			except:
+				skipMounted		= False
+
+			print(get_available_partitions(addLum=True, skipMounted=skipMounted))
 
 
 

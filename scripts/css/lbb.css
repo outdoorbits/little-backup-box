@@ -27,6 +27,13 @@ button.usb {
 	border-color: var(--cusb);
 	width: 80%;
 }
+select.usb {
+	color: var(--cusb);
+	border-color: var(--cusb);
+	width: 50%;
+	margin-top: 0rem;
+	margin-bottom: 0.8rem;
+}
 
 button.camera {
 	color: var(--ccamera);

@@ -55,6 +55,13 @@ class backup(object):
 		# TargetName:	one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		# DoSyncDatabase, DoGenerateThumbnails, DoUpdateEXIF	True/False
 
+		# Objects
+		self.__setup		= lib_setup.setup()
+		self.__display	= lib_display.display()
+		self.__log		= lib_log.log()
+		self.__lan		= lib_language.language()
+		self.__reporter	= None
+
 		# Arguments
 		self.SourceName										= SourceName
 		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
@@ -62,17 +69,28 @@ class backup(object):
 		self.DoSyncDatabase									= DoSyncDatabase
 		self.DoGenerateThumbnails							= DoGenerateThumbnails
 		self.DoUpdateEXIF									= DoUpdateEXIF
+
 		self.DeviceIdentifierPresetSource					= DeviceIdentifierPresetSource
 		self.DeviceIdentifierPresetSource_blocked			= (self.DeviceIdentifierPresetSource != '')
+
+		if self.DeviceIdentifierPresetSource:
+			self.__log.message(f'Preset source: {self.DeviceIdentifierPresetSource}')
+
 		self.DeviceIdentifierPresetTarget					= DeviceIdentifierPresetTarget
+
+		if self.DeviceIdentifierPresetTarget:
+			self.__log.message(f'Preset target: {self.DeviceIdentifierPresetTarget}')
+
 		self.PowerOff										= PowerOff
 		self.SecundaryBackupFollows							= SecundaryBackupFollows
 
 		# Basics
 		self.__WORKING_DIR	= os.path.dirname(__file__)
 
+
+
 		# Setup
-		self.__setup		= lib_setup.setup()
+
 		self.const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC	= self.__setup.get_val('const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC')
 		self.const_SYNC_TIME_OVERHEATING_WAIT_SEC		= self.__setup.get_val('const_SYNC_TIME_OVERHEATING_WAIT_SEC')
 		self.const_IMAGE_DATABASE_FILENAME				= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')
@@ -96,12 +114,6 @@ class backup(object):
 
 		if self.PowerOff == 'setup':
 			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
-
-		# Objects
-		self.__display	= lib_display.display()
-		self.__log		= lib_log.log()
-		self.__lan		= lib_language.language()
-		self.__reporter	= None
 
 		# Common variables
 		self.SourceDevice		= None
@@ -146,7 +158,7 @@ class backup(object):
 		lib_system.rpi_leds(trigger='timer',delay_on=250,delay_off=750)
 
 		if TargetStorageType in ['usb', 'internal', 'cloud', 'cloud_rsync']:
-			self.TargetDevice	= lib_storage.storage(TargetName, lib_storage.role_Target, True, self.DeviceIdentifierPresetSource, self.DeviceIdentifierPresetTarget)
+			self.TargetDevice	= lib_storage.storage(StorageName=TargetName, Role=lib_storage.role_Target, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetTarget, DeviceIdentifierPresetOther=self.DeviceIdentifierPresetSource)
 			self.TargetDevice.mount()
 		else:
 			self.__display.message([self.__lan.l('box_backup_invalid_mode_combination_1'), self.__lan.l('box_backup_invalid_mode_combination_2'), self.__lan.l('box_backup_invalid_mode_combination_3')])
@@ -200,7 +212,7 @@ class backup(object):
 				lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
 				if self.SourceStorageType in ['usb', 'internal', 'camera', 'cloud', 'cloud_rsync']:
-					self.SourceDevice	= lib_storage.storage(self.SourceName, lib_storage.role_Source, True, self.DeviceIdentifierPresetSource, self.DeviceIdentifierPresetTarget)
+					self.SourceDevice	= lib_storage.storage(StorageName=self.SourceName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetSource, DeviceIdentifierPresetOther=self.DeviceIdentifierPresetTarget)
 
 					self.SourceDevice.mount()
 
@@ -481,7 +493,7 @@ class backup(object):
 					completedSources.append(self.SourceDevice.DeviceIdentifier)
 
 					if self.SourceDevice.StorageType == 'usb':
-						availableSources	= lib_storage.get_available_partitions(self.__setup,self.TargetDevice.DeviceIdentifier,completedSources)
+						availableSources	= lib_storage.get_available_partitions(self.TargetDevice.DeviceIdentifier,completedSources)
 					elif self.SourceDevice.StorageType == 'camera':
 						availableSources	= lib_storage.get_available_cameras()
 						# remove disconnected cameras from completedSources
@@ -602,6 +614,7 @@ class backup(object):
 				const_FILE_EXTENSIONS_LIST_TIF		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TIF')
 				const_FILE_EXTENSIONS_LIST_VIDEO	= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO')
 				const_FILE_EXTENSIONS_LIST_AUDIO	= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
+
 				conf_VIEW_CONVERT_HEIC				= self.__setup.get_val('conf_VIEW_CONVERT_HEIC')
 
 				# prepare database

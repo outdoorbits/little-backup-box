@@ -15,10 +15,16 @@
 		$generate_thumbnails	= isset($_POST['generate_thumbnails'])?"True":"False";
 		$update_exif			= isset($_POST['update_exif'])?"True":"False";
 		$power_off_force		= isset($_POST['power_off'])?"True":"False";
+
+		$preset_source			= isset($_POST['preset_source'])?$_POST['preset_source']:"";
+		$preset_target			= isset($_POST['preset_target'])?$_POST['preset_target']:"";
 	} else {
 		$generate_thumbnails	= $config['conf_BACKUP_GENERATE_THUMBNAILS']?"True":"False";
 		$update_exif			= $config['conf_BACKUP_UPDATE_EXIF']?"True":"False";
 		$power_off_force		= $config['conf_POWER_OFF']?"True":"False";
+
+		$preset_source			= '';
+		$preset_target			= '';
 	}
 
 	include("sub-popup.php");
@@ -52,6 +58,7 @@
 <head>
 	<?php include "sub-standards-header-loader.php"; ?>
 	<script type="text/javascript" src="js/logmonitor.js"></script>
+	<script type="text/javascript" src="js/partition_presets.js"></script>
 
 	<script>
 		function HideDisallowedButtons(ActiveSource) {
@@ -191,6 +198,53 @@
 							</td>
 						</tr>
 					</table>
+
+					<?php
+						$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py get_available_partitions");
+						$PartisionsArray	= explode(',', $Partitions);
+					?>
+					<table style='border: 0;'>
+						<tr>
+							<td style='padding-right: 10pt;'>
+								<select id="preset_target" name="preset_target" onchange="PresetPartitionChange()">
+									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
+									<?php
+										foreach ($PartisionsArray as $Partition) {
+											$Partition	= trim($Partition, "[]' \n");
+											list($Lum, $DeviceIdentifier)	= explode(':',$Partition,2);
+											$Lum	= trim($Lum,'/dev');
+											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
+										}
+									?>
+								</select>
+							</td>
+							<td>
+								<label for="preset_target"><?php echo L::main_backup_preset_target_label; ?></label>
+							</td>
+						</tr>
+
+						<tr>
+							<td style='padding-right: 10pt;'>
+								<select id="preset_source" name="preset_source" onchange="PresetPartitionChange()">
+									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
+									<?php
+										foreach ($PartisionsArray as $Partition) {
+											$Partition	= trim($Partition, "[]' \n");
+											list($Lum, $DeviceIdentifier)	= explode(':',$Partition,2);
+											$Lum	= trim($Lum,'/dev');
+											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
+										}
+									?>
+								</select>
+							</td>
+							<td>
+								<label for="preset_source"><?php echo L::main_backup_preset_source_label; ?></label>
+							</td>
+						</tr>
+
+
+
+					</table>
 				</div>
 
 			</details>
@@ -237,44 +291,45 @@
 		exec("mkdir -p tmp");
 		exec("sudo chown www-data:www-data ./tmp -R");
 
-	// 	Backup
+		// 	Backup
 		if (isset($_POST['TargetDevice'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py " . $_POST['SourceDevice'] . " " . $_POST['TargetDevice'] . " False '$generate_thumbnails' '$update_exif' '' '' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py " . $_POST['SourceDevice'] . " " . $_POST['TargetDevice'] . " False '$generate_thumbnails' '$update_exif' '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
+
 			popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
 		// 	Functions
 		if (isset($_POST['backup_function_thumbnails_usb'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py thumbnails usb False True False '' '' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py thumbnails usb False True False '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 		if (isset($_POST['backup_function_thumbnails_internal'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py thumbnails internal False True False '' '' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py thumbnails internal False True False '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
 		if (isset($_POST['backup_function_database_usb'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py database usb True False False '' '' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py database usb True False False '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 		if (isset($_POST['backup_function_database_internal'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py database internal True False False '' '' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py database internal True False False '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
 		if (isset($_POST['backup_function_exif_usb'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py exif usb False False True '' '' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py exif usb False False True '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 		if (isset($_POST['backup_function_exif_internal'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py exif internal False False True '' '' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py exif internal False False True '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
