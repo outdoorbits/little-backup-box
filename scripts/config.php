@@ -79,7 +79,7 @@
 function get_wifi_country_selector($ID,$NAME) {
 	global $WIFI_COUNTRY;
 
-	$wifi_contry_selector	= '<select id="'.$ID.'" name="'.$NAME.'">';
+	$wifi_country_selector	= '<select id="'.$ID.'" name="'.$NAME.'">';
 
 		exec("sed '/^#/d' /usr/share/zoneinfo/iso3166.tab",$COUNTRIES);
 		foreach($COUNTRIES as $COUNTRY) {
@@ -88,10 +88,10 @@ function get_wifi_country_selector($ID,$NAME) {
 			$COUNTRYNAME	= trim($COUNTRY_ARRAY[1]);
 			$selected		= $WIFI_COUNTRY==$COUNTRYCODE ? " selected" : "";
 
-			$wifi_contry_selector	.= '<option value="'.$COUNTRYCODE.'"'.$selected.'>'.$COUNTRYCODE.' '.$COUNTRYNAME.'</option>';
+			$wifi_country_selector	.= '<option value="'.$COUNTRYCODE.'"'.$selected.'>'.$COUNTRYCODE.' '.$COUNTRYNAME.'</option>';
 		}
-	$wifi_contry_selector	.= '</select>';
-	return ($wifi_contry_selector);
+	$wifi_country_selector	.= '</select>';
+	return ($wifi_country_selector);
 }
 
 function check_new_password($title, $pwd_1, $pwd_2) {
@@ -1176,12 +1176,12 @@ function upload_settings() {
 								?>
 							</select><br>
 
-						<label for="conf_MENU_BUTTON_RESISTOR_PULL"><?php echo L::config_menu_button_resitor_pull_label; ?></label><br>
+						<label for="conf_MENU_BUTTON_RESISTOR_PULL"><?php echo L::config_menu_button_resistor_pull_label; ?></label><br>
 							<select name="conf_MENU_BUTTON_RESISTOR_PULL" id="conf_MENU_BUTTON_RESISTOR_PULL">
 								<?php
-									$button_resitor_pulls_array=array('DOWN','UP');
-									foreach($button_resitor_pulls_array as $button_resitor_pull) {
-										echo "<option value='" . $button_resitor_pull . "' " . ($config["conf_MENU_BUTTON_RESISTOR_PULL"] == $button_resitor_pull?" selected":"") . ">" . $button_resitor_pull . "</option>";
+									$button_resistor_pulls_array=array('DOWN','UP');
+									foreach($button_resistor_pulls_array as $button_resistor_pull) {
+										echo "<option value='" . $button_resistor_pull . "' " . ($config["conf_MENU_BUTTON_RESISTOR_PULL"] == $button_resistor_pull?" selected":"") . ">" . $button_resistor_pull . "</option>";
 									}
 								?>
 							</select>

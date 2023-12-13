@@ -133,7 +133,7 @@
 							foreach($TargetServices as $Storage) {
 								$LabelNameExplode		= explode(':', $Storage, 2);
 								$LabelName				= end($LabelNameExplode);
-								if (@substr_compare($Storage, 'cloud:', 0, strlen('cloud:'))==0) { /* use "@" to supress error messages*/
+								if (@substr_compare($Storage, 'cloud:', 0, strlen('cloud:'))==0) { /* use "@" to suppress error messages*/
 									$ButtonClass	= 'cloud';
 								}
 								elseif ($LabelName == 'cloud_rsync') {
@@ -201,7 +201,7 @@
 
 					<?php
 						$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py get_available_partitions");
-						$PartisionsArray	= explode(',', $Partitions);
+						$PartitionsArray	= explode(',', $Partitions);
 					?>
 					<table style='border: 0;'>
 						<tr>
@@ -209,7 +209,7 @@
 								<select id="preset_target" name="preset_target" onchange="PresetPartitionChange()">
 									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
 									<?php
-										foreach ($PartisionsArray as $Partition) {
+										foreach ($PartitionsArray as $Partition) {
 											$Partition	= trim($Partition, "[]' \n");
 											list($Lum, $DeviceIdentifier)	= explode(':',$Partition,2);
 											$Lum	= trim($Lum,'/dev');
@@ -228,7 +228,7 @@
 								<select id="preset_source" name="preset_source" onchange="PresetPartitionChange()">
 									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
 									<?php
-										foreach ($PartisionsArray as $Partition) {
+										foreach ($PartitionsArray as $Partition) {
 											$Partition	= trim($Partition, "[]' \n");
 											list($Lum, $DeviceIdentifier)	= explode(':',$Partition,2);
 											$Lum	= trim($Lum,'/dev');

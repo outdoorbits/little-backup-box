@@ -288,7 +288,7 @@
       "button_header": "Botones de control",
       "rotate_header": "Rotar mapeo de botones",
       "button_edge_detection_label": "Detección de borde de botón",
-      "button_resitor_pull_label": "Pull resistor",
+      "button_resistor_pull_label": "Pull resistor",
       "button_comment": "Comentario",
       "button_edit_custom_configfile": "Editar archivo de configuración personalizado"
     },
@@ -447,7 +447,7 @@
       "offline": "desconectado",
       "online": "en línea",
       "mail": {
-        "desription_http": "http (inseguro)",
+        "description_http": "http (inseguro)",
         "info": "Información Little Backup Box",
         "main": "web UI",
         "open_samba": "Abrir en el administrador de archivos (Samba / Windows)",

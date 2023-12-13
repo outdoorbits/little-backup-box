@@ -73,7 +73,7 @@ class progressmonitor(object):
 					(SyncOutputLine[0:5] != 'sent ') and
 					(SyncOutputLine[0:14] != 'total size is ')
 				):
-					# interprete line as file
+					# interpret line as file
 					self.CountProgress	+= 1
 					self.CountJustCopied	+= 1
 
@@ -120,14 +120,14 @@ class progressmonitor(object):
 
 				TimeElapsed		= lib_system.get_uptime_sec() - self.StartTime
 				TimeRemaining	= TimeElapsed * (self.FilesToProcess - self.CountProgress) / self.CountProgress
-				TimeRemainingFormated	= str(timedelta(seconds=TimeRemaining)).split('.')[0]
+				TimeRemainingFormatted	= str(timedelta(seconds=TimeRemaining)).split('.')[0]
 			else:
 
 				self.CountProgress	= 0
-				TimeRemainingFormated	= '?'
+				TimeRemainingFormatted	= '?'
 
 			# DisplayLine4
-			DisplayLine4	= f"{self.__lan.l('box_backup_time_remaining')}: {TimeRemainingFormated}"
+			DisplayLine4	= f"{self.__lan.l('box_backup_time_remaining')}: {TimeRemainingFormatted}"
 
 			# DisplayLinesExtra
 			DisplayLinesExtra	= []

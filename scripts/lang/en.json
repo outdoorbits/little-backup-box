@@ -121,7 +121,7 @@
       "offline": "offline",
       "mail": {
         "main": "web UI",
-        "desription_http": "http (insecure)",
+        "description_http": "http (insecure)",
         "open_samba": "Open in file manager (Samba / Windows)",
         "info": "Little Backup Box Info",
         "description_https": "https (secure, certificate cannot be verified automatically, please confirm it)"
@@ -377,7 +377,7 @@
       "loglevel_minimum": "minimal",
       "loglevel_text": "Log system-events (to Log Monitor)?<br>(Logfile:",
       "mail_html_header": "Send mails in HTML-format",
-      "mail_html_label": "If mails are activated, should they be formated in HTML?",
+      "mail_html_label": "If mails are activated, should they be Formatted in HTML?",
       "notify_header": "Send mails",
       "notify_label": "Try to send mails about actual links to this Little Backup Box and about finished backups?",
       "power_off_idle_time_header": "Power down after idle-time",
@@ -470,7 +470,7 @@
       "button_header": "Control buttons",
       "rotate_header": "Rotate button mapping",
       "button_edge_detection_label": "Button edge detection",
-      "button_resitor_pull_label": "Pull resistor",
+      "button_resistor_pull_label": "Pull resistor",
       "button_comment": "Comment",
       "button_edit_custom_configfile": "Edit custom configuration file"
     },
@@ -527,7 +527,7 @@
     }
   },
   "cmd": {
-    "input_password": "Password requiered to start",
+    "input_password": "Password required to start",
     "execute": "execute",
     "no_cmd": "No valid command given.",
     "link_text_home": "Return to Little Backup Box",

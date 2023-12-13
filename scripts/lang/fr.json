@@ -288,7 +288,7 @@
       "button_header": "Boutons de commande",
       "rotate_header": "Mappage des boutons de rotation",
       "button_edge_detection_label": "Détection du bord du bouton",
-      "button_resitor_pull_label": "Pull résistance",
+      "button_resistor_pull_label": "Pull résistance",
       "button_comment": "Commentaire",
       "button_edit_custom_configfile": "Modifier le fichier de configuration personnalisé"
     },
@@ -447,7 +447,7 @@
       "offline": "hors ligne",
       "online": "en ligne",
       "mail": {
-        "desription_http": "http (non sécurisé)",
+        "description_http": "http (non sécurisé)",
         "info": "Little Backup Box Info",
         "main": "web UI",
         "open_samba": "Ouvrir dans le gestionnaire de fichiers (Samba / Windows)",

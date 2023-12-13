@@ -31,6 +31,6 @@ if [ ! "${conf_FAN_PWM_GPIO}" = "-" ] && [ ! "${conf_FAN_PWM_TEMP_C}" = "0" ]; t
 	# activate fan control
 	raspi-config nonint do_fan 0 ${conf_FAN_PWM_GPIO} ${conf_FAN_PWM_TEMP_C}
 else
-	# inactivate fan control
+	# deactivate fan control
 	raspi-config nonint do_fan 1
 fi
