@@ -415,7 +415,7 @@ class storage(object):
 		except:
 			CameraModel	= 'Camera'
 
-		# camera manufacterer
+		# camera manufacturer
 		try:
 			CameraManufacturer	= [CameraSummaryLine for CameraSummaryLine in CameraSummaryList if CameraSummaryLine.strip().startswith('Manufacturer')][0]
 			CameraManufacturer	= CameraManufacturer.strip().split(' ',1)[1]
@@ -503,7 +503,7 @@ class storage(object):
 
 							SourcePathKnown	= False
 							for SourcePath in self.SubPathsAtSource:
-								SourcePathKnown	= CameraFolder in SourcePath # if not allready in SubPathsAtSource add to it
+								SourcePathKnown	= CameraFolder in SourcePath # if not already in SubPathsAtSource add to it
 
 							if not SourcePathKnown:
 								self.SubPathsAtSource.append(CameraFolder)

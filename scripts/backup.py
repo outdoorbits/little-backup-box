@@ -230,7 +230,7 @@ class backup(object):
 						self.TargetDevice.StorageType == 'cloud' and
 						self.SourceDevice.CloudServiceName == self.TargetDevice.CloudServiceName
 					) or																													# cloud to cloud only for different cloud services
-					(self.SourceDevice.StorageType == 'cloud_rsync') or																		# cant write device identifier to rsync server
+					(self.SourceDevice.StorageType == 'cloud_rsync') or																		# can't write device identifier to rsync server
 					(self.TargetDevice.StorageType == 'camera') or																			# camera never can be target
 					(self.SourceDevice.StorageType	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')							# camera can't rsync to rsyncserver as this is not supported by gphoto2
 				):
@@ -658,7 +658,7 @@ class backup(object):
 				Command	= f"find '{self.TargetDevice.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 				TIMSList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 				TIMSList.sort()
-				#convert tims filesnames to original filenames
+				#convert tims filenames to original filenames
 				for i, TIMS in enumerate(TIMSList):
 					TIMSList[i]	= TIMS.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0] 			# remove self.TargetDevice.MountPoint and second extension
 					TIMSList[i]	= '/'.join(TIMSList[i].rsplit('/tims/', 1))										# remove /tims from folder

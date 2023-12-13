@@ -85,12 +85,12 @@
 
 							if ($ButtonClass != 'usb' and $ButtonClass_old=='usb') {
 								$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py get_available_partitions True");
-								$PartisionsArray	= explode(',', $Partitions);
+								$PartitionsArray	= explode(',', $Partitions);
 
 								echo ('<label for="DeviceIdentifierPreset">'.L::tools_mount_select_partition_label.': </label>');
 								echo ('<select class="usb" id="DeviceIdentifierPreset" name="DeviceIdentifierPreset">');
 									echo ("<option value=''>".L::main_backup_preset_partition_auto."</option>");
-									foreach ($PartisionsArray as $Partition) {
+									foreach ($PartitionsArray as $Partition) {
 										$Partition	= trim($Partition, "[]' \n");
 										list($Lum, $DeviceIdentifier)	= explode(':',$Partition,2);
 										$Lum	= trim($Lum,'/dev');

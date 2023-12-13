@@ -288,7 +288,7 @@
       "button_header": "Steuer-Taster",
       "rotate_header": "Button-Zuordnung drehen",
       "button_edge_detection_label": "Tastenkantenerkennung",
-      "button_resitor_pull_label": "Pull Widerstand",
+      "button_resistor_pull_label": "Pull Widerstand",
       "button_comment": "Kommentar",
       "button_edit_custom_configfile": "Benutzerdefinierte Konfigurationsdatei bearbeiten"
     },
@@ -447,7 +447,7 @@
       "offline": "offline",
       "online": "online",
       "mail": {
-        "desription_http": "http (unsicher)",
+        "description_http": "http (unsicher)",
         "info": "Little Backup Box Info",
         "main": "web UI",
         "open_samba": "Im Dateimanager öffnen (Samba / Windows)",

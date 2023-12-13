@@ -61,7 +61,7 @@ class display(object):
 	def message(self,RawLines): # Lines = ['abc','def',...]
 		self.__start_display()
 
-		# cut RawLines (if a RawLine countains newline) and assemble Lines
+		# cut RawLines (if a RawLine contains newline) and assemble Lines
 		Lines = []
 		for Line in RawLines:
 			SubLines = Line.splitlines()

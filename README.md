@@ -60,8 +60,8 @@ These languages are already available. Do you want to maintain or create a trans
 <li>2022/01/08: Uploads to the box can be done by the filemanager now.</li>
 <li>2021/12/31: Add language support for display-messages*1</li>
 <li>2021/12-27: Add power-off after idle time. Configuration in "Settings".</li>
-<li>2021/12/21: Add language support to the web-UI for French, Spanisch and German*1</li>
-<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">menue based update-function</a>.</li>
+<li>2021/12/21: Add language support to the web-UI for French, Spanish and German*1</li>
+<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">menu based update-function</a>.</li>
 <li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
 </ul>
 
@@ -94,7 +94,7 @@ These languages are already available. Do you want to maintain or create a trans
 <figcaption>The web UI on a smartphone. Full function in pocket-size.</figcaption>
 </figure>
 
-<h2>Developement status</h2>
+<h2>Development status</h2>
 Little Backup Box is still under construction.<br />
 <b>Please test your Installation carefully before productive use!</b><br />
 Little Backup Box has undergone massive development over the past few months. At the moment, no further major innovations are planned. Instead, the focus should now be on finding and correcting any errors and making the system even more reliable.<br />
@@ -138,7 +138,7 @@ You will be asked if you want to install <a href="https://davesteele.github.io/c
 The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
 </li>
 <li>
-<b>Don't worry:</b> Please note this in case you installed via wifi/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's comming up, it changes your wifi-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is a short information, how to access Little Backup Box. In your setting, this would be the information you need:<br />
+<b>Don't worry:</b> Please note this in case you installed via wifi/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's coming up, it changes your wifi-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is a short information, how to access Little Backup Box. In your setting, this would be the information you need:<br />
 <br />
 ******************************************************************************************<br />
 *** How to proceed:<br />

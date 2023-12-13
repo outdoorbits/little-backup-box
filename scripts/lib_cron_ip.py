@@ -50,7 +50,7 @@ def display_ip():
 			with open(const_DISPLAY_CONTENT_OLD_FILE,'r') as f:
 				DisplayContentOld	= f.read()
 
-		__IPsFormated	= []
+		__IPsFormatted	= []
 
 		OnlineMessage	= __lan.l('box_cronip_online') if lib_network.get_internet_status() else __lan.l('box_cronip_offline')
 
@@ -58,10 +58,10 @@ def display_ip():
 			IP	= IP.strip()
 
 			if IP and ((IP not in DisplayContentOld) or (OnlineMessage not in DisplayContentOld)):
-				__IPsFormated.append(f":{IP}")
+				__IPsFormatted.append(f":{IP}")
 
-		if __IPsFormated:
-			display.message([f":{OnlineMessage}, IP:"] + __IPsFormated)
+		if __IPsFormatted:
+			display.message([f":{OnlineMessage}, IP:"] + __IPsFormatted)
 
 def mail_ip():
 	IP_sent_Markerfile		= __setup.get_val('const_IP_SENT_MARKERFILE')
@@ -122,7 +122,7 @@ def __getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain):
 {__lan.l('box_cronip_mail_description_https')}:
 {indexLinksPlainSSL}
 
-{__lan.l('box_cronip_mail_desription_http')}:
+{__lan.l('box_cronip_mail_description_http')}:
 {indexLinksPlain8000}
 
 *** {__lan.l('box_cronip_mail_open_samba')}: ***
@@ -134,7 +134,7 @@ def __getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML):
 {__lan.l('box_cronip_mail_description_https')}:<br>
 {indexLinksHTMLSSL}
 <br>
-{__lan.l('box_cronip_mail_desription_http')}:<br>
+{__lan.l('box_cronip_mail_description_http')}:<br>
 {indexLinksHTML8000}
 <br>
 <b>{__lan.l('box_cronip_mail_open_samba')}:</b><br>

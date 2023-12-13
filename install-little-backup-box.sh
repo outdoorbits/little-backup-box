@@ -118,7 +118,7 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	read -r -d '' COMITUP_INSTALL_QUESTION << EOM
 \Zb\ZuInstall comitup?\Zn
 
-Do you want to allow Little-Backup-Box to work as a WiFi-accress-point and make yourself independent of other WiFi-networks?
+Do you want to allow Little-Backup-Box to work as a WiFi-access-point and make yourself independent of other WiFi-networks?
 Do you want zu connect your Little-Backup-Box flexible to any WiFi, managed conveniently by web-gui?
 
 Comitup provides all these capabilities.
@@ -611,7 +611,7 @@ echo "*** We are always happy to receive your feedback!"
 echo "********************************************************************************************"
 echo ""
 
-# finshed
+# finished
 echo "Little Backup Box: Setup finished." | tee "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
 echo "Mode=${SCRIPT_MODE}" | tee -a "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
 date | tee -a "${INSTALLER_DIR}/SETUP_FINISHED.TXT"
