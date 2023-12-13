@@ -241,7 +241,7 @@ class i18n {
         $this->forcedLang = $forcedLang;
     }
 
-    public function setSectionSeperator($sectionSeparator) {
+    public function setSectionSeparator($sectionSeparator) {
         $this->fail_after_init();
         $this->sectionSeparator = $sectionSeparator;
     }
@@ -249,7 +249,7 @@ class i18n {
     /**
      * @deprecated Use setSectionSeparator.
      */
-    public function setSectionSeparator($sectionSeparator) {
+    public function setSectionSeperator($sectionSeparator) {
         $this->setSectionSeparator($sectionSeparator);
     }
 
