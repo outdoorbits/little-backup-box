@@ -11,7 +11,7 @@ class i18n {
 
     /**
      * Language file path
-     * This is the path for the language files. You must use the '{LANGUAGE}' placeholder for the language or the script won't find any language files.
+     * This is the path for the language files. You must use the '{LANGUAGE}' placeholder for the language or the script wont find any language files.
      *
      * @var string
      */
@@ -241,7 +241,7 @@ class i18n {
         $this->forcedLang = $forcedLang;
     }
 
-    public function setSectionSeparator($sectionSeparator) {
+    public function setSectionSeperator($sectionSeparator) {
         $this->fail_after_init();
         $this->sectionSeparator = $sectionSeparator;
     }
@@ -365,7 +365,7 @@ class i18n {
 
     protected function fail_after_init() {
         if ($this->isInitialized()) {
-            throw new BadMethodCallException('This ' . __CLASS__ . ' object is already initialized, so you can not change any settings.');
+            throw new BadMethodCallException('This ' . __CLASS__ . ' object is already initalized, so you can not change any settings.');
         }
     }
 }
