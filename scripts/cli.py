@@ -4,37 +4,108 @@ import subprocess
 import sys
 import os
 
+import lib_setup
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Little Backup Box backup script')
+	setup	= lib_setup.setup()
 
-    parser.add_argument('source', metavar='source',
-                        choices=['usb', 'internal', 'camera', 'cloud', 'cloud_rsync', 'thumbnails', 'database', 'exif'],
-                        help='Source name, one of ["usb", "internal", "camera", "cloud:SERVICE_NAME", "cloud_rsync"] or functions: ["thumbnails", "database", "exif"]')
-    parser.add_argument('target', metavar='target', choices=['usb', 'internal', 'cloud', 'cloud_rsync'],
-                        help='Target name, one of ["usb", "internal", "cloud", "cloud_rsync"]')
+	const_MEDIA_DIR				= setup.get_val('const_MEDIA_DIR')
+	const_RCLONE_CONFIG_FILE	= setup.get_val('const_RCLONE_CONFIG_FILE')
 
-    parser.add_argument('--cloud-service', required=False, default='')
-    parser.add_argument('--sync-database', action='store_true', required=False, default=True)
-    parser.add_argument('--generate-thumbnails', action='store_true', required=False, default=False,
-                        help='Create thumbnails for View after backup (Local storages only)')
-    parser.add_argument('--update-exif', action='store_true', required=False, default=False,
-                        help='New media without their own rating receive the standard rating. If possible, this is written to the original file.')
+	#get possible CloudServices
+	rclone_config	= subprocess.check_output(['sudo', 'rclone', 'config', 'show', '--config', os.path.join(const_MEDIA_DIR, const_RCLONE_CONFIG_FILE)]).decode().split('\n')
 
-    parser.add_argument('--device-identifier-preset-source', required=False, default='',
-                        help='Device identifier preset for source, e.g --uuid 123..., sda1, etc.')
-    parser.add_argument('--device-identifier-preset-target', required=False, default='',
-                        help='Device identifier preset for source, e.g --uuid 123..., sda1, etc.')
+	CloudServices	= []
 
-    parser.add_argument('--power-off', action='store_true', required=False, default=False,
-                        help='Power off after backup')
+	for line in rclone_config:
+		if len(line) > 0 and line[0] == '[':
+			CloudServices.append(f"cloud:{line.strip('[]')}")
 
-    parser.add_argument('--secondary-backup-follows', action='store_true', required=False, default=False)
+	parser = argparse.ArgumentParser(description='Little Backup Box backup script', add_help=True)
 
-    args = parser.parse_args()
+	SourceChoices	= ['usb', 'internal', 'camera'] + CloudServices + ['cloud_rsync', 'thumbnails', 'database', 'exif']
+	parser.add_argument(
+		'--SourceName',
+		'-s',
+		metavar='source',
+		choices		= SourceChoices,
+		help=f'Source name, one of {SourceChoices}',
+		default=''
+	)
 
-    argStrings = map(lambda x: str(x),
-                     [args.source, args.target, args.sync_database, args.generate_thumbnails, args.update_exif,
-                      args.device_identifier_preset_source, args.device_identifier_preset_target, args.power_off,
-                      args.secondary_backup_follows])
+	TargetChoices	= ['usb', 'internal'] + CloudServices + ['cloud_rsync']
+	parser.add_argument(
+		'--TargetName',
+		'-t',
+		metavar		= 'target',
+		choices		= TargetChoices,
+		help		= f'Target name, one of {TargetChoices}',
+		default=''
+	)
 
-    subprocess.call(["python3", os.path.join(sys.path[0], "backup.py")] + list(argStrings))
+	parser.add_argument(
+		'--sync-database',
+		'-sd',
+		action		= 'store_true',
+		required	= False,
+		default		= False,
+		help		= 'Should the View database be synchronized after backup?'
+	)
+
+	parser.add_argument(
+		'--generate-thumbnails',
+		'-gt',
+		action		= 'store_true',
+		required	= False,
+		default		= False,
+		help		= 'Create thumbnails for View after backup (Local storages only)'
+	)
+
+	parser.add_argument(
+		'--update-exif',
+		'-ue',
+		action		= 'store_true',
+		required=False,
+		default=False,
+		help='New media without their own rating receive the standard rating. If possible, this is written to the original file.'
+	)
+
+	parser.add_argument(
+		'--device-identifier-preset-source',
+		'-si',
+		required=False,
+		default='',
+		help='Device identifier preset for source, e.g --uuid 123..., sda1, etc.'
+	)
+
+	parser.add_argument(
+		'--device-identifier-preset-target',
+		'-ti',
+		required	= False,
+		default='',
+		help='Device identifier preset for source, e.g --uuid 123..., sda1, etc.'
+	)
+
+	parser.add_argument(
+		'--power-off',
+		'-p',
+		action		= 'store_true',
+		required	= False,
+		default		= False,
+		help		= 'Power off after backup?'
+	)
+
+	parser.add_argument(
+		'--secondary-backup-follows',
+		'-sb',
+		action		= 'store_true',
+		required	= False,
+		default		= False,
+		help		= 'Will another backup follow? If not, the process can be completed.'
+	)
+
+	args = vars(parser.parse_args())
+
+	#print(args)
+
+	print(f"backupObj=backup(SourceName={args['SourceName']}, TargetName={args['TargetName']}, DoSyncDatabase={args['sync_database']}, DoGenerateThumbnails={args['generate_thumbnails']}, DoUpdateEXIF={args['update_exif']}, DeviceIdentifierPresetSource={args['device_identifier_preset_source']}, DeviceIdentifierPresetTarget={args['device_identifier_preset_target']}, PowerOff={args['power_off']}, SecundaryBackupFollows={args['secondary_backup_follows']})")
