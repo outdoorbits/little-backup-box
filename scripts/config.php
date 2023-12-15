@@ -1237,8 +1237,8 @@ function upload_settings() {
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
-            <?php echo '<button style="margin-top: 2em; position: sticky; bottom: 0; background-color: var(--cbg)" type="submit" name="save">' . L::config_save_button . '</button>'; ?>
+		<div class="card" style="margin-top: 2em; position: sticky; bottom: 0; z-index: 10; background-color: var(--cbg)">
+            <?php echo '<button style="margin-top: 2em" type="submit" name="save">' . L::config_save_button . '</button>'; ?>
 		</div>
 
 	</form>
