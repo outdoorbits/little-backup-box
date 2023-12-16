@@ -29,8 +29,9 @@ if __name__ == "__main__":
 		'-s',
 		metavar='source',
 		choices		= SourceChoices,
-		help=f'Source name, one of {SourceChoices}',
-		default=''
+		required=True,
+		default='',
+		help=f'Source name, one of {SourceChoices}'
 	)
 
 	TargetChoices	= ['usb', 'internal'] + CloudServices + ['cloud_rsync']
@@ -39,8 +40,9 @@ if __name__ == "__main__":
 		'-t',
 		metavar		= 'target',
 		choices		= TargetChoices,
-		help		= f'Target name, one of {TargetChoices}',
-		default=''
+		required=True,
+		default='',
+		help		= f'Target name, one of {TargetChoices}'
 	)
 
 	parser.add_argument(
