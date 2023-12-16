@@ -57,19 +57,17 @@ if __name__ == "__main__":
 	parser.add_argument(
 		'--generate-thumbnails',
 		'-gt',
-		action		= 'store_true',
 		required	= False,
-		default		= False,
-		help		= 'Create thumbnails for View after backup (Local storages only)'
+		default		= 'setup',
+		help		= 'Create thumbnails for View after backup (Local storages only) [\'True\', \'False\']. If not set, use config value.'
 	)
 
 	parser.add_argument(
 		'--update-exif',
 		'-ue',
-		action		= 'store_true',
 		required=False,
-		default=False,
-		help='New media without their own rating receive the standard rating. If possible, this is written to the original file.'
+		default		= 'setup',
+		help='New media without their own rating receive the standard rating. If possible, this is written to the original file. [\'True\', \'False\']. If not set, use config value.'
 	)
 
 	parser.add_argument(
@@ -91,10 +89,9 @@ if __name__ == "__main__":
 	parser.add_argument(
 		'--power-off',
 		'-p',
-		action		= 'store_true',
 		required	= False,
-		default		= False,
-		help		= 'Power off after backup?'
+		default		= 'setup',
+		help		= 'Power off after backup? [\'True\', \'False\']. If not set, use config value.'
 	)
 
 	parser.add_argument(
