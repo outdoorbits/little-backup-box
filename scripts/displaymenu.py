@@ -83,7 +83,7 @@ class menu(object):
 					{
 					'type':		'item',
 					'title':	self.__lan.l(f'box_menu_backup_mode_{source}') + '|' + self.__lan.l('box_menu_to') + '|' + self.__lan.l(f'box_menu_backup_mode_{target}'),
-					'action':	self.create_shell_action([ kill_backup_process,start_backup_trunk + [source,target] ]),
+					'action':	self.create_shell_action([ kill_backup_process, start_backup_trunk + ['--SourceName', source, '--TargetName', target] ]),
 					}
 				)
 
@@ -134,7 +134,7 @@ class menu(object):
 					{
 						'type':		'item',
 						'title':	sourceName + '|' + self.__lan.l('box_menu_to') + '|' + targetName,
-						'action':	self.create_shell_action([ kill_backup_process,start_backup_trunk + [source,target] ]),
+						'action':	self.create_shell_action([ kill_backup_process, start_backup_trunk + ['--SourceName', source, '--TargetName', target] ]),
 					}
 				)
 
@@ -320,16 +320,16 @@ class menu(object):
 		else:
 			self.LAST_INPUT_TIME	= time.time()
 
-	def create_confirmed_shell_action(self,title,command):
+	def create_confirmed_shell_action(self, title, command):
 		return([
 			{
 				'type':		'confirmitem',
 				'title':	title,
-				'action':	self.create_shell_action(command,title),
+				'action':	self.create_shell_action(command, title),
 			},
 		])
 
-	def create_shell_action(self,command,title=''):
+	def create_shell_action(self, command, title=''):
 		return([
 			{
 				'type':		'shell',

@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import argparse
 from datetime import datetime, timedelta
 import os
 import pathlib
@@ -929,54 +930,104 @@ class backup(object):
 			lib_poweroff.poweroff(Action, display_summary).poweroff()
 
 if __name__ == "__main__":
-	SourceName						= sys.argv[1]
-	TargetName						= sys.argv[2]
+	setup	= lib_setup.setup()
 
-	if SourceName	== 'database':
-		DoSyncDatabase			= True
-	else:
-		try:
-			DoSyncDatabase					= (sys.argv[3] == 'True')
-		except:
-			DoSyncDatabase					= False
+	const_MEDIA_DIR				= setup.get_val('const_MEDIA_DIR')
+	const_RCLONE_CONFIG_FILE	= setup.get_val('const_RCLONE_CONFIG_FILE')
 
-	if SourceName == 'thumbnails':
-		DoGenerateThumbnails	= True
-	else:
-		try:
-			DoGenerateThumbnails			= (sys.argv[4] == 'True')
-		except:
-			DoGenerateThumbnails			= 'setup'
+	#get possible CloudServices
+	rclone_config	= subprocess.check_output(['sudo', 'rclone', 'config', 'show', '--config', os.path.join(const_MEDIA_DIR, const_RCLONE_CONFIG_FILE)]).decode().split('\n')
 
-	if SourceName == 'exif':
-		DoUpdateEXIF			= True
-	else:
-		try:
-			DoUpdateEXIF					= (sys.argv[5] == 'True')
-		except:
-			DoUpdateEXIF					= 'setup'
+	CloudServices	= []
 
-	try:
-		DeviceIdentifierPresetSource	= sys.argv[6]
-	except:
-		DeviceIdentifierPresetSource	= ''
+	for line in rclone_config:
+		if len(line) > 0 and line[0] == '[':
+			CloudServices.append(f"cloud:{line.strip('[]')}")
 
-	try:
-		DeviceIdentifierPresetTarget	= sys.argv[7]
-	except:
-		DeviceIdentifierPresetTarget	= ''
+	parser = argparse.ArgumentParser(
+		description	= 'Controls the entire backup process of Little Backup Box. Some parameters are taken from the configuration if they are not explicitly set as arguments. Please configure the standards in the web UI.',
+		add_help	= True,
+		epilog		= 'This script can ideally be configured and started via the Little Backup Box web UI.'
+	)
 
-	try:
-		PowerOff						= (sys.argv[8] == 'True')
-	except:
-		PowerOff						= 'setup'
+	SourceChoices	= ['usb', 'internal', 'camera'] + CloudServices + ['cloud_rsync', 'thumbnails', 'database', 'exif']
+	parser.add_argument(
+		'--SourceName',
+		'-s',
+		choices		= SourceChoices,
+		required =	True,
+		help=f'Source name, one of {SourceChoices}'
+	)
 
-	try:
-		SecundaryBackupFollows						= (sys.argv[9] == 'True')
-	except:
-		SecundaryBackupFollows						= False
+	TargetChoices	= ['usb', 'internal'] + CloudServices + ['cloud_rsync']
+	parser.add_argument(
+		'--TargetName',
+		'-t',
+		choices		= TargetChoices,
+		required	= True,
+		help		= f'Target name, one of {TargetChoices}'
+	)
 
-	backupObj= backup(SourceName, TargetName, DoSyncDatabase, DoGenerateThumbnails, DoUpdateEXIF, DeviceIdentifierPresetSource, DeviceIdentifierPresetTarget, PowerOff, SecundaryBackupFollows)
+	parser.add_argument(
+		'--sync-database',
+		'-sd',
+		required	= False,
+		default		= False,
+		help		= 'Should the View database be synchronized after backup? [\'True\', \'False\']'
+	)
+
+	parser.add_argument(
+		'--generate-thumbnails',
+		'-gt',
+		required	= False,
+		default		= 'setup',
+		help		= 'Create thumbnails for View after backup (Local storages only) [\'True\', \'False\']. If not set, use config value.'
+	)
+
+	parser.add_argument(
+		'--update-exif',
+		'-ue',
+		required=False,
+		default		= 'setup',
+		help='New media without their own rating receive the standard rating. If possible, this is written to the original file. [\'True\', \'False\']. If not set, use config value.'
+	)
+
+	parser.add_argument(
+		'--device-identifier-preset-source',
+		'-si',
+		required=False,
+		default='',
+		help='Device identifier preset for source, e.g --uuid 123..., sda1, etc.'
+	)
+
+	parser.add_argument(
+		'--device-identifier-preset-target',
+		'-ti',
+		required	= False,
+		default='',
+		help='Device identifier preset for source, e.g --uuid 123..., sda1, etc.'
+	)
+
+	parser.add_argument(
+		'--power-off',
+		'-p',
+		required	= False,
+		default		= 'setup',
+		help		= 'Power off after backup? [\'True\', \'False\']. If not set, use config value.'
+	)
+
+	parser.add_argument(
+		'--secondary-backup-follows',
+		'-sb',
+		required	= False,
+		default		= False,
+		help		= 'Will another backup follow? If not, the process can be completed. [\'True\', \'False\']'
+	)
+
+	args = vars(parser.parse_args())
+
+	backupObj	= backup(SourceName=args['SourceName'], TargetName=args['TargetName'], DoSyncDatabase=args['sync_database'], DoGenerateThumbnails=args['generate_thumbnails'], DoUpdateEXIF=args['update_exif'], DeviceIdentifierPresetSource=args['device_identifier_preset_source'], DeviceIdentifierPresetTarget=args['device_identifier_preset_target'], PowerOff=args['power_off'], SecundaryBackupFollows=args['secondary_backup_follows'])
+
 	backupObj.run()
 
 

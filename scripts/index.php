@@ -294,7 +294,7 @@
 		// 	Backup
 		if (isset($_POST['TargetDevice'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py " . $_POST['SourceDevice'] . " " . $_POST['TargetDevice'] . " False '$generate_thumbnails' '$update_exif' '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . $_POST['SourceDevice'] . " --TargetName " . $_POST['TargetDevice'] . " --sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
 
 			popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
@@ -302,34 +302,34 @@
 		// 	Functions
 		if (isset($_POST['backup_function_thumbnails_usb'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py thumbnails usb False True False '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName thumbnails --TargetName usb --sync-database False --generate-thumbnails True --update-exif False --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 		if (isset($_POST['backup_function_thumbnails_internal'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py thumbnails internal False True False '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName thumbnails --TargetName internal --sync-database False --generate-thumbnails True --update-exif False --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
 		if (isset($_POST['backup_function_database_usb'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py database usb True False False '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName database --TargetName usb --sync-database True --generate-thumbnails False --update-exif False --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 		if (isset($_POST['backup_function_database_internal'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py database internal True False False '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName database --TargetName internal --sync-database True --generate-thumbnails False --update-exif False --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
 		if (isset($_POST['backup_function_exif_usb'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py exif usb False False True '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName exif --TargetName usb --sync-database False --generate-thumbnails False --update-exif True --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_usb_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 		if (isset($_POST['backup_function_exif_internal'])) {
 			exec("sudo pkill -f '$WORKING_DIR/backup*'");
-			exec("sudo python3 $WORKING_DIR/backup.py exif internal False False True '$preset_source' '$preset_target' $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName exif --TargetName internal --sync-database False --generate-thumbnails False --update-exif True --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
