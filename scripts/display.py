@@ -120,32 +120,44 @@ class DISPLAY(object):
 				self.color_alert	= (*self.color_alert, 255)
 				self.color_bg		= (*self.color_bg, 255)
 
-		if self.conf_DISP_CONNECTION == 'I2C':
-			serial = i2c(port=1, address=self.conf_DISP_I2C_ADDRESS)
-		elif self.conf_DISP_CONNECTION == 'SPI':
-			serial = spi(port=self.conf_DISP_SPI_PORT, device=0)
-		else:
-			exit ('Error: No valid connection type for display')
+		self.hardware_ready	= True
 
-		if self.conf_DISP_DRIVER == "SSD1306":
-			self.device = ssd1306(serial)
-		elif self.conf_DISP_DRIVER == "SSD1309":
-			self.device = ssd1309(serial)
-		elif self.conf_DISP_DRIVER == "SSD1322":
-			self.device = ssd1322(serial)
-		elif self.conf_DISP_DRIVER == "SSD1331":
-			self.device = ssd1331(serial)
-		elif self.conf_DISP_DRIVER == "SH1106":
-			self.device = sh1106(serial)
-		else:
-			sys.exit('Error: No valid display driver')
+		try:
+			if self.conf_DISP_CONNECTION == 'I2C':
+				serial = i2c(port=1, address=self.conf_DISP_I2C_ADDRESS)
+			elif self.conf_DISP_CONNECTION == 'SPI':
+				serial = spi(port=self.conf_DISP_SPI_PORT, device=0)
+			else:
+				exit ('Error: No valid connection type for display')
+		except:
+			self.hardware_ready	= False
+			print(f'Display connection to {self.conf_DISP_CONNECTION} could not be enabled.', file=sys.stderr)
 
-		self.device.capabilities(self.conf_DISP_RESOLUTION_X,self.conf_DISP_RESOLUTION_Y,self.conf_DISP_ROTATE,mode=self.conf_DISP_COLOR_MODEL)
+		try:
+			if self.conf_DISP_DRIVER == "SSD1306":
+				self.device = ssd1306(serial)
+			elif self.conf_DISP_DRIVER == "SSD1309":
+				self.device = ssd1309(serial)
+			elif self.conf_DISP_DRIVER == "SSD1322":
+				self.device = ssd1322(serial)
+			elif self.conf_DISP_DRIVER == "SSD1331":
+				self.device = ssd1331(serial)
+			elif self.conf_DISP_DRIVER == "SH1106":
+				self.device = sh1106(serial)
+			else:
+				sys.exit('Error: No valid display driver')
+		except:
+			self.hardware_ready	= False
+			print(f'Display driver {self.conf_DISP_DRIVER} could not be enabled.', file=sys.stderr)
 
-		self.device.contrast(self.conf_DISP_CONTRAST)
 
-		if self.conf_DISP_BLACK_ON_POWER_OFF:
-			self.device.persist = True
+		if self.hardware_ready:
+			self.device.capabilities(self.conf_DISP_RESOLUTION_X,self.conf_DISP_RESOLUTION_Y,self.conf_DISP_ROTATE,mode=self.conf_DISP_COLOR_MODEL)
+
+			self.device.contrast(self.conf_DISP_CONTRAST)
+
+			if self.conf_DISP_BLACK_ON_POWER_OFF:
+				self.device.persist = True
 
 		# define font
 		font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
@@ -159,14 +171,17 @@ class DISPLAY(object):
 			DISPLAYMENU	= displaymenu.menu(self.maxLines,self.__setup)
 
 	def calculate_LineSize(self):
-		# calculate size of text
-		with canvas(self.device) as draw:
-			(left, top, right, bottom) = draw.textbbox((0,0),"gG",font=self.FONT)
+		if self.hardware_ready:
+			# calculate size of text
+			with canvas(self.device) as draw:
+				(left, top, right, bottom) = draw.textbbox((0,0),"gG",font=self.FONT)
 
-		self.line_height = bottom - top
+			self.line_height = bottom - top
 
-		self.maxLines = int(self.device.height / self.line_height)
-		if self.maxLines > self.const_DISPLAY_LINES_LIMIT:
+			self.maxLines = int(self.device.height / self.line_height)
+			if self.maxLines > self.const_DISPLAY_LINES_LIMIT:
+				self.maxLines = self.const_DISPLAY_LINES_LIMIT
+		else:
 			self.maxLines = self.const_DISPLAY_LINES_LIMIT
 
 	def show(self, Lines):
@@ -374,10 +389,12 @@ class DISPLAY(object):
 				with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
 					oCF.write("\n".join(Lines))
 
-				self.show(Lines)
+				if self.hardware_ready:
+					self.show(Lines)
 
 			time.sleep(frame_time)
 
 if __name__ == "__main__":
 	display	= DISPLAY()
 	display.main()
+

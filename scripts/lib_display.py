@@ -51,6 +51,11 @@ class display(object):
 
 		self.pgbar_len = 20
 
+		if self.conf_DISP:
+			# ensure const_DISPLAY_CONTENT_FOLDER exists
+			if not os.path.isdir(self.const_DISPLAY_CONTENT_FOLDER):
+				pathlib.Path(self.const_DISPLAY_CONTENT_FOLDER).mkdir(parents=True, exist_ok=True)
+
 		self.__start_display()
 
 	def __start_display(self):
@@ -58,7 +63,7 @@ class display(object):
 			# grep: returncode=1 if no matches found
 			subprocess.run(f"sh -c '{self.python} {self.WORKING_DIR}/display.py &'",shell=True)
 
-	def message(self,RawLines): # Lines = ['abc','def',...]
+	def message(self, RawLines): # Lines = ['abc','def',...]
 		self.__start_display()
 
 		# cut RawLines (if a RawLine contains newline) and assemble Lines
@@ -69,17 +74,14 @@ class display(object):
 				Lines.append(SubLine)
 
 		if Lines:
-			# ensure const_DISPLAY_CONTENT_FOLDER exists
-			if not os.path.isdir(self.const_DISPLAY_CONTENT_FOLDER):
-				pathlib.Path(self.const_DISPLAY_CONTENT_FOLDER).mkdir(parents=True, exist_ok=True)
-
-			# if display is disabled, write message into const_DISPLAY_CONTENT_OLD_FILE to prevent repeating IP
+			# if display is disabled, write message into const_DISPLAY_CONTENT_OLD_FILE to prevent repeating IP message
 			DisplayFilePath	= os.path.join(self.const_DISPLAY_CONTENT_FOLDER,"{:014d}.txt".format(int(lib_system.get_uptime_sec()*100))) if self.conf_DISP else self.const_DISPLAY_CONTENT_OLD_FILE
 
+			# write DisplayFile in any case to prevent repeting IP message
 			with open(DisplayFilePath,'w') as DisplayFile:
 				DisplayFile.write('\n'.join(str(Line) for Line in Lines))
 
-			# format Lines to LogLines
+			# format Lines for LogLines
 			LogLines = []
 			for Line in Lines:
 
@@ -112,6 +114,9 @@ class display(object):
 				self.log.message(LogMessage)
 
 	def wait_for_empty_stack(self):
+		if not self.conf_DISP:
+			return(None)
+
 		while self.display_content_files.get_ContentFilesList():
 			self.__start_display()
 			time.sleep(self.conf_DISP_FRAME_TIME / 2)
