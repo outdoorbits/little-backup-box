@@ -532,7 +532,7 @@ BUT DON'T WORRY!\Zn
 The installation will finish seconds later, but maybe you won't see that progress on screen anymore. Your raspberry pi will reboot when setup is finished. Have a look at the action-LED.
 
 \ZuWhat's going on?\Zn
-Your raspberrys wifi-configuration has been removed by comitup now. Because comitup has no
+	Your raspberrys wifi-configuration has been removed by comitup now. Because comitup has no
 access-data for your wifi yet, it can't connect to it and will start as a wifi-hotspot:
 ssid=little-backup-box-nnnn (nnnn is a random number).
 

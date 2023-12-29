@@ -1,3 +1,4 @@
 .DS_Store
 .directory 
+*.kate-swp
 /scripts/__pycache__
