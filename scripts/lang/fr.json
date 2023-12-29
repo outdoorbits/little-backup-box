@@ -67,7 +67,9 @@
     "camera_identifier": "Identifiant",
     "camera_model": "Modèle de caméra",
     "camera_serial": "Numéro de série",
-    "cameras": "Appareils photo/smartphones"
+    "cameras": "Appareils photo/smartphones",
+    "system": "Système",
+    "model": "Modèle"
   },
   "config": {
     "config": "Réglages",

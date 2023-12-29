@@ -29,6 +29,7 @@ import RPi.GPIO as GPIO
 import lib_language
 import lib_network
 import lib_storage
+import lib_system
 
 
 class menu(object):
@@ -40,6 +41,8 @@ class menu(object):
 		self.__lan				= lib_language.language()
 
 		self.WORKING_DIR = os.path.dirname(__file__)
+
+		self.board_model_number					= lib_system.get_pi_model(number_only=True)
 
 		self.const_MEDIA_DIR					= self.__setup.get_val('const_MEDIA_DIR')
 		self.conf_DISP_FRAME_TIME				= self.__setup.get_val('conf_DISP_FRAME_TIME')
@@ -225,37 +228,40 @@ class menu(object):
 		self.GPIO_init()
 
 	def GPIO_init(self):
-		GPIO.setmode(GPIO.BCM)
-		GPIO.setwarnings(False)
+		if self.board_model_number	== 5:
+			pass
+		else:
+			GPIO.setmode(GPIO.BCM)
+			GPIO.setwarnings(False)
 
-		if self.conf_MENU_BUTTON_COMBINATION:
-			if self.conf_MENU_BUTTON_COMBINATION.isnumeric():
-				ButtonsConfigFile		= f"{self.WORKING_DIR}/{self.const_BUTTONS_CONFIG_FILE}"
-				ButtonCombinationNumber	= int(self.conf_MENU_BUTTON_COMBINATION)
-			elif self.conf_MENU_BUTTON_COMBINATION[0:1] == 'c':
-				ButtonsConfigFile		= f"{self.const_MEDIA_DIR}/{self.const_BUTTONS_PRIVATE_CONFIG_FILE}"
-				ButtonCombinationNumber	=  int(self.conf_MENU_BUTTON_COMBINATION[1:])
+			if self.conf_MENU_BUTTON_COMBINATION:
+				if self.conf_MENU_BUTTON_COMBINATION.isnumeric():
+					ButtonsConfigFile		= f"{self.WORKING_DIR}/{self.const_BUTTONS_CONFIG_FILE}"
+					ButtonCombinationNumber	= int(self.conf_MENU_BUTTON_COMBINATION)
+				elif self.conf_MENU_BUTTON_COMBINATION[0:1] == 'c':
+					ButtonsConfigFile		= f"{self.const_MEDIA_DIR}/{self.const_BUTTONS_PRIVATE_CONFIG_FILE}"
+					ButtonCombinationNumber	=  int(self.conf_MENU_BUTTON_COMBINATION[1:])
 
-			if os.path.isfile(ButtonsConfigFile):
-				ConfigLines	= []
-				with open(ButtonsConfigFile,'r') as f:
-					ConfigLines	= f.readlines()
+				if os.path.isfile(ButtonsConfigFile):
+					ConfigLines	= []
+					with open(ButtonsConfigFile,'r') as f:
+						ConfigLines	= f.readlines()
 
-				ConfigLineNumber	= 0
-				for ConfigLine in ConfigLines:
-					ConfigLine	= ConfigLine.strip()
-					if ConfigLine:
-						if ConfigLine[0:1] != '#':
-							ConfigLineNumber	+= 1
-							if ConfigLineNumber	== ButtonCombinationNumber:
-								ConfigLine	= ConfigLine.split(':',1)[0]
-								ButtonDefs	= ConfigLine.split(',')
-								for ButtonDef in ButtonDefs:
-									GPIO_PIN, ButtonFunction	= ButtonDef.split('=')
-									GPIO_PIN	= int(GPIO_PIN)
+					ConfigLineNumber	= 0
+					for ConfigLine in ConfigLines:
+						ConfigLine	= ConfigLine.strip()
+						if ConfigLine:
+							if ConfigLine[0:1] != '#':
+								ConfigLineNumber	+= 1
+								if ConfigLineNumber	== ButtonCombinationNumber:
+									ConfigLine	= ConfigLine.split(':',1)[0]
+									ButtonDefs	= ConfigLine.split(',')
+									for ButtonDef in ButtonDefs:
+										GPIO_PIN, ButtonFunction	= ButtonDef.split('=')
+										GPIO_PIN	= int(GPIO_PIN)
 
-									self.GPIO_config_button(GPIO_PIN,ButtonFunction)
-									self.buttonevent_timestamp[GPIO_PIN] = 0
+										self.GPIO_config_button(GPIO_PIN,ButtonFunction)
+										self.buttonevent_timestamp[GPIO_PIN] = 0
 
 	def GPIO_config_button(self,GPIO_PIN,ButtonFunction):
 		GPIO.setup(GPIO_PIN, GPIO.IN, pull_up_down = self.GPIO_MENU_BUTTON_RESISTOR_PULL)

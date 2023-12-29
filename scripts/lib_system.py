@@ -102,11 +102,49 @@ def get_abnormal_system_conditions(lan):
 
 	return(Conditions)
 
+def get_pi_model(number_only=False):
+
+	model	= ''
+
+	try:
+		with open('/proc/device-tree/model') as f:
+			model	= f.read()
+	except:
+		model	= 'unknown'
+
+	if number_only:
+		if model.startswith('Raspberry Pi Model B'):
+			model	= 1
+
+		elif model.startswith('Raspberry Pi Zero'):
+			model	= 0
+
+		elif model.startswith('Raspberry Pi 2'):
+			model	= 2
+
+		elif model.startswith('Raspberry Pi 3'):
+			model	= 3
+
+		elif model.startswith('Raspberry Pi 4'):
+			model	= 4
+
+		elif model.startswith('Raspberry Pi 5'):
+			model	= 5
+
+		else:
+			model	= -1
+
+	return(model)
+
 if __name__ == "__main__":
 	if len(sys.argv)>1:
 		if sys.argv[1] == 'get_uptime_sec':
 			print(get_uptime_sec())
+
 		if sys.argv[1] == 'get_abnormal_system_conditions':
 			lan	= lib_language.language()
 			print(get_abnormal_system_conditions(lan))
+
+		if sys.argv[1] == 'get_pi_model':
+			print(get_pi_model())
 

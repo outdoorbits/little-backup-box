@@ -35,36 +35,44 @@
 	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::sysinfo_sysinfo; ?></h1>
 
 	<div class="card">
+		<h3><?php echo L::sysinfo_system; ?></h3>
 		<?php
-		$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
-		$temp = round((float) $temp / 1000, 1);
+			$model					= shell_exec("sudo python3 ${WORKING_DIR}/lib_system.py get_pi_model");
 
-		$cpuusage = 100 - (float) shell_exec("vmstat | tail -1 | awk '{print $15}'");
+			$temp					= shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
+			$temp					= round((float) $temp / 1000, 1);
 
-		$mem_ram_frac = shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
-		$mem_ram_all = shell_exec("free | grep Mem | awk '{print $2 / 1024}'");
-		$mem_ram = round((float) $mem_ram_frac, 1) . " % * " . round((float) $mem_ram_all) . " MB";
+			$cpuusage				= 100 - (float) shell_exec("vmstat | tail -1 | awk '{print $15}'");
 
-		$mem_swap_frac = shell_exec("free | grep Swap | awk '{print $3/$2 * 100.0}'");
-		$mem_swap_all = shell_exec("free | grep Swap | awk '{print $2 / 1024}'");
-		$mem_swap = round($mem_swap_frac, 1) . " % * " . round($mem_swap_all) . " MB";
+			$mem_ram_frac			= shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'");
+			$mem_ram_all			= shell_exec("free | grep Mem | awk '{print $2 / 1024}'");
+			$mem_ram				= round((float) $mem_ram_frac, 1) . " % * " . round((float) $mem_ram_all) . " MB";
 
-		$abnormal_conditions = shell_exec("sudo python3 ${WORKING_DIR}/lib_system.py get_abnormal_system_conditions");
+			$mem_swap_frac			= shell_exec("free | grep Swap | awk '{print $3/$2 * 100.0}'");
+			$mem_swap_all			= shell_exec("free | grep Swap | awk '{print $2 / 1024}'");
+			$mem_swap				= round($mem_swap_frac, 1) . " % * " . round($mem_swap_all) . " MB";
+
+			$abnormal_conditions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_system.py get_abnormal_system_conditions");
+
+			echo '<table>';
+
+			echo "<tr><td width='30%'>" . L::sysinfo_model . ": </td><td><strong>" . $model . "</strong></td></tr>";
 
 			if (isset($temp) && is_numeric($temp)) {
-				echo "<p>" . L::sysinfo_temp . ": <strong>" . $temp . "°C</strong></p>";
+				echo "<tr><td>" . L::sysinfo_temp . ": </td><td><strong>" . $temp . "°C</strong></td></tr>";
 			}
 
 			if (isset($cpuusage) && is_numeric($cpuusage)) {
-				echo "<p>" . L::sysinfo_cpuload . ": <strong>" . $cpuusage . "%</strong></p>";
+				echo "<tr><td>" . L::sysinfo_cpuload . ": </td><td><strong>" . $cpuusage . "%</strong></td></tr>";
 			}
 
-			echo "<p>" . L::sysinfo_memory_ram . ": <strong>" . $mem_ram . "</strong></p>";
+			echo "<tr><td>" . L::sysinfo_memory_ram . ": </td><td><strong>" . $mem_ram . "</strong></td></tr>";
 
-			echo "<p>" . L::sysinfo_memory_swap . ": <strong>" . $mem_swap . "</strong></p>";
+			echo "<tr><td>" . L::sysinfo_memory_swap . ": </td><td><strong>" . $mem_swap . "</strong></td></tr>";
 
-			echo "<p>" . L::sysinfo_conditions . ": <strong>" . $abnormal_conditions . "</strong></p>";
+			echo "<tr><td>" . L::sysinfo_conditions . ": </td><td><strong>" . $abnormal_conditions . "</strong></td></tr>";
 
+			echo '</table>';
 		?>
 	</div>
 
