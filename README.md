@@ -31,6 +31,7 @@ These languages are already available. Do you want to maintain or create a trans
 <br />
 <h2>NEWS</h2>
 <ul>
+<li>2023-12-29: Workaround to enable comitup with bookworm</li>
 <li>2023/09/17: When backing up from cameras, all connected cameras are backed up. This is restricted to the use of different models! Test carefully! Some smartphones use the same technical identifier even though the model is different. In this case, only one of these devices would be backed up!</li>
 <li>2023/09/16: View image viewer: Support for tif images added</li>
 <li>2023/09/16: When backing up from USB, all connected USB partitions (except those of the target drive) are backed up.</li>
@@ -105,12 +106,8 @@ Please give feedback on problems or translation errors but also on the successfu
 As there is no manual available anymore, the github-wiki should replace it one day: <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not particularly detailed yet, but it can certainly help with the most common questions.
 
 <h2 id="installation">Installation</h2>
-<h3>Warning: Please still use Raspberry Pi OS (Legacy) Lite (bullseye)</h3>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
-Raspberry Pi OS bookworm doesn't meet dependencies of <a href="http://davesteele.github.io/comitup/">Comitup</a>. As the developer says, Comitup will be adapted to bookworm, but this is a major task and there is no timetable yet. This is why <b>still using <u>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</u> is strongly recommended.</b><br />
-<br />
 <ol>
-<li>Create a bootable SD card with <b>Raspberry Pi OS (Legacy) Lite (version 11, bullseye)</b> for use with Little Backup Box.<br />
+<li>Create a bootable SD card with <b>Raspberry Pi OS Lite (bookworm or bullseye)</b> for use with Little Backup Box.<br />
 An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select "Raspberry Pi OS (other)" > "Raspberry Pi OS Lite (32-bit)" or "Raspberry Pi OS Lite (64-bit)".<br />
 In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens the options-dialog. Here you can ...
 <ul>

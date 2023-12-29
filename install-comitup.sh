@@ -45,6 +45,19 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 		comitup comitup-watch
 
+# Workaround
+# Comitup (still) depends on python3-networkmanager. However, the current package version is not compatible with bookworm while the github version has been corrected. This will be installed here.
+# $OS_RELEASE is defined in install-little-backup-box.sh
+if  (( ${OS_RELEASE} > 11 )); then
+	# bookworm or later
+	wget https://raw.githubusercontent.com/snstac/python-networkmanager/main/NetworkManager.py
+
+	sudo chmod --reference=/usr/lib/python3/dist-packages/NetworkManager.py ./NetworkManager.py
+	sudo chown --reference=/usr/lib/python3/dist-packages/NetworkManager.py ./NetworkManager.py
+
+	sudo mv --force ./NetworkManager.py /usr/lib/python3/dist-packages/NetworkManager.py
+fi
+
 # Installing comitup*: Allow NetworkManager to manage the wifi interfaces by removing references to them from /etc/network/interfaces
 sudo rm /etc/network/interfaces
 

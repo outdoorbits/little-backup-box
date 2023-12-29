@@ -272,7 +272,7 @@ sudo raspi-config nonint do_i2c 0
 sudo raspi-config nonint do_spi 0
 
 if  (( ${OS_RELEASE} > 11 )); then
-	# bookworm
+	# bookworm or later
 	sudo DEBIAN_FRONTEND=noninteractive \
 			apt \
 			-o "Dpkg::Options::=--force-confold" \
