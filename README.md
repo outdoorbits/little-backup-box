@@ -9,6 +9,9 @@ Backups can be made directly from many cameras and smartphones. Of course, USB s
 Your valuable data can be backed up on cloud storage from numerous providers - even with VPN protection if necessary.<br />
 Media content can be viewed and rated for the subsequent process.<br />
 <br />
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
+Unfortunately, the (fantastic!) python library <a href="https://github.com/rm-hull/luma.core">luma.core</a> is <a href="https://github.com/rm-hull/luma.core/issues/268">not (yet) compatible with the new hardware of the Raspberry Pi 5</a>. When using a Raspberry Pi 5, the screen initially remains black. Of course, the Little Backup Box can also be operated without a display, e.g. via cell phone control. Let's hope for an adjustment soon...
+<br />
 <table>
 <tr>
 <td>
