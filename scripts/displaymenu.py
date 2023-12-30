@@ -20,11 +20,12 @@
 # Provides a menu for the display.
 # It can be used by hardware-buttons. Please read the Wiki at https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu.
 
-import time
+from gpiozero import Button
+from signal import pause
 import sys
+import time
 import os
 import subprocess
-import RPi.GPIO as GPIO
 
 import lib_language
 import lib_network
@@ -42,27 +43,27 @@ class menu(object):
 
 		self.WORKING_DIR = os.path.dirname(__file__)
 
-		self.board_model_number					= lib_system.get_pi_model(number_only=True)
+		self.board_model_number							= lib_system.get_pi_model(number_only=True)
 
-		self.const_MEDIA_DIR					= self.__setup.get_val('const_MEDIA_DIR')
-		self.conf_DISP_FRAME_TIME				= self.__setup.get_val('conf_DISP_FRAME_TIME')
-		self.conf_RSYNC_SERVER					= self.__setup.get_val('conf_RSYNC_SERVER')
-		self.conf_RSYNC_PORT					= self.__setup.get_val('conf_RSYNC_PORT')
-		self.conf_RSYNC_USER					= self.__setup.get_val('conf_RSYNC_USER')
-		self.conf_RSYNC_PASSWORD				= self.__setup.get_val('conf_RSYNC_PASSWORD')
-		self.conf_RSYNC_SERVER_MODULE			= self.__setup.get_val('conf_RSYNC_SERVER_MODULE')
-		self.const_BUTTONS_CONFIG_FILE			= self.__setup.get_val('const_BUTTONS_CONFIG_FILE')
-		self.const_BUTTONS_PRIVATE_CONFIG_FILE	= self.__setup.get_val('const_BUTTONS_PRIVATE_CONFIG_FILE')
-		self.conf_MENU_BUTTON_COMBINATION		= self.__setup.get_val('conf_MENU_BUTTON_COMBINATION')
-		self.conf_MENU_BUTTON_ROTATE			= self.__setup.get_val('conf_MENU_BUTTON_ROTATE')
-		self.conf_MENU_BUTTON_BOUNCETIME 		= self.__setup.get_val('conf_MENU_BUTTON_BOUNCETIME')
-		self.GPIO_MENU_BUTTON_EDGE_DETECTION 	= GPIO.RISING	if self.__setup.get_val('conf_MENU_BUTTON_EDGE_DETECTION') == 'RISING' else GPIO.FALLING
-		self.GPIO_MENU_BUTTON_RESISTOR_PULL 	= GPIO.PUD_DOWN	if self.__setup.get_val('conf_MENU_BUTTON_RESISTOR_PULL') == 'DOWN' else GPIO.PUD_UP
+		self.const_MEDIA_DIR							= self.__setup.get_val('const_MEDIA_DIR')
+		self.conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.conf_RSYNC_SERVER							= self.__setup.get_val('conf_RSYNC_SERVER')
+		self.conf_RSYNC_PORT							= self.__setup.get_val('conf_RSYNC_PORT')
+		self.conf_RSYNC_USER							= self.__setup.get_val('conf_RSYNC_USER')
+		self.conf_RSYNC_PASSWORD						= self.__setup.get_val('conf_RSYNC_PASSWORD')
+		self.conf_RSYNC_SERVER_MODULE					= self.__setup.get_val('conf_RSYNC_SERVER_MODULE')
+		self.const_BUTTONS_CONFIG_FILE					= self.__setup.get_val('const_BUTTONS_CONFIG_FILE')
+		self.const_BUTTONS_PRIVATE_CONFIG_FILE			= self.__setup.get_val('const_BUTTONS_PRIVATE_CONFIG_FILE')
+		self.conf_MENU_BUTTON_COMBINATION				= self.__setup.get_val('conf_MENU_BUTTON_COMBINATION')
+		self.conf_MENU_BUTTON_ROTATE					= self.__setup.get_val('conf_MENU_BUTTON_ROTATE')
+		self.conf_MENU_BUTTON_BOUNCETIME 				= self.__setup.get_val('conf_MENU_BUTTON_BOUNCETIME')
+		self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING 	= self.__setup.get_val('conf_MENU_BUTTON_EDGE_DETECTION') == 'RISING'
+		self.GPIO_MENU_BUTTON_RESISTOR_PULL_UP 			= self.__setup.get_val('conf_MENU_BUTTON_RESISTOR_PULL') == 'UP'
 
-		self.RCLONE_CONFIG_FILE					= f"{self.const_MEDIA_DIR}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
-		self.const_MENU_TIMEOUT_SEC				= self.__setup.get_val('const_MENU_TIMEOUT_SEC')
+		self.RCLONE_CONFIG_FILE							= f"{self.const_MEDIA_DIR}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
+		self.const_MENU_TIMEOUT_SEC						= self.__setup.get_val('const_MENU_TIMEOUT_SEC')
 
-		self.buttonevent_timestamp = {}
+		self.buttons	= {}
 
 		## menu-types:
 		#
@@ -227,47 +228,40 @@ class menu(object):
 
 		self.GPIO_init()
 
+		while True:
+			pause()
+
 	def GPIO_init(self):
-		if self.board_model_number	== 5:
-			pass
-		else:
-			GPIO.setmode(GPIO.BCM)
-			GPIO.setwarnings(False)
+		if self.conf_MENU_BUTTON_COMBINATION:
+			if self.conf_MENU_BUTTON_COMBINATION.isnumeric():
+				ButtonsConfigFile		= f"{self.WORKING_DIR}/{self.const_BUTTONS_CONFIG_FILE}"
+				ButtonCombinationNumber	= int(self.conf_MENU_BUTTON_COMBINATION)
+			elif self.conf_MENU_BUTTON_COMBINATION[0:1] == 'c':
+				ButtonsConfigFile		= f"{self.const_MEDIA_DIR}/{self.const_BUTTONS_PRIVATE_CONFIG_FILE}"
+				ButtonCombinationNumber	=  int(self.conf_MENU_BUTTON_COMBINATION[1:])
 
-			if self.conf_MENU_BUTTON_COMBINATION:
-				if self.conf_MENU_BUTTON_COMBINATION.isnumeric():
-					ButtonsConfigFile		= f"{self.WORKING_DIR}/{self.const_BUTTONS_CONFIG_FILE}"
-					ButtonCombinationNumber	= int(self.conf_MENU_BUTTON_COMBINATION)
-				elif self.conf_MENU_BUTTON_COMBINATION[0:1] == 'c':
-					ButtonsConfigFile		= f"{self.const_MEDIA_DIR}/{self.const_BUTTONS_PRIVATE_CONFIG_FILE}"
-					ButtonCombinationNumber	=  int(self.conf_MENU_BUTTON_COMBINATION[1:])
+			if os.path.isfile(ButtonsConfigFile):
+				ConfigLines	= []
+				with open(ButtonsConfigFile,'r') as f:
+					ConfigLines	= f.readlines()
 
-				if os.path.isfile(ButtonsConfigFile):
-					ConfigLines	= []
-					with open(ButtonsConfigFile,'r') as f:
-						ConfigLines	= f.readlines()
+				ConfigLineNumber	= 0
+				for ConfigLine in ConfigLines:
+					ConfigLine	= ConfigLine.strip()
+					if ConfigLine:
+						if ConfigLine[0:1] != '#':
+							ConfigLineNumber	+= 1
+							if ConfigLineNumber	== ButtonCombinationNumber:
+								ConfigLine	= ConfigLine.split(':',1)[0]
+								ButtonDefs	= ConfigLine.split(',')
+								for ButtonDef in ButtonDefs:
+									GPIO_PIN, ButtonFunction	= ButtonDef.split('=')
+									GPIO_PIN	= int(GPIO_PIN)
 
-					ConfigLineNumber	= 0
-					for ConfigLine in ConfigLines:
-						ConfigLine	= ConfigLine.strip()
-						if ConfigLine:
-							if ConfigLine[0:1] != '#':
-								ConfigLineNumber	+= 1
-								if ConfigLineNumber	== ButtonCombinationNumber:
-									ConfigLine	= ConfigLine.split(':',1)[0]
-									ButtonDefs	= ConfigLine.split(',')
-									for ButtonDef in ButtonDefs:
-										GPIO_PIN, ButtonFunction	= ButtonDef.split('=')
-										GPIO_PIN	= int(GPIO_PIN)
+									self.GPIO_config_button(GPIO_PIN,ButtonFunction)
 
-										self.GPIO_config_button(GPIO_PIN,ButtonFunction)
-										self.buttonevent_timestamp[GPIO_PIN] = 0
 
 	def GPIO_config_button(self,GPIO_PIN,ButtonFunction):
-		GPIO.setup(GPIO_PIN, GPIO.IN, pull_up_down = self.GPIO_MENU_BUTTON_RESISTOR_PULL)
-
-		GPIO.remove_event_detect(GPIO_PIN)
-
 		# rotate buttons
 		if self.conf_MENU_BUTTON_ROTATE == 2:
 			if ButtonFunction == 'up':
@@ -279,32 +273,39 @@ class menu(object):
 			elif ButtonFunction == 'right':
 				ButtonFunction	= 'left'
 
+		# define button
+		self.buttons[GPIO_PIN]				= Button(pin=GPIO_PIN, pull_up=self.GPIO_MENU_BUTTON_RESISTOR_PULL_UP, bounce_time=self.conf_MENU_BUTTON_BOUNCETIME / 1000)
+
 		# add events to buttons
 		if ButtonFunction == 'up':
-			GPIO.add_event_detect(GPIO_PIN, self.GPIO_MENU_BUTTON_EDGE_DETECTION, callback = self.move_up, bouncetime=self.conf_MENU_BUTTON_BOUNCETIME)
-		elif ButtonFunction == 'down':
-			GPIO.add_event_detect(GPIO_PIN, self.GPIO_MENU_BUTTON_EDGE_DETECTION, callback = self.move_down, bouncetime=self.conf_MENU_BUTTON_BOUNCETIME)
-		elif ButtonFunction == 'left':
-			GPIO.add_event_detect(GPIO_PIN, self.GPIO_MENU_BUTTON_EDGE_DETECTION, callback = self.move_left, bouncetime=self.conf_MENU_BUTTON_BOUNCETIME)
-		elif ButtonFunction == 'right':
-			GPIO.add_event_detect(GPIO_PIN, self.GPIO_MENU_BUTTON_EDGE_DETECTION, callback = self.move_right, bouncetime=self.conf_MENU_BUTTON_BOUNCETIME)
+			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
+				self.buttons[GPIO_PIN].when_pressed	= self.move_up
+			else:
+				self.buttons[GPIO_PIN].when_released	= self.move_up
 
-	def bouncing(self,channel):
-		# GPIO bouncetime not always works as expected. This function filters bouncing.
+		if ButtonFunction == 'down':
+			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
+				self.buttons[GPIO_PIN].when_pressed	= self.move_down
+			else:
+				self.buttons[GPIO_PIN].when_released	= self.move_down
 
-		if channel == 0:
-			self.buttonevent_timestamp[channel]	= time.time()
-			return(True)
+		if ButtonFunction == 'left':
+			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
+				self.buttons[GPIO_PIN].when_pressed	= self.move_left
+			else:
+				self.buttons[GPIO_PIN].when_released	= self.move_left
 
-		if abs(time.time() - self.buttonevent_timestamp[channel]) >= self.conf_MENU_BUTTON_BOUNCETIME/1000:
-			self.buttonevent_timestamp[channel]	= time.time()
-			return(False)
-		else:
-			self.buttonevent_timestamp[channel]	= time.time()
-			return(True)
+		if ButtonFunction == 'right':
+			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
+				self.buttons[GPIO_PIN].when_pressed	= self.move_right
+			else:
+				self.buttons[GPIO_PIN].when_released	= self.move_right
 
 	def __del__(self):
-		GPIO.cleanup()
+		for GPIO_PIN in self.buttons.keys():
+			self.buttons[GPIO_PIN].when_pressed		= None
+			self.buttons[GPIO_PIN].when_released	= None
+
 
 	def reset(self):
 		self.MENU_LEVEL		= 0 # integer
@@ -361,7 +362,7 @@ class menu(object):
 
 			return([f"s=b:{IP}", f"s=b:{STATUS}"])
 
-	def display(self,channel):
+	def display(self):
 		self.check_timeout()
 
 		self.set_shift()
@@ -426,7 +427,7 @@ class menu(object):
 
 					LINES+= [f"{style}:{line}"]
 				else:
-					print('No known menu type: {}'.format(self.MENU[self.MENU_LEVEL][n]['type']))
+					print('No known menu type: {}'.format(self.MENU[self.MENU_LEVEL][n]['type']),file=sys.stderr)
 
 			n += 1
 
@@ -434,57 +435,50 @@ class menu(object):
 		LINES_Str	= f"'{LINES_Str}'"
 		os.system(f"python3 {self.WORKING_DIR}/lib_display.py 'set:clear,time={frame_time}' {LINES_Str}")
 
-		self.buttonevent_timestamp[channel]	= time.time()
+	def move_down(self):
+		if len(self.MENU[self.MENU_LEVEL]) > (self.MENU_POS[self.MENU_LEVEL] + 1):
+			self.MENU_POS[self.MENU_LEVEL] += 1
+		else:
+			self.MENU_POS[self.MENU_LEVEL] = 0
 
-	def move_down(self,channel):
-		if not self.bouncing(channel):
+		self.display()
 
-			if len(self.MENU[self.MENU_LEVEL]) > (self.MENU_POS[self.MENU_LEVEL] + 1):
-				self.MENU_POS[self.MENU_LEVEL] += 1
-			else:
-				self.MENU_POS[self.MENU_LEVEL] = 0
+	def move_up(self):
+		if self.MENU_POS[self.MENU_LEVEL] > 0:
+			self.MENU_POS[self.MENU_LEVEL] += -1
+		elif (len(self.MENU[self.MENU_LEVEL]) > 0):
+			self.MENU_POS[self.MENU_LEVEL] = len(self.MENU[self.MENU_LEVEL]) - 1
+		self.display()
 
-			self.display(channel)
+	def move_right(self):
+		menu_new	= self.MENU[self.MENU_LEVEL][self.MENU_POS[self.MENU_LEVEL]]['action']
+		self.MENU_LEVEL += 1
 
-	def move_up(self,channel):
-		if not self.bouncing(channel):
-			if self.MENU_POS[self.MENU_LEVEL] > 0:
-				self.MENU_POS[self.MENU_LEVEL] += -1
-			elif (len(self.MENU[self.MENU_LEVEL]) > 0):
-				self.MENU_POS[self.MENU_LEVEL] = len(self.MENU[self.MENU_LEVEL]) - 1
-			self.display(channel)
+		# replace or append next menu level
+		if len(self.MENU) >= self.MENU_LEVEL + 1:
+			self.MENU[self.MENU_LEVEL] = menu_new
+			self.MENU_POS[self.MENU_LEVEL] = 0
+			self.MENU_SHIFT[self.MENU_LEVEL] = 0
+		else:
+			self.MENU.append(menu_new)
+			self.MENU_POS.append(0)
+			self.MENU_SHIFT.append(0)
 
-	def move_right(self,channel):
-		if not self.bouncing(channel):
-			menu_new	= self.MENU[self.MENU_LEVEL][self.MENU_POS[self.MENU_LEVEL]]['action']
-			self.MENU_LEVEL += 1
+		self.display()
 
-			# replace or append next menu level
-			if len(self.MENU) >= self.MENU_LEVEL + 1:
-				self.MENU[self.MENU_LEVEL] = menu_new
-				self.MENU_POS[self.MENU_LEVEL] = 0
-				self.MENU_SHIFT[self.MENU_LEVEL] = 0
-			else:
-				self.MENU.append(menu_new)
-				self.MENU_POS.append(0)
-				self.MENU_SHIFT.append(0)
-
-			self.display(channel)
-
-	def move_left(self,channel):
-		if not self.bouncing(channel):
-			if self.MENU_LEVEL > 0:
-				self.MENU_LEVEL += -1
-			self.display(channel)
+	def move_left(self):
+		if self.MENU_LEVEL > 0:
+			self.MENU_LEVEL += -1
+		self.display()
 
 ##debug
-#if __name__ == "__main__":
+if __name__ == "__main__":
 
-	#import lib_setup
+	import lib_setup
 
-	#setup=lib_setup.setup()
+	setup=lib_setup.setup()
 
-	#menuobj	= menu(10,setup)
+	menuobj	= menu(DISPLAY_LINES=10, setup=setup)
 
 	#menuobj.move_right(27)#debug
 	#time.sleep (0.5)
