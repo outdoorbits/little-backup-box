@@ -216,7 +216,7 @@ class setup(object):
 					'conf_MENU_ENABLED':							{'value': True, 'type' : 'bool'},
 					'conf_MENU_BUTTON_COMBINATION':					{'value': '1', 'type' : 'str'},
 					'conf_MENU_BUTTON_ROTATE':						{'value': 2, 'type' : 'int'},
-					'conf_MENU_BUTTON_BOUNCETIME':					{'value': 100, 'type' : 'int'},
+					'conf_MENU_BUTTON_BOUNCETIME':					{'value': 15, 'type' : 'int'},
 					'conf_MENU_BUTTON_EDGE_DETECTION':				{'value': 'RISING', 'type' : 'str'},
 					'conf_MENU_BUTTON_RESISTOR_PULL':				{'value': 'DOWN', 'type' : 'str'},
 					'conf_FAN_PWM_TEMP_C':							{'value': 50, 'type' : 'int'},

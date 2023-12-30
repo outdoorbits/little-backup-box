@@ -1159,7 +1159,7 @@ function upload_settings() {
 						<label for="conf_MENU_BUTTON_BOUNCETIME"><?php echo L::config_menu_button_bouncetime_label; ?></label><br>
 							<select name="conf_MENU_BUTTON_BOUNCETIME" id="conf_MENU_BUTTON_BOUNCETIME">
 								<?php
-									$button_bouncetimes_array=array(25,50,100,200,300,400,500);
+									$button_bouncetimes_array=array(5, 10, 15, 20, 25, 50, 100, 200, 300, 400, 500);
 									foreach($button_bouncetimes_array as $button_bouncetime) {
 										echo "<option value='" . $button_bouncetime . "' " . ($config["conf_MENU_BUTTON_BOUNCETIME"] == $button_bouncetime?" selected":"") . ">" . $button_bouncetime . "</option>";
 									}
