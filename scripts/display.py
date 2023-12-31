@@ -44,9 +44,10 @@
 # multiple options can be separated by "," (without spaces)
 # set:clear,time=1.5
 
-import time
-import sys
 import os
+import sys
+import threading
+import time
 
 import lib_setup
 
@@ -150,7 +151,6 @@ class DISPLAY(object):
 			self.hardware_ready	= False
 			print(f'Display driver {self.conf_DISP_DRIVER} could not be enabled.', file=sys.stderr)
 
-
 		if self.hardware_ready:
 			self.device.capabilities(self.conf_DISP_RESOLUTION_X,self.conf_DISP_RESOLUTION_Y,self.conf_DISP_ROTATE,mode=self.conf_DISP_COLOR_MODEL)
 
@@ -168,7 +168,9 @@ class DISPLAY(object):
 
 		## start display menu
 		if self.conf_MENU_ENABLED:
-			DISPLAYMENU	= displaymenu.menu(self.maxLines,self.__setup)
+			# start displaymenu as iternal background process
+			watch_thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines,self.__setup))
+			watch_thread.start()
 
 	def calculate_LineSize(self):
 		if self.hardware_ready:
