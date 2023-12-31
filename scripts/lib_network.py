@@ -17,6 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import os
+import qrcode
 import subprocess
 from urllib import request
 import sys
@@ -25,6 +27,28 @@ def get_IP():
 	IP	= subprocess.check_output(['hostname','-I']).decode().replace(' ','\n').strip()
 
 	return(IP)
+
+def create_ip_link_qr_image(IP, const_IP_QR_FILE, SquareSize): # for SquareSize use min(conf_DISP_RESOLUTION_X, conf_DISP_RESOLUTION_Y)
+	IP_QR_FILE	= const_IP_QR_FILE.replace('_', IP.replace('.', '-'), 1)
+	IP_QR_FILE	= IP_QR_FILE.replace('_', f"_{SquareSize}")
+
+	if not os.path.isfile(IP_QR_FILE) and (SquareSize > 10):
+		qr	= qrcode.QRCode(
+			version=1,
+			error_correction=qrcode.constants.ERROR_CORRECT_L,
+			box_size=SquareSize,
+			border=1,
+		)
+		qr.add_data(f"https://{IP}")
+		qr.make(fit=True)
+
+		img = qr.make_image(fill_color="black", back_color="white")
+		img.save(IP_QR_FILE)
+
+	if not os.path.isfile(IP_QR_FILE):
+		IP_QR_FILE	= None
+
+	return(IP_QR_FILE)
 
 def get_internet_status():
 	try:

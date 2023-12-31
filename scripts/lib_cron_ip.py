@@ -40,6 +40,10 @@ def display_ip():
 	display	= lib_display.display()
 
 	const_DISPLAY_CONTENT_OLD_FILE	= __setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+	const_IP_QR_FILE				= __setup.get_val('const_IP_QR_FILE')
+
+	conf_DISP_RESOLUTION_X			= __setup.get_val('conf_DISP_RESOLUTION_X')
+	conf_DISP_RESOLUTION_Y			= __setup.get_val('conf_DISP_RESOLUTION_Y')
 
 	if (
 		__conf_DISP_IP_REPEAT and
@@ -63,9 +67,19 @@ def display_ip():
 		if __IPsFormatted:
 			display.message([f":{OnlineMessage}, IP:"] + __IPsFormatted)
 
+			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, const_IP_QR_FILE=const_IP_QR_FILE, SquareSize=min(conf_DISP_RESOLUTION_X, conf_DISP_RESOLUTION_Y))
+
+			if not IP_QR_FILE is None:
+				display.message([f"time=3:IMAGE={IP_QR_FILE}"] + __IPsFormatted)
+
+
 def mail_ip():
 	IP_sent_Markerfile		= __setup.get_val('const_IP_SENT_MARKERFILE')
+	const_IP_QR_FILE		= __setup.get_val('const_IP_QR_FILE')
+
 	conf_MAIL_NOTIFICATIONS	= __setup.get_val('conf_MAIL_NOTIFICATIONS')
+	conf_DISP_RESOLUTION_X	= __setup.get_val('conf_DISP_RESOLUTION_X')
+	conf_DISP_RESOLUTION_Y	= __setup.get_val('conf_DISP_RESOLUTION_Y')
 
 	mailObj	= lib_mail.mail()
 
@@ -86,6 +100,9 @@ def mail_ip():
 		for IP in __IPs:
 			if IP not in MarkerfileContent:
 				newIP	= True
+
+		# create qr link
+		IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, const_IP_QR_FILE=const_IP_QR_FILE, SquareSize=min(conf_DISP_RESOLUTION_X, conf_DISP_RESOLUTION_Y))
 
 		# write lockfile
 		with open(IP_sent_Markerfile,'w') as f:
@@ -113,7 +130,8 @@ def mail_ip():
 			mailObj.sendmail(
 				f"{__lan.l('box_cronip_mail_info')}: {', '.join(__IPs)}",
 				__getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain),
-				__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML)
+				__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML),
+				IP_QR_FILE
 			)
 
 def __getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain):

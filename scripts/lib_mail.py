@@ -27,6 +27,8 @@ import sys
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email import encoders
+from email.mime.base import MIMEBase
 
 class mail(object):
 
@@ -51,10 +53,26 @@ class mail(object):
 	def mail_configured(self):
 		return(self.conf_SMTP_SERVER and self.conf_SMTP_PORT and self.conf_MAIL_SECURITY and self.conf_MAIL_USER and self.conf_MAIL_PASSWORD and self.conf_MAIL_FROM and self.conf_MAIL_TO)
 
-	def sendmail(self,Subject,TextPlain,TextHTML=''):
+	def sendmail(self, Subject, TextPlain, TextHTML='', Filename=None):
 		if not self.mail_configured():
 			self.log.message('Mail not fully configured.')
 			return
+
+		if not Filename is None:
+			try:
+				attachment	= MIMEBase('application', "octet-stream")
+
+				with open(Filename, "rb") as f:
+					attachment.set_payload(f.read())
+
+				encoders.encode_base64(attachment)
+
+				attachment.add_header(
+					'Content-Disposition',
+					f'attachment; filename={os.path.basename(Filename)}'
+				)
+			except:
+				Filename	= None
 
 		if self.conf_MAIL_SECURITY == 'SSL':
 			# SSL
@@ -89,6 +107,9 @@ class mail(object):
 			if TextHTML:
 				MailContentHTML		= MIMEText(TextHTML, "html")
 				MailContent.attach(MailContentHTML)
+
+			if not Filename is None:
+				MailContent.attach(attachment)
 
 			try:
 				server.sendmail(self.conf_MAIL_USER, self.conf_MAIL_TO, MailContent.as_string())
