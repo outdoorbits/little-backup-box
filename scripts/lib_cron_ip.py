@@ -26,7 +26,6 @@ import lib_mail
 import lib_network
 import lib_setup
 
-import sys#xxx
 # objects
 __setup	= lib_setup.setup()
 __lan	= lib_language.language()
