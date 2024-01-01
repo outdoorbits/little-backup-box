@@ -29,7 +29,7 @@ def get_IP():
 
 	return(IP)
 
-def create_ip_link_qr_image(IP, const_IP_QR_FILE, width, height, font=None, fontsize=8):
+def create_ip_link_qr_image(IP, onlinestatus, IP_QR_FILE, width, height, font=None, fontsize=8):
 
 	qr_box_size	= int(height/10)
 	qr_border	= 1
@@ -37,10 +37,10 @@ def create_ip_link_qr_image(IP, const_IP_QR_FILE, width, height, font=None, font
 	LinkText	= f"https://{IP}"
 
 	# set file name
-	IP_QR_FILE	= const_IP_QR_FILE.replace('_', IP.replace('.', '-'), 1)
-	IP_QR_FILE	= IP_QR_FILE.replace('_', f"_{height}")
+	IP_QR_FILE	= IP_QR_FILE.replace('_', IP.replace('.', '-'), 1)
+	IP_QR_FILE	= IP_QR_FILE.replace('_', f"_{height}_{'online' if onlinestatus else 'offline'}")
 
-	if not os.path.isfile(IP_QR_FILE) and (height >= 30):
+	if not os.path.isfile(IP_QR_FILE) and (height >= 64):
 
 		if not font is None:
 			qr_height	= height - fontsize - 1
@@ -61,11 +61,33 @@ def create_ip_link_qr_image(IP, const_IP_QR_FILE, width, height, font=None, font
 
 		final_image	= Image.new('RGB', (width, height))
 
-		final_image.paste(qr_image,(0, 0))
+		final_image.paste(qr_image, box=(0 , 0))
 
-		draw = ImageDraw.Draw(final_image)
-		font			= ImageFont.truetype(font, fontsize)
-		draw.text((0, qr_height), IP, font=font)
+		# text
+		if not font is None:
+			font			= ImageFont.truetype(font, fontsize)
+
+			draw			= ImageDraw.Draw(final_image)
+
+			(left, top, right, bottom) = draw.textbbox((0,0), IP, font=font)
+			text_length = right - left
+
+			draw.text((int((width - text_length) / 2), qr_height), IP, font=font)
+
+		# onlinestatus
+		status_size	= min(
+			width - qr_height - 4,
+			qr_height - 4
+		)
+
+		if status_size >= 0:
+			status_icon_file	= 'img/online.png' if onlinestatus else 'img/offline.png'
+			WORKING_DIR			= os.path.dirname(__file__)
+			status_icon_file	= f"{WORKING_DIR}/{status_icon_file}"
+
+			with Image.open(status_icon_file) as status_image:
+				status_image	= status_image.resize((status_size, status_size))
+				final_image.paste(status_image, box=(qr_height + 2, 2))
 
 		final_image.save(IP_QR_FILE)
 

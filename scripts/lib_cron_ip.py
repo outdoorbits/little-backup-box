@@ -58,7 +58,8 @@ def display_ip():
 
 		__IPsFormatted	= []
 
-		OnlineMessage	= __lan.l('box_cronip_online') if lib_network.get_internet_status() else __lan.l('box_cronip_offline')
+		onlinestatus	= lib_network.get_internet_status()
+		OnlineMessage	= __lan.l('box_cronip_online') if onlinestatus else __lan.l('box_cronip_offline')
 
 		for IP in __IPs:
 			IP	= IP.strip()
@@ -67,13 +68,12 @@ def display_ip():
 				__IPsFormatted.append(f":{IP}")
 
 		if __IPsFormatted:
-			display.message([f":{OnlineMessage}, IP:"] + __IPsFormatted)
+			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=onlinestatus, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
-			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, const_IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
-
-			if not IP_QR_FILE is None:
+			if IP_QR_FILE is None:
+				display.message([f":{OnlineMessage}, IP:"] + __IPsFormatted)
+			else:
 				display.message([f"time=3:IMAGE={IP_QR_FILE}"] + __IPsFormatted)
-
 
 def mail_ip():
 	IP_sent_Markerfile		= __setup.get_val('const_IP_SENT_MARKERFILE')
@@ -106,7 +106,7 @@ def mail_ip():
 				newIP	= True
 
 		# create qr link
-		IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, const_IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
+		IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=True, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
 		# write lockfile
 		with open(IP_sent_Markerfile,'w') as f:
@@ -120,6 +120,7 @@ def mail_ip():
 		indexLinksHTMLSSL		= ''
 		indexLinksHTML8000		= ''
 		sambaLinksHTML			= ''
+
 		for IP in __IPs:
 			indexLinksPlainSSL	+= f'  https://{IP}\n'
 			indexLinksPlain8000	+= f'  http://{IP}:8000\n'
