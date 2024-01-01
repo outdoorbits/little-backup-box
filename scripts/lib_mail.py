@@ -53,26 +53,41 @@ class mail(object):
 	def mail_configured(self):
 		return(self.conf_SMTP_SERVER and self.conf_SMTP_PORT and self.conf_MAIL_SECURITY and self.conf_MAIL_USER and self.conf_MAIL_PASSWORD and self.conf_MAIL_FROM and self.conf_MAIL_TO)
 
-	def sendmail(self, Subject, TextPlain, TextHTML='', Filename=None):
+	def sendmail(self, Subject, TextPlain, TextHTML='', File_name=None, File_content_disposition='attachment', File_content_ID=''):
+		# File_content_disposition cloud be attachment or inline
+
 		if not self.mail_configured():
 			self.log.message('Mail not fully configured.')
 			return
 
-		if not Filename is None:
+		if not File_name is None:
 			try:
 				attachment	= MIMEBase('application', "octet-stream")
 
-				with open(Filename, "rb") as f:
+				with open(File_name, "rb") as f:
 					attachment.set_payload(f.read())
 
+			except:
+				File_name	= None
+
+			if not File_name is None:
 				encoders.encode_base64(attachment)
 
 				attachment.add_header(
 					'Content-Disposition',
-					f'attachment; filename={os.path.basename(Filename)}'
+					f'{File_content_disposition}; filename="{os.path.basename(File_name)}"'
 				)
-			except:
-				Filename	= None
+
+				if File_content_ID:
+					attachment.add_header(
+						'Content-ID',
+						f'<{File_content_ID}>'
+					)
+
+				attachment.add_header(
+					'Content-Location',
+					f'{os.path.basename(File_name)}'
+				)
 
 		if self.conf_MAIL_SECURITY == 'SSL':
 			# SSL
@@ -108,7 +123,7 @@ class mail(object):
 				MailContentHTML		= MIMEText(TextHTML, "html")
 				MailContent.attach(MailContentHTML)
 
-			if not Filename is None:
+			if not File_name is None:
 				MailContent.attach(attachment)
 
 			try:

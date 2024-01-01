@@ -87,7 +87,10 @@ class menu(object):
 					{
 					'type':		'item',
 					'title':	self.__lan.l(f'box_menu_backup_mode_{source}') + '|' + self.__lan.l('box_menu_to') + '|' + self.__lan.l(f'box_menu_backup_mode_{target}'),
-					'action':	self.create_shell_action([ kill_backup_process, start_backup_trunk + ['--SourceName', source, '--TargetName', target] ]),
+					'action':	self.create_confirmed_shell_action(
+									title	= self.__lan.l(f'box_menu_backup_mode_{source}') + '|' + self.__lan.l('box_menu_to') + '|' + self.__lan.l(f'box_menu_backup_mode_{target}'),
+									command	= [ kill_backup_process, start_backup_trunk + ['--SourceName', source, '--TargetName', target] ]
+								),
 					}
 				)
 
@@ -138,7 +141,10 @@ class menu(object):
 					{
 						'type':		'item',
 						'title':	sourceName + '|' + self.__lan.l('box_menu_to') + '|' + targetName,
-						'action':	self.create_shell_action([ kill_backup_process, start_backup_trunk + ['--SourceName', source, '--TargetName', target] ]),
+						'action':	self.create_confirmed_shell_action(
+										title	= sourceName + '|' + self.__lan.l('box_menu_to') + '|' + targetName,
+										command	= [ kill_backup_process, start_backup_trunk + ['--SourceName', source, '--TargetName', target] ]
+									),
 					}
 				)
 
@@ -158,7 +164,10 @@ class menu(object):
 			{
 				'type':		'menu',
 				'title':	self.__lan.l('box_menu_backup_stop'),
-				'action':	self.create_confirmed_shell_action(self.__lan.l('box_menu_backup_stop'),[kill_backup_process]),
+				'action':	self.create_confirmed_shell_action(
+								title	= self.__lan.l('box_menu_backup_stop'),
+								command	= [kill_backup_process]
+							),
 			},
 		]
 
@@ -178,13 +187,19 @@ class menu(object):
 			{
 				'type':		'item',
 				'title':	self.__lan.l('box_menu_comitup_reset'),
-				'action':	self.create_confirmed_shell_action(self.__lan.l('box_menu_comitup_reset'),[['sudo',f'{self.WORKING_DIR}/comitup-reset.sh']]),
+				'action':	self.create_confirmed_shell_action(
+								title	= self.__lan.l('box_menu_comitup_reset'),
+								command	= [['sudo',f'{self.WORKING_DIR}/comitup-reset.sh']]
+							),
 			},
 
 			{
 				'type':		'item',
 				'title':	self.__lan.l('box_menu_vpn_stop'),
-				'action':	self.create_confirmed_shell_action(self.__lan.l('box_menu_vpn_stop'),[['sudo','python3', f"{self.WORKING_DIR}/lib_vpn.py", 'stop']]),
+				'action':	self.create_confirmed_shell_action(
+								title	= self.__lan.l('box_menu_vpn_stop'),
+								command	= [['sudo','python3', f"{self.WORKING_DIR}/lib_vpn.py", 'stop']]
+							),
 			},
 		]
 
@@ -192,13 +207,19 @@ class menu(object):
 			{
 				'type':		'item',
 				'title':	self.__lan.l('box_menu_power_reboot'),
-				'action':	self.create_confirmed_shell_action(self.__lan.l('box_menu_power_reboot'),[['sudo','python3',f'{self.WORKING_DIR}/lib_poweroff.py','reboot' ]]),
+				'action':	self.create_confirmed_shell_action(
+								title	= self.__lan.l('box_menu_power_reboot'),
+								command	= [['sudo','python3',f'{self.WORKING_DIR}/lib_poweroff.py','reboot' ]]
+							),
 			},
 
 			{
 				'type':		'item',
 				'title':	self.__lan.l('box_menu_power_shutdown'),
-				'action':	self.create_confirmed_shell_action(self.__lan.l('box_menu_power_shutdown'),[['sudo','python3',f'{self.WORKING_DIR}/lib_poweroff.py','poweroff' ]]),
+				'action':	self.create_confirmed_shell_action(
+								title	= self.__lan.l('box_menu_power_shutdown'),
+								command	= [['sudo','python3',f'{self.WORKING_DIR}/lib_poweroff.py','poweroff' ]]
+							),
 			},
 		]
 
@@ -332,11 +353,11 @@ class menu(object):
 			{
 				'type':		'confirmitem',
 				'title':	title,
-				'action':	self.create_shell_action(command, title),
+				'action':	self.create_shell_action(title, command),
 			},
 		])
 
-	def create_shell_action(self, command, title=''):
+	def create_shell_action(self, title, command):
 		return([
 			{
 				'type':		'shell',

@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import base64
 import os
 
 import lib_display
@@ -25,6 +26,7 @@ import lib_mail
 import lib_network
 import lib_setup
 
+import sys#xxx
 # objects
 __setup	= lib_setup.setup()
 __lan	= lib_language.language()
@@ -108,6 +110,17 @@ def mail_ip():
 		# create qr link
 		IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=True, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
+		if IP_QR_FILE is None:
+			qr_link	= ''
+		else:
+			try:
+				with open(IP_QR_FILE, "rb") as qr_file:
+					base64_image	= base64.b64encode(qr_file.read()).decode()
+			except:
+				base64_image	= ''
+
+			qr_link	= f'<br><img src="data:image/png;base64, {base64_image}" style="border:5px solid black;">'
+
 		# write lockfile
 		with open(IP_sent_Markerfile,'w') as f:
 			f.write(', '.join(__IPs))
@@ -126,17 +139,16 @@ def mail_ip():
 			indexLinksPlain8000	+= f'  http://{IP}:8000\n'
 			sambaLinksPlain		+= f'  smb://{IP}\n'
 
-			indexLinksHTMLSSL	+= f'  <a href="https://{IP}">https://{IP}</a><br>\n'
+			indexLinksHTMLSSL	+= f'  <a href="https://{IP}">https://{IP}{qr_link}</a><br>\n'
 			indexLinksHTML8000	+= f'  <a href="http://{IP}:8000">http://{IP}:8000</a><br>\n'
 			sambaLinksHTML		+= f'  <a href="smb://{IP}">smb://{IP}</a><br>\n'
 
 		#send mail
 		if newIP:
 			mailObj.sendmail(
-				f"{__lan.l('box_cronip_mail_info')}: {', '.join(__IPs)}",
-				__getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain),
-				__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML),
-				IP_QR_FILE
+				Subject		= f"{__lan.l('box_cronip_mail_info')}: {', '.join(__IPs)}",
+				TextPlain	= __getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain),
+				TextHTML	= __getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML)
 			)
 
 def __getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain):
