@@ -90,6 +90,7 @@ class DISPLAY(object):
 
 		self.const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		self.const_DISPLAY_LINES_LIMIT		= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
+		self.const_FONT_PATH				= self.__setup.get_val('const_FONT_PATH')
 
 		#define colors
 		color = {}
@@ -160,8 +161,7 @@ class DISPLAY(object):
 				self.device.persist = True
 
 		# define font
-		font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
-		self.FONT = ImageFont.truetype(font_path, self.conf_DISP_FONT_SIZE)
+		self.FONT = ImageFont.truetype(self.const_FONT_PATH, self.conf_DISP_FONT_SIZE)
 
 		# calculate line dimensions
 		self.calculate_LineSize()
@@ -209,8 +209,6 @@ class DISPLAY(object):
 				# define constants
 				x = 0
 				y_shift = 0
-
-
 
 				y_space = 0
 				if self.maxLines > 1:

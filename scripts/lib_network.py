@@ -18,6 +18,7 @@
 #######################################################################
 
 import os
+from PIL import Image, ImageDraw, ImageFont
 import qrcode
 import subprocess
 from urllib import request
@@ -28,22 +29,45 @@ def get_IP():
 
 	return(IP)
 
-def create_ip_link_qr_image(IP, const_IP_QR_FILE, SquareSize): # for SquareSize use min(conf_DISP_RESOLUTION_X, conf_DISP_RESOLUTION_Y)
-	IP_QR_FILE	= const_IP_QR_FILE.replace('_', IP.replace('.', '-'), 1)
-	IP_QR_FILE	= IP_QR_FILE.replace('_', f"_{SquareSize}")
+def create_ip_link_qr_image(IP, const_IP_QR_FILE, width, height, font=None, fontsize=8):
 
-	if not os.path.isfile(IP_QR_FILE) and (SquareSize > 10):
+	qr_box_size	= int(height/10)
+	qr_border	= 1
+
+	LinkText	= f"https://{IP}"
+
+	# set file name
+	IP_QR_FILE	= const_IP_QR_FILE.replace('_', IP.replace('.', '-'), 1)
+	IP_QR_FILE	= IP_QR_FILE.replace('_', f"_{height}")
+
+	if not os.path.isfile(IP_QR_FILE) and (height >= 30):
+
+		if not font is None:
+			qr_height	= height - fontsize - 1
+		else:
+			qr_height	= height
+
 		qr	= qrcode.QRCode(
 			version=1,
-			error_correction=qrcode.constants.ERROR_CORRECT_L,
-			box_size=SquareSize,
-			border=1,
+			error_correction	= qrcode.constants.ERROR_CORRECT_L,
+				box_size		= qr_box_size,
+				border			= qr_border,
 		)
-		qr.add_data(f"https://{IP}")
+		qr.add_data(LinkText)
 		qr.make(fit=True)
 
-		img = qr.make_image(fill_color="black", back_color="white")
-		img.save(IP_QR_FILE)
+		qr_image	= qr.make_image(fill_color="black", back_color="white")
+		qr_image	= qr_image.resize((qr_height,qr_height))
+
+		final_image	= Image.new('RGB', (width, height))
+
+		final_image.paste(qr_image,(0, 0))
+
+		draw = ImageDraw.Draw(final_image)
+		font			= ImageFont.truetype(font, fontsize)
+		draw.text((0, qr_height), IP, font=font)
+
+		final_image.save(IP_QR_FILE)
 
 	if not os.path.isfile(IP_QR_FILE):
 		IP_QR_FILE	= None

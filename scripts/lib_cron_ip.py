@@ -44,6 +44,8 @@ def display_ip():
 
 	conf_DISP_RESOLUTION_X			= __setup.get_val('conf_DISP_RESOLUTION_X')
 	conf_DISP_RESOLUTION_Y			= __setup.get_val('conf_DISP_RESOLUTION_Y')
+	const_FONT_PATH					= __setup.get_val('const_FONT_PATH')
+	conf_DISP_FONT_SIZE				= __setup.get_val('conf_DISP_FONT_SIZE')
 
 	if (
 		__conf_DISP_IP_REPEAT and
@@ -67,7 +69,7 @@ def display_ip():
 		if __IPsFormatted:
 			display.message([f":{OnlineMessage}, IP:"] + __IPsFormatted)
 
-			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, const_IP_QR_FILE=const_IP_QR_FILE, SquareSize=min(conf_DISP_RESOLUTION_X, conf_DISP_RESOLUTION_Y))
+			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, const_IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
 			if not IP_QR_FILE is None:
 				display.message([f"time=3:IMAGE={IP_QR_FILE}"] + __IPsFormatted)
@@ -80,6 +82,8 @@ def mail_ip():
 	conf_MAIL_NOTIFICATIONS	= __setup.get_val('conf_MAIL_NOTIFICATIONS')
 	conf_DISP_RESOLUTION_X	= __setup.get_val('conf_DISP_RESOLUTION_X')
 	conf_DISP_RESOLUTION_Y	= __setup.get_val('conf_DISP_RESOLUTION_Y')
+	const_FONT_PATH					= __setup.get_val('const_FONT_PATH')
+	conf_DISP_FONT_SIZE				= __setup.get_val('conf_DISP_FONT_SIZE')
 
 	mailObj	= lib_mail.mail()
 
@@ -102,7 +106,7 @@ def mail_ip():
 				newIP	= True
 
 		# create qr link
-		IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, const_IP_QR_FILE=const_IP_QR_FILE, SquareSize=min(conf_DISP_RESOLUTION_X, conf_DISP_RESOLUTION_Y))
+		IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, const_IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
 		# write lockfile
 		with open(IP_sent_Markerfile,'w') as f:

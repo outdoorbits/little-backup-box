@@ -307,7 +307,8 @@ class setup(object):
 					'const_SYNC_TIME_OVERHEATING_WAIT_SEC':			{'type': 'int'},
 					'const_CLOUD_MOUNT_TIMEOUT':					{'type': 'int'},
 					'const_BACKUP_MAX_TRIES':						{'type': 'int'},
-					'const_SOFTWARE_VERSION':						{'type': 'str'}
+					'const_SOFTWARE_VERSION':						{'type': 'str'},
+					'const_FONT_PATH':								{'type': 'str'}
 				}
 		)
 

@@ -40,3 +40,4 @@ const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC=120
 const_SYNC_TIME_OVERHEATING_WAIT_SEC=60
 const_CLOUD_MOUNT_TIMEOUT=30
 const_BACKUP_MAX_TRIES=5
+const_FONT_PATH='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
