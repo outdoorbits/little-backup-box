@@ -130,7 +130,8 @@ class DISPLAY(object):
 			elif self.conf_DISP_CONNECTION == 'SPI':
 				serial = spi(port=self.conf_DISP_SPI_PORT, device=0)
 			else:
-				exit ('Error: No valid connection type for display')
+				print('Error: No valid connection type for display',file=sys.stderr)
+
 		except:
 			self.hardware_ready	= False
 			print(f'Display connection to {self.conf_DISP_CONNECTION} could not be enabled.', file=sys.stderr)
@@ -147,7 +148,7 @@ class DISPLAY(object):
 			elif self.conf_DISP_DRIVER == "SH1106":
 				self.device = sh1106(serial)
 			else:
-				sys.exit('Error: No valid display driver')
+				print('Error: No valid display driver', file=sys.stderr)
 		except:
 			self.hardware_ready	= False
 			print(f'Display driver {self.conf_DISP_DRIVER} could not be enabled.', file=sys.stderr)
@@ -318,6 +319,8 @@ class DISPLAY(object):
 		# start endless loop to display content
 		while(True):
 			import_old_file = True
+
+			# check for new files earlier than conf_DISP_FRAME_TIME
 			frame_time = self.conf_DISP_FRAME_TIME / 4
 
 			ContentFile	= self.__display_content_files.get_next_file_name()
