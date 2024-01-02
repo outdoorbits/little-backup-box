@@ -72,9 +72,9 @@ def display_ip():
 			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=onlinestatus, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
 			if IP_QR_FILE is None:
-				display.message([f":{OnlineMessage}, IP:"] + __IPsFormatted)
+				display.message(['set:time=3', f":{OnlineMessage}, IP:"] + __IPsFormatted)
 			else:
-				display.message([f"time=3:IMAGE={IP_QR_FILE}"] + __IPsFormatted)
+				display.message(['set:time=3', f":IMAGE={IP_QR_FILE}"] + __IPsFormatted)
 
 def mail_ip():
 	IP_sent_Markerfile		= __setup.get_val('const_IP_SENT_MARKERFILE')

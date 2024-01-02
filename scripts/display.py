@@ -332,10 +332,10 @@ class DISPLAY(object):
 					time.sleep(0.2)
 
 				Lines = []
+				frame_time = self.conf_DISP_FRAME_TIME
 				# read new lines
 				with open(ContentFile, 'r') as CF:
 					for Line in CF:
-						frame_time = self.conf_DISP_FRAME_TIME
 
 						Line = Line.strip()
 
