@@ -66,15 +66,15 @@ def display_ip():
 			IP	= IP.strip()
 
 			if IP and ((IP not in DisplayContentOld) or (OnlineMessage not in DisplayContentOld)):
-				__IPsFormatted.append(f":{IP}")
+				IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=onlinestatus, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
-		if __IPsFormatted:
-			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=onlinestatus, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
+				if not IP_QR_FILE is None:
+					display.message(['set:time=3', f":IMAGE={IP_QR_FILE}", f":{IP}"])
+				else:
+					__IPsFormatted.append(f":{IP}")
 
-			if IP_QR_FILE is None:
+			if __IPsFormatted:
 				display.message(['set:time=3', f":{OnlineMessage}, IP:"] + __IPsFormatted)
-			else:
-				display.message(['set:time=3', f":IMAGE={IP_QR_FILE}"] + __IPsFormatted)
 
 def mail_ip():
 	IP_sent_Markerfile		= __setup.get_val('const_IP_SENT_MARKERFILE')
@@ -106,20 +106,6 @@ def mail_ip():
 			if IP not in MarkerfileContent:
 				newIP	= True
 
-		# create qr link
-		IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=True, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
-
-		if IP_QR_FILE is None:
-			qr_link	= ''
-		else:
-			try:
-				with open(IP_QR_FILE, "rb") as qr_file:
-					base64_image	= base64.b64encode(qr_file.read()).decode()
-			except:
-				base64_image	= ''
-
-			qr_link	= f'<br><img src="data:image/png;base64, {base64_image}" style="border:5px solid black;">'
-
 		# write lockfile
 		with open(IP_sent_Markerfile,'w') as f:
 			f.write(', '.join(__IPs))
@@ -134,6 +120,21 @@ def mail_ip():
 		sambaLinksHTML			= ''
 
 		for IP in __IPs:
+			# create qr link
+			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=True, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
+
+			if IP_QR_FILE is None:
+				qr_link	= ''
+			else:
+				try:
+					with open(IP_QR_FILE, "rb") as qr_file:
+						base64_image	= base64.b64encode(qr_file.read()).decode()
+
+					qr_link	= f'<br><img src="data:image/png;base64, {base64_image}" style="border:5px solid black;">'
+				except:
+					base64_image	= ''
+					qr_link	= ''
+
 			indexLinksPlainSSL	+= f'  https://{IP}\n'
 			indexLinksPlain8000	+= f'  http://{IP}:8000\n'
 			sambaLinksPlain		+= f'  smb://{IP}\n'
