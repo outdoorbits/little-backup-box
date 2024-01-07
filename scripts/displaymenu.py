@@ -73,7 +73,7 @@ class menu(object):
 		# shell: action contains the shell-command-array, title is ignored
 		# info: displays an information
 
-		kill_backup_process	= ['sudo','pkill','-f',f'"{self.WORKING_DIR}/backup*"']
+		kill_backup_process	= ['sudo',f'{self.WORKING_DIR}/stop_backup.sh']
 		start_backup_trunk	= ['sudo','python3',f'{self.WORKING_DIR}/backup.py']
 
 		# local backups
