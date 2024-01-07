@@ -42,9 +42,13 @@
 #
 # To set global parameters you can use a 'set:'-line:
 # multiple options can be separated by "," (without spaces)
-# set:clear,time=1.5
+# set:clear,time=1.5,temp
+# clear:	Do not display lines from old page
+# time=2:	Display time in seconds (empty for standard config)
+# temp:		show previous screen again after this
 
 import os
+import shutil
 import sys
 import threading
 import time
@@ -318,7 +322,8 @@ class DISPLAY(object):
 	def main(self):
 		# start endless loop to display content
 		while(True):
-			import_old_file = True
+			import_old_file 		= True
+			previous_screen_again	= False
 
 			# check for new files earlier than conf_DISP_FRAME_TIME
 			frame_time = self.conf_DISP_FRAME_TIME / 4
@@ -354,6 +359,9 @@ class DISPLAY(object):
 								if SettingType == 'clear':
 									import_old_file = False
 
+								if SettingType == 'temp':
+									previous_screen_again = True
+
 								if SettingType == 'time' and float(SettingValue) >= 0:
 									frame_time = float(SettingValue)
 
@@ -387,6 +395,10 @@ class DISPLAY(object):
 
 				# remove content file
 				os.remove(ContentFile)
+
+				# display temp only:
+				if previous_screen_again and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
+					shutil.copyfile(self.const_DISPLAY_CONTENT_OLD_FILE, f'{ContentFile}')
 
 				# move lines to old lines file
 				with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
