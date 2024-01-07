@@ -419,8 +419,15 @@ class menu(object):
 					break
 
 				elif self.MENU[self.MENU_LEVEL][n]['type'] == 'shell':
+					i	= 0
 					for command in self.MENU[self.MENU_LEVEL][n]['action']:
-						subprocess.Popen(command, shell=False)
+						i	+= 1
+
+						# wait for all commands to finish except for the last
+						if i < len(self.MENU[self.MENU_LEVEL][n]['action']):
+							subprocess.run(command, shell=False)
+						else:
+							subprocess.Popen(command, shell=False)
 
 					self.reset()
 					LINES	= []
@@ -493,21 +500,26 @@ class menu(object):
 		self.display()
 
 ##debug
-if __name__ == "__main__":
+#if __name__ == "__main__":
 
-	import lib_setup
+	#import lib_setup
 
-	setup=lib_setup.setup()
+	#setup=lib_setup.setup()
 
-	menuobj	= menu(DISPLAY_LINES=10, setup=setup)
+	#menuobj	= menu(DISPLAY_LINES=10, setup=setup)
 
-	#menuobj.move_right(27)#debug
+	#menuobj.move_right()#debug
+	#menuobj.move_right()#debug
+	#menuobj.move_right()#debug
+	#menuobj.move_right()#debug
+	#menuobj.move_right()#debug
+
 	#time.sleep (0.5)
-	#menuobj.move_right(27)#debug
+	#menuobj.move_right()#debug
 	#time.sleep (0.5)
-	#menuobj.move_right(27)#debug
+	#menuobj.move_right()#debug
 	#time.sleep (0.5)
-	#menuobj.move_right(27)#debug
+	#menuobj.move_right()#debug
 
 	#menuobj.move_down(0)#debug
 	#menuobj.move_down(0)#debug
