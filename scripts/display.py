@@ -324,7 +324,7 @@ class DISPLAY(object):
 		# start endless loop to display content
 		while(True):
 			import_old_file 		= True
-			previous_screen_again	= False
+			temp_screen	= False
 			hidden_info				= ''
 
 			# check for new files earlier than conf_DISP_FRAME_TIME
@@ -363,7 +363,7 @@ class DISPLAY(object):
 									import_old_file = False
 
 								if SettingType == 'temp':
-									previous_screen_again = True
+									temp_screen = True
 
 								if SettingType == 'hidden':
 									hidden_info	= SettingValue
@@ -403,7 +403,7 @@ class DISPLAY(object):
 				os.remove(ContentFile)
 
 				# display temp only:
-				if previous_screen_again and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
+				if temp_screen and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
 					shutil.copyfile(self.const_DISPLAY_CONTENT_OLD_FILE, f'{ContentFile}')
 
 					if hidden_info:
