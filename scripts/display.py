@@ -46,6 +46,7 @@
 # clear:	Do not display lines from old page
 # time=2:	Display time in seconds (empty for standard config)
 # temp:		show previous screen again after this
+# hidden:	markertext to write into const_DISPLAY_CONTENT_OLD_FILE
 
 import os
 import shutil
@@ -324,6 +325,7 @@ class DISPLAY(object):
 		while(True):
 			import_old_file 		= True
 			previous_screen_again	= False
+			hidden_info				= ''
 
 			# check for new files earlier than conf_DISP_FRAME_TIME
 			frame_time = self.conf_DISP_FRAME_TIME / 4
@@ -339,6 +341,7 @@ class DISPLAY(object):
 				Lines = []
 				frame_time = self.conf_DISP_FRAME_TIME
 				# read new lines
+
 				with open(ContentFile, 'r') as CF:
 					for Line in CF:
 
@@ -362,8 +365,11 @@ class DISPLAY(object):
 								if SettingType == 'temp':
 									previous_screen_again = True
 
+								if SettingType == 'hidden':
+									hidden_info	= SettingValue
+
 								if SettingType == 'time' and float(SettingValue) >= 0:
-									frame_time = float(SettingValue)
+									frame_time	= float(SettingValue)
 
 						elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
 
@@ -400,7 +406,13 @@ class DISPLAY(object):
 				if previous_screen_again and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
 					shutil.copyfile(self.const_DISPLAY_CONTENT_OLD_FILE, f'{ContentFile}')
 
+					if hidden_info:
+						with open(ContentFile, 'a') as newCF:
+							newCF.write(f"\nset:hidden={hidden_info}")
+
 				# move lines to old lines file
+				if hidden_info:
+					Lines.append(f"set:hidden={hidden_info}")
 				with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
 					oCF.write("\n".join(Lines))
 
