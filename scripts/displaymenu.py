@@ -381,17 +381,20 @@ class menu(object):
 			self.MENU_SHIFT[self.MENU_LEVEL] = self.HEAD_LINES + self.MENU_POS[self.MENU_LEVEL] + 1 - self.DISPLAY_LINES
 
 	def get_INFO(self,action):
-		if action == 'ip':
-			lib_cron_ip.display_ip(FrameTime=5, force=True)
+		FrameTime	= self.conf_DISP_FRAME_TIME
 
-			return([])
+		if action == 'ip':
+			FrameTime	= FrameTime * 3
+			lib_cron_ip.display_ip(FrameTime=FrameTime, force=True)
+
+			return([], FrameTime)
 
 	def display(self):
 		self.check_timeout()
 
 		self.set_shift()
 
-		frame_time			= 0
+		FrameTime			= 0
 		LINES 				= []
 		n					= 0
 
@@ -437,10 +440,9 @@ class menu(object):
 					break
 
 				elif self.MENU[self.MENU_LEVEL][n]['type'] == 'info':
-					INFO	= self.get_INFO(self.MENU[self.MENU_LEVEL][n]['action'])
+					INFO, FrameTime	= self.get_INFO(self.MENU[self.MENU_LEVEL][n]['action'])
 					if INFO:
 						LINES	+= [f"s=h:{TITLE}"] + INFO
-						frame_time = self.conf_DISP_FRAME_TIME * 4
 
 					self.reset(ShowMenu=True)
 					LINES	= []
@@ -467,7 +469,7 @@ class menu(object):
 		if LINES:
 			LINES_Str	= "' '".join(LINES)
 			LINES_Str	= f"'{LINES_Str}'"
-			os.system(f"python3 {self.WORKING_DIR}/lib_display.py 'set:clear,time={frame_time}' {LINES_Str}")
+			os.system(f"python3 {self.WORKING_DIR}/lib_display.py 'set:clear,time={FrameTime}' {LINES_Str}")
 
 	def move_down(self):
 		if len(self.MENU[self.MENU_LEVEL]) > (self.MENU_POS[self.MENU_LEVEL] + 1):
