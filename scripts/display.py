@@ -328,7 +328,7 @@ class DISPLAY(object):
 			hidden_info				= ''
 
 			# check for new files earlier than conf_DISP_FRAME_TIME
-			frame_time = self.conf_DISP_FRAME_TIME / 4
+			FrameTime = self.conf_DISP_FRAME_TIME / 4
 
 			ContentFile	= self.__display_content_files.get_next_file_name()
 
@@ -339,7 +339,7 @@ class DISPLAY(object):
 					time.sleep(0.2)
 
 				Lines = []
-				frame_time = self.conf_DISP_FRAME_TIME
+				FrameTime = self.conf_DISP_FRAME_TIME
 				# read new lines
 
 				with open(ContentFile, 'r') as CF:
@@ -369,7 +369,7 @@ class DISPLAY(object):
 									hidden_info	= SettingValue
 
 								if SettingType == 'time' and float(SettingValue) >= 0:
-									frame_time	= float(SettingValue)
+									FrameTime	= float(SettingValue)
 
 						elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
 
@@ -419,7 +419,7 @@ class DISPLAY(object):
 				if self.hardware_ready:
 					self.show(Lines)
 
-			time.sleep(frame_time)
+			time.sleep(FrameTime)
 
 if __name__ == "__main__":
 	display	= DISPLAY()

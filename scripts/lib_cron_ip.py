@@ -37,7 +37,8 @@ __conf_DISP_IP_REPEAT				= __setup.get_val('conf_DISP_IP_REPEAT')
 # Shared values
 __IPs	= lib_network.get_IP().split('\n')
 
-def display_ip():
+def display_ip(FrameTime=None, force=False):
+
 	display	= lib_display.display()
 
 	const_DISPLAY_CONTENT_OLD_FILE	= __setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
@@ -65,16 +66,18 @@ def display_ip():
 		for IP in __IPs:
 			IP	= IP.strip()
 
-			if IP and ((IP not in DisplayContentOld) or (OnlineMessage not in DisplayContentOld)):
+			if IP and ((IP not in DisplayContentOld) or (OnlineMessage not in DisplayContentOld) or force):
 				IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=onlinestatus, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
 				if not IP_QR_FILE is None:
-					display.message([f'set:time=5,temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"])
+					FrameTime	= 5 if FrameTime is None else FrameTime
+					display.message([f'set:time={FrameTime},temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"])
 				else:
 					__IPsFormatted.append(f":{IP}")
 
 				if __IPsFormatted:
-					display.message(['set:time=3', f":{OnlineMessage}, IP:"] + __IPsFormatted)
+					FrameTime	= 3 if FrameTime is None else FrameTime
+					display.message(['set:time={FrameTime}', f":{OnlineMessage}, IP:"] + __IPsFormatted)
 
 def mail_ip():
 	IP_sent_Markerfile		= __setup.get_val('const_IP_SENT_MARKERFILE')

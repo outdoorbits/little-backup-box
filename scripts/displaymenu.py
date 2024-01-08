@@ -27,6 +27,7 @@ import time
 import os
 import subprocess
 
+import lib_cron_ip
 import lib_language
 import lib_network
 import lib_storage
@@ -245,7 +246,7 @@ class menu(object):
 		]
 
 		# define menu variables an (re-)set them
-		self.reset()
+		self.reset(ShowMenu=True)
 
 		self.GPIO_init()
 
@@ -328,7 +329,7 @@ class menu(object):
 			self.buttons[GPIO_PIN].when_released	= None
 
 
-	def reset(self):
+	def reset(self, ShowMenu=False):
 		self.MENU_LEVEL		= 0 # integer
 		self.MENU			= []
 		self.MENU_POS		= []
@@ -341,6 +342,9 @@ class menu(object):
 		self.MENU.append(self.MENU_MAIN) # points to the actually active menu level
 		self.MENU_POS.append(0)
 		self.MENU_SHIFT.append(0)
+
+		if ShowMenu:
+			self.display()
 
 	def check_timeout(self):
 		if abs(time.time() - self.LAST_INPUT_TIME) >= self.const_MENU_TIMEOUT_SEC:
@@ -378,10 +382,9 @@ class menu(object):
 
 	def get_INFO(self,action):
 		if action == 'ip':
-			IP		= lib_network.get_IP()
-			STATUS	= self.__lan.l('box_cronip_online') if lib_network.get_internet_status() else self.__lan.l('box_cronip_offline')
+			lib_cron_ip.display_ip(FrameTime=5, force=True)
 
-			return([f"s=b:{IP}", f"s=b:{STATUS}"])
+			return([])
 
 	def display(self):
 		self.check_timeout()
@@ -406,7 +409,7 @@ class menu(object):
 
 			if (n >= self.MENU_SHIFT[self.MENU_LEVEL]) and (n < self.DISPLAY_LINES + self.MENU_SHIFT[self.MENU_LEVEL] - self.HEAD_LINES):
 
-				# Title can be combined by more than one part to translate separately.
+				# Title can be combined by more than one parts translatet separately.
 				# Parts are separated by "|"
 				TITLE = ''
 				titleparts = self.MENU[self.MENU_LEVEL][n]['title'].split('|')
@@ -429,16 +432,18 @@ class menu(object):
 						else:
 							subprocess.Popen(command, shell=False)
 
-					self.reset()
+					self.reset(ShowMenu=False)
 					LINES	= []
 					break
 
 				elif self.MENU[self.MENU_LEVEL][n]['type'] == 'info':
+					INFO	= self.get_INFO(self.MENU[self.MENU_LEVEL][n]['action'])
+					if INFO:
+						LINES	+= [f"s=h:{TITLE}"] + INFO
+						frame_time = self.conf_DISP_FRAME_TIME * 4
 
-					LINES += [f"s=h:{TITLE}"] + self.get_INFO(self.MENU[self.MENU_LEVEL][n]['action'])
-					frame_time = self.conf_DISP_FRAME_TIME * 4
-
-					self.reset()
+					self.reset(ShowMenu=True)
+					LINES	= []
 					break
 
 				# menu or item
@@ -459,9 +464,10 @@ class menu(object):
 
 			n += 1
 
-		LINES_Str	= "' '".join(LINES)
-		LINES_Str	= f"'{LINES_Str}'"
-		os.system(f"python3 {self.WORKING_DIR}/lib_display.py 'set:clear,time={frame_time}' {LINES_Str}")
+		if LINES:
+			LINES_Str	= "' '".join(LINES)
+			LINES_Str	= f"'{LINES_Str}'"
+			os.system(f"python3 {self.WORKING_DIR}/lib_display.py 'set:clear,time={frame_time}' {LINES_Str}")
 
 	def move_down(self):
 		if len(self.MENU[self.MENU_LEVEL]) > (self.MENU_POS[self.MENU_LEVEL] + 1):
