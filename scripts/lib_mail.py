@@ -100,6 +100,7 @@ class mail(object):
 
 		else:
 			# STARTTLS
+			context = ssl.create_default_context()
 			try:
 				server = smtplib.SMTP(self.conf_SMTP_SERVER, self.conf_SMTP_PORT, timeout=self.const_MAIL_TIMEOUT)
 				server.ehlo()

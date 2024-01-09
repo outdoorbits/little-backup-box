@@ -246,7 +246,7 @@ class menu(object):
 		]
 
 		# define menu variables an (re-)set them
-		self.reset(ShowMenu=True)
+		self.reset(ShowMenu=False)
 
 		self.GPIO_init()
 
