@@ -89,6 +89,7 @@ class mail(object):
 					f'{os.path.basename(File_name)}'
 				)
 
+		mailserver_ready	= True
 		if self.conf_MAIL_SECURITY == 'SSL':
 			# SSL
 			context = ssl.create_default_context()
@@ -97,6 +98,7 @@ class mail(object):
 				server.login(self.conf_MAIL_USER, self.conf_MAIL_PASSWORD)
 			except Exception as e:
 				self.log.message(f"Mail error while defining SSL smtp server: {e}")
+				mailserver_ready	= False
 
 		else:
 			# STARTTLS
@@ -110,43 +112,45 @@ class mail(object):
 
 			except Exception as e:
 				self.log.message(f"Mail error while defining STARTTLS smtp server: {e}")
+				mailserver_ready	= False
 
-		if self.conf_MAIL_HTML:
-			MailContent = MIMEMultipart("alternative")
-			MailContent["Subject"] = Subject
-			MailContent["From"] = self.conf_MAIL_FROM
-			MailContent["To"] = self.conf_MAIL_TO
+		if mailserver_ready:
+			if self.conf_MAIL_HTML:
+				MailContent = MIMEMultipart("alternative")
+				MailContent["Subject"]	= Subject
+				MailContent["From"]		= self.conf_MAIL_FROM
+				MailContent["To"]		= self.conf_MAIL_TO
 
-			MailContentPlain	= MIMEText(TextPlain, "plain")
-			MailContent.attach(MailContentPlain)
+				MailContentPlain		= MIMEText(TextPlain, "plain")
+				MailContent.attach(MailContentPlain)
 
-			if TextHTML:
-				MailContentHTML		= MIMEText(TextHTML, "html")
-				MailContent.attach(MailContentHTML)
+				if TextHTML:
+					MailContentHTML		= MIMEText(TextHTML, "html")
+					MailContent.attach(MailContentHTML)
 
-			if not File_name is None:
-				MailContent.attach(attachment)
+				if not File_name is None:
+					MailContent.attach(attachment)
 
-			try:
-				server.sendmail(self.conf_MAIL_USER, self.conf_MAIL_TO, MailContent.as_string())
-			except Exception as e:
-				self.log.message(f"Error sending HTML mail: {e}")
+				try:
+					server.sendmail(self.conf_MAIL_FROM, self.conf_MAIL_TO, MailContent.as_string())
+				except Exception as e:
+					self.log.message(f"Error sending HTML mail: {e}")
 
-		else: # Plain text mail
-			MailContent = f"""\
+			else: # Plain text mail
+				MailContent = f"""\
 Subject: {Subject}
 
 {TextPlain}
 """
-			try:
-				server.sendmail(self.conf_MAIL_USER, self.conf_MAIL_TO, MailContent)
-			except Exception as e:
-				self.log.message(f"Error sending plain text mail: {e}")
+				try:
+					server.sendmail(self.conf_MAIL_FROM, self.conf_MAIL_TO, MailContent)
+				except Exception as e:
+					self.log.message(f"Error sending plain text mail: {e}")
 
-		try:
-			server.quit()
-		except Exception as e:
-				self.log.message(f"Mail error while disconnecting from smtp server: {e}")
+			try:
+				server.quit()
+			except Exception as e:
+					self.log.message(f"Mail error while disconnecting from smtp server: {e}")
 
 ################
 

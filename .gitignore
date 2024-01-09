@@ -3,3 +3,4 @@
 *.kate-swp
 /scripts/__pycache__
 /scripts/cache
+/scripts/test.py
