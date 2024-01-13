@@ -9,8 +9,6 @@ Backups can be made directly from many cameras and smartphones. Of course, USB s
 Your valuable data can be backed up on cloud storage from numerous providers - even with VPN protection if necessary.<br />
 Media content can be viewed and rated for the subsequent process.<br />
 <br />
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/exclamation_mark.gif" width="50px" align="left">
-Unfortunately, the (fantastic!) python library <a href="https://github.com/rm-hull/luma.core">luma.core</a> is <a href="https://github.com/rm-hull/luma.core/issues/268">not (yet) compatible with the new hardware of the Raspberry Pi 5</a>. When using a Raspberry Pi 5, the screen initially remains black. Of course, the Little Backup Box can also be operated without a display, e.g. via cell phone control. Let's hope for an adjustment soon...
 <br />
 <table>
 <tr>
@@ -34,6 +32,7 @@ These languages are already available. Do you want to maintain or create a trans
 <br />
 <h2>NEWS</h2>
 <ul>
+<li>2024-01-19: Workaround to enable display with Raspberry Pi 5</li>
 <li>2023-12-29: Workaround to enable comitup with bookworm</li>
 <li>2023/09/17: When backing up from cameras, all connected cameras are backed up. This is restricted to the use of different models! Test carefully! Some smartphones use the same technical identifier even though the model is different. In this case, only one of these devices would be backed up!</li>
 <li>2023/09/16: View image viewer: Support for tif images added</li>

@@ -32,7 +32,13 @@ echo "Installing comitup..."
 wget https://davesteele.github.io/comitup/latest/davesteele-comitup-apt-source_latest.deb
 sudo dpkg -i --force-all davesteele-comitup-apt-source_latest.deb
 sudo rm davesteele-comitup-apt-source_latest.deb
+
 sudo apt update
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Enable and start NetworkManager
 sudo systemctl enable NetworkManager.service
