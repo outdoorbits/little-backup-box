@@ -266,7 +266,6 @@ if [ -z "$(cat /etc/ssh/sshd_config | grep 'IPQos cs0 cs0')" ]; then
 fi
 
 # Display
-
 ## activate i2c and spi
 sudo raspi-config nonint do_i2c 0
 sudo raspi-config nonint do_spi 0
@@ -288,6 +287,9 @@ else
 			libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5 i2c-tools
 	sudo -H pip3 install luma.oled
 fi
+
+## Raspberry Pi 5 workaround
+sudo python3 "${INSTALLER_DIR}/luma/install_workaround.py"
 
 
 # Enable OLED screen support if available
