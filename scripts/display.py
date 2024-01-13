@@ -392,8 +392,9 @@ class DISPLAY(object):
 								if len(Lines) < self.const_DISPLAY_LINES_LIMIT:
 									Line = Line.split(':',1)[-1]
 									if Line:
-										Line = "s=b:{}".format(Line)
-										Lines.append(Line)
+										if Line[0:4] != 'set:':
+											Line = "s=b:{}".format(Line)
+											Lines.append(Line)
 
 				# fill line count to const_DISPLAY_LINES_LIMIT
 				while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
