@@ -102,9 +102,11 @@ class vpn(object):
 
 			if self.VPNMode == 'OpenVPN':
 				Command	= ['sudo','bash','-c','openvpn','--config',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
+				self.__log.message(' '.join(Command),3)
 				subprocess.Popen(Command,stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
 			elif self.VPNMode == 'WireGuard':
 				Command	= ['sudo','wg-quick','up',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
+				self.__log.message(' '.join(Command),3)
 				subprocess.run(Command)
 
 			VPN_TimeoutTime	= lib_system.get_uptime_sec() + self.__conf_VPN_TIMEOUT
