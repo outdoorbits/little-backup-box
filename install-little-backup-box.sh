@@ -153,7 +153,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard resolvconf hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-gpiozero python3-qrcode
+		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-gpiozero python3-qrcode
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -167,11 +167,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 	apt autoremove -y
 
 # disable services
-sudo systemctl disable resolvconf
 sudo systemctl disable openvpn.service
-
-# remove resolvconf config
-sudo rm /etc/resolvconf/resolv.conf.d/*
 
 # Clone Little Backup Box
 echo "Cloning Little Backup Box"
@@ -596,6 +592,18 @@ fi
 
 # post-install-information
 IP=$(python3 "${const_WEB_ROOT_LBB}/lib_network.py" ip)
+
+# install resolvconf, needed by wireguard
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		resolvconf
+
+## remove resolvconf config
+sudo systemctl disable resolvconf
+sudo rm /etc/resolvconf/resolv.conf.d/*
 
 echo ""
 echo "********************************************************************************************"
