@@ -67,9 +67,18 @@ class backup(object):
 		self.SourceName										= SourceName
 		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
 		TargetStorageType, TargetCloudService				= lib_storage.extractCloudService(TargetName)
-		self.DoSyncDatabase									= DoSyncDatabase == 'True'
-		self.DoGenerateThumbnails							= DoGenerateThumbnails == 'True'
-		self.DoUpdateEXIF									= DoUpdateEXIF == 'True'
+
+		self.DoSyncDatabase									= DoSyncDatabase
+		if not type(DoSyncDatabase) is bool:
+			self.DoSyncDatabase	= self.DoSyncDatabase == 'True'
+
+		self.DoGenerateThumbnails							= DoGenerateThumbnails
+		if not type(DoGenerateThumbnails) is bool:
+			self.DoGenerateThumbnails	= self.DoGenerateThumbnails == 'True'
+
+		self.DoUpdateEXIF									= DoUpdateEXIF
+		if not type(DoUpdateEXIF) is bool:
+			self.DoUpdateEXIF	= self.DoUpdateEXIF == 'True'
 
 		self.DeviceIdentifierPresetSource					= DeviceIdentifierPresetSource
 		self.DeviceIdentifierPresetSource_blocked			= (self.DeviceIdentifierPresetSource != '')
@@ -83,7 +92,10 @@ class backup(object):
 			self.__log.message(f'Preset target: {self.DeviceIdentifierPresetTarget}')
 
 		self.PowerOff										= PowerOff
-		self.SecundaryBackupFollows							= SecundaryBackupFollows == 'True'
+
+		self.SecundaryBackupFollows							= SecundaryBackupFollows
+		if not type(SecundaryBackupFollows) is bool:
+			self.SecundaryBackupFollows	= self.SecundaryBackupFollows == 'True'
 
 		# Basics
 		self.__WORKING_DIR	= os.path.dirname(__file__)
@@ -105,6 +117,7 @@ class backup(object):
 
 		if self.DoGenerateThumbnails == 'setup':
 			self.DoGenerateThumbnails					= self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
+
 		if self.SourceStorageType == 'thumbnails':
 			self.DoGenerateThumbnails	= True
 
@@ -115,7 +128,7 @@ class backup(object):
 
 		if self.PowerOff == 'setup':
 			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
-		else:
+		elif not type(PowerOff) is bool:
 			self.PowerOff	= self.PowerOff == 'True'
 
 		# Common variables
