@@ -67,9 +67,9 @@ class backup(object):
 		self.SourceName										= SourceName
 		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
 		TargetStorageType, TargetCloudService				= lib_storage.extractCloudService(TargetName)
-		self.DoSyncDatabase									= DoSyncDatabase
-		self.DoGenerateThumbnails							= DoGenerateThumbnails
-		self.DoUpdateEXIF									= DoUpdateEXIF
+		self.DoSyncDatabase									= DoSyncDatabase == 'True'
+		self.DoGenerateThumbnails							= DoGenerateThumbnails == 'True'
+		self.DoUpdateEXIF									= DoUpdateEXIF == 'True'
 
 		self.DeviceIdentifierPresetSource					= DeviceIdentifierPresetSource
 		self.DeviceIdentifierPresetSource_blocked			= (self.DeviceIdentifierPresetSource != '')
@@ -83,7 +83,7 @@ class backup(object):
 			self.__log.message(f'Preset target: {self.DeviceIdentifierPresetTarget}')
 
 		self.PowerOff										= PowerOff
-		self.SecundaryBackupFollows							= SecundaryBackupFollows
+		self.SecundaryBackupFollows							= SecundaryBackupFollows == 'True'
 
 		# Basics
 		self.__WORKING_DIR	= os.path.dirname(__file__)
@@ -115,6 +115,8 @@ class backup(object):
 
 		if self.PowerOff == 'setup':
 			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
+		else:
+			self.PowerOff	= self.PowerOff == 'True'
 
 		# Common variables
 		self.SourceDevice		= None
@@ -149,8 +151,8 @@ class backup(object):
 		if VPN_Mode in ['OpenVPN','WireGuard']:
 			self.vpn	= lib_vpn.vpn(VPN_Mode)
 			if self.vpn.start():
-				lib_cron_ip.display_ip()
-				lib_cron_ip.mail_ip()
+				lib_cron_ip.ip_info().display_ip()
+				lib_cron_ip.ip_info().mail_ip()
 			else:
 				sys.exit(103)
 
@@ -516,8 +518,8 @@ class backup(object):
 		if self.vpn:
 			self.vpn.stop()
 			del self.vpn
-			lib_cron_ip.display_ip()
-			lib_cron_ip.mail_ip()
+			lib_cron_ip.ip_info().display_ip()
+			lib_cron_ip.ip_info().mail_ip()
 
 	def __checkLostDevice(self):
 		lostTargetDevice	= False
@@ -1025,7 +1027,8 @@ if __name__ == "__main__":
 	)
 
 	args = vars(parser.parse_args())
-
+	print('xxx',file=sys.stderr)
+	print(args['power_off'],file=sys.stderr)
 	backupObj	= backup(SourceName=args['SourceName'], TargetName=args['TargetName'], DoSyncDatabase=args['sync_database'], DoGenerateThumbnails=args['generate_thumbnails'], DoUpdateEXIF=args['update_exif'], DeviceIdentifierPresetSource=args['device_identifier_preset_source'], DeviceIdentifierPresetTarget=args['device_identifier_preset_target'], PowerOff=args['power_off'], SecundaryBackupFollows=args['secondary_backup_follows'])
 
 	backupObj.run()

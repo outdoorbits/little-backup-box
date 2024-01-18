@@ -358,7 +358,7 @@ function upload_settings() {
 					}
 
 					# Feedback files in place
-					exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_uploaded_1 . "' '" . L::config_display_message_settings_uploaded_2 . "' > /dev/null 2>&1 &");
+					exec("sudo python3 $WORKING_DIR/lib_display.py ':" . L::config_display_message_settings_uploaded_1 . "' ':" . L::config_display_message_settings_uploaded_2 . "' > /dev/null 2>&1 &");
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
 
 					# reload config

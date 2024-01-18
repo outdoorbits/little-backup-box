@@ -38,7 +38,7 @@ class backup_autorun(object):
 	def run(self):
 		self.__cleanup_at_boot()
 		self.__display_hello()
-		lib_cron_ip.mail_ip()
+		lib_cron_ip.ip_info().mail_ip()
 		self.__default_backup()
 
 	def __cleanup_at_boot(self):
@@ -80,7 +80,7 @@ class backup_autorun(object):
 		else:
 			self.__display.message(["set:time=2", f":IMAGE={WORKING_DIR}/little-backup-box.jpg"])
 
-		lib_cron_ip.display_ip()
+		lib_cron_ip.ip_info().display_ip()
 
 	def __default_backup(self):
 		conf_BACKUP_DEFAULT_SOURCE				= self.__setup.get_val('conf_BACKUP_DEFAULT_SOURCE')

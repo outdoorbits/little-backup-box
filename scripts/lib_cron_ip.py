@@ -26,162 +26,178 @@ import lib_mail
 import lib_network
 import lib_setup
 
-# objects
-__setup	= lib_setup.setup()
-__lan	= lib_language.language()
 
-# setup
-__conf_DISP_IP_REPEAT				= __setup.get_val('conf_DISP_IP_REPEAT')
+class ip_info(object):
+
+	def __init__(self):
+		# objects
+		self.__setup	= lib_setup.setup()
+		self.__display	= lib_display.display()
+		self.__lan	= lib_language.language()
+
+		# setup
+		self.__conf_DISP_IP_REPEAT				= self.__setup.get_val('conf_DISP_IP_REPEAT')
+
+		# Shared values
+		self.__IPs	= []
+
+	def get_ip(self):
+		self.__IPs	= lib_network.get_IP().split('\n')
+		if not self.__IPs:
+			self.__IPs	= ['10.41.0.1']
+
+	def display_ip(self,FrameTime=None, force=False):
 
 
-# Shared values
-__IPs	= lib_network.get_IP().split('\n')
 
-def display_ip(FrameTime=None, force=False):
+		const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		const_IP_QR_FILE_PATTERN		= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
 
-	display	= lib_display.display()
+		conf_DISP_RESOLUTION_X			= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		conf_DISP_RESOLUTION_Y			= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
+		conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
 
-	const_DISPLAY_CONTENT_OLD_FILE	= __setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-	const_IP_QR_FILE				= __setup.get_val('const_IP_QR_FILE')
+		self.get_ip()
 
-	conf_DISP_RESOLUTION_X			= __setup.get_val('conf_DISP_RESOLUTION_X')
-	conf_DISP_RESOLUTION_Y			= __setup.get_val('conf_DISP_RESOLUTION_Y')
-	const_FONT_PATH					= __setup.get_val('const_FONT_PATH')
-	conf_DISP_FONT_SIZE				= __setup.get_val('conf_DISP_FONT_SIZE')
+		if (
+			(
+				self.__conf_DISP_IP_REPEAT and
+				self.__IPs
+			) or
+			force
+		):
+			DisplayContentOld	= ''
+			if os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
+				with open(const_DISPLAY_CONTENT_OLD_FILE,'r') as f:
+					DisplayContentOld	= f.read()
 
-	if (
-		__conf_DISP_IP_REPEAT and
-		__IPs
-	):
-		DisplayContentOld	= ''
-		if os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
-			with open(const_DISPLAY_CONTENT_OLD_FILE,'r') as f:
-				DisplayContentOld	= f.read()
+			self.__IPsFormatted	= []
 
-		__IPsFormatted	= []
+			OnlineStatus	= lib_network.get_internet_status()
+			OnlineMessage	= self.__lan.l('box_cronip_online') if OnlineStatus else self.__lan.l('box_cronip_offline')
 
-		onlinestatus	= lib_network.get_internet_status()
-		OnlineMessage	= __lan.l('box_cronip_online') if onlinestatus else __lan.l('box_cronip_offline')
+			for IP in self.__IPs:
+				IP	= IP.strip()
 
-		for IP in __IPs:
-			IP	= IP.strip()
+				if IP and ((IP not in DisplayContentOld) or (OnlineMessage not in DisplayContentOld) or force):
+					IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, OnlineStatus=OnlineStatus, IP_QR_FILE=const_IP_QR_FILE_PATTERN, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
-			if IP and ((IP not in DisplayContentOld) or (OnlineMessage not in DisplayContentOld) or force):
-				IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=onlinestatus, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
+					if not IP_QR_FILE is None:
+						FrameTime	= 5 if FrameTime is None else FrameTime
+						self.__display.message([f'set:time={FrameTime},temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"])
+					else:
+						self.__IPsFormatted.append(f":{IP}")
 
-				if not IP_QR_FILE is None:
-					FrameTime	= 5 if FrameTime is None else FrameTime
-					display.message([f'set:time={FrameTime},temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"])
-				else:
-					__IPsFormatted.append(f":{IP}")
+			if self.__IPsFormatted:
+				FrameTime	= 3 if FrameTime is None else FrameTime
+				self.__display.message(['set:time={FrameTime}', f":{OnlineMessage}, IP:"] + self.__IPsFormatted)
 
-				if __IPsFormatted:
-					FrameTime	= 3 if FrameTime is None else FrameTime
-					display.message(['set:time={FrameTime}', f":{OnlineMessage}, IP:"] + __IPsFormatted)
+	def mail_ip(self):
+		IP_sent_Markerfile			= self.__setup.get_val('const_IP_SENT_MARKERFILE')
+		const_IP_QR_FILE_PATTERN	= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
 
-def mail_ip():
-	IP_sent_Markerfile		= __setup.get_val('const_IP_SENT_MARKERFILE')
-	const_IP_QR_FILE		= __setup.get_val('const_IP_QR_FILE')
+		conf_MAIL_NOTIFICATIONS		= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
+		conf_DISP_RESOLUTION_X		= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		conf_DISP_RESOLUTION_Y		= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		const_FONT_PATH				= self.__setup.get_val('const_FONT_PATH')
+		conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
 
-	conf_MAIL_NOTIFICATIONS	= __setup.get_val('conf_MAIL_NOTIFICATIONS')
-	conf_DISP_RESOLUTION_X	= __setup.get_val('conf_DISP_RESOLUTION_X')
-	conf_DISP_RESOLUTION_Y	= __setup.get_val('conf_DISP_RESOLUTION_Y')
-	const_FONT_PATH					= __setup.get_val('const_FONT_PATH')
-	conf_DISP_FONT_SIZE				= __setup.get_val('conf_DISP_FONT_SIZE')
+		mailObj	= lib_mail.mail()
 
-	mailObj	= lib_mail.mail()
+		self.get_ip()
 
-	if (
-		__IPs and
-		conf_MAIL_NOTIFICATIONS and
-		lib_network.get_internet_status()
-	):
+		if (
+			self.__IPs and
+			conf_MAIL_NOTIFICATIONS and
+			lib_network.get_internet_status()
+		):
 
-		# read lockfile
-		MarkerfileContent	= ''
-		if os.path.isfile(IP_sent_Markerfile):
-			with open(IP_sent_Markerfile,'r') as f:
-				MarkerfileContent	= f.read()
+			# read lockfile
+			MarkerfileContent	= ''
+			if os.path.isfile(IP_sent_Markerfile):
+				with open(IP_sent_Markerfile,'r') as f:
+					MarkerfileContent	= f.read()
 
-		# check for new IP
-		newIP	= False
-		for IP in __IPs:
-			if IP not in MarkerfileContent:
-				newIP	= True
+			# check for new IP
+			newIP	= False
+			for IP in self.__IPs:
+				if IP not in MarkerfileContent:
+					newIP	= True
 
-		# write lockfile
-		with open(IP_sent_Markerfile,'w') as f:
-			f.write(', '.join(__IPs))
+			# write lockfile
+			with open(IP_sent_Markerfile,'w') as f:
+				f.write(', '.join(self.__IPs))
 
-		# create links
-		indexLinksPlainSSL		= ''
-		indexLinksPlain8000		= ''
-		sambaLinksPlain			= ''
+			# create links
+			indexLinksPlainSSL		= ''
+			indexLinksPlain8000		= ''
+			sambaLinksPlain			= ''
 
-		indexLinksHTMLSSL		= ''
-		indexLinksHTML8000		= ''
-		sambaLinksHTML			= ''
+			indexLinksHTMLSSL		= ''
+			indexLinksHTML8000		= ''
+			sambaLinksHTML			= ''
 
-		for IP in __IPs:
-			# create qr link
-			IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, onlinestatus=True, IP_QR_FILE=const_IP_QR_FILE, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
+			for IP in self.__IPs:
+				# create qr link
+				IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, OnlineStatus=True, IP_QR_FILE=const_IP_QR_FILE_PATTERN, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
-			if IP_QR_FILE is None:
-				qr_link	= ''
-			else:
-				try:
-					with open(IP_QR_FILE, "rb") as qr_file:
-						base64_image	= base64.b64encode(qr_file.read()).decode()
-
-					qr_link	= f'<br><img src="data:image/png;base64, {base64_image}" style="border:5px solid black;">'
-				except:
-					base64_image	= ''
+				if IP_QR_FILE is None:
 					qr_link	= ''
+				else:
+					try:
+						with open(IP_QR_FILE, "rb") as qr_file:
+							base64_image	= base64.b64encode(qr_file.read()).decode()
 
-			indexLinksPlainSSL	+= f'  https://{IP}\n'
-			indexLinksPlain8000	+= f'  http://{IP}:8000\n'
-			sambaLinksPlain		+= f'  smb://{IP}\n'
+						qr_link	= f'<br><img src="data:image/png;base64, {base64_image}" style="border:5px solid black;">'
+					except:
+						base64_image	= ''
+						qr_link	= ''
 
-			indexLinksHTMLSSL	+= f'  <a href="https://{IP}">https://{IP}{qr_link}</a><br>\n'
-			indexLinksHTML8000	+= f'  <a href="http://{IP}:8000">http://{IP}:8000</a><br>\n'
-			sambaLinksHTML		+= f'  <a href="smb://{IP}">smb://{IP}</a><br>\n'
+				indexLinksPlainSSL	+= f'  https://{IP}\n'
+				indexLinksPlain8000	+= f'  http://{IP}:8000\n'
+				sambaLinksPlain		+= f'  smb://{IP}\n'
 
-		#send mail
-		if newIP:
-			mailObj.sendmail(
-				Subject		= f"{__lan.l('box_cronip_mail_info')}: {', '.join(__IPs)}",
-				TextPlain	= __getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain),
-				TextHTML	= __getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML)
-			)
+				indexLinksHTMLSSL	+= f'  <a href="https://{IP}">https://{IP}{qr_link}</a><br>\n'
+				indexLinksHTML8000	+= f'  <a href="http://{IP}:8000">http://{IP}:8000</a><br>\n'
+				sambaLinksHTML		+= f'  <a href="smb://{IP}">smb://{IP}</a><br>\n'
 
-def __getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain):
-	return(f"""
-*** {__lan.l('box_cronip_mail_main')}: ***
-{__lan.l('box_cronip_mail_description_https')}:
-{indexLinksPlainSSL}
+			#send mail
+			if newIP:
+				mailObj.sendmail(
+					Subject		= f"{self.__lan.l('box_cronip_mail_info')}: {', '.join(self.__IPs)}",
+					TextPlain	= self.__getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain),
+					TextHTML	= self.__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML)
+				)
 
-{__lan.l('box_cronip_mail_description_http')}:
-{indexLinksPlain8000}
+	def __getTextPlain(self,indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain):
+		return(f"""
+	*** {self.__lan.l('box_cronip_mail_main')}: ***
+	{self.__lan.l('box_cronip_mail_description_https')}:
+	{indexLinksPlainSSL}
 
-*** {__lan.l('box_cronip_mail_open_samba')}: ***
-{sambaLinksPlain}""")
+	{self.__lan.l('box_cronip_mail_description_http')}:
+	{indexLinksPlain8000}
 
-def __getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML):
-	return(f"""
-<b>{__lan.l('box_cronip_mail_main')}:</b><br>
-{__lan.l('box_cronip_mail_description_https')}:<br>
-{indexLinksHTMLSSL}
-<br>
-{__lan.l('box_cronip_mail_description_http')}:<br>
-{indexLinksHTML8000}
-<br>
-<b>{__lan.l('box_cronip_mail_open_samba')}:</b><br>
-{sambaLinksHTML}"""
-)
+	*** {self.__lan.l('box_cronip_mail_open_samba')}: ***
+	{sambaLinksPlain}""")
+
+	def __getTextHTML(self,indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML):
+		return(f"""
+	<b>{self.__lan.l('box_cronip_mail_main')}:</b><br>
+	{self.__lan.l('box_cronip_mail_description_https')}:<br>
+	{indexLinksHTMLSSL}
+	<br>
+	{self.__lan.l('box_cronip_mail_description_http')}:<br>
+	{indexLinksHTML8000}
+	<br>
+	<b>{self.__lan.l('box_cronip_mail_open_samba')}:</b><br>
+	{sambaLinksHTML}"""
+	)
 
 
 
 
 if __name__ == "__main__":
-	display_ip()
-	mail_ip()
+	ip_info.self.display_ip()
+	ip_info.mail_ip()

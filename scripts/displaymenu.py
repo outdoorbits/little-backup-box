@@ -385,7 +385,7 @@ class menu(object):
 
 		if action == 'ip':
 			FrameTime	= FrameTime * 3
-			lib_cron_ip.display_ip(FrameTime=FrameTime, force=True)
+			lib_cron_ip.ip_info().display_ip(FrameTime=FrameTime, force=True)
 
 			return([], FrameTime)
 
