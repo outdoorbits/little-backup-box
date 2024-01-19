@@ -43,12 +43,8 @@ class ip_info(object):
 
 	def get_ip(self):
 		self.__IPs	= lib_network.get_IP().split('\n')
-		if not self.__IPs:
-			self.__IPs	= ['10.41.0.1']
 
 	def display_ip(self,FrameTime=None, force=False):
-
-
 
 		const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		const_IP_QR_FILE_PATTERN		= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
@@ -61,11 +57,8 @@ class ip_info(object):
 		self.get_ip()
 
 		if (
-			(
-				self.__conf_DISP_IP_REPEAT and
-				self.__IPs
-			) or
-			force
+			(self.__conf_DISP_IP_REPEAT or force) and
+			self.__IPs
 		):
 			DisplayContentOld	= ''
 			if os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
@@ -92,6 +85,9 @@ class ip_info(object):
 			if self.__IPsFormatted:
 				FrameTime	= 3 if FrameTime is None else FrameTime
 				self.__display.message(['set:time={FrameTime}', f":{OnlineMessage}, IP:"] + self.__IPsFormatted)
+
+		elif force and not self.__IPs:
+			self.__display.message(['set:clear', f":{self.__lan.l('box_cronip_offline')}"])
 
 	def mail_ip(self):
 		IP_sent_Markerfile			= self.__setup.get_val('const_IP_SENT_MARKERFILE')
@@ -199,5 +195,5 @@ class ip_info(object):
 
 
 if __name__ == "__main__":
-	ip_info.self.display_ip()
-	ip_info.mail_ip()
+	ip_info().display_ip()
+	ip_info().mail_ip()
