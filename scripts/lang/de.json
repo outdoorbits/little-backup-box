@@ -51,7 +51,8 @@
       "preset_target_label": "USB Zielpartition festlegen",
       "preset_source_label": "USB Quellpartition festlegen",
       "preset_partition_auto": "automatische Auswahl"
-    }
+    },
+    "logout_button": "Ausloggen"
   },
   "sysinfo": {
     "sysinfo": "Systeminformationen",

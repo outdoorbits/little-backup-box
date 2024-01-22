@@ -222,7 +222,8 @@
       "preset_target_label": "Set USB target partition",
       "preset_source_label": "Set USB source partition",
       "preset_partition_auto": "automatische Auswahl"
-    }
+    },
+    "logout_button": "Logout"
   },
   "sysinfo": {
     "sysinfo": "System info",

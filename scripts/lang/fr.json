@@ -51,7 +51,8 @@
       "preset_target_label": "Définir la partition cible USB",
       "preset_source_label": "Définir la partition source USB",
       "preset_partition_auto": "sélection automatique"
-    }
+    },
+    "logout_button": "Se déconnecter"
   },
   "sysinfo": {
     "sysinfo": "Information système",

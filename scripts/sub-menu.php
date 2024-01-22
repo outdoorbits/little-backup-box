@@ -8,7 +8,13 @@ sub expects from calling script:
 -->
 
 <?php
-    $HTTP_HOST = $_SERVER['SERVER_PORT']==80?$_SERVER['HTTP_HOST'] . ":80":$_SERVER['HTTP_HOST'];
+    $HTTP_HOST	= $_SERVER['SERVER_PORT']==80?$_SERVER['HTTP_HOST'] . ":80":$_SERVER['HTTP_HOST'];
+
+	if (isset($_SERVER['HTTPS'])) {
+		$PROTOCOL	= "https://";
+	} else {
+		$PROTOCOL	= "http://";
+	}
 
 	if ($config["conf_THEME"]=="dark") {
 		$nav_theme_class="navbar-dark bg-dark";
@@ -48,6 +54,7 @@ sub expects from calling script:
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdownPower">
 						<li><a class="dropdown-item" href="?reboot=true"><?php echo L::main_reboot_button; ?></a></li>
 						<li><a class="dropdown-item" href="?shutdown=true"><?php echo L::main_shutdown_button; ?></a></li>
+						<li><a class="dropdown-item" href="<?php echo "{$PROTOCOL}logout@{$HTTP_HOST}"; ?>"><?php echo L::main_logout_button; ?></a></li>
 					</ul>
 				</li>
 			</ul>

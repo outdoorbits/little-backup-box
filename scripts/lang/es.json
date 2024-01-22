@@ -51,7 +51,8 @@
       "preset_target_label": "Establecer partición de destino USB",
       "preset_source_label": "Establecer partición de origen USB",
       "preset_partition_auto": "Selección automática"
-    }
+    },
+    "logout_button": "Cerrar sesión"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
