@@ -46,6 +46,9 @@ class ip_info(object):
 
 	def display_ip(self,FrameTime=None, force=False):
 
+		if not (self.__conf_DISP_IP_REPEAT or force):
+			return()
+
 		const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		const_IP_QR_FILE_PATTERN		= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
 
@@ -56,10 +59,7 @@ class ip_info(object):
 
 		self.get_ip()
 
-		if (
-			(self.__conf_DISP_IP_REPEAT or force) and
-			self.__IPs
-		):
+		if self.__IPs:
 			DisplayContentOld	= ''
 			if os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
 				with open(const_DISPLAY_CONTENT_OLD_FILE,'r') as f:

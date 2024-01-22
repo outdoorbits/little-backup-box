@@ -25,6 +25,7 @@ import subprocess
 
 
 class viewdb(object):
+
 	def __init__(self,setup,log,MountPoint):
 		self.__setup	= setup
 		self.__log		= log
