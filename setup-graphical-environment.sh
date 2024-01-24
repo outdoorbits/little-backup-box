@@ -44,8 +44,10 @@ sudo sed -i "s/^\($VAR\s*=\s*\).*\$/\1$NEW_VALUE/" $CONFIG_FILE
 sed $CONFIG_FILE -i -e "s/^\(#\|\)autologin-user=.*/autologin-user=$NEW_VALUE"
 
 # disable auto mount for user
-CONFIG_FILE="/home/$USER/.config/pcmanfm/LXDE-pi/pcmanfm.conf"
+CONFIG_DIR="/home/$USER/.config/pcmanfm/LXDE-pi"
+CONFIG_FILE="${CONFIG_DIR}/pcmanfm.conf"
 
+mkdir -p $CONFIG_DIR
 echo """[volume]
 mount_on_startup=0
 mount_removable=0
@@ -57,5 +59,5 @@ AUTOSTART_USER_DIR="/home/$USER/.config/lxsession/LXDE-pi"
 
 sudo -u $USER mkdir -p $AUTOSTART_USER_DIR
 sudo -u $USER cp /etc/xdg/lxsession/LXDE-pi/autostart ${AUTOSTART_USER_DIR}/
-echo "@/usr/bin/chromium-browser --kiosk --no-first-run https://localhost" | sudo -u $USER tee -a $AUTOSTART_USER_DIR/autostart
+echo "@/usr/bin/chromium-browser --kiosk --no-first-run http://localhost" | sudo -u $USER tee -a $AUTOSTART_USER_DIR/autostart
 sudo chmod 700 $AUTOSTART_USER_DIR/autostart
