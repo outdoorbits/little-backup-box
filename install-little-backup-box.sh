@@ -512,6 +512,9 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 fi
 sudo service vsftpd restart
 
+# setup graphical environment
+source "${INSTALLER_DIR}/setup-graphical-environment.sh"
+
 # install comitup
 ## re-install (update) if installed
 if [ "$(dpkg-query -W --showformat='${db:Status-Status}' "comitup" 2>&1)" = "installed" ]; then
