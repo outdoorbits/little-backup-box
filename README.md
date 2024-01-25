@@ -32,6 +32,7 @@ These languages are already available. Do you want to maintain or create a trans
 <br />
 <h2>NEWS</h2>
 <ul>
+<li>2024-01-25: Enable using of graphic environment</li>
 <li>2024-01-19: Workaround to enable display with Raspberry Pi 5</li>
 <li>2023-12-29: Workaround to enable comitup with bookworm</li>
 <li>2023/09/17: When backing up from cameras, all connected cameras are backed up. This is restricted to the use of different models! Test carefully! Some smartphones use the same technical identifier even though the model is different. In this case, only one of these devices would be backed up!</li>
@@ -109,7 +110,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 
 <h2 id="installation">Installation</h2>
 <ol>
-<li>Create a bootable SD card with <b>Raspberry Pi OS Lite (bookworm or bullseye)</b> for use with Little Backup Box.<br />
+<li>Create a bootable SD card with <b>Raspberry Pi OS (bookworm or bullseye)</b> for use with Little Backup Box. If you don't plan to use a graphic environment on a regular monitor, you are recommended to use the lite version.'<br />
 An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select "Raspberry Pi OS (other)" > "Raspberry Pi OS Lite (32-bit)" or "Raspberry Pi OS Lite (64-bit)".<br />
 In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens the options-dialog. Here you can ...
 <ul>
