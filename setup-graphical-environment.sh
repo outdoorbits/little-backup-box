@@ -18,7 +18,11 @@
 #######################################################################
 
 # settings
-USER="lbb"
+USER="lbb-desktop"
+
+# create user
+sudo useradd --create-home -s /bin/bash ${USER}
+
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
@@ -31,14 +35,14 @@ if [ ! -f "/usr/bin/startx" ]; then
 	exit "No graphical system detected."
 fi
 
-# auto logon user lbb
+# auto logon $USER
 ## enable auto login
 sudo raspi-config nonint do_boot_behaviour B4
 
 ## edit /etc/lightdm/lightdm.conf to set auto login user
 CONFIG_FILE="/etc/lightdm/lightdm.conf"
 VAR="autologin-user"
-NEW_VALUE="lbb"
+NEW_VALUE="${USER}"
 
 sudo sed $CONFIG_FILE -i -e "s/^\(#\|\)${VAR}=.*/autologin-user=${NEW_VALUE}/"
 
@@ -60,5 +64,5 @@ sudo -u $USER mkdir -p $AUTOSTART_USER_DIR
 echo """[Desktop Entry]
 Type=Application
 Name=little-backup-box
-Exec="firefox --kiosk http://localhost"
+Exec="firefox -setDefaultBrowser --kiosk http://localhost"
 """ | sudo -u $USER tee $AUTOSTART_USER_DIR/little-backup-box.desktop
