@@ -46,32 +46,40 @@ class idletime(object):
 		if self.conf_POWER_OFF_IDLE_TIME > 0:
 			IdleSecToPowerOff	= self.conf_POWER_OFF_IDLE_TIME * 60
 
-			CmdRunnerActive	= os.path.isfile(self.const_CMD_RUNNER_LOCKFILE)
-
 			CompareTime	= time.time()
 
+			# uptime
+			UpTime	= lib_system.get_uptime_sec()
+			if UpTime < IdleSecToPowerOff:
+				return(f'idletime: uptime < idletime ({UpTime}s < {IdleSecToPowerOff}s)')
+
+			# logfile logmonitor
 			LbbLogfileAgeSec	= IdleSecToPowerOff
 			if os.path.isfile(self.const_LOGFILE):
-				LbbLogfileAgeSec	= (time.time() - os.stat(self.const_LOGFILE).st_mtime)
+				LbbLogfileAgeSec	= (CompareTime - os.stat(self.const_LOGFILE).st_mtime)
 
+			if LbbLogfileAgeSec < IdleSecToPowerOff:
+				return(f'idletime: logfile logmonitor idletime not reached ({LbbLogfileAgeSec}s < {IdleSecToPowerOff}s)')
+
+			# logfile apache2
 			ApacheLogfileAgeSec	= IdleSecToPowerOff
 			if os.path.isfile(self.ApacheAccessLogfile):
-				ApacheLogfileAgeSec	= (time.time() - os.stat(self.ApacheAccessLogfile).st_mtime)
+				ApacheLogfileAgeSec	= (CompareTime - os.stat(self.ApacheAccessLogfile).st_mtime)
 
-			#first layer: Is idletime reached?
-			if (
-				(not CmdRunnerActive) and
-				(lib_system.get_uptime_sec() >= IdleSecToPowerOff) and
-				(LbbLogfileAgeSec >= IdleSecToPowerOff) and
-				(ApacheLogfileAgeSec >= IdleSecToPowerOff)
-			):
-				#second layer: Are rsync or gphoto2 active?
-				rsync_active	= True
-				if (
-					(subprocess.run('pgrep rsync',shell=True).returncode > 0) and 	# no match
-					(subprocess.run('pgrep gphoto2',shell=True).returncode > 0)		# no match
-				):
-					lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
+			if ApacheLogfileAgeSec < IdleSecToPowerOff:
+				return(f'idletime: logfile apache2 idletime not reached ({ApacheLogfileAgeSec}s < {IdleSecToPowerOff}s)')
+
+			# check processes
+			for process in ['rsync','gphoto2']:
+				if subprocess.run(['pgrep','-x',process]).returncode == 0:
+					return(f'idletime: active process={process}')
+
+			# CmdRunnerActive?
+			if os.path.isfile(self.const_CMD_RUNNER_LOCKFILE):
+				return('idletime: active process=cmd_runner')
+
+			# shutdown
+			lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
 
 if __name__ == "__main__":
-	idletime().check()
+	print(idletime().check())
