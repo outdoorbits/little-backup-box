@@ -17,6 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# expects
+# INSTALLER_DIR
+# from calling script
+
 # settings
 USER="lbb-desktop"
 
@@ -56,6 +60,30 @@ mount_on_startup=0
 mount_removable=0
 autorun=0
 """ | sudo -u $USER tee $CONFIG_FILE
+
+# set background
+BG_FILE="lbb-desktop.png"
+BG_DIR="/home/$USER/backgrounds"
+
+sudo -u $USER mkdir -p "${BG_DIR}"
+sudo cp "${INSTALLER_DIR}/img/${BG_FILE}" "${BG_DIR}"
+sudo chown $USER:$USER "${BG_DIR}" -R
+
+echo """[*]
+wallpaper_mode=crop
+wallpaper_common=1
+wallpaper=${BG_DIR}/${BG_FILE}
+desktop_bg=#ffffff
+desktop_fg=#e8e8e8
+desktop_shadow=#d6d3de
+desktop_font=PibotoLt 12
+show_wm_menu=0
+sort=mtime;ascending;
+show_documents=0
+show_trash=0
+show_mounts=0
+""" | sudo -u $USER tee /home/$USER/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
+
 
 # auto start browser
 AUTOSTART_USER_DIR="/home/$USER/.config/autostart"
