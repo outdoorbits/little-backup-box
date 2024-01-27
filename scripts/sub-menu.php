@@ -42,7 +42,7 @@ sub expects from calling script:
 
 		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
-				<li class="nav-item"><a class="nav-link" href="/files.php" target="_blank"><?php echo L::mainmenue_filebrowser; ?></a></li>
+				<li class="nav-item"><a class="nav-link" href="/frame.php?page=files"><?php echo L::mainmenue_filebrowser; ?></a></li>
 			</ul>
 		</div>
 

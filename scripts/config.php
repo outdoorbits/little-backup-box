@@ -820,14 +820,7 @@ function upload_settings() {
 						?>
 
 					</p>
-					<?php
-						if (strpos($_SERVER['SERVER_PORT'], "443") !== false) {
-							$rclone_link="https://" . $_SERVER['SERVER_ADDR'] . ":8443";
-						} else {
-							$rclone_link="http://" . $_SERVER['SERVER_ADDR'] . ":81";
-						}
-					?>
-					<a href="<?php echo $rclone_link; ?>" target="_blank"><?php echo L::config_cloud_rclone_gui; ?></a>
+					<a href="/frame.php?page=rclone_gui" target="_blank"><?php echo L::config_cloud_rclone_gui; ?></a>
 
 				<h3><?php echo L::config_cloud_restart_header; ?></h3>
 					<label for="restart_rclone_gui"><?php echo L::config_cloud_restart_label; ?></label><br>

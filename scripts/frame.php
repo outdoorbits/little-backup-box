@@ -1,6 +1,6 @@
 <!doctype html>
 
-<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
+<!-- Author: Stefan Saam, github@saams.de
          License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 <?php
@@ -12,15 +12,28 @@
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] .'/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-	include("sub-popup.php");
+	$HTTP_HOST	= $_SERVER['SERVER_PORT']==80?$_SERVER['HTTP_HOST'] . ":80":$_SERVER['HTTP_HOST'];
 
-	include("get-cloudservices.php");
+	if (isset($_SERVER['HTTPS'])) {
+		$PROTOCOL	= "https://";
+	} else {
+		$PROTOCOL	= "http://";
+	}
 
-	$TIME_ZONE_old	= $config["conf_TIME_ZONE"];
+	$framed_pages	= array(
+		'files'			=> '/files',
+		'rclone_gui'	=> $PROTOCOL.$HTTP_HOST.($PROTOCOL == "https://"?":8443":":81")
+	);
 
-	$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
+	$frame_index	= '';
+	if (isset($_GET['page'])) {
+		$frame_index	= $_GET['page'];
+	}
 
-	$vpn_types		= array('OpenVPN','WireGuard');
+	if (! isset($framed_pages[$frame_index])) {
+		header("Location: " . $PROTOCOL . $HTTP_HOST);
+		exit();
+	}
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
@@ -33,7 +46,7 @@
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
-	<iframe id="logmonitor" src="/files" width="100%" height="100%" style="background: #FFFFFF;"></iframe>
+	<iframe id="logmonitor" src="<?php echo $framed_pages[$frame_index]; ?>" style="position: absolute; left: 0; width: 100%; height: 90%; border: none; background: #FFFFFF;"></iframe>
 
 </body>
 

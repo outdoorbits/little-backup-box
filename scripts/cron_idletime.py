@@ -30,7 +30,8 @@ class idletime(object):
 	def __init__(self):
 		#definitions
 		self.WORKING_DIR	= os.path.dirname(__file__)
-		self.ApacheAccessLogfile	= "/var/log/apache2/lbb-access.log"
+		self.ApacheAccessLogfile		= "/var/log/apache2/lbb-access.log"
+		self.ApacheRcloneAccessLogfile	= "/var/log/apache2/rclone-access.log"
 
 		#objects
 		self.__setup	= lib_setup.setup()
@@ -54,20 +55,19 @@ class idletime(object):
 				return(f'idletime: uptime < idletime ({UpTime}s < {IdleSecToPowerOff}s)')
 
 			# logfile logmonitor
-			LbbLogfileAgeSec	= IdleSecToPowerOff
-			if os.path.isfile(self.const_LOGFILE):
-				LbbLogfileAgeSec	= (CompareTime - os.stat(self.const_LOGFILE).st_mtime)
-
+			LbbLogfileAgeSec	= CompareTime - os.stat(self.const_LOGFILE).st_mtime if os.path.isfile(self.const_LOGFILE) else IdleSecToPowerOff
 			if LbbLogfileAgeSec < IdleSecToPowerOff:
 				return(f'idletime: logfile logmonitor idletime not reached ({LbbLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 			# logfile apache2
-			ApacheLogfileAgeSec	= IdleSecToPowerOff
-			if os.path.isfile(self.ApacheAccessLogfile):
-				ApacheLogfileAgeSec	= (CompareTime - os.stat(self.ApacheAccessLogfile).st_mtime)
-
+			ApacheLogfileAgeSec	= CompareTime - os.stat(self.ApacheAccessLogfile).st_mtime if os.path.isfile(self.ApacheAccessLogfile) else IdleSecToPowerOff
 			if ApacheLogfileAgeSec < IdleSecToPowerOff:
 				return(f'idletime: logfile apache2 idletime not reached ({ApacheLogfileAgeSec}s < {IdleSecToPowerOff}s)')
+
+			# logfile apache2 rclone gui
+			ApacheRcloneLogfileAgeSec	= CompareTime - os.stat(self.ApacheRcloneAccessLogfile).st_mtime if os.path.isfile(self.ApacheRcloneAccessLogfile) else IdleSecToPowerOff
+			if ApacheRcloneLogfileAgeSec < IdleSecToPowerOff:
+				return(f'idletime: logfile rclone gui idletime not reached ({ApacheRcloneLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 			# check processes
 			for process in ['rsync','gphoto2']:
@@ -79,7 +79,7 @@ class idletime(object):
 				return('idletime: active process=cmd_runner')
 
 			# shutdown
-			lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
+			#lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
 
 if __name__ == "__main__":
 	print(idletime().check())
