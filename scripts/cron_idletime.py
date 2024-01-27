@@ -79,7 +79,7 @@ class idletime(object):
 				return('idletime: active process=cmd_runner')
 
 			# shutdown
-			#lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
+			lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
 
 if __name__ == "__main__":
 	print(idletime().check())
