@@ -46,8 +46,11 @@
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
-	<iframe id="logmonitor" src="<?php echo $framed_pages[$frame_index]; ?>" style="position: absolute; left: 0; width: 100%; height: 90%; border: none; background: #FFFFFF;"></iframe>
+	<div style="position: absolute; left: 0; width: 100%; height: 90%; border: none; background: #FF0000;">
+		<iframe id="logmonitor" src="<?php echo $framed_pages[$frame_index]; ?>" style="width: 100%; height: 100%; border: none; background: #FFFFFF;"></iframe>
+	<div>
 
+	<?php include "sub-footer.php"; ?>
 </body>
 
 </html>

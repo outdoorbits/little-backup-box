@@ -75,26 +75,26 @@ ul.danger {
 }
 
 .rating{
-display : flex;
+	display : flex;
 }
 
 .rating input{
-position : absolute;
-left     : -100vw;
+	position : absolute;
+	left     : -100vw;
 }
 
 .rating label{
-width      : 16px;
-height     : 16px;
-padding    : 16px 0 0;
-overflow   : hidden;
-background : url('stars.svg') no-repeat top left;
+	width      : 16px;
+	height     : 16px;
+	padding    : 16px 0 0;
+	overflow   : hidden;
+	background : url('stars.svg') no-repeat top left;
 }
 
 .rating:not(:hover) input:indeterminate + label,
 .rating:not(:hover) input:checked ~ input + label,
 .rating input:hover ~ input + label{
-background-position : -16px 0;
+	background-position : -16px 0;
 }
 
 .rating:not(:hover) input:focus-visible + label{
@@ -137,6 +137,12 @@ div.floating {
 	padding: 0;
 }
 
+div.footer {
+	margin: auto;
+	max-width: var(--width);
+	padding: 0 0 0;
+}
+
 /* columns */
 .column {
 	float: left;
@@ -177,7 +183,7 @@ div.floating {
 }
 
 .radio-usb label:hover {
-background-color: var(--cmed);
+	background-color: var(--cmed);
 }
 
 .radio-usb input[type="radio"]:checked + label {
@@ -187,13 +193,13 @@ background-color: var(--cmed);
 
 /* CAMERA */
 .radio-camera {
-margin: 10px;
+	margin: 10px;
 }
 
 .radio-camera input[type="radio"] {
-opacity: 0;
-position: fixed;
-width: 0;
+	opacity: 0;
+	position: fixed;
+	width: 0;
 }
 
 .radio-camera label {
@@ -211,7 +217,7 @@ width: 0;
 }
 
 .radio-camera label:hover {
-background-color: var(--cmed);
+	background-color: var(--cmed);
 }
 
 .radio-camera input[type="radio"]:checked + label {
@@ -221,13 +227,13 @@ background-color: var(--cmed);
 
 /* CLOUD */
 .radio-cloud {
-margin: 10px;
+	margin: 10px;
 }
 
 .radio-cloud input[type="radio"] {
-opacity: 0;
-position: fixed;
-width: 0;
+	opacity: 0;
+	position: fixed;
+	width: 0;
 }
 
 .radio-cloud label {
