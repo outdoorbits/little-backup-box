@@ -17,9 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# expects
-# INSTALLER_DIR
-# from calling script
+# expected from calling script
+## const_WEB_ROOT_LBB
+## USER_WWW_DATA
 
 # settings
 USER="lbb-desktop"
@@ -94,3 +94,22 @@ Type=Application
 Name=little-backup-box
 Exec="firefox -setDefaultBrowser --kiosk http://localhost"
 """ | sudo -u $USER tee $AUTOSTART_USER_DIR/little-backup-box.desktop
+
+# install KioskBoard virtual keyboard
+rm -R '~/KioskBoard'
+git clone https://github.com/outdoorbits/KioskBoard.git
+GIT_CLONE=$?
+if [ "${GIT_CLONE}" -gt 0 ]; then
+	echo "Cloning KioskBoard from github.com failed. Please try again later."
+else
+	KioskBoardDir="${const_WEB_ROOT_LBB}/KioskBoard"
+	mkdir -p "${KioskBoardDir}"
+	sudo cp -f ~/KioskBoard/LICENSE ${KioskBoardDir}/
+	sudo cp -f ~/KioskBoard/dist/kioskboard-2.3.0.min.css ${KioskBoardDir}/
+	sudo cp -f ~/KioskBoard/dist/kioskboard-2.3.0.min.js ${KioskBoardDir}/
+	sudo cp -f ~/KioskBoard/dist/kioskboard-keys-* ${KioskBoardDir}/
+
+	# set file permissions in $KioskBoardDir
+	sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${KioskBoardDir}" -R
+	sudo chmod 777 ${KioskBoardDir}/*
+fi

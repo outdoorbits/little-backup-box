@@ -15,6 +15,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . "/" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
+	include("sub-virtual-keyboard.php");
 # expected parameters:
 # CMD: "update", "format", "f3"
 # optional parameters:
@@ -25,7 +26,10 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
 
 <head>
-	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
+	<?php
+		include "${WORKING_DIR}/sub-standards-header-loader.php";
+		virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
+	?>
 </head>
 
 <body <?php echo $background; ?>>
@@ -179,7 +183,7 @@ if (isset($CMD_HEADER)) {
 					<?php
 						if ($PASSWORD_ASK) {
 							echo '<label for="PWD">' . L::cmd_input_password . ':</label>';
-							echo '<input type="password" size="20" name="PWD" id="PWD"><br>';
+							echo '<input type="password" ' . virtual_keyboard_options('','all','bottom','true') . ' size="20" name="PWD" id="PWD"><br>';
 						}
 					?>
 
@@ -210,6 +214,7 @@ if (isset($CMD_HEADER)) {
 	<?php
 		}
 }
+		virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"],'virtual_keyboard');
 	?>
 </body>
 </html>

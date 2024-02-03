@@ -219,6 +219,7 @@ class setup(object):
 					'conf_MENU_BUTTON_BOUNCETIME':					{'value': 15, 'type' : 'int'},
 					'conf_MENU_BUTTON_EDGE_DETECTION':				{'value': 'RISING', 'type' : 'str'},
 					'conf_MENU_BUTTON_RESISTOR_PULL':				{'value': 'DOWN', 'type' : 'str'},
+					'conf_VIRTUAL_KEYBOARD_ENABLED':				{'value': True, 'type' : 'bool'},
 					'conf_FAN_PWM_TEMP_C':							{'value': 50, 'type' : 'int'},
 					'conf_FAN_PWM_GPIO':							{'value': 18, 'type' : 'int'},
 					'conf_POPUP_MESSAGES':							{'value': True, 'type' : 'bool'},

@@ -317,7 +317,13 @@
     "display_message_settings_upload_error_3": "configuración.",
     "display_message_settings_upload_error_1": "Error al",
     "password_changed": "Contraseña cambiada.",
-    "password_removed": "Se eliminó la contraseña general."
+    "password_removed": "Se eliminó la contraseña general.",
+    "screen": {
+      "section": "Pantalla",
+      "virtual_keyboard_enable_header": "Teclado virtual",
+      "virtual_keyboard_enable_label": "Habilitar teclado virtual",
+      "description": "Configuraciones que afectan a una pantalla con interfaz gráfica de usuario (escritorio)."
+    }
   },
   "tools": {
     "tools": "Herramientas",
