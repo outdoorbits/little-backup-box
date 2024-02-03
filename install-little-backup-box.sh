@@ -18,6 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+# accepts one optional argument: branch
 
 # IMPORTANT for developers:
 # All actions have to be sufficient for modes install and update!
@@ -173,7 +174,7 @@ sudo systemctl disable openvpn.service
 echo "Cloning Little Backup Box"
 cd
 
-sudo rm -R ${INSTALLER_DIR}
+rm -R ${INSTALLER_DIR}
 git clone --branch "${branch}" https://github.com/outdoorbits/little-backup-box.git
 GIT_CLONE=$?
 if [ "${GIT_CLONE}" -gt 0 ]; then
