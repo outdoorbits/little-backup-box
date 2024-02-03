@@ -294,7 +294,7 @@
 		// 	Backup
 		if (isset($_POST['TargetDevice'])) {
 			exec("sudo $WORKING_DIR/stop_backup.sh");
-			exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . $_POST['SourceDevice'] . " --TargetName " . $_POST['TargetDevice'] . " --sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --device-identifier-preset-source '$preset_source' --device-identifier-preset-target '$preset_target' --power-off $power_off_force> /dev/null 2>&1 &");
 
 			popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
