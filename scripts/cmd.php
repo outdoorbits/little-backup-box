@@ -183,7 +183,7 @@ if (isset($CMD_HEADER)) {
 					<?php
 						if ($PASSWORD_ASK) {
 							echo '<label for="PWD">' . L::cmd_input_password . ':</label>';
-							echo '<input type="password" ' . virtual_keyboard_options('','all','bottom','true') . ' size="20" name="PWD" id="PWD"><br>';
+							echo '<input type="password" ' . virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true') . ' size="20" name="PWD" id="PWD"><br>';
 						}
 					?>
 

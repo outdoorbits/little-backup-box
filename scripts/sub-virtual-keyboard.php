@@ -23,7 +23,8 @@
 // 2. in the html head execute this to integrate the css:
 // 		virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 //
-// 3. add <?php echo (virtual_keyboard_options(classes,type,placement,specialchararcters)); ?\>
+// 3. add <?php echo (virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],classes,type,placement,specialchararcters)); ?\>
+//		enabled				= boolean
 // 		classes				= string, space separated
 // 		type				= one out of ['all', 'keyboard', 'numpad']
 // 		placement			= one out of ['top', 'bottom']
@@ -45,18 +46,27 @@ function virtual_keyboard_css($enabled) {
 	}
 }
 
-function virtual_keyboard_options($classes,$type, $placement, $specialcharacters='false') {
-	if (strlen($classes) == 0) {
-		$classes	= 'virtual_keyboard';
-	} else {
-		$classes	= "virtual_keyboard $classes";
-	}
+function virtual_keyboard_options($enabled,$classes,$type, $placement, $specialcharacters='false') {
+	if (virtual_keyboard_enabled($enabled)) {
+		if (strlen($classes) == 0) {
+			$classes	= 'virtual_keyboard';
+		} else {
+			$classes	= "virtual_keyboard $classes";
+		}
 
-	$data	= "class='$classes' data-kioskboard-type='$type' data-kioskboard-placement='$placement'";
-	if ($type !== 'numpad') {
-		$data	.= " data-kioskboard-specialcharacters='$specialcharacters'";
+		$data	= "class='$classes' data-kioskboard-type='$type' data-kioskboard-placement='$placement'";
+		if ($type !== 'numpad') {
+			$data	.= " data-kioskboard-specialcharacters='$specialcharacters'";
+		}
+
+		return($data);
+	} else {
+		if (strlen($classes) == 0) {
+			return('');
+		} else {
+			return("class='$classes'");
+		}
 	}
-	return($data);
 }
 
 function virtual_keyboard_js($enabled,$language,$theme,...$virtual_keyboard_class_names) {
