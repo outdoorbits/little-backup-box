@@ -317,7 +317,13 @@
     "display_message_settings_upload_error_3": "importiert werden.",
     "display_message_settings_upload_error_1": "Einstellungen",
     "password_changed": "Passwort geändert.",
-    "password_removed": "Allgemeines Passwort entfernt."
+    "password_removed": "Allgemeines Passwort entfernt.",
+    "screen": {
+      "section": "Bildschirm",
+      "virtual_keyboard_enable_header": "Virtuelle Tastatur",
+      "virtual_keyboard_enable_label": "Virtuelle Tastatur aktivieren",
+      "description": "Einstellungen, welche einen Bildschirm mit grafischer Benutzeroberfläche (Desktop) betreffen."
+    }
   },
   "tools": {
     "tools": "Werkzeug",

@@ -1040,7 +1040,6 @@ if __name__ == "__main__":
 	)
 
 	args = vars(parser.parse_args())
-	print('xxx',file=sys.stderr)
 	print(args['power_off'],file=sys.stderr)
 	backupObj	= backup(SourceName=args['SourceName'], TargetName=args['TargetName'], DoSyncDatabase=args['sync_database'], DoGenerateThumbnails=args['generate_thumbnails'], DoUpdateEXIF=args['update_exif'], DeviceIdentifierPresetSource=args['device_identifier_preset_source'], DeviceIdentifierPresetTarget=args['device_identifier_preset_target'], PowerOff=args['power_off'], SecundaryBackupFollows=args['secondary_backup_follows'])
 

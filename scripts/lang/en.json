@@ -499,7 +499,13 @@
     "display_message_settings_upload_error_3": "failed.",
     "display_message_settings_upload_error_1": "Settings",
     "password_changed": "Password changed.",
-    "password_removed": "General password removed."
+    "password_removed": "General password removed.",
+    "screen": {
+      "section": "Screen",
+      "virtual_keyboard_enable_header": "Virtual keyboard",
+      "virtual_keyboard_enable_label": "Enable virtual keyboard",
+      "description": "Settings that affect a screen with a graphical user interface (desktop)."
+    }
   },
   "tools": {
     "tools": "Tools",

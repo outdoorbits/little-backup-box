@@ -1,7 +1,24 @@
 <!doctype html>
 
-<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
-         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
+<!--
+# Author: Stefan Saam, github@saams.de
+# Original author: Dmitri Popov, dmpop@linux.com
+
+#######################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#######################################################################
+-->
 
 <?php
 	$WORKING_DIR=dirname(__FILE__);
@@ -13,6 +30,7 @@
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] .'/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-popup.php");
+	include("sub-virtual-keyboard.php");
 
 	include("get-cloudservices.php");
 
@@ -26,7 +44,10 @@
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
 
 <head>
-	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
+	<?php
+		include "${WORKING_DIR}/sub-standards-header-loader.php";
+		virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
+	?>
 </head>
 
 <body <?php echo $background; ?>>
@@ -135,6 +156,7 @@ function write_config() {
 	$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
 	$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?"true":"false";
 	$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?"true":"false";
+	$conf_VIRTUAL_KEYBOARD_ENABLED				= isset($conf_VIRTUAL_KEYBOARD_ENABLED)?"true":"false";
 	$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?"true":"false";
 	$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?"true":"false";
 	$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
@@ -213,6 +235,7 @@ conf_MENU_BUTTON_ROTATE='$conf_MENU_BUTTON_ROTATE'
 conf_MENU_BUTTON_BOUNCETIME=$conf_MENU_BUTTON_BOUNCETIME
 conf_MENU_BUTTON_EDGE_DETECTION='$conf_MENU_BUTTON_EDGE_DETECTION'
 conf_MENU_BUTTON_RESISTOR_PULL='$conf_MENU_BUTTON_RESISTOR_PULL'
+conf_VIRTUAL_KEYBOARD_ENABLED=$conf_VIRTUAL_KEYBOARD_ENABLED
 conf_FAN_PWM_TEMP_C=$conf_FAN_PWM_TEMP_C
 conf_FAN_PWM_GPIO=$conf_FAN_PWM_GPIO
 conf_THEME=$conf_THEME
@@ -491,7 +514,7 @@ function upload_settings() {
 
 				<h3><?php echo L::config_backup_camera_folder_mask_header; ?></h3>
 					<label for="conf_BACKUP_CAMERA_FOLDER_MASK"><?php echo L::config_backup_camera_folder_mask_label; ?></label><br>
-					<input type="text" id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" size="6" value="<?php echo $config['conf_BACKUP_CAMERA_FOLDER_MASK']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" size="6" value="<?php echo $config['conf_BACKUP_CAMERA_FOLDER_MASK']; ?>">
 
 				<h3><?php echo L::config_backup_power_off_header; ?></h3>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
@@ -704,6 +727,21 @@ function upload_settings() {
 
 		<div class="card" style="margin-top: 2em;">
 			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_screen_section; ?></summary>
+				<p>
+					<?php echo L::config_screen_description; ?>
+				</p>
+				<h3><?php echo L::config_screen_virtual_keyboard_enable_header; ?></h3>
+					<div>
+						<label for="conf_VIRTUAL_KEYBOARD_ENABLED"><?php echo L::config_screen_virtual_keyboard_enable_label; ?></label><br>
+						<input type="checkbox" id="conf_VIRTUAL_KEYBOARD_ENABLED" name="conf_VIRTUAL_KEYBOARD_ENABLED" <?php echo $config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1"?"checked":""; ?>>
+					</div>
+
+			</details>
+		</div>
+
+		<div class="card" style="margin-top: 2em;">
+			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_imageviewer_section; ?></summary>
 
 				<h3><?php echo L::config_backup_generate_thumbnails_header; ?></h3>
@@ -739,11 +777,11 @@ function upload_settings() {
 
 				<h3><?php echo L::config_mail_smtp_header; ?></h3>
 					<label for="conf_SMTP_SERVER"><?php echo L::config_mail_smtp_label; ?></label><br>
-					<input type="text" id="conf_SMTP_SERVER" name="conf_SMTP_SERVER" size="6" value="<?php echo $config['conf_SMTP_SERVER']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_SMTP_SERVER" name="conf_SMTP_SERVER" size="6" value="<?php echo $config['conf_SMTP_SERVER']; ?>">
 
 				<h3><?php echo L::config_mail_port_header; ?></h3>
 					<label for="conf_SMTP_PORT"><?php echo L::config_mail_port_label . " " . $config_standard["conf_SMTP_PORT"]; ?>)</label><br>
-					<input type="text" id="conf_SMTP_PORT" name="conf_SMTP_PORT" size="20" value="<?php echo $config['conf_SMTP_PORT']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','numpad','bottom'); ?> id="conf_SMTP_PORT" name="conf_SMTP_PORT" size="20" value="<?php echo $config['conf_SMTP_PORT']; ?>">
 
 				<h3><?php echo L::config_mail_security_header; ?></h3>
 					<input type="radio" id="conf_MAIL_SECURITY_STARTTLS" name="conf_MAIL_SECURITY" value="STARTTLS" <?php echo $config['conf_MAIL_SECURITY']!=="SSL"?"checked":""; ?>>
@@ -753,19 +791,19 @@ function upload_settings() {
 
 				<h3><?php echo L::config_mail_user_header; ?></h3>
 					<label for="conf_MAIL_USER"><?php echo L::config_mail_user_label; ?></label><br>
-					<input type="text" id="conf_MAIL_USER" name="conf_MAIL_USER" size="20" value="<?php echo $config['conf_MAIL_USER']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_MAIL_USER" name="conf_MAIL_USER" size="20" value="<?php echo $config['conf_MAIL_USER']; ?>">
 
 				<h3><?php echo L::config_mail_password_header; ?></h3>
 					<label for="conf_MAIL_PASSWORD"><?php echo L::config_mail_password_label; ?></label><br>
-					<input type="password" id="conf_MAIL_PASSWORD" name="conf_MAIL_PASSWORD" size="20" value="<?php echo $config['conf_MAIL_PASSWORD']; ?>">
+					<input type="password" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_MAIL_PASSWORD" name="conf_MAIL_PASSWORD" size="20" value="<?php echo $config['conf_MAIL_PASSWORD']; ?>">
 
 				<h3><?php echo L::config_mail_sender_header; ?></h3>
 					<label for="conf_MAIL_FROM"><?php echo L::config_mail_sender_label; ?></label><br>
-					<input type="text" id="conf_MAIL_FROM" name="conf_MAIL_FROM" size="20" value="<?php echo $config['conf_MAIL_FROM']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_MAIL_FROM" name="conf_MAIL_FROM" size="20" value="<?php echo $config['conf_MAIL_FROM']; ?>">
 
 				<h3><?php echo L::config_mail_recipient_header; ?></h3>
 					<label for="conf_MAIL_TO"><?php echo L::config_mail_recipient_label; ?></label><br>
-					<input type="text" id="conf_MAIL_TO" name="conf_MAIL_TO" size="20" value="<?php echo $config['conf_MAIL_TO']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_MAIL_TO" name="conf_MAIL_TO" size="20" value="<?php echo $config['conf_MAIL_TO']; ?>">
 
 				<h3><?php echo L::config_mail_testmail_header; ?></h3>
 					<label for="send_testmail"><?php echo L::config_mail_testmail_label; ?></label><br>
@@ -779,23 +817,23 @@ function upload_settings() {
 
 				<h3><?php echo L::config_rsync_server_header; ?></h3>
 					<label for="conf_RSYNC_SERVER"><?php echo L::config_rsync_server_label; ?></label><br>
-					<input type="text" id="conf_RSYNC_SERVER" name="conf_RSYNC_SERVER" size="6" value="<?php echo $config['conf_RSYNC_SERVER']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_RSYNC_SERVER" name="conf_RSYNC_SERVER" size="6" value="<?php echo $config['conf_RSYNC_SERVER']; ?>">
 
 				<h3><?php echo L::config_rsync_port_header; ?></h3>
 					<label for="conf_RSYNC_PORT"><?php echo L::config_rsync_port_label . " " . $config_standard['conf_RSYNC_PORT']; ?>)</label><br>
-					<input type="text" id="conf_RSYNC_PORT" name="conf_RSYNC_PORT" size="20" value="<?php echo $config['conf_RSYNC_PORT']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','numpad','bottom'); ?> id="conf_RSYNC_PORT" name="conf_RSYNC_PORT" size="20" value="<?php echo $config['conf_RSYNC_PORT']; ?>">
 
 				<h3><?php echo L::config_rsync_user_header; ?></h3>
 					<label for="conf_RSYNC_USER"><?php echo L::config_rsync_user_label; ?></label><br>
-					<input type="text" id="conf_RSYNC_USER" name="conf_RSYNC_USER" size="20" value="<?php echo $config['conf_RSYNC_USER']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_RSYNC_USER" name="conf_RSYNC_USER" size="20" value="<?php echo $config['conf_RSYNC_USER']; ?>">
 
 				<h3><?php echo L::config_rsync_password_header; ?></h3>
 					<label for="conf_RSYNC_PASSWORD"><?php echo L::config_rsync_password_label; ?></label><br>
-					<input type="password" id="conf_RSYNC_PASSWORD" name="conf_RSYNC_PASSWORD" size="20" value="<?php echo $config['conf_RSYNC_PASSWORD']; ?>">
+					<input type="password" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_RSYNC_PASSWORD" name="conf_RSYNC_PASSWORD" size="20" value="<?php echo $config['conf_RSYNC_PASSWORD']; ?>">
 
 				<h3><?php echo L::config_rsync_module_header; ?></h3>
 					<label for="conf_RSYNC_SERVER_MODULE"><?php echo L::config_rsync_module_label1 .  $config_standard['conf_RSYNC_SERVER_MODULE'] . L::config_rsync_module_label2; ?></label><br>
-					<input type="text" id="conf_RSYNC_SERVER_MODULE" name="conf_RSYNC_SERVER_MODULE" size="20" value="<?php echo $config['conf_RSYNC_SERVER_MODULE']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_RSYNC_SERVER_MODULE" name="conf_RSYNC_SERVER_MODULE" size="20" value="<?php echo $config['conf_RSYNC_SERVER_MODULE']; ?>">
 			</details>
 		</div>
 
@@ -805,7 +843,7 @@ function upload_settings() {
 
 				<h3><?php echo L::config_backup_target_basedir_cloud_header; ?></h3>
 					<label for="conf_BACKUP_TARGET_BASEDIR_CLOUD"><?php echo L::config_backup_target_basedir_cloud_label; ?></label><br>
-					<input type="text" id="conf_BACKUP_TARGET_BASEDIR_CLOUD" name="conf_BACKUP_TARGET_BASEDIR_CLOUD" size="6" value="<?php echo $config['conf_BACKUP_TARGET_BASEDIR_CLOUD']; ?>">
+					<input type="text" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_BACKUP_TARGET_BASEDIR_CLOUD" name="conf_BACKUP_TARGET_BASEDIR_CLOUD" size="6" value="<?php echo $config['conf_BACKUP_TARGET_BASEDIR_CLOUD']; ?>">
 
 				<h3><?php echo L::config_cloud_header; ?></h3>
 					<p>
@@ -1221,9 +1259,9 @@ function upload_settings() {
 				<h3><?php echo L::config_password_header; ?></h3>
 					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
 					<label for="conf_PASSWORD_1"><p><?php echo L::config_password_global_lbb_label . '</p><p style="text-decoration: underline;">' . L::config_password_global_wifi_label . '</p><p><b>' . L::config_alert_password_characters_not_allowed . '</b>'; ?></label></p>
-					<input type="password" id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
+					<input type="password" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
 					<label for="conf_PASSWORD_2"><?php echo L::config_password_repeat_label; ?></label><br>
-					<input type="password" id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">
+					<input type="password" <?php echo virtual_keyboard_options('','all','bottom','true'); ?> id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">
 
 					<?php
 						if ($config['conf_PASSWORD'] != "") {
@@ -1292,7 +1330,7 @@ function upload_settings() {
 		</div>
 
 		<?php include "sub-footer.php"; ?>
-
+		<?php virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"],'virtual_keyboard','virtual_keyboard_numbers'); ?>
 </body>
 
 </html>

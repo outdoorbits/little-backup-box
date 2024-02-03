@@ -79,6 +79,7 @@ else
 	sudo cp -f ~/KioskBoard/LICENSE ${KioskBoardDir}/
 	sudo cp -f ~/KioskBoard/dist/kioskboard-2.3.0.min.css ${KioskBoardDir}/
 	sudo cp -f ~/KioskBoard/dist/kioskboard-2.3.0.min.js ${KioskBoardDir}/
+	sudo cp -f ~/KioskBoard/dist/kioskboard-keys-* ${KioskBoardDir}/
 
 	# set file permissions in $KioskBoardDir
 	sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${KioskBoardDir}" -R

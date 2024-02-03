@@ -317,7 +317,13 @@
     "display_message_settings_upload_error_3": "a échoué.",
     "display_message_settings_upload_error_1": "Paramètres",
     "password_changed": "Mot de passe changé.",
-    "password_removed": "Mot de passe général supprimé."
+    "password_removed": "Mot de passe général supprimé.",
+    "screen": {
+      "section": "Écran",
+      "virtual_keyboard_enable_header": "Clavier virtuel",
+      "virtual_keyboard_enable_label": "Activer le clavier virtuel",
+      "description": "Paramètres qui affectent un écran avec une interface utilisateur graphique (bureau)."
+    }
   },
   "tools": {
     "tools": "Outils",
