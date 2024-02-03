@@ -41,8 +41,8 @@ class ip_info(object):
 		# Shared values
 		self.__IPs	= []
 
-	def get_ip(self):
-		self.__IPs	= lib_network.get_IP().split('\n')
+	def get_IPs(self):
+		self.__IPs	= lib_network.get_IPs().split('\n')
 
 	def display_ip(self,FrameTime=None, force=False):
 
@@ -57,7 +57,7 @@ class ip_info(object):
 		const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
 		conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
 
-		self.get_ip()
+		self.get_IPs()
 
 		if self.__IPs:
 			DisplayContentOld	= ''
@@ -92,16 +92,16 @@ class ip_info(object):
 	def mail_ip(self):
 		IP_sent_Markerfile			= self.__setup.get_val('const_IP_SENT_MARKERFILE')
 		const_IP_QR_FILE_PATTERN	= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
+		const_FONT_PATH				= self.__setup.get_val('const_FONT_PATH')
 
 		conf_MAIL_NOTIFICATIONS		= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
 		conf_DISP_RESOLUTION_X		= self.__setup.get_val('conf_DISP_RESOLUTION_X')
 		conf_DISP_RESOLUTION_Y		= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
-		const_FONT_PATH				= self.__setup.get_val('const_FONT_PATH')
 		conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
 
 		mailObj	= lib_mail.mail()
 
-		self.get_ip()
+		self.get_IPs()
 
 		if (
 			self.__IPs and

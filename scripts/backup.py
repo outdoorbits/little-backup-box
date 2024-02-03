@@ -624,6 +624,14 @@ class backup(object):
 
 				lib_system.rpi_leds(trigger='timer',delay_on=900,delay_off=100)
 
+				if os.path.isfile('/usr/lib/libraw/dcraw_emu'):
+					DCRAW_EMU	= '/usr/lib/libraw/dcraw_emu'
+				else:
+					try:
+						DCRAW_EMU	= subprocess.check_output(['whereis', 'dcraw_emu']).decode().strip().split('\n')[0].split(' ')[1]
+					except:
+						DCRAW_EMU	= 'dcraw_emu'
+
 				const_FILE_EXTENSIONS_LIST_WEB_IMAGES		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_WEB_IMAGES')
 				const_FILE_EXTENSIONS_LIST_HEIC		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_HEIC')
 				const_FILE_EXTENSIONS_LIST_RAW		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW')
@@ -748,7 +756,7 @@ class backup(object):
 
 					elif SourceFilePathNameExt in const_FILE_EXTENSIONS_LIST_RAW.split(';'):
 						# file-type: raw-image
-						SourceCommand	= ["/usr/lib/libraw/dcraw_emu", "-w", "-Z", "-", f"{self.TargetDevice.MountPoint}/{SourceFilePathName}"]
+						SourceCommand	= [DCRAW_EMU, "-w", "-Z", "-", f"{self.TargetDevice.MountPoint}/{SourceFilePathName}"]
 						FilterCommand	= ["convert", "-", "-resize", "800", f"{self.TargetDevice.MountPoint}/{TIMS_SubpathFilename}"]
 						try:
 							lib_common.pipe(SourceCommand,FilterCommand)
@@ -1040,7 +1048,7 @@ if __name__ == "__main__":
 	)
 
 	args = vars(parser.parse_args())
-	print(args['power_off'],file=sys.stderr)
+
 	backupObj	= backup(SourceName=args['SourceName'], TargetName=args['TargetName'], DoSyncDatabase=args['sync_database'], DoGenerateThumbnails=args['generate_thumbnails'], DoUpdateEXIF=args['update_exif'], DeviceIdentifierPresetSource=args['device_identifier_preset_source'], DeviceIdentifierPresetTarget=args['device_identifier_preset_target'], PowerOff=args['power_off'], SecundaryBackupFollows=args['secondary_backup_follows'])
 
 	backupObj.run()

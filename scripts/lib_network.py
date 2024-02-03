@@ -24,10 +24,12 @@ import subprocess
 from urllib import request
 import sys
 
-def get_IP():
-	IP	= subprocess.check_output(['hostname','-I']).decode().replace(' ','\n').strip()
+import lib_setup
 
-	return(IP)
+def get_IPs():
+	IPs	= subprocess.check_output(['hostname','-I']).decode().replace(' ','\n').strip()
+
+	return(IPs)
 
 def create_ip_link_qr_image(IP, OnlineStatus, IP_QR_FILE, width, height, font=None, fontsize=8):
 
@@ -105,6 +107,28 @@ def get_internet_status():
 
 	return(False)
 
+def get_qr_links():
+	qr_links	= ''
+
+	__setup	= lib_setup.setup()
+
+	const_IP_QR_FILE_PATTERN	= __setup.get_val('const_IP_QR_FILE_PATTERN')
+	const_FONT_PATH				= __setup.get_val('const_FONT_PATH')
+	const_WEB_ROOT_LBB			= __setup.get_val('const_WEB_ROOT_LBB')
+
+	conf_DISP_RESOLUTION_X		= __setup.get_val('conf_DISP_RESOLUTION_X')
+	conf_DISP_RESOLUTION_Y		= __setup.get_val('conf_DISP_RESOLUTION_Y')
+	conf_DISP_FONT_SIZE			= __setup.get_val('conf_DISP_FONT_SIZE')
+
+	IPs	= get_IPs().split('\n')
+
+	for IP in IPs:
+		IP_QR_FILE	= create_ip_link_qr_image(IP=IP, OnlineStatus=True, IP_QR_FILE=const_IP_QR_FILE_PATTERN, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
+		IP_QR_FILE	= IP_QR_FILE.replace(const_WEB_ROOT_LBB,'',1)
+		qr_links	= f'{qr_links}<img src="{IP_QR_FILE}" style="padding: 5px;"> '
+
+	return(qr_links)
+
 if __name__ == "__main__":
 	Mode	= None
 	try:
@@ -113,7 +137,10 @@ if __name__ == "__main__":
 		pass
 
 	if Mode == 'ip':
-		print (get_IP())
+		print (get_IPs())
 
-	if Mode == 'internet_status':
+	elif Mode == 'internet_status':
 		print (get_internet_status())
+
+	elif Mode == 'qr_links':
+		print(get_qr_links())

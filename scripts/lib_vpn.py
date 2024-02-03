@@ -55,7 +55,7 @@ class vpn(object):
 		self.__log					= lib_log.log()
 		self.__lan					= lib_language.language()
 
-		self.IP_pre_VPN				= lib_network.get_IP()
+		self.IP_pre_VPN				= lib_network.get_IPs()
 
 		self.connected				= False
 		self.__status_check_time	= 0
@@ -71,14 +71,14 @@ class vpn(object):
 			if self.VPNMode == 'OpenVPN':
 				Command	= ['sudo','ip','tuntap','show']
 				try:
-					Status	= (subprocess.check_output(Command) != '') and (self.IP_pre_VPN != lib_network.get_IP())
+					Status	= (subprocess.check_output(Command) != '') and (self.IP_pre_VPN != lib_network.get_IPs())
 				except:
 					Status	= False
 
 			elif self.VPNMode == "WireGuard":
 				Command	= ['sudo','wg','show',self.__VPN_FileName.split('.')[0]]
 				try:
-					Status = (self.__VPN_FileName.split('.')[0] in subprocess.check_output(Command).decode()) and (self.IP_pre_VPN != lib_network.get_IP())
+					Status = (self.__VPN_FileName.split('.')[0] in subprocess.check_output(Command).decode()) and (self.IP_pre_VPN != lib_network.get_IPs())
 				except:
 					Status	= False
 

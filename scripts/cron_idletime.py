@@ -30,7 +30,8 @@ class idletime(object):
 	def __init__(self):
 		#definitions
 		self.WORKING_DIR	= os.path.dirname(__file__)
-		self.ApacheAccessLogfile	= "/var/log/apache2/lbb-access.log"
+		self.ApacheAccessLogfile		= "/var/log/apache2/lbb-access.log"
+		self.ApacheRcloneAccessLogfile	= "/var/log/apache2/rclone-access.log"
 
 		#objects
 		self.__setup	= lib_setup.setup()
@@ -46,32 +47,39 @@ class idletime(object):
 		if self.conf_POWER_OFF_IDLE_TIME > 0:
 			IdleSecToPowerOff	= self.conf_POWER_OFF_IDLE_TIME * 60
 
-			CmdRunnerActive	= os.path.isfile(self.const_CMD_RUNNER_LOCKFILE)
-
 			CompareTime	= time.time()
 
-			LbbLogfileAgeSec	= IdleSecToPowerOff
-			if os.path.isfile(self.const_LOGFILE):
-				LbbLogfileAgeSec	= (time.time() - os.stat(self.const_LOGFILE).st_mtime)
+			# uptime
+			UpTime	= lib_system.get_uptime_sec()
+			if UpTime < IdleSecToPowerOff:
+				return(f'idletime: uptime < idletime ({UpTime}s < {IdleSecToPowerOff}s)')
 
-			ApacheLogfileAgeSec	= IdleSecToPowerOff
-			if os.path.isfile(self.ApacheAccessLogfile):
-				ApacheLogfileAgeSec	= (time.time() - os.stat(self.ApacheAccessLogfile).st_mtime)
+			# logfile logmonitor
+			LbbLogfileAgeSec	= CompareTime - os.stat(self.const_LOGFILE).st_mtime if os.path.isfile(self.const_LOGFILE) else IdleSecToPowerOff
+			if LbbLogfileAgeSec < IdleSecToPowerOff:
+				return(f'idletime: logfile logmonitor idletime not reached ({LbbLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
-			#first layer: Is idletime reached?
-			if (
-				(not CmdRunnerActive) and
-				(lib_system.get_uptime_sec() >= IdleSecToPowerOff) and
-				(LbbLogfileAgeSec >= IdleSecToPowerOff) and
-				(ApacheLogfileAgeSec >= IdleSecToPowerOff)
-			):
-				#second layer: Are rsync or gphoto2 active?
-				rsync_active	= True
-				if (
-					(subprocess.run('pgrep rsync',shell=True).returncode > 0) and 	# no match
-					(subprocess.run('pgrep gphoto2',shell=True).returncode > 0)		# no match
-				):
-					lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
+			# logfile apache2
+			ApacheLogfileAgeSec	= CompareTime - os.stat(self.ApacheAccessLogfile).st_mtime if os.path.isfile(self.ApacheAccessLogfile) else IdleSecToPowerOff
+			if ApacheLogfileAgeSec < IdleSecToPowerOff:
+				return(f'idletime: logfile apache2 idletime not reached ({ApacheLogfileAgeSec}s < {IdleSecToPowerOff}s)')
+
+			# logfile apache2 rclone gui
+			ApacheRcloneLogfileAgeSec	= CompareTime - os.stat(self.ApacheRcloneAccessLogfile).st_mtime if os.path.isfile(self.ApacheRcloneAccessLogfile) else IdleSecToPowerOff
+			if ApacheRcloneLogfileAgeSec < IdleSecToPowerOff:
+				return(f'idletime: logfile rclone gui idletime not reached ({ApacheRcloneLogfileAgeSec}s < {IdleSecToPowerOff}s)')
+
+			# check processes
+			for process in ['rsync','gphoto2']:
+				if subprocess.run(['pgrep','-x',process]).returncode == 0:
+					return(f'idletime: active process={process}')
+
+			# CmdRunnerActive?
+			if os.path.isfile(self.const_CMD_RUNNER_LOCKFILE):
+				return('idletime: active process=cmd_runner')
+
+			# shutdown
+			lib_poweroff.poweroff(Action='poweroff', DisplayMessage=[self.__lan.l('box_poweroff_idle_time_reached')]).poweroff()
 
 if __name__ == "__main__":
-	idletime().check()
+	print(idletime().check())

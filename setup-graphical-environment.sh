@@ -22,7 +22,11 @@
 ## USER_WWW_DATA
 
 # settings
-USER="lbb"
+USER="lbb-desktop"
+
+# create user
+sudo useradd --create-home -s /bin/bash ${USER}
+
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
@@ -35,14 +39,14 @@ if [ ! -f "/usr/bin/startx" ]; then
 	exit "No graphical system detected."
 fi
 
-# auto logon user lbb
+# auto logon $USER
 ## enable auto login
 sudo raspi-config nonint do_boot_behaviour B4
 
 ## edit /etc/lightdm/lightdm.conf to set auto login user
 CONFIG_FILE="/etc/lightdm/lightdm.conf"
 VAR="autologin-user"
-NEW_VALUE="lbb"
+NEW_VALUE="${USER}"
 
 sudo sed $CONFIG_FILE -i -e "s/^\(#\|\)${VAR}=.*/autologin-user=${NEW_VALUE}/"
 
@@ -57,6 +61,30 @@ mount_removable=0
 autorun=0
 """ | sudo -u $USER tee $CONFIG_FILE
 
+# set background
+BG_FILE="lbb-desktop.png"
+BG_DIR="/home/$USER/backgrounds"
+
+sudo -u $USER mkdir -p "${BG_DIR}"
+sudo cp "${INSTALLER_DIR}/img/${BG_FILE}" "${BG_DIR}"
+sudo chown $USER:$USER "${BG_DIR}" -R
+
+echo """[*]
+wallpaper_mode=crop
+wallpaper_common=1
+wallpaper=${BG_DIR}/${BG_FILE}
+desktop_bg=#ffffff
+desktop_fg=#e8e8e8
+desktop_shadow=#d6d3de
+desktop_font=PibotoLt 12
+show_wm_menu=0
+sort=mtime;ascending;
+show_documents=0
+show_trash=0
+show_mounts=0
+""" | sudo -u $USER tee /home/$USER/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
+
+
 # auto start browser
 AUTOSTART_USER_DIR="/home/$USER/.config/autostart"
 
@@ -64,7 +92,7 @@ sudo -u $USER mkdir -p $AUTOSTART_USER_DIR
 echo """[Desktop Entry]
 Type=Application
 Name=little-backup-box
-Exec="firefox --kiosk http://localhost"
+Exec="firefox -setDefaultBrowser --kiosk http://localhost"
 """ | sudo -u $USER tee $AUTOSTART_USER_DIR/little-backup-box.desktop
 
 # install KioskBoard virtual keyboard
