@@ -101,10 +101,13 @@ function virtual_keyboard_js($enabled,$language,$theme,...$virtual_keyboard_clas
 			echo("<script>");
 			echo("	KioskBoard.run('.$virtual_keyboard_class_name',{");
 			echo("		keysArrayOfObjects: " . $keysArrayOfObjects . ",");
-			echo("		allowRealKeyboard: false,");
+			echo("		allowRealKeyboard: true,");
 			echo("		allowMobileKeyboard: true,");
 			echo("		language: '$language',");
 			echo("		theme: '$theme',");
+			echo("		capsLockActive: false,");
+			echo("		keysFontSize: '17px',");
+			echo("		keysIconSize: '20px',");
 			echo("	});");
 			echo("</script>");
 		}
