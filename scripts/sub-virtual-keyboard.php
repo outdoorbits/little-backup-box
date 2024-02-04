@@ -116,7 +116,6 @@ function virtual_keyboard_js($enabled,$language,$theme) {
 }
 
 function virtual_keyboard_enabled($enabled) {
-	return(true);#xxx
 	return($enabled and ($_SERVER['REMOTE_ADDR'] == '127.0.0.1'));
 }
 
