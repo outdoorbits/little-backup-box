@@ -21,9 +21,9 @@
 // 		include("sub-virtual-keyboard.php");
 //
 // 2. in the html head execute this to integrate the css:
-// 		virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
+// 		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 //
-// 3. add <?php echo (virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],classes,type,placement,specialchararcters)); ?\>
+// 3. add <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],classes,type,placement,specialchararcters); ?\>
 //		enabled				= boolean
 // 		classes				= string, space separated
 // 		type				= one out of ['all', 'keyboard', 'numpad']
@@ -31,7 +31,7 @@
 // 		specialcharacters	= one out of ['true', 'false']
 //
 // 4. below the last input and before </body> execute this to activate the keyboard function:
-// 		virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]);
+// 		echo virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]);
 // as arguments pass all the keyboard types you need
 
 
@@ -43,7 +43,7 @@ function virtual_keyboard_css($enabled) {
 	if (virtual_keyboard_enabled($enabled)) {
 		global $kioskboard_dir;
 
-		echo ("<link href='${kioskboard_dir}/kioskboard-2.3.0.min.css' rel='stylesheet'>");
+		return ("<link href='${kioskboard_dir}/kioskboard-2.3.0.min.css' rel='stylesheet'>");
 	}
 }
 
@@ -74,8 +74,6 @@ function virtual_keyboard_js($enabled,$language,$theme) {
 	if (virtual_keyboard_enabled($enabled)) {
 		global $virtual_keyboard_class_name;
 
-		echo("<script src='KioskBoard/kioskboard-2.3.0.min.js'></script>");
-
 		$language_keys	= array(
 			'ar'=>	'arabic',
 			'en'=>	'english',
@@ -99,19 +97,19 @@ function virtual_keyboard_js($enabled,$language,$theme) {
 			$theme	= 'light';
 		}
 
-		echo("<script>");
-		echo("	KioskBoard.run('.$virtual_keyboard_class_name',{");
-		echo("		keysArrayOfObjects: " . $keysArrayOfObjects . ",");
-		echo("		allowRealKeyboard: true,");
-		echo("		allowMobileKeyboard: true,");
-		echo("		language: '$language',");
-		echo("		theme: '$theme',");
-		echo("		capsLockActive: false,");
-		echo("		keysFontSize: '17px',");
-		echo("		keysIconSize: '20px',");
-		echo("	});");
-		echo("</script>");
-
+		return("<script src='KioskBoard/kioskboard-2.3.0.min.js'></script>
+<script>
+	KioskBoard.run('.$virtual_keyboard_class_name',{
+		keysArrayOfObjects: " . $keysArrayOfObjects . ",
+		allowRealKeyboard: true,
+		allowMobileKeyboard: true,
+		language: '$language',
+		theme: '$theme',
+		capsLockActive: false,
+		keysFontSize: '17px',
+		keysIconSize: '20px',
+	});
+</script>");
 	}
 }
 

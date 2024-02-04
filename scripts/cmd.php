@@ -28,7 +28,7 @@ License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 <head>
 	<?php
 		include "${WORKING_DIR}/sub-standards-header-loader.php";
-		virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
+		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 	?>
 </head>
 
@@ -214,7 +214,7 @@ if (isset($CMD_HEADER)) {
 	<?php
 		}
 }
-		virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]);
+		echo virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]);
 	?>
 </body>
 </html>

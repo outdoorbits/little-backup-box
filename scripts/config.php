@@ -46,7 +46,7 @@
 <head>
 	<?php
 		include "${WORKING_DIR}/sub-standards-header-loader.php";
-		virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
+		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 	?>
 </head>
 
@@ -1323,7 +1323,7 @@ function upload_settings() {
 		</div>
 
 		<?php include "sub-footer.php"; ?>
-		<?php virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]); ?>
+		<?php echo virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]); ?>
 </body>
 
 </html>
