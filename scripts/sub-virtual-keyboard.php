@@ -31,12 +31,13 @@
 // 		specialcharacters	= one out of ['true', 'false']
 //
 // 4. below the last input and before </body> execute this to activate the keyboard function:
-// 		virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"],'virtual_keyboard'[, 'virtual_keyboard_xyz']);
+// 		virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]);
 // as arguments pass all the keyboard types you need
 
 
 
 $kioskboard_dir	= '/KioskBoard';
+$virtual_keyboard_class_name	= 'virtual_keyboard';
 
 function virtual_keyboard_css($enabled) {
 	if (virtual_keyboard_enabled($enabled)) {
@@ -69,8 +70,10 @@ function virtual_keyboard_options($enabled,$classes,$type, $placement, $specialc
 	}
 }
 
-function virtual_keyboard_js($enabled,$language,$theme,...$virtual_keyboard_class_names) {
+function virtual_keyboard_js($enabled,$language,$theme) {
 	if (virtual_keyboard_enabled($enabled)) {
+		global $virtual_keyboard_class_name;
+
 		echo("<script src='KioskBoard/kioskboard-2.3.0.min.js'></script>");
 
 		$language_keys	= array(
@@ -96,25 +99,24 @@ function virtual_keyboard_js($enabled,$language,$theme,...$virtual_keyboard_clas
 			$theme	= 'light';
 		}
 
-		foreach ($virtual_keyboard_class_names as $virtual_keyboard_class_name) {
+		echo("<script>");
+		echo("	KioskBoard.run('.$virtual_keyboard_class_name',{");
+		echo("		keysArrayOfObjects: " . $keysArrayOfObjects . ",");
+		echo("		allowRealKeyboard: true,");
+		echo("		allowMobileKeyboard: true,");
+		echo("		language: '$language',");
+		echo("		theme: '$theme',");
+		echo("		capsLockActive: false,");
+		echo("		keysFontSize: '17px',");
+		echo("		keysIconSize: '20px',");
+		echo("	});");
+		echo("</script>");
 
-			echo("<script>");
-			echo("	KioskBoard.run('.$virtual_keyboard_class_name',{");
-			echo("		keysArrayOfObjects: " . $keysArrayOfObjects . ",");
-			echo("		allowRealKeyboard: true,");
-			echo("		allowMobileKeyboard: true,");
-			echo("		language: '$language',");
-			echo("		theme: '$theme',");
-			echo("		capsLockActive: false,");
-			echo("		keysFontSize: '17px',");
-			echo("		keysIconSize: '20px',");
-			echo("	});");
-			echo("</script>");
-		}
 	}
 }
 
 function virtual_keyboard_enabled($enabled) {
+	return(true);#xxx
 	return($enabled and ($_SERVER['REMOTE_ADDR'] == '127.0.0.1'));
 }
 

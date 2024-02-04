@@ -1323,7 +1323,7 @@ function upload_settings() {
 		</div>
 
 		<?php include "sub-footer.php"; ?>
-		<?php virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"],'virtual_keyboard','virtual_keyboard_numbers'); ?>
+		<?php virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]); ?>
 </body>
 
 </html>
