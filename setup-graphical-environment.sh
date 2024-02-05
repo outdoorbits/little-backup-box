@@ -36,7 +36,7 @@ fi
 
 # Don't start setup if no graphical system installed
 if [ ! -f "/usr/bin/startx" ]; then
-	exit "No graphical system detected."
+	return
 fi
 
 # auto logon $USER
