@@ -58,10 +58,10 @@ class password(object):
 				f.write('Authtype Basic\n')
 				f.write('Authname "Password Required"\n')
 				f.write('AuthUserFile /etc/apache2/includes/htpasswd\n')
-				f.write('Order allow,deny\n')
-				f.write('Require valid-user\n')
-				f.write('Allow from localhost\n')
-				f.write('Satisfy Any\n')
+				f.write('<RequireAny>\n')
+				f.write('    Require valid-user\n')
+				f.write('    Require local\n')
+				f.write('</RequireAny>\n')
 
 			subprocess.run(f'echo "{Password}" | htpasswd -ci "/etc/apache2/includes/htpasswd" "{self.user}"',shell=True)
 
