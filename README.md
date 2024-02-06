@@ -2,7 +2,7 @@
 <h2>About</h2>
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg"  align="left" title="Little Backup Box in its 3D printed case"><BR CLEAR="all">
 Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br />
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-desktop-variant.png"  align="right" width="300" title="Little Backup Box in a touchscreen housing"><BR CLEAR="all">
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-desktop-variant.png"  align="left" title="Little Backup Box in a touchscreen housing"><BR CLEAR="all">
 Little Backup Box in a touchscreen housing<br />
 <br />
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br />
