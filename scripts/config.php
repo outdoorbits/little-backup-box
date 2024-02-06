@@ -1310,12 +1310,12 @@ function upload_settings() {
 <!-- 				<ul> -->
 <!-- 					<li> -->
 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'main' ? '<b>' : ''); ?>
-							<a href='/cmd.php?CMD=update'><?php echo L::config_update_linktext ?></a>
+							<button onclick="window.location.href='/cmd.php?CMD=update';"><?php echo L::config_update_linktext ?></button>
 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'main' ? '</b>' : ''); ?>
 <!-- 					</li> -->
 <!-- 					<li> -->
 <!-- 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '<b>' : ''); ?> -->
-<!-- 							<a href='/cmd.php?CMD=update_development'><?php echo L::config_update_development_linktext ?></a> -->
+<!-- 								<button onclick="window.location.href='/cmd.php?CMD=update_development';"><?php echo L::config_update_development_linktext ?></button> -->
 <!-- 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '</b>' : ''); ?> -->
 <!-- 					</li> -->
 <!-- 				</ul> -->
