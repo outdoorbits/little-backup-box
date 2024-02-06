@@ -1,6 +1,6 @@
 <h1>Little Backup Box</h1>
 <h2>About</h2>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg"  align="left" width="100%" title="Little Backup Box in its 3D printed case"><br />
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg"  align="left" title="Little Backup Box in its 3D printed case"><br />
 Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br />
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-desktop-variant.png"  align="right" width="300" title="Little Backup Box in a touchscreen housing"><br />
 <br />
