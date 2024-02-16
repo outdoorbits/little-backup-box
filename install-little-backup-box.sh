@@ -174,12 +174,12 @@ sudo systemctl disable openvpn.service
 if  (( ${OS_RELEASE} > 11 )); then
 		# older os cant be used with raspberry pi 5
 		CONFIG_TXT="/boot/firmware/config.txt"
-		if ! grep -q "usb_max_current_enable" "${CONFIG_TXT}"; then
-				echo "usb_max_current_enable=1" | sudo tee -a "${CONFIG_TXT}"
+		VAR="usb_max_current_enable"
+		VALUE=1
+		if ! grep -q "${VAR}" "${CONFIG_TXT}"; then
+				echo "${VAR}=${VALUE}" | sudo tee -a "${CONFIG_TXT}"
 		else
-				VAR="usb_max_current_enable"
-				VALUE=1
-				sudo sed -i "/^$VAR/s/\(.[^=]*\)\([ \t]*=[ \t]*\)\(.[^=]*\)/\1\2$VALUE/" "${CONFIG_TXT}"
+				sudo sed -i "/^${VAR}/s/\(.[^=]*\)\([ \t]*=[ \t]*\)\(.[^=]*\)/\1\2${VALUE}/" "${CONFIG_TXT}"
 		fi
 fi
 
