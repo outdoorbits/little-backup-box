@@ -187,7 +187,7 @@ class backup(object):
 		if self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif']):
 			self.backup()
 
-		if self.TargetDevice and self.DoSyncDatabase:
+		if self.TargetDevice and (self.DoSyncDatabase or self.DoGenerateThumbnails):
 			self.syncDatabase()
 
 		if self.TargetDevice and self.DoGenerateThumbnails:
