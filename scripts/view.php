@@ -309,6 +309,9 @@
 		$DATABASE_FILE	= $STORAGE_PATH . '/' . $constants['const_IMAGE_DATABASE_FILENAME'];
 
 		if (file_exists($DATABASE_FILE)) {
+			# check database
+			exec('sudo python3 ' . $WORKING_DIR . '/lib_view.py ' . $STORAGE_PATH);
+
 			try {
 
 				shell_exec("sudo chown www-data:www-data '" . $DATABASE_FILE ."'");

@@ -23,7 +23,6 @@ import re
 import sqlite3
 import subprocess
 
-
 class viewdb(object):
 
 	def __init__(self,setup,log,MountPoint):
@@ -62,6 +61,9 @@ class viewdb(object):
 		dbCreateArray.append(f"alter table EXIF_DATA add column LbbRating integer default {self.const_VIEW_RATING_STANDARD_VALUE};")
 		dbCreateArray.append("alter table EXIF_DATA add column Rating text;")
 		dbCreateArray.append("alter table EXIF_DATA add column Camera_Model_Name text;")
+
+		dbCreateArray.append("alter table EXIF_DATA add column File_Type text;")
+		dbCreateArray.append("alter table EXIF_DATA add column File_Type_Extension text;")
 
 		# try to get version of existing db
 		dbVersion	= -1
@@ -197,3 +199,18 @@ class viewdb(object):
 		if dbFields:
 			Command	= f"insert into EXIF_DATA ({dbFields}) values ({dbValues});"
 			self.dbExecute(Command)
+
+
+if __name__ == "__main__":
+	import sys
+
+	if len(sys.argv) > 1:
+		import lib_setup
+		import lib_log
+
+		setup	= lib_setup.setup()
+		log		= lib_log.log()
+
+		MountPoint	= sys.argv[1]
+
+		viewdb(setup,log,MountPoint)
