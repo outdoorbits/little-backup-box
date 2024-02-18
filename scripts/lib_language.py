@@ -49,5 +49,5 @@ if __name__ == "__main__":
 
 	if key:
 		lan=language()
-		print(lan.l(key).decode())
+		print(lan.l(key))
 

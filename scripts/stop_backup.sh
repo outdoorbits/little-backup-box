@@ -20,3 +20,5 @@
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 ps -ef | grep "${WORKING_DIR}/backup" | grep -v grep | awk '{print $2}' | sudo xargs -r kill -9
+
+sudo python3 ${WORKING_DIR}/lib_display.py "$(python3 ${WORKING_DIR}/lib_language.py main_backup_stopped)"

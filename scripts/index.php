@@ -335,7 +335,6 @@
 
 		if (isset($_POST['stopbackup'])) {
 			popup(L::main_stopbackup_m,$config["conf_POPUP_MESSAGES"]);
-			exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::main_backup_stopped . "'");
 			exec("sudo $WORKING_DIR/stop_backup.sh");
 		}
 
