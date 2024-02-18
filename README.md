@@ -38,7 +38,7 @@ These languages are already available. Do you want to maintain or create a trans
 <li>2024-01-25: Enable using of graphic environment</li>
 <li>2024-01-19: Workaround to enable display with Raspberry Pi 5</li>
 <li>2023-12-29: Workaround to enable comitup with bookworm</li>
-<li>2023/09/17: When backing up from cameras, all connected cameras are backed up. This is restricted to the use of different models! Test carefully! Some smartphones use the same technical identifier even though the model is different. In this case, only one of these devices would be backed up!</li>
+<li>2023/09/17: When backing up from cameras, all connected cameras are backed up. Please check you logs or your mail reports after backup!</li>
 <li>2023/09/16: View image viewer: Support for tif images added</li>
 <li>2023/09/16: When backing up from USB, all connected USB partitions (except those of the target drive) are backed up.</li>
 <li>2023/08/24: Little Backup Box core files are nearly totally rewritten to python. This is a major step and the new version might be not stable yet but final tests have been very successfully. In <a href="#installation"><b>installation instructions</b></a> you find how to get this version. Please test and report. Thank you!</li>

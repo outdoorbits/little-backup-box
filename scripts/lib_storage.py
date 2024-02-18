@@ -91,7 +91,8 @@ class storage(object):
 		self.__log		= lib_log.log()
 		self.__lan		= lib_language.language()
 
-		self.DeviceIdentifier = '' # will be set on mounting, will never be automatic unset
+		self.DeviceIdentifier	= ''	# will be set on mounting, will never be automatic unset
+		self.CameraPort		= ''	# will be set on mounting, will never be automatic unset
 
 		# for use in cloud_rsync only:
 		self.rsyncSSH	= []
@@ -377,30 +378,33 @@ class storage(object):
 		SourceCommand	= ["gphoto2", "--auto-detect"]
 		FilterCommand	= ["grep", "usb"]
 
-		CameraIdentifierUSB	= ''
-		while not CameraIdentifierUSB:
+		CameraModel	= ''
+		while not CameraModel:
 			try:
 				Cameras	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
 
 				if self.DeviceIdentifierPresetThis:
-					if any(self.DeviceIdentifierPresetThis in Cam for Cam in Cameras):
-						CameraIdentifierUSB	= self.DeviceIdentifierPresetThis
+					if any(self.DeviceIdentifierPresetThis == format_CameraIdentifier(split_CameraAutoDetect(Cam)[0],split_CameraAutoDetect(Cam)[1]) for Cam in Cameras):
+						CameraModelPort	= self.DeviceIdentifierPresetThis
+
 				else:
-					CameraIdentifierUSB	= Cameras[0].split('usb:')[0].strip(' ')
+					CameraModelPort		= Cameras[0]
+
+				CameraModel, self.CameraPort = split_CameraAutoDetect(CameraModelPort)
 
 			except:
 				pass
 
-			if not CameraIdentifierUSB:
+			if not CameraModel:
 				time.sleep(1)
 
 		self.__camera_connected	= True
-		self.DeviceIdentifier	= CameraIdentifierUSB
-		self.__log.message(f"gphoto2: Got camera model identifier '{CameraIdentifierUSB}'.", 3)
+		self.DeviceIdentifier	= CameraModel
+		self.__log.message(f"gphoto2: Got camera model identifier '{self.DeviceIdentifier}'.", 3)
 
 		self.__display.message([f":{self.__lan.l('box_backup_camera_ok')}", f":{self.__lan.l('box_backup_working')}..."])
 
-		Command	= ["gphoto2", "--camera", CameraIdentifierUSB, "--summary"]
+		Command	= ["gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--summary"]
 
 		try:
 			CameraSummaryList	= subprocess.check_output(Command).decode().strip().split('\n')
@@ -437,7 +441,7 @@ class storage(object):
 		self.__display.message([f":{CameraModel}", f":{CameraManufacturer}", f":SN: {CameraSerialDisp}"])
 
 		# define camera backup folders
-		SourceCommand	= ["gphoto2", "--camera", CameraIdentifierUSB, "--storage-info"]
+		SourceCommand	= ["gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--storage-info"]
 		FilterCommand	= ["grep", "basedir"]
 		try:
 			CameraBaseDirs	= lib_common.pipe(SourceCommand,FilterCommand).decode().strip().replace('basedir=','').split('\n')
@@ -481,7 +485,7 @@ class storage(object):
 			if len(self.SubPathsAtSource) == 0:
 				self.__display.message([f":{self.__lan.l('box_backup_camera_scanning_folders')}"])
 
-				SourceCommand	= ["gphoto2", "--camera", CameraIdentifierUSB, "--list-folders"]
+				SourceCommand	= ["gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--list-folders"]
 				FilterCommand	= ["grep", "^There are"]
 				try:
 					CameraFoldersRaw	= lib_common.pipe(SourceCommand,FilterCommand).decode().strip().split('\n')
@@ -941,6 +945,18 @@ def get_available_partitions(excludeTarget='', excludeSources=[], addLum=False, 
 
 	return(availablePartitions)
 
+def format_CameraIdentifier(Model, Port):
+	return(f"{Model} {Port}")
+
+def split_CameraAutoDetect(AutoDetect):
+	try:
+		Model, Port	= AutoDetect.split(' usb:')
+		Model	= Model.strip()
+		Port	= f"usb:{Port.strip()}"
+		return([Model, Port])
+	except:
+		return(['',''])
+
 def get_available_cameras():
 	SourceCommand	= ["gphoto2", "--auto-detect"]
 	FilterCommand	= ["grep", "usb"]
@@ -952,15 +968,23 @@ def get_available_cameras():
 
 	available_cameras	= []
 	for Camera in Cameras:
-		Camera	= Camera.split('usb:')[0].strip()
+		CameraModelPort	= Camera.split(' usb:')
+		try:
+			CameraModel		= CameraModelPort[0].strip()
+			CameraPort		= f"usb:{CameraModelPort[1]}".strip()
+		except:
+			CameraModel		= ''
+			CameraPort		= ''
 
-		if not Camera:
+		if not CameraModel: # Model empty -> retry
 			continue
 
-		if Camera in Cameras:
+		Identifier	= format_CameraIdentifier(CameraModel, CameraPort)
+
+		if Identifier in available_cameras: # unknown devices only
 			continue
 
-		available_cameras.append(Camera)
+		available_cameras.append(Identifier)
 
 	return(available_cameras)
 

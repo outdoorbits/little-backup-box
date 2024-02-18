@@ -389,7 +389,7 @@ class backup(object):
 							os.chdir(f"{self.TargetDevice.MountPoint}/{self.SourceDevice.SubPathAtTarget}")
 
 							# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
-							Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--filename", "%F/%f.%C", "--get-all-files", "--folder", SubPathAtSource, "--skip-existing"]
+							Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, "--filename", "%F/%f.%C", "--get-all-files", "--folder", SubPathAtSource, "--skip-existing"]
 							self.__log.message(' '.join(Command),3)
 
 							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
@@ -516,7 +516,10 @@ class backup(object):
 
 				#end loop RepeatBackupNextSource
 				if (self.SourceDevice.StorageType in ['usb', 'camera']):
-					completedSources.append(self.SourceDevice.DeviceIdentifier)
+					if self.SourceDevice.StorageType == 'usb':
+						completedSources.append(self.SourceDevice.DeviceIdentifier)
+					else: # if self.SourceDevice.StorageType == 'camera'
+						completedSources.append(lib_storage.format_CameraIdentifier(self.SourceDevice.DeviceIdentifier, self.SourceDevice.CameraPort))
 
 					if self.SourceDevice.StorageType == 'usb':
 						availableSources	= lib_storage.get_available_partitions(self.TargetDevice.DeviceIdentifier,completedSources)
@@ -907,7 +910,7 @@ class backup(object):
 
 			for SubPathAtSource in checkPathsList:
 
-				SourceCommand		= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--list-files", "--folder", f"{SubPathAtSource}"]
+				SourceCommand		= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, "--list-files", "--folder", f"{SubPathAtSource}"]
 				FilterCommand		= ["grep", "^#"]
 				self.__log.message(' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand),3)
 				try:

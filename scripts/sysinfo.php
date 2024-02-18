@@ -102,6 +102,7 @@
 
 					exec("sudo gphoto2 --auto-detect",$DEVICES);
 					if (count($DEVICES)>2) {
+
 						echo "<ol>";
 
 							$FirstColumnLength	= strpos($DEVICES[0],'Port');
@@ -111,20 +112,19 @@
 								$LineNumber	+= 1;
 
 									if ($LineNumber > 2) {
-										$DEVICE	= substr($DEVICE,0,$FirstColumnLength);
-										$DEVICE	= trim($DEVICE);
+										$MODEL	= substr($DEVICE,0,$FirstColumnLength);
+										$MODEL	= trim($MODEL);
+
+										$PORT	= substr($DEVICE,$FirstColumnLength);
+										$PORT	= trim($PORT);
 
 										echo "<li>";
 
-											echo "<h3>" . L::sysinfo_camera_identifier ."</h3>";
-											echo "<ul>";
 
-												echo "<li>$DEVICE</li>";
-
-											echo "</ul>";
+											echo "$MODEL $PORT";
 
 											echo '<h4>' . L::sysinfo_camera_model.'</h4>';
-											exec("sudo gphoto2 --camera '$DEVICE' --summary | grep 'Model' | cut -d: -f2 | tr -d ' '",$SUMMARY);
+											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --summary | grep 'Model' | cut -d: -f2 | tr -d ' '",$SUMMARY);
 											if (count($SUMMARY)) {
 												echo "<ul>";
 
@@ -141,7 +141,7 @@
 
 											echo '<h4>' . L::sysinfo_camera_serial.'</h4>';
 											unset($SUMMARY);
-											exec("sudo gphoto2 --camera '$DEVICE' --summary | grep 'Serial Number' | cut -d: -f2 | tr -d ' '",$SUMMARY);
+											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --summary | grep 'Serial Number' | cut -d: -f2 | tr -d ' '",$SUMMARY);
 											if (count($SUMMARY)) {
 												echo "<ul>";
 
@@ -158,7 +158,7 @@
 											}
 
 											echo '<h4>' . L::sysinfo_camera_storages.'</h4>';
-											exec("sudo gphoto2 --camera '$DEVICE' --storage-info | grep 'basedir' | cut -d= -f2 | tr -d ' '",$STORAGES);
+											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --storage-info | grep 'basedir' | cut -d= -f2 | tr -d ' '",$STORAGES);
 											if (count($STORAGES)) {
 												echo "<ul>";
 													foreach ($STORAGES as $STORAGE) {
