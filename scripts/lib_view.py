@@ -22,6 +22,7 @@ import os
 import re
 import sqlite3
 import subprocess
+import sys
 
 class viewdb(object):
 
@@ -83,8 +84,10 @@ class viewdb(object):
 				i	+= 1
 				if i > dbVersion:
 					if Command != "DEPRECATED":
-						#print(Command)
-						self.__cur.execute(Command)
+						try:
+							self.__cur.execute(Command)
+						except:
+							print(f'Error executing "{Command}".',file=sys.stderr)
 
 			self.dbExecute(f"update CONFIG set VERSION = {i};")
 

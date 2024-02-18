@@ -50,7 +50,8 @@
       "update_exif_checkbox_label": "Écrire des données EXIF ​​​​dans les fichiers d'origine (uniquement pour le stockage local)",
       "preset_target_label": "Définir la partition cible USB",
       "preset_source_label": "Définir la partition source USB",
-      "preset_partition_auto": "sélection automatique"
+      "preset_partition_auto": "sélection automatique",
+      "stopped": "Sauvegarde arrêtée."
     },
     "logout_button": "Se déconnecter"
   },

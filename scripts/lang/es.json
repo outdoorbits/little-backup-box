@@ -50,7 +50,8 @@
       "update_exif_checkbox_label": "Escribir datos EXIF ​​en los archivos originales (solo para almacenamiento local)",
       "preset_target_label": "Establecer partición de destino USB",
       "preset_source_label": "Establecer partición de origen USB",
-      "preset_partition_auto": "Selección automática"
+      "preset_partition_auto": "Selección automática",
+      "stopped": "Copia se detuvo."
     },
     "logout_button": "Cerrar sesión"
   },

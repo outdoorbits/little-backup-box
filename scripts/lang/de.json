@@ -50,7 +50,8 @@
       "update_exif_checkbox_label": "EXIF-Daten in die Original-Dateien schreiben (nur für lokale Speicher)",
       "preset_target_label": "USB Zielpartition festlegen",
       "preset_source_label": "USB Quellpartition festlegen",
-      "preset_partition_auto": "automatische Auswahl"
+      "preset_partition_auto": "automatische Auswahl",
+      "stopped": "Backup gestoppt."
     },
     "logout_button": "Ausloggen"
   },
