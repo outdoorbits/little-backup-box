@@ -187,7 +187,17 @@ class backup(object):
 		if self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif']):
 			self.backup()
 
-		if self.TargetDevice and (self.DoSyncDatabase or self.DoGenerateThumbnails):
+		if (
+				self.TargetDevice and
+				(
+					self.DoSyncDatabase or
+					(
+						self.DoGenerateThumbnails and
+						not self.get_excludeTIMS() and
+						self.SourceDevice.StorageType != 'camera'
+					)
+				)
+			):
 			self.syncDatabase()
 
 		if self.TargetDevice and self.DoGenerateThumbnails:
@@ -241,14 +251,14 @@ class backup(object):
 				# check invalid combinations of Source and Target
 				if (
 					(self.SourceDevice.StorageType == self.TargetDevice.StorageType and not (self.SourceDevice.StorageType in ['usb', 'cloud'])) or				# usb to usb and cloud to cloud are the only methods where type of Source and Target can be equal
-					(
+					(																																			# exclude cloud to cloud for equal cloud services
 						self.SourceDevice.StorageType == 'cloud' and
 						self.TargetDevice.StorageType == 'cloud' and
 						self.SourceDevice.CloudServiceName == self.TargetDevice.CloudServiceName
-					) or																													# cloud to cloud only for different cloud services
-					(self.SourceDevice.StorageType == 'cloud_rsync') or																		# can't write device identifier to rsync server
-					(self.TargetDevice.StorageType == 'camera') or																			# camera never can be target
-					(self.SourceDevice.StorageType	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')							# camera can't rsync to rsyncserver as this is not supported by gphoto2
+					) or
+					(self.SourceDevice.StorageType == 'cloud_rsync') or																							# can't write device identifier to rsync server
+					(self.TargetDevice.StorageType == 'camera') or																								# camera never can be target
+					(self.SourceDevice.StorageType	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')												# camera can't rsync to rsyncserver as this is not supported by gphoto2
 				):
 					self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
 					sys.exit(104)
