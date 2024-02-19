@@ -124,6 +124,7 @@
 											echo "$MODEL $PORT";
 
 											echo '<h4>' . L::sysinfo_camera_model.'</h4>';
+											unset($SUMMARY);
 											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --summary | grep 'Model' | cut -d: -f2 | tr -d ' '",$SUMMARY);
 											if (count($SUMMARY)) {
 												echo "<ul>";
@@ -158,6 +159,7 @@
 											}
 
 											echo '<h4>' . L::sysinfo_camera_storages.'</h4>';
+											unset($STORAGES);
 											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --storage-info | grep 'basedir' | cut -d= -f2 | tr -d ' '",$STORAGES);
 											if (count($STORAGES)) {
 												echo "<ul>";

@@ -374,26 +374,19 @@ class storage(object):
 	def __mount_camera(self):
 		self.__display.message([f":{self.__lan.l('box_backup_connect_camera_1')}", f":{self.__lan.l('box_backup_connect_camera_2')}"])
 
-		# Wait for camera
-		SourceCommand	= ["gphoto2", "--auto-detect"]
-		FilterCommand	= ["grep", "usb"]
-
 		CameraModel	= ''
 		while not CameraModel:
-			try:
-				Cameras	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
+			Cameras	= get_available_cameras()
 
+			if Cameras:
 				if self.DeviceIdentifierPresetThis:
-					if any(self.DeviceIdentifierPresetThis == format_CameraIdentifier(split_CameraAutoDetect(Cam)[0],split_CameraAutoDetect(Cam)[1]) for Cam in Cameras):
+					if any(self.DeviceIdentifierPresetThis == Cam for Cam in Cameras):
 						CameraModelPort	= self.DeviceIdentifierPresetThis
 
 				else:
 					CameraModelPort		= Cameras[0]
 
 				CameraModel, self.CameraPort = split_CameraAutoDetect(CameraModelPort)
-
-			except:
-				pass
 
 			if not CameraModel:
 				time.sleep(1)
