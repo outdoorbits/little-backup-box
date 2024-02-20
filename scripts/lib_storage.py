@@ -386,7 +386,7 @@ class storage(object):
 				else:
 					CameraModelPort		= Cameras[0]
 
-				CameraModel, self.CameraPort = split_CameraAutoDetect(CameraModelPort)
+				CameraModel, self.CameraPort = split_CameraIdentifier(CameraModelPort)
 
 			if not CameraModel:
 				time.sleep(1)
@@ -941,43 +941,55 @@ def get_available_partitions(excludeTarget='', excludeSources=[], addLum=False, 
 def format_CameraIdentifier(Model, Port):
 	return(f"{Model} {Port}")
 
-def split_CameraAutoDetect(AutoDetect):
+def split_CameraIdentifier(Identifier):
 	try:
-		Model, Port	= AutoDetect.split(' usb:')
+		Model, Port	= Identifier.strip().rsplit(' ', 1)
+
 		Model	= Model.strip()
-		Port	= f"usb:{Port.strip()}"
+		Port	= f"{Port.strip()}"
+
 		return([Model, Port])
 	except:
 		return(['',''])
 
 def get_available_cameras():
-	SourceCommand	= ["gphoto2", "--auto-detect"]
-	FilterCommand	= ["grep", "usb"]
+	Command	= ["gphoto2", "--auto-detect"]
 
 	try:
-		Cameras	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
+		Cameras	= subprocess.check_output(Command).decode().split('\n')
 	except:
 		return([])
 
-	available_cameras	= []
-	for Camera in Cameras:
-		CameraModelPort	= Camera.split(' usb:')
+	ModelColumnWidth	= Cameras[0].index('Port')
+
+	available_cameras_raw	= []
+	for Camera in Cameras[2:]:
+
 		try:
-			CameraModel		= CameraModelPort[0].strip()
-			CameraPort		= f"usb:{CameraModelPort[1]}".strip()
+			CameraModel		= Camera[0:ModelColumnWidth].strip()
+			CameraPort		= Camera[ModelColumnWidth:].strip()
 		except:
 			CameraModel		= ''
 			CameraPort		= ''
 
-		if not CameraModel: # Model empty -> retry
-			continue
+		if (CameraModel and CameraPort): # Model or Port empty -> retry
+			available_cameras_raw.append(
+				{
+					'Model':	CameraModel,
+					'Port':		CameraPort
+				}
+			)
 
-		Identifier	= format_CameraIdentifier(CameraModel, CameraPort)
+	#sort list of cameras
+	available_cameras_sorted	= sorted(available_cameras_raw, key=lambda x:x['Port'])
 
-		if Identifier in available_cameras: # unknown devices only
-			continue
+	#create formated list of cameras
+	available_cameras	= []
+	for camera in available_cameras_sorted:
+		Identifier	= format_CameraIdentifier(camera['Model'], camera['Port'])
 
-		available_cameras.append(Identifier)
+		if not Identifier in available_cameras: # unknown devices only
+			available_cameras.append(Identifier)
 
 	return(available_cameras)
 
