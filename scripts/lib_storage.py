@@ -92,7 +92,7 @@ class storage(object):
 		self.__lan		= lib_language.language()
 
 		self.DeviceIdentifier	= ''	# will be set on mounting, will never be automatic unset
-		self.CameraPort		= ''	# will be set on mounting, will never be automatic unset
+		self.CameraPort			= ''	# will be set on mounting, will never be automatic unset
 
 		# for use in cloud_rsync only:
 		self.rsyncSSH	= []
@@ -374,25 +374,22 @@ class storage(object):
 	def __mount_camera(self):
 		self.__display.message([f":{self.__lan.l('box_backup_connect_camera_1')}", f":{self.__lan.l('box_backup_connect_camera_2')}"])
 
-		CameraModel	= ''
-		while not CameraModel:
+		while not (self.DeviceIdentifier and self.CameraPort):
 			Cameras	= get_available_cameras()
 
 			if Cameras:
 				if self.DeviceIdentifierPresetThis:
 					if any(self.DeviceIdentifierPresetThis == Cam for Cam in Cameras):
-						CameraModelPort	= self.DeviceIdentifierPresetThis
+						self.DeviceIdentifier, self.CameraPort = self.__split_CameraIdentifier(self.DeviceIdentifierPresetThis)
 
 				else:
-					CameraModelPort		= Cameras[0]
+					self.DeviceIdentifier, self.CameraPort = self.__split_CameraIdentifier(Cameras[0])
 
-				CameraModel, self.CameraPort = split_CameraIdentifier(CameraModelPort)
-
-			if not CameraModel:
+			if not (self.DeviceIdentifier and self.CameraPort):
 				time.sleep(1)
 
 		self.__camera_connected	= True
-		self.DeviceIdentifier	= CameraModel
+		#self.DeviceIdentifier	= CameraModel
 		self.__log.message(f"gphoto2: Got camera model identifier '{self.DeviceIdentifier}'.", 3)
 
 		self.__display.message([f":{self.__lan.l('box_backup_camera_ok')}", f":{self.__lan.l('box_backup_working')}..."])
@@ -765,6 +762,17 @@ class storage(object):
 
 		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 2}", f":{l_drive_ok}", f":{storsize}", f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
 
+	def __split_CameraIdentifier(self,Identifier):
+		try:
+			Model, Port	= Identifier.strip().rsplit(' ', 1)
+
+			Model	= Model.strip()
+			Port	= f"{Port.strip()}"
+
+			return([Model, Port])
+		except:
+			return(['',''])
+
 #########################
 
 def umount(setup, MountPoints):
@@ -941,17 +949,6 @@ def get_available_partitions(excludeTarget='', excludeSources=[], addLum=False, 
 def format_CameraIdentifier(Model, Port):
 	return(f"{Model} {Port}")
 
-def split_CameraIdentifier(Identifier):
-	try:
-		Model, Port	= Identifier.strip().rsplit(' ', 1)
-
-		Model	= Model.strip()
-		Port	= f"{Port.strip()}"
-
-		return([Model, Port])
-	except:
-		return(['',''])
-
 def get_available_cameras():
 	Command	= ["gphoto2", "--auto-detect"]
 
@@ -1013,7 +1010,7 @@ def extractCloudService(DeviceName):
 
 	return(DevicePart, CloudPart)
 
-###########################
+
 
 if __name__ == "__main__":
 	#storage('usb', 'source' , True, '', '').mount()
