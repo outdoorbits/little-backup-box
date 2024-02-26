@@ -238,7 +238,7 @@ class backup(object):
 				lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
 				if self.SourceStorageType in ['usb', 'internal', 'camera', 'cloud', 'cloud_rsync']:
-					self.SourceDevice	= lib_storage.storage(StorageName=self.SourceName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetSource, DeviceIdentifierPresetOther=self.DeviceIdentifierPresetTarget)
+					self.SourceDevice	= lib_storage.storage(StorageName=self.SourceName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetSource, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier)
 
 					self.SourceDevice.mount()
 
@@ -522,7 +522,7 @@ class backup(object):
 						completedSources.append(lib_storage.format_CameraIdentifier(self.SourceDevice.DeviceIdentifier, self.SourceDevice.CameraPort))
 
 					if self.SourceDevice.StorageType == 'usb':
-						availableSources	= lib_storage.get_available_partitions(self.TargetDevice.DeviceIdentifier,completedSources)
+						availableSources	= lib_storage.get_available_partitions(TargetPartition=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources)
 					elif self.SourceDevice.StorageType == 'camera':
 						availableSources	= lib_storage.get_available_cameras()
 						# remove disconnected cameras from completedSources

@@ -149,7 +149,12 @@
       "generate_thumbnails_label": "¿Crear miniaturas para View después de la copia de seguridad? (Solo para almacenamiento local)",
       "update_exif_header": "Ajuste automáticamente los datos EXIF ​​​​de los archivos multimedia al importar",
       "update_exif_label": "Los nuevos medios sin calificación propia reciben la calificación estándar. Si es posible, esto se escribe en el archivo original.",
-      "default_settings_header": "Configuración para la copia de seguridad estándar principal"
+      "default_settings_header": "Configuración para la copia de seguridad estándar principal",
+      "target": {
+        "requirements_header": "Requisitos de partición de destino",
+        "requirements_label": "¿Cuál es el tamaño mínimo de la partición de destino que se aceptará?",
+        "requirements_size_ignore": "aceptar todo"
+      }
     },
     "backup_usb_usb": "USB almacenar &rarr; USB almacenamiento",
     "backup_usb_internal": "USB Almacenar &rarr; almacenamiento interno",
@@ -450,7 +455,10 @@
       "mode_usbs": "Almacenamientos USB",
       "folder": "Carpeta",
       "files_just_copied": "recién copiado",
-      "failed_attempts": "intentos fallidos"
+      "failed_attempts": "intentos fallidos",
+      "report": {
+        "time_elapsed": "Período"
+      }
     },
     "cronip": {
       "offline": "desconectado",

@@ -149,7 +149,12 @@
       "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)",
       "update_exif_header": "EXIF-Daten von Mediendateien beim Import automatisch anpassen",
       "update_exif_label": "Neue Medien ohne eigene Bewertung erhalten die Standardbewertung. Diese wird - wenn möglich - in die Originaldatei geschrieben.",
-      "default_settings_header": "Einstellungen für das primäre Standard-Backup"
+      "default_settings_header": "Einstellungen für das primäre Standard-Backup",
+      "target": {
+        "requirements_header": "Anforderungen an die Zielpartition",
+        "requirements_label": "Wie groß muss die Zielpartition mindestens sein, um akzepiert zu werden?",
+        "requirements_size_ignore": "akzeptiere alle"
+      }
     },
     "backup_usb_usb": "USB-Quellspeicher &rarr; USB-Zielspeicher",
     "backup_usb_internal": "USB-Quellspeicher &rarr; interner Speicher",
@@ -450,7 +455,10 @@
       "mode_usbs": "USB-Speicher",
       "folder": "Ordner",
       "files_just_copied": "soeben kopiert",
-      "failed_attempts": "Fehlversuche"
+      "failed_attempts": "Fehlversuche",
+      "report": {
+        "time_elapsed": "Dauer"
+      }
     },
     "cronip": {
       "offline": "offline",

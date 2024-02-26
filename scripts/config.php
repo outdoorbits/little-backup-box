@@ -209,6 +209,7 @@ conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS=$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS
 conf_BACKUP_DEFAULT_UPDATE_EXIF=$conf_BACKUP_DEFAULT_UPDATE_EXIF
 conf_BACKUP_DEFAULT_SOURCE2='$conf_BACKUP_DEFAULT_SOURCE2'
 conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
+conf_BACKUP_TARGET_SIZE_MIN=$conf_BACKUP_TARGET_SIZE_MIN
 conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
 conf_BACKUP_TARGET_BASEDIR_CLOUD='$conf_BACKUP_TARGET_BASEDIR_CLOUD'
 conf_POWER_OFF=$conf_POWER_OFF
@@ -510,6 +511,42 @@ function upload_settings() {
 							<?php
 								}
 							?>
+					</select>
+
+				<h3><?php echo L::config_backup_target_requirements_header; ?></h3>
+					<label for="conf_BACKUP_TARGET_SIZE_MIN"><?php echo L::config_backup_target_requirements_label; ?></label><br>
+					<select name="conf_BACKUP_TARGET_SIZE_MIN" id="conf_BACKUP_TARGET_SIZE_MIN">
+						<?php
+							$target_size_options	= array(
+								array(
+									'label'	=> l::config_backup_target_requirements_size_ignore,
+									'size'	=> 0
+								),
+								array(
+									'label'	=> '100 MB',
+									'size'	=> 100 * pow (1024,2)
+								),
+								array(
+									'label'	=> '512 MB',
+									'size'	=> 512 * pow (1024,2)
+								),
+								array(
+									'label'	=> '1 GB',
+									'size'	=> 1 * pow (1024,3)
+								),
+								array(
+									'label'	=> '512 GB',
+									'size'	=> 512 * pow (1024,3)
+								),
+								array(
+									'label'	=> '1 TB',
+									'size'	=> 1 * pow (1024,4)
+								),
+							);
+							foreach($target_size_options as $target_size_option) {
+								echo('<option value="' . $target_size_option['size'] . '" ' . ($config["conf_BACKUP_TARGET_SIZE_MIN"]==$target_size_option['size'] ?" selected":"") . '>' . $target_size_option['label'] . '</option>');
+							}
+						?>
 					</select>
 
 				<h3><?php echo L::config_backup_camera_folder_mask_header; ?></h3>

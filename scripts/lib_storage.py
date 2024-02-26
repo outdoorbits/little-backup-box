@@ -79,6 +79,7 @@ class storage(object):
 		self.__const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')
 		self.__const_INTERNAL_BACKUP_DIR				= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
 		self.__conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__conf_BACKUP_TARGET_SIZE_MIN				= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
 
 		self.__RCLONE_CONFIG_FILE						= f"{self.__setup.get_val('const_MEDIA_DIR')}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 
@@ -161,76 +162,32 @@ class storage(object):
 			Command	= ['udevadm','trigger']
 			subprocess.run(Command)
 
-			Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep 'MOUNTPOINT=\"\"' | grep '^PATH=\\\"/dev/{self.__const_STORAGE_DEV_MASK}'"
-			try:
-				# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
-				USB_DeviceList = subprocess.check_output(Command,shell=True).decode().split('\n')
-			except:
-				USB_DeviceList = []
+			USB_DeviceList = get_available_partitions(TargetPartition=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, returnDict=True)
 
 			# log if list of devices changed
-			if USB_DeviceList != USB_DeviceList_old:
-				USB_DeviceListStr	= '\n'.join(USB_DeviceList)
+			if USB_DeviceList and USB_DeviceList != USB_DeviceList_old:
+				USB_DeviceListStr	= '\n'.join([USB_Device['identifier'] for USB_Device in USB_DeviceList])
 				self.__log.message(f"pre mount {self.StorageType}, {self.Role} (device list changed)\n{USB_DeviceListStr}",3)
 
 				USB_DeviceList_old = USB_DeviceList
 
-				#get LUM-Alpha of the other device (like sda for sda1) to exclude partitions on that device
-				if self.DeviceIdentifierPresetOther:
-					SourceCommand	= ["lsblk", "-p", "-P", "-o", "PATH,MOUNTPOINT,UUID"]
-					FilterCommand	= ["grep", self.DeviceIdentifierPresetOther.replace('--uuid', '')]
-					try:
-						USB_Device_other = lib_common.pipe(SourceCommand,FilterCommand).decode()
-						USB_Device_other_lum = USB_Device_other.split('"')[1]
-						USB_Device_other_lum_Alpha = lum_other.decode().translate(str.maketrans('', '', digits))
-					except:
-						USB_Device_other_lum_Alpha	= None
-
 				# find USB
-				for USB_Device in USB_DeviceList:
-					#get lum, lum_alpha (without partition number),UUID and FS type
-					try:
-						USB_Device_lum	= USB_Device.split('PATH=',1)[1].split('"',2)[1]
-					except:
-						USB_Device_lum	= None
+				DeviceChosen	= {}
+				if not self.DeviceIdentifierPresetThis:
+					DeviceChosen	= USB_DeviceList[0]
+				else:
+					for USB_Device in USB_DeviceList:
+						if self.DeviceIdentifierPresetThis in [USB_Device['uuid'], USB_Device['lum']]:
+							DeviceChosen	= USB_Device
+							break
 
-					try:
-						USB_Device_lum_Alpha	= USB_Device_lum.translate(str.maketrans('', '', digits))
-					except:
-						USB_Device_lum_Alpha	= None
+				if DeviceChosen:
+					DeviceChosenIdentifier	= DeviceChosen['identifier']
 
-					try:
-						USB_Device_UUID = USB_Device.split('UUID=',1)[1].split('"',2)[1]
-					except:
-						USB_Device_UUID	= None
-
-					try:
-						Device_FS_Type = USB_Device.split('FSTYPE=',1)[1].split('"',2)[1]
-					except:
-						Device_FS_Type	= None
-
-					#Check filesystem-type to be accepted
-					if not Device_FS_Type in FS_Types_supported:
-						Device_FS_Type	= None
-
-					if USB_Device_UUID:
-						DeviceIdentifier = f"--uuid {USB_Device_UUID}"
-					else:
-						DeviceIdentifier = USB_Device_lum
-
-					if (
-						Device_FS_Type and
-						(self.DeviceIdentifierPresetOther != DeviceIdentifier) and
-						((USB_Device_lum_Alpha != USB_Device_other_lum_Alpha) or (self.DeviceIdentifierPresetThis and self.DeviceIdentifierPresetOther)) and
-						((not self.DeviceIdentifierPresetThis) or (DeviceIdentifier == self.DeviceIdentifierPresetThis))
-						):
-							DeviceChosenIdentifier = DeviceIdentifier
-							self.FS_Type = Device_FS_Type
-
-							self.__log.message (f"DeviceChosenIdentifier='{DeviceChosenIdentifier}' ('{USB_Device_lum}') prepared to mount at '{self.MountPoint}', {self.FS_Type}")
-
-					if DeviceChosenIdentifier:
-						break
+				if DeviceChosenIdentifier:
+					self.__log.message (f"DeviceChosenIdentifier='{DeviceChosenIdentifier}' ('{DeviceChosen['lum']}') prepared to mount at '{self.MountPoint}', {DeviceChosen['fs_type']}")
+					self.FS_Type	= DeviceChosen['fs_type']
+					break
 
 			# Check if device is identified
 			if DeviceChosenIdentifier or not self.WaitForDevice:
@@ -868,20 +825,12 @@ def get_mounts_list():
 	mountsList	= list(dict.fromkeys(mountsList))
 	return(f" {' '.join(mountsList)} ")
 
-def get_available_partitions(excludeTarget='', excludeSources=[], addLum=False, skipMounted=False):
+def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, HumanReadable=False, skipMounted=False, returnDict=False):
 	setup	= lib_setup.setup()
-
-	class continueUSB_DeviceListRaw(Exception):
-		pass
-
-	Exception_continueUSB_DeviceListRaw	= continueUSB_DeviceListRaw()
 
 	TargetDevice_lum_alpha	= ''
 
-	availablePartitions	= []
-
-	skipMounted_Command	= "| grep 'MOUNTPOINT=\"\"'" if skipMounted else ''
-	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE  {skipMounted_Command} | grep '^PATH=\\\"/dev/{setup.get_val('const_STORAGE_DEV_MASK')}'"
+	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '^PATH=\\\"/dev/{setup.get_val('const_STORAGE_DEV_MASK')}'"
 
 	try:
 		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
@@ -894,55 +843,103 @@ def get_available_partitions(excludeTarget='', excludeSources=[], addLum=False, 
 	for USB_Device in USB_DeviceListRaw:
 
 		try:
-			lum			= USB_Device.split('PATH=',1)[1].split('"',2)[1]
+			lum			= USB_Device.split('PATH=',1)[1].split('"',2)[1].replace('/dev/','',1)
 			lum_alpha	= lum.translate(str.maketrans('', '', digits))
 		except:
 			lum			= ''
+			lum_alpha	= ''
 
 		try:
 			uuid		= USB_Device.split('UUID=',1)[1].split('"',2)[1]
+			uuid		= f"--uuid {uuid}"
 		except:
 			uuid		= ''
+
+		try:
+			MountPoint		= Device_FS_Type = USB_Device.split('MOUNTPOINT=',1)[1].split('"',2)[1]
+		except:
+			MountPoint		= ''
 
 		try:
 			fs_type		= Device_FS_Type = USB_Device.split('FSTYPE=',1)[1].split('"',2)[1]
 		except:
 			fs_type		= ''
 
+		# find TargetPartition
+		if lum_alpha and TargetPartition and TargetPartition in [uuid, lum]:
+			TargetDevice_lum_alpha	= lum_alpha
+
+		# exclude unsuitable partitions
+		## exclude partitions without valid identifiers
+		if (not lum) and (not uuid):
+			continue
+
+		## exclude invalid fs types
+		if not fs_type in FS_Types_supported:
+			continue
+
+		## exclude all excludePartitions
+		if lum in excludePartitions or uuid in excludePartitions:
+			continue
+
+		## exclude mounted devices
+		if skipMounted and MountPoint:
+			continue
+
+		## exclude TargetPartition if pre defined
+		if TargetPartition and TargetPartition in [uuid, lum]:
+			continue
+
+		# append accepted devices
 		USB_DeviceList.append(
 			{
 				'lum':			lum,
 				'lum_alpha':	lum_alpha,
 				'uuid':			uuid,
+				'identifier':	uuid if uuid else lum,
 				'fs_type':		fs_type
 			}
 		)
 
-		if excludeTarget and ((f"/dev/{excludeTarget}" in [lum, lum_alpha]) or (excludeTarget == f"--uuid {uuid}")):
-			TargetDevice_lum_alpha	= lum_alpha
+	# exclude all partitions on target device
+	if TargetDevice_lum_alpha:
+		USB_DeviceList_old	= USB_DeviceList
+		USB_DeviceList	= []
+		for USB_Device in USB_DeviceList_old:
+			# exclude if lum_alpha is on target device
+			if USB_Device['lum_alpha'] == TargetDevice_lum_alpha and USB_Device['identifier'] != DeviceIdentifierPreset:
+				continue
 
-	# check devices
+			# append accepted devices
+			USB_DeviceList.append(USB_Device)
+
+	# exclude small partitions
+	if MinSizeBytes > 0:
+		USB_DeviceList_old	= USB_DeviceList
+		USB_DeviceList	= []
+		for USB_Device in USB_DeviceList_old:
+			Command	= f"blockdev --getsize64 /dev/{USB_Device['lum']}"
+			try:
+				SizeBytes = int(subprocess.check_output(Command,shell=True).decode())
+			except:
+				SizeBytes = 0
+
+			if SizeBytes < MinSizeBytes and USB_Device['identifier'] != DeviceIdentifierPreset:
+				continue
+
+			# append accepted devices
+			USB_DeviceList.append(USB_Device)
+
+	#create formated list availablePartitions
+	availablePartitions		= []
 	for USB_Device in USB_DeviceList:
-		# exclude empty lines
-		if (not USB_Device['uuid']) and (not USB_Device['lum']):
-			continue
-
-		# exclude not supported file systems
-		if (USB_Device['fs_type'] not in FS_Types_supported):
-			continue
-
-		# exclude all partitions at target device
-		if TargetDevice_lum_alpha == USB_Device['lum_alpha']:
-			continue
-
-		# exclude all excludeSources devices
-		if (USB_Device['lum'] in excludeSources) or (f"--uuid {USB_Device['uuid']}" in excludeSources):
-			continue
-
-		if addLum:
-			availablePartitions.append(f"{USB_Device['lum']}:--uuid {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
+		if HumanReadable:
+			availablePartitions.append(f"{USB_Device['lum']}: {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
 		else:
-			availablePartitions.append(f"--uuid {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
+			if returnDict:
+				availablePartitions.append(USB_Device)
+			else:
+				availablePartitions.append(USB_Device['identifier'])
 
 	return(availablePartitions)
 
@@ -1062,7 +1059,4 @@ if __name__ == "__main__":
 			except:
 				skipMounted		= False
 
-			print(get_available_partitions(addLum=True, skipMounted=skipMounted))
-
-
-
+			print(get_available_partitions(HumanReadable=True, skipMounted=skipMounted,returnDict=True))

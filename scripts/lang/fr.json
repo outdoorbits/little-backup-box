@@ -149,7 +149,12 @@
       "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)",
       "update_exif_header": "Ajustez automatiquement les données EXIF ​​​​des fichiers multimédias lors de l'importation",
       "update_exif_label": "Les nouveaux médias sans leur propre classement reçoivent le classement standard. Si possible, ceci est écrit dans le fichier d'origine.",
-      "default_settings_header": "Paramètres de la sauvegarde standard principale"
+      "default_settings_header": "Paramètres de la sauvegarde standard principale",
+      "target": {
+        "requirements_header": "Exigences de la partition cible",
+        "requirements_label": "Quelle est la taille minimale de la partition cible à accepter ?",
+        "requirements_size_ignore": "accepter tout"
+      }
     },
     "backup_usb_usb": "USB stockage &rarr; USB stockage",
     "backup_usb_internal": "USB Stockage source &rarr; stockage interne",
@@ -450,7 +455,10 @@
       "mode_usbs": "Stockages USB",
       "folder": "Dossier",
       "files_just_copied": "je viens de copier",
-      "failed_attempts": "tentatives infructueuses"
+      "failed_attempts": "tentatives infructueuses",
+      "report": {
+        "time_elapsed": "Temps"
+      }
     },
     "cronip": {
       "offline": "hors ligne",

@@ -166,6 +166,9 @@ class reporter(object):
 
 		self.__BackupReports	= {}
 
+		self.StartTime			= lib_system.get_uptime_sec()
+		self.StopTime			= 0
+
 		#shared values to use as output
 		self.mail_subject			= ''
 		self.mail_content_PLAIN		= ''
@@ -224,6 +227,14 @@ class reporter(object):
 	def get_errors(self):
 		return(self.__BackupReports[self.__Folder][-1]['Errors'])
 
+	def get_time_elapsed(self):
+		if self.StopTime == 0:
+			self.StopTime	= lib_system.get_uptime_sec()
+
+		TimeElapsed	=  self.StopTime - self.StartTime
+
+		return(str(timedelta(seconds=TimeElapsed)).split('.')[0].replace('day','d'))
+
 	def prepare_mail(self):
 		# provides self.mail_subject and self.mail_content_HTML
 
@@ -235,7 +246,7 @@ class reporter(object):
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 
 		self.mail_content_HTML	+= f"\n  <b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
-		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b><u>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} {self.__SourceCloudService} {self.__SourceDeviceLbbDeviceID}</u> {self.__lan.l('box_backup_mail_to')} <u>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} {self.__TargetCloudService} {self.__TargetDeviceLbbDeviceID}</u></b></p></br>\n"
+		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b><u>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} {self.__SourceCloudService} {self.__SourceDeviceLbbDeviceID}</u> {self.__lan.l('box_backup_mail_to')} <u>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} {self.__TargetCloudService} {self.__TargetDeviceLbbDeviceID}</u></br>{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
 
 		separator	= False
 		for Folder in self.__BackupReports:
@@ -358,8 +369,9 @@ class reporter(object):
 					self.display_summary	+= [f":{self.sync_return_code_decoder(Error.split(':',1)[0])}"]
 
 		self.display_summary.append(f":{FilesProcessed} {self.__lan.l('box_backup_of')} {FilesToProcess} {self.__lan.l('box_backup_files_copied')}")
-
 		self.display_summary.append(f":{FailedTriesCountAll} {self.__lan.l('box_backup_failed_attempts')}")
+		self.display_summary.append(f":{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}")
+
 
 	def sync_return_code_decoder(self,Code):
 
