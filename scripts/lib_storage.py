@@ -851,7 +851,7 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 
 		try:
 			uuid		= USB_Device.split('UUID=',1)[1].split('"',2)[1]
-			uuid		= f"--uuid {uuid}"
+			uuid		= f'--uuid {uuid}' if uuid else ''
 		except:
 			uuid		= ''
 
