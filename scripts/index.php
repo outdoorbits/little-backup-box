@@ -230,7 +230,7 @@
 									<?php
 										foreach ($PartitionsArray as $Partition) {
 											$Partition	= trim($Partition, "[]' \n");
-											list($Lum, $DeviceIdentifier)	= explode(':',$Partition,2);
+											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
 											$Lum	= trim($Lum,'/dev');
 											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
 										}

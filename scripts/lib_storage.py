@@ -226,7 +226,7 @@ class storage(object):
 					try:
 						Result	= subprocess.check_output(Command,shell=True).decode()
 					except:
-						Result	= 'Error mounting'
+						Result	= f'Error mounting {self.FS_Type}'
 
 				elif self.FS_Type in ['hfs','hfsplus']:
 					# mac-filesystems
@@ -235,7 +235,7 @@ class storage(object):
 					try:
 						Result	= subprocess.check_output(Command,shell=True).decode()
 					except:
-						Result	= 'Error mounting'
+						Result	= f'Error mounting {self.FS_Type}'
 
 				elif self.FS_Type in ['ext2','ext3','ext4']:
 					# linux-filesystems
@@ -251,9 +251,9 @@ class storage(object):
 						subprocess.check_output(CommandMount,shell=True)
 						Result	= subprocess.run(CommandBindFS,shell=True)
 					except:
-						Result	= 'Error mounting'
+						Result	= f'Error mounting {self.FS_Type}'
 
-				self.__log.message(f"mounted {l_mount_device} '{DeviceChosenIdentifier}' at '{self.MountPoint}': Msg.='${Result}'", 2)
+				self.__log.message(f"mounted {l_mount_device} '{DeviceChosenIdentifier}' at '{self.MountPoint}': Msg.='{Result}'", 2)
 			else:
 				self.__log.message(f"{l_mount_device} already mounted, nothing to do.",3)
 
@@ -843,7 +843,7 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 	for USB_Device in USB_DeviceListRaw:
 
 		try:
-			lum			= USB_Device.split('PATH=',1)[1].split('"',2)[1].replace('/dev/','',1)
+			lum			= USB_Device.split('PATH=',1)[1].split('"',2)[1]
 			lum_alpha	= lum.translate(str.maketrans('', '', digits))
 		except:
 			lum			= ''
@@ -918,7 +918,7 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 		USB_DeviceList_old	= USB_DeviceList
 		USB_DeviceList	= []
 		for USB_Device in USB_DeviceList_old:
-			Command	= f"blockdev --getsize64 /dev/{USB_Device['lum']}"
+			Command	= f"blockdev --getsize64 {USB_Device['lum']}"
 			try:
 				SizeBytes = int(subprocess.check_output(Command,shell=True).decode())
 			except:
@@ -934,7 +934,7 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 	availablePartitions		= []
 	for USB_Device in USB_DeviceList:
 		if HumanReadable:
-			availablePartitions.append(f"{USB_Device['lum']}: {USB_Device['uuid']}" if USB_Device['uuid'] else USB_Device['lum'])
+			availablePartitions.append(f"{USB_Device['lum']}: {USB_Device['uuid']}" if USB_Device['uuid'] else f"{USB_Device['lum']}: {USB_Device['lum']}")
 		else:
 			if returnDict:
 				availablePartitions.append(USB_Device)
