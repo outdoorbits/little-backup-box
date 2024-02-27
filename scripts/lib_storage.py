@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import argparse
 import glob
 import datetime
 import math
@@ -1014,49 +1015,94 @@ if __name__ == "__main__":
 	#print(subprocess.check_output('mount').decode())
 	#sys.exit()
 
-	if len(sys.argv) > 1:
-		Action					= sys.argv[1]
+	parser = argparse.ArgumentParser(
+		description	= 'Controls the entire storage processes of Little Backup Box. Some parameters are taken from the configuration if they are not explicitly set as arguments. Please configure the standards in the web UI.',
+		add_help	= True,
+		epilog		= 'This script can ideally be configured and started via the Little Backup Box web UI.'
+	)
 
-		if Action in ['mount','umount','mounted'] and len(sys.argv) > 2:
+	Actions	= ['mount','umount','mounted','get_mounts_list','get_available_partitions']
+	parser.add_argument(
+		'--Action',
+		'-a',
+		choices		= Actions,
+		required =	True,
+		help=f'Action name, one of {Actions}'
+	)
 
-			StorageName				= sys.argv[2]
+	StorageNames	= ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
+	parser.add_argument(
+		'--StorageName',
+		'-s',
+		required =	False,
+		help=f'Storage name, one of {StorageNames}'
+	)
 
-			try:
-				Role				= sys.argv[3]
-			except:
-				Role		= ''
+	Roles	= ['source','target']
+	parser.add_argument(
+		'--Role',
+		'-r',
+		choices		= Roles,
+		required =	False,
+		help=f'Role name, one of {Roles}'
+	)
 
-			try:
-				WaitForDevice		= (sys.argv[4] == 'True')
-			except:
-				WaitForDevice		= True
+	parser.add_argument(
+		'--WaitForDevice',
+		'-w',
+		required	= False,
+		default		= True,
+		help		= 'Should mount wait for the device? [\'True\', \'False\']'
+	)
 
-			try:
-				DeviceIdentifierPresetThis		= sys.argv[5]
-			except:
-				DeviceIdentifierPresetThis		= ''
+	parser.add_argument(
+		'--DeviceIdentifierPresetThis',
+		'-it',
+		required =	False,
+		help='DeviceIdentifierPresetThis'
+	)
 
-			try:
-				DeviceIdentifierPresetOther		= sys.argv[6]
-			except:
-				DeviceIdentifierPresetOther		= ''
+	parser.add_argument(
+		'--DeviceIdentifierPresetOther',
+		'-io',
+		required =	False,
+		help='DeviceIdentifierPresetOther'
+	)
 
-			if Action == 'mount':
-				storage(StorageName=StorageName, Role=Role, WaitForDevice=WaitForDevice, DeviceIdentifierPresetThis=DeviceIdentifierPresetThis, DeviceIdentifierPresetOther=DeviceIdentifierPresetOther).mount()
+	parser.add_argument(
+		'--skipMounted',
+		'-sm',
+		required	= False,
+		default		= False,
+		help		= 'Only for --Action get_available_partitions: [\'True\', \'False\']'
+	)
 
-			elif Action == 'umount':
-				storage(StorageName=StorageName, Role=Role, WaitForDevice=WaitForDevice, DeviceIdentifierPresetThis=DeviceIdentifierPresetThis, DeviceIdentifierPresetOther=DeviceIdentifierPresetOther).umount()
+	args	= vars(parser.parse_args())
 
-			elif Action == 'mounted':
-				print(storage(StorageName=StorageName, Role=Role, WaitForDevice=WaitForDevice, DeviceIdentifierPresetThis=DeviceIdentifierPresetThis, DeviceIdentifierPresetOther=DeviceIdentifierPresetOther).mounted())
 
-		elif Action == 'get_mounts_list':
-			print(get_mounts_list())
+	if args['Action'] in ['mount','umount','mounted']:
 
-		elif Action == 'get_available_partitions':
-			try:
-				skipMounted		= (sys.argv[2] == 'True')
-			except:
-				skipMounted		= False
+		if args['StorageName'] is None:
+			parser.error(f"--Action {args['Action']} requires --storage {StorageNames}.")
 
-			print(get_available_partitions(HumanReadable=True, skipMounted=skipMounted,returnDict=True))
+		if args['Role'] is None:
+			parser.error(f"--Action {args['Action']} requires --Role ['source','target'].")
+
+		args['DeviceIdentifierPresetThis']	= '' if args['DeviceIdentifierPresetThis'] is None else args['DeviceIdentifierPresetThis']
+
+		args['DeviceIdentifierPresetOther']	= '' if args['DeviceIdentifierPresetOther'] is None else args['DeviceIdentifierPresetOther']
+
+		if args['Action'] == 'mount':
+			storage(StorageName=args['StorageName'], Role=args['Role'], WaitForDevice=args['WaitForDevice'], DeviceIdentifierPresetThis=args['DeviceIdentifierPresetThis'], DeviceIdentifierPresetOther=args['DeviceIdentifierPresetOther']).mount()
+
+		elif args['Action'] == 'umount':
+			storage(StorageName=args['StorageName'], Role=args['Role'], WaitForDevice=args['WaitForDevice'], DeviceIdentifierPresetThis=args['DeviceIdentifierPresetThis'], DeviceIdentifierPresetOther=args['DeviceIdentifierPresetOther']).umount()
+
+		elif args['Action'] == 'mounted':
+			print(storage(StorageName=args['StorageName'], Role=args['Role'], WaitForDevice=args['WaitForDevice'], DeviceIdentifierPresetThis=args['DeviceIdentifierPresetThis'], DeviceIdentifierPresetOther=args['DeviceIdentifierPresetOther']).mounted())
+
+	elif args['Action'] == 'get_mounts_list':
+		print(get_mounts_list())
+
+	elif args['Action'] == 'get_available_partitions':
+		print(get_available_partitions(HumanReadable=True, skipMounted=args['skipMounted'],returnDict=True))

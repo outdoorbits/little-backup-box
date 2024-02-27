@@ -200,7 +200,7 @@
 					</table>
 
 					<?php
-						$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py get_available_partitions");
+						$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted True");
 						$PartitionsArray	= explode(',', $Partitions);
 					?>
 					<table style='border: 0;'>

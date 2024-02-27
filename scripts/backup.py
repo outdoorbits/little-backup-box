@@ -1060,7 +1060,7 @@ if __name__ == "__main__":
 		help		= 'Will another backup follow? If not, the process can be completed. [\'True\', \'False\']'
 	)
 
-	args = vars(parser.parse_args())
+	args	= vars(parser.parse_args())
 
 	backupObj	= backup(SourceName=args['SourceName'], TargetName=args['TargetName'], DoSyncDatabase=args['sync_database'], DoGenerateThumbnails=args['generate_thumbnails'], DoUpdateEXIF=args['update_exif'], DeviceIdentifierPresetSource=args['device_identifier_preset_source'], DeviceIdentifierPresetTarget=args['device_identifier_preset_target'], PowerOff=args['power_off'], SecundaryBackupFollows=args['secondary_backup_follows'])
 

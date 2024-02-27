@@ -56,7 +56,7 @@
 		<hr>
 			<form class="text-center" style="margin-top: 1em;" method="POST">
 				<?php
-					$MountsList	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py get_mounts_list");
+					$MountsList	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_mounts_list");
 
 					$l_Roles	= array(
 							'target'	=> l::tools_mount_target,
@@ -84,7 +84,7 @@
 							}
 
 							if ($ButtonClass != 'usb' and $ButtonClass_old=='usb') {
-								$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py get_available_partitions True");
+								$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted True");
 								$PartitionsArray	= explode(',', $Partitions);
 
 								echo ('<label for="DeviceIdentifierPreset">'.L::tools_mount_select_partition_label.': </label>');
@@ -92,7 +92,7 @@
 									echo ("<option value=''>".L::main_backup_preset_partition_auto."</option>");
 									foreach ($PartitionsArray as $Partition) {
 										$Partition	= trim($Partition, "[]' \n");
-										list($Lum, $DeviceIdentifier)	= explode(':',$Partition,2);
+										list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
 										$Lum	= trim($Lum,'/dev');
 										echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
 									}
@@ -188,14 +188,12 @@
 	<?php include "sub-footer.php"; ?>
 
 	<?php
-
 	if (isset($_POST['mount'])) {
 		[$Role,$Storage]	= explode('_',$_POST['mount'],2);
 		$DeviceIdentifierPresetThis	= isset($_POST['DeviceIdentifierPreset'])?$_POST['DeviceIdentifierPreset']:'';
 
-		$command = "sudo python3 $WORKING_DIR/lib_storage.py mount $Storage $Role True '$DeviceIdentifierPresetThis'";
-// 		print$command;
-		shell_exec ("python3 lib_log.py 'execute' '' '${command}' '1'");
+		$command = "sudo python3 $WORKING_DIR/lib_storage.py --Action mount --StorageName $Storage --Role $Role --DeviceIdentifierPresetThis \\'$DeviceIdentifierPresetThis\\'";
+		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' \"${command}\" '1'");
 
 		echo "<script>";
 			echo "window.location = window.location.href;";
@@ -205,9 +203,8 @@
 	elseif (isset($_POST['umount'])) {
 		[$Role,$Storage]	= explode('_',$_POST['umount'],2);
 
-		$command = "sudo python3 $WORKING_DIR/lib_storage.py umount $Storage $Role";
-// 		print($command . '<br>');
-		shell_exec ("python3 lib_log.py 'execute' '' '${command}' '1'");
+		$command = "sudo python3 $WORKING_DIR/lib_storage.py --Action umount --StorageName $Storage --Role $Role";
+		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' '${command}' '1'");
 
 		echo "<script>";
 			echo "window.location = window.location.href;";
@@ -225,7 +222,7 @@
 					document.location.href="/cmd.php?CMD=fsck&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
 			</script>
 			<?php
-			shell_exec ("python3 lib_log.py 'message' \"fsck ${PARAM1} ${PARAM2}\" \"1\"");
+			shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' \"fsck ${PARAM1} ${PARAM2}\" \"1\"");
 		}
 	}
 
@@ -240,7 +237,7 @@
 					document.location.href="/cmd.php?CMD=format&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
 			</script>
 			<?php
-			shell_exec ("python3 lib_log.py 'message' \"format ${PARAM1} ${PARAM2}\" \"1\"");
+			shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' \"format ${PARAM1} ${PARAM2}\" \"1\"");
 		}
 	}
 
@@ -255,7 +252,7 @@
 						document.location.href="/cmd.php?CMD=f3&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
 				</script>
 				<?php
-				shell_exec ("python3 lib_log.py 'message' \"format ${PARAM1} ${PARAM2}\" \"1\"");
+				shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' \"format ${PARAM1} ${PARAM2}\" \"1\"");
 			}
 	}
 
