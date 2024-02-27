@@ -77,20 +77,20 @@
 	</div>
 
 	<div class="card">
-		<h3><?php echo L::sysinfo_devices; ?></h3>
+		<h3><?php echo L::sysinfo_diskspace; ?></h3>
 			<?php
-			echo '<pre>';
-			passthru("sudo lsblk");
-			echo '</pre>';
+				echo '<pre>';
+				passthru("sudo lsblk --output NAME,SIZE,FSAVAIL,FSUSED,FSUSE%,MOUNTPOINT");
+				echo '</pre>';
 			?>
 	</div>
 
 	<div class="card">
-		<h3><?php echo L::sysinfo_diskspace; ?></h3>
+		<h3><?php echo L::sysinfo_devices; ?></h3>
 			<?php
-				echo '<pre>';
-				passthru("sudo df -H");
-				echo '</pre>';
+			echo '<pre>';
+			passthru("sudo lsblk --output NAME,FSTYPE,UUID,MODEL");
+			echo '</pre>';
 			?>
 	</div>
 

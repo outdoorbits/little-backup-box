@@ -1033,7 +1033,7 @@ if __name__ == "__main__":
 		'-si',
 		required=False,
 		default='',
-		help='Device identifier preset for source, e.g --uuid 123..., sda1, etc.'
+		help='Device identifier preset for source, e.g --uuid 123..., /dev/sdb1, etc.'
 	)
 
 	parser.add_argument(
@@ -1041,7 +1041,7 @@ if __name__ == "__main__":
 		'-ti',
 		required	= False,
 		default='',
-		help='Device identifier preset for source, e.g --uuid 123..., sda1, etc.'
+		help='Device identifier preset for source, e.g --uuid 123..., /dev/sda1, etc.'
 	)
 
 	parser.add_argument(
