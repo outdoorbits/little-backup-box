@@ -1079,7 +1079,11 @@ if __name__ == "__main__":
 
 	args	= vars(parser.parse_args())
 
+	# prepare arguments
+	args['WaitForDevice']	= args['WaitForDevice'] in [True, 'True']
+	args['skipMounted']		= args['skipMounted'] in [True, 'True']
 
+	# execute
 	if args['Action'] in ['mount','umount','mounted']:
 
 		if args['StorageName'] is None:
