@@ -34,45 +34,40 @@ These languages are already available. Do you want to maintain or create a trans
 <br />
 <a href="#installation"><b>Jump to installation instructions</b></a><br />
 <br />
-<h2>NEWS</h2>
+<a href="changelog.md">Changelog</a>
+<br />
+<h2>Features</h2>
+Some of the features of the web user interface are
 <ul>
-	<li>2024-01-25: Enable using of graphic environment</li>
-	<li>2024-01-19: Workaround to enable display with Raspberry Pi 5</li>
-	<li>2023-12-29: Workaround to enable comitup with bookworm</li>
-	<li>2023/09/17: When backing up from cameras, all connected cameras are backed up. Please check you logs or your mail reports after backup!</li>
-	<li>2023/09/16: View image viewer: Support for tif images added</li>
-	<li>2023/09/16: When backing up from USB, all connected USB partitions (except those of the target drive) are backed up.</li>
-	<li>2023/08/24: Little Backup Box core files are nearly totally rewritten to python. This is a major step and the new version might be not stable yet but final tests have been very successfully. In <a href="#installation"><b>installation instructions</b></a> you find how to get this version. Please test and report. Thank you!</li>
-	<li>2023/05/15: There is a printable case now! Look at <a href="https://github.com/outdoorbits/case-for-little-backup-box">outdoorbits/case-for-little-backup-box</a></li>
-	<li>2023/04/14: Introducing support for hardware buttons including a display-menu to control a wide range of lbb's functions. Read more in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu">Wiki</a>.</li>
-	<li>2023/04/01: Add support for Apple file systems HFS and HFS Plus. Supported file systems now are Ext2, Ext3, Ext4, FAT, vFAT, exFAT, NTFS, HFS and HFS Plus.</li>
-	<li>2023/02/28: Add support for multiple displays, I2C and SPI</li>
-	<li>2023/02/24: Add VPN support for WireGuard and OpenVPN</li>
-	<li>2023/02/15: Remove miniDLNA due to security concerns</li>
-	<li>2023/02/15: Settings: Use global password as WiFi-password in comitup-hotspot-mode</li>
-	<li>2022/12/12: View got magnifying glass-function. This allows quick ratings with improved evidence.</li>
-	<li>2022/12/03: Rating function supports writing of EXIF-data into media-files. This allows to use the ratings in further processing (e.g. in <a href="https://www.darktable.org/">darktable</a>).</li>
-	<li>2022/11/19: Image-viewer "View" now can handle videos and audios!</li>
-	<li>2022/11/14: Image-viewer "View" got a rating function. Images having one star only can be deleted.</li>
-	<li>2022/11/08: Image-viewer mejiro is replaced by a integrated solution offering much faster options to find images.</li>
-	<li>2022/10/14: Add f3probe to tools to test external storages integrity before use.</li>
-	<li>2022/10/09: Rework of the progress-monitoring to save traffic and increase speed.</li>
-	<li>2022/10/03: If checked in settings, thumbnails will be generated after backup.</li>
-	<li>2022/10/03: If checked in settings, the LCD display will be turned off before shutdown.</li>
-	<li>2022/10/01: The Wifi country code can now be set in the settings.</li>
-	<li>2022/09/24: A disk formatting function has been added to the tools.</li>
-	<li>2022/04/03: A secondary default backup mode has been added. This allows you to configure a automatically starting network backup after a local backup.</li>
-	<li>2022/01/16: The <a href="https://github.com/outdoorbits/little-backup-box/wiki/02.-Hardware">Wiki</a> explains now, how to connect a LCD-display.</li>
-	<li>2022/01/12: Camera-backup: Paths to backup can be configured for each device.</li>
-	<li>2022/01/08: Add option to backup only specific directories from cameras or smartphones.</li>
-	<li>2022/01/08: Uploads to the box can be done by the filemanager now.</li>
-	<li>2021/12/31: Add language support for display-messages*1</li>
-	<li>2021/12-27: Add power-off after idle time. Configuration in "Settings".</li>
-	<li>2021/12/21: Add language support to the web-UI for French, Spanish and German*1</li>
-	<li>2021/12/13: There is a <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">menu based update-function</a>.</li>
-	<li>2021/12/18: Select color-themes and background-images. Design is more colorful now to make orientation easier.</li>
+	<li>automate backup from
+		<ul>
+			<li>usb storage</li>
+			<li>camera</li>
+			<li>internal storage</li>
+			<li>cloud storage</li>
+		</ul>
+		to
+		<ul>
+			<li>usb storage</li>
+			<li>internal storage</li>
+			<li>rsync server</li>
+			<li>cloud storage</li>
+		</ul>
+	</li>
+	<li>Tools for memory management
+		<ul>
+			<li>manual mount local and cloud stoarges</li>
+			<li>check disk integrity</li>
+			<li>format disks</li>
+			<li>check USB device for authenticity</li>
+			<li>cloud storage</li>
+		</ul>
+	</li>
+	<li>Preview and rate images</li>
+	<li>Manage files by file manager</li>
+	<li>Email information about the backup success</li>
+	<li>Diverse setup options</li>
 </ul>
-
 <figure>
 <table align="right">
 <tr>
@@ -88,10 +83,6 @@ These languages are already available. Do you want to maintain or create a trans
 </table>
 </figure>
 
-<br />
-... a lot of stuff! Please let me know about problems.<br />
-<br />
-<i>Caution: The translations were carried out by machine and could cause unpleasant feelings in native speakers. Help is particularly welcome here. Technically, working on the language files is extremely easy. Would you help?</i><br />
 <figure align="center">
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui.png" align="center" width="90%">
 <figcaption>The web UI</figcaption>
@@ -195,18 +186,18 @@ If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.
 
 <h2>Contribute</h2>
 <ul>
-<li>If you've found a bug or have suggestions for improvements, open an issue in the <a href="https://github.com/outdoorbits/little-backup-box/issues">Issues section</a>.</li>
-<li>If you could spend a bit of time and add a new language - great, just tell me, it's easy!</li>
-<li>To add new features or fix issues yourself, follow the following steps.</li>
+	<li>If you've found a bug or have suggestions for improvements, open an issue in the <a href="https://github.com/outdoorbits/little-backup-box/issues">Issues section</a>.</li>
+	<li>If you could spend a bit of time and add a new language - great, just tell me, it's easy!</li>
+	<li>To add new features or fix issues yourself, follow the following steps.</li>
 </ul>
 
 <ol>
-<li>Open an issue to discuss your idea.</li>
-<li>Fork the project's repository.</li>
-<li>Create a feature branch using the <code>git checkout -b new-feature</code> command.</li>
-<li>Add your new feature or fix bugs and run the <code>git commit -am 'Add a new feature'</code> command to commit changes.</li>
-<li>Push changes using the <code>git push origin new-feature</code> command.</li>
-<li>Submit a pull request (in your fork at github.com).</li>
+	<li>Open an issue to discuss your idea.</li>
+	<li>Fork the project's repository.</li>
+	<li>Create a feature branch using the <code>git checkout -b new-feature</code> command.</li>
+	<li>Add your new feature or fix bugs and run the <code>git commit -am 'Add a new feature'</code> command to commit changes.</li>
+	<li>Push changes using the <code>git push origin new-feature</code> command.</li>
+	<li>Submit a pull request (in your fork at github.com).</li>
 </ol>
 
 <h2>Authors</h2>
@@ -214,9 +205,9 @@ Stefan Saam, founder is <a href="https://www.tokyoma.de/">Dmitri Popov</a>. He h
 
 <h2>Contributors</h2>
 <ul>
-<li>Dmitri Popov</li>
-<li>Kerry Staite (STL files)</li>
-<li><a href="https://github.com/munecito">munecito</a> (corrections of the Spanish translation)</li>
+	<li>Dmitri Popov</li>
+	<li>Kerry Staite (STL files)</li>
+	<li><a href="https://github.com/munecito">munecito</a> (corrections of the Spanish translation)</li>
 </ul>
 
 <h2>License</h2>
