@@ -36,6 +36,20 @@ These languages are already available. Do you want to maintain or create a trans
 <br />
 <a href="changelog.md">Changelog</a>
 <br />
+<figure>
+	<table align="right">
+		<tr>
+			<td>
+				<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<figcaption>The display while a backup<br />from camera to usb and<br />from usb to rsync-server.</figcaption>
+			</td>
+		</tr>
+	</table>
+</figure>
 <h2>Features</h2>
 Some of the features of the web user interface are
 <ul>
@@ -69,20 +83,6 @@ Some of the features of the web user interface are
 	<li>Diverse setup options</li>
 </ul>
 It's your swiss army knife for reliably performing, checking and managing backups on the go.
-<figure>
-<table align="right">
-<tr>
-<td>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
-</td>
-</tr>
-<tr>
-<td>
-<figcaption>The display while a backup<br />from camera to usb and<br />from usb to rsync-server.</figcaption>
-</td>
-</tr>
-</table>
-</figure>
 
 <figure align="center">
 <img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui.png" align="center" width="90%">
