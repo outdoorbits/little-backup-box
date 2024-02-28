@@ -68,6 +68,7 @@ Some of the features of the web user interface are
 	<li>Email information about the backup success</li>
 	<li>Diverse setup options</li>
 </ul>
+It's your swiss army knife for reliably performing, checking and managing backups on the go.
 <figure>
 <table align="right">
 <tr>
