@@ -32,10 +32,6 @@ Media content can be viewed and rated for the subsequent process.<br />
 </table>
 These languages are already available. Do you want to maintain or create a translation?<br />
 <br />
-<a href="#installation"><b>Jump to installation instructions</b></a><br />
-<br />
-<a href="changelog.md">Changelog</a>
-<br />
 <figure>
 	<table align="right">
 		<tr>
@@ -50,6 +46,10 @@ These languages are already available. Do you want to maintain or create a trans
 		</tr>
 	</table>
 </figure>
+<a href="#installation"><b>Jump to installation instructions</b></a><br />
+<br />
+<a href="changelog.md">Changelog</a>
+<br />
 <h2>Features</h2>
 Some of the features of the web user interface are
 <ul>
