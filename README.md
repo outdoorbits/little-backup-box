@@ -48,7 +48,7 @@ Some of the features of the web user interface are
 			<li>internal storage</li>
 			<li>cloud storage</li>
 		</ul>
-		<b>to<b/>
+		<b>to</b>
 		<ul>
 			<li>usb storage</li>
 			<li>internal storage</li>
