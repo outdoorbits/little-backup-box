@@ -13,16 +13,6 @@
 <br />
 <br />
 <figure>
-	<a href="https://youtu.be/qAEebY8UlRc">
-		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-desktop-variant.png" align="center">
-	</a>
-	<br />
-	<figcaption>YouTube: The display while a backup from camera to usb and from usb to rsync-server.</figcaption>
-</figure>
-<br />
-<br />
-<br />
-<figure>
 	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
 	<figcaption>The display while a backup from camera to usb and from usb to rsync-server.</figcaption>
 </figure>
@@ -31,7 +21,24 @@
 <br />
 <figure>
 	<img src="https://github.com/outdoorbits/case-for-little-backup-box/blob/main/Raspberry_Pi_5/images/case_raspberry_pi_5.png" align="center">
-	<figcaption>Case for Raspberry Pi 5</figcaption>
+	<figcaption><a href="https://github.com/outdoorbits/case-for-little-backup-box">Case for Raspberry Pi 5</a></figcaption>
+</figure>
+<br />
+<br />
+<br />
+<figure>
+	<a href="https://youtu.be/qAEebY8UlRc">
+		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-desktop-variant.png" align="center">
+	</a>
+	<br />
+	<figcaption>YouTube: Desktop variant. The display while a backup from camera to usb and from usb to rsync-server.</figcaption>
+</figure>
+<br />
+<br />
+<br />
+<figure>
+	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/desktop-variant-keyboard.jpg" align="center">
+	<figcaption>Desktop variant using a wireless keyboard</figcaption>
 </figure>
 <br />
 <br />
