@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2024-02-26: A minimum size of the partition to be used on the target device can be set in the configuration. This allows smaller partitions to be skipped as a destination.</li>
 	<li>2024-01-25: Enable using of graphic environment</li>
 	<li>2024-01-19: Workaround to enable display with Raspberry Pi 5</li>
 	<li>2023-12-29: Workaround to enable comitup with bookworm</li>
