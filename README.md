@@ -32,35 +32,23 @@ Media content can be viewed and rated for the subsequent process.<br />
 </table>
 These languages are already available. Do you want to maintain or create a translation?<br />
 <br />
-<figure>
-	<table align="right">
-		<tr>
-			<td>
-				<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<figcaption>The display while a backup<br />from camera to usb and<br />from usb to rsync-server.</figcaption>
-			</td>
-		</tr>
-	</table>
-</figure>
 <a href="#installation"><b>Jump to installation instructions</b></a><br />
 <br />
 <a href="changelog.md">Changelog</a>
 <br />
+<a href="gallery.md">Have a look at the gallery.</a>
+<br />
 <h2>Features</h2>
 Some of the features of the web user interface are
 <ul>
-	<li>automate backup from
+	<li>**automate backup from**
 		<ul>
 			<li>usb storage</li>
 			<li>camera</li>
 			<li>internal storage</li>
 			<li>cloud storage</li>
 		</ul>
-		to
+		**to**
 		<ul>
 			<li>usb storage</li>
 			<li>internal storage</li>
@@ -68,7 +56,7 @@ Some of the features of the web user interface are
 			<li>cloud storage</li>
 		</ul>
 	</li>
-	<li>Tools for memory management
+	<li>**Tools for memory management**
 		<ul>
 			<li>manual mount local and cloud stoarges</li>
 			<li>check disk integrity</li>
@@ -77,22 +65,13 @@ Some of the features of the web user interface are
 			<li>cloud storage</li>
 		</ul>
 	</li>
-	<li>Preview and rate images</li>
-	<li>Manage files by file manager</li>
-	<li>Email information about the backup success</li>
-	<li>Diverse setup options</li>
+	<li>**Preview and rate images**</li>
+	<li>**Manage files by file manager**</li>
+	<li>**Email information about the backup success**</li>
+	<li>**Diverse setup options**</li>
 </ul>
 It's your swiss army knife for reliably performing, checking and managing backups on the go.
 
-<figure align="center">
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui.png" align="center" width="90%">
-<figcaption>The web UI</figcaption>
-</figure>
-<br />
-<figure>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui-smartphone.png" align="center">
-<figcaption>The web UI on a smartphone. Full function in pocket-size.</figcaption>
-</figure>
 
 <h2>Development status</h2>
 Little Backup Box is still under construction.<br />
@@ -179,11 +158,6 @@ If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.
 <li>Updates can be carried out quickly and easily via the WebUI. Just follow the instructions in the <a href="https://github.com/outdoorbits/little-backup-box/wiki/03.-Installation#update">wiki</a>.</li>
 <li>Alternatively just login via ssh and execute the installation-command from above. It will run in update-mode.</li>
 </ul>
-
-<figure align="center">
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui-view.png" align="center" width="90%">
-<figcaption>Image-viewer View</figcaption>
-</figure>
 
 <h2>Contribute</h2>
 <ul>
