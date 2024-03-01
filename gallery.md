@@ -14,6 +14,7 @@
 <br />
 <figure>
 	<a href="https://youtu.be/qAEebY8UlRc">
+		<br />
 		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-desktop-variant.png" align="center">
 	</a>
 	<figcaption>The display while a backup from camera to usb and from usb to rsync-server.</figcaption>
