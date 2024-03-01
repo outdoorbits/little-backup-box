@@ -41,14 +41,14 @@ These languages are already available. Do you want to maintain or create a trans
 <h2>Features</h2>
 Some of the features of the web user interface are
 <ul>
-	<li>**automate backup from**
+	<li><b>automate backup from</b>
 		<ul>
 			<li>usb storage</li>
 			<li>camera</li>
 			<li>internal storage</li>
 			<li>cloud storage</li>
 		</ul>
-		**to**
+		<b>to<b/>
 		<ul>
 			<li>usb storage</li>
 			<li>internal storage</li>
@@ -56,7 +56,7 @@ Some of the features of the web user interface are
 			<li>cloud storage</li>
 		</ul>
 	</li>
-	<li>**Tools for memory management**
+	<li><b>Tools for memory management</b>
 		<ul>
 			<li>manual mount local and cloud stoarges</li>
 			<li>check disk integrity</li>
@@ -65,10 +65,10 @@ Some of the features of the web user interface are
 			<li>cloud storage</li>
 		</ul>
 	</li>
-	<li>**Preview and rate images**</li>
-	<li>**Manage files by file manager**</li>
-	<li>**Email information about the backup success**</li>
-	<li>**Diverse setup options**</li>
+	<li><b>Preview and rate images</b></li>
+	<li><b>Manage files by file manager</b></li>
+	<li><b>Email information about the backup success</b></li>
+	<li><b>Diverse setup options</b></li>
 </ul>
 It's your swiss army knife for reliably performing, checking and managing backups on the go.
 
