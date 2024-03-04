@@ -23,7 +23,7 @@
     "cloudservice": "service cloud",
     "reboot_m": "Little Backup Box redémarre. Actualisez cette page dans quelques instants.",
     "shutdown_m": "Little Backup Box est éteint. Vous pouvez fermer cette page.",
-    "help_txt": "<p class='text-center'>Veuillez lire le <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p >",
+    "help_txt": "<ul>\n   <li>tous USB : tous les périphériques USB connectés, caméras et stockage, sont sauvegardés.</li>\n   <li>Serveur rsync cible: les caméras ne peuvent pas être sauvegardées directement sur un serveur rsync. La mise en cache locale est requise ici.</li>\n</ul>\n<p class = 'text-center'> Veuillez lire le <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.< / p>",
     "stopbackup_button": "ARRÊTER",
     "stopbackup_m": "Arrêt de la sauvegarde.",
     "usb_button": "Poste stockage USB",
@@ -328,7 +328,9 @@
       "virtual_keyboard_enable_header": "Clavier virtuel",
       "virtual_keyboard_enable_label": "Activer le clavier virtuel",
       "description": "Paramètres qui affectent un écran avec une interface utilisateur graphique (bureau)."
-    }
+    },
+    "backup_anyusb_internal": "tout USB (caméras et stockage) &rarr; stockage interne",
+    "backup_anyusb_usb": "tout USB (caméras et stockage) &rarr; USB stockage"
   },
   "tools": {
     "tools": "Outils",
@@ -360,8 +362,6 @@
   },
   "box": {
     "backup": {
-      "insert_source_1": "Prêt",
-      "insert_source_2": "Insérer sources",
       "invalid_mode_combination_1": "Invalide",
       "invalid_mode_combination_2": "mode",
       "invalid_mode_combination_3": "combinaison",
@@ -418,8 +418,6 @@
       "files_copied": "dos. copié",
       "generating_thumbnails_finding_images1": "Gén. de vignettes",
       "generating_thumbnails_finding_images3": "Juste un moment......",
-      "insert_target_1": "Prêt",
-      "insert_target_2": "Insérer la cible",
       "usb_target_ok": "Poste stockage ok",
       "mode_usb": "Stockage USB",
       "usb_source_ok": "Source ok",
@@ -458,7 +456,14 @@
       "failed_attempts": "tentatives infructueuses",
       "report": {
         "time_elapsed": "Temps"
-      }
+      },
+      "connect_source_2": "Insérer sources",
+      "connect_target_2": "Insérer la cible",
+      "connect_source_any_2": "Insérer sources",
+      "connect_source_1": "Prêt",
+      "connect_target_1": "Prêt",
+      "connect_source_any_1": "Prêt",
+      "mode_anyusb": "tout USB"
     },
     "cronip": {
       "offline": "hors ligne",

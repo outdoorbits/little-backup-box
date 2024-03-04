@@ -95,17 +95,19 @@ CHOICE_BACKUP_MODE=1
 if [ "${SCRIPT_MODE}" = "install" ]; then
 	OPTIONS=(
 		1 "none"
-		2 "USB-source -> USB-target storage"
-		3 "USB-source -> internal storage"
-		4 "Camera -> USB-target storage"
-		5 "Camera -> internal storage"
+		2 "any USB -> USB storage"
+		3 "any USB -> internal storage"
+		4 "USB storage -> USB storage"
+		5 "USB storage -> internal storage"
+		6 "Camera -> USB storage"
+		7 "Camera -> internal storage"
 	)
 
 	CHOICE_BACKUP_MODE=$(dialog --clear \
 		--backtitle "$BACKTITLE" \
 		--title "Backup Mode" \
 		--menu "Select the default backup mode:" \
-		20 50 7 \
+		20 50 9 \
 		"${OPTIONS[@]}" \
 		2>&1 >/dev/tty)
 
@@ -344,18 +346,26 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 			conf_BACKUP_DEFAULT_TARGET="none"
 		;;
 	2)
-			conf_BACKUP_DEFAULT_SOURCE="usb"
+			conf_BACKUP_DEFAULT_SOURCE="anyusb"
 			conf_BACKUP_DEFAULT_TARGET="usb"
 		;;
 	3)
-			conf_BACKUP_DEFAULT_SOURCE="usb"
+			conf_BACKUP_DEFAULT_SOURCE="anyusb"
 			conf_BACKUP_DEFAULT_TARGET="internal"
 		;;
 	4)
-			conf_BACKUP_DEFAULT_SOURCE="camera"
+			conf_BACKUP_DEFAULT_SOURCE="usb"
 			conf_BACKUP_DEFAULT_TARGET="usb"
 		;;
 	5)
+			conf_BACKUP_DEFAULT_SOURCE="usb"
+			conf_BACKUP_DEFAULT_TARGET="internal"
+		;;
+	6)
+			conf_BACKUP_DEFAULT_SOURCE="camera"
+			conf_BACKUP_DEFAULT_TARGET="usb"
+		;;
+	7)
 			conf_BACKUP_DEFAULT_SOURCE="camera"
 			conf_BACKUP_DEFAULT_TARGET="internal"
 		;;

@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2024-03-04: Add USB auto source option. All connected devices (cameras and storages) will be backed up.</li>
 	<li>2024-02-26: A minimum size of the partition to be used on the target device can be set in the configuration. This allows smaller partitions to be skipped as a destination.</li>
 	<li>2024-01-25: Enable using of graphic environment</li>
 	<li>2024-01-19: Workaround to enable display with Raspberry Pi 5</li>

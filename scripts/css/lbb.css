@@ -22,17 +22,18 @@ html, body {
 	background-repeat: repeat-y;
 }
 
-button.usb {
-	color: var(--cusb);
-	border-color: var(--cusb);
-	width: 80%;
-}
 select.usb {
 	color: var(--cusb);
 	border-color: var(--cusb);
 	width: 50%;
 	margin-top: 0rem;
 	margin-bottom: 0.8rem;
+}
+
+button.usb {
+	color: var(--cusb);
+	border-color: var(--cusb);
+	width: 80%;
 }
 
 button.camera {
@@ -156,7 +157,41 @@ div.footer {
 }
 
 
-/* radio toolbar */
+/* radio mode selector */
+/* USB auto */
+.radio-anyusb {
+	margin: 10px;
+}
+
+.radio-anyusb input[type="radio"] {
+	opacity: 0;
+	position: fixed;
+	width: 0;
+}
+
+.radio-anyusb label {
+	width: 80%;
+	padding: 0.5rem;
+	cursor: pointer;
+	font-weight: bold;
+	letter-spacing: 0.1rem;
+	color: var(--canyusb);
+	background-color: var(--clight);
+	margin: .5rem;
+	border: .1rem solid var(--cusb);
+	display: inline-block;
+	border-radius: .3rem;
+}
+
+.radio-anyusb label:hover {
+	background-color: var(--cmed);
+}
+
+.radio-anyusb input[type="radio"]:checked + label {
+	background-color: var(--clight);
+	border-color: var(--cdanger);
+}
+
 /* USB */
 .radio-usb {
 	margin: 10px;

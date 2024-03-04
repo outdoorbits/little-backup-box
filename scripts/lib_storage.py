@@ -141,16 +141,16 @@ class storage(object):
 		self.umount()
 
 		if self.Role == role_Target:
-			l_box_backup_insert_1	= self.__lan.l('box_backup_insert_target_1')
-			l_box_backup_insert_2	= self.__lan.l('box_backup_insert_target_2')
+			l_box_backup_connect_1	= self.__lan.l('box_backup_connect_target_1')
+			l_box_backup_connect_2	= self.__lan.l('box_backup_connect_target_2')
 		elif self.Role == role_Source:
-			l_box_backup_insert_1	= self.__lan.l('box_backup_insert_source_1')
-			l_box_backup_insert_2	= self.__lan.l('box_backup_insert_source_2')
+			l_box_backup_connect_1	= self.__lan.l('box_backup_connect_source_1')
+			l_box_backup_connect_2	= self.__lan.l('box_backup_connect_source_2')
 		else:
 			sys.exit(101)
 
 		if self.MountPoint:
-			self.__display.message([f":{l_box_backup_insert_1}", f":{l_box_backup_insert_2}"])
+			self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
 
 		# identify device, wait for it if self.WaitForDevice is True
 		USB_DeviceList_old			= []

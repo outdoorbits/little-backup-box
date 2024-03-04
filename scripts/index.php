@@ -29,9 +29,11 @@
 
 	include("sub-popup.php");
 
-	$LocalServices	= array('usb','internal');
+	$LocalAutoServices	= array('anyusb');
 
-	$CameraServices	= array('camera');
+	$LocalServices		= array('usb','internal');
+
+	$CameraServices		= array('camera');
 
 	include("get-cloudservices.php");
 	$CloudServices_marked	= array();
@@ -40,6 +42,7 @@
 	}
 
 	$SourceServices	= array(
+		'anyusb'	=> $LocalAutoServices,
 		'usb'		=> $LocalServices,
 		'camera'	=> $CameraServices,
 		'cloud'		=> $CloudServices_marked
@@ -70,6 +73,7 @@
 // 				find disallowed combinations
 				if (
 					((TargetService === ActiveSource.value) && (TargetService !== 'usb')) ||
+					((ActiveSource.value === 'anyusb') && (TargetService === 'cloud_rsync')) ||
 					((ActiveSource.value === 'camera') && (TargetService === 'cloud_rsync'))
 				) {
 					document.getElementById("Target_" + TargetService).disabled = true;
@@ -109,8 +113,14 @@
 									$LabelNameExplode		= explode(':', $Storage, 2);
 									$LabelName				= end($LabelNameExplode);
 
-									if ($LabelName == 'usb') {
-										$LabelName		= l::box_backup_mode_usbs;
+									if ($LabelName == 'anyusb') {
+										$LabelName		= l::box_backup_mode_anyusb;
+									}
+									elseif ($LabelName == 'usb') {
+										$LabelName		= l::box_backup_mode_usb;
+									}
+									elseif ($LabelName == 'internal') {
+										$LabelName		= l::box_backup_mode_internal;
 									}
 									elseif ($LabelName == 'camera') {
 										$LabelName		= l::box_backup_mode_cameras;
@@ -118,7 +128,7 @@
 									elseif ($LabelName == 'cloud_rsync') {
 										$LabelName		= l::box_backup_mode_cloud_rsync;
 									}
-									$OldSource = isset($_POST['SourceDevice']) ? $_POST['SourceDevice'] : 'usb';
+									$OldSource = isset($_POST['SourceDevice']) ? $_POST['SourceDevice'] : 'anyusb';
 									print("<input type='radio' name='SourceDevice' value='$Storage' id='Source_$Storage' onchange='HideDisallowedButtons(this)' " . ($Storage == $OldSource ? 'checked' : '') . ">");
 									print("<label for='Source_$Storage'>$LabelName</label></br>");
 								}
@@ -143,6 +153,10 @@
 								elseif ($LabelName == 'usb') {
 									$ButtonClass	= 'usb';
 									$LabelName		= l::tools_mount_usb;
+								}
+								elseif ($LabelName == 'internal') {
+									$ButtonClass	= 'usb';
+									$LabelName		= l::box_backup_mode_internal;
 								}
 								elseif ($LabelName == 'camera') {
 									$ButtonClass	= 'camera';

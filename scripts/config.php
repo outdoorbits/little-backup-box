@@ -461,6 +461,8 @@ function upload_settings() {
 
 					<select name="BACKUP_MODE" id="BACKUP_MODE">
 						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
+						<option value="anyusb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb usb"?" selected":""; ?>><?php echo L::config_backup_anyusb_usb; ?></option>
+						<option value="anyusb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb internal"?" selected":""; ?>><?php echo L::config_backup_anyusb_internal; ?></option>
 						<option value="usb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb usb"?" selected":""; ?>><?php echo L::config_backup_usb_usb; ?></option>
 						<option value="usb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb internal"?" selected":""; ?>><?php echo L::config_backup_usb_internal; ?></option>
 						<option value="camera usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera usb"?" selected":""; ?>><?php echo L::config_backup_camera_usb; ?></option>

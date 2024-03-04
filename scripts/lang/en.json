@@ -28,8 +28,6 @@
       "no_valid_destination_mode_1": "No valid",
       "no_valid_destination_mode_2": "destination",
       "no_valid_destination_mode_3": "mode defined",
-      "insert_source_1": "Ready",
-      "insert_source_2": "Insert sources",
       "working": "Working",
       "connect_camera_1": "Ready",
       "connect_camera_2": "Connect cameras",
@@ -67,8 +65,6 @@
       "files_copied": "files copied",
       "generating_thumbnails_finding_images1": "Gen. thumbnails",
       "generating_thumbnails_finding_images3": "Just a moment...",
-      "insert_target_1": "Ready",
-      "insert_target_2": "Insert target",
       "usb_target_ok": "Target o.k.",
       "mode_usb": "USB storage",
       "usb_source_ok": "Source o.k.",
@@ -107,7 +103,14 @@
       "failed_attempts": "failed attempts",
       "report": {
         "time_elapsed": "Duration"
-      }
+      },
+      "connect_source_2": "Insert sources",
+      "connect_target_2": "Insert target",
+      "connect_source_any_2": "Insert sources",
+      "connect_source_1": "Ready",
+      "connect_target_1": "Ready",
+      "connect_source_any_1": "Ready",
+      "mode_anyusb": "any USB"
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -199,7 +202,7 @@
     "stopbackup_m": "Stopping backup.",
     "reboot_m": "Little Backup Box reboots. Refresh this page in a few moments.",
     "shutdown_m": "Little Backup Box is powered off. You can close this page.",
-    "help_txt": "<p class='text-center'>Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a></p>",
+    "help_txt": "<ul>\n   <li>any USB: All connected USB devices, both cameras and storage, are backed up.</li>\n   <li>Target rsync server: Cameras cannot be backed up directly to an rsync server. Local caching is required here.</li>\n</ul>\n<p class = 'text-center'> Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.< /p>",
     "usb_button": "USB storage",
     "view_database": "View-Database",
     "thumbnails_header": "Generate thumbnails and import them into the database",
@@ -513,7 +516,9 @@
       "virtual_keyboard_enable_header": "Virtual keyboard",
       "virtual_keyboard_enable_label": "Enable virtual keyboard",
       "description": "Settings that affect a screen with a graphical user interface (desktop)."
-    }
+    },
+    "backup_anyusb_internal": "any USB (cameras and storage) &rarr; internal storage",
+    "backup_anyusb_usb": "any USB (cameras and storage) &rarr; USB-target-storage"
   },
   "tools": {
     "tools": "Tools",

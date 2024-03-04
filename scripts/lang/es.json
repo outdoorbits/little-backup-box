@@ -23,7 +23,7 @@
     "cloudservice": "servicio de almacenamiento en la nube",
     "reboot_m": "Little Backup Box se reiniciará. Actualice esta página en unos momentos.",
     "shutdown_m": "Little Backup Box está apagado. Puede cerrar esta página.",
-    "help_txt": "<p class = 'text-center'> Lea la <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'> Wiki </a> </ p >",
+    "help_txt": "<ul>\n   <li>todo USB: se realiza una copia de seguridad de todos los dispositivos USB conectados, tanto cámaras como almacenamiento.</li>\n   <li>Servidor rsync de destino: no se puede realizar una copia de seguridad de las cámaras directamente en un servidor rsync. Aquí se requiere almacenamiento en caché local.</li>\n</ul>\n<p class = 'text-center'> Lea la <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.< / p>",
     "stopbackup_button": "DETENER",
     "stopbackup_m": "Deteniendo la copia de seguridad.",
     "usb_button": "Almacenamiento USB",
@@ -328,7 +328,9 @@
       "virtual_keyboard_enable_header": "Teclado virtual",
       "virtual_keyboard_enable_label": "Habilitar teclado virtual",
       "description": "Configuraciones que afectan a una pantalla con interfaz gráfica de usuario (escritorio)."
-    }
+    },
+    "backup_anyusb_internal": "todo USB (cámaras y almacenamiento) &rarr; almacenamiento interno",
+    "backup_anyusb_usb": "todo USB (cámaras y almacenamiento) &rarr; USB almacenamiento"
   },
   "tools": {
     "tools": "Herramientas",
@@ -360,8 +362,6 @@
   },
   "box": {
     "backup": {
-      "insert_source_1": "Listo",
-      "insert_source_2": "Insertar orígenes",
       "invalid_mode_combination_1": "Modo",
       "invalid_mode_combination_2": "de combinacion",
       "invalid_mode_combination_3": "no válido",
@@ -418,8 +418,6 @@
       "files_copied": "arch. copiado",
       "generating_thumbnails_finding_images1": "Gen. de miniaturas",
       "generating_thumbnails_finding_images3": "Sólo un momento...",
-      "insert_target_1": "Listo",
-      "insert_target_2": "Insertar destino",
       "usb_target_ok": "Almacenamiento ext. o.k.",
       "mode_usb": "Almacenamiento USB",
       "usb_source_ok": "Origen o.k.",
@@ -458,7 +456,14 @@
       "failed_attempts": "intentos fallidos",
       "report": {
         "time_elapsed": "Período"
-      }
+      },
+      "connect_source_2": "Insertar orígenes",
+      "connect_target_2": "Insertar destino",
+      "connect_source_any_2": "Insertar orígenes",
+      "connect_source_1": "Listo",
+      "connect_target_1": "Listo",
+      "connect_source_any_1": "Listo",
+      "mode_anyusb": "todo USB"
     },
     "cronip": {
       "offline": "desconectado",
