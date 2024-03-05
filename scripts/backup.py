@@ -575,7 +575,7 @@ class backup(object):
 						mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
 
 				# exit loop?
-				if not self.SourceStorageType in ['anyusb', 'usb', 'camera']:
+				if not self.SourceStorageType in ['anyusb', 'usb', 'camera'] or self.DeviceIdentifierPresetSource:
 					break
 
 			self.__display.message([f":{self.__lan.l('box_finished')}"])
