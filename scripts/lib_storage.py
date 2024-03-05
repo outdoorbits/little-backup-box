@@ -503,6 +503,43 @@ class storage(object):
 		Command	= ["chown", f"{self.__mount_user}:{self.__mount_group}", MountPoint, "-R"]
 		subprocess.run(Command)
 
+	def __read_device_id(self,DatePart, RandomPart):
+		LbbDeviceID	= ''
+
+		Columns	= ['VENDOR','MODEL','SERIAL','FSSIZE','FSTYPE','FSVER','LABEL','UUID','PATH']
+
+		searchID	= self.DeviceIdentifier.replace('--uuid ','')
+		SourceCommand	= ' '.join(['lsblk','--output']) + ' ' + ','.join(Columns)
+		Filter			= f'{Columns[0]}\|{searchID}'
+
+		Result	= subprocess.check_output(f"{SourceCommand} | grep -w '{Filter}'",shell=True).decode().strip().split('\n')
+
+		if len(Result) == 2:
+
+			ColumnPosition_OLD	= len(Result[1])
+			ColumnPositions	= {}
+			for Column in reversed(Columns):
+				ColumnPosition		= Result[0].index(Column)
+				ColumnEnd			= ColumnPosition_OLD if not ColumnPosition_OLD is None else None
+				ColumnPosition_OLD	= ColumnPosition
+
+				ColumnPositions[Column]	= {
+					'ColumnPosition'	: ColumnPosition,
+					'ColumnEnd'			: ColumnEnd
+				}
+
+			for Column in Columns:
+				if Column != 'PATH':
+					Part	= Result[1][ColumnPositions[Column]['ColumnPosition']:ColumnPositions[Column]['ColumnEnd']].strip()
+					LbbDeviceID	+= f'{Part} ' if Part else ''
+
+			LbbDeviceID	= LbbDeviceID.strip().replace(' ','_')
+
+		if not LbbDeviceID:
+			LbbDeviceID	= f"lbb_{DatePart}-{RandomPart}_ID_NOT_STABLE"
+
+		return(f'lbb_{LbbDeviceID}')
+
 	def __manage_lbb_device_ID(self):
 		if self.mounted():
 
@@ -525,7 +562,10 @@ class storage(object):
 				# set global backup parameters
 				self.LbbDeviceID	= f"lbb_{DatePart}-{RandomPart}"
 
-				open(f"{self.MountPoint}/{self.LbbDeviceID}.id",'w').close()
+				try:
+					open(f"{self.MountPoint}/{self.LbbDeviceID}.id",'w').close()
+				except:
+					self.LbbDeviceID	= self.__read_device_id(DatePart, RandomPart)
 
 			self.LbbSourceDescriptor	= f"{self.__lan.l('box_backup_source_id')}: {self.LbbDeviceID}"
 			self.SubPathsAtSource	= ['']
@@ -559,7 +599,7 @@ class storage(object):
 			MountPointSearch	= f" {MountPoint} "
 			Command	= f"mount -l | grep '{MountPointSearch}' | grep '{self.CloudServiceName}'"
 		else:
-			MountPointSearch	= f'MOUNTPOINT="{MountPoint}" \| MOUNTPOINT="{self.__TechMountPoint}"' if self.__TechMountPoint else f'MOUNTPOINT="{MountPoint}"'
+			MountPointSearch	= f'MOUNTPOINT="{MountPoint}"\|MOUNTPOINT="{self.__TechMountPoint}"' if self.__TechMountPoint else f'MOUNTPOINT="{MountPoint}"'
 			Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{MountPointSearch}'"
 
 		# mount check
