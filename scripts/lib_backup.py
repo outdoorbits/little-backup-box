@@ -283,10 +283,7 @@ class reporter(object):
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_exception')} {Report['SyncReturnCode']} ({self.sync_return_code_decoder(Report['SyncReturnCode'])}).</p>"
 
 				FilesCopiedAll	= Report['FilesToProcess'] - Report['FilesToProcessPost'] if not Report['FilesToProcessPost'] is None else '?'
-				if Report['FilesCopied'] == Report['FilesProcessed']:
-					self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')}.</p>"
-				else:
-					self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')} ({Report['FilesCopied']} {self.__lan.l('box_backup_files_just_copied')})</p>"
+				self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')}. ({Report['FilesCopied']} {self.__lan.l('box_backup_files_just_copied')})</p>"
 
 			self.mail_content_HTML	+= f"<br>\n\n    <p style='{CSS_margins_left_1}'>{len(self.__BackupReports[Folder])} {self.__lan.l('box_backup_mail_tries_needed')}.</p>"
 
@@ -322,6 +319,7 @@ class reporter(object):
 		# mail subject
 		self.mail_subject	= 'Little Backup Box: '
 		self.mail_subject	+= self.__lan.l('box_backup_mail_backup_complete') if BackupComplete else self.__lan.l('box_backup_mail_error')
+		self.mail_subject	+= f" {self.__SourceDeviceLbbDeviceID}"
 
 	def prepare_display_summary(self):
 		# provides self.display_summary
