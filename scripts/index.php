@@ -85,7 +85,10 @@
     </script>
 </head>
 
-<body onload="refreshLogMonitor()" <?php echo $background; ?>>
+<?php
+	$OldSource = isset($_POST['SourceDevice']) ? $_POST['SourceDevice'] : 'anyusb';
+?>
+<body onload="refreshLogMonitor();HideDisallowedButtons(document.getElementById('Source_<?php echo $OldSource; ?>'))" <?php echo $background; ?>>
 	<?php include "sub-standards-body-loader.php"; ?>
 	<?php include "sub-menu.php"; ?>
 
@@ -128,7 +131,6 @@
 									elseif ($LabelName == 'cloud_rsync') {
 										$LabelName		= l::box_backup_mode_cloud_rsync;
 									}
-									$OldSource = isset($_POST['SourceDevice']) ? $_POST['SourceDevice'] : 'anyusb';
 									print("<input type='radio' name='SourceDevice' value='$Storage' id='Source_$Storage' onchange='HideDisallowedButtons(this)' " . ($Storage == $OldSource ? 'checked' : '') . ">");
 									print("<label for='Source_$Storage'>$LabelName</label></br>");
 								}

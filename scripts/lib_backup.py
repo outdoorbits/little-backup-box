@@ -246,7 +246,7 @@ class reporter(object):
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 
 		self.mail_content_HTML	+= f"\n  <b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
-		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b><u>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} {self.__SourceCloudService} {self.__SourceDeviceLbbDeviceID}</u> {self.__lan.l('box_backup_mail_to')} <u>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} {self.__TargetCloudService} {self.__TargetDeviceLbbDeviceID}</u></br>{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
+		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} <b>'{self.__SourceCloudService}{' ' if self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}'</b> {self.__lan.l('box_backup_mail_to')} {self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} <b>'{self.__TargetCloudService}{' ' if self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}'</b></br>{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
 
 		separator	= False
 		for Folder in self.__BackupReports:

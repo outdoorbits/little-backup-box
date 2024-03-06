@@ -236,8 +236,10 @@ class backup(object):
 			Identifier					= self.DeviceIdentifierPresetSource
 			Identifier_OLD				= ''
 
+			dynamicSources	= self.SourceStorageType in ['anyusb', 'usb', 'camera'] and not self.DeviceIdentifierPresetSource
+
 			# message to connect sources
-			if SourceStorageName in ['anyusb', 'camera', 'usb']:
+			if dynamicSources:
 				if SourceStorageName == 'anyusb':
 					l_box_backup_connect_1	= self.__lan.l('box_backup_connect_source_any_1')
 					l_box_backup_connect_2	= self.__lan.l('box_backup_connect_source_any_2')
@@ -252,7 +254,7 @@ class backup(object):
 
 			while True:
 				# define next source
-				if self.SourceName in ['anyusb', 'usb', 'camera'] and not self.DeviceIdentifierPresetSource:
+				if dynamicSources:
 
 					# add last run to completedSources
 					if Identifier_OLD:
@@ -575,7 +577,7 @@ class backup(object):
 						mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
 
 				# exit loop?
-				if not self.SourceStorageType in ['anyusb', 'usb', 'camera'] or self.DeviceIdentifierPresetSource:
+				if not dynamicSources:
 					break
 
 			self.__display.message([f":{self.__lan.l('box_finished')}"])

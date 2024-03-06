@@ -163,7 +163,7 @@ class storage(object):
 			Command	= ['udevadm','trigger']
 			subprocess.run(Command)
 
-			USB_DeviceList = get_available_partitions(TargetPartition=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, returnDict=True)
+			USB_DeviceList = get_available_partitions(TargetPartition=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, returnDict=True)
 
 			# log if list of devices changed
 			if USB_DeviceList and USB_DeviceList != USB_DeviceList_old:
@@ -543,7 +543,15 @@ class storage(object):
 	def __manage_lbb_device_ID(self):
 		if self.mounted():
 
-			LbbID_FileList	= glob.glob(f"{self.MountPoint}/????[0-9]*[0-9]-[0-9]*[0-9].id")
+			# find id file
+			Extension	= 'id'
+			LbbID_FileList	= glob.glob(f"{self.MountPoint}/????[0-9]*[0-9]-[0-9]*[0-9].{Extension}")
+			if not LbbID_FileList:
+				Extension	= 'lbbid'
+				LbbID_FileList	= glob.glob(f"{self.MountPoint}/????[0-9]*[0-9]-[0-9]*[0-9].{Extension}")
+			if not LbbID_FileList:
+				Extension	= 'lbbid'
+				LbbID_FileList	= glob.glob(f"{self.MountPoint}/*.{Extension}")
 
 			if len(LbbID_FileList) > 1:
 				LbbID_FileList.sort(reverse=True)
@@ -551,7 +559,7 @@ class storage(object):
 			if len(LbbID_FileList) > 0: # ID file exists
 
 				# set global backup parameters
-				self.LbbDeviceID			= LbbID_FileList[0].split('/')[-1].replace('.id','')
+				self.LbbDeviceID			= LbbID_FileList[0].split('/')[-1].replace(f'.{Extension}','')
 
 			else:	# create ID file
 				DatePart	= datetime.datetime.now().strftime("%Y%m%d%H%M%S")
@@ -563,7 +571,7 @@ class storage(object):
 				self.LbbDeviceID	= f"lbb_{DatePart}-{RandomPart}"
 
 				try:
-					open(f"{self.MountPoint}/{self.LbbDeviceID}.id",'w').close()
+					open(f"{self.MountPoint}/{self.LbbDeviceID}.lbbid",'w').close()
 				except:
 					self.LbbDeviceID	= self.__read_device_id(DatePart, RandomPart)
 
@@ -866,7 +874,7 @@ def get_mounts_list():
 	mountsList	= list(dict.fromkeys(mountsList))
 	return(f" {' '.join(mountsList)} ")
 
-def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, HumanReadable=False, skipMounted=False, returnDict=False):
+def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, HumanReadable=False, returnDict=False):
 	setup	= lib_setup.setup()
 
 	TargetDevice_lum_alpha	= ''
