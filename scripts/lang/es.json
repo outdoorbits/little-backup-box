@@ -401,7 +401,7 @@
         "error": "Error",
         "backup_failed": "Copia de seguridad fallida",
         "summary": "Resumen",
-        "no_backup": "Error: No se realizó ninguna copia de seguridad."
+        "no_backup": "Error: No se realizó ninguna copia de seguridad"
       },
       "try": "Intentar",
       "checking_old_files": "comparando",

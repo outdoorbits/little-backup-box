@@ -404,7 +404,7 @@
         "error": "Fehler",
         "backup_failed": "Backup fehlgeschlagen",
         "summary": "Zusammenfassung",
-        "no_backup": "Fehler: Kein Backup durchgeführt."
+        "no_backup": "Fehler: Kein Backup durchgeführt"
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",

@@ -56,7 +56,7 @@
         "error": "Error",
         "backup_failed": "Backup failed",
         "summary": "Summary",
-        "no_backup": "Error: No backup performed."
+        "no_backup": "Error: No backup performed"
       },
       "storage_filesystem_short": "FS",
       "exception": "Unknown error",
