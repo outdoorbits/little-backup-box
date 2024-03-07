@@ -118,7 +118,7 @@ class backup_autorun(object):
 			self.__display.message([f":{self.__lan.l('box_backup_secondary')}"])
 
 			secSourceDeviceIdentifier	= ''
-			if  conf_BACKUP_DEFAULT_SOURCE=='usb' and conf_BACKUP_DEFAULT_SOURCE2 == 'usb':
+			if  conf_BACKUP_DEFAULT_TARGET == 'usb' and conf_BACKUP_DEFAULT_SOURCE2 == 'usb':
 				try:
 					secSourceDeviceIdentifier	= backup_process.TargetDevice.DeviceIdentifier
 				except:

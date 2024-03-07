@@ -255,7 +255,6 @@ class backup(object):
 			while True:
 				# define next source
 				if dynamicSources:
-
 					# add last run to completedSources
 					if Identifier_OLD:
 						if SourceStorageName == 'camera':
@@ -327,15 +326,15 @@ class backup(object):
 
 				#run backup
 				self.__reporter	= lib_backup.reporter(
-					self.__lan,
-					SourceStorageType,
-					self.SourceDevice.CloudServiceName,
-					self.SourceDevice.LbbDeviceID,
-					self.TargetDevice.StorageType,
-					self.TargetDevice.CloudServiceName,
-					self.TargetDevice.LbbDeviceID,
-					self.TransferMode,
-					SyncLog=self.__conf_LOG_SYNC
+					lan						= self.__lan,
+					SourceStorageType		= SourceStorageType,
+					SourceCloudService		= self.SourceDevice.CloudServiceName,
+					SourceDeviceLbbDeviceID	= self.SourceDevice.LbbDeviceID,
+					TargetStorageType		= self.TargetDevice.StorageType,
+					TargetCloudService		= self.TargetDevice.CloudServiceName,
+					TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
+					TransferMode			= self.TransferMode,
+					SyncLog					= self.__conf_LOG_SYNC
 				)
 
 				lib_system.rpi_leds(trigger='heartbeat')

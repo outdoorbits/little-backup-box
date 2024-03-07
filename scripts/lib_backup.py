@@ -326,7 +326,7 @@ class reporter(object):
 		# mail subject
 		self.mail_subject	= 'Little Backup Box: '
 		self.mail_subject	+= self.__lan.l('box_backup_mail_backup_complete') if BackupComplete else self.__lan.l('box_backup_mail_error')
-		self.mail_subject	+= f" {self.__SourceDeviceLbbDeviceID}"
+		self.mail_subject	+= f" {self.__SourceDeviceLbbDeviceID} -> {self.__TargetDeviceLbbDeviceID}"
 
 	def prepare_display_summary(self):
 		# provides self.display_summary
