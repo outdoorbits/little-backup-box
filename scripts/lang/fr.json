@@ -400,7 +400,8 @@
         "exception": "Exception",
         "error": "Erreur",
         "backup_failed": "La sauvegarde a échoué",
-        "summary": "Résumé"
+        "summary": "Résumé",
+        "no_backup": "Erreur : Aucune sauvegarde effectuée."
       },
       "try": "essayer",
       "checking_old_files": "comparant",

@@ -185,7 +185,7 @@ class reporter(object):
 
 
 	def new_try(self):
-
+		# append report
 		self.__BackupReports[self.__Folder].append({
 			'FilesToProcess':		0,
 			'FilesProcessed':		0,
@@ -249,6 +249,11 @@ class reporter(object):
 		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} <b>'{self.__SourceCloudService}{' ' if self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}'</b> {self.__lan.l('box_backup_mail_to')} {self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} <b>'{self.__TargetCloudService}{' ' if self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}'</b></br>{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
 
 		separator	= False
+
+		if not self.__BackupReports:
+			self.new_folder('None')
+			self.add_error('no backup')
+
 		for Folder in self.__BackupReports:
 
 			BackupComplete	= BackupComplete and (not self.__BackupReports[Folder][-1]['Errors'])
@@ -269,10 +274,12 @@ class reporter(object):
 
 				self.mail_content_HTML	+= f"\n\n  <h4>{tryNumber}. {self.__lan.l('box_backup_try')}</h4>"
 
-
 				if not Report['Errors']:
 					self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_backup_complete')}.</p>"
 				else:
+					if 'no backup' in Report['Errors']:
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_no_backup')}.</p>"
+
 					if 'Err.Lost device!' in Report['Errors']:
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_lost_device')}.</p>"
 

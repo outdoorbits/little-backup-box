@@ -100,7 +100,7 @@ class backup_autorun(object):
 			if SecundaryBackupConfigured:
 				self.__display.message([f":{self.__lan.l('box_backup_primary')}"])
 
-			backup_prim = backup.backup(
+			backup_process = backup.backup(
 				SourceName						= conf_BACKUP_DEFAULT_SOURCE,
 				TargetName						= conf_BACKUP_DEFAULT_TARGET,
 				DoSyncDatabase					= False,
@@ -111,48 +111,30 @@ class backup_autorun(object):
 				PowerOff						= (conf_POWER_OFF and (SecundaryBackupConfigured == False)),
 				SecundaryBackupFollows			= SecundaryBackupConfigured
 			)
-			backup_prim.run()
+			backup_process.run()
 
 		## default-backup 2
 		if SecundaryBackupConfigured:
 			self.__display.message([f":{self.__lan.l('box_backup_secondary')}"])
 
-			newSourceDeviceDeviceIdentifier	= ''
-			if		conf_BACKUP_DEFAULT_SOURCE2 == conf_BACKUP_DEFAULT_SOURCE:
+			secSourceDeviceIdentifier	= ''
+			if  conf_BACKUP_DEFAULT_SOURCE=='usb' and conf_BACKUP_DEFAULT_SOURCE2 == 'usb':
 				try:
-					newSourceDeviceDeviceIdentifier	= backup_prim.SourceDevice.DeviceIdentifier
-				except:
-					pass
-			elif	conf_BACKUP_DEFAULT_SOURCE2 == conf_BACKUP_DEFAULT_TARGET:
-				try:
-					newSourceDeviceDeviceIdentifier	= backup_prim.TargetDevice.DeviceIdentifier
+					secSourceDeviceIdentifier	= backup_process.TargetDevice.DeviceIdentifier
 				except:
 					pass
 
-			newTargetDeviceDeviceIdentifier	= ''
-			if		conf_BACKUP_DEFAULT_TARGET2 == conf_BACKUP_DEFAULT_TARGET:
-				try:
-					newTargetDeviceDeviceIdentifier	= backup_prim.TargetDevice.DeviceIdentifier
-				except:
-					pass
-			elif	conf_BACKUP_DEFAULT_TARGET2 == conf_BACKUP_DEFAULT_SOURCE:
-				try:
-					newTargetDeviceDeviceIdentifier	= backup_prim.SourceDevice.DeviceIdentifier
-				except:
-					pass
-
-			backup_sek = backup.backup(
+			backup.backup(
 				SourceName						= conf_BACKUP_DEFAULT_SOURCE2,
 				TargetName						= conf_BACKUP_DEFAULT_TARGET2,
 				DoSyncDatabase					= False,
-				DoGenerateThumbnails			= conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS,
-				DoUpdateEXIF					= conf_BACKUP_DEFAULT_UPDATE_EXIF,
-				DeviceIdentifierPresetSource	= newSourceDeviceDeviceIdentifier,
-				DeviceIdentifierPresetTarget	= newTargetDeviceDeviceIdentifier,
+				DoGenerateThumbnails			= False,
+				DoUpdateEXIF					= False,
+				DeviceIdentifierPresetSource	= secSourceDeviceIdentifier,
+				DeviceIdentifierPresetTarget	= '',
 				PowerOff						= conf_POWER_OFF,
 				SecundaryBackupFollows			= False
-			)
-			backup_sek.run()
+			).run()
 
 if __name__ == "__main__":
 	backup_autorun().run()

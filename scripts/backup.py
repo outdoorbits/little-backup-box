@@ -994,9 +994,7 @@ class backup(object):
 			display_summary	= self.__reporter.display_summary
 
 		if self.SecundaryBackupFollows:
-
 			lib_storage.umount(self.__setup,'all')
-
 			self.__display.message(display_summary)
 		else:
 			# Power off

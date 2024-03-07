@@ -316,8 +316,9 @@ class storage(object):
 		)
 
 		if configured:
-			self.rsyncSSH	= ["sshpass", "-p", conf_RSYNC_PASSWORD]
-			self.MountPoint	= f"rsync://{conf_RSYNC_USER}@{conf_RSYNC_SERVER}:{conf_RSYNC_PORT}/{conf_RSYNC_SERVER_MODULE}"
+			self.rsyncSSH			= ["sshpass", "-p", conf_RSYNC_PASSWORD]
+			self.MountPoint			= f"rsync://{conf_RSYNC_USER}@{conf_RSYNC_SERVER}:{conf_RSYNC_PORT}/{conf_RSYNC_SERVER_MODULE}"
+			self.LbbDeviceID		= conf_RSYNC_SERVER_MODULE
 
 		return(configured)
 
@@ -655,7 +656,7 @@ class storage(object):
 					Result	= ''
 			else:
 				if self.MountPoint:
-					Command	= ['umount',self.MountPoint]
+					Command	= ['umount', '-l', self.MountPoint]
 					try:
 						Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
 						os.rmdir(MountPoint)
@@ -665,7 +666,7 @@ class storage(object):
 			# umount TechMountPoint
 			if self.FS_Type in ['ext2','ext3','ext4']:
 				if self.__TechMountPoint:
-					Command	= [ 'umount',self.__TechMountPoint]
+					Command	= [ 'umount', '-l', self.__TechMountPoint]
 					try:
 						Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
 						os.rmdir(MountPoint)
@@ -784,6 +785,7 @@ class storage(object):
 def umount(setup, MountPoints):
 	#setup:			setup-object
 	#MountPoints:	'all' or a MountPoint or an array of MountPoints
+
 	if type(MountPoints) != "<class 'list'>":
 		if MountPoints == 'all':
 			MountPoints	= [
@@ -798,16 +800,17 @@ def umount(setup, MountPoints):
 			MountPoints	= [MountPoints]
 
 	for MountPoint in MountPoints:
-		try:
-			if getFS_Type(MountPoint) in ['hfs','hfsplus']:
-				subprocess.run(['fusermount','-uz',MountPoint], stderr=subprocess.DEVNULL)
-				os.rmdir(MountPoint)
 
-			else:
-				subprocess.run(['umount',MountPoint], stderr=subprocess.DEVNULL)
-				os.rmdir(MountPoint)
-		except:
-			pass
+		if os.path.isdir(MountPoint):
+			try:
+				if getFS_Type(MountPoint) in ['hfs','hfsplus']:
+					subprocess.run(['fusermount','-uz',MountPoint], stderr=subprocess.DEVNULL)
+					os.rmdir(MountPoint)
+				else:
+					subprocess.run(['umount', '-l', MountPoint], stderr=subprocess.DEVNULL)
+					os.rmdir(MountPoint)
+			except:
+				pass
 
 def remove_all_mountpoints(setup):
 	umount(setup,'all')
