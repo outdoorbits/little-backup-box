@@ -252,6 +252,7 @@ class reporter(object):
 
 		if not self.__BackupReports:
 			self.new_folder('None')
+			self.new_try()
 			self.add_error('no backup')
 
 		for Folder in self.__BackupReports:
