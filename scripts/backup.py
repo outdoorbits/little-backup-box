@@ -563,6 +563,10 @@ class backup(object):
 
 						del progress
 
+				# umount source
+				if self.SourceDevice.mountable:
+					self.SourceDevice.umount()
+
 				# Mail result
 				if self.conf_MAIL_NOTIFICATIONS:
 					mail	= lib_mail.mail()
@@ -986,6 +990,8 @@ class backup(object):
 		# Set the PWR LED ON to indicate that the backup has finished
 		lib_system.rpi_leds(trigger='none',brightness='1')
 
+		lib_storage.umount(self.__setup,'all')
+
 		if self.__reporter is None:
 			display_summary	= []
 		else:
@@ -993,7 +999,6 @@ class backup(object):
 			display_summary	= self.__reporter.display_summary
 
 		if self.SecundaryBackupFollows:
-			lib_storage.umount(self.__setup,'all')
 			self.__display.message(display_summary)
 		else:
 			# Power off
