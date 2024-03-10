@@ -1011,12 +1011,8 @@ def get_available_cameras():
 	available_cameras_raw	= []
 	for Camera in Cameras[2:]:
 
-		try:
-			CameraModel		= Camera[0:ModelColumnWidth].strip()
-			CameraPort		= Camera[ModelColumnWidth:].strip()
-		except:
-			CameraModel		= ''
-			CameraPort		= ''
+		CameraModel		= Camera[0:ModelColumnWidth].strip()
+		CameraPort		= Camera[ModelColumnWidth:].strip()
 
 		if (CameraModel and CameraPort): # Model or Port empty -> retry
 			available_cameras_raw.append(
