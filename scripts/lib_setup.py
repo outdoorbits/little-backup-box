@@ -275,6 +275,8 @@ class setup(object):
 					'const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE':		{'type': 'str'},
 					'const_MOUNTPOINT_SUBPATH_CLOUD_TARGET':		{'type': 'str'},
 					'const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE':		{'type': 'str'},
+					'const_MOUNT_LOCAL_TIMEOUT':					{'type': 'int'},
+					'const_MOUNT_CLOUD_TIMEOUT':					{'type': 'int'},
 					'const_INTERNAL_BACKUP_DIR':					{'type': 'str'},
 					'const_BACKGROUND_IMAGES_DIR':					{'type': 'str'},
 					'const_WEB_ROOT_LBB':							{'type': 'str'},
@@ -307,7 +309,6 @@ class setup(object):
 					'const_VPN_FILENAME_WireGuard':					{'type': 'str'},
 					'const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC':	{'type': 'int'},
 					'const_SYNC_TIME_OVERHEATING_WAIT_SEC':			{'type': 'int'},
-					'const_CLOUD_MOUNT_TIMEOUT':					{'type': 'int'},
 					'const_BACKUP_MAX_TRIES':						{'type': 'int'},
 					'const_SOFTWARE_VERSION':						{'type': 'str'},
 					'const_FONT_PATH':								{'type': 'str'}

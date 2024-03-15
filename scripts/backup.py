@@ -380,20 +380,21 @@ class backup(object):
 							time.sleep(2)
 
 						# Remount devices if "Err.Lost device"
-						if "Err.Lost device!" in ErrorsOld:
+						if "Err.: Lost device!" in ErrorsOld:
 							self.__log.execute('Lost device: pre remount','lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE',3)
 
 							if not self.TargetDevice.mounted():
 								self.__log.message(f"remount target device {self.TargetDevice.StorageType} {self.TargetDevice.CloudServiceName} {self.TargetDevice.DeviceIdentifier}",3)
-								self.TargetDevice.mount()
+								self.TargetDevice.mount(TimeOutActive=False)
 
 							if not self.SourceDevice.mounted():
 								self.__log.message(f"remount source device {SourceStorageName} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
-								self.SourceDevice.mount()
+								if not self.SourceDevice.mount(TimeOutActive=True):
+									self.__reporter.add_error('Err.: Remounting device failed!')
 
 						# Check for lost devices
 						if self.__checkLostDevice():
-							self.__reporter.add_error('Err.Lost device!')
+							self.__reporter.add_error('Err.: Lost device!')
 							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
@@ -434,7 +435,7 @@ class backup(object):
 						try:
 							pathlib.Path(f"{self.TargetDevice.MountPoint}/{self.SourceDevice.SubPathAtTarget}").mkdir(parents=True, exist_ok=True)
 						except:
-							self.__reporter.add_error('Err.Lost device!')
+							self.__reporter.add_error('Err.: Lost device!')
 
 							ErrorsOld	= self.__reporter.get_errors()
 							continue
@@ -525,7 +526,7 @@ class backup(object):
 
 						# Transfer completed?
 						if FilesToProcessPost > 0:
-							self.__reporter.add_error('Files missing!')
+							self.__reporter.add_error('Err.: Files missing!')
 							self.__log.message(f"Files missing: {FilesToProcessPost} files not synced.")
 							self.__log.execute('Files missing', 'lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE', 3)
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
@@ -538,7 +539,7 @@ class backup(object):
 
 						# Re-Check for lost devices
 						if self.__checkLostDevice():
-							self.__reporter.add_error('Err.Lost device!')
+							self.__reporter.add_error('Err.: Lost device!')
 							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
@@ -547,7 +548,7 @@ class backup(object):
 						SyncTimeDiff	= SyncStopTime - SyncStartTime
 
 						if (
-							'Err.Lost device!' in self.__reporter.get_errors() and
+							'Err.: Lost device!' in self.__reporter.get_errors() and
 							SyncReturnCode > 0 and
 							SyncTimeDiff >= self.const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC and
 							self.const_BACKUP_MAX_TRIES >  TriesCount

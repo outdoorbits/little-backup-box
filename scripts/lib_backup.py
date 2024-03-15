@@ -238,7 +238,8 @@ class reporter(object):
 	def prepare_mail(self):
 		# provides self.mail_subject and self.mail_content_HTML
 
-		CSS_margins_left_1	= 'margin-left:10px;margin-top:0;margin-bottom:0;'
+		CSS_margins_left_1		= 'margin-left:10px;margin-top:0;margin-bottom:0;'
+		CSS_font_format_alert	= 'font-weight: bold; color: #ff0000;'
 
 		BackupComplete	= True
 
@@ -253,7 +254,7 @@ class reporter(object):
 		if not self.__BackupReports:
 			self.new_folder('None')
 			self.new_try()
-			self.add_error('no backup')
+			self.add_error('Err.: No backup!')
 
 		for Folder in self.__BackupReports:
 
@@ -278,17 +279,20 @@ class reporter(object):
 				if not Report['Errors']:
 					self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_backup_complete')}.</p>"
 				else:
-					if 'no backup' in Report['Errors']:
-						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_no_backup')}.</p>"
+					if 'Err.: No backup!' in Report['Errors']:
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_no_backup')}</p>"
 
-					if 'Err.Lost device!' in Report['Errors']:
-						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_lost_device')}.</p>"
+					if 'Err.: Lost device!' in Report['Errors']:
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_lost_device')}</p>"
 
-					if 'Files missing!' in Report['Errors']:
-						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_files_missing')}.</p>"
+					if 'Err.: Remounting device failed!' in Report['Errors']:
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_remount_device_failed')}</p>"
+
+					if 'Err.: Files missing!' in Report['Errors']:
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_files_missing')}</p>"
 
 					if 'Exception' in Report['Errors']:
-						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_exception')} {Report['SyncReturnCode']} ({self.sync_return_code_decoder(Report['SyncReturnCode'])}).</p>"
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_exception')} {Report['SyncReturnCode']} ({self.sync_return_code_decoder(Report['SyncReturnCode'])}).</p>"
 
 				FilesCopiedAll	= Report['FilesToProcess'] - Report['FilesToProcessPost'] if not Report['FilesToProcessPost'] is None else '?'
 				self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')}. ({Report['FilesCopied']} {self.__lan.l('box_backup_files_just_copied')})</p>"
@@ -367,9 +371,9 @@ class reporter(object):
 
 			for Error in Errors:
 				ErrorSign	= Error.split(':',1)[1]
-				if ErrorSign == 'Err.Lost device!':
+				if ErrorSign == 'Err.: Lost device!':
 					self.display_summary	+= [f":{self.__lan.l('box_backup_lost_device')}."]
-				elif ErrorSign == 'Files missing!':
+				elif ErrorSign == 'Err.: Files missing!':
 					self.display_summary	+= [f":{self.__lan.l('box_backup_files_missing')}."]
 				elif ErrorSign == 'Exception':
 					self.display_summary	+= [f":{self.sync_return_code_decoder(Error.split(':',1)[0])}"]

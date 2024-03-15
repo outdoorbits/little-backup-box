@@ -112,17 +112,17 @@ class storage(object):
 
 		self.__camera_connected	= False
 
-	def mount(self):
+	def mount(self,TimeOutActive=None):
 		mounted	= False
 
 		if self.StorageType == 'usb':
-			mounted	= self.__mount_USB_storage()
+			mounted	= self.__mount_USB_storage(TimeOutActive=TimeOutActive==True)
 		elif self.StorageType == 'internal':
 			mounted	= self.__mount_internal()
 		elif self.StorageType == 'camera':
-			mounted	= self.__mount_camera()
+			mounted	= self.__mount_camera(TimeOutActive=TimeOutActive==True)
 		elif self.StorageType == 'cloud':
-			mounted	= self.__mount_cloud()
+			mounted	= self.__mount_cloud(TimeOutActive=TimeOutActive!=False)
 		elif self.StorageType == 'cloud_rsync':
 			mounted	= self.__mount_cloud_rsync()
 
@@ -131,7 +131,7 @@ class storage(object):
 
 		return(mounted)
 
-	def __mount_USB_storage(self):
+	def __mount_USB_storage(self, TimeOutActive=False):
 		# mounts the device, if WAIT_FOR_MOUNT=true, waits until the device is available
 		# returns uuid or false (if not mounted), "na" for not available
 		# checks and remounts all by UUID_USBX given devices
@@ -156,7 +156,9 @@ class storage(object):
 		USB_DeviceList_old			= []
 		USB_Device_other_lum_Alpha	= None
 		DeviceChosenIdentifier		= None
+		EndTime	= time.time()+self.__setup.get_val('const_MOUNT_LOCAL_TIMEOUT')
 		retry						= True if self.MountPoint else False
+
 		while retry:
 
 			# force to re-scan usb-devices
@@ -194,6 +196,9 @@ class storage(object):
 			if DeviceChosenIdentifier or not self.WaitForDevice:
 				# success: device to mount identified
 				retry = False
+
+			if retry and TimeOutActive:
+				retry	= EndTime > time.time()
 
 			if retry:
 				time.sleep(0.5)
@@ -270,7 +275,7 @@ class storage(object):
 		self.__log.message(f"mount USB device: {MOUNTED}")
 		return(MOUNTED)
 
-	def __mount_cloud(self):
+	def __mount_cloud(self, TimeOutActive=True):
 		self.umount()
 
 		MOUNTED	= self.mounted()
@@ -287,8 +292,8 @@ class storage(object):
 
 				subprocess.run(Command,shell=True)
 
-				EndTime	= time.time()+self.__setup.get_val('const_CLOUD_MOUNT_TIMEOUT')
-				while (not MOUNTED) and (EndTime > time.time()):
+				EndTime	= time.time()+self.__setup.get_val('const_MOUNT_CLOUD_TIMEOUT')
+				while (not MOUNTED) and (EndTime > time.time() or TimeOutActive==False):
 					MOUNTED	= self.mounted()
 					time.sleep(0.5)
 
@@ -330,8 +335,10 @@ class storage(object):
 
 		return(True)
 
-	def __mount_camera(self):
+	def __mount_camera(self,TimeOutActive=False):
 		self.__display.message([f":{self.__lan.l('box_backup_connect_camera_1')}", f":{self.__lan.l('box_backup_connect_camera_2')}"])
+
+		EndTime	= time.time()+self.__setup.get_val('const_MOUNT_LOCAL_TIMEOUT')
 
 		while not (self.DeviceIdentifier and self.CameraPort):
 			Cameras	= get_available_cameras()
@@ -343,6 +350,9 @@ class storage(object):
 
 				else:
 					self.DeviceIdentifier, self.CameraPort = self.__split_CameraIdentifier(Cameras[0])
+
+			if not (self.DeviceIdentifier and self.CameraPort) and TimeOutActive and (EndTime >= time.time()):
+				return(False)
 
 			if not (self.DeviceIdentifier and self.CameraPort):
 				time.sleep(1)

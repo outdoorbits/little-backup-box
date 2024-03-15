@@ -404,7 +404,8 @@
         "error": "Fehler",
         "backup_failed": "Backup fehlgeschlagen",
         "summary": "Zusammenfassung",
-        "no_backup": "Fehler: Kein Backup durchgeführt"
+        "no_backup": "Fehler: Kein Backup durchgeführt!",
+        "remount_device_failed": "Remount fehlgeschlagen!"
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",
