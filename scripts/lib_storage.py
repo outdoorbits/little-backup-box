@@ -154,12 +154,10 @@ class storage(object):
 
 		# identify device, wait for it if self.WaitForDevice is True
 		USB_DeviceList_old			= []
-		USB_Device_other_lum_Alpha	= None
-		DeviceChosenIdentifier		= None
+		DeviceChosenIdentifier		= ''
 		EndTime	= time.time()+self.__setup.get_val('const_MOUNT_LOCAL_TIMEOUT')
-		retry						= True if self.MountPoint else False
 
-		while retry:
+		while self.MountPoint:
 
 			# force to re-scan usb-devices
 			Command	= ['udevadm','trigger']
@@ -195,13 +193,12 @@ class storage(object):
 			# Check if device is identified
 			if DeviceChosenIdentifier or not self.WaitForDevice:
 				# success: device to mount identified
-				retry = False
+				break
 
-			if retry and TimeOutActive:
-				retry	= EndTime > time.time()
+			if TimeOutActive and EndTime > time.time():
+				break
 
-			if retry:
-				time.sleep(0.5)
+			time.sleep(0.5)
 
 		# Mount USB device
 		MOUNTED	= None
@@ -265,12 +262,12 @@ class storage(object):
 
 			# Check finally for success
 			if self.mounted():
-				MOUNTED  = DeviceChosenIdentifier
-				self.DeviceIdentifier = DeviceChosenIdentifier
+				MOUNTED					= DeviceChosenIdentifier
+				self.DeviceIdentifier	= DeviceChosenIdentifier
 
 				self.__display_storage_properties()
 			else:
-				MOUNTED	= None
+				MOUNTED	= False
 
 		self.__log.message(f"mount USB device: {MOUNTED}")
 		return(MOUNTED)
@@ -286,9 +283,9 @@ class storage(object):
 			self.__clean_mountpoint()
 			self.createPath()
 
-			if self.CloudServiceName:
+			if self.CloudServiceName and self.MountPoint:
 				Command	= f'rclone mount {self.CloudServiceName}: {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --config {self.__RCLONE_CONFIG_FILE}'
-				Command=f"sh -c '{Command} &'"
+				Command	= f"sh -c '{Command} &'"
 
 				subprocess.run(Command,shell=True)
 
@@ -299,6 +296,8 @@ class storage(object):
 
 		if MOUNTED:
 			self.__display_storage_properties()
+		else:
+			self.umount(silent=True)
 
 		self.__log.message(f"mount cloud {self.CloudServiceName}: {MOUNTED}", 3)
 
@@ -631,7 +630,7 @@ class storage(object):
 		self.__log.message(f"MOUNTED?: '{MountPoint}' = {MOUNTED}",2)
 		return(MOUNTED)
 
-	def umount(self):
+	def umount(self,silent=False):
 		if self.StorageType in ['internal', 'cloud_rsync']:
 			return(True)
 
@@ -645,12 +644,13 @@ class storage(object):
 				self.FS_Type	= self.FS_Type if self.FS_Type else getFS_Type(self.MountPoint)
 
 			# message
-			if self.StorageType == 'usb':
-				l_box_backup_MountPointDescription=self.__lan.l(f"box_backup_{self.StorageType}_{self.Role}")
-			else:
-				l_box_backup_MountPointDescription=self.__lan.l(f"box_backup_{self.StorageType}")
+			if not silent:
+				if self.StorageType == 'usb':
+					l_box_backup_MountPointDescription=self.__lan.l(f"box_backup_{self.StorageType}_{self.Role}")
+				else:
+					l_box_backup_MountPointDescription=self.__lan.l(f"box_backup_{self.StorageType}")
 
-			self.__display.message([f":{self.__lan.l('box_backup_umount')}", f":{l_box_backup_MountPointDescription}"])
+				self.__display.message([f":{self.__lan.l('box_backup_umount')}", f":{l_box_backup_MountPointDescription}"])
 
 			# smbd stop
 			Command	= ['service','smbd','stop']
@@ -687,10 +687,12 @@ class storage(object):
 			Command	= ['service','smbd','start']
 			subprocess.run(Command)
 
-			self.__log.message(f"umount: {self.MountPoint}? {Result}", 2)
-			self.__display.message([f":{self.__lan.l('box_finished')}"])
+			if not silent:
+				self.__log.message(f"umount: {self.MountPoint}? {Result}", 2)
+				self.__display.message([f":{self.__lan.l('box_finished')}"])
 		else:
-			self.__log.message(f"umount {self.MountPoint}: Not mounted.", 3)
+			if not silent:
+				self.__log.message(f"umount {self.MountPoint}: Not mounted.", 3)
 
 		return(Result)
 
@@ -776,6 +778,8 @@ class storage(object):
 			l_drive_ok	= self.__lan.l(f"box_backup_{self.StorageType}_{self.Role}_ok")
 		else:
 			l_drive_ok	= self.__lan.l(f"box_backup_{self.StorageType}_ok")
+			if self.CloudServiceName:
+				l_drive_ok	+= f': {self.CloudServiceName}'
 
 		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 2}", f":{l_drive_ok}", f":{storsize}", f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
 
