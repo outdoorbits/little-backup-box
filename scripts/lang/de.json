@@ -42,7 +42,7 @@
       "modifications": "Modifikationen",
       "backup": "Backup von",
       "break1": "Backup",
-      "break2": "abgebrochen.",
+      "break2": "abgebrochen",
       "generate_thumbnails_checkbox_label": "Vorschaubilder erzeugen und in Datenbank einlesen (nur für lokale Speicher)",
       "initiated": "eingeleitet",
       "power_off_checkbox_label": "Ausschalten nach Durchlauf",

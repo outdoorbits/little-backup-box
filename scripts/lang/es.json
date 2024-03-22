@@ -42,7 +42,7 @@
       "modifications": "Modificaciones",
       "backup": "Copia de seguridad de",
       "break1": "Copia de seguridad",
-      "break2": "cancelada.",
+      "break2": "cancelada",
       "generate_thumbnails_checkbox_label": "Genere miniaturas y lea en la base de datos (solo para almacenamiento local)",
       "initiated": "Copia de seguridad iniciada",
       "power_off_checkbox_label": "Apagar después de ejecutar",

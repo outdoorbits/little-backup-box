@@ -221,7 +221,7 @@
       "modifications": "Modifications",
       "backup": "Backup from",
       "break1": "Backup",
-      "break2": "aborted.",
+      "break2": "aborted",
       "generate_thumbnails_checkbox_label": "Generate thumbnails and read into database (only for local storage)",
       "initiated": "initiated",
       "power_off_checkbox_label": "Turn off after run",

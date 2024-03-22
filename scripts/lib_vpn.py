@@ -71,7 +71,10 @@ class vpn(object):
 			if self.VPNMode == 'OpenVPN':
 				Command	= ['sudo','ip','tuntap','show']
 				try:
-					Status	= (subprocess.check_output(Command) != '') and (self.IP_pre_VPN != lib_network.get_IPs())
+					Status	= (
+						(subprocess.check_output(Command) != '') and
+						(self.IP_pre_VPN != lib_network.get_IPs())
+					)
 				except:
 					Status	= False
 
@@ -79,7 +82,11 @@ class vpn(object):
 				Command	= ['sudo','wg','show',self.__VPN_FileName.split('.')[0]]
 				try:
 					wg_show	= subprocess.check_output(Command).decode()
-					Status = (self.__VPN_FileName.split('.')[0] in wg_show) and ('latest handshake' in wg_show) and (self.IP_pre_VPN != lib_network.get_IPs())
+					Status = (
+						(self.__VPN_FileName.split('.')[0] in wg_show) and
+						('latest handshake' in wg_show) and
+						(self.IP_pre_VPN != lib_network.get_IPs())
+					)
 				except:
 					Status	= False
 
