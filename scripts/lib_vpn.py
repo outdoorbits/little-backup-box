@@ -78,7 +78,8 @@ class vpn(object):
 			elif self.VPNMode == "WireGuard":
 				Command	= ['sudo','wg','show',self.__VPN_FileName.split('.')[0]]
 				try:
-					Status = (self.__VPN_FileName.split('.')[0] in subprocess.check_output(Command).decode()) and (self.IP_pre_VPN != lib_network.get_IPs())
+					wg_show	= subprocess.check_output(Command).decode()
+					Status = (self.__VPN_FileName.split('.')[0] in wg_show) and ('latest handshake' in wg_show) and (self.IP_pre_VPN != lib_network.get_IPs())
 				except:
 					Status	= False
 
