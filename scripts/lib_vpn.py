@@ -66,6 +66,7 @@ class vpn(object):
 
 	def __status(self):
 		Status	= False
+
 		if self.VPNMode in ['OpenVPN','WireGuard']:
 
 			if self.VPNMode == 'OpenVPN':

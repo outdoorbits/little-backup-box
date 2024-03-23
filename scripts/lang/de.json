@@ -41,8 +41,6 @@
     "backup": {
       "modifications": "Modifikationen",
       "backup": "Backup von",
-      "break1": "Backup",
-      "break2": "abgebrochen",
       "generate_thumbnails_checkbox_label": "Vorschaubilder erzeugen und in Datenbank einlesen (nur für lokale Speicher)",
       "initiated": "eingeleitet",
       "power_off_checkbox_label": "Ausschalten nach Durchlauf",
@@ -51,7 +49,7 @@
       "preset_target_label": "USB Zielpartition festlegen",
       "preset_source_label": "USB Quellpartition festlegen",
       "preset_partition_auto": "automatische Auswahl",
-      "stopped": "Backup gestoppt."
+      "stopped": "Backup abgebrochen"
     },
     "logout_button": "Ausloggen"
   },
@@ -465,7 +463,9 @@
       "connect_source_1": "Bereit",
       "connect_target_1": "Bereit",
       "connect_source_any_1": "Bereit",
-      "mode_anyusb": "alle USB"
+      "mode_anyusb": "alle USB",
+      "break1": "Backup",
+      "break2": "abgebrochen"
     },
     "cronip": {
       "offline": "offline",

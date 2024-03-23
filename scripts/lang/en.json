@@ -112,7 +112,9 @@
       "connect_source_1": "Ready",
       "connect_target_1": "Ready",
       "connect_source_any_1": "Ready",
-      "mode_anyusb": "any USB"
+      "mode_anyusb": "any USB",
+      "break1": "Backup",
+      "break2": "aborted"
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -220,8 +222,6 @@
     "backup": {
       "modifications": "Modifications",
       "backup": "Backup from",
-      "break1": "Backup",
-      "break2": "aborted",
       "generate_thumbnails_checkbox_label": "Generate thumbnails and read into database (only for local storage)",
       "initiated": "initiated",
       "power_off_checkbox_label": "Turn off after run",
@@ -230,7 +230,7 @@
       "preset_target_label": "Set USB target partition",
       "preset_source_label": "Set USB source partition",
       "preset_partition_auto": "automatische Auswahl",
-      "stopped": "Backup stopped."
+      "stopped": "Backup aborted"
     },
     "logout_button": "Logout"
   },

@@ -41,8 +41,6 @@
     "backup": {
       "modifications": "Modifications",
       "backup": "Sauvegarde depuis",
-      "break1": "Sauvegarde",
-      "break2": "abandonnée",
       "generate_thumbnails_checkbox_label": "Générer des vignettes et lire dans la base de données (uniquement pour le stockage local)",
       "initiated": "initié",
       "power_off_checkbox_label": "Éteindre après la course",
@@ -51,7 +49,7 @@
       "preset_target_label": "Définir la partition cible USB",
       "preset_source_label": "Définir la partition source USB",
       "preset_partition_auto": "sélection automatique",
-      "stopped": "Sauvegarde arrêtée."
+      "stopped": "Sauvegarde abandonnée"
     },
     "logout_button": "Se déconnecter"
   },
@@ -465,7 +463,9 @@
       "connect_source_1": "Prêt",
       "connect_target_1": "Prêt",
       "connect_source_any_1": "Prêt",
-      "mode_anyusb": "tout USB"
+      "mode_anyusb": "tout USB",
+      "break1": "Sauvegarde",
+      "break2": "abandonnée"
     },
     "cronip": {
       "offline": "hors ligne",

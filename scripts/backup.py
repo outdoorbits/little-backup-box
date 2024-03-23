@@ -167,7 +167,7 @@ class backup(object):
 				lib_cron_ip.ip_info().display_ip()
 				lib_cron_ip.ip_info().mail_ip()
 			else:
-				self.__display.message([self.__lan.l('main_backup_break1'), self.__lan.l('main_backup_break2')])
+				self.__display.message([self.__lan.l('box_backup_break1'), self.__lan.l('box_backup_break2')])
 
 				# Mail result
 				if self.conf_MAIL_NOTIFICATIONS:
@@ -177,7 +177,8 @@ class backup(object):
 						lib_network.get_internet_status()
 						): # Check internet connection
 
-						mail.sendmail(f"Little Backup Box: {self.__lan.l('main_backup_break1')} {self.__lan.l('main_backup_break2')}",f"{self.__lan.l('main_backup_break1')} {self.__lan.l('main_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
+						mail.sendmail(f"Little Backup Box: {self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}",f"{self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
+
 				sys.exit(103)
 
 		# MANAGE TARGET DEVICE
