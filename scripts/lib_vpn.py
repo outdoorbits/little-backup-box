@@ -32,9 +32,6 @@ import time
 
 class vpn(object):
 
-# exit codes:
-# 101:
-
 	def __init__(self,VPNMode):
 		#VPNMode:['OpenVPN','WireGuard']
 

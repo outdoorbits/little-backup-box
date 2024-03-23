@@ -42,12 +42,6 @@ import lib_system
 import lib_view
 import lib_vpn
 
-# Error codes
-# 101:		No valid Source
-# 102:		No valid Target
-# 103:		VPN failed
-# 104:		Invalid combination of Source and target
-
 class backup(object):
 
 	def __init__(self, SourceName, TargetName, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
@@ -167,7 +161,7 @@ class backup(object):
 				lib_cron_ip.ip_info().display_ip()
 				lib_cron_ip.ip_info().mail_ip()
 			else:
-				self.__display.message([self.__lan.l('box_backup_break1'), self.__lan.l('box_backup_break2')])
+				self.__display.message([self.__lan.l('box_backup_break1'), self.__lan.l('box_backup_break2'), self.__lan.l('box_backup_vpn_connecting_failed')])
 
 				# Mail result
 				if self.conf_MAIL_NOTIFICATIONS:
@@ -179,7 +173,7 @@ class backup(object):
 
 						mail.sendmail(f"Little Backup Box: {self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}",f"{self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
 
-				sys.exit(103)
+				return(None)
 
 		# MANAGE TARGET DEVICE
 		# Set the PWR LED to blink short to indicate waiting for the target device
@@ -190,7 +184,7 @@ class backup(object):
 			self.TargetDevice.mount()
 		else:
 			self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
-			sys.exit(102)
+			return(None)
 
 	def run(self):
 		# Set the PWR LED ON to indicate that the backup has not yet started
@@ -313,7 +307,7 @@ class backup(object):
 					pass
 				else:
 					self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
-					sys.exit(101)
+					return()
 
 				# remember SourceStorageName for next run
 				if SourceStorageName=='camera':
@@ -334,7 +328,7 @@ class backup(object):
 					(SourceStorageName	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')									# camera can't rsync to rsyncserver as this is not supported by gphoto2
 				):
 					self.__display.message([f":{SourceStorageName}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
-					sys.exit(104)
+					return()
 
 				#run backup
 				self.__reporter	= lib_backup.reporter(
