@@ -22,6 +22,7 @@ import subprocess
 import sys
 
 import lib_display
+import lib_language
 import lib_setup
 
 
@@ -33,6 +34,7 @@ class comitup(object):
 
 		#objects
 		self.__setup	= lib_setup.setup()
+		self.__lan		= lib_language.language()
 		self.__display	= lib_display.display()
 
 	def config(self, Password=None): # use general password if None is given
@@ -57,7 +59,10 @@ class comitup(object):
 	def new_status(self,status):
 		# display new status
 		if status:
-			self.__display.message([':Comitup:', f':{status}'])
+			status_translated	= self.__lan.l(f'box_comitup_status_{status}')
+			status_translated	= status_translated if status_translated!=f'box_comitup_status_{status}' else status
+
+			self.__display.message([':Comitup:', f':{status_translated}'])
 
 		# setup apache ports
 		ApachePortsConf	= '/etc/apache2/ports.conf'

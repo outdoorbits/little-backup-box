@@ -536,7 +536,14 @@
       "vpn_stop": "Desconectar VPN"
     },
     "backup_local": "localmente",
-    "finished": "finalizado"
+    "finished": "finalizado",
+    "comitup": {
+      "status": {
+        "HOTSPOT": "punto de acceso",
+        "CONNECTING": "conectando",
+        "CONNECTED": "conectado"
+      }
+    }
   },
   "seconds_short": "s",
   "sysconditions": {

@@ -13,9 +13,11 @@
 	require_once 'i18n.class.helper.php';
 	$i18n = i18n_setup($config);
 
-	if ($text=L::$key()) {
-		echo $text;
-	} else {
+	try {
+		echo L::$key();
+	}
+	catch(Error $e) {
+// 		echo 'Message: ' .$e->getMessage();
 		echo $key;
 	}
 ?>

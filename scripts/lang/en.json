@@ -185,7 +185,14 @@
       "vpn_stop": "Disconnect VPN"
     },
     "backup_local": "Backup locally",
-    "finished": "finished"
+    "finished": "finished",
+    "comitup": {
+      "status": {
+        "HOTSPOT": "hotspot",
+        "CONNECTING": "connecting",
+        "CONNECTED": "connected"
+      }
+    }
   },
   "mainmenue": {
     "main": "Backup",

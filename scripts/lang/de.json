@@ -536,7 +536,14 @@
       "vpn_stop": "VPN trennen"
     },
     "backup_local": "Backup lokal",
-    "finished": "erledigt"
+    "finished": "erledigt",
+    "comitup": {
+      "status": {
+        "HOTSPOT": "Hotspot",
+        "CONNECTING": "verbinden",
+        "CONNECTED": "verbunden"
+      }
+    }
   },
   "seconds_short": "s",
   "sysconditions": {
