@@ -4,7 +4,7 @@
 Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br />
 <br />
 <a href="https://youtu.be/qAEebY8UlRc">
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-desktop-variant.png"  align="left" title="Little Backup Box in a touchscreen housing"><BR CLEAR="all">
+<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/youtube-lbb-desktop-variant.png"  align="left" title="Little Backup Box in a touchscreen housing"><BR CLEAR="all">
 Little Backup Box in a touchscreen housing - watch Dave's video on YouTube</a><br />
 <br />
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br />
@@ -34,9 +34,9 @@ These languages are already available. Do you want to maintain or create a trans
 <br />
 <a href="#installation"><b>Jump to installation instructions</b></a><br />
 <br />
-<a href="changelog.md">Changelog</a>
-<br />
-<a href="gallery.md">Have a look at the gallery.</a>
+<a href="changelog.md">Changelog</a><br />
+<a href="gallery.md">Have a look at the gallery</a><br />
+<a href="resources.md">Web resources</a><br />
 <br />
 <h2>Features</h2>
 Some of the features of the web user interface are
