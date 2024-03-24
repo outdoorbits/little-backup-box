@@ -4,7 +4,6 @@
 	<li><a href="#websites">Websites</a></li>
 	<li><a href="#videos">Videos</a></li>
 </ul>
-https://www.thelightdecides.com/travel-photography-blog-post/little-backup-box-update
 
 <h2 id="websites">Websites</h2>
 <h3><a href="https://www.thelightdecides.com">https://www.thelightdecides.com</a></h3>
