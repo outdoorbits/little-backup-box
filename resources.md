@@ -10,13 +10,10 @@
 Thomas Schnitzler reports in detail and well-founded about his experiences with the Little Backup Box. Very worth reading, thanks Thomas!
 <ul>
 	<li>
-		<a href="https://www.thelightdecides.com/travel-photography-blog-post/little-backup-box">Little Backup Box und ein Raspberry Pi = Fotobackup für unterwegs</a>
-	</li>
-	<li>
-		<a href="https://www.thelightdecides.com/travel-photography-blog-post/little-backup-box-update">Update: Little Backup Box - Fotobackup für unterwegs</a>
-	</li>
-	<li>
 		<a href="https://www.thelightdecides.com/travel-photography-blog-post/little-backup-box-update-2">Little Backup Box - Backup deiner Fotos auf Reisen</a>
+	</li>
+	<li>
+		<a href="https://www.thelightdecides.com/travel-photography-blog-post/little-backup-box-raspberry-pi-5">Little Backup Box und der Raspberry Pi 5</a>
 	</li>
 </ul>
 
