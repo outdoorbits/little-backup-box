@@ -236,7 +236,7 @@
       "update_exif_checkbox_label": "Write EXIF data to the original files (only for local storage)",
       "preset_target_label": "Set USB target partition",
       "preset_source_label": "Set USB source partition",
-      "preset_partition_auto": "automatische Auswahl",
+      "preset_partition_auto": "automatic selection",
       "stopped": "Backup aborted"
     },
     "logout_button": "Logout"
