@@ -49,7 +49,11 @@
       "preset_target_label": "Définir la partition cible USB",
       "preset_source_label": "Définir la partition source USB",
       "preset_partition_auto": "sélection automatique",
-      "stopped": "Sauvegarde abandonnée"
+      "stopped": "Sauvegarde abandonnée",
+      "primary": "Sauvegarde principale",
+      "secondary": "Sauvegarde secondaire",
+      "general": "Général",
+      "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?"
     },
     "logout_button": "Se déconnecter"
   },

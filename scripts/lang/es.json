@@ -49,7 +49,11 @@
       "preset_target_label": "Establecer partición de destino USB",
       "preset_source_label": "Establecer partición de origen USB",
       "preset_partition_auto": "Selección automática",
-      "stopped": "Copia se cancelada"
+      "stopped": "Copia se cancelada",
+      "primary": "Ejecución principal",
+      "secondary": "Ejecución secundaria",
+      "general": "General",
+      "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?"
     },
     "logout_button": "Cerrar sesión"
   },

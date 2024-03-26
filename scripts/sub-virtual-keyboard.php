@@ -1,20 +1,22 @@
 <?php
+/*
 # Author: Stefan Saam, github@saams.de
-//
-// #######################################################################
-// # This program is free software: you can redistribute it and/or modify
-// # it under the terms of the GNU General Public License as published by
-// # the Free Software Foundation, either version 3 of the License, or
-// # (at your option) any later version.
-//
-// # This program is distributed in the hope that it will be useful,
-// # but WITHOUT ANY WARRANTY; without even the implied warranty of
-// # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// # GNU General Public License for more details.
-//
-// # You should have received a copy of the GNU General Public License
-// # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// #######################################################################
+
+#######################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#######################################################################*/
+
 //
 // Usage:
 // 1. in the beginning of the main script load the library:
@@ -34,8 +36,6 @@
 // 		echo virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]);
 // as arguments pass all the keyboard types you need
 
-
-
 $kioskboard_dir	= '/KioskBoard';
 $virtual_keyboard_class_name	= 'virtual_keyboard';
 
@@ -47,7 +47,7 @@ function virtual_keyboard_css($enabled) {
 	}
 }
 
-function virtual_keyboard_options($enabled,$classes,$type, $placement, $specialcharacters='false') {
+function virtual_keyboard_options($enabled, $classes, $type, $placement, $specialcharacters='false') {
 	if (virtual_keyboard_enabled($enabled)) {
 		if (strlen($classes) == 0) {
 			$classes	= 'virtual_keyboard';
@@ -62,6 +62,7 @@ function virtual_keyboard_options($enabled,$classes,$type, $placement, $specialc
 
 		return($data);
 	} else {
+// 		disable, but still give back classes
 		if (strlen($classes) == 0) {
 			return('');
 		} else {

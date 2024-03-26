@@ -32,7 +32,7 @@
 	include("sub-popup.php");
 	include("sub-virtual-keyboard.php");
 
-	include("get-cloudservices.php");
+	include("sub-common.php");
 
 	$TIME_ZONE_old	= $config["conf_TIME_ZONE"];
 
@@ -496,24 +496,9 @@ function upload_settings() {
 				<h3><?php echo L::config_backup_header2; ?></h3>
 					<label for="BACKUP_MODE_2"><?php echo L::config_backup_label2; ?></label><br>
 
-					<select name="BACKUP_MODE_2" id="BACKUP_MODE_2">
-						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
-							<?php
-								if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
-							?>
-									<option value="internal cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
-									<option value="usb cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
-							<?php
-								}
-
-								foreach($CloudServices as $CloudService) {
-							?>
-									<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
-									<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE2"] . " " . $config["conf_BACKUP_DEFAULT_TARGET2"]=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
-							<?php
-								}
-							?>
-					</select>
+					<?php
+						get_secondary_backup_selector("BACKUP_MODE_2", $CloudServices, $config);
+					?>
 
 				<h3><?php echo L::config_backup_target_requirements_header; ?></h3>
 					<label for="conf_BACKUP_TARGET_SIZE_MIN"><?php echo L::config_backup_target_requirements_label; ?></label><br>
