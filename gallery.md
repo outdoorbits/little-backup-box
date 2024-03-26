@@ -38,6 +38,13 @@
 	<figcaption>Desktop variant using a wireless keyboard</figcaption>
 </figure>
 <br />
+<h3>Waveshare 4.3" Touchdisplay and M.2 NVMe SSD</h3>
+<figure>
+	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/pioB-1999.jpg" align="center">
+	<figcaption>PioB-1999 built the first variant I know of with a display and M.2 SSD. Details can be found in the <a href="https://github.com/outdoorbits/little-backup-box/discussions/278">discussions</a>.</figcaption>
+</figure>
+<br />
+
 <h3>Web UI</h3>
 <h2 id="screenshots">Screenshots</h2>
 <figure align="center">
