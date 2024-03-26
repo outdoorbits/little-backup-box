@@ -31,6 +31,8 @@ import lib_storage
 
 class backup_autorun(object):
 	def __init__(self):
+		self.WORKING_DIR	= os.path.dirname(__file__)
+
 		self.__setup	= lib_setup.setup(rewrite_configfile=True)
 		self.__display	= lib_display.display()
 		self.__lan		= lib_language.language()
@@ -74,15 +76,15 @@ class backup_autorun(object):
 		lib_storage.remove_all_mountpoints(self.__setup)
 
 	def __display_hello(self):
-		WORKING_DIR	= os.path.dirname(__file__)
 		if self.__setup.get_val('conf_DISP_COLOR_MODEL') == '1':
-			self.__display.message(["set:time=2", f":IMAGE={WORKING_DIR}/little-backup-box.bmp"])
+			self.__display.message(["set:time=2", f":IMAGE={self.WORKING_DIR}/little-backup-box.bmp"])
 		else:
-			self.__display.message(["set:time=2", f":IMAGE={WORKING_DIR}/little-backup-box.jpg"])
+			self.__display.message(["set:time=2", f":IMAGE={self.WORKING_DIR}/little-backup-box.jpg"])
 
 		lib_cron_ip.ip_info().display_ip()
 
 	def __default_backup(self):
+
 		conf_BACKUP_DEFAULT_SOURCE				= self.__setup.get_val('conf_BACKUP_DEFAULT_SOURCE')
 		conf_BACKUP_DEFAULT_TARGET				= self.__setup.get_val('conf_BACKUP_DEFAULT_TARGET')
 		conf_BACKUP_DEFAULT_SOURCE2				= self.__setup.get_val('conf_BACKUP_DEFAULT_SOURCE2')
@@ -93,48 +95,27 @@ class backup_autorun(object):
 		conf_POWER_OFF							= self.__setup.get_val('conf_POWER_OFF')
 
 		# Default backup
-		SecundaryBackupConfigured	= (conf_BACKUP_DEFAULT_SOURCE2 != 'none') and (conf_BACKUP_DEFAULT_TARGET2 != 'none')
-
-		## default backup 1
+		PrimaryBackupConfig		= []
 		if conf_BACKUP_DEFAULT_SOURCE != 'none' and conf_BACKUP_DEFAULT_TARGET != 'none':
-			if SecundaryBackupConfigured:
-				self.__display.message([f":{self.__lan.l('box_backup_primary')}"])
+			PrimaryBackupConfig	= [
+				f"--SourceName", f"{conf_BACKUP_DEFAULT_SOURCE}",
+				f"--TargetName", f"{conf_BACKUP_DEFAULT_TARGET}",
+				f"--sync-database", "False",
+				f"--generate-thumbnails", f"{conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS}",
+				f"--update-exif", f"{conf_BACKUP_DEFAULT_UPDATE_EXIF}",
+				f"--power-off", f"{conf_POWER_OFF}"
+			]
 
-			backup_process = backup.backup(
-				SourceName						= conf_BACKUP_DEFAULT_SOURCE,
-				TargetName						= conf_BACKUP_DEFAULT_TARGET,
-				DoSyncDatabase					= False,
-				DoGenerateThumbnails			= conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS,
-				DoUpdateEXIF					= conf_BACKUP_DEFAULT_UPDATE_EXIF,
-				DeviceIdentifierPresetSource	= '',
-				DeviceIdentifierPresetTarget	= '',
-				PowerOff						= (conf_POWER_OFF and (SecundaryBackupConfigured == False)),
-				SecundaryBackupFollows			= SecundaryBackupConfigured
-			)
-			backup_process.run()
+		SecundaryBackupConfig	= []
+		if conf_BACKUP_DEFAULT_SOURCE2 != 'none' and conf_BACKUP_DEFAULT_TARGET2 != 'none':
+			SecundaryBackupConfig	= [
+				f"--SecSourceName", f"{conf_BACKUP_DEFAULT_SOURCE2}",
+				f"--SecTargetName", f"{conf_BACKUP_DEFAULT_TARGET2}"
+			]
 
-		## default-backup 2
-		if SecundaryBackupConfigured:
-			self.__display.message([f":{self.__lan.l('box_backup_secondary')}"])
-
-			secSourceDeviceIdentifier	= ''
-			if  conf_BACKUP_DEFAULT_TARGET == 'usb' and conf_BACKUP_DEFAULT_SOURCE2 == 'usb':
-				try:
-					secSourceDeviceIdentifier	= backup_process.TargetDevice.DeviceIdentifier
-				except:
-					pass
-
-			backup.backup(
-				SourceName						= conf_BACKUP_DEFAULT_SOURCE2,
-				TargetName						= conf_BACKUP_DEFAULT_TARGET2,
-				DoSyncDatabase					= False,
-				DoGenerateThumbnails			= False,
-				DoUpdateEXIF					= False,
-				DeviceIdentifierPresetSource	= secSourceDeviceIdentifier,
-				DeviceIdentifierPresetTarget	= '',
-				PowerOff						= conf_POWER_OFF,
-				SecundaryBackupFollows			= False
-			).run()
+		if PrimaryBackupConfig:
+			Command	= ['python3', f"{self.WORKING_DIR}/backup.py"] + PrimaryBackupConfig + SecundaryBackupConfig
+			subprocess.run(Command)
 
 if __name__ == "__main__":
 	backup_autorun().run()

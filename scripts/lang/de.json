@@ -49,7 +49,11 @@
       "preset_target_label": "USB Zielpartition festlegen",
       "preset_source_label": "USB Quellpartition festlegen",
       "preset_partition_auto": "automatische Auswahl",
-      "stopped": "Backup abgebrochen"
+      "stopped": "Backup abgebrochen",
+      "primary": "Primäres Backup",
+      "secondary": "Sekundärs Backup",
+      "general": "Allgemein",
+      "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?"
     },
     "logout_button": "Ausloggen"
   },
@@ -408,7 +412,7 @@
       "try": "Versuch",
       "checking_old_files": "abgleichen",
       "camera_scanning_folders": "Ordner scannen ...",
-      "primary": "Prim. Sicherung",
+      "primary": "Prim. Backup",
       "secondary": "Sek. Backup",
       "mode_camera": "Kamera",
       "mode_cloud": "Cloud",

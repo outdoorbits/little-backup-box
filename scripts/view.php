@@ -1,9 +1,24 @@
 <!doctype html>
 
-<!-- Author: Stefan Saam, github@saams.de
-         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
-
 <?php
+/*
+# Author: Stefan Saam, github@saams.de
+
+#######################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#######################################################################*/
+
 	$WORKING_DIR=dirname(__FILE__);
 	$config = parse_ini_file("config.cfg", false);
 	$constants = parse_ini_file("constants.sh", false);
@@ -16,7 +31,7 @@
 
 	include("sub-popup.php");
 
-	include("get-cloudservices.php");
+	include("sub-common.php");
 
 	# symlink to media-folder
 	if (! file_exists("./media")) {

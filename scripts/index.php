@@ -1,7 +1,23 @@
 <!doctype html>
 
-<!-- Author: Dmitri Popov, dmpop@linux.com; Stefan Saam, github@saams.de
-         License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
+<!--
+# Author: Stefan Saam, github@saams.de
+
+#######################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#######################################################################
+-->
 
 <?php
 	$WORKING_DIR=dirname(__FILE__);
@@ -35,7 +51,8 @@
 
 	$CameraServices		= array('camera');
 
-	include("get-cloudservices.php");
+	include("sub-common.php");
+
 	$CloudServices_marked	= array();
 	foreach($CloudServices as $CloudService) {
 		$CloudServices_marked[]	= 'cloud:' . $CloudService;
@@ -186,6 +203,7 @@
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_backup_modifications; ?></summary>
 
 				<div class='backupsection'>
+					<h4><?php echo L::main_backup_primary; ?></h4>
 					<table style='border: 0;'>
 						<tr>
 							<td style='padding-right: 10pt;'>
@@ -204,15 +222,6 @@
 								<label for="update_exif"><?php echo L::main_backup_update_exif_checkbox_label; ?></label>
 							</td>
 						</tr>
-
-						<tr>
-							<td style='padding-right: 10pt;'>
-								<input type="checkbox" id="power_off" name="power_off" <?php echo $power_off_force=="True"?"checked":""; ?>>
-							</td>
-							<td>
-								<label for="power_off"><?php echo L::main_backup_power_off_checkbox_label; ?></label>
-							</td>
-						</tr>
 					</table>
 
 					<?php
@@ -220,26 +229,11 @@
 						$PartitionsArray	= explode(',', $Partitions);
 					?>
 					<table style='border: 0;'>
-						<tr>
-							<td style='padding-right: 10pt;'>
-								<select id="preset_target" name="preset_target" onchange="PresetPartitionChange()">
-									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
-									<?php
-										foreach ($PartitionsArray as $Partition) {
-											$Partition	= trim($Partition, "[]' \n");
-											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
-											$Lum	= trim($Lum,'/dev');
-											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
-										}
-									?>
-								</select>
-							</td>
-							<td>
-								<label for="preset_target"><?php echo L::main_backup_preset_target_label; ?></label>
-							</td>
-						</tr>
 
 						<tr>
+							<td>
+								<label for="preset_source"><?php echo L::main_backup_preset_source_label; ?>:</label>
+							</td>
 							<td style='padding-right: 10pt;'>
 								<select id="preset_source" name="preset_source" onchange="PresetPartitionChange()">
 									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
@@ -253,15 +247,58 @@
 									?>
 								</select>
 							</td>
+						</tr>
+
+						<tr>
 							<td>
-								<label for="preset_source"><?php echo L::main_backup_preset_source_label; ?></label>
+								<label for="preset_target"><?php echo L::main_backup_preset_target_label; ?>:</label>
+							</td>
+							<td style='padding-right: 10pt;'>
+								<select id="preset_target" name="preset_target" onchange="PresetPartitionChange()">
+									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
+									<?php
+										foreach ($PartitionsArray as $Partition) {
+											$Partition	= trim($Partition, "[]' \n");
+											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
+											$Lum	= trim($Lum,'/dev');
+											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
+										}
+									?>
+								</select>
 							</td>
 						</tr>
 
-
-
 					</table>
 				</div>
+
+				<div class='backupsection'>
+					<h4><?php echo L::main_backup_secondary; ?></h4>
+					<table style='border: 0;'>
+						<tr>
+							<td style='padding-right: 10pt;'>
+								<?php get_secondary_backup_selector('BACKUP_MODE_2', $CloudServices, $config, true); ?>
+							</td>
+							<td>
+								<label for="preset_target"><?php echo L::main_backup_secondary_label; ?></label>
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class='backupsection'>
+					<h4><?php echo L::main_backup_general; ?></h4>
+					<table style='border: 0;'>
+						<tr>
+							<td style='padding-right: 10pt;'>
+								<input type="checkbox" id="power_off" name="power_off" <?php echo $power_off_force=="True"?"checked":""; ?>>
+							</td>
+							<td>
+								<label for="power_off"><?php echo L::main_backup_power_off_checkbox_label; ?></label>
+							</td>
+						</tr>
+					</table>
+				</div>
+
 
 			</details>
 		</div>
@@ -309,8 +346,23 @@
 
 		// 	Backup
 		if (isset($_POST['TargetDevice'])) {
+
+			$SecBackupArgs	= '';
+			if (isset($_POST['BACKUP_MODE_2'])) {
+				$BACKUP_MODE_2_array	= explode(' ', $_POST['BACKUP_MODE_2'], 2);
+				if (count($BACKUP_MODE_2_array)==2) {
+					if (($BACKUP_MODE_2_array[0] !== 'none') and ($BACKUP_MODE_2_array[1] !== 'none')) {
+						$SecBackupArgs	= "--SecSourceName " . escapeshellarg($BACKUP_MODE_2_array[0]) . " --SecTargetName " . escapeshellarg($BACKUP_MODE_2_array[1]);
+					}
+				}
+			}
+
+			if ($_POST['SourceDevice'] !== 'usb') {
+				$preset_source	= '';
+			}
+
 			exec("sudo $WORKING_DIR/stop_backup.sh");
-			exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
 
 			popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}

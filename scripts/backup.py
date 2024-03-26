@@ -63,16 +63,8 @@ class backup(object):
 		TargetStorageType, TargetCloudService				= lib_storage.extractCloudService(TargetName)
 
 		self.DoSyncDatabase									= DoSyncDatabase
-		if not type(DoSyncDatabase) is bool:
-			self.DoSyncDatabase	= self.DoSyncDatabase == 'True'
-
 		self.DoGenerateThumbnails							= DoGenerateThumbnails
-		if not type(DoGenerateThumbnails) is bool:
-			self.DoGenerateThumbnails	= self.DoGenerateThumbnails == 'True'
-
 		self.DoUpdateEXIF									= DoUpdateEXIF
-		if not type(DoUpdateEXIF) is bool:
-			self.DoUpdateEXIF	= self.DoUpdateEXIF == 'True'
 
 		self.DeviceIdentifierPresetSource					= DeviceIdentifierPresetSource
 
@@ -85,10 +77,7 @@ class backup(object):
 			self.__log.message(f'Preset target: {self.DeviceIdentifierPresetTarget}')
 
 		self.PowerOff										= PowerOff
-
 		self.SecundaryBackupFollows							= SecundaryBackupFollows
-		if not type(SecundaryBackupFollows) is bool:
-			self.SecundaryBackupFollows	= self.SecundaryBackupFollows == 'True'
 
 		# Basics
 		self.__WORKING_DIR	= os.path.dirname(__file__)
@@ -96,7 +85,6 @@ class backup(object):
 
 
 		# Setup
-
 		self.const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC	= self.__setup.get_val('const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC')
 		self.const_SYNC_TIME_OVERHEATING_WAIT_SEC		= self.__setup.get_val('const_SYNC_TIME_OVERHEATING_WAIT_SEC')
 		self.const_IMAGE_DATABASE_FILENAME				= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')
@@ -121,8 +109,6 @@ class backup(object):
 
 		if self.PowerOff == 'setup':
 			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
-		elif not type(PowerOff) is bool:
-			self.PowerOff	= self.PowerOff == 'True'
 
 		# Common variables
 		self.SourceDevice		= None
@@ -1018,6 +1004,8 @@ class backup(object):
 
 if __name__ == "__main__":
 	setup	= lib_setup.setup()
+	lan		= lib_language.language()
+	display	= lib_display.display()
 
 	const_MEDIA_DIR				= setup.get_val('const_MEDIA_DIR')
 	const_RCLONE_CONFIG_FILE	= setup.get_val('const_RCLONE_CONFIG_FILE')
@@ -1103,18 +1091,81 @@ if __name__ == "__main__":
 		help		= 'Power off after backup? [\'True\', \'False\']. If not set, use config value.'
 	)
 
+	#parser.add_argument(
+		#'--secondary-backup-follows',
+		#'-sb',
+		#required	= False,
+		#default		= False,
+		#help		= 'Will another backup follow? If not, the process can be completed. [\'True\', \'False\']'
+	#)
+
+	SecSourceChoices	= ['usb', 'internal']
 	parser.add_argument(
-		'--secondary-backup-follows',
-		'-sb',
+		'--SecSourceName',
+		'-2s',
+		choices		= SecSourceChoices,
+		required =	False,
+		help=f'Source name, one of {SecSourceChoices}'
+	)
+
+	SecTargetChoices	= CloudServices + ['cloud_rsync']
+	parser.add_argument(
+		'--SecTargetName',
+		'-2t',
+		choices		= SecTargetChoices,
 		required	= False,
-		default		= False,
-		help		= 'Will another backup follow? If not, the process can be completed. [\'True\', \'False\']'
+		help		= f'Target name, one of {SecTargetChoices}'
 	)
 
 	args	= vars(parser.parse_args())
 
-	backupObj	= backup(SourceName=args['SourceName'], TargetName=args['TargetName'], DoSyncDatabase=args['sync_database'], DoGenerateThumbnails=args['generate_thumbnails'], DoUpdateEXIF=args['update_exif'], DeviceIdentifierPresetSource=args['device_identifier_preset_source'], DeviceIdentifierPresetTarget=args['device_identifier_preset_target'], PowerOff=args['power_off'], SecundaryBackupFollows=args['secondary_backup_follows'])
+	# clean boolean args
+	args['sync_database']		= args['sync_database'].lower() == 'true'
+	args['generate_thumbnails']	= args['generate_thumbnails'].lower() == 'true'	if args['generate_thumbnails'] != 'setup'	else 'setup'
+	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
+	args['power_off']			= args['power_off'].lower() == 'true'			if args['power_off'] != 'setup'				else 'setup'
 
+	SecundaryBackupFollows	= args['SecSourceName'] and args['SecTargetName']
+
+	# primary backup
+	if SecundaryBackupFollows:
+		display.message([f":{lan.l('box_backup_primary')}"])
+
+	backupObj	= backup(
+		SourceName=args['SourceName'],
+		TargetName=args['TargetName'],
+		DoSyncDatabase=args['sync_database'],
+		DoGenerateThumbnails=args['generate_thumbnails'],
+		DoUpdateEXIF=args['update_exif'],
+		DeviceIdentifierPresetSource=args['device_identifier_preset_source'],
+		DeviceIdentifierPresetTarget=args['device_identifier_preset_target'],
+		PowerOff=args['power_off'],
+		SecundaryBackupFollows=SecundaryBackupFollows
+	)
 	backupObj.run()
+
+	# secondary backup
+	secSourceDeviceIdentifier	= None
+	if SecundaryBackupFollows:
+		display.message([f":{lan.l('box_backup_secondary')}"])
+
+		secSourceDeviceIdentifier	= None
+		if  args['TargetName'] == 'usb' and args['SecTargetName'] == 'usb':
+			try:
+				secSourceDeviceIdentifier	= backupObj.TargetDevice.DeviceIdentifier
+			except:
+				pass
+
+		backupObj	= backup(
+			SourceName=args['SecSourceName'],
+			TargetName=args['SecTargetName'],
+			DoSyncDatabase=False,
+			DoGenerateThumbnails=False,
+			DoUpdateEXIF=False,
+			DeviceIdentifierPresetSource=secSourceDeviceIdentifier,
+			DeviceIdentifierPresetTarget=None,
+			PowerOff=args['power_off'],
+			SecundaryBackupFollows=False)
+		backupObj.run()
 
 

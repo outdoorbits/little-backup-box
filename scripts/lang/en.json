@@ -237,7 +237,11 @@
       "preset_target_label": "Set USB target partition",
       "preset_source_label": "Set USB source partition",
       "preset_partition_auto": "automatic selection",
-      "stopped": "Backup aborted"
+      "stopped": "Backup aborted",
+      "primary": "Primary backup",
+      "secondary": "Secondary backup",
+      "general": "General",
+      "secondary_label": "Should a cloud backup be performed after the primary backup?"
     },
     "logout_button": "Logout"
   },
