@@ -21,7 +21,7 @@ Thomas Schnitzler reports in detail and well-founded about his experiences with 
 <h3>Desktop variant</h3>
 <figure>
 	<a href="https://youtu.be/qAEebY8UlRc">
-		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/youtube-lbb-desktop-variant.png" align="center">
+		<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/youtube-lbb-desktop-variant.png" align="center">
 	</a>
 	<br />
 	<figcaption>YouTube: Desktop variant. The display while a backup from camera to usb and from usb to rsync-server.</figcaption>
@@ -30,7 +30,7 @@ Thomas Schnitzler reports in detail and well-founded about his experiences with 
 <h3>Introduction</h3>
 <figure>
 	<a href="https://youtu.be/vpWjOFSuwvE">
-		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/youtube-pott.png" align="center">
+		<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/youtube-pott.png" align="center">
 	</a>
 	<br />
 	<figcaption>YouTube: "Little Backup Box - mobil Speicherkarte ohne Notebook sichern" (German-speaking) by Andreas Pott</figcaption>

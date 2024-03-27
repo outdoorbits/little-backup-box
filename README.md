@@ -1,10 +1,10 @@
 <h1>Little Backup Box</h1>
 <h2>About</h2>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg"  align="left" title="Little Backup Box in its 3D printed case"><BR CLEAR="all">
+<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/lbb-orange.jpg"  align="left" title="Little Backup Box in its 3D printed case"><BR CLEAR="all">
 Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br />
 <br />
 <a href="https://youtu.be/qAEebY8UlRc">
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/youtube-lbb-desktop-variant.png"  align="left" title="Little Backup Box in a touchscreen housing"><BR CLEAR="all">
+<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/youtube-lbb-desktop-variant.png"  align="left" title="Little Backup Box in a touchscreen housing"><BR CLEAR="all">
 Little Backup Box in a touchscreen housing - watch Dave's video on YouTube</a><br />
 <br />
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br />
@@ -17,16 +17,16 @@ Media content can be viewed and rated for the subsequent process.<br />
 <table>
 <tr>
 <td>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_us.png" width="50px" align="center">
+<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/flag_us.png" width="50px" align="center">
 </td>
 <td>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_france.png" width="50px" align="center">
+<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/flag_france.png" width="50px" align="center">
 </td>
 <td>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_spain.png" width="50px" align="center">
+<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/flag_spain.png" width="50px" align="center">
 </td>
 <td>
-<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/flag_germany.png" width="50px" align="center">
+<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/flag_germany.png" width="50px" align="center">
 </td>
 </tr>
 </table>

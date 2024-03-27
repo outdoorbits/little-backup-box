@@ -1156,7 +1156,7 @@ if __name__ == "__main__":
 			except:
 				pass
 
-		backupObj	= backup(
+		backup(
 			SourceName=args['SecSourceName'],
 			TargetName=args['SecTargetName'],
 			DoSyncDatabase=False,
@@ -1165,7 +1165,7 @@ if __name__ == "__main__":
 			DeviceIdentifierPresetSource=secSourceDeviceIdentifier,
 			DeviceIdentifierPresetTarget=None,
 			PowerOff=args['power_off'],
-			SecundaryBackupFollows=False)
-		backupObj.run()
+			SecundaryBackupFollows=False
+		).run()
 
 

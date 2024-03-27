@@ -7,13 +7,13 @@
 <h2 id="hardware">Hardware examples</h2>
 <h3>3D printed case</h3>
 <figure>
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/lbb-orange.jpg" align="center">
+	<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/lbb-orange.jpg" align="center">
 	<figcaption>Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a></figcaption>
 </figure>
 <br />
 <h3>Display example</h3>
 <figure>
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/camera_backup.gif" align="center">
+	<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/camera_backup.gif" align="center">
 	<figcaption>The display while a backup from camera to usb and from usb to rsync-server.</figcaption>
 </figure>
 <br />
@@ -26,7 +26,7 @@
 <h3>YouTube: Desktop variant</h3>
 <figure>
 	<a href="https://youtu.be/qAEebY8UlRc">
-		<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/youtube-lbb-desktop-variant.png" align="center">
+		<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/youtube-lbb-desktop-variant.png" align="center">
 	</a>
 	<br />
 	<figcaption>YouTube: Desktop variant</figcaption>
@@ -34,13 +34,13 @@
 <br />
 <h3>Using a wireless keyboard</h3>
 <figure>
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/desktop-variant-keyboard.jpg" align="center">
+	<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/desktop-variant-keyboard.jpg" align="center">
 	<figcaption>Desktop variant using a wireless keyboard</figcaption>
 </figure>
 <br />
 <h3>Waveshare 4.3" Touchdisplay and M.2 NVMe SSD</h3>
 <figure>
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/pioB-1999.jpg" align="center">
+	<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/pioB-1999.jpg" align="center">
 	<figcaption>PioB-1999 built the first variant I know of with a display and M.2 SSD. Details can be found in the <a href="https://github.com/outdoorbits/little-backup-box/discussions/278">discussions</a>.</figcaption>
 </figure>
 <br />
@@ -48,18 +48,18 @@
 <h3>Web UI</h3>
 <h2 id="screenshots">Screenshots</h2>
 <figure align="center">
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui.png" align="center" width="90%">
+	<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/webui.png" align="center" width="90%">
 	<figcaption>The web UI</figcaption>
 </figure>
 <br />
 <h3>Web UI on smartphones</h3>
 <figure>
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui-smartphone.png" align="center">
+	<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/webui-smartphone.png" align="center">
 	<figcaption>The web UI on a smartphone. Full function in pocket-size.</figcaption>
 </figure>
 <br />
 <h3>Image-viewer</h3>
 <figure align="center">
-	<img src="https://raw.github.com/outdoorbits/little-backup-box/main/img/webui-view.png" align="center" width="90%">
+	<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/webui-view.png" align="center" width="90%">
 	<figcaption>Image-viewer "View"</figcaption>
 </figure>
