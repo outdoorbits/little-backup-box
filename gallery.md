@@ -41,7 +41,7 @@
 <h3>Waveshare 4.3" Touchdisplay and M.2 NVMe SSD</h3>
 <figure>
 	<img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/pioB-1999.jpg" align="center">
-	<figcaption>PioB-1999 built the first variant I know of with a display and M.2 SSD. Details can be found in the <a href="https://github.com/outdoorbits/little-backup-box/discussions/278">discussions</a>.</figcaption>
+	<figcaption>PioB-1999 built the first variant I know of with a display and M.2 SSD. Details can be found in the <a href="https://github.com/outdoorbits/little-backup-box/discussions/278">discussions</a>. The case is available at <a href="https://www.printables.com/model/824210-case-for-raspberry-pi5-with-43-display-and-2tb-nvm">https://www.printables.com/model/824210-case-for-raspberry-pi5-with-43-display-and-2tb-nvm</a>.</figcaption>
 </figure>
 <br />
 
