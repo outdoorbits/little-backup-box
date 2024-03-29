@@ -30,8 +30,9 @@
 	extract ($_GET,EXTR_SKIP);
 
 	include("sub-popup.php");
-
 	include("sub-common.php");
+
+	$NVMe_available	= nvme_available($WORKING_DIR, $constants);
 
 	# symlink to media-folder
 	if (! file_exists("./media")) {
@@ -539,8 +540,14 @@
 							<select name="filter_medium" id="filter_medium" onchange="this.form.submit()">
 								<option value="target_usb" <?php echo ($filter_medium == "target_usb"?" selected":""); ?>><?php echo L::view_filter_medium_target_usb; ?></option>";
 								<option value="source_usb" <?php echo ($filter_medium == "source_usb"?" selected":""); ?>><?php echo L::view_filter_medium_source_usb; ?></option>";
-								<option value="target_nvme" <?php echo ($filter_medium == "target_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_target_nvme; ?></option>";
-								<option value="source_nvme" <?php echo ($filter_medium == "source_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_source_nvme; ?></option>";
+								<?php
+									if ($NVMe_available) {
+										?>
+											<option value="target_nvme" <?php echo ($filter_medium == "target_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_target_nvme; ?></option>";
+											<option value="source_nvme" <?php echo ($filter_medium == "source_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_source_nvme; ?></option>";
+										<?php
+									}
+								?>
 								<option value="internal" <?php echo ($filter_medium == "internal"?" selected":""); ?>><?php echo L::view_filter_medium_internal; ?></option>";
 							</select>
 					</div>

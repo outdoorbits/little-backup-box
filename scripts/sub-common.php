@@ -59,4 +59,18 @@ function get_secondary_backup_selector($fieldname, $CloudServices, $config, $ign
 	<?php
 
 }
+
+function nvme_available($WORKING_DIR, $constants) {
+	// 	NVMe available?
+	exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False", $Partitions);
+	$NVMe_available	= false;
+
+	foreach ($Partitions as $Partition) {
+		if (str_starts_with($Partition,"/dev/".$constants['const_STORAGE_INT_MASK'])) {
+			$NVMe_available	= true;
+		}
+	}
+
+	return($NVMe_available);
+}
 ?>

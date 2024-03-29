@@ -44,19 +44,11 @@
 	}
 
 	include("sub-popup.php");
+	include("sub-common.php");
 
 	$LocalAutoServices	= array('anyusb');
 
-// 	NVMe available?
-	unset($Partitions);
-	exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False", $Partitions);
-	$NVMe_available	= false;
-
-	foreach ($Partitions as $Partition) {
-		if (str_starts_with($Partition,"/dev/".$constants['const_STORAGE_INT_MASK'])) {
-			$NVMe_available	= true;
-		}
-	}
+	$NVMe_available	= nvme_available($WORKING_DIR, $constants);
 
 	$LocalServices		= array('usb', 'internal');
 	if ($NVMe_available) {
@@ -64,8 +56,6 @@
 	}
 
 	$CameraServices		= array('camera');
-
-	include("sub-common.php");
 
 	$CloudServices_marked	= array();
 	foreach($CloudServices as $CloudService) {
