@@ -623,9 +623,11 @@
       "order_by_id": "ID",
       "file_type_extension": "Extensión de tipo de archivo",
       "camera_model_name": "Cámara",
-      "medium_target_local": "Destino local",
-      "medium_source_local": "Origen local",
-      "file_type": "Tipo de archivo"
+      "file_type": "Tipo de archivo",
+      "medium_source_usb": "Origen local",
+      "medium_target_usb": "Destino local",
+      "medium_source_nvme": "Origen NVMe local",
+      "medium_target_nvme": "Destino NVMe local"
     },
     "images": {
       "download": "Descargar originales",

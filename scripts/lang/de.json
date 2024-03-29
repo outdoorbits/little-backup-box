@@ -623,9 +623,11 @@
       "order_by_id": "ID",
       "file_type_extension": "Dateityperweiterung",
       "camera_model_name": "Kamera",
-      "medium_target_local": "Lokales Ziel",
-      "medium_source_local": "Lokale Quelle",
-      "file_type": "Dateityp"
+      "file_type": "Dateityp",
+      "medium_source_usb": "Lokale Quelle",
+      "medium_target_usb": "Lokales Ziel",
+      "medium_source_nvme": "Lokale NVMe Quelle",
+      "medium_target_nvme": "Lokales NVMe Ziel"
     },
     "images": {
       "download": "Download Original",

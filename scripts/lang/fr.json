@@ -623,9 +623,11 @@
       "order_by_id": "ID",
       "file_type_extension": "Extension de type de fichier",
       "camera_model_name": "Appareil photo",
-      "medium_target_local": "Cible locale",
-      "medium_source_local": "Origine locale",
-      "file_type": "Type de fichier"
+      "file_type": "Type de fichier",
+      "medium_source_usb": "Origine locale",
+      "medium_target_usb": "Cible locale",
+      "medium_source_nvme": "Origine NVMe locale",
+      "medium_target_nvme": "Cible NVMe locale"
     },
     "images": {
       "download": "Télécharger l'original",
