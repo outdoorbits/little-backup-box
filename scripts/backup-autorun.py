@@ -21,6 +21,7 @@
 
 import os
 import subprocess
+import threading
 
 import backup
 import lib_cron_ip
@@ -40,7 +41,7 @@ class backup_autorun(object):
 	def run(self):
 		self.__cleanup_at_boot()
 		self.__display_hello()
-		lib_cron_ip.ip_info().mail_ip()
+		threading.Thread(target=lib_cron_ip.ip_info().mail_ip).start()
 		self.__default_backup()
 
 	def __cleanup_at_boot(self):

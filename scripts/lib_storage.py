@@ -754,7 +754,6 @@ class storage(object):
 					# check __TechMountPoint for FileSystem
 					if self.__TechMountPoint:
 						storfstype	= getFS_Type(self.__TechMountPoint)
-
 			except:
 				storfstype		= '?'
 
@@ -853,15 +852,19 @@ def umount(setup, MountPoints):
 	for MountPoint in MountPoints:
 
 		if os.path.isdir(MountPoint):
-			try:
 				if getFS_Type(MountPoint) in ['hfs','hfsplus']:
-					subprocess.run(['fusermount','-uz',MountPoint], stderr=subprocess.DEVNULL)
-					os.rmdir(MountPoint)
+					try:
+						subprocess.run(['fusermount','-uz',MountPoint], stderr=subprocess.DEVNULL)
+						os.rmdir(MountPoint)
+					except:
+						pass
 				else:
-					subprocess.run(['umount', '-l', MountPoint], stderr=subprocess.DEVNULL)
-					os.rmdir(MountPoint)
-			except:
-				pass
+					try:
+						subprocess.run(['umount', '-l', MountPoint], stderr=subprocess.DEVNULL)
+						os.rmdir(MountPoint)
+					except:
+						pass
+
 
 def remove_all_mountpoints(setup):
 	umount(setup,'all')
