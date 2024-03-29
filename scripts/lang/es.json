@@ -46,8 +46,8 @@
       "power_off_checkbox_label": "Apagar después de ejecutar",
       "to": "a",
       "update_exif_checkbox_label": "Escribir datos EXIF ​​en los archivos originales (solo para almacenamiento local)",
-      "preset_target_label": "Establecer partición de destino USB",
-      "preset_source_label": "Establecer partición de origen USB",
+      "preset_target_label": "Establecer partición de destino",
+      "preset_source_label": "Establecer partición de origen",
       "preset_partition_auto": "Selección automática",
       "stopped": "Copia se cancelada",
       "primary": "Ejecución principal",
@@ -55,7 +55,8 @@
       "general": "General",
       "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?"
     },
-    "logout_button": "Cerrar sesión"
+    "logout_button": "Cerrar sesión",
+    "nvme_button": "NVMe SSD"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
@@ -82,8 +83,6 @@
     "backup_section": "Respaldo",
     "backup_header": "Modo de respaldo predeterminado",
     "backup_label": "Seleccione el modo de copia de seguridad predeterminado:",
-    "backup_none": "sin respaldo automático",
-    "backup_camera_internal": "Cámara &rarr; almacenamiento interno",
     "backup_power_off_header": "Apagado",
     "backup_power_off_label": "Apagar después de la copia de seguridad",
     "view_section": "Apariencia",
@@ -156,11 +155,18 @@
         "requirements_header": "Requisitos de partición de destino",
         "requirements_label": "¿Cuál es el tamaño mínimo de la partición de destino que se aceptará?",
         "requirements_size_ignore": "aceptar todo"
-      }
+      },
+      "anyusb_nvme": "todo USB (cámaras y almacenamiento) &rarr; NVMe SSD",
+      "anyusb_internal": "todo USB (cámaras y almacenamiento) &rarr; almacenamiento interno",
+      "anyusb_usb": "todo USB (cámaras y almacenamiento) &rarr; USB almacenamiento",
+      "camera_internal": "Cámara &rarr; almacenamiento interno",
+      "none": "sin respaldo automático",
+      "camera_usb": "Cámara &rarr; USB almacenamiento",
+      "usb_internal": "USB Almacenar &rarr; almacenamiento interno",
+      "usb_usb": "USB almacenar &rarr; USB almacenamiento",
+      "usb_nvme": "USB almacenar &rarr; NVMe SSD",
+      "camera_nvme": "Cámara &rarr; NVMe SSD"
     },
-    "backup_usb_usb": "USB almacenar &rarr; USB almacenamiento",
-    "backup_usb_internal": "USB Almacenar &rarr; almacenamiento interno",
-    "backup_camera_usb": "Cámara &rarr; USB almacenamiento",
     "imageviewer": {
       "section": "Visor de imágenes View",
       "convert_heic_header": "Convertir imágenes heic a jpeg",
@@ -330,9 +336,7 @@
       "virtual_keyboard_enable_header": "Teclado virtual",
       "virtual_keyboard_enable_label": "Habilitar teclado virtual",
       "description": "Configuraciones que afectan a una pantalla con interfaz gráfica de usuario (escritorio)."
-    },
-    "backup_anyusb_internal": "todo USB (cámaras y almacenamiento) &rarr; almacenamiento interno",
-    "backup_anyusb_usb": "todo USB (cámaras y almacenamiento) &rarr; USB almacenamiento"
+    }
   },
   "tools": {
     "tools": "Herramientas",
@@ -411,9 +415,6 @@
       "camera_scanning_folders": "Escaneando carpetas...",
       "primary": "Ejecución principal",
       "secondary": "Ejecución secundaria",
-      "mode_camera": "Cámara",
-      "mode_cloud": "Nube",
-      "mode_internal": "Int. almacenamiento",
       "storage_filesystem_short": "FS",
       "exception": "Error desconocido",
       "time_remaining": "Tiempo",
@@ -423,20 +424,16 @@
       "generating_thumbnails_finding_images1": "Gen. de miniaturas",
       "generating_thumbnails_finding_images3": "Sólo un momento...",
       "usb_target_ok": "Almacenamiento ext. o.k.",
-      "mode_usb": "Almacenamiento USB",
       "usb_source_ok": "Origen o.k.",
-      "mode_thumbnails": "De miniaturas",
       "camera_storage_not_exists_2": "no existe.",
       "camera_storage_not_exists_1": "Cámara-almacenamiento",
       "generating_database_finding_images1": "Sincronizar base de datos",
       "generating_database_finding_images3": "Sólo un momento...",
-      "mode_database": "Base de datos",
       "cleaning_database": "Base de datos de limpieza",
       "counting_images": "Contando imágenes.",
       "generating_thumbnails": "Gen. de miniaturas",
       "updating_exif": "Actualización de EXIF",
       "generating_database": "Sincronizar base de datos",
-      "mode_exif": "EXIF",
       "vpn": {
         "connecting_failed": "VPN fallida",
         "connecting": "Conectar VPN",
@@ -452,9 +449,6 @@
       "serial": "Número de serie",
       "source_id": "ID de fuente",
       "usb": "USB",
-      "mode_cloud_rsync": "Servidor rsync",
-      "mode_cameras": "Cámaras",
-      "mode_usbs": "Almacenamientos USB",
       "folder": "Carpeta",
       "files_just_copied": "recién copiado",
       "failed_attempts": "intentos fallidos",
@@ -467,9 +461,23 @@
       "connect_source_1": "Listo",
       "connect_target_1": "Listo",
       "connect_source_any_1": "Listo",
-      "mode_anyusb": "todo USB",
       "break1": "Copia de seguridad",
-      "break2": "cancelada"
+      "break2": "cancelada",
+      "mode": {
+        "anyusb": "todo USB",
+        "camera": "Cámara",
+        "cameras": "Cámaras",
+        "cloud": "Nube",
+        "cloud_rsync": "Servidor rsync",
+        "database": "Base de datos",
+        "exif": "EXIF",
+        "internal": "Int. almacenamiento",
+        "thumbnails": "De miniaturas",
+        "usb": "Almacenamiento USB",
+        "usbs": "Almacenamientos USB",
+        "nvme": "NVMe SSD",
+        "nvmes": "NVMe SSDs"
+      }
     },
     "cronip": {
       "offline": "desconectado",

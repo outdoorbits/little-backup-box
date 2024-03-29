@@ -54,7 +54,7 @@ class storage(object):
 # 101: storage type = usb but no role defined
 
 	def __init__(self, StorageName, Role, WaitForDevice=True, DeviceIdentifierPresetThis=None, DeviceIdentifierPresetOther=None):
-		#StorageName: 					one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
+		#StorageName: 					one of ['usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		#Role:							[lib_storage.role_Source, lib_storage.role_Target]
 		#DeviceIdentifierPresetThis:	['--uuid 123...', 'sda1', ...]
 		#WaitForDevice:					True/False, retry until device is available
@@ -68,19 +68,20 @@ class storage(object):
 		self.__WORKING_DIR = os.path.dirname(__file__)
 
 		self.__setup	= lib_setup.setup()
-		self.__const_STORAGE_DEV_MASK					= self.__setup.get_val('const_STORAGE_DEV_MASK')
 
-		self.__const_MEDIA_DIR							= self.__setup.get_val('const_MEDIA_DIR')
-		self.__const_TECH_MOUNT_TARGET					= self.__setup.get_val('const_TECH_MOUNT_TARGET')
-		self.__const_TECH_MOUNT_SOURCE					= self.__setup.get_val('const_TECH_MOUNT_SOURCE')
+		self.__const_MEDIA_DIR								= self.__setup.get_val('const_MEDIA_DIR')
+		self.__const_TECH_MOUNT_TARGET						= self.__setup.get_val('const_TECH_MOUNT_TARGET')
+		self.__const_TECH_MOUNT_SOURCE						= self.__setup.get_val('const_TECH_MOUNT_SOURCE')
 
-		self.__const_MOUNTPOINT_SUBPATH_LOCAL_TARGET	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')
-		self.__const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')
-		self.__const_MOUNTPOINT_SUBPATH_CLOUD_TARGET	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')
-		self.__const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')
-		self.__const_INTERNAL_BACKUP_DIR				= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
-		self.__conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
-		self.__conf_BACKUP_TARGET_SIZE_MIN				= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
+		self.__const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET')
+		self.__const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE')
+		self.__const_MOUNTPOINT_SUBPATH_LOCAL_NVME_TARGET	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_NVME_TARGET')
+		self.__const_MOUNTPOINT_SUBPATH_LOCAL_NVME_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_NVME_SOURCE')
+		self.__const_MOUNTPOINT_SUBPATH_CLOUD_TARGET		= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')
+		self.__const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')
+		self.__const_INTERNAL_BACKUP_DIR					= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
+		self.__conf_DISP_FRAME_TIME							= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__conf_BACKUP_TARGET_SIZE_MIN					= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
 
 		self.__RCLONE_CONFIG_FILE						= f"{self.__setup.get_val('const_MEDIA_DIR')}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 
@@ -106,8 +107,8 @@ class storage(object):
 		self.SubPathsAtSource		= []
 		self.SubPathAtTarget		= '' # subpath below targets MountPoint ('internal/xyz')
 
-		self.mountable	= self.StorageType in ['usb', 'internal' ,'cloud']
-		self.isLocal	= self.StorageType in ['usb', 'internal', 'camera']
+		self.mountable	= self.StorageType in ['usb', 'internal', 'nvme' ,'cloud']
+		self.isLocal	= self.StorageType in ['usb', 'internal', 'nvme', 'camera']
 		self.FS_Type	= ''
 
 		self.__camera_connected	= False
@@ -115,8 +116,8 @@ class storage(object):
 	def mount(self,TimeOutActive=None):
 		mounted	= False
 
-		if self.StorageType == 'usb':
-			mounted	= self.__mount_USB_storage(TimeOutActive=TimeOutActive==True)
+		if self.StorageType in ['usb', 'nvmw']:
+			mounted	= self.__mount_local_storage(TimeOutActive=TimeOutActive==True)
 		elif self.StorageType == 'internal':
 			mounted	= self.__mount_internal()
 		elif self.StorageType == 'camera':
@@ -131,7 +132,7 @@ class storage(object):
 
 		return(mounted)
 
-	def __mount_USB_storage(self, TimeOutActive=False):
+	def __mount_local_storage(self, TimeOutActive=False):
 		# mounts the device, if WAIT_FOR_MOUNT=true, waits until the device is available
 		# returns uuid or false (if not mounted), "na" for not available
 		# checks and remounts all by UUID_USBX given devices
@@ -158,12 +159,11 @@ class storage(object):
 		EndTime	= time.time()+self.__setup.get_val('const_MOUNT_LOCAL_TIMEOUT')
 
 		while self.MountPoint:
-
 			# force to re-scan usb-devices
 			Command	= ['udevadm','trigger']
 			subprocess.run(Command)
 
-			USB_DeviceList = get_available_partitions(TargetPartition=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, returnDict=True)
+			USB_DeviceList = get_available_partitions(self.StorageType, TargetPartition=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, returnDict=True)
 
 			# log if list of devices changed
 			if USB_DeviceList and USB_DeviceList != USB_DeviceList_old:
@@ -657,19 +657,19 @@ class storage(object):
 			subprocess.run(Command)
 
 			# umount self.MountPoint
-			if self.FS_Type in ['hfs','hfsplus'] + ['ext2','ext3','ext4']:
-				Command	= ['fusermount','-uz', self.MountPoint]
-				try:
-					Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
-					os.rmdir(MountPoint)
-				except:
-					Result	= ''
-			else:
-				if self.MountPoint:
+			if self.MountPoint:
+				if self.FS_Type in ['hfs','hfsplus'] + ['ext2','ext3','ext4']:
+					Command	= ['fusermount','-uz', self.MountPoint]
+					try:
+						Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
+						os.rmdir(self.MountPoint)
+					except:
+						Result	= ''
+				else:
 					Command	= ['umount', '-l', self.MountPoint]
 					try:
 						Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
-						os.rmdir(MountPoint)
+						os.rmdir(self.MountPoint)
 					except:
 						Result	= ''
 
@@ -679,7 +679,7 @@ class storage(object):
 					Command	= [ 'umount', '-l', self.__TechMountPoint]
 					try:
 						Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
-						os.rmdir(MountPoint)
+						os.rmdir(self.__TechMountPoint)
 					except:
 						Result	= ''
 
@@ -698,10 +698,12 @@ class storage(object):
 
 	def __set_mountpoint(self):
 		baseDir	= self.__const_MEDIA_DIR
-
-		if self.StorageType in ['usb']:
+		if self.StorageType == 'usb':
 			self.__TechMountPoint	= self.__const_TECH_MOUNT_TARGET if self.Role == role_Target else self.__const_TECH_MOUNT_SOURCE
-			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_TARGET}"
+			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET}"
+		elif self.StorageType == 'nvme':
+			self.__TechMountPoint	= self.__const_TECH_MOUNT_TARGET if self.Role == role_Target else self.__const_TECH_MOUNT_SOURCE
+			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_NVME_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_NVME_TARGET}"
 		elif self.StorageType == 'cloud':
 			self.__TechMountPoint	= ''
 			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}"
@@ -796,20 +798,55 @@ class storage(object):
 
 #########################
 
+def get_mountPoints(setup, parts, path_list_only):
+	#parts: list, any of ['all', 'usb', 'nvme', 'tech', 'cloud']
+
+	mountPoints	= {}
+
+	if (set(parts) & set(['all', 'usb'])):
+		mountPoints.update(
+			{
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET')}":		'target_usb',
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE')}":		'source_usb'
+			}
+		)
+
+	if (set(parts) & set(['all', 'nvme'])):
+		mountPoints.update(
+			{
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_NVME_TARGET')}":	'target_nvme',
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_NVME_SOURCE')}":	'source_nvme'
+			}
+		)
+
+	if (set(parts) & set(['all', 'tech'])):
+		mountPoints.update(
+			{
+				setup.get_val('const_TECH_MOUNT_TARGET'):																'target_usb',
+				setup.get_val('const_TECH_MOUNT_SOURCE'):																'source_usb'
+			}
+		)
+
+	if (set(parts) & set(['all', 'cloud'])):
+		mountPoints.update(
+			{
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}":			'target_cloud',
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}": 		'source_cloud'
+			}
+		)
+
+	if path_list_only:
+		return(list(mountPoints.keys()))
+	else:
+		return(mountPoints)
+
 def umount(setup, MountPoints):
 	#setup:			setup-object
 	#MountPoints:	'all' or a MountPoint or an array of MountPoints
 
 	if type(MountPoints) != "<class 'list'>":
 		if MountPoints == 'all':
-			MountPoints	= [
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}",
-				setup.get_val('const_TECH_MOUNT_TARGET'),
-				setup.get_val('const_TECH_MOUNT_SOURCE')
-			]
+			MountPoints	= get_mountPoints(setup, ['usb', 'nvme', 'cloud'], True)
 		else:
 			MountPoints	= [MountPoints]
 
@@ -829,88 +866,74 @@ def umount(setup, MountPoints):
 def remove_all_mountpoints(setup):
 	umount(setup,'all')
 	#deletes all mountpoints and their content! For use directly after boot and before any mount only!!!
-	MountPoints	= [
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}",
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}",
-				setup.get_val('const_TECH_MOUNT_TARGET'),
-				setup.get_val('const_TECH_MOUNT_SOURCE')
-			]
+	MountPoints	= get_mountPoints(setup, ['all'], True)
 
 	for MountPoint in MountPoints:
-		Command	= ['rm','-R',MountPoint]
-		subprocess.run(Command)
-
-def get_mounts_list():
-	mountsList	= [] # space!
-
-	setup	= lib_setup.setup()
-
-	TargetLocal				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_TARGET')}"
-	SourceLocal				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE')}"
-	TargetCloud				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}"
-	SourceCloud				= f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}"
-
-	const_TECH_MOUNT_TARGET	= setup.get_val('const_TECH_MOUNT_TARGET')
-	const_TECH_MOUNT_SOURCE	= setup.get_val('const_TECH_MOUNT_SOURCE')
-
-	MountPointListLocal	= f"{TargetLocal}\|{SourceLocal}\|{const_TECH_MOUNT_TARGET}\|{const_TECH_MOUNT_SOURCE}"
-	MountPointListCloud	= f"{TargetCloud}\|{SourceCloud}"
-
-	SourceCommand	= ["mount"]
-	FilterCommand	= ["grep", MountPointListLocal]
-	try:
-		MountsLocal	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
-	except:
-		MountsLocal	= []
-
-	SourceCommand	= ["mount"]
-	FilterCommand	= ["grep", MountPointListCloud]
-	try:
-		MountsCloud	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
-	except:
-		MountsCloud	= []
-
-	for MountLocal in MountsLocal:
-		if (f" {TargetLocal} " in MountLocal) or (f" {const_TECH_MOUNT_TARGET} " in MountLocal):
-			mountsList.append('target_usb')
-		if (f" {SourceLocal} " in MountLocal) or (f" {const_TECH_MOUNT_SOURCE} " in MountLocal):
-			mountsList.append('source_usb')
-
-	for MountCloud in MountsCloud:
+		Command	= ['rm','-R', MountPoint]
 		try:
-			CloudService	= MountCloud.split(':',1)[0]
-			if f" {TargetCloud} " in MountCloud:
-				mountsList.append(f'target_cloud:{CloudService}')
-			if f" {SourceCloud} " in MountCloud:
-				mountsList.append(f'source_cloud:{CloudService}')
+			subprocess.run(Command)
 		except:
 			pass
 
+def get_mounts_list():
+	mountsList	= []
+
+	setup	= lib_setup.setup()
+
+	MountPointList	= '\|'.join(get_mountPoints(setup, ['all'], True))
+
+	SourceCommand	= ["mount"]
+	FilterCommand	= ["grep", MountPointList]
+	try:
+		Mounts	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
+	except:
+		Mounts	= []
+
+	MountPointsDict	= get_mountPoints(setup, ['all'], False)
+	for MountPoint in MountPointsDict:
+		for Mount in Mounts:
+			if f' {MountPoint} ' in Mount:
+				MountType	= MountPointsDict[MountPoint]
+				if MountType in ['target_cloud', 'source_cloud']:
+					CloudServiceName	= Mount.split(':',1)[0]
+					mountsList.append(f"{MountType}:{CloudServiceName}")
+				else:
+					mountsList.append(MountType)
+
+	#remove duplicates
 	mountsList	= list(dict.fromkeys(mountsList))
+
 	return(f" {' '.join(mountsList)} ")
 
-def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, HumanReadable=False, returnDict=False):
+def get_available_partitions(StorageType=None, TargetPartition='',excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, HumanReadable=False, returnDict=False):
+	#StorageType: one of [None, 'usb', 'nvme'*] *None will be all, everything else except usb will be nvme
+
 	setup	= lib_setup.setup()
 
 	TargetDevice_lum_alpha	= ''
 
-	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '^PATH=\\\"/dev/{setup.get_val('const_STORAGE_DEV_MASK')}'"
+	if StorageType is None:
+		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
+	elif StorageType=='usb':
+		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}"
+	else:
+		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
+
+	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
 
 	try:
 		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
-		USB_DeviceListRaw = subprocess.check_output(Command,shell=True).decode().split('\n')
+		DeviceListRaw = subprocess.check_output(Command,shell=True).decode().split('\n')
 	except:
-		USB_DeviceListRaw = []
+		DeviceListRaw = []
 
 	# generate list of devices and properties
-	USB_DeviceList	= []
-	for USB_Device in USB_DeviceListRaw:
+	DeviceList	= []
+	for USB_Device in DeviceListRaw:
 
 		try:
 			lum			= USB_Device.split('PATH=',1)[1].split('"',2)[1]
-			lum_alpha	= lum.translate(str.maketrans('', '', digits))
+			lum_alpha	= lum.rstrip('0123456789')
 		except:
 			lum			= ''
 			lum_alpha	= ''
@@ -922,12 +945,12 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 			uuid		= ''
 
 		try:
-			MountPoint		= Device_FS_Type = USB_Device.split('MOUNTPOINT=',1)[1].split('"',2)[1]
+			MountPoint	= USB_Device.split('MOUNTPOINT=',1)[1].split('"',2)[1]
 		except:
-			MountPoint		= ''
+			MountPoint	= ''
 
 		try:
-			fs_type		= Device_FS_Type = USB_Device.split('FSTYPE=',1)[1].split('"',2)[1]
+			fs_type		= USB_Device.split('FSTYPE=',1)[1].split('"',2)[1]
 		except:
 			fs_type		= ''
 
@@ -956,8 +979,12 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 		if TargetPartition and TargetPartition in [uuid, lum]:
 			continue
 
+		## exclude partitions if mounted as system partition
+		if MountPoint in ['/', '/boot/firmware']:
+			continue
+
 		# append accepted devices
-		USB_DeviceList.append(
+		DeviceList.append(
 			{
 				'lum':			lum,
 				'lum_alpha':	lum_alpha,
@@ -969,21 +996,21 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 
 	# exclude all partitions on target device
 	if TargetDevice_lum_alpha:
-		USB_DeviceList_old	= USB_DeviceList
-		USB_DeviceList	= []
-		for USB_Device in USB_DeviceList_old:
+		DeviceList_old	= DeviceList
+		DeviceList	= []
+		for USB_Device in DeviceList_old:
 			# exclude if lum_alpha is on target device
 			if USB_Device['lum_alpha'] == TargetDevice_lum_alpha and USB_Device['identifier'] != DeviceIdentifierPreset:
 				continue
 
 			# append accepted devices
-			USB_DeviceList.append(USB_Device)
+			DeviceList.append(USB_Device)
 
 	# exclude small partitions
 	if MinSizeBytes > 0:
-		USB_DeviceList_old	= USB_DeviceList
-		USB_DeviceList	= []
-		for USB_Device in USB_DeviceList_old:
+		DeviceList_old	= DeviceList
+		DeviceList	= []
+		for USB_Device in DeviceList_old:
 			Command	= f"blockdev --getsize64 {USB_Device['lum']}"
 			try:
 				SizeBytes = int(subprocess.check_output(Command,shell=True).decode())
@@ -994,11 +1021,11 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 				continue
 
 			# append accepted devices
-			USB_DeviceList.append(USB_Device)
+			DeviceList.append(USB_Device)
 
 	#create formated list availablePartitions
 	availablePartitions		= []
-	for USB_Device in USB_DeviceList:
+	for USB_Device in DeviceList:
 		if HumanReadable:
 			availablePartitions.append(f"{USB_Device['lum']}: {USB_Device['uuid']}" if USB_Device['uuid'] else f"{USB_Device['lum']}: {USB_Device['lum']}")
 		else:
@@ -1008,6 +1035,67 @@ def get_available_partitions(TargetPartition='',excludePartitions=[], DeviceIden
 				availablePartitions.append(USB_Device['identifier'])
 
 	return(availablePartitions)
+
+def get_available_devices():
+	setup	= lib_setup.setup()
+
+	StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
+
+	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
+
+	try:
+		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
+		DeviceListRaw = subprocess.check_output(Command,shell=True).decode().split('\n')
+	except:
+		DeviceListRaw = []
+
+	# generate list of devices and properties
+	DeviceList			= []
+	BlockedDeviceList	= []
+
+	for USB_Device in DeviceListRaw:
+
+		try:
+			lum			= USB_Device.split('PATH=',1)[1].split('"',2)[1]
+			lum_alpha	= lum.rstrip('0123456789')
+		except:
+			lum			= ''
+			lum_alpha	= ''
+
+		try:
+			MountPoint	= USB_Device.split('MOUNTPOINT=',1)[1].split('"',2)[1]
+		except:
+			MountPoint	= ''
+
+		# exclude unsuitable devices
+		## exclude devices without valid identifiers
+		if not lum_alpha:
+			continue
+
+		## exclude devices if mounted as system device
+		if MountPoint in ['/', '/boot/firmware']:
+			BlockedDeviceList.append(lum_alpha)
+			continue
+
+		# append accepted devices
+		DeviceList.append(lum_alpha)
+
+
+	#remove duplicates
+	DeviceList	= list(dict.fromkeys(DeviceList))
+
+	#remove BlockedDeviceList from DeviceList
+	if BlockedDeviceList:
+		DeviceList_old	= DeviceList
+		DeviceList	= []
+		for USB_Device in DeviceList_old:
+			if USB_Device in BlockedDeviceList:
+				continue
+
+			# append accepted devices
+			DeviceList.append(USB_Device)
+
+	return(DeviceList)
 
 def format_CameraIdentifier(Model, Port):
 	return(f"{Model} {Port}")
@@ -1082,7 +1170,7 @@ if __name__ == "__main__":
 		epilog		= 'This script can ideally be configured and started via the Little Backup Box web UI.'
 	)
 
-	Actions	= ['mount','umount','mounted','get_mounts_list','get_available_partitions']
+	Actions	= ['mount','umount','mounted','get_mounts_list','get_available_partitions', 'get_available_devices']
 	parser.add_argument(
 		'--Action',
 		'-a',
@@ -1091,7 +1179,7 @@ if __name__ == "__main__":
 		help=f'Action name, one of {Actions}'
 	)
 
-	StorageNames	= ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
+	StorageNames	= ['usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
 	parser.add_argument(
 		'--StorageName',
 		'-s',
@@ -1166,8 +1254,16 @@ if __name__ == "__main__":
 		elif args['Action'] == 'mounted':
 			print(storage(StorageName=args['StorageName'], Role=args['Role'], WaitForDevice=args['WaitForDevice'], DeviceIdentifierPresetThis=args['DeviceIdentifierPresetThis'], DeviceIdentifierPresetOther=args['DeviceIdentifierPresetOther']).mounted())
 
+	#get_mounts_list
 	elif args['Action'] == 'get_mounts_list':
 		print(get_mounts_list())
 
+	#get_available_partitions
 	elif args['Action'] == 'get_available_partitions':
-		print(get_available_partitions(HumanReadable=True, skipMounted=args['skipMounted'],returnDict=True))
+		args['StorageName']	= args['StorageName'] if args['StorageName'] else None
+
+		print('\n'.join(get_available_partitions(args['StorageName'], HumanReadable=True, skipMounted=args['skipMounted'],returnDict=True)))
+
+	#get_available_devices
+	elif args['Action'] == 'get_available_devices':
+		print('\n'.join(get_available_devices()))

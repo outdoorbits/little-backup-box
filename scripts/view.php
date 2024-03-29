@@ -261,8 +261,8 @@
 		exec("df -h", $mounted_devices_array);
 
 		$mounted_devices	= implode("|",$mounted_devices_array);
-		if (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_TARGET'])) {$filter_medium="target_local";}
-		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE'])) {$filter_medium="source_local";}
+		if (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET'])) {$filter_medium="target_local";}
+		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE'])) {$filter_medium="source_local";}
 		else {$filter_medium="internal";}
 	}
 
@@ -308,10 +308,10 @@
 	# define path of the database-file
 	$STORAGE_PATH	= "";
 	if ($filter_medium == "target_local") {
-		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_TARGET'];
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET'];
 	}
 	elseif ($filter_medium == "source_local") {
-		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE'];
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE'];
 	}
 	elseif ($filter_medium == "internal") {
 		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_INTERNAL_BACKUP_DIR'];

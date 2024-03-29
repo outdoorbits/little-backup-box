@@ -39,16 +39,26 @@
 	$MountableStorages	= array_merge($LocalServices,$CloudServices_marked);
 
 	function get_device_selector($name, $list_partitions=true) {
+		global $WORKING_DIR;
+
+		$Options	= array();
+
 		if ($list_partitions) {
-			exec("ls /dev/sd* | xargs -n 1 basename", $devices);
+			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions", $Partitions);
 		} else {
-			exec("ls /dev/sd* | xargs -n 1 basename | grep -v '[0123456789]'", $devices);
+			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_devices", $Partitions);
+		}
+
+		foreach ($Partitions as $Partition) {
+			list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
+			$Lum	= str_replace('/dev/', '', $Lum);
+			array_push($Options, $Lum);
 		}
 
 		$selector	= '<select name="' . $name . '">\n';
 		$selector .= "<option value='-'>-</option>\n";
-		foreach ($devices as $n => $device) {
-			$selector .= "<option value='$device'>$device</option>\n";
+		foreach ($Options as $n => $Option) {
+			$selector .= "<option value='$Option'>$Option</option>\n";
 		}
 		$selector .= "</select>";
 		return($selector);
@@ -103,16 +113,14 @@
 							}
 
 							if ($ButtonClass != 'usb' and $ButtonClass_old=='usb') {
-								$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted True");
-								$PartitionsArray	= explode(',', $Partitions);
+								exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted True", $Partitions);
 
 								echo ('<label for="DeviceIdentifierPreset">'.L::tools_mount_select_partition_label.': </label>');
 								echo ('<select class="usb" id="DeviceIdentifierPreset" name="DeviceIdentifierPreset">');
 									echo ("<option value=''>".L::main_backup_preset_partition_auto."</option>");
-									foreach ($PartitionsArray as $Partition) {
-										$Partition	= trim($Partition, "[]' \n");
+									foreach ($Partitions as $Partition) {
 										list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
-										$Lum	= trim($Lum,'/dev');
+										$Lum	= str_replace('/dev/', '', $Lum);
 										echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
 									}
 								echo ('</select><br>');
@@ -136,9 +144,9 @@
 			<form class="text-center" style="margin-top: 1em;" method="POST">
 					<label for="partition"><?php echo l::tools_select_partition ?></label>
 						<?php
-						print(get_device_selector("PARAM1"));
-						echo ("<button name='fsck_check'>" . l::tools_fsck_check_b . "</button>");
-						echo ("<button name='fsck_autorepair' class='danger'>" . l::tools_fsck_autorepair_b . "</button>");
+							echo(get_device_selector("PARAM1"));
+							echo ("<button name='fsck_check'>" . l::tools_fsck_check_b . "</button>");
+							echo ("<button name='fsck_autorepair' class='danger'>" . l::tools_fsck_autorepair_b . "</button>");
 						?>
 			</form>
 	</div>
@@ -149,9 +157,7 @@
 			<form class="text-center" style="margin-top: 1em;" method="POST">
 					<label for="PARAM1"><?php echo l::tools_select_partition; ?>:</label>
 					<br>
-					<?php
-					print(get_device_selector("PARAM1"));
-					?>
+					<?php echo(get_device_selector("PARAM1")); ?>
 					<br>
 					<label for="PARAM2"><?php echo l::tools_select_format_fstype; ?>:</label>
 					<br>
@@ -179,9 +185,7 @@
 			<form class="text-center" style="margin-top: 1em;" method="POST">
 					<label for="PARAM1"><?php echo l::tools_select_partition; ?>:</label>
 					<br>
-					<?php
-					print(get_device_selector("PARAM1",false));
-					?>
+					<?php echo(get_device_selector("PARAM1",false)); ?>
 					<br>
 					<label for="PARAM2"><?php echo l::tools_f3_select_action; ?>:</label>
 					<br>
@@ -211,7 +215,7 @@
 		[$Role,$Storage]	= explode('_',$_POST['mount'],2);
 		$DeviceIdentifierPresetThis	= isset($_POST['DeviceIdentifierPreset'])?$_POST['DeviceIdentifierPreset']:'';
 
-		$command = "sudo python3 $WORKING_DIR/lib_storage.py --Action mount --StorageName $Storage --Role $Role --DeviceIdentifierPresetThis \\'$DeviceIdentifierPresetThis\\'";
+		$command = "sudo python3 ${WORKING_DIR}/lib_storage.py --Action mount --StorageName $Storage --Role $Role --DeviceIdentifierPresetThis \\'$DeviceIdentifierPresetThis\\'";
 		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' \"${command}\" '1'");
 
 		echo "<script>";
@@ -222,7 +226,7 @@
 	elseif (isset($_POST['umount'])) {
 		[$Role,$Storage]	= explode('_',$_POST['umount'],2);
 
-		$command = "sudo python3 $WORKING_DIR/lib_storage.py --Action umount --StorageName $Storage --Role $Role";
+		$command = "sudo python3 ${WORKING_DIR}/lib_storage.py --Action umount --StorageName $Storage --Role $Role";
 		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' '${command}' '1'");
 
 		echo "<script>";

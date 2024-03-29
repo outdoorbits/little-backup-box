@@ -47,7 +47,21 @@
 
 	$LocalAutoServices	= array('anyusb');
 
-	$LocalServices		= array('usb','internal');
+// 	NVMe available?
+	unset($Partitions);
+	exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False", $Partitions);
+	$NVMe_available	= false;
+
+	foreach ($Partitions as $Partition) {
+		if (str_starts_with($Partition,"/dev/".$constants['const_STORAGE_INT_MASK'])) {
+			$NVMe_available	= true;
+		}
+	}
+
+	$LocalServices		= array('usb', 'internal');
+	if ($NVMe_available) {
+		array_push($LocalServices, 'nvme');
+	}
 
 	$CameraServices		= array('camera');
 
@@ -142,6 +156,9 @@
 									elseif ($LabelName == 'internal') {
 										$LabelName		= l::box_backup_mode_internal;
 									}
+									elseif ($LabelName == 'nvme') {
+										$LabelName		= l::box_backup_mode_nvme;
+									}
 									elseif ($LabelName == 'camera') {
 										$LabelName		= l::box_backup_mode_cameras;
 									}
@@ -176,6 +193,10 @@
 								elseif ($LabelName == 'internal') {
 									$ButtonClass	= 'usb';
 									$LabelName		= l::box_backup_mode_internal;
+								}
+								elseif ($LabelName == 'nvme') {
+									$ButtonClass	= 'usb';
+									$LabelName		= l::box_backup_mode_nvme;
 								}
 								elseif ($LabelName == 'camera') {
 									$ButtonClass	= 'camera';
@@ -225,9 +246,10 @@
 					</table>
 
 					<?php
-						$Partitions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False");
-						$PartitionsArray	= explode(',', $Partitions);
+						unset($Partitions);
+						exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False", $Partitions);
 					?>
+
 					<table style='border: 0;'>
 
 						<tr>
@@ -238,10 +260,9 @@
 								<select id="preset_source" name="preset_source" onchange="PresetPartitionChange()">
 									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
 									<?php
-										foreach ($PartitionsArray as $Partition) {
-											$Partition	= trim($Partition, "[]' \n");
+										foreach ($Partitions as $Partition) {
 											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
-											$Lum	= trim($Lum,'/dev');
+											$Lum	= str_replace('/dev/', '', $Lum);
 											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
 										}
 									?>
@@ -257,10 +278,9 @@
 								<select id="preset_target" name="preset_target" onchange="PresetPartitionChange()">
 									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
 									<?php
-										foreach ($PartitionsArray as $Partition) {
-											$Partition	= trim($Partition, "[]' \n");
+										foreach ($Partitions as $Partition) {
 											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
-											$Lum	= trim($Lum,'/dev');
+											$Lum	= str_replace('/dev/', '', $Lum);
 											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
 										}
 									?>
@@ -311,18 +331,21 @@
 					<h3><?php echo L::main_thumbnails_header; ?></h3>
 					<button name="backup_function_thumbnails_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
 					<button name="backup_function_thumbnails_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+					<button name="backup_function_thumbnails_nvme" class="usb"><?php echo L::right_arrow . L::main_nvme_button; ?></button>
 				</div>
 
 				<div class='backupsection'>
 					<h3><?php echo L::main_database_header; ?></h3>
 					<button name="backup_function_database_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
 					<button name="backup_function_database_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+					<button name="backup_function_database_nvme" class="usb"><?php echo L::right_arrow . L::main_nvme_button; ?></button>
 				</div>
 
 				<div class='backupsection'>
 					<h3><?php echo L::main_exif_header; ?></h3>
 					<button name="backup_function_exif_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
 					<button name="backup_function_exif_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+					<button name="backup_function_exif_nvme" class="usb"><?php echo L::right_arrow . L::main_nvme_button; ?></button>
 				</div>
 
 			</details>
@@ -378,6 +401,11 @@
 			exec("sudo python3 $WORKING_DIR/backup.py --SourceName thumbnails --TargetName internal --sync-database False --generate-thumbnails True --update-exif False --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
+		if (isset($_POST['backup_function_thumbnails_nvme'])) {
+			exec("sudo $WORKING_DIR/stop_backup.sh");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName thumbnails --TargetName nvme --sync-database False --generate-thumbnails True --update-exif False --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
+			popup(L::main_backup_backup . " " . L::main_thumbnails_button . " " . L::main_backup_to . " " . L::main_nvme_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		}
 
 		if (isset($_POST['backup_function_database_usb'])) {
 			exec("sudo $WORKING_DIR/stop_backup.sh");
@@ -389,6 +417,11 @@
 			exec("sudo python3 $WORKING_DIR/backup.py --SourceName database --TargetName internal --sync-database True --generate-thumbnails False --update-exif False --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
+		if (isset($_POST['backup_function_database_nvme'])) {
+			exec("sudo $WORKING_DIR/stop_backup.sh");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName database --TargetName nvme --sync-database True --generate-thumbnails False --update-exif False --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
+			popup(L::main_backup_backup . " " . L::main_database_button . " " . L::main_backup_to . " " . L::main_nvme_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		}
 
 		if (isset($_POST['backup_function_exif_usb'])) {
 			exec("sudo $WORKING_DIR/stop_backup.sh");
@@ -399,6 +432,10 @@
 			exec("sudo $WORKING_DIR/stop_backup.sh");
 			exec("sudo python3 $WORKING_DIR/backup.py --SourceName exif --TargetName internal --sync-database False --generate-thumbnails False --update-exif True --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_internal_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
+		}if (isset($_POST['backup_function_exif_nvme'])) {
+			exec("sudo $WORKING_DIR/stop_backup.sh");
+			exec("sudo python3 $WORKING_DIR/backup.py --SourceName exif --TargetName nvme --sync-database False --generate-thumbnails False --update-exif True --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
+			popup(L::main_backup_backup . " " . L::main_exif_button . " " . L::main_backup_to . " " . L::main_nvme_button . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
 		if (isset($_POST['stopbackup'])) {
