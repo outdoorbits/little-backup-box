@@ -56,7 +56,8 @@
       "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?"
     },
     "logout_button": "Se déconnecter",
-    "nvme_button": "NVMe SSD"
+    "nvme_button": "NVMe SSD",
+    "anyusb_button": "tout USB (caméras et stockage)"
   },
   "sysinfo": {
     "sysinfo": "Information système",
@@ -158,14 +159,13 @@
       },
       "anyusb_nvme": "tout USB (caméras et stockage) &rarr; NVMe SSD",
       "anyusb_internal": "tout USB (caméras et stockage) &rarr; stockage interne",
-      "anyusb_usb": "tout USB (caméras et stockage) &rarr; USB stockage",
       "camera_internal": "Caméra &rarr; stockage interne",
       "none": "pas de sauvegarde automatique",
-      "camera_usb": "Caméra &rarr; USB stockage",
       "usb_internal": "USB Stockage source &rarr; stockage interne",
-      "usb_usb": "USB stockage &rarr; USB stockage",
       "usb_nvme": "USB stockage &rarr; NVMe SSD",
-      "camera_nvme": "Caméra &rarr; NVMe SSD"
+      "camera_nvme": "Caméra &rarr; NVMe SSD",
+      "nvme_internal": "NVMe SSD &rarr; stockage interne",
+      "internal_nvme": "stockage interne &rarr; NVMe SSD"
     },
     "imageviewer": {
       "section": "Visionneuse d'images View",

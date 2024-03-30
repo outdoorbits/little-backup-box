@@ -26,7 +26,7 @@
 $CloudServices=array();
 exec("sudo rclone config show --config \"" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"] . "\" | grep '^\[.*\]$' | sed 's/^\[//' | sed 's/\]$//'",$CloudServices);
 
-function get_secondary_backup_selector($fieldname, $CloudServices, $config, $ignore_preset=false) {
+function get_secondary_backup_selector($fieldname, $CloudServices, $config, $NVMe_available, $ignore_preset=false) {
 
 	if ($ignore_preset) {
 		$BACKUP_DEFAULT_SOURCE2	= 'none';
@@ -39,23 +39,39 @@ function get_secondary_backup_selector($fieldname, $CloudServices, $config, $ign
 
 	<select name="<?php echo $fieldname; ?>" id="<?php echo $fieldname; ?>">
 		<option value="none none" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
-			<?php
-				if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
-			?>
+		<?php
+			if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
+		?>
+				<optgroup label="&rarr; <?php echo L::main_rsync_button; ?>">
 					<option value="usb cloud_rsync" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
-					<option value="nvme cloud_rsync" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="nvme cloud_rsync"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_rsync_button; ?></option>
+					<?php
+						if ($NVMe_available) {
+							?>
+								<option value="nvme cloud_rsync" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="nvme cloud_rsync"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_rsync_button; ?></option>
+							<?php
+						}
+					?>
 					<option value="internal cloud_rsync" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
-			<?php
-				}
+				</optgroup>
+		<?php
+			}
 
-				foreach($CloudServices as $CloudService) {
-			?>
+			foreach($CloudServices as $CloudService) {
+		?>
+				<optgroup label="&rarr; <?php echo $CloudService; ?>">
 					<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
-					<option value="nvme cloud:<?php print $CloudService; ?>" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="nvme cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . $CloudService; ?></option>
+					<?php
+						if ($NVMe_available) {
+							?>
+								<option value="nvme cloud:<?php print $CloudService; ?>" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="nvme cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . $CloudService; ?></option>
+							<?php
+						}
+					?>
 					<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
-			<?php
-				}
-			?>
+				</optgroup>
+		<?php
+			}
+		?>
 	</select>
 
 	<?php

@@ -286,7 +286,7 @@
 					<table style='border: 0;'>
 						<tr>
 							<td style='padding-right: 10pt;'>
-								<?php get_secondary_backup_selector('BACKUP_MODE_2', $CloudServices, $config, true); ?>
+								<?php get_secondary_backup_selector('BACKUP_MODE_2', $CloudServices, $config, $NVMe_available, true); ?>
 							</td>
 							<td>
 								<label for="preset_target"><?php echo L::main_backup_secondary_label; ?></label>

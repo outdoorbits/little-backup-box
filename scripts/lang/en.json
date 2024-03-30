@@ -248,7 +248,8 @@
       "secondary_label": "Should a cloud backup be performed after the primary backup?"
     },
     "logout_button": "Logout",
-    "nvme_button": "NVMe SSD"
+    "nvme_button": "NVMe SSD",
+    "anyusb_button": "any USB (cameras and storage)"
   },
   "sysinfo": {
     "sysinfo": "System info",
@@ -361,14 +362,13 @@
       },
       "anyusb_nvme": "any USB (cameras and storage) &rarr; NVMe SSD",
       "anyusb_internal": "any USB (cameras and storage) &rarr; internal storage",
-      "anyusb_usb": "any USB (cameras and storage) &rarr; USB-target-storage",
       "camera_internal": "Camera &rarr; internal storage",
       "none": "no automatic backup",
-      "camera_usb": "Camera &rarr; USB-target-storage",
       "usb_internal": "USB-source storage &rarr; internal storage",
-      "usb_usb": "USB-source-storage &rarr; USB-target-storage",
       "usb_nvme": "USB-source-storage &rarr; NVMe SSD",
-      "camera_nvme": "Camera &rarr; NVMe SSD"
+      "camera_nvme": "Camera &rarr; NVMe SSD",
+      "nvme_internal": "NVMe SSD &rarr; internal storage",
+      "internal_nvme": "internal storage &rarr; NVMe SSD"
     },
     "imageviewer": {
       "section": "Image viewer View",

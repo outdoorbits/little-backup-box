@@ -56,7 +56,8 @@
       "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?"
     },
     "logout_button": "Cerrar sesión",
-    "nvme_button": "NVMe SSD"
+    "nvme_button": "NVMe SSD",
+    "anyusb_button": "todo USB (cámaras y almacenamiento)"
   },
   "sysinfo": {
     "sysinfo": "Información del sistema",
@@ -158,14 +159,13 @@
       },
       "anyusb_nvme": "todo USB (cámaras y almacenamiento) &rarr; NVMe SSD",
       "anyusb_internal": "todo USB (cámaras y almacenamiento) &rarr; almacenamiento interno",
-      "anyusb_usb": "todo USB (cámaras y almacenamiento) &rarr; USB almacenamiento",
       "camera_internal": "Cámara &rarr; almacenamiento interno",
       "none": "sin respaldo automático",
-      "camera_usb": "Cámara &rarr; USB almacenamiento",
       "usb_internal": "USB Almacenar &rarr; almacenamiento interno",
-      "usb_usb": "USB almacenar &rarr; USB almacenamiento",
       "usb_nvme": "USB almacenar &rarr; NVMe SSD",
-      "camera_nvme": "Cámara &rarr; NVMe SSD"
+      "camera_nvme": "Cámara &rarr; NVMe SSD",
+      "nvme_internal": "NVMe SSD &rarr; almacenamiento interno",
+      "internal_nvme": "almacenamiento interno &rarr; NVMe SSD"
     },
     "imageviewer": {
       "section": "Visor de imágenes View",

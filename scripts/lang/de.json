@@ -56,7 +56,8 @@
       "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?"
     },
     "logout_button": "Ausloggen",
-    "nvme_button": "NVMe SSD"
+    "nvme_button": "NVMe SSD",
+    "anyusb_button": "alle USB (Kameras und Speicher)"
   },
   "sysinfo": {
     "sysinfo": "Systeminformationen",
@@ -158,14 +159,13 @@
       },
       "anyusb_nvme": "alle USB (Kameras und Speicher) &rarr; NVMe SSD",
       "anyusb_internal": "alle USB (Kameras und Speicher) &rarr; interner Speicher",
-      "anyusb_usb": "alle USB (Kameras und Speicher) &rarr; USB-Zielspeicher",
       "camera_internal": "Kamera &rarr; interner Speicher",
       "none": "kein automatisches Backup",
-      "camera_usb": "Kamera &rarr; USB-Zielspeicher",
       "usb_internal": "USB-Quellspeicher &rarr; interner Speicher",
-      "usb_usb": "USB-Quellspeicher &rarr; USB-Zielspeicher",
       "usb_nvme": "USB-Quellspeicher &rarr; NVMe SSD",
-      "camera_nvme": "Kamera &rarr; NVMe SSD"
+      "camera_nvme": "Kamera &rarr; NVMe SSD",
+      "nvme_internal": "NVMe SSD &rarr; interner Speicher",
+      "internal_nvme": "interner Speicher &rarr; NVMe SSD"
     },
     "imageviewer": {
       "section": "Bildbetrachter View",

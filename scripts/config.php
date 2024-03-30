@@ -33,6 +33,7 @@
 	include("sub-virtual-keyboard.php");
 
 	include("sub-common.php");
+	$NVMe_available	= nvme_available($WORKING_DIR, $constants);
 
 	$TIME_ZONE_old	= $config["conf_TIME_ZONE"];
 
@@ -461,30 +462,86 @@ function upload_settings() {
 
 					<select name="BACKUP_MODE" id="BACKUP_MODE">
 						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
-						<option value="anyusb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb usb"?" selected":""; ?>><?php echo L::config_backup_anyusb_usb; ?></option>
-						<option value="anyusb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb internal"?" selected":""; ?>><?php echo L::config_backup_anyusb_internal; ?></option>
-						<option value="anyusb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb nvme"?" selected":""; ?>><?php echo L::config_backup_anyusb_nvme; ?></option>
-						<option value="usb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb usb"?" selected":""; ?>><?php echo L::config_backup_usb_usb; ?></option>
-						<option value="usb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb internal"?" selected":""; ?>><?php echo L::config_backup_usb_internal; ?></option>
-						<option value="usb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb nvme"?" selected":""; ?>><?php echo L::config_backup_usb_nvme; ?></option>
-						<option value="camera usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera usb"?" selected":""; ?>><?php echo L::config_backup_camera_usb; ?></option>
-						<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::config_backup_camera_internal; ?></option>
-						<option value="camera nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera nvme"?" selected":""; ?>><?php echo L::config_backup_camera_nvme; ?></option>
+
+<!-- to USB -->
+						<optgroup label="&rarr; <?php echo L::main_usb_button; ?>">
+							<option value="anyusb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb usb"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_usb_button; ?></option>
+							<option value="usb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb usb"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_usb_button; ?></option>
+							<?php
+								if ($NVMe_available) {
+									?>
+										<option value="nvme usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme usb"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_usb_button; ?></option>
+									<?php
+								}
+							?>
+							<option value="internal usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal usb"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_usb_button; ?></option>
+							<option value="camera usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera usb"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_usb_button; ?></option>
+						</optgroup>
+
+<!-- to NVMe -->
+
+						<?php
+							if ($NVMe_available) {
+								?>
+									<optgroup label="&rarr; <?php echo L::main_nvme_button; ?>">
+										<option value="anyusb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb nvme"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_nvme_button; ?></option>
+										<option value="usb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb nvme"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_nvme_button; ?></option>
+										<option value="internal nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal nvme"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_nvme_button; ?></option>
+										<option value="camera nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera nvme"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_nvme_button; ?></option>
+									</optgroup>
+								<?php
+							}
+						?>
+
+<!-- to internal -->
+						<optgroup label="&rarr; <?php echo L::main_internal_button; ?>">
+							<option value="anyusb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb internal"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_internal_button; ?></option>
+							<option value="usb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb internal"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_internal_button; ?></option>
+							<?php
+								if ($NVMe_available) {
+									?>
+										<option value="nvme internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme internal"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_internal_button; ?></option>
+									<?php
+								}
+							?>
+							<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_internal_button; ?></option>
+						</optgroup>
+
+<!-- to rsync server -->
 						<?php
 							if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
 						?>
-								<option value="internal cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
-								<option value="usb cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
-								<option value="nvme cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme cloud_rsync"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_rsync_button; ?></option>
+								<optgroup label="&rarr; <?php echo L::main_rsync_button; ?>">
+									<option value="usb cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
+									<?php
+										if ($NVMe_available) {
+											?>
+												<option value="nvme cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme cloud_rsync"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_rsync_button; ?></option>
+											<?php
+										}
+									?>
+									<option value="internal cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
+								</optgroup>
 						<?php
 							}
 
+// to cloud service
 							foreach($CloudServices as $CloudService) {
-						?>
-								<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
-								<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
-								<option value="nvme cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . $CloudService; ?></option>
-						<?php
+								?>
+									<optgroup label="&rarr; <?php echo $CloudService; ?>">
+										<option value="anyusb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . $CloudService; ?></option>
+										<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
+										<?php
+											if ($NVMe_available) {
+												?>
+													<option value="nvme cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . $CloudService; ?></option>
+												<?php
+											}
+										?>
+										<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
+										<option value="camera cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . $CloudService; ?></option>
+									</optgroup>
+								<?php
 							}
 						?>
 					</select>
@@ -502,7 +559,7 @@ function upload_settings() {
 					<label for="BACKUP_MODE_2"><?php echo L::config_backup_label2; ?></label><br>
 
 					<?php
-						get_secondary_backup_selector("BACKUP_MODE_2", $CloudServices, $config);
+						get_secondary_backup_selector("BACKUP_MODE_2", $CloudServices, $config, $NVMe_available);
 					?>
 
 				<h3><?php echo L::config_backup_target_requirements_header; ?></h3>
