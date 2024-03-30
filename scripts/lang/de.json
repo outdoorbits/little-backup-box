@@ -157,15 +157,7 @@
         "requirements_label": "Wie groß muss die Zielpartition mindestens sein, um akzepiert zu werden?",
         "requirements_size_ignore": "akzeptiere alle"
       },
-      "anyusb_nvme": "alle USB (Kameras und Speicher) &rarr; NVMe SSD",
-      "anyusb_internal": "alle USB (Kameras und Speicher) &rarr; interner Speicher",
-      "camera_internal": "Kamera &rarr; interner Speicher",
-      "none": "kein automatisches Backup",
-      "usb_internal": "USB-Quellspeicher &rarr; interner Speicher",
-      "usb_nvme": "USB-Quellspeicher &rarr; NVMe SSD",
-      "camera_nvme": "Kamera &rarr; NVMe SSD",
-      "nvme_internal": "NVMe SSD &rarr; interner Speicher",
-      "internal_nvme": "interner Speicher &rarr; NVMe SSD"
+      "none": "kein automatisches Backup"
     },
     "imageviewer": {
       "section": "Bildbetrachter View",

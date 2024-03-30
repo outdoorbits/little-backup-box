@@ -157,15 +157,7 @@
         "requirements_label": "¿Cuál es el tamaño mínimo de la partición de destino que se aceptará?",
         "requirements_size_ignore": "aceptar todo"
       },
-      "anyusb_nvme": "todo USB (cámaras y almacenamiento) &rarr; NVMe SSD",
-      "anyusb_internal": "todo USB (cámaras y almacenamiento) &rarr; almacenamiento interno",
-      "camera_internal": "Cámara &rarr; almacenamiento interno",
-      "none": "sin respaldo automático",
-      "usb_internal": "USB Almacenar &rarr; almacenamiento interno",
-      "usb_nvme": "USB almacenar &rarr; NVMe SSD",
-      "camera_nvme": "Cámara &rarr; NVMe SSD",
-      "nvme_internal": "NVMe SSD &rarr; almacenamiento interno",
-      "internal_nvme": "almacenamiento interno &rarr; NVMe SSD"
+      "none": "sin respaldo automático"
     },
     "imageviewer": {
       "section": "Visor de imágenes View",

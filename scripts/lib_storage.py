@@ -678,14 +678,13 @@ class storage(object):
 						Result	= ''
 
 			# umount TechMountPoint
-			if self.FS_Type in ['ext2','ext3','ext4']:
-				if self.__TechMountPoint:
-					Command	= [ 'umount', '-l', self.__TechMountPoint]
-					try:
-						Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
-						os.rmdir(self.__TechMountPoint)
-					except:
-						Result	= ''
+			if self.__TechMountPoint:
+				Command	= [ 'umount', '-l', self.__TechMountPoint]
+				try:
+					Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
+					os.rmdir(self.__TechMountPoint)
+				except:
+					Result	= ''
 
 			# smbd start
 			Command	= ['service','smbd','start']
