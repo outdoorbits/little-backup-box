@@ -42,15 +42,17 @@ function get_secondary_backup_selector($fieldname, $CloudServices, $config, $ign
 			<?php
 				if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
 			?>
-					<option value="internal cloud_rsync" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
 					<option value="usb cloud_rsync" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
+					<option value="nvme cloud_rsync" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="nvme cloud_rsync"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_rsync_button; ?></option>
+					<option value="internal cloud_rsync" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
 			<?php
 				}
 
 				foreach($CloudServices as $CloudService) {
 			?>
-					<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
 					<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
+					<option value="nvme cloud:<?php print $CloudService; ?>" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="nvme cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . $CloudService; ?></option>
+					<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $BACKUP_DEFAULT_SOURCE2 . " " . $BACKUP_DEFAULT_TARGET2=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
 			<?php
 				}
 			?>
