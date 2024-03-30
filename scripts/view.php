@@ -262,10 +262,10 @@
 		exec("df -h", $mounted_devices_array);
 
 		$mounted_devices	= implode("|",$mounted_devices_array);
-		if (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_USB_TARGET'])) {$filter_medium="target_usb";}
-		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_USB_SOURCE'])) {$filter_medium="source_usb";}
-		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_NVME_TARGET'])) {$filter_medium="target_nvme";}
-		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_NVME_SOURCE'])) {$filter_medium="source_nvme";}
+		if (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_USB_TARGET'])) {$filter_medium="target_usb";}
+		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_USB_SOURCE'])) {$filter_medium="source_usb";}
+		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_NVME_TARGET'])) {$filter_medium="target_nvme";}
+		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_NVME_SOURCE'])) {$filter_medium="source_nvme";}
 		else {$filter_medium="internal";}
 	}
 
@@ -311,16 +311,16 @@
 	# define path of the database-file
 	$STORAGE_PATH	= "";
 	if ($filter_medium == "target_usb") {
-		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_USB_TARGET'];
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_USB_TARGET'];
 	}
 	elseif ($filter_medium == "source_usb") {
-		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_USB_SOURCE'];
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_USB_SOURCE'];
 	}
 	elseif ($filter_medium == "target_nvme") {
-		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_NVME_TARGET'];
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_NVME_TARGET'];
 	}
 	elseif ($filter_medium == "source_nvme") {
-		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_NVME_SOURCE'];
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_NVME_SOURCE'];
 	}
 	elseif ($filter_medium == "internal") {
 		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_INTERNAL_BACKUP_DIR'];
