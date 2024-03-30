@@ -244,13 +244,12 @@ class backup(object):
 
 				self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
 
-			while True:
+			while True: # backup loops until break
 				# define next source
 				if dynamicSources:
 					# add last run to completedSources
 					if Identifier_OLD:
 						if SourceStorageName == 'camera':
-							# if SourceStorageName == 'camera'
 							completedSources_camera.append(Identifier_OLD)
 						else:
 							completedSources_usb.append(Identifier_OLD)
@@ -262,12 +261,11 @@ class backup(object):
 						# remove disconnected cameras from completedSources_camera
 						completedSources_camera	= list(set(completedSources_camera) & set(availableSources_camera))
 						todoSources				= list(set(availableSources_camera) - set(completedSources_camera))
-						SourceStorageName	= 'camera'
-						SourceStorageType	= SourceStorageName
+						SourceStorageName		= 'camera'
+						SourceStorageType		= SourceStorageName
 
 					if self.SourceName in ['anyusb', 'usb', 'nvme'] and not todoSources:
-						availableSources_usb	= lib_storage.get_available_partitions(self.SourceName, TargetPartition=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
-						todoSources	= list(set(availableSources_usb) - set(completedSources_usb))
+						todoSources			= lib_storage.get_available_partitions(StorageType=self.SourceName, TargetDeviceIdentifier=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
 						SourceStorageName	= 'usb' if self.SourceName == 'anyusb' else self.SourceName
 						SourceStorageType	= SourceStorageName
 

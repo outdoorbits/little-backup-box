@@ -163,7 +163,7 @@ class storage(object):
 			Command	= ['udevadm','trigger']
 			subprocess.run(Command)
 
-			USB_DeviceList = get_available_partitions(self.StorageType, TargetPartition=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, returnDict=True)
+			USB_DeviceList = get_available_partitions(StorageType=self.StorageType, TargetDeviceIdentifier=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, returnDict=True)
 
 			# log if list of devices changed
 			if USB_DeviceList and USB_DeviceList != USB_DeviceList_old:
@@ -908,22 +908,21 @@ def get_mounts_list():
 
 	return(f" {' '.join(mountsList)} ")
 
-def get_available_partitions(StorageType=None, TargetPartition='',excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, HumanReadable=False, returnDict=False):
-	#StorageType: one of [None, 'usb', 'nvme'*] *None will be all, everything else except usb will be nvme
+def get_available_partitions(StorageType='anyusb', TargetDeviceIdentifier='', excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, HumanReadable=False, returnDict=False):
+	#StorageType: one of ['anyusb'*, 'usb', 'nvme'] *anything but usb and nvme will be interpreted as anyusb
 
 	setup	= lib_setup.setup()
 
 	TargetDevice_lum_alpha	= ''
 
-	if StorageType is None:
-		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
-	elif StorageType=='usb':
+	if StorageType == 'usb':
 		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}"
-	else:
+	elif StorageType == 'nvme':
 		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
+	else:
+		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
 
 	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
-
 	try:
 		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
 		DeviceListRaw = subprocess.check_output(Command,shell=True).decode().split('\n')
@@ -957,8 +956,8 @@ def get_available_partitions(StorageType=None, TargetPartition='',excludePartiti
 		except:
 			fs_type		= ''
 
-		# find TargetPartition
-		if lum_alpha and TargetPartition and TargetPartition in [uuid, lum]:
+		# find TargetDeviceIdentifier
+		if lum_alpha and TargetDeviceIdentifier and (TargetDeviceIdentifier in [uuid, lum]):
 			TargetDevice_lum_alpha	= lum_alpha
 
 		# exclude unsuitable partitions
@@ -978,8 +977,8 @@ def get_available_partitions(StorageType=None, TargetPartition='',excludePartiti
 		if skipMounted and MountPoint:
 			continue
 
-		## exclude TargetPartition if pre defined
-		if TargetPartition and TargetPartition in [uuid, lum]:
+		## exclude TargetDeviceIdentifier if pre defined
+		if TargetDeviceIdentifier and TargetDeviceIdentifier in [uuid, lum]:
 			continue
 
 		## exclude partitions if mounted as system partition
@@ -1265,7 +1264,7 @@ if __name__ == "__main__":
 	elif args['Action'] == 'get_available_partitions':
 		args['StorageName']	= args['StorageName'] if args['StorageName'] else None
 
-		print('\n'.join(get_available_partitions(args['StorageName'], HumanReadable=True, skipMounted=args['skipMounted'],returnDict=True)))
+		print('\n'.join(get_available_partitions(StorageType=args['StorageName'], HumanReadable=True, skipMounted=args['skipMounted'],returnDict=True)))
 
 	#get_available_devices
 	elif args['Action'] == 'get_available_devices':
