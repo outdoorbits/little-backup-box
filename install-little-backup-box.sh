@@ -251,13 +251,17 @@ echo "Creating the required media-directories"
 
 sudo mkdir -p "${const_MEDIA_DIR}"
 
-sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET}" > /dev/null 2>&1
-sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_USB_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_USB_SOURCE}" > /dev/null 2>&1
+
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_NVME_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_NVME_SOURCE}" > /dev/null 2>&1
+
 sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}" > /dev/null 2>&1
 sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" > /dev/null 2>&1
 
-sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET}"
-sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_USB_TARGET}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_USB_SOURCE}"
 sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}"
 sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}"
 sudo mkdir -p "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}"
@@ -521,7 +525,7 @@ sudo sh -c "echo '' >> /etc/samba/smb.conf"
 
 sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
 
-DIRECTORIES=("${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}")
+DIRECTORIES=("${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_USB_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_USB_SOURCE}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}")
 for DIRECTORY in "${DIRECTORIES[@]}"; do
     PATHNAME=$(basename ${DIRECTORY})
 

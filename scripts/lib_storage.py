@@ -70,18 +70,22 @@ class storage(object):
 		self.__setup	= lib_setup.setup()
 
 		self.__const_MEDIA_DIR								= self.__setup.get_val('const_MEDIA_DIR')
-		self.__const_TECH_MOUNT_TARGET						= self.__setup.get_val('const_TECH_MOUNT_TARGET')
-		self.__const_TECH_MOUNT_SOURCE						= self.__setup.get_val('const_TECH_MOUNT_SOURCE')
 
-		self.__const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET')
-		self.__const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE')
-		self.__const_MOUNTPOINT_SUBPATH_LOCAL_NVME_TARGET	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_NVME_TARGET')
-		self.__const_MOUNTPOINT_SUBPATH_LOCAL_NVME_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_NVME_SOURCE')
-		self.__const_MOUNTPOINT_SUBPATH_CLOUD_TARGET		= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')
-		self.__const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')
-		self.__const_INTERNAL_BACKUP_DIR					= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
-		self.__conf_DISP_FRAME_TIME							= self.__setup.get_val('conf_DISP_FRAME_TIME')
-		self.__conf_BACKUP_TARGET_SIZE_MIN					= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
+		self.__const_MOUNTPOINT_SUBPATH_USB_TARGET		= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_USB_TARGET')
+		self.__const_MOUNTPOINT_SUBPATH_USB_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_USB_SOURCE')
+		self.__const_MOUNTPOINT_TECH_USB_TARGET			= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET')
+		self.__const_MOUNTPOINT_TECH_USB_SOURCE			= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE')
+
+		self.__const_MOUNTPOINT_SUBPATH_NVME_TARGET		= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_NVME_TARGET')
+		self.__const_MOUNTPOINT_SUBPATH_NVME_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_NVME_SOURCE')
+		self.__const_MOUNTPOINT_TECH_NVME_TARGET		= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET')
+		self.__const_MOUNTPOINT_TECH_NVME_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE')
+
+		self.__const_MOUNTPOINT_SUBPATH_CLOUD_TARGET	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')
+		self.__const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')
+		self.__const_INTERNAL_BACKUP_DIR				= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
+		self.__conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__conf_BACKUP_TARGET_SIZE_MIN				= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
 
 		self.__RCLONE_CONFIG_FILE						= f"{self.__setup.get_val('const_MEDIA_DIR')}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 
@@ -699,11 +703,11 @@ class storage(object):
 	def __set_mountpoint(self):
 		baseDir	= self.__const_MEDIA_DIR
 		if self.StorageType == 'usb':
-			self.__TechMountPoint	= self.__const_TECH_MOUNT_TARGET if self.Role == role_Target else self.__const_TECH_MOUNT_SOURCE
-			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET}"
+			self.__TechMountPoint	= self.__const_MOUNTPOINT_TECH_USB_TARGET if self.Role == role_Target else self.__const_MOUNTPOINT_TECH_USB_SOURCE
+			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_USB_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_USB_TARGET}"
 		elif self.StorageType == 'nvme':
-			self.__TechMountPoint	= self.__const_TECH_MOUNT_TARGET if self.Role == role_Target else self.__const_TECH_MOUNT_SOURCE
-			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_NVME_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_LOCAL_NVME_TARGET}"
+			self.__TechMountPoint	= self.__const_MOUNTPOINT_TECH_NVME_TARGET if self.Role == role_Target else self.__const_MOUNTPOINT_TECH_NVME_SOURCE
+			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_NVME_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_NVME_TARGET}"
 		elif self.StorageType == 'cloud':
 			self.__TechMountPoint	= ''
 			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}"
@@ -805,32 +809,34 @@ def get_mountPoints(setup, parts, path_list_only):
 	if (set(parts) & set(['all', 'usb'])):
 		mountPoints.update(
 			{
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET')}":		'target_usb',
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE')}":		'source_usb'
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_USB_TARGET')}":	'target_usb',
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_USB_SOURCE')}":	'source_usb'
 			}
 		)
 
 	if (set(parts) & set(['all', 'nvme'])):
 		mountPoints.update(
 			{
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_NVME_TARGET')}":	'target_nvme',
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_LOCAL_NVME_SOURCE')}":	'source_nvme'
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_NVME_TARGET')}":	'target_nvme',
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_NVME_SOURCE')}":	'source_nvme'
 			}
 		)
 
 	if (set(parts) & set(['all', 'tech'])):
 		mountPoints.update(
 			{
-				setup.get_val('const_TECH_MOUNT_TARGET'):																'target_usb',
-				setup.get_val('const_TECH_MOUNT_SOURCE'):																'source_usb'
+				setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET'):												'target_usb',
+				setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE'):												'source_usb',
+				setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET'):												'target_nvme',
+				setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE'):												'source_nvme'
 			}
 		)
 
 	if (set(parts) & set(['all', 'cloud'])):
 		mountPoints.update(
 			{
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}":			'target_cloud',
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}": 		'source_cloud'
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_TARGET')}":	'target_cloud',
+				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE')}": 'source_cloud'
 			}
 		)
 
@@ -852,18 +858,20 @@ def umount(setup, MountPoints):
 	for MountPoint in MountPoints:
 
 		if os.path.isdir(MountPoint):
-				if getFS_Type(MountPoint) in ['hfs','hfsplus']:
-					try:
-						subprocess.run(['fusermount','-uz',MountPoint], stderr=subprocess.DEVNULL)
-						os.rmdir(MountPoint)
-					except:
-						pass
-				else:
-					try:
-						subprocess.run(['umount', '-l', MountPoint], stderr=subprocess.DEVNULL)
-						os.rmdir(MountPoint)
-					except:
-						pass
+			if getFS_Type(MountPoint) in ['hfs','hfsplus']:
+				Command	= ['fusermount','-uz', MountPoint]
+				try:
+					subprocess.run(Command, stderr=subprocess.DEVNULL)
+					os.rmdir(MountPoint)
+				except:
+					pass
+			else:
+				Command	= ['umount', '-l', MountPoint]
+				try:
+					subprocess.run(Command, stderr=subprocess.DEVNULL)
+					os.rmdir(MountPoint)
+				except:
+					pass
 
 
 def remove_all_mountpoints(setup):

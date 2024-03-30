@@ -269,10 +269,14 @@ class setup(object):
 		return(
 				{
 					'const_MEDIA_DIR':								{'type': 'str'},
-					'const_TECH_MOUNT_TARGET':						{'type': 'str'},
-					'const_TECH_MOUNT_SOURCE':						{'type': 'str'},
-					'const_MOUNTPOINT_SUBPATH_LOCAL_USB_TARGET':		{'type': 'str'},
-					'const_MOUNTPOINT_SUBPATH_LOCAL_USB_SOURCE':		{'type': 'str'},
+					'const_MOUNTPOINT_SUBPATH_USB_TARGET':	{'type': 'str'},
+					'const_MOUNTPOINT_SUBPATH_USB_SOURCE':	{'type': 'str'},
+					'const_MOUNTPOINT_TECH_USB_TARGET':				{'type': 'str'},
+					'const_MOUNTPOINT_TECH_USB_SOURCE':				{'type': 'str'},
+					'const_MOUNTPOINT_SUBPATH_NVME_TARGET':	{'type': 'str'},
+					'const_MOUNTPOINT_SUBPATH_NVME_SOURCE':	{'type': 'str'},
+					'const_MOUNTPOINT_TECH_NVME_TARGET':				{'type': 'str'},
+					'const_MOUNTPOINT_TECH_NVME_SOURCE':				{'type': 'str'},
 					'const_MOUNTPOINT_SUBPATH_CLOUD_TARGET':		{'type': 'str'},
 					'const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE':		{'type': 'str'},
 					'const_MOUNT_LOCAL_TIMEOUT':					{'type': 'int'},
