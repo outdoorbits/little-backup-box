@@ -1,0 +1,93 @@
+#Problem: mount namespaces
+https://unix.stackexchange.com/questions/596306/device-mounted-by-apache-not-showing-in-shell-mtab-or-proc-mounts
+
+#how to disable mount namespaces in php-fpm
+https://serverfault.com/questions/1024364/disable-mount-namespaces-in-apache-php-fpm
+
+/etc/systemd/system/php-fpm.service
+----
+[Unit]
+Description=The PHP FastCGI Process Manager
+After=syslog.target network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/sbin/php-fpm --nodaemonize
+ExecReload=/bin/kill -USR2 $MAINPID
+
+# Disable private mount namespace
+PrivateTmp=false
+RuntimeDirectory=php-fpm
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target
+----
+PrivateTmp=false does the trick
+
+
+#Steps:
+1. Switch to php-fpm:
+https://askubuntu.com/questions/1319861/how-to-configure-apache-http-to-php-fpm-on-ubuntu-20-10
+----
+
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		apache2 apache2-utils php-fpm libapache2-mod-fcgid
+
+PHP_VERSION=$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
+
+#stop apache
+sudo systemctl stop apache2
+
+#disable apache php
+sudo a2dismod php*
+
+#disable prefork module
+sudo a2dismod mpm_prefork
+
+#enable event mpm module
+sudo a2enmod mpm_event
+
+#enable apache2 proxy_fcgi
+sudo a2enmod proxy_fcgi
+
+#enable apache2 setenvif
+sudo a2enmod setenvif
+
+#enable conf php<VERSION>-fpm
+sudo a2enconf php${PHP_VERSION}-fpm
+
+----
+2. modify/overwrite /etc/systemd/system/php-fpm.service
+/etc/systemd/system/multi-user.target.wants/php8.2-fpm.service
+
+
+echo "[Unit]
+Description=The PHP ${PHP_VERSION} FastCGI Process Manager
+Documentation=man:php-fpm${PHP_VERSION}(8)
+After=network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/sbin/php-fpm${PHP_VERSION} --nodaemonize --fpm-config /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
+ExecStartPost=-/usr/lib/php/php-fpm-socket-helper install /run/php/php-fpm.sock /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf 82
+ExecStopPost=-/usr/lib/php/php-fpm-socket-helper remove /run/php/php-fpm.sock /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf 82
+ExecReload=/bin/kill -USR2 $MAINPID
+
+# Disable private mount namespace
+PrivateTmp=false
+RuntimeDirectory=php-fpm
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target" | tee /etc/systemd/system/multi-user.target.wants/php${PHP_VERSION}-fpm.service
+
+3. finish
+sudo systemctl daemon-reload
+sudo service php8.2-fpm restart
+#start apache
+sudo systemctl restart apache2
