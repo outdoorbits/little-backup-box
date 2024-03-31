@@ -156,7 +156,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass apache2 apache2-utils libapache2-mod-php bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard openresolv hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-gpiozero python3-qrcode
+		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl dos2unix libimobiledevice6 ifuse sshpass bc f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard openresolv hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-gpiozero python3-qrcode
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -441,7 +441,67 @@ sudo find /etc/php/ -name "php.ini" -exec sudo sed -i "s/^\(max_file_uploads\s*=
 sudo find /etc/php/ -name "php.ini" -exec sudo sed -i "s/^\(post_max_size\s*=\s*\).*\$/\10/" {} \;
 sudo find /etc/php/ -name "php.ini" -exec sudo sed -i "s/^\(upload_max_filesize\s*=\s*\).*\$/\1256M/" {} \;
 
-# Create Apache-Configuration
+## install apache2
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		apache2 apache2-utils php-fpm libapache2-mod-fcgid
+
+#configure apache for php-fpm
+PHP_VERSION=$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
+
+#stop apache
+sudo systemctl stop apache2
+
+#disable apache php
+sudo a2dismod php*
+
+#disable prefork module
+sudo a2dismod mpm_prefork
+
+#enable event mpm module
+sudo a2enmod mpm_event
+
+#enable apache2 proxy_fcgi
+sudo a2enmod proxy_fcgi
+
+#enable apache2 setenvif
+sudo a2enmod setenvif
+
+#enable conf php<VERSION>-fpm
+sudo a2enconf php${PHP_VERSION}-fpm
+
+#stop php-fpm service
+sudo service php${PHP_VERSION}-fpm stop
+
+#configure php-fpm to disable private mount namespace
+echo "[Unit]
+Description=The PHP ${PHP_VERSION} FastCGI Process Manager
+Documentation=man:php-fpm${PHP_VERSION}(8)
+After=network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/sbin/php-fpm${PHP_VERSION} --nodaemonize --fpm-config /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
+ExecStartPost=-/usr/lib/php/php-fpm-socket-helper install /run/php/php-fpm.sock /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf 82
+ExecStopPost=-/usr/lib/php/php-fpm-socket-helper remove /run/php/php-fpm.sock /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf 82
+ExecReload=/bin/kill -USR2 $MAINPID
+
+# Disable private mount namespace
+PrivateTmp=false
+RuntimeDirectory=php-fpm
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target" | tee /etc/systemd/system/multi-user.target.wants/php${PHP_VERSION}-fpm.service
+
+#start php-fpm service
+sudo systemctl daemon-reload
+sudo service php${PHP_VERSION}-fpm start
+
+#openssl
 sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
 
  # Apache-config-files
