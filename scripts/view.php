@@ -30,8 +30,9 @@
 	extract ($_GET,EXTR_SKIP);
 
 	include("sub-popup.php");
-
 	include("sub-common.php");
+
+	$NVMe_available	= get_nvme_available($WORKING_DIR, $constants);
 
 	# symlink to media-folder
 	if (! file_exists("./media")) {
@@ -261,8 +262,10 @@
 		exec("df -h", $mounted_devices_array);
 
 		$mounted_devices	= implode("|",$mounted_devices_array);
-		if (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_TARGET'])) {$filter_medium="target_local";}
-		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE'])) {$filter_medium="source_local";}
+		if (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_USB_TARGET'])) {$filter_medium="target_usb";}
+		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_USB_SOURCE'])) {$filter_medium="source_usb";}
+		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_NVME_TARGET'])) {$filter_medium="target_nvme";}
+		elseif (strpos($mounted_devices,$constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_NVME_SOURCE'])) {$filter_medium="source_nvme";}
 		else {$filter_medium="internal";}
 	}
 
@@ -307,11 +310,17 @@
 
 	# define path of the database-file
 	$STORAGE_PATH	= "";
-	if ($filter_medium == "target_local") {
-		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_TARGET'];
+	if ($filter_medium == "target_usb") {
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_USB_TARGET'];
 	}
-	elseif ($filter_medium == "source_local") {
-		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE'];
+	elseif ($filter_medium == "source_usb") {
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_USB_SOURCE'];
+	}
+	elseif ($filter_medium == "target_nvme") {
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_NVME_TARGET'];
+	}
+	elseif ($filter_medium == "source_nvme") {
+		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_MOUNTPOINT_NVME_SOURCE'];
 	}
 	elseif ($filter_medium == "internal") {
 		$STORAGE_PATH	= $constants['const_MEDIA_DIR'] . '/' . $constants['const_INTERNAL_BACKUP_DIR'];
@@ -529,8 +538,16 @@
 						<label for="filter_medium"><?php echo L::view_filter_medium; ?></label><br>
 
 							<select name="filter_medium" id="filter_medium" onchange="this.form.submit()">
-								<option value="target_local" <?php echo ($filter_medium == "target_local"?" selected":""); ?>><?php echo L::view_filter_medium_target_local; ?></option>";
-								<option value="source_local" <?php echo ($filter_medium == "source_local"?" selected":""); ?>><?php echo L::view_filter_medium_source_local; ?></option>";
+								<option value="target_usb" <?php echo ($filter_medium == "target_usb"?" selected":""); ?>><?php echo L::view_filter_medium_target_usb; ?></option>";
+								<option value="source_usb" <?php echo ($filter_medium == "source_usb"?" selected":""); ?>><?php echo L::view_filter_medium_source_usb; ?></option>";
+								<?php
+									if ($NVMe_available) {
+										?>
+											<option value="target_nvme" <?php echo ($filter_medium == "target_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_target_nvme; ?></option>";
+											<option value="source_nvme" <?php echo ($filter_medium == "source_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_source_nvme; ?></option>";
+										<?php
+									}
+								?>
 								<option value="internal" <?php echo ($filter_medium == "internal"?" selected":""); ?>><?php echo L::view_filter_medium_internal; ?></option>";
 							</select>
 					</div>

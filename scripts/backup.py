@@ -165,7 +165,7 @@ class backup(object):
 		# Set the PWR LED to blink short to indicate waiting for the target device
 		lib_system.rpi_leds(trigger='timer',delay_on=250,delay_off=750)
 
-		if TargetStorageType in ['usb', 'internal', 'cloud', 'cloud_rsync']:
+		if TargetStorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync']:
 			self.TargetDevice	= lib_storage.storage(StorageName=TargetName, Role=lib_storage.role_Target, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetTarget, DeviceIdentifierPresetOther=self.DeviceIdentifierPresetSource)
 			self.TargetDevice.mount()
 		else:
@@ -209,7 +209,7 @@ class backup(object):
 
 	def get_excludeTIMS(self, SourceStorageType):
 		## don't sync tims to cloud
-		if self.TargetDevice.isLocal and SourceStorageType in ['usb', 'internal']:
+		if self.TargetDevice.isLocal and SourceStorageType in ['usb', 'internal', 'nvme']:
 			excludeTIMS	= []
 			self.TIMSCopyPossible	= True
 		else:
@@ -228,7 +228,7 @@ class backup(object):
 			Identifier					= self.DeviceIdentifierPresetSource
 			Identifier_OLD				= ''
 
-			dynamicSources	= self.SourceStorageType in ['anyusb', 'usb', 'camera'] and not self.DeviceIdentifierPresetSource
+			dynamicSources	= self.SourceStorageType in ['anyusb', 'usb', 'nvme', 'camera'] and not self.DeviceIdentifierPresetSource
 
 			# message to connect sources
 			if dynamicSources:
@@ -244,13 +244,12 @@ class backup(object):
 
 				self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
 
-			while True:
+			while True: # backup loops until break
 				# define next source
 				if dynamicSources:
 					# add last run to completedSources
 					if Identifier_OLD:
 						if SourceStorageName == 'camera':
-							# if SourceStorageName == 'camera'
 							completedSources_camera.append(Identifier_OLD)
 						else:
 							completedSources_usb.append(Identifier_OLD)
@@ -262,13 +261,12 @@ class backup(object):
 						# remove disconnected cameras from completedSources_camera
 						completedSources_camera	= list(set(completedSources_camera) & set(availableSources_camera))
 						todoSources				= list(set(availableSources_camera) - set(completedSources_camera))
-						SourceStorageName	= 'camera'
-						SourceStorageType	= SourceStorageName
+						SourceStorageName		= 'camera'
+						SourceStorageType		= SourceStorageName
 
-					if self.SourceName in ['anyusb', 'usb'] and not todoSources:
-						availableSources_usb	= lib_storage.get_available_partitions(TargetPartition=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
-						todoSources	= list(set(availableSources_usb) - set(completedSources_usb))
-						SourceStorageName	= 'usb'
+					if self.SourceName in ['anyusb', 'usb', 'nvme'] and not todoSources:
+						todoSources			= lib_storage.get_available_partitions(StorageType=self.SourceName, TargetDeviceIdentifier=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
+						SourceStorageName	= 'usb' if self.SourceName == 'anyusb' else self.SourceName
 						SourceStorageType	= SourceStorageName
 
 					if todoSources:
@@ -284,7 +282,7 @@ class backup(object):
 				# Set the PWR LED to blink long to indicate waiting for the source device
 				lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
-				if SourceStorageType in ['usb', 'internal', 'camera', 'cloud', 'cloud_rsync']:
+				if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync']:
 					self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier)
 
 					self.SourceDevice.mount()
@@ -298,7 +296,7 @@ class backup(object):
 				# remember SourceStorageName for next run
 				if SourceStorageName=='camera':
 					Identifier_OLD	= lib_storage.format_CameraIdentifier(self.SourceDevice.DeviceIdentifier, self.SourceDevice.CameraPort)
-				elif SourceStorageName=='usb':
+				elif SourceStorageName in ['usb', 'nvme']:
 					Identifier_OLD	= self.SourceDevice.DeviceIdentifier
 
 				# check invalid combinations of Source and Target
@@ -408,7 +406,7 @@ class backup(object):
 						elif SourceStorageName == 'camera' and self.SourceDevice.DeviceIdentifier:
 							SourceLabel	= self.SourceDevice.DeviceIdentifier
 						else:
-							if SourceStorageType in ['usb','camera']:
+							if SourceStorageType in ['usb', 'nvme', 'camera']:
 								SourceLabel	= self.__lan.l(f"box_backup_mode_{SourceStorageType}s")
 							else:
 								SourceLabel	= self.__lan.l(f"box_backup_mode_{SourceStorageType}")
@@ -924,7 +922,7 @@ class backup(object):
 
 		# To define a new method, add an elif block (example below)
 
-		if self.SourceDevice.StorageType in ['usb','internal','cloud','cloud_rsync']:
+		if self.SourceDevice.StorageType in ['usb','internal', 'nvme','cloud','cloud_rsync']:
 			## Source is mounted (mountable) device
 
 			RsyncOptions	= self.getRsyncOptions()
@@ -1025,7 +1023,7 @@ if __name__ == "__main__":
 		epilog		= 'This script can ideally be configured and started via the Little Backup Box web UI.'
 	)
 
-	SourceChoices	= ['anyusb', 'usb', 'internal', 'camera'] + CloudServices + ['cloud_rsync', 'thumbnails', 'database', 'exif']
+	SourceChoices	= ['anyusb', 'usb', 'internal', 'nvme', 'camera'] + CloudServices + ['cloud_rsync', 'thumbnails', 'database', 'exif']
 	parser.add_argument(
 		'--SourceName',
 		'-s',
@@ -1034,7 +1032,7 @@ if __name__ == "__main__":
 		help=f'Source name, one of {SourceChoices}'
 	)
 
-	TargetChoices	= ['usb', 'internal'] + CloudServices + ['cloud_rsync']
+	TargetChoices	= ['usb', 'internal', 'nvme'] + CloudServices + ['cloud_rsync']
 	parser.add_argument(
 		'--TargetName',
 		'-t',
@@ -1099,7 +1097,7 @@ if __name__ == "__main__":
 		#help		= 'Will another backup follow? If not, the process can be completed. [\'True\', \'False\']'
 	#)
 
-	SecSourceChoices	= ['usb', 'internal']
+	SecSourceChoices	= ['usb', 'internal', 'nvme']
 	parser.add_argument(
 		'--SecSourceName',
 		'-2s',
@@ -1150,7 +1148,7 @@ if __name__ == "__main__":
 		display.message([f":{lan.l('box_backup_secondary')}"])
 
 		secSourceDeviceIdentifier	= None
-		if  args['TargetName'] == 'usb' and args['SecTargetName'] == 'usb':
+		if  args['TargetName'] == 'usb' and args['SecSourceName'] == 'usb':
 			try:
 				secSourceDeviceIdentifier	= backupObj.TargetDevice.DeviceIdentifier
 			except:

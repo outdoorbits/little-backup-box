@@ -46,8 +46,8 @@
       "power_off_checkbox_label": "Ausschalten nach Durchlauf",
       "to": "nach",
       "update_exif_checkbox_label": "EXIF-Daten in die Original-Dateien schreiben (nur für lokale Speicher)",
-      "preset_target_label": "USB Zielpartition festlegen",
-      "preset_source_label": "USB Quellpartition festlegen",
+      "preset_target_label": "Zielpartition festlegen",
+      "preset_source_label": "Quellpartition festlegen",
       "preset_partition_auto": "automatische Auswahl",
       "stopped": "Backup abgebrochen",
       "primary": "Primäres Backup",
@@ -55,7 +55,9 @@
       "general": "Allgemein",
       "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?"
     },
-    "logout_button": "Ausloggen"
+    "logout_button": "Ausloggen",
+    "nvme_button": "NVMe SSD",
+    "anyusb_button": "alle USB (Kameras und Speicher)"
   },
   "sysinfo": {
     "sysinfo": "Systeminformationen",
@@ -82,8 +84,6 @@
     "backup_section": "Backup",
     "backup_header": "Standard-Backup-Modus",
     "backup_label": "Wählen Sie den Standard-Backup-Modus:",
-    "backup_none": "kein automatisches Backup",
-    "backup_camera_internal": "Kamera &rarr; interner Speicher",
     "backup_power_off_header": "Ausschalten",
     "backup_power_off_label": "Ausschalten nach Backup",
     "view_section": "Ansicht",
@@ -156,11 +156,9 @@
         "requirements_header": "Anforderungen an die Zielpartition",
         "requirements_label": "Wie groß muss die Zielpartition mindestens sein, um akzepiert zu werden?",
         "requirements_size_ignore": "akzeptiere alle"
-      }
+      },
+      "none": "kein automatisches Backup"
     },
-    "backup_usb_usb": "USB-Quellspeicher &rarr; USB-Zielspeicher",
-    "backup_usb_internal": "USB-Quellspeicher &rarr; interner Speicher",
-    "backup_camera_usb": "Kamera &rarr; USB-Zielspeicher",
     "imageviewer": {
       "section": "Bildbetrachter View",
       "convert_heic_header": "heic-Bilder in jpeg konvertieren",
@@ -330,9 +328,7 @@
       "virtual_keyboard_enable_header": "Virtuelle Tastatur",
       "virtual_keyboard_enable_label": "Virtuelle Tastatur aktivieren",
       "description": "Einstellungen, welche einen Bildschirm mit grafischer Benutzeroberfläche (Desktop) betreffen."
-    },
-    "backup_anyusb_internal": "alle USB (Kameras und Speicher) &rarr; interner Speicher",
-    "backup_anyusb_usb": "alle USB (Kameras und Speicher) &rarr; USB-Zielspeicher"
+    }
   },
   "tools": {
     "tools": "Werkzeug",
@@ -414,29 +410,22 @@
       "camera_scanning_folders": "Ordner scannen ...",
       "primary": "Prim. Backup",
       "secondary": "Sek. Backup",
-      "mode_camera": "Kamera",
-      "mode_cloud": "Cloud",
-      "mode_internal": "Int.Speicher",
       "mount": "Einbinden",
       "umount": "Aushängen",
       "files_copied": "Dat. kopiert",
       "generating_thumbnails_finding_images1": "Gen. Vorschaubilder",
       "generating_thumbnails_finding_images3": "Moment...",
       "usb_target_ok": "Ziel o.k.",
-      "mode_usb": "USB-Speicher",
       "usb_source_ok": "Quelle o.k.",
-      "mode_thumbnails": "Vorschaubilder",
       "camera_storage_not_exists_2": "existiert nicht.",
       "camera_storage_not_exists_1": "Kamera-Speicher",
       "generating_database_finding_images1": "Synchr. Datenbank",
       "generating_database_finding_images3": "Moment...",
-      "mode_database": "Datenbank",
       "cleaning_database": "Bereinige Datenbank",
       "counting_images": "Zähle Bilder.",
       "generating_thumbnails": "Gen. Vorschaubilder",
       "updating_exif": "EXIF aktualisieren",
       "generating_database": "Synchr. Datenbank",
-      "mode_exif": "EXIF",
       "vpn": {
         "connecting_failed": "VPN-Fehler",
         "connecting": "Verbinde VPN",
@@ -452,9 +441,6 @@
       "serial": "Seriennummer",
       "source_id": "Quell-ID",
       "usb": "USB",
-      "mode_cloud_rsync": "rsync Server",
-      "mode_cameras": "Kameras",
-      "mode_usbs": "USB-Speicher",
       "folder": "Ordner",
       "files_just_copied": "soeben kopiert",
       "failed_attempts": "Fehlversuche",
@@ -467,9 +453,23 @@
       "connect_source_1": "Bereit",
       "connect_target_1": "Bereit",
       "connect_source_any_1": "Bereit",
-      "mode_anyusb": "alle USB",
       "break1": "Backup",
-      "break2": "abgebrochen"
+      "break2": "abgebrochen",
+      "mode": {
+        "anyusb": "alle USB",
+        "camera": "Kamera",
+        "cameras": "Kameras",
+        "cloud": "Cloud",
+        "cloud_rsync": "rsync Server",
+        "database": "Datenbank",
+        "exif": "EXIF",
+        "internal": "Int.Speicher",
+        "thumbnails": "Vorschaubilder",
+        "usb": "USB-Speicher",
+        "usbs": "USB-Speicher",
+        "nvme": "NVMe SSD",
+        "nvmes": "NVMe SSDs"
+      }
     },
     "cronip": {
       "offline": "offline",
@@ -615,9 +615,11 @@
       "order_by_id": "ID",
       "file_type_extension": "Dateityperweiterung",
       "camera_model_name": "Kamera",
-      "medium_target_local": "Lokales Ziel",
-      "medium_source_local": "Lokale Quelle",
-      "file_type": "Dateityp"
+      "file_type": "Dateityp",
+      "medium_source_usb": "Lokale Quelle",
+      "medium_target_usb": "Lokales Ziel",
+      "medium_source_nvme": "Lokale NVMe Quelle",
+      "medium_target_nvme": "Lokales NVMe Ziel"
     },
     "images": {
       "download": "Download Original",

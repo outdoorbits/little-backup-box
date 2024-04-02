@@ -97,10 +97,13 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 		1 "none"
 		2 "any USB -> USB storage"
 		3 "any USB -> internal storage"
-		4 "USB storage -> USB storage"
-		5 "USB storage -> internal storage"
-		6 "Camera -> USB storage"
-		7 "Camera -> internal storage"
+		4 "any USB -> NVMe SSD"
+		5 "USB storage -> USB storage"
+		6 "USB storage -> internal storage"
+		7 "USB storage -> NVMe SSD"
+		8 "Camera -> USB storage"
+		9 "Camera -> internal storage"
+		10 "Camera -> NVMe SSD"
 	)
 
 	CHOICE_BACKUP_MODE=$(dialog --clear \
@@ -248,16 +251,19 @@ echo "Creating the required media-directories"
 
 sudo mkdir -p "${const_MEDIA_DIR}"
 
-sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_TARGET}" > /dev/null 2>&1
-sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE}" > /dev/null 2>&1
-sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}" > /dev/null 2>&1
-sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_USB_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_USB_SOURCE}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_TECH_USB_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_TECH_USB_SOURCE}" > /dev/null 2>&1
 
-sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_TARGET}"
-sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE}"
-sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}"
-sudo mkdir -p "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}"
-sudo mkdir -p "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}"
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_NVME_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_NVME_SOURCE}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_TECH_NVME_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_TECH_NVME_SOURCE}" > /dev/null 2>&1
+
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_CLOUD_TARGET}" > /dev/null 2>&1
+sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_CLOUD_SOURCE}" > /dev/null 2>&1
+
 sudo mkdir -p "${const_MEDIA_DIR}/${const_BACKGROUND_IMAGES_DIR}/lbb"
 
 sudo chown -R ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_MEDIA_DIR}"
@@ -354,20 +360,32 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 			conf_BACKUP_DEFAULT_TARGET="internal"
 		;;
 	4)
-			conf_BACKUP_DEFAULT_SOURCE="usb"
-			conf_BACKUP_DEFAULT_TARGET="usb"
+			conf_BACKUP_DEFAULT_SOURCE="anyusb"
+			conf_BACKUP_DEFAULT_TARGET="nvme"
 		;;
 	5)
 			conf_BACKUP_DEFAULT_SOURCE="usb"
-			conf_BACKUP_DEFAULT_TARGET="internal"
+			conf_BACKUP_DEFAULT_TARGET="usb"
 		;;
 	6)
+			conf_BACKUP_DEFAULT_SOURCE="usb"
+			conf_BACKUP_DEFAULT_TARGET="internal"
+		;;
+	7)
+			conf_BACKUP_DEFAULT_SOURCE="usb"
+			conf_BACKUP_DEFAULT_TARGET="nvme"
+		;;
+	8)
 			conf_BACKUP_DEFAULT_SOURCE="camera"
 			conf_BACKUP_DEFAULT_TARGET="usb"
 		;;
-	7)
+	9)
 			conf_BACKUP_DEFAULT_SOURCE="camera"
 			conf_BACKUP_DEFAULT_TARGET="internal"
+		;;
+	10)
+			conf_BACKUP_DEFAULT_SOURCE="camera"
+			conf_BACKUP_DEFAULT_TARGET="nvme"
 		;;
 
 	esac
@@ -452,9 +470,6 @@ sudo DEBIAN_FRONTEND=noninteractive \
 #configure apache for php-fpm
 PHP_VERSION=$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
 
-#stop apache
-sudo systemctl stop apache2
-
 #disable apache php
 sudo a2dismod php*
 
@@ -473,8 +488,8 @@ sudo a2enmod setenvif
 #enable conf php<VERSION>-fpm
 sudo a2enconf php${PHP_VERSION}-fpm
 
-#stop php-fpm service
-sudo service php${PHP_VERSION}-fpm stop
+# #stop php-fpm service
+# sudo service php${PHP_VERSION}-fpm stop
 
 #configure php-fpm to disable private mount namespace
 echo "[Unit]
@@ -499,7 +514,7 @@ WantedBy=multi-user.target" | tee /etc/systemd/system/multi-user.target.wants/ph
 
 #start php-fpm service
 sudo systemctl daemon-reload
-sudo service php${PHP_VERSION}-fpm start
+# sudo service php${PHP_VERSION}-fpm start
 
 #openssl
 sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
@@ -523,7 +538,7 @@ sudo a2enmod proxy_http
 sudo a2dissite 000-default
 sudo a2ensite little-backup-box
 
-sudo systemctl reload apache2
+# sudo systemctl reload apache2
 
 # Configure Samba
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -566,7 +581,7 @@ sudo sh -c "echo '' >> /etc/samba/smb.conf"
 
 sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
 
-DIRECTORIES=("${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_LOCAL_SOURCE}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_SUBPATH_CLOUD_SOURCE}" "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}")
+DIRECTORIES=("${const_MEDIA_DIR}/${const_MOUNTPOINT_USB_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_USB_SOURCE}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_NVME_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_NVME_SOURCE}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_CLOUD_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_CLOUD_SOURCE}" "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}")
 for DIRECTORY in "${DIRECTORIES[@]}"; do
     PATHNAME=$(basename ${DIRECTORY})
 

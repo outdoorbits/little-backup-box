@@ -137,7 +137,7 @@ class progressmonitor(object):
 			# FrameTime
 			FrameTime	= self.__conf_DISP_FRAME_TIME
 			if self.FilesToProcess == self.CountProgress:
-				FrameTime	= self.__conf_DISP_FRAME_TIME * 2
+				FrameTime	= self.__conf_DISP_FRAME_TIME * 1.5
 
 			# Display
 			self.__display.message([f"set:clear,time={FrameTime}",f"s=hc:{self.DisplayLine1}",f"s=hc:{self.DisplayLine2}",f"s=hc:{DisplayLine3}",f"s=hc:{DisplayLine4}",f"s=hc:{DisplayLine5}"] + DisplayLinesExtra)

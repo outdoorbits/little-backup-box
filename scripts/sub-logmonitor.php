@@ -16,26 +16,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################*/
-?>
 
-<div class="card" style="margin-top: 3em;">
-	<h2 style="margin-top: 0em;"><?php echo L::log_logmonitor; ?></h2>
-	<hr>
-	<iframe id="logmonitor" src="/tmp/little-backup-box.log" width="100%" height="300" style="background: #FFFFFF;" onfocus="clearIntervalLogMonitor()"></iframe>
-	<div class="text-center" style="margin-top: 0.5em;">
-		<button name="refresh" onclick="window.location.reload();"><?php echo L::log_refresh_button; ?></button>
-		<a role="button" href="/tmp/little-backup-box.log" download="little-backup-box.log"><button>Download</button></a>
 
-		<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-			<button style="margin-top: 2em;" type="delete" name="delete" class="danger"><?php echo (L::log_delete_button); ?></button>
-		</form>
-	</div>
-</div>
-<?php
-	if (isset($_POST['delete'])) {
-		unlink($constants["const_LOGFILE"]);
-		$LogFileHandle = fopen($constants["const_LOGFILE"], 'w') or die('Error opening file: ' . $constants["const_LOGFILE"]);
-		fwrite($LogFileHandle,"");
-		fclose("$LogFileHandle");
-	};
-?>
+function logmonitor($sourcefile, $enable_delete=false) {
+	?>
+		<div class="card" style="margin-top: 3em;">
+			<h2 style="margin-top: 0em;"><?php echo L::log_logmonitor; ?></h2>
+			<hr>
+			<iframe id="logmonitor" src="<?php echo str_replace('/var/www/little-backup-box', '' ,$sourcefile); ?>" width="100%" height="300" style="background: #FFFFFF;" onfocus="clearIntervalLogMonitor()"></iframe>
+			<div class="text-center" style="margin-top: 0.5em;">
+				<button name="refresh" onclick="window.location.reload();"><?php echo L::log_refresh_button; ?></button>
+				<a role="button" href="<?php echo str_replace('/var/www/little-backup-box', '' ,$sourcefile); ?>" download="<?php echo basename($sourcefile); ?>"><button>Download</button></a>
+
+				<?php
+					if ($enable_delete) {
+						?>
+							<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+								<button style="margin-top: 2em;" type="delete" name="delete_logfile" class="danger"><?php echo (L::log_delete_button); ?></button>
+							</form>
+						<?php
+					}
+				?>
+			</div>
+		</div>
+		<?php
+			if (isset($_POST['delete_logfile'])) {
+				if (file_exists($sourcefile)) {
+					unlink($sourcefile);
+				}
+				$LogFileHandle = fopen($sourcefile, 'w') or die('Error opening file: ' . $sourcefile);
+				fwrite($LogFileHandle,"Little Backup Box\n");
+				fclose($LogFileHandle);
+			};
+}
