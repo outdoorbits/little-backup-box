@@ -33,7 +33,8 @@
 	include("sub-virtual-keyboard.php");
 
 	include("sub-common.php");
-	$NVMe_available	= nvme_available($WORKING_DIR, $constants);
+	$NVMe_available	= get_nvme_available($WORKING_DIR, $constants);
+	$CloudServices	= get_cloudservices($constants);
 
 	$TIME_ZONE_old	= $config["conf_TIME_ZONE"];
 

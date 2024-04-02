@@ -221,6 +221,7 @@ if (isset($CMD_HEADER)) {
 			<?php
 		} elseif (isset($_SESSION['CMD'])) {
 			?>
+
 <!-- 			run command -->
 
 		<iframe id="cmdmonitor" src="/cmd-runner.php?<?php echo htmlspecialchars(SID); ?>" width="100%" height="500" style="background: #FFFFFF;"></iframe>

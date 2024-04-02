@@ -21,6 +21,7 @@
 
 import os
 import subprocess
+import shutil
 import threading
 
 import backup
@@ -70,6 +71,7 @@ class backup_autorun(object):
 		try:
 			with open(const_LOGFILE,'w') as f:
 				f.write('Little Backup Box\n')
+			shutil.chown(const_LOGFILE, user='www-data', group='www-data')
 		except:
 			pass
 

@@ -214,7 +214,9 @@
 
 	<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::sysinfo_refresh_button); ?></button></div>
 
-	<?php include "sub-logmonitor.php"; ?>
+	<?php include "sub-logmonitor.php";
+		logmonitor($sourcefile=$constants['const_LOGFILE'], $enable_delete=true);
+	?>
 
 	<?php include "sub-footer.php"; ?>
 

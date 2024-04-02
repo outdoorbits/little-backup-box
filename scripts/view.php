@@ -32,7 +32,7 @@
 	include("sub-popup.php");
 	include("sub-common.php");
 
-	$NVMe_available	= nvme_available($WORKING_DIR, $constants);
+	$NVMe_available	= get_nvme_available($WORKING_DIR, $constants);
 
 	# symlink to media-folder
 	if (! file_exists("./media")) {

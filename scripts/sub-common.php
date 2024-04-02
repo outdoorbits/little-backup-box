@@ -17,14 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################*/
 
-// expects $constants
-//
-// defines $CloudServices as array
-
-
-
-$CloudServices=array();
-exec("sudo rclone config show --config \"" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"] . "\" | grep '^\[.*\]$' | sed 's/^\[//' | sed 's/\]$//'",$CloudServices);
+function get_cloudservices($constants) {
+	exec("sudo rclone config show --config \"" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"] . "\" | grep '^\[.*\]$' | sed 's/^\[//' | sed 's/\]$//'",$CloudServices);
+	return ($CloudServices);
+}
 
 function get_secondary_backup_selector($fieldname, $CloudServices, $config, $NVMe_available, $ignore_preset=false) {
 
@@ -78,7 +74,7 @@ function get_secondary_backup_selector($fieldname, $CloudServices, $config, $NVM
 
 }
 
-function nvme_available($WORKING_DIR, $constants) {
+function get_nvme_available($WORKING_DIR, $constants) {
 	// 	NVMe available?
 	exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False", $Partitions);
 	$NVMe_available	= false;

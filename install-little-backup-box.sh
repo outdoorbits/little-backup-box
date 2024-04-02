@@ -470,9 +470,6 @@ sudo DEBIAN_FRONTEND=noninteractive \
 #configure apache for php-fpm
 PHP_VERSION=$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
 
-#stop apache
-sudo systemctl stop apache2
-
 #disable apache php
 sudo a2dismod php*
 
@@ -491,8 +488,8 @@ sudo a2enmod setenvif
 #enable conf php<VERSION>-fpm
 sudo a2enconf php${PHP_VERSION}-fpm
 
-#stop php-fpm service
-sudo service php${PHP_VERSION}-fpm stop
+# #stop php-fpm service
+# sudo service php${PHP_VERSION}-fpm stop
 
 #configure php-fpm to disable private mount namespace
 echo "[Unit]
@@ -517,7 +514,7 @@ WantedBy=multi-user.target" | tee /etc/systemd/system/multi-user.target.wants/ph
 
 #start php-fpm service
 sudo systemctl daemon-reload
-sudo service php${PHP_VERSION}-fpm start
+# sudo service php${PHP_VERSION}-fpm start
 
 #openssl
 sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
@@ -541,7 +538,7 @@ sudo a2enmod proxy_http
 sudo a2dissite 000-default
 sudo a2ensite little-backup-box
 
-sudo systemctl reload apache2
+# sudo systemctl reload apache2
 
 # Configure Samba
 if [ "${SCRIPT_MODE}" = "update" ]; then
