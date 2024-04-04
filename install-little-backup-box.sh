@@ -36,6 +36,11 @@ fi
 # get OS release version
 OS_RELEASE=$(lsb_release -a | grep 'Release:' | cut -d':' -f 2 | xargs)
 
+if  (( ${OS_RELEASE} <= 11 )); then
+	echo "I'm sorry. Updates are currently only possible for Raspberry Pi OS Bookworm. A solution is already being worked on."
+	exit
+fi
+
 # check arguments
 if [ $# -gt 0 ]; then
 	branch=${1}
@@ -488,9 +493,6 @@ sudo a2enmod setenvif
 #enable conf php<VERSION>-fpm
 sudo a2enconf php${PHP_VERSION}-fpm
 
-# #stop php-fpm service
-# sudo service php${PHP_VERSION}-fpm stop
-
 #configure php-fpm to disable private mount namespace
 echo "[Unit]
 Description=The PHP ${PHP_VERSION} FastCGI Process Manager
@@ -514,7 +516,6 @@ WantedBy=multi-user.target" | tee /etc/systemd/system/multi-user.target.wants/ph
 
 #start php-fpm service
 sudo systemctl daemon-reload
-# sudo service php${PHP_VERSION}-fpm start
 
 #openssl
 sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
@@ -537,8 +538,6 @@ sudo a2enmod proxy_http
 # sudo a2enconf ssl-params # forces https
 sudo a2dissite 000-default
 sudo a2ensite little-backup-box
-
-# sudo systemctl reload apache2
 
 # Configure Samba
 if [ "${SCRIPT_MODE}" = "update" ]; then
