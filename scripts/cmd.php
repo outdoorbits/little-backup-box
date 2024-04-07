@@ -32,6 +32,8 @@
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . "/" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-virtual-keyboard.php");
+	include("sub-logmonitor.php");
+
 # expected parameters:
 # CMD: "update", "format", "f3"
 # optional parameters:
@@ -46,9 +48,10 @@
 		include "${WORKING_DIR}/sub-standards-header-loader.php";
 		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 	?>
+	<script type="text/javascript" src="js/logmonitor.js"></script>
 </head>
 
-<body <?php echo $background; ?>>
+<body <?php echo $background; ?> onload="refreshLogMonitor('false')">
 <?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 <?php
@@ -220,11 +223,9 @@ if (isset($CMD_HEADER)) {
 				</p>
 			<?php
 		} elseif (isset($_SESSION['CMD'])) {
+//  			run command
+			logmonitor($sourcefile="/cmd-runner.php?" . htmlspecialchars(SID), $title='', $allow_logfile_operations=false);
 			?>
-
-<!-- 			run command -->
-
-		<iframe id="cmdmonitor" src="/cmd-runner.php?<?php echo htmlspecialchars(SID); ?>" width="100%" height="500" style="background: #FFFFFF;"></iframe>
 		<p>
 			<a href="/"><?php echo L::cmd_link_text_home_running; ?></a>
 		</p>

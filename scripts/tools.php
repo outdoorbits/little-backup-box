@@ -86,7 +86,7 @@
 	<script src="js/logmonitor.js"></script>
 </head>
 
-<body onload="refreshLogMonitor()" <?php echo $background; ?>>
+<body onload="refreshLogMonitor('true')" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
@@ -142,7 +142,7 @@
 	</div>
 
 	<?php include "sub-logmonitor.php";
-		logmonitor($sourcefile=$constants['const_LOGFILE'], $enable_delete=true);
+		logmonitor($sourcefile=$constants['const_LOGFILE'], $title=L::log_logmonitor, $allow_logfile_operations=true);
 	?>
 
 	<div class="card" style="margin-top: 3em;">

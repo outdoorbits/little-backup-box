@@ -49,8 +49,8 @@
 			header('Content-Encoding: none');
 		}
 
-		// Fill-up 4 kB buffer (should be enough in most cases).
-		echo str_pad('', ini_get('output_buffering'));
+		// Fill-up buffer (should be enough in most cases).
+		echo str_pad('', ini_get('output_buffering')),"\n";
 
 		// Flush all buffers.
 		do {

@@ -110,7 +110,7 @@
 <?php
 	$OldSource = isset($_POST['SourceDevice']) ? $_POST['SourceDevice'] : 'anyusb';
 ?>
-<body onload="refreshLogMonitor();HideDisallowedButtons(document.getElementById('Source_<?php echo $OldSource; ?>'))" <?php echo $background; ?>>
+<body onload="refreshLogMonitor('true');HideDisallowedButtons(document.getElementById('Source_<?php echo $OldSource; ?>'))" <?php echo $background; ?>>
 	<?php include "sub-standards-body-loader.php"; ?>
 	<?php include "sub-menu.php"; ?>
 
@@ -345,7 +345,7 @@
 	</form>
 
 	<?php include "sub-logmonitor.php";
-		logmonitor($sourcefile=$constants['const_LOGFILE'], $enable_delete=true);
+		logmonitor($sourcefile=$constants['const_LOGFILE'], $title=L::log_logmonitor, $allow_logfile_operations=true);
 	?>
 
 	<div class="card" style="margin-top: 3em;">

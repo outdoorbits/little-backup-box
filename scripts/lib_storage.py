@@ -361,8 +361,8 @@ class storage(object):
 				time.sleep(1)
 
 		self.__camera_connected	= True
-		#self.DeviceIdentifier	= CameraModel
-		self.__log.message(f"gphoto2: Got camera model identifier '{self.DeviceIdentifier}'.", 3)
+
+		self.__log.message(f"gphoto2: Got camera model identifier '{self.DeviceIdentifier}' at Port '{self.CameraPort}'.", 3)
 
 		self.__display.message([f":{self.__lan.l('box_backup_camera_ok')}", f":{self.__lan.l('box_backup_working')}..."])
 
@@ -371,6 +371,7 @@ class storage(object):
 		try:
 			CameraSummaryList	= subprocess.check_output(Command).decode().strip().split('\n')
 		except:
+			self.__log.message(f"gphoto2: Error getting summary", 3)
 			return(False)
 
 		# camera model

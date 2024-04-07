@@ -1,19 +1,30 @@
 // refreshLogMonitor
 // Refresh the log monitor iframe every 2 seconds
-// needs '<body onload="refreshLogMonitor()">'
+// needs:
+// in <head>: <script type="text/javascript" src="js/logmonitor.js"></script>
+// '<body onload="refreshLogMonitor('true/false')">'
 // and '<iframe id="logmonitor" ...'
 
-let LogMonitorInterval = 'undefined'
+let LogMonitorInterval = 'undefined';
+let reload_content_remember	= 'undefined';
 
-function refreshLogMonitor() {
+function refreshLogMonitor(reload_content) {
 	var logmonitor = document.getElementById("logmonitor");
 
-	if (!(logmonitor === document.activeElement)) {
-		logmonitor.contentWindow.location.reload();
+	if (reload_content_remember === 'undefined') {
+		reload_content_remember = reload_content;
+	}
 
-		if (LogMonitorInterval == 'undefined') {
+	if (!(logmonitor === document.activeElement)) {
+
+		if (reload_content_remember === 'true') {
+			logmonitor.contentWindow.location.reload();
+		}
+
+		if (LogMonitorInterval === 'undefined') {
 			LogMonitorInterval = setInterval('logmonitor.contentWindow.scrollTo(0, 999999)',200);
 		}
+
 	} else {
 		clearIntervalLogMonitor();
 	}

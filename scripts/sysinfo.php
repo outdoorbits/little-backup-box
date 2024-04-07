@@ -39,7 +39,7 @@
 	<script src="js/refresh_site.js"></script>
 </head>
 
-<body onload="refreshLogMonitor(); refresh_site()" <?php echo $background; ?>>
+<body onload="refreshLogMonitor('true'); refresh_site()" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
@@ -215,7 +215,7 @@
 	<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::sysinfo_refresh_button); ?></button></div>
 
 	<?php include "sub-logmonitor.php";
-		logmonitor($sourcefile=$constants['const_LOGFILE'], $enable_delete=true);
+		logmonitor($sourcefile=$constants['const_LOGFILE'], $title=L::log_logmonitor, $allow_logfile_operations=true);
 	?>
 
 	<?php include "sub-footer.php"; ?>
