@@ -131,7 +131,7 @@ class storage(object):
 		elif self.StorageType == 'cloud_rsync':
 			mounted	= self.__mount_cloud_rsync()
 
-		if mounted and (self.StorageType in ['usb', 'internal', 'cloud']):
+		if mounted and (self.StorageType in ['usb', 'internal', 'nvme', 'cloud']):
 			self.__manage_lbb_device_ID()
 
 		return(mounted)
@@ -635,7 +635,7 @@ class storage(object):
 		self.__log.message(f"MOUNTED?: '{MountPoint}' = {MOUNTED}",2)
 		return(MOUNTED)
 
-	def umount(self,silent=False):
+	def umount(self, silent=False):
 		if self.StorageType in ['internal', 'cloud_rsync']:
 			return(True)
 
@@ -650,7 +650,7 @@ class storage(object):
 
 			# message
 			if not silent:
-				if self.StorageType == 'usb':
+				if self.StorageType in ['usb', 'nvme']:
 					l_box_backup_MountPointDescription=self.__lan.l(f"box_backup_{self.StorageType}_{self.Role}")
 				else:
 					l_box_backup_MountPointDescription=self.__lan.l(f"box_backup_{self.StorageType}")
@@ -851,7 +851,7 @@ def umount(setup, MountPoints):
 
 	if type(MountPoints) != "<class 'list'>":
 		if MountPoints == 'all':
-			MountPoints	= get_mountPoints(setup, ['usb', 'nvme', 'cloud'], True)
+			MountPoints	= get_mountPoints(setup, ['all'], True)
 		else:
 			MountPoints	= [MountPoints]
 
@@ -875,7 +875,7 @@ def umount(setup, MountPoints):
 
 
 def remove_all_mountpoints(setup):
-	umount(setup,'all')
+	umount(setup, 'all')
 	#deletes all mountpoints and their content! For use directly after boot and before any mount only!!!
 	MountPoints	= get_mountPoints(setup, ['all'], True)
 

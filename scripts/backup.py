@@ -121,7 +121,7 @@ class backup(object):
 		else:
 			self.TransferMode	= 'rsync'
 
-		# Unmount devices
+		# Unmount devices, clean before backup
 		lib_storage.umount(self.__setup,'all')
 
 		# message mode info
