@@ -71,18 +71,18 @@ class storage(object):
 
 		self.__const_MEDIA_DIR								= self.__setup.get_val('const_MEDIA_DIR')
 
-		self.__const_MOUNTPOINT_USB_TARGET		= self.__setup.get_val('const_MOUNTPOINT_USB_TARGET')
-		self.__const_MOUNTPOINT_USB_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_USB_SOURCE')
+		self.__const_MOUNTPOINT_USB_TARGET				= self.__setup.get_val('const_MOUNTPOINT_USB_TARGET')
+		self.__const_MOUNTPOINT_USB_SOURCE				= self.__setup.get_val('const_MOUNTPOINT_USB_SOURCE')
 		self.__const_MOUNTPOINT_TECH_USB_TARGET			= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET')
 		self.__const_MOUNTPOINT_TECH_USB_SOURCE			= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE')
 
-		self.__const_MOUNTPOINT_NVME_TARGET		= self.__setup.get_val('const_MOUNTPOINT_NVME_TARGET')
-		self.__const_MOUNTPOINT_NVME_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_NVME_SOURCE')
+		self.__const_MOUNTPOINT_NVME_TARGET				= self.__setup.get_val('const_MOUNTPOINT_NVME_TARGET')
+		self.__const_MOUNTPOINT_NVME_SOURCE				= self.__setup.get_val('const_MOUNTPOINT_NVME_SOURCE')
 		self.__const_MOUNTPOINT_TECH_NVME_TARGET		= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET')
 		self.__const_MOUNTPOINT_TECH_NVME_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE')
 
-		self.__const_MOUNTPOINT_CLOUD_TARGET	= self.__setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')
-		self.__const_MOUNTPOINT_CLOUD_SOURCE	= self.__setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
+		self.__const_MOUNTPOINT_CLOUD_TARGET			= self.__setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')
+		self.__const_MOUNTPOINT_CLOUD_SOURCE			= self.__setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
 		self.__const_INTERNAL_BACKUP_DIR				= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
 		self.__conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.__conf_BACKUP_TARGET_SIZE_MIN				= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
@@ -120,7 +120,7 @@ class storage(object):
 	def mount(self,TimeOutActive=None):
 		mounted	= False
 
-		if self.StorageType in ['usb', 'nvmw']:
+		if self.StorageType in ['usb', 'nvme']:
 			mounted	= self.__mount_local_storage(TimeOutActive=TimeOutActive==True)
 		elif self.StorageType == 'internal':
 			mounted	= self.__mount_internal()
@@ -167,7 +167,7 @@ class storage(object):
 			Command	= ['udevadm','trigger']
 			subprocess.run(Command)
 
-			USB_DeviceList = get_available_partitions(StorageType=self.StorageType, TargetDeviceIdentifier=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, returnDict=True)
+			USB_DeviceList = get_available_partitions(StorageType=self.StorageType, TargetDeviceIdentifier=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, ignore_fs=False, returnDict=True)
 
 			# log if list of devices changed
 			if USB_DeviceList and USB_DeviceList != USB_DeviceList_old:
@@ -779,7 +779,7 @@ class storage(object):
 		storfree	= f"{self.__lan.l('box_backup_storage_free')}: {self.__HumanReadableNumber(storfree,1000)}"
 		storfstype	= f"{self.__lan.l('box_backup_storage_filesystem_short')}: {storfstype}"
 
-		if self.StorageType == 'usb':
+		if self.StorageType in ['usb', 'nvme']:
 			l_drive_ok	= self.__lan.l(f"box_backup_{self.StorageType}_{self.Role}_ok")
 		else:
 			l_drive_ok	= self.__lan.l(f"box_backup_{self.StorageType}_ok")
@@ -916,7 +916,7 @@ def get_mounts_list():
 
 	return(f" {' '.join(mountsList)} ")
 
-def get_available_partitions(StorageType='anyusb', TargetDeviceIdentifier='', excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, HumanReadable=False, returnDict=False):
+def get_available_partitions(StorageType='anyusb', TargetDeviceIdentifier='', excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, ignore_fs=False, HumanReadable=False, returnDict=False):
 	#StorageType: one of ['anyusb'*, 'usb', 'nvme'] *anything but usb and nvme will be interpreted as anyusb
 
 	setup	= lib_setup.setup()
@@ -974,7 +974,7 @@ def get_available_partitions(StorageType='anyusb', TargetDeviceIdentifier='', ex
 			continue
 
 		## exclude invalid fs types
-		if not fs_type in FS_Types_supported:
+		if (not ignore_fs) and (not fs_type in FS_Types_supported):
 			continue
 
 		## exclude all excludePartitions
@@ -1236,11 +1236,20 @@ if __name__ == "__main__":
 		help		= 'Only for --Action get_available_partitions: [\'True\', \'False\']'
 	)
 
+	parser.add_argument(
+		'--ignore-fs',
+		'-ifs',
+		required	= False,
+		default		= False,
+		help		= 'Only for --Action get_available_partitions: [\'True\', \'False\']'
+	)
+
 	args	= vars(parser.parse_args())
 
 	# prepare arguments
 	args['WaitForDevice']	= args['WaitForDevice'] in [True, 'True']
 	args['skipMounted']		= args['skipMounted'] in [True, 'True']
+	args['ignore_fs']		= args['ignore_fs'] in [True, 'True']
 
 	# execute
 	if args['Action'] in ['mount','umount','mounted']:
@@ -1272,7 +1281,7 @@ if __name__ == "__main__":
 	elif args['Action'] == 'get_available_partitions':
 		args['StorageName']	= args['StorageName'] if args['StorageName'] else None
 
-		print('\n'.join(get_available_partitions(StorageType=args['StorageName'], HumanReadable=True, skipMounted=args['skipMounted'],returnDict=True)))
+		print('\n'.join(get_available_partitions(StorageType=args['StorageName'], HumanReadable=True, skipMounted=args['skipMounted'], ignore_fs=args['ignore_fs'],returnDict=True)))
 
 	#get_available_devices
 	elif args['Action'] == 'get_available_devices':

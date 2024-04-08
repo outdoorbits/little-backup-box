@@ -355,7 +355,8 @@
       "target": "Objetivo",
       "source": "Origen",
       "usb": "USB",
-      "select_partition_label": "Partición"
+      "select_partition_label": "Partición",
+      "nvme": "NVMe SSD"
     }
   },
   "box": {
@@ -469,7 +470,12 @@
         "usbs": "Almacenamientos USB",
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs"
-      }
+      },
+      "nvme": "NVMe SSD",
+      "nvme_source": "Fuente USB",
+      "nvme_source_ok": "Origen o.k.",
+      "nvme_target": "Destino USB",
+      "nvme_target_ok": "Almacenamiento ext. o.k."
     },
     "cronip": {
       "offline": "desconectado",

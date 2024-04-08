@@ -118,7 +118,12 @@
         "usbs": "USB storages",
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs"
-      }
+      },
+      "nvme": "NVMe SSD",
+      "nvme_source": "USB-source",
+      "nvme_source_ok": "Source o.k.",
+      "nvme_target": "USB-target",
+      "nvme_target_ok": "Target o.k."
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -558,7 +563,8 @@
       "target": "target",
       "source": "source",
       "usb": "USB",
-      "select_partition_label": "Partition"
+      "select_partition_label": "Partition",
+      "nvme": "NVMe SSD"
     }
   },
   "cmd": {

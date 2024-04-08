@@ -74,9 +74,11 @@ function get_secondary_backup_selector($fieldname, $CloudServices, $config, $NVM
 
 }
 
-function get_nvme_available($WORKING_DIR, $constants) {
+function get_nvme_available($WORKING_DIR, $constants, $ignore_fs = false) {
 	// 	NVMe available?
-	exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False", $Partitions);
+	$ignore_fs	= $ignore_fs ? 'False' : 'True';
+
+	exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False --ignore-fs ${ignore_fs}", $Partitions);
 	$NVMe_available	= false;
 
 	foreach ($Partitions as $Partition) {

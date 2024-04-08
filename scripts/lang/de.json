@@ -355,7 +355,8 @@
       "target": "Ziel",
       "source": "Quelle",
       "usb": "USB",
-      "select_partition_label": "Partition"
+      "select_partition_label": "Partition",
+      "nvme": "NVMe SSD"
     }
   },
   "box": {
@@ -469,7 +470,12 @@
         "usbs": "USB-Speicher",
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs"
-      }
+      },
+      "nvme": "NVMe SSD",
+      "nvme_source": "USB-Quelle",
+      "nvme_source_ok": "Quelle o.k.",
+      "nvme_target": "USB-Ziel",
+      "nvme_target_ok": "Ziel o.k."
     },
     "cronip": {
       "offline": "offline",

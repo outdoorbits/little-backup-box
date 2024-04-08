@@ -355,7 +355,8 @@
       "target": "Cible",
       "source": "Origine",
       "usb": "USB",
-      "select_partition_label": "Partition"
+      "select_partition_label": "Partition",
+      "nvme": "NVMe SSD"
     }
   },
   "box": {
@@ -469,7 +470,12 @@
         "usbs": "Stockages USB",
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs"
-      }
+      },
+      "nvme": "NVMe SSD",
+      "nvme_source": "Source USB",
+      "nvme_source_ok": "Source ok",
+      "nvme_target": "Cible USB",
+      "nvme_target_ok": "Poste stockage ok"
     },
     "cronip": {
       "offline": "hors ligne",
