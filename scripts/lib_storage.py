@@ -875,7 +875,9 @@ def umount(setup, MountPoints):
 
 
 def remove_all_mountpoints(setup):
+	#umount all
 	umount(setup, 'all')
+
 	#deletes all mountpoints and their content! For use directly after boot and before any mount only!!!
 	MountPoints	= get_mountPoints(setup, ['all'], True)
 
