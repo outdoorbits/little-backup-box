@@ -46,12 +46,14 @@ Some of the features of the web user interface are
 			<li>usb storage</li>
 			<li>camera</li>
 			<li>internal storage</li>
+			<li>NVMe SSD storage</li>
 			<li>cloud storage</li>
 		</ul>
 		<b>to</b>
 		<ul>
 			<li>usb storage</li>
 			<li>internal storage</li>
+			<li>NVMe SSD storage</li>
 			<li>rsync server</li>
 			<li>cloud storage</li>
 		</ul>
@@ -65,13 +67,12 @@ Some of the features of the web user interface are
 			<li>cloud storage</li>
 		</ul>
 	</li>
+	<li><b>Email information about the backup success</b></li>
 	<li><b>Preview and rate images</b></li>
 	<li><b>Manage files by file manager</b></li>
-	<li><b>Email information about the backup success</b></li>
-	<li><b>Diverse setup options</b></li>
+	<li><b>Convenient configuration via web interface</b></li>
 </ul>
 It's your swiss army knife for reliably performing, checking and managing backups on the go.
-
 
 <h2>Development status</h2>
 Little Backup Box is still under construction.<br />
