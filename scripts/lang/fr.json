@@ -81,11 +81,6 @@
     "lang_header": "Choisir la langue/Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
     "lang_browser_detect": "Détection du navigateur/Browser detect",
-    "backup_section": "Sauvegarde",
-    "backup_header": "Mode de sauvegarde par défaut",
-    "backup_label": "Sélectionnez le mode de sauvegarde par défaut :",
-    "backup_power_off_header": "Éteindre",
-    "backup_power_off_label": "Mise hors tension après sauvegarde",
     "view_section": "voir",
     "view_theme_header": "Schéma de couleur",
     "view_theme_label": "Sélectionnez un thème de couleur :",
@@ -134,15 +129,9 @@
     "alert_password_global": "Mot de passe global",
     "alert_password_mail_header": "Mot de passe de messagerie",
     "alert_password_rsync_header": "rsync-le mot de passe",
-    "backup_target_basedir_cloud_header": "Dossier d'accueil sur les serveurs cloud (destination)",
-    "backup_target_basedir_cloud_label": "La sauvegarde est effectuée sous ce répertoire.",
     "rsync_module_header": "Module rsync",
     "rsync_module_label1": "Nom du module sur le serveur rsync, par exemple 'little-backup-box' (par défaut :",
     "rsync_module_label2": "). <br> Le nom du module est défini côté serveur dans rsyncd.conf et est mis entre [crochets]. Notez également <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
-    "backup_camera_folder_mask_header": "Répertoires à sauvegarder sur les smartphones et les caméras",
-    "backup_camera_folder_mask_label": "Des instructions pour le comportement de sauvegarde pour certains appareils photo ou smartphones peuvent être données ici.<br>\nLes entrées ici ont la forme : <br>\n&quot;CAMERA:CHEMIN&quot; <br>\nLe nom d'une caméra connectée se trouve sur la page &quot;Système&quot; sur &quot;Appareil photo/Smartphone&quot;.<br>\nSi une instruction doit s'appliquer à toutes les caméras, &quot;*&quot; (sans autres ajouts) peut être utilisé comme joker pour tous les appareils.<br>\nLe chemin n'a pas besoin d'être spécifié en entier. Il suffit d'en utiliser une partie importante. <br>\nExemples : <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Le champ reste vide, sauvegardez tous les dossiers de toutes les caméras.)<br>\nPlus d'informations sur le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
-    "backup_header2": "Mode de sauvegarde secondaire par défaut (sauvegardes réseau uniquement)",
-    "backup_label2": "Sélectionnez un mode de sauvegarde secondaire par défaut à exécuter après le principal :",
     "wifi_section": "Paramètres Wifi",
     "wifi_country_label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée",
     "wifi_country_header": "Pays Wi-Fi",
@@ -155,9 +144,25 @@
       "target": {
         "requirements_header": "Exigences de la partition cible",
         "requirements_label": "Quelle est la taille minimale de la partition cible à accepter ?",
-        "requirements_size_ignore": "accepter tout"
+        "requirements_size_ignore": "accepter tout",
+        "basedir_cloud_header": "Dossier d'accueil sur les serveurs cloud (destination)",
+        "basedir_cloud_label": "La sauvegarde est effectuée sous ce répertoire."
       },
-      "none": "pas de sauvegarde automatique"
+      "none": "pas de sauvegarde automatique",
+      "header": "Mode de sauvegarde par défaut",
+      "header2": "Mode de sauvegarde secondaire par défaut (sauvegardes réseau uniquement)",
+      "label": "Sélectionnez le mode de sauvegarde par défaut :",
+      "label2": "Sélectionnez un mode de sauvegarde secondaire par défaut à exécuter après le principal :",
+      "power_off_header": "Éteindre",
+      "power_off_label": "Mise hors tension après sauvegarde",
+      "section": "Sauvegarde",
+      "camera": {
+        "folder_mask_header": "Répertoires à sauvegarder sur les smartphones et les caméras",
+        "folder_mask_label": "Des instructions pour le comportement de sauvegarde pour certains appareils photo ou smartphones peuvent être données ici.<br>\nLes entrées ici ont la forme : <br>\n&quot;CAMERA:CHEMIN&quot; <br>\nLe nom d'une caméra connectée se trouve sur la page &quot;Système&quot; sur &quot;Appareil photo/Smartphone&quot;.<br>\nSi une instruction doit s'appliquer à toutes les caméras, &quot;*&quot; (sans autres ajouts) peut être utilisé comme joker pour tous les appareils.<br>\nLe chemin n'a pas besoin d'être spécifié en entier. Il suffit d'en utiliser une partie importante. <br>\nExemples : <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Le champ reste vide, sauvegardez tous les dossiers de toutes les caméras.)<br>\nPlus d'informations sur le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
+        "model_folders_header": "Dossiers à synchroniser à partir du modèle d'appareil photo",
+        "specific_device_folders_header": "Carpetas para sincronizar desde una cámara específica",
+        "device_folder_pattern": "À utiliser comme modèle dans les paramètres"
+      }
     },
     "imageviewer": {
       "section": "Visionneuse d'images View",

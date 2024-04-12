@@ -299,15 +299,6 @@
     "lang_header": "Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
     "lang_browser_detect": "Browser detect",
-    "backup_section": "Backup",
-    "backup_header": "Default backup mode",
-    "backup_label": "Select the default backup-mode:",
-    "backup_header2": "Default secondary backup mode (network backups only)",
-    "backup_label2": "Select a secondary default backup-mode to run after the primary:",
-    "backup_camera_folder_mask_header": "Directories to be backed up on smartphones and cameras",
-    "backup_camera_folder_mask_label": "Here you can specify which directories are to be backed up by which cameras or smartphones. <br>\nEntries here have the form: <br>\n&quot; CAMERA: PATH &quot; <br>\nThe name of a connected camera can be found on the &quot; System &quot; page under &quot; Camera / Smartphone &quot ;. <br>\nIf an instruction is to apply to all cameras, &quot; * &quot; (without further additions) can be used as a joker for all devices. <br>\nThe path does not have to be specified in full. It is enough to use a unique part of it. <br>\nExamples: <br>\n&quot;*:DCIM &quot; (all cameras: all folders that contain &quot; DCIM &quot;) <br>\n&quot;*:DCIM; MyCamera: IMAGES &quot; (also from the &quot; MyCamera &quot; camera: all folders containing &quot; IMAGES &quot;) <br>\n&quot;&quot; (Field remains empty: Back up all folders of all cameras.) <br>\n<br>\nInstead of searching for a pattern, absolute paths can also be specified. These must always be marked with &quot;! / &quot; start:\n&quot;MyCamera:!/store_00020002/DCIM&quot; <br>\nAs soon as an absolute folder applies to a camera, there is no longer a search for a pattern for it. This saves time.\nMore information at <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
-    "backup_power_off_header": "Power off",
-    "backup_power_off_label": "Power down after backup",
     "view_section": "View",
     "view_theme_header": "Theme",
     "view_theme_label": "Select a color theme:",
@@ -346,8 +337,6 @@
     "save_settings_upload_header": "Upload",
     "save_settings_upload_label": "Select the settings-file",
     "save_settings_upload_button": "Upload settings",
-    "backup_target_basedir_cloud_header": "Base folder on cloud servers (destination)",
-    "backup_target_basedir_cloud_label": "The backup on the cloud server is carried out under this directory.",
     "rsync_module_header": "rsync module",
     "rsync_module_label1": "Module name on the rsync server, e.g. 'little-backup-box' (default:",
     "rsync_module_label2": "). <br> The module name is defined on the server side in rsyncd.conf and is set in [square brackets]. Also note <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
@@ -363,9 +352,25 @@
       "target": {
         "requirements_header": "Target partition requirements",
         "requirements_label": "What is the minimum size of the target partition to be accepted?",
-        "requirements_size_ignore": "accept all"
+        "requirements_size_ignore": "accept all",
+        "basedir_cloud_header": "Base folder on cloud servers (destination)",
+        "basedir_cloud_label": "The backup on the cloud server is carried out under this directory."
       },
-      "none": "no automatic backup"
+      "none": "no automatic backup",
+      "header": "Default backup mode",
+      "header2": "Default secondary backup mode (network backups only)",
+      "label": "Select the default backup-mode:",
+      "label2": "Select a secondary default backup-mode to run after the primary:",
+      "power_off_header": "Power off",
+      "power_off_label": "Power down after backup",
+      "section": "Backup",
+      "camera": {
+        "folder_mask_header": "Directories to be backed up on smartphones and cameras",
+        "folder_mask_label": "Here you can specify which directories are to be backed up by which cameras or smartphones. <br>\nEntries here have the form: <br>\n&quot; CAMERA: PATH &quot; <br>\nThe name of a connected camera can be found on the &quot; System &quot; page under &quot; Camera / Smartphone &quot ;. <br>\nIf an instruction is to apply to all cameras, &quot; * &quot; (without further additions) can be used as a joker for all devices. <br>\nThe path does not have to be specified in full. It is enough to use a unique part of it. <br>\nExamples: <br>\n&quot;*:DCIM &quot; (all cameras: all folders that contain &quot; DCIM &quot;) <br>\n&quot;*:DCIM; MyCamera: IMAGES &quot; (also from the &quot; MyCamera &quot; camera: all folders containing &quot; IMAGES &quot;) <br>\n&quot;&quot; (Field remains empty: Back up all folders of all cameras.) <br>\n<br>\nInstead of searching for a pattern, absolute paths can also be specified. These must always be marked with &quot;! / &quot; start:\n&quot;MyCamera:!/store_00020002/DCIM&quot; <br>\nAs soon as an absolute folder applies to a camera, there is no longer a search for a pattern for it. This saves time.\nMore information at <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
+        "model_folders_header": "Folders to sync from camera model",
+        "specific_device_folders_header": "Folders to sync from specific camera",
+        "device_folder_pattern": "For use as pattern in Settings"
+      }
     },
     "imageviewer": {
       "section": "Image viewer View",

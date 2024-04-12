@@ -81,11 +81,6 @@
     "lang_header": "Sprache auswählen/Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
     "lang_browser_detect": "Browser-Erkennung/Browser detect",
-    "backup_section": "Backup",
-    "backup_header": "Standard-Backup-Modus",
-    "backup_label": "Wählen Sie den Standard-Backup-Modus:",
-    "backup_power_off_header": "Ausschalten",
-    "backup_power_off_label": "Ausschalten nach Backup",
     "view_section": "Ansicht",
     "view_theme_header": "Farbschema",
     "view_theme_label": "Wählen Sie ein Farbschema aus:",
@@ -134,15 +129,9 @@
     "alert_password_global": "Globales Passwort",
     "alert_password_mail_header": "Mail-Passwort",
     "alert_password_rsync_header": "rsync-",
-    "backup_target_basedir_cloud_header": "Basisordner auf Cloud-Servern (Ziel)",
-    "backup_target_basedir_cloud_label": "Die Sicherung auf dem Cloud-Server wird unterhalb dieses Verzeichnisses durchgeführt.",
     "rsync_module_header": "rsync-Modul",
     "rsync_module_label1": "Modulname auf dem rsync-Server, z.B. 'little-backup-box' (Standard:",
     "rsync_module_label2": ").<br>Der Modulname ist serverseitig in rsyncd.conf definiert und in [eckige Klammern] gesetzt. Beachten Sie auch <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'>readme_rsync.md</a>.",
-    "backup_camera_folder_mask_header": "Zu sichernde Verzeichnisse auf Smartphones und Kameras",
-    "backup_camera_folder_mask_label": "Hier kann vorgegeben werden, welche Verzeichnisse von welchen Kameras oder Smartphones gesichert werden.<br>\nEinträge hier haben das Format: <br>\n&quot;KAMERA:PFAD&quot;<br>\nDen Namen einer angeschlossenen Kamera finden Sie auf der Seite &quot;System&quot; unter &quot;Kamera/Smartphone&quot;.<br>\nWenn eine Anweisung für alle Kameras gelten soll, wird &quot;*&quot; (ohne weitere Zusätze) als Joker für alle Geräte nutzbar.<br>\nDer Pfad muss nicht vollständig angegeben werden. Es reicht aus, einen eindeutigen Teil davon zu verwenden. <br>\nBeispiele: <br>\n&quot;*:DCIM&quot; (alle Kameras: alle Ordner, die &quot;DCIM&quot; enthalten)<br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; (zusätzlich von der Kamera &quot;MyCamera&quot;: alle Ordner, die im Namen &quot;IMAGES&quot; enthalten)<br>\n&quot;&quot; (Feld bleibt leer: Alle Ordner aller Kameras sichern.)<br>\n<br>\nStatt einem Muster, können auch absolute Pfade angegeben werden. Diese müssen immer mit &quot;!/&quot; beginnen:\n&quot;MyCamera:!/store_00020002/DCIM&quot;<br>\nSobald ein absoluter Ordner für eine Kamera definiert ist, erfolgt für diese Kamera keine Suche nach Mustern mehr. Dies spart beispielsweise bei Smartphones sehr viel Zeit, da hier sehr viele Ordner zu durchsuchen wären.<br>\nWeitere Informationen im <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">Wiki</a>.",
-    "backup_header2": "Standardmäßiger sekundärer Sicherungsmodus (nur Netzwerk-Backups)",
-    "backup_label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:",
     "wifi_section": "WLAN-Einstellungen",
     "wifi_country_label": "Wählen Sie das Land aus, in dem diese Little Backup Box verwendet werden soll",
     "wifi_country_header": "WLAN-Land",
@@ -155,9 +144,25 @@
       "target": {
         "requirements_header": "Anforderungen an die Zielpartition",
         "requirements_label": "Wie groß muss die Zielpartition mindestens sein, um akzepiert zu werden?",
-        "requirements_size_ignore": "akzeptiere alle"
+        "requirements_size_ignore": "akzeptiere alle",
+        "basedir_cloud_header": "Basisordner auf Cloud-Servern (Ziel)",
+        "basedir_cloud_label": "Die Sicherung auf dem Cloud-Server wird unterhalb dieses Verzeichnisses durchgeführt."
       },
-      "none": "kein automatisches Backup"
+      "none": "kein automatisches Backup",
+      "header": "Standard-Backup-Modus",
+      "header2": "Standardmäßiger sekundärer Sicherungsmodus (nur Netzwerk-Backups)",
+      "label": "Wählen Sie den Standard-Backup-Modus:",
+      "label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:",
+      "power_off_header": "Ausschalten",
+      "power_off_label": "Ausschalten nach Backup",
+      "section": "Backup",
+      "camera": {
+        "folder_mask_header": "Zu sichernde Verzeichnisse auf Smartphones und Kameras",
+        "folder_mask_label": "Hier kann vorgegeben werden, welche Verzeichnisse von welchen Kameras oder Smartphones gesichert werden.<br>\nEinträge hier haben das Format: <br>\n&quot;KAMERA:PFAD&quot;<br>\nDen Namen einer angeschlossenen Kamera finden Sie auf der Seite &quot;System&quot; unter &quot;Kamera/Smartphone&quot;.<br>\nWenn eine Anweisung für alle Kameras gelten soll, wird &quot;*&quot; (ohne weitere Zusätze) als Joker für alle Geräte nutzbar.<br>\nDer Pfad muss nicht vollständig angegeben werden. Es reicht aus, einen eindeutigen Teil davon zu verwenden. <br>\nBeispiele: <br>\n&quot;*:DCIM&quot; (alle Kameras: alle Ordner, die &quot;DCIM&quot; enthalten)<br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; (zusätzlich von der Kamera &quot;MyCamera&quot;: alle Ordner, die im Namen &quot;IMAGES&quot; enthalten)<br>\n&quot;&quot; (Feld bleibt leer: Alle Ordner aller Kameras sichern.)<br>\n<br>\nStatt einem Muster, können auch absolute Pfade angegeben werden. Diese müssen immer mit &quot;!/&quot; beginnen:\n&quot;MyCamera:!/store_00020002/DCIM&quot;<br>\nSobald ein absoluter Ordner für eine Kamera definiert ist, erfolgt für diese Kamera keine Suche nach Mustern mehr. Dies spart beispielsweise bei Smartphones sehr viel Zeit, da hier sehr viele Ordner zu durchsuchen wären.<br>\nWeitere Informationen im <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">Wiki</a>.",
+        "model_folders_header": "Vom Kameramodell zu synchronisierende Ordner",
+        "specific_device_folders_header": "Von spezifischer Kamera zu synchronisierende Ordner",
+        "device_folder_pattern": "Zur Verwendung als Muster in den Einstellungen"
+      }
     },
     "imageviewer": {
       "section": "Bildbetrachter View",

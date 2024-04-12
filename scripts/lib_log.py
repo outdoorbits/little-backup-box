@@ -38,7 +38,7 @@ class log(object):
 		self.hide_passwords_list	= ['conf_PASSWORD', 'conf_MAIL_PASSWORD', 'conf_RSYNC_PASSWORD']
 
 	def message(self,Message,LogLevel=10):
-		if LogLevel >= self.LogLevel:
+		if LogLevel <= self.LogLevel:
 
 			#replace passwords out of logfile
 			for PWD_var in self.hide_passwords_list:

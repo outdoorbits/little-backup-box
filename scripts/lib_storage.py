@@ -338,6 +338,9 @@ class storage(object):
 
 		return(True)
 
+	def __get_CameraDeviceID(self, CameraModel, CameraSerial):
+		return(f"{CameraModel}_{CameraSerial}")
+
 	def __mount_camera(self,TimeOutActive=False):
 		self.__display.message([f":{self.__lan.l('box_backup_connect_camera_1')}", f":{self.__lan.l('box_backup_connect_camera_2')}"])
 
@@ -421,7 +424,7 @@ class storage(object):
 			for CameraFolderMask in CameraFolderMasks:
 				MaskCamera, MaskFolder	= CameraFolderMask.split(':',1)
 
-				if (MaskCamera == CameraModel) or (MaskCamera == '*'):
+				if (MaskCamera == CameraModel) or (MaskCamera == self.__get_CameraDeviceID(CameraModel, CameraSerial)) or (MaskCamera == '*'):
 					# static defined folders (quick)
 					if MaskFolder.startswith('!/'):
 
@@ -486,15 +489,20 @@ class storage(object):
 				self.SubPathsAtSource	= list(set(self.SubPathsAtSource) - set(SubPathsAtSourceDel))
 
 		# set global backup parameters
-		self.LbbDeviceID			= f"{CameraModel}_{CameraSerial}"
+		self.LbbDeviceID			= self.__get_CameraDeviceID(CameraModel, CameraSerial)
 		self.LbbSourceDescriptor	= f"{self.__lan.l('box_backup_mode_camera')}: {CameraModel}, {self.__lan.l('box_backup_serial')}: {CameraSerial}"
 		if len(self.SubPathsAtSource) == 0:
 			self.SubPathsAtSource=['/']
 		self.SubPathAtTarget		= f"{self.LbbDeviceID}"
+
 		# log self.SubPathsAtSource
-		self.__log.message(f"Folders to sync from camera '${CameraModel}':", 1)
+		self.__log.message(f"{self.__lan.l('config_backup_camera_model_folders_header')} '{CameraModel}':", 1)
 		for SourcePath in self.SubPathsAtSource:
-			self.__log.message(f"*** - {SourcePath} - For use as pattern in Settings ({self.__lan.l('config_backup_camera_folder_mask_header')}): '{CameraModel}:!{SourcePath}'", 1)
+			self.__log.message(f"*** - {SourcePath} - {self.__lan.l('config_backup_camera_device_folder_pattern')} ({self.__lan.l('config_backup_camera_folder_mask_header')}): '{CameraModel}:!{SourcePath}'", 1)
+
+		self.__log.message(f"{self.__lan.l('config_backup_camera_specific_device_folders_header')} '{self.LbbDeviceID}':", 1)
+		for SourcePath in self.SubPathsAtSource:
+			self.__log.message(f"*** - {SourcePath} - {self.__lan.l('config_backup_camera_device_folder_pattern')} ({self.__lan.l('config_backup_camera_folder_mask_header')}): '{self.LbbDeviceID}:!{SourcePath}'", 1)
 
 		return(True)
 

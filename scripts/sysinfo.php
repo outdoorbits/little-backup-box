@@ -183,7 +183,12 @@
 												echo "<ul>";
 													foreach ($STORAGES as $STORAGE) {
 
-														echo "<li>$STORAGE</li>";
+														echo "<li>$STORAGE<br>" . L::config_backup_camera_device_folder_pattern . ':';
+														echo "<ul>";
+															echo "<li>" . L::config_backup_camera_model_folders_header . ':<br><b>' . $MODEL . ':!' . $STORAGE . "</b></li>";
+															echo "<li>" . L::config_backup_camera_specific_device_folders_header . ':<br><b>' . $MODEL . '_' . $SERIAL . ':!' . $STORAGE . "</b></li>";
+														echo "</ul>";
+														echo "</li>";
 													}
 												echo "</ul>";
 											}
