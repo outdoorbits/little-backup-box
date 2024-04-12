@@ -159,7 +159,7 @@
       "camera": {
         "folder_mask_header": "Répertoires à sauvegarder sur les smartphones et les caméras",
         "folder_mask_label": "Des instructions pour le comportement de sauvegarde pour certains appareils photo ou smartphones peuvent être données ici.<br>\nLes entrées ici ont la forme : <br>\n&quot;CAMERA:CHEMIN&quot; <br>\nLe nom d'une caméra connectée se trouve sur la page &quot;Système&quot; sur &quot;Appareil photo/Smartphone&quot;.<br>\nSi une instruction doit s'appliquer à toutes les caméras, &quot;*&quot; (sans autres ajouts) peut être utilisé comme joker pour tous les appareils.<br>\nLe chemin n'a pas besoin d'être spécifié en entier. Il suffit d'en utiliser une partie importante. <br>\nExemples : <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Le champ reste vide, sauvegardez tous les dossiers de toutes les caméras.)<br>\nPlus d'informations sur le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
-        "model_folders_header": "Dossiers à synchroniser à partir du modèle d'appareil photo",
+        "model_folders_header": "Modèle de caméra à synchroniser avec Ordner",
         "specific_device_folders_header": "Carpetas para sincronizar desde una cámara específica",
         "device_folder_pattern": "À utiliser comme modèle dans les paramètres"
       }
