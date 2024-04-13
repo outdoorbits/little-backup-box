@@ -146,8 +146,11 @@ function write_config() {
 
 	extract ($_POST,EXTR_SKIP);
 
-	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
-	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
+	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)	= explode(" ",$BACKUP_MODE,2);
+	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)	= explode(" ",$BACKUP_MODE_2,2);
+
+	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace(array("\r", "\n"), ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
+	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace(';;', ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
 
 	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?"true":"false";
 	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?"true":"false";
@@ -601,7 +604,7 @@ function upload_settings() {
 
 				<h3><?php echo L::config_backup_camera_folder_mask_header; ?></h3>
 					<label for="conf_BACKUP_CAMERA_FOLDER_MASK"><?php echo L::config_backup_camera_folder_mask_label; ?></label><br>
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" size="6" value="<?php echo $config['conf_BACKUP_CAMERA_FOLDER_MASK']; ?>">
+					<textarea <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" rows="8" style="width: 100%;"><?php echo str_replace(';', "\n", $config['conf_BACKUP_CAMERA_FOLDER_MASK']); ?></textarea>
 
 				<h3><?php echo L::config_backup_power_off_header; ?></h3>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
