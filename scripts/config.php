@@ -149,8 +149,8 @@ function write_config() {
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)	= explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)	= explode(" ",$BACKUP_MODE_2,2);
 
-	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace(array("\r", "\n"), ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
-	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace(';;', ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
+	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\r\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
+	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
 
 	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?"true":"false";
 	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?"true":"false";
