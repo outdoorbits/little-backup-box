@@ -113,6 +113,64 @@
 	</div>
 
 	<div class="card">
+		<h3><?php echo L::sysinfo_device_states; ?></h3>
+			<?php
+			echo ('<pre><table style="width: 100%; padding-top: 0;">');
+			unset($Partitions);
+			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False --ignore-fs True", $Partitions);
+
+			foreach ($Partitions as $Partition) {
+
+				if (str_contains($Partition, ':')) {
+					list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
+				} else {
+					$Lum				= $Partition;
+					$DeviceIdentifier	= '';
+				}
+
+				echo ("<tr><th style='vertical-align:top;'>$Lum</th><td>");
+
+					$Values	= array(
+						'Temperature',
+						'Power On Hours',
+						'Unsafe Shutdowns',
+						'Media and Data Integrity Errors',
+						'Warning  Comp. Temperature Time',
+						'Critical Comp. Temperature Time'
+					);
+
+					unset($States);
+					exec("sudo smartctl -a $Lum", $States);
+
+
+					$StatusMessage	= '';
+					foreach($States as $State) {
+						foreach($Values as $Value) {
+							$Value	= "$Value:";
+							if (str_starts_with($State, $Value)) {
+								$StatusMessage	.= ("<tr><td style='padding-top: 0; padding-left: 20px;'>$Value</td><td style='padding-top: 0; padding-left: 20px;'>" . trim(str_replace($Value, '', $State)) . '</td></tr>');
+							}
+						}
+					}
+
+					if ($StatusMessage) {
+						echo ('<table style="width: 100%; border-spacing: 0;">');
+						echo ($StatusMessage);
+						echo ('</table>');
+					}
+					else {
+						echo ('-');
+					}
+
+				echo ("</td></td></tr>");
+
+
+			}
+			echo '</table></pre>';
+			?>
+	</div>
+
+	<div class="card">
 		<h3><?php echo L::sysinfo_cameras; ?></h3>
 			<?php
 				echo '<pre>';

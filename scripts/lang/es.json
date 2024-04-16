@@ -74,7 +74,8 @@
     "camera_serial": "Número de serie",
     "cameras": "Cámaras/teléfonos inteligentes",
     "system": "Sistema",
-    "model": "Modelo"
+    "model": "Modelo",
+    "device_states": "Estado del dispositivo"
   },
   "config": {
     "config": "Ajustes",

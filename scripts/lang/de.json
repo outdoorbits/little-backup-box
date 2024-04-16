@@ -64,7 +64,7 @@
     "temp": "Temperatur",
     "cpuload": "CPU-Last",
     "devices": "Geräte",
-    "diskspace": "Festplattenplatz",
+    "diskspace": "Speicherplatz",
     "conditions": "Bedingungen",
     "memory_ram": "RAM belegt",
     "memory_swap": "SWAP belegt",
@@ -74,7 +74,8 @@
     "camera_serial": "Seriennummer",
     "cameras": "Kameras/Smartphones",
     "system": "System",
-    "model": "Modell"
+    "model": "Modell",
+    "device_states": "Gerätestatus"
   },
   "config": {
     "config": "Einstellungen",

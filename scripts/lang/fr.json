@@ -74,7 +74,8 @@
     "camera_serial": "Numéro de série",
     "cameras": "Appareils photo/smartphones",
     "system": "Système",
-    "model": "Modèle"
+    "model": "Modèle",
+    "device_states": "Statut du périphérique"
   },
   "config": {
     "config": "Réglages",

@@ -271,7 +271,8 @@
     "camera_serial": "Serial number",
     "cameras": "Cameras/smartphones",
     "system": "System",
-    "model": "Model"
+    "model": "Model",
+    "device_states": "Device status"
   },
   "sysconditions": {
     "under_voltage_cur": "The voltage is currently too low.",
