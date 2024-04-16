@@ -115,11 +115,12 @@
 	<div class="card">
 		<h3><?php echo L::sysinfo_device_states; ?></h3>
 			<?php
-			echo ('<pre><table style="width: 100%; padding-top: 0;">');
+			echo ('<pre><table style="width: 100%;">');
 			unset($Partitions);
 			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False --ignore-fs True", $Partitions);
 
 			foreach ($Partitions as $Partition) {
+				$output	= false;
 
 				if (str_contains($Partition, ':')) {
 					list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
@@ -128,7 +129,7 @@
 					$DeviceIdentifier	= '';
 				}
 
-				echo ("<tr><th style='vertical-align:top;'>$Lum</th><td>");
+				echo ("<tr><th style='vertical-align:top;'>$Lum</th><td style='padding-left: 10px;'>");
 
 					$Values	= array(
 						'Temperature',
@@ -148,23 +149,17 @@
 						foreach($Values as $Value) {
 							$Value	= "$Value:";
 							if (str_starts_with($State, $Value)) {
-								$StatusMessage	.= ("<tr><td style='padding-top: 0; padding-left: 20px;'>$Value</td><td style='padding-top: 0; padding-left: 20px;'>" . trim(str_replace($Value, '', $State)) . '</td></tr>');
+								echo(str_pad($Value, 35, ' ') . trim(str_replace($Value, '', $State)) . '<br>');
+								$output	= true;
 							}
 						}
 					}
 
-					if ($StatusMessage) {
-						echo ('<table style="width: 100%; border-spacing: 0;">');
-						echo ($StatusMessage);
-						echo ('</table>');
-					}
-					else {
+					if (! $output) {
 						echo ('-');
 					}
 
-				echo ("</td></td></tr>");
-
-
+				echo ("</td></tr>");
 			}
 			echo '</table></pre>';
 			?>
