@@ -123,7 +123,7 @@
 				$output	= false;
 
 				if (str_contains($Partition, ':')) {
-					list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
+					list($Lum, $DeviceIdentifier)	= explode(': ', $Partition, 2);
 				} else {
 					$Lum				= $Partition;
 					$DeviceIdentifier	= '';
@@ -131,7 +131,7 @@
 
 				echo ("<tr><th style='vertical-align:top;'>$Lum</th><td style='padding-left: 10px;'>");
 
-					$Values	= array(
+					$KeyWords	= array(
 						'Temperature',
 						'Power On Hours',
 						'Unsafe Shutdowns',
@@ -146,10 +146,12 @@
 
 					$StatusMessage	= '';
 					foreach($States as $State) {
-						foreach($Values as $Value) {
-							$Value	= "$Value:";
-							if (str_starts_with($State, $Value)) {
-								echo(str_pad($Value, 35, ' ') . trim(str_replace($Value, '', $State)) . '<br>');
+						foreach($KeyWords as $KeyWord) {
+							if (str_starts_with($State, $KeyWord . ':')) {
+								list($Value, $measured)	= explode(':', $State, 2);
+								$Value		= str_pad(trim($Value) . ':', 35, ' ');
+								$measured	= trim($measured);
+								echo($Value . $measured . '<br>');
 								$output	= true;
 							}
 						}
