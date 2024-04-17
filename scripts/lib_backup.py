@@ -48,6 +48,8 @@ class progressmonitor(object):
 		self.DisplayLine1	= DisplayLine1
 		self.DisplayLine2	= DisplayLine2
 
+		self.FilesList_gphoto2		= []
+
 		# start screen
 		self.progress(CountProgress=0)
 
@@ -83,6 +85,9 @@ class progressmonitor(object):
 
 				if SyncOutputLine[0:6] == 'Saving':
 					self.CountJustCopied	+= 1
+					self.FilesList_gphoto2	+= [SyncOutputLine.replace('Saving file as ', '')]
+		else:
+			self.CountProgress	+= 1
 
 		if self.CountProgress > self.CountProgress_OLD:
 			self.CountProgress_OLD	= self.CountProgress

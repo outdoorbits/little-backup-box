@@ -154,7 +154,6 @@
       "header2": "Standardmäßiger sekundärer Sicherungsmodus (nur Netzwerk-Backups)",
       "label": "Wählen Sie den Standard-Backup-Modus:",
       "label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:",
-      "power_off_header": "Ausschalten",
       "power_off_label": "Ausschalten nach Backup",
       "section": "Backup",
       "camera": {
@@ -163,7 +162,9 @@
         "model_folders_header": "Von Kameramodell zu synchronisierende Ordner",
         "specific_device_folders_header": "Von spezifischer Kamera zu synchronisierende Ordner",
         "device_folder_pattern": "Zur Verwendung als Muster in den Einstellungen"
-      }
+      },
+      "general_settings_header": "Allgemeine Einstellungen",
+      "move_files_label": "Dateien verschieben statt sie zu kopieren?<br>Achtung: Von als Ziel-Speicher markierten Partitionen werden keine Dateien gelöscht."
     },
     "imageviewer": {
       "section": "Bildbetrachter View",
@@ -481,7 +482,11 @@
       "nvme_source": "USB-Quelle",
       "nvme_source_ok": "Quelle o.k.",
       "nvme_target": "USB-Ziel",
-      "nvme_target_ok": "Ziel o.k."
+      "nvme_target_ok": "Ziel o.k.",
+      "camera": {
+        "removing_files_1": "Lösche Dateien",
+        "removing_files_2": "von Kamera"
+      }
     },
     "cronip": {
       "offline": "offline",

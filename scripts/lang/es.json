@@ -154,7 +154,6 @@
       "header2": "Modo de respaldo secundario predeterminado (solo respaldos de red)",
       "label": "Seleccione el modo de copia de seguridad predeterminado:",
       "label2": "Seleccione un modo de copia de seguridad predeterminado secundario para ejecutar después del principal:",
-      "power_off_header": "Apagado",
       "power_off_label": "Apagar después de la copia de seguridad",
       "section": "Respaldo",
       "camera": {
@@ -163,7 +162,9 @@
         "model_folders_header": "Del modelo de cámara al orden sincronizado",
         "specific_device_folders_header": "Dossiers à synchroniser à partir d'une caméra spécifique",
         "device_folder_pattern": "Para usar como patrón en Configuración"
-      }
+      },
+      "general_settings_header": "Configuración general",
+      "move_files_label": "Déplacer des fichiers au lieu de les copier ?<br>Attention : aucun fichier ne sera supprimé des partitions marquées comme stockage cible."
     },
     "imageviewer": {
       "section": "Visor de imágenes View",
@@ -481,7 +482,11 @@
       "nvme_source": "Fuente USB",
       "nvme_source_ok": "Origen o.k.",
       "nvme_target": "Destino USB",
-      "nvme_target_ok": "Almacenamiento ext. o.k."
+      "nvme_target_ok": "Almacenamiento ext. o.k.",
+      "camera": {
+        "removing_files_1": "Borrar archivos",
+        "removing_files_2": "desde la cámara"
+      }
     },
     "cronip": {
       "offline": "desconectado",

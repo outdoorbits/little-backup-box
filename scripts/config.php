@@ -154,6 +154,7 @@ function write_config() {
 
 	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?"true":"false";
 	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?"true":"false";
+	$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?"true":"false";
 	$conf_POWER_OFF								= isset($conf_POWER_OFF)?"true":"false";
 	$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?"true":"false";
 	$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?"true":"false";
@@ -217,6 +218,7 @@ conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
 conf_BACKUP_TARGET_SIZE_MIN=$conf_BACKUP_TARGET_SIZE_MIN
 conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
 conf_BACKUP_TARGET_BASEDIR_CLOUD='$conf_BACKUP_TARGET_BASEDIR_CLOUD'
+conf_BACKUP_MOVE_FILES=$conf_BACKUP_MOVE_FILES
 conf_POWER_OFF=$conf_POWER_OFF
 conf_DISP=$conf_DISP
 conf_DISP_CONNECTION='$conf_DISP_CONNECTION'
@@ -606,9 +608,14 @@ function upload_settings() {
 					<label for="conf_BACKUP_CAMERA_FOLDER_MASK"><?php echo L::config_backup_camera_folder_mask_label; ?></label><br>
 					<textarea <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" rows="8" style="width: 100%;"><?php echo str_replace(';', "\n", $config['conf_BACKUP_CAMERA_FOLDER_MASK']); ?></textarea>
 
-				<h3><?php echo L::config_backup_power_off_header; ?></h3>
+				<h3><?php echo L::config_backup_general_settings_header; ?></h3>
+					<label for="conf_BACKUP_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
+					<input type="checkbox" id="conf_BACKUP_MOVE_FILES" name="conf_BACKUP_MOVE_FILES" <?php echo $config['conf_BACKUP_MOVE_FILES']=="1"?"checked":""; ?>><br>
+					<br>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
 					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
+
+
 			</details>
 		</div>
 

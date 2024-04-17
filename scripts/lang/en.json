@@ -123,7 +123,11 @@
       "nvme_source": "USB-source",
       "nvme_source_ok": "Source o.k.",
       "nvme_target": "USB-target",
-      "nvme_target_ok": "Target o.k."
+      "nvme_target_ok": "Target o.k.",
+      "camera": {
+        "removing_files_1": "Delete files",
+        "removing_files_2": "from camera"
+      }
     },
     "poweroff": {
       "poweroff": "Power off",
@@ -362,7 +366,6 @@
       "header2": "Default secondary backup mode (network backups only)",
       "label": "Select the default backup-mode:",
       "label2": "Select a secondary default backup-mode to run after the primary:",
-      "power_off_header": "Power off",
       "power_off_label": "Power down after backup",
       "section": "Backup",
       "camera": {
@@ -371,7 +374,9 @@
         "model_folders_header": "Folders to sync by camera model",
         "specific_device_folders_header": "Folders to sync from specific camera",
         "device_folder_pattern": "For use as pattern in Settings"
-      }
+      },
+      "general_settings_header": "General Settings",
+      "move_files_label": "Move files instead of copying them?<br>Attention: No files will be deleted from partitions marked as target storage."
     },
     "imageviewer": {
       "section": "Image viewer View",
