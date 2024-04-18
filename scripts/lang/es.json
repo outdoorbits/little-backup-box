@@ -408,7 +408,9 @@
         "backup_failed": "Copia de seguridad fallida",
         "summary": "Resumen",
         "no_backup": "Error: No se realizó ninguna copia de seguridad!",
-        "remount_device_failed": "¡El montaje falló!"
+        "remount_device_failed": "¡El montaje falló!",
+        "removed_source_blocked": "Los archivos transferidos <u>no</u> se eliminaron del origen porque el origen ya era el destino de la copia de seguridad.",
+        "removed_source": "Los archivos transferidos se han eliminado de la fuente. (si es posible)"
       },
       "try": "Intentar",
       "checking_old_files": "comparando",

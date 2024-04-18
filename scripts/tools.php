@@ -45,17 +45,18 @@
 
 	$MountableStorages	= array_merge($LocalServices,$CloudServices_marked);
 
-	function get_device_selector($name, $id='', $nullName='-', $nullValue='-', $storage_type='',$list_partitions=true, $ignore_fs=false, $OptionValue_is_DeviceIdentifier=false, $html_options='') {
+	function get_device_selector($name, $id='', $nullName='-', $nullValue='-', $storage_type='',$list_partitions=true, $skip_mounted=false, $ignore_fs=false, $OptionValue_is_DeviceIdentifier=false, $html_options='') {
 		global $WORKING_DIR;
 
+		$skip_mounted	= $skip_mounted ? 'True' : 'False';
 		$ignore_fs		= $ignore_fs ? 'True' : 'False';
 
 		$storage_type	= $storage_type == '' ? '' : "--StorageName ${storage_type}";
 
 		if ($list_partitions) {
-			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions ${storage_type} --ignore-fs ${ignore_fs}", $Partitions);
+			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions ${storage_type} --skipMounted ${skip_mounted} --ignore-fs ${ignore_fs}", $Partitions);
 		} else {
-			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_devices ${storage_type} --ignore-fs ${ignore_fs}", $Partitions);
+			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_devices ${storage_type} --skipMounted ${skip_mounted} --ignore-fs ${ignore_fs}", $Partitions);
 		}
 
 		$id	= empty($id) ? $name : $id;
@@ -136,10 +137,18 @@
 							}
 
 							if (($MountableStorage != 'usb' and $MountableStorage_old=='usb') or ($MountableStorage != 'nvme' and $MountableStorage_old=='nvme')) {
-								exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted True", $Partitions);
-
 								echo ("<label for='DeviceIdentifierPreset_${MountableStorage_old}'>".L::tools_mount_select_partition_label.': </label>');
-								echo (get_device_selector(name: 'DeviceIdentifierPreset_'.$MountableStorage_old, id: 'DeviceIdentifierPreset', nullName: L::main_backup_preset_partition_auto, nullValue: '',storage_type: $MountableStorage_old, list_partitions: true, OptionValue_is_DeviceIdentifier: true, html_options: 'class="usb"'));
+								echo (get_device_selector(
+									name: 'DeviceIdentifierPreset_'.$MountableStorage_old,
+									id: 'DeviceIdentifierPreset',
+									nullName: L::main_backup_preset_partition_auto,
+									nullValue: '', storage_type: $MountableStorage_old,
+									list_partitions: true,
+									skip_mounted: true,
+									ignore_fs: false,
+									OptionValue_is_DeviceIdentifier: true,
+									html_options: 'class="usb"')
+								);
 							}
 
 							$button = strpos($MountsList," $Storage ") !== false ? "<button class='$ButtonClass' name='umount' value='" . $Storage . "'>" . l::tools_umount_b . ": $LabelName " . $l_Roles[$Role] . "</button>" : "<button class='$ButtonClass' name='mount' value='" . $Storage . "'>" . l::tools_mount_b . ": $LabelName " . $l_Roles[$Role] . "</button>";

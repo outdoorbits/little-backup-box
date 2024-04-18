@@ -44,7 +44,7 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
+	def __init__(self, SourceName, TargetName, move_files=False, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
 
 		# SourceName:	one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
 		# TargetName:	one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
@@ -61,6 +61,8 @@ class backup(object):
 		self.SourceName										= SourceName
 		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
 		TargetStorageType, TargetCloudService				= lib_storage.extractCloudService(TargetName)
+
+		self.move_files										= move_files
 
 		self.DoSyncDatabase									= DoSyncDatabase
 		self.DoGenerateThumbnails							= DoGenerateThumbnails
@@ -93,6 +95,9 @@ class backup(object):
 		self.conf_BACKUP_MOVE_FILES						= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
 		self.conf_MAIL_NOTIFICATIONS					= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
 		self.__conf_LOG_SYNC							= self.__setup.get_val('conf_LOG_SYNC')
+
+		if self.move_files == 'setup':
+			self.move_files				= self.conf_BACKUP_MOVE_FILES
 
 		if self.SourceStorageType == 'database':
 			self.DoSyncDatabase			= True
@@ -206,7 +211,7 @@ class backup(object):
 		else:
 			RsyncOptions	+= ['--compress']
 
-		if self.conf_BACKUP_MOVE_FILES and not self.SourceDevice.wasTarget:
+		if self.move_files and not self.SourceDevice.wasTarget:
 			RsyncOptions	+= ['--remove-source-files']
 
 		return(RsyncOptions)
@@ -329,6 +334,8 @@ class backup(object):
 					TargetCloudService		= self.TargetDevice.CloudServiceName,
 					TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
 					TransferMode			= self.TransferMode,
+					move_files				= self.move_files,
+					SourceWasTarget			= self.SourceDevice.wasTarget,
 					SyncLog					= self.__conf_LOG_SYNC
 				)
 
@@ -560,7 +567,7 @@ class backup(object):
 						FilesList_gphoto2	= progress.FilesList_gphoto2
 						del progress
 
-						if SourceStorageName == 'camera' and self.conf_BACKUP_MOVE_FILES and FilesList_gphoto2:
+						if SourceStorageName == 'camera' and self.move_files and FilesList_gphoto2:
 							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList_gphoto2), self.__lan.l('box_backup_camera_removing_files_1'), self.__lan.l('box_backup_camera_removing_files_2'))
 
 							for FileRemove in FilesList_gphoto2:
@@ -569,11 +576,14 @@ class backup(object):
 								folder	= folder if folder[0] == '/' else f"/{folder}"
 
 								Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', folder, '--delete-file', os.path.basename(FileRemove)]
-								subprocess.run(Command)
+								try:
+									subprocess.run(Command)
+								except:
+									pass
+
 								progress.progress()
 
 							del progress
-
 
 				# umount source
 				if self.SourceDevice.mountable:
@@ -1053,11 +1063,19 @@ if __name__ == "__main__":
 	)
 
 	parser.add_argument(
+		'--move-files',
+		'-move',
+		required	= False,
+		default		= 'setup',
+		help		= 'Remove source files after backup from primary storage? [\'True\', \'False\']'
+	)
+
+	parser.add_argument(
 		'--sync-database',
 		'-sd',
 		required	= False,
 		default		= False,
-		help		= 'Should the View database be synchronized after backup? [\'True\', \'False\']'
+		help		= 'Should the View database be synchronized after backup? [\'True\', \'False\'] If not set, use config value.'
 	)
 
 	parser.add_argument(
@@ -1065,7 +1083,7 @@ if __name__ == "__main__":
 		'-gt',
 		required	= False,
 		default		= 'setup',
-		help		= 'Create thumbnails for View after backup (Local storages only) [\'True\', \'False\']. If not set, use config value.'
+		help		= 'Create thumbnails for View after backup (Local storages only)? [\'True\', \'False\'] If not set, use config value.'
 	)
 
 	parser.add_argument(
@@ -1129,6 +1147,7 @@ if __name__ == "__main__":
 	args	= vars(parser.parse_args())
 
 	# clean boolean args
+	args['move_files']			= args['move_files'].lower() == 'true'	if args['move_files'] != 'setup'	else 'setup'
 	args['sync_database']		= args['sync_database'].lower() == 'true'
 	args['generate_thumbnails']	= args['generate_thumbnails'].lower() == 'true'	if args['generate_thumbnails'] != 'setup'	else 'setup'
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
@@ -1143,6 +1162,7 @@ if __name__ == "__main__":
 	backupObj	= backup(
 		SourceName=args['SourceName'],
 		TargetName=args['TargetName'],
+		move_files=args['move_files'],
 		DoSyncDatabase=args['sync_database'],
 		DoGenerateThumbnails=args['generate_thumbnails'],
 		DoUpdateEXIF=args['update_exif'],
@@ -1168,6 +1188,7 @@ if __name__ == "__main__":
 		backup(
 			SourceName=args['SecSourceName'],
 			TargetName=args['SecTargetName'],
+			move_files=args['move_files'],
 			DoSyncDatabase=False,
 			DoGenerateThumbnails=False,
 			DoUpdateEXIF=False,

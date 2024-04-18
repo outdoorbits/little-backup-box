@@ -280,7 +280,6 @@ CONFIGDATA;
 
 	fwrite($config_file_handle, $config_file_content);
 	fclose($config_file_handle);
-	exec ("dos2unix './" . $CONFIGFILE . "'");
 
 	# remove vpn config file
 	foreach($vpn_types as $vpn_type) {

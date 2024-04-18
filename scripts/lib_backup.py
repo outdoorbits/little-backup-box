@@ -145,13 +145,13 @@ class progressmonitor(object):
 				FrameTime	= self.__conf_DISP_FRAME_TIME * 1.5
 
 			# Display
-			self.__display.message([f"set:clear,time={FrameTime}",f"s=hc:{self.DisplayLine1}",f"s=hc:{self.DisplayLine2}",f"s=hc:{DisplayLine3}",f"s=hc:{DisplayLine4}",f"s=hc:{DisplayLine5}"] + DisplayLinesExtra)
+			self.__display.message([f"set:clear,time={FrameTime}", f"s=hc:{self.DisplayLine1}", f"s=hc:{self.DisplayLine2}", f"s=hc:{DisplayLine3}", f"s=hc:{DisplayLine4}", f"s=hc:{DisplayLine5}"] + DisplayLinesExtra)
 
 			self.LastMessageTime=lib_system.get_uptime_sec()
 
 class reporter(object):
 	# collects information during the backup process and provides ready to use summarys
-	def __init__(self,lan,SourceStorageType,SourceCloudService,SourceDeviceLbbDeviceID,TargetStorageType,TargetCloudService,TargetDeviceLbbDeviceID,TransferMode,SyncLog=True):
+	def __init__(self, lan, SourceStorageType, SourceCloudService, SourceDeviceLbbDeviceID, TargetStorageType, TargetCloudService, TargetDeviceLbbDeviceID, TransferMode, move_files, SourceWasTarget, SyncLog=True):
 
 		self.__lan						= lan
 
@@ -164,6 +164,9 @@ class reporter(object):
 		self.__TargetDeviceLbbDeviceID	= TargetDeviceLbbDeviceID
 
 		self.__TransferMode				= TransferMode
+
+		self.__move_files				= move_files
+		self.__SourceWasTarget			= SourceWasTarget
 
 		self.__SyncLog				= SyncLog
 
@@ -252,7 +255,13 @@ class reporter(object):
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 
 		self.mail_content_HTML	+= f"\n  <b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
-		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} <b>'{self.__SourceCloudService}{' ' if self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}'</b> {self.__lan.l('box_backup_mail_to')} {self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} <b>'{self.__TargetCloudService}{' ' if self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}'</b></br>{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
+		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} '{self.__SourceCloudService}{' ' if self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}'</b> {self.__lan.l('box_backup_mail_to')} <b>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} '{self.__TargetCloudService}{' ' if self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}'</b></br>{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
+
+		if self.__move_files:
+			if self.__SourceWasTarget:
+				self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_removed_source_blocked')}</b></p></br>\n"
+			else:
+				self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_removed_source')}</b></p></br>\n"
 
 		separator	= False
 

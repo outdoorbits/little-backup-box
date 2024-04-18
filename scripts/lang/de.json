@@ -411,7 +411,9 @@
         "backup_failed": "Backup fehlgeschlagen",
         "summary": "Zusammenfassung",
         "no_backup": "Fehler: Kein Backup durchgeführt!",
-        "remount_device_failed": "Remount fehlgeschlagen!"
+        "remount_device_failed": "Remount fehlgeschlagen!",
+        "removed_source_blocked": "Übertragene Dateien wurden <u>nicht</u> von der Quelle gelöscht, weil die Quelle zuvor auch schon Backup-Ziel war.",
+        "removed_source": "Übertragene Dateien wurden von der Quelle gelöscht. (falls möglich)"
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",

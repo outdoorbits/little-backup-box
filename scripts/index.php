@@ -28,6 +28,7 @@
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	if (isset($_POST['form_sent'])) {
+		$move_files				= isset($_POST['move_files'])?"True":"False";
 		$generate_thumbnails	= isset($_POST['generate_thumbnails'])?"True":"False";
 		$update_exif			= isset($_POST['update_exif'])?"True":"False";
 		$power_off_force		= isset($_POST['power_off'])?"True":"False";
@@ -35,6 +36,7 @@
 		$preset_source			= isset($_POST['preset_source'])?$_POST['preset_source']:"";
 		$preset_target			= isset($_POST['preset_target'])?$_POST['preset_target']:"";
 	} else {
+		$move_files				= $config['conf_BACKUP_MOVE_FILES']?"True":"False";
 		$generate_thumbnails	= $config['conf_BACKUP_GENERATE_THUMBNAILS']?"True":"False";
 		$update_exif			= $config['conf_BACKUP_UPDATE_EXIF']?"True":"False";
 		$power_off_force		= $config['conf_POWER_OFF']?"True":"False";
@@ -218,6 +220,15 @@
 					<h4><?php echo L::main_backup_primary; ?></h4>
 					<table style='border: 0;'>
 						<tr>
+							<td style='padding-right: 10pt; vertical-align: top;'>
+								<input type="checkbox" id="move_files" name="move_files" <?php echo $move_files=="True"?"checked":""; ?>>
+							</td>
+							<td>
+								<label for="move_files"><?php echo L::config_backup_move_files_label; ?></label>
+							</td>
+						</tr>
+
+						<tr>
 							<td style='padding-right: 10pt;'>
 								<input type="checkbox" id="generate_thumbnails" name="generate_thumbnails" <?php echo $generate_thumbnails=="True"?"checked":""; ?>>
 							</td>
@@ -378,8 +389,7 @@
 			}
 
 			shell_exec("sudo $WORKING_DIR/stop_backup.sh");
-			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
-
+			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --move-files '$move_files' --sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 
