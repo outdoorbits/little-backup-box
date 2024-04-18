@@ -217,7 +217,7 @@ conf_BACKUP_DEFAULT_SOURCE2='$conf_BACKUP_DEFAULT_SOURCE2'
 conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
 conf_BACKUP_TARGET_SIZE_MIN=$conf_BACKUP_TARGET_SIZE_MIN
 conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
-conf_BACKUP_TARGET_BASEDIR_CLOUD='$conf_BACKUP_TARGET_BASEDIR_CLOUD'
+conf_BACKUP_TARGET_BASEDIR_CLOUDS='$conf_BACKUP_TARGET_BASEDIR_CLOUDS'
 conf_BACKUP_MOVE_FILES=$conf_BACKUP_MOVE_FILES
 conf_POWER_OFF=$conf_POWER_OFF
 conf_DISP=$conf_DISP
@@ -938,8 +938,20 @@ function upload_settings() {
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_cloud_section; ?></summary>
 
 				<h3><?php echo L::config_backup_target_basedir_cloud_header; ?></h3>
-					<label for="conf_BACKUP_TARGET_BASEDIR_CLOUD"><?php echo L::config_backup_target_basedir_cloud_label; ?></label><br>
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_TARGET_BASEDIR_CLOUD" name="conf_BACKUP_TARGET_BASEDIR_CLOUD" size="6" value="<?php echo $config['conf_BACKUP_TARGET_BASEDIR_CLOUD']; ?>">
+					<?php
+						echo L::config_backup_target_basedir_cloud_label;
+
+					$CloudBaseDirsRAW	= explode(':|:', $config['conf_BACKUP_TARGET_BASEDIR_CLOUDS']);
+					$CloudBaseDirs	= array();
+					foreach($CloudBaseDirsRAW as $BaseDir) {
+						list($CloudService, $CloudBaseDir) = explode(':=:', $Basedir);
+						$CloudBaseDirs[$CloudService]	= $CloudBaseDir;
+					}
+
+					foreach($CloudServices as $CloudService) { ?>
+							<label for="conf_BACKUP_TARGET_BASEDIR_CLOUDS"><?php echo $CloudService; ?>:</label><br>
+							<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_TARGET_BASEDIR_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_TARGET_BASEDIR_CLOUDS_<?php echo ($CloudService);?>" size="6" value="<?php echo $CloudBaseDirs[$CloudService]; ?>">
+					<?php } ?>
 
 				<h3><?php echo L::config_cloud_header; ?></h3>
 					<p>
