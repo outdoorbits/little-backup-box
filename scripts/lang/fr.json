@@ -154,7 +154,6 @@
       "header2": "Mode de sauvegarde secondaire par défaut (sauvegardes réseau uniquement)",
       "label": "Sélectionnez le mode de sauvegarde par défaut :",
       "label2": "Sélectionnez un mode de sauvegarde secondaire par défaut à exécuter après le principal :",
-      "power_off_header": "Éteindre",
       "power_off_label": "Mise hors tension après sauvegarde",
       "section": "Sauvegarde",
       "camera": {
@@ -163,7 +162,9 @@
         "model_folders_header": "Modèle de caméra à synchroniser avec Ordner",
         "specific_device_folders_header": "Carpetas para sincronizar desde una cámara específica",
         "device_folder_pattern": "À utiliser comme modèle dans les paramètres"
-      }
+      },
+      "general_settings_header": "Réglages généraux",
+      "move_files_label": "Déplacer des fichiers au lieu de les copier ?<br>Attention : aucun fichier ne sera supprimé des partitions marquées comme stockage cible."
     },
     "imageviewer": {
       "section": "Visionneuse d'images View",
@@ -407,7 +408,9 @@
         "backup_failed": "La sauvegarde a échoué",
         "summary": "Résumé",
         "no_backup": "Erreur: Aucune sauvegarde effectuée!",
-        "remount_device_failed": "Le remontage a échoué !"
+        "remount_device_failed": "Le remontage a échoué !",
+        "removed_source_blocked": "Les fichiers transférés n'ont <u>pas</u> supprimés de la source car la source était déjà la destination de la sauvegarde.",
+        "removed_source": "Les fichiers transférés ont été supprimés de la source. (si possible)"
       },
       "try": "essayer",
       "checking_old_files": "comparant",
@@ -481,7 +484,11 @@
       "nvme_source": "Source USB",
       "nvme_source_ok": "Source ok",
       "nvme_target": "Cible USB",
-      "nvme_target_ok": "Poste stockage ok"
+      "nvme_target_ok": "Poste stockage ok",
+      "camera": {
+        "removing_files_1": "Supprimer les fichiers",
+        "removing_files_2": "depuis la caméra"
+      }
     },
     "cronip": {
       "offline": "hors ligne",

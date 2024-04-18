@@ -65,6 +65,8 @@ class storage(object):
 		self.DeviceIdentifierPresetThis				= DeviceIdentifierPresetThis
 		self.DeviceIdentifierPresetOther			= DeviceIdentifierPresetOther
 
+		self.wasTarget								= False
+
 		self.__WORKING_DIR = os.path.dirname(__file__)
 
 		self.__setup	= lib_setup.setup()
@@ -133,6 +135,11 @@ class storage(object):
 
 		if mounted and (self.StorageType in ['usb', 'internal', 'nvme', 'cloud']):
 			self.__manage_lbb_device_ID()
+
+		if mounted and self.Role == role_Target:
+			self.__write_target_flag()
+		else:
+			self.__read_target_flag()
 
 		return(mounted)
 
@@ -605,6 +612,23 @@ class storage(object):
 				self.SubPathAtTarget		= f"internal/{self.LbbDeviceID}"
 			else:
 				self.SubPathAtTarget		= f"{self.LbbDeviceID}"
+
+	def __write_target_flag(self):
+		self.wasTarget	= True
+
+		if self.StorageType == 'cloud_rsync':
+			return()
+
+		FlagFile	= f"{self.MountPoint}/target.lbbflag"
+		if not os.path.isfile(FlagFile):
+			try:
+				open(FlagFile,'w').close()
+			except:
+				pass
+
+	def __read_target_flag(self):
+		FlagFile	= f"{self.MountPoint}/target.lbbflag"
+		self.wasTarget	= os.path.isfile(FlagFile)
 
 	def mounted(self,MountPoint=''):
 		# returns DeviceIdentifier, if device is mounted

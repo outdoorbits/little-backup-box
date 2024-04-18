@@ -44,7 +44,7 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
+	def __init__(self, SourceName, TargetName, move_files=False, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
 
 		# SourceName:	one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
 		# TargetName:	one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
@@ -61,6 +61,8 @@ class backup(object):
 		self.SourceName										= SourceName
 		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
 		TargetStorageType, TargetCloudService				= lib_storage.extractCloudService(TargetName)
+
+		self.move_files										= move_files
 
 		self.DoSyncDatabase									= DoSyncDatabase
 		self.DoGenerateThumbnails							= DoGenerateThumbnails
@@ -90,8 +92,12 @@ class backup(object):
 		self.const_IMAGE_DATABASE_FILENAME				= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')
 		self.const_BACKUP_MAX_TRIES						= self.__setup.get_val('const_BACKUP_MAX_TRIES')
 
+		self.conf_BACKUP_MOVE_FILES						= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
 		self.conf_MAIL_NOTIFICATIONS					= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
-		self.__conf_LOG_SYNC								= self.__setup.get_val('conf_LOG_SYNC')
+		self.__conf_LOG_SYNC							= self.__setup.get_val('conf_LOG_SYNC')
+
+		if self.move_files == 'setup':
+			self.move_files				= self.conf_BACKUP_MOVE_FILES
 
 		if self.SourceStorageType == 'database':
 			self.DoSyncDatabase			= True
@@ -197,13 +203,16 @@ class backup(object):
 		self.finish()
 
 	def getRsyncOptions(self):
-		RsyncOptions		= ["-avh", "--info=FLIST0,PROGRESS2", "--stats", "--no-owner", "--no-group", "--no-perms", "--mkpath", "--min-size=1", "--exclude", "*.id", "--exclude", self.const_IMAGE_DATABASE_FILENAME]
+		RsyncOptions		= ['-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--exclude', '*.id', '--exclude', '*.lbbid', '--exclude', '*.lbbflag', '--exclude', self.const_IMAGE_DATABASE_FILENAME]
 
 		# use compression for cloud syncs only
 		if self.TargetDevice.isLocal and self.SourceDevice.isLocal:
-			RsyncOptions	+= ["--no-compress", "--whole-file"]
+			RsyncOptions	+= ['--no-compress', '--whole-file']
 		else:
-			RsyncOptions	+= ["--compress"]
+			RsyncOptions	+= ['--compress']
+
+		if self.move_files and not self.SourceDevice.wasTarget:
+			RsyncOptions	+= ['--remove-source-files']
 
 		return(RsyncOptions)
 
@@ -213,7 +222,7 @@ class backup(object):
 			excludeTIMS	= []
 			self.TIMSCopyPossible	= True
 		else:
-			excludeTIMS	= ["--exclude", "*tims/"]
+			excludeTIMS	= ['--exclude', "*tims/"]
 
 		return(excludeTIMS)
 
@@ -258,6 +267,7 @@ class backup(object):
 					todoSources	= []
 					if self.SourceName in ['anyusb', 'camera']:
 						availableSources_camera	= lib_storage.get_available_cameras()
+
 						# remove disconnected cameras from completedSources_camera
 						completedSources_camera	= list(set(completedSources_camera) & set(availableSources_camera))
 						todoSources				= list(set(availableSources_camera) - set(completedSources_camera))
@@ -324,6 +334,8 @@ class backup(object):
 					TargetCloudService		= self.TargetDevice.CloudServiceName,
 					TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
 					TransferMode			= self.TransferMode,
+					move_files				= self.move_files,
+					SourceWasTarget			= self.SourceDevice.wasTarget,
 					SyncLog					= self.__conf_LOG_SYNC
 				)
 
@@ -552,7 +564,26 @@ class backup(object):
 
 						ErrorsOld	= self.__reporter.get_errors()
 
+						FilesList_gphoto2	= progress.FilesList_gphoto2
 						del progress
+
+						if SourceStorageName == 'camera' and self.move_files and FilesList_gphoto2:
+							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList_gphoto2), self.__lan.l('box_backup_camera_removing_files_1'), self.__lan.l('box_backup_camera_removing_files_2'))
+
+							for FileRemove in FilesList_gphoto2:
+								folder	= os.path.dirname(FileRemove)
+								folder	= folder if folder else '/'
+								folder	= folder if folder[0] == '/' else f"/{folder}"
+
+								Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', folder, '--delete-file', os.path.basename(FileRemove)]
+								try:
+									subprocess.run(Command)
+								except:
+									pass
+
+								progress.progress()
+
+							del progress
 
 				# umount source
 				if self.SourceDevice.mountable:
@@ -613,11 +644,9 @@ class backup(object):
 				DisplayLine1	= self.__lan.l('box_backup_cleaning_database')						# header1
 				DisplayLine2	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}")	# header2
 
-				progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
+				progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
 
-				CountProgress	= 0
 				for KnownFile in KnownFilesList:
-					CountProgress	+= 1
 
 					ID			= KnownFile[0]
 					FileName	= f"{self.TargetDevice.MountPoint}/{KnownFile[1].strip('/')}"
@@ -626,7 +655,7 @@ class backup(object):
 						db.dbExecute(f"DELETE from EXIF_DATA WHERE ID={ID};")
 						self.__log.message(f"DELETE from EXIF_DATA WHERE ID={ID};", 3)
 
-					progress.progress(CountProgress=CountProgress)
+					progress.progress()
 
 				del progress
 
@@ -652,9 +681,7 @@ class backup(object):
 
 				progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
 
-				CountProgress	= 0
 				for TimsFileName in TIMSList:
-					CountProgress	+= 1
 					OrigFileName	= TimsFileName.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0]	# remove mountpoint and remove second extension from tims
 					OrigFileName	= '/'.join(OrigFileName.rsplit('/tims/', 1)) 								# remove /tims from folder
 					ImageFilePath	= os.path.dirname(OrigFileName)
@@ -662,7 +689,7 @@ class backup(object):
 					if not db.dbSelect(f"select ID from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'"):
 						db.dbInsertImage(OrigFileName)
 
-					progress.progress(CountProgress=CountProgress)
+					progress.progress()
 
 				del progress
 				self.__display.message([f":{self.__lan.l('box_finished')}"])
@@ -747,10 +774,7 @@ class backup(object):
 
 				progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
 
-				CountProgress	= 0
 				for SourceFilePathName in MissingTIMSList:
-					CountProgress	+= 1
-
 					#extract Extension from filename
 					try:
 						SourceFilePathNameExt	= SourceFilePathName.rsplit('.',1)[1].lower()
@@ -867,7 +891,7 @@ class backup(object):
 
 					db.dbInsertImage(SourceFilePathName)
 
-					progress.progress(CountProgress=CountProgress)
+					progress.progress()
 
 				del progress
 				self.__display.message([f":{self.__lan.l('box_finished')}"])
@@ -893,10 +917,7 @@ class backup(object):
 
 				progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
 
-				CountProgress	= 0
 				for FileTuple in FilesTupleList:
-					CountProgress	+= 1
-
 					#replace substitute of space by space
 					MediaID			= FileTuple[0]
 					MediaPathFile	= f"{self.TargetDevice.MountPoint}/{FileTuple[1]}"
@@ -905,7 +926,7 @@ class backup(object):
 					subprocess.run(['exiftool', '-overwrite_original', f'-Rating={MediaLbbRating}',MediaPathFile])
 					db.dbExecute(f"update EXIF_DATA set Rating={MediaLbbRating} where ID={MediaID};")
 
-					progress.progress(CountProgress=CountProgress)
+					progress.progress()
 
 				del progress
 				self.__display.message([f":{self.__lan.l('box_finished')}"])
@@ -1042,11 +1063,19 @@ if __name__ == "__main__":
 	)
 
 	parser.add_argument(
+		'--move-files',
+		'-move',
+		required	= False,
+		default		= 'setup',
+		help		= 'Remove source files after backup from primary storage? [\'True\', \'False\']'
+	)
+
+	parser.add_argument(
 		'--sync-database',
 		'-sd',
 		required	= False,
 		default		= False,
-		help		= 'Should the View database be synchronized after backup? [\'True\', \'False\']'
+		help		= 'Should the View database be synchronized after backup? [\'True\', \'False\'] If not set, use config value.'
 	)
 
 	parser.add_argument(
@@ -1054,7 +1083,7 @@ if __name__ == "__main__":
 		'-gt',
 		required	= False,
 		default		= 'setup',
-		help		= 'Create thumbnails for View after backup (Local storages only) [\'True\', \'False\']. If not set, use config value.'
+		help		= 'Create thumbnails for View after backup (Local storages only)? [\'True\', \'False\'] If not set, use config value.'
 	)
 
 	parser.add_argument(
@@ -1118,6 +1147,7 @@ if __name__ == "__main__":
 	args	= vars(parser.parse_args())
 
 	# clean boolean args
+	args['move_files']			= args['move_files'].lower() == 'true'	if args['move_files'] != 'setup'	else 'setup'
 	args['sync_database']		= args['sync_database'].lower() == 'true'
 	args['generate_thumbnails']	= args['generate_thumbnails'].lower() == 'true'	if args['generate_thumbnails'] != 'setup'	else 'setup'
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
@@ -1132,6 +1162,7 @@ if __name__ == "__main__":
 	backupObj	= backup(
 		SourceName=args['SourceName'],
 		TargetName=args['TargetName'],
+		move_files=args['move_files'],
 		DoSyncDatabase=args['sync_database'],
 		DoGenerateThumbnails=args['generate_thumbnails'],
 		DoUpdateEXIF=args['update_exif'],
@@ -1157,6 +1188,7 @@ if __name__ == "__main__":
 		backup(
 			SourceName=args['SecSourceName'],
 			TargetName=args['SecTargetName'],
+			move_files=args['move_files'],
 			DoSyncDatabase=False,
 			DoGenerateThumbnails=False,
 			DoUpdateEXIF=False,
