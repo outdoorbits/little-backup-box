@@ -143,14 +143,25 @@ function write_config() {
 	global $WIFI_COUNTRY;
 	global $constants;
 	global $vpn_types;
+	global $CloudServices;
 
-	extract ($_POST,EXTR_SKIP);
+	extract ($_POST, EXTR_SKIP);
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)	= explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)	= explode(" ",$BACKUP_MODE_2,2);
 
 	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\r\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
 	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
+
+	$conf_BACKUP_TARGET_BASEDIR_CLOUDS	= '';
+	foreach($CloudServices as $CloudService) {
+		if (isset(${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService})) {
+			$conf_BACKUP_TARGET_BASEDIR_CLOUDS	= $conf_BACKUP_TARGET_BASEDIR_CLOUDS ? $conf_BACKUP_TARGET_BASEDIR_CLOUDS . '|;|' : $conf_BACKUP_TARGET_BASEDIR_CLOUDS;
+			${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService}	= trim(${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService});
+			${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService}	= trim(${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService}, '/\\');
+			$conf_BACKUP_TARGET_BASEDIR_CLOUDS	.= $CloudService.'|=|'.${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService};
+		}
+	}
 
 	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?"true":"false";
 	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?"true":"false";
@@ -941,10 +952,10 @@ function upload_settings() {
 					<?php
 						echo L::config_backup_target_basedir_cloud_label;
 
-					$CloudBaseDirsRAW	= explode(':|:', $config['conf_BACKUP_TARGET_BASEDIR_CLOUDS']);
+					$CloudBaseDirsRAW	= explode('|;|', $config['conf_BACKUP_TARGET_BASEDIR_CLOUDS']);
 					$CloudBaseDirs	= array();
 					foreach($CloudBaseDirsRAW as $BaseDir) {
-						list($CloudService, $CloudBaseDir) = explode(':=:', $Basedir);
+						list($CloudService, $CloudBaseDir) = explode('|=|', $BaseDir);
 						$CloudBaseDirs[$CloudService]	= $CloudBaseDir;
 					}
 
