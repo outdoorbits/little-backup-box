@@ -51,7 +51,7 @@ class progressmonitor(object):
 		self.FilesList_gphoto2		= []
 
 		# start screen
-		self.progress(CountProgress=0)
+		self.progress(TransferMode='init', CountProgress=0)
 
 
 	def progress(self,TransferMode=None,SyncOutputLine='',CountProgress=None):
@@ -86,7 +86,7 @@ class progressmonitor(object):
 				if SyncOutputLine[0:6] == 'Saving':
 					self.CountJustCopied	+= 1
 					self.FilesList_gphoto2	+= [SyncOutputLine.replace('Saving file as ', '')]
-		else:
+		elif TransferMode is None:
 			self.CountProgress	+= 1
 
 		if self.CountProgress > self.CountProgress_OLD:
