@@ -575,13 +575,15 @@ class backup(object):
 								folder	= folder if folder else '/'
 								folder	= folder if folder[0] == '/' else f"/{folder}"
 
+								if not os.path.isfile(f"{self.TargetDevice.MountPoint}/{self.SourceDevice.SubPathAtTarget}{folder}/{os.path.basename(FileRemove)}"):
+									continue
+
 								Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', folder, '--delete-file', os.path.basename(FileRemove)]
 								try:
 									subprocess.run(Command)
+									progress.progress()
 								except:
 									pass
-
-								progress.progress()
 
 							del progress
 
