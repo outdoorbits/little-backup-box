@@ -245,7 +245,6 @@
 		$DeviceIdentifierPresetThis	= isset($_POST['DeviceIdentifierPreset_'.$Storage])?$_POST['DeviceIdentifierPreset_'.$Storage]:'';
 
 		$command = "sudo python3 ${WORKING_DIR}/lib_storage.py --Action mount --StorageName $Storage --Role $Role --DeviceIdentifierPresetThis \\'$DeviceIdentifierPresetThis\\'";
-		print($command);
 		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' \"${command}\" '1'");
 
 		echo "<script>";
