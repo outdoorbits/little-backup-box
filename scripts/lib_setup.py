@@ -190,7 +190,7 @@ class setup(object):
 					'conf_BACKUP_DEFAULT_SOURCE2':					{'value': 'none', 'type' : 'str'},
 					'conf_BACKUP_DEFAULT_TARGET2':					{'value': 'none', 'type' : 'str'},
 					'conf_BACKUP_CAMERA_FOLDER_MASK':				{'value': '*:DCIM', 'type' : 'str'},
-					'conf_BACKUP_TARGET_BASEDIR_CLOUD':				{'value': 'little-backup-box', 'type' : 'str'},
+					'conf_BACKUP_TARGET_BASEDIR_CLOUDS':			{'value': '', 'type' : 'str'},
 					'conf_BACKUP_GENERATE_THUMBNAILS':				{'value': True, 'type' : 'bool'},
 					'conf_BACKUP_UPDATE_EXIF':						{'value': False, 'type' : 'bool'},
 					'conf_BACKUP_TARGET_SIZE_MIN':					{'value': 0, 'type' : 'int'},

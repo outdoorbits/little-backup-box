@@ -89,6 +89,8 @@ class storage(object):
 		self.__conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.__conf_BACKUP_TARGET_SIZE_MIN				= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
 
+		self.__conf_BACKUP_TARGET_BASEDIR_CLOUDS		= self.__setup.get_val('conf_BACKUP_TARGET_BASEDIR_CLOUDS')
+
 		self.__RCLONE_CONFIG_FILE						= f"{self.__setup.get_val('const_MEDIA_DIR')}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 
 		self.__mount_user		= "www-data"
@@ -295,9 +297,16 @@ class storage(object):
 			self.createPath()
 
 			if self.CloudServiceName and self.MountPoint:
-				Command	= f'rclone mount {self.CloudServiceName}: {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --config {self.__RCLONE_CONFIG_FILE}'
-				Command	= f"sh -c '{Command} &'"
 
+				CloudBaseDir	= ''
+				CloudBaseDirConfigs	= self.__conf_BACKUP_TARGET_BASEDIR_CLOUDS.split('|;|')
+				for CloudBaseDirConfig in CloudBaseDirConfigs:
+					CloudServiceCandidate, CloudBaseDirCandidate	= CloudBaseDirConfig.split('|=|')
+					if CloudServiceCandidate == self.CloudServiceName:
+						CloudBaseDir	= CloudBaseDirCandidate
+
+				Command	= f'rclone mount {self.CloudServiceName}:{CloudBaseDir} {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --config {self.__RCLONE_CONFIG_FILE}'
+				Command	= f"sh -c '{Command} &'"
 				subprocess.run(Command,shell=True)
 
 				EndTime	= time.time()+self.__setup.get_val('const_MOUNT_CLOUD_TIMEOUT')
