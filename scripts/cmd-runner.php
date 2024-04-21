@@ -107,14 +107,13 @@
 					}
 				}
 				else {
-					$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE '/dev/".clean_argument($PARAM1)."'";
+					$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE -p '/dev/".clean_argument($PARAM1)."'";
 				}
 
 				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_fsck_start1 . "' ':" . L::box_cmd_fsck_start2 . "' ':" . clean_argument($PARAM2,array(' ')) . "'";
-				$COMMAND_LINE	.= ";echo '$COMMAND_LINE'";
-				$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 				$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 				$COMMAND_LINE	.= ";echo ''";
+				$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 				$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 				$COMMAND_LINE	.= ";echo ''";
 				$COMMAND_LINE	.= ";echo 'FINISHED.'";
@@ -350,16 +349,23 @@
 		$process = proc_open($COMMAND_LINE, $descriptorspec, $pipes);
 		if (is_resource($process)) {
 			fclose($pipes[0]);
-			stream_set_blocking($pipes[2], 0);
-			$stream = $pipes[1];
+			stream_set_blocking($pipes[1], true);
+			stream_set_blocking($pipes[2], false);
 
 			echo 'WORKING...<br>';
 
 			$RESULT = '';
-			while ($s = fgets($stream, ini_get('output_buffering'))) {
+			while ($s = fgets($pipes[1], ini_get('output_buffering'))) {
 				echo $s."<br>";
-				doFlush();
 				$RESULT .= $s;
+				doFlush();
+			}
+
+			$error	= stream_get_contents($pipes[2], ini_get('output_buffering'));
+			if ($error) {
+				$error	= "\nErrors:\n$error";
+				echo(str_replace("\n", "<br>\n", $error));
+				$RESULT .= $error;
 			}
 		}
 

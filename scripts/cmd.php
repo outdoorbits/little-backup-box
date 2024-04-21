@@ -48,7 +48,7 @@
 		include "${WORKING_DIR}/sub-standards-header-loader.php";
 		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 	?>
-	<script type="text/javascript" src="js/logmonitor.js"></script>
+	<script src="js/logmonitor.js"></script>
 </head>
 
 <body <?php echo $background; ?> onload="refreshLogMonitor('false')">
