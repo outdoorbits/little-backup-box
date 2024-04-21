@@ -113,7 +113,6 @@
 				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_fsck_start1 . "' ':" . L::box_cmd_fsck_start2 . "' ':" . clean_argument($PARAM2,array(' ')) . "'";
 				$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 				$COMMAND_LINE	.= ";echo ''";
-				$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 				$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 				$COMMAND_LINE	.= ";echo ''";
 				$COMMAND_LINE	.= ";echo 'FINISHED.'";
@@ -126,7 +125,6 @@
 						$MAIN_COMMAND	= "mkfs.vfat -v -I -F32 '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -145,7 +143,6 @@
 						$MAIN_COMMAND	= "mkfs.exfat '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -164,7 +161,6 @@
 						$MAIN_COMMAND	= "mkfs.ntfs --enable-compression --force --verbose '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -183,7 +179,6 @@
 						$MAIN_COMMAND	= "mkfs.ntfs --force --verbose '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -202,7 +197,6 @@
 						$MAIN_COMMAND	= "mkfs.ext4 -v -F '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -221,7 +215,6 @@
 						$MAIN_COMMAND	= "mkfs.ext3 -v -F '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -240,7 +233,6 @@
 						$MAIN_COMMAND	= "mkfs.hfsplus '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -259,7 +251,6 @@
 						$MAIN_COMMAND	= "mkfs.hfs '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -289,7 +280,6 @@
 						$MAIN_COMMAND	= "f3probe --time-ops '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_start1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_non_destructive . "' ':" . L::box_cmd_f3_probe_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
@@ -302,7 +292,6 @@
 						$MAIN_COMMAND	= "f3probe --destructive --time-ops '/dev/".clean_argument($PARAM1)."'";
 
 						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_start1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_destructive . "' ':" . L::box_cmd_f3_probe_start2 . "'";
-						$COMMAND_LINE	.= ";sudo umount '/dev/".clean_argument($PARAM1)."'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
