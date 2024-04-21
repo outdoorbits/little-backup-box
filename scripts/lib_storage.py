@@ -85,13 +85,15 @@ class storage(object):
 
 		self.__const_MOUNTPOINT_CLOUD_TARGET			= self.__setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')
 		self.__const_MOUNTPOINT_CLOUD_SOURCE			= self.__setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
+
 		self.__const_INTERNAL_BACKUP_DIR				= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
+
 		self.__conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.__conf_BACKUP_TARGET_SIZE_MIN				= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
 
 		self.__conf_BACKUP_TARGET_BASEDIR_CLOUDS		= self.__setup.get_val('conf_BACKUP_TARGET_BASEDIR_CLOUDS')
 
-		self.__RCLONE_CONFIG_FILE						= f"{self.__setup.get_val('const_MEDIA_DIR')}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
+		self.__RCLONE_CONFIG_FILE						= os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_RCLONE_CONFIG_FILE'))
 
 		self.__mount_user		= "www-data"
 		self.__mount_group		= "www-data"
@@ -530,7 +532,7 @@ class storage(object):
 	def createPath(self,MountPoint='',SubPathBelowMountPoint=''):
 		MountPoint = MountPoint if MountPoint else self.MountPoint
 
-		pathlib.Path(f"{MountPoint}/{SubPathBelowMountPoint}").mkdir(parents=True, exist_ok=True)
+		pathlib.Path(MountPoint, SubPathBelowMountPoint).mkdir(parents=True, exist_ok=True)
 		self.set_perms_mountpoint(MountPoint)
 
 		Command	= ['service','smbd','restart']
@@ -610,7 +612,7 @@ class storage(object):
 				self.LbbDeviceID	= f"lbb_{DatePart}-{RandomPart}"
 
 				try:
-					open(f"{self.MountPoint}/{self.LbbDeviceID}.lbbid",'w').close()
+					open(os.path.join(self.MountPoint, f"{self.LbbDeviceID}.lbbid"),'w').close()
 				except:
 					self.LbbDeviceID	= self.__read_device_id(DatePart, RandomPart)
 
@@ -618,7 +620,7 @@ class storage(object):
 			self.SubPathsAtSource	= ['']
 
 			if self.StorageType == 'internal':
-				self.SubPathAtTarget		= f"internal/{self.LbbDeviceID}"
+				self.SubPathAtTarget		= os.path.join('internal', self.LbbDeviceID)
 			else:
 				self.SubPathAtTarget		= f"{self.LbbDeviceID}"
 
@@ -628,7 +630,7 @@ class storage(object):
 		if self.StorageType == 'cloud_rsync':
 			return()
 
-		FlagFile	= f"{self.MountPoint}/target.lbbflag"
+		FlagFile	= os.path.join(self.MountPoint, 'target.lbbflag')
 		if not os.path.isfile(FlagFile):
 			try:
 				open(FlagFile,'w').close()
@@ -636,7 +638,7 @@ class storage(object):
 				pass
 
 	def __read_target_flag(self):
-		FlagFile	= f"{self.MountPoint}/target.lbbflag"
+		FlagFile	= os.path.join(self.MountPoint, 'target.lbbflag')
 		self.wasTarget	= os.path.isfile(FlagFile)
 
 	def mounted(self,MountPoint=''):
@@ -644,7 +646,7 @@ class storage(object):
 
 		# internal is always mounted
 		if self.StorageType == 'internal':
-			return({f"{self.__const_MEDIA_DIR}/{self.__const_INTERNAL_BACKUP_DIR}"})
+			return(os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR))
 
 		# camera: hold value of mount process
 		if self.StorageType == 'camera':
@@ -742,19 +744,18 @@ class storage(object):
 		return(Result)
 
 	def __set_mountpoint(self):
-		baseDir	= self.__const_MEDIA_DIR
 		if self.StorageType == 'usb':
 			self.__TechMountPoint	= self.__const_MOUNTPOINT_TECH_USB_TARGET if self.Role == role_Target else self.__const_MOUNTPOINT_TECH_USB_SOURCE
-			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_USB_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_USB_TARGET}"
+			self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_MOUNTPOINT_USB_SOURCE) if self.Role == role_Source else os.path.join(self.__const_MEDIA_DIR, self.__const_MOUNTPOINT_USB_TARGET)
 		elif self.StorageType == 'nvme':
 			self.__TechMountPoint	= self.__const_MOUNTPOINT_TECH_NVME_TARGET if self.Role == role_Target else self.__const_MOUNTPOINT_TECH_NVME_SOURCE
-			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_NVME_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_NVME_TARGET}"
+			self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_MOUNTPOINT_NVME_SOURCE) if self.Role == role_Source else os.path.join(self.__const_MEDIA_DIR, self.__const_MOUNTPOINT_NVME_TARGET)
 		elif self.StorageType == 'cloud':
 			self.__TechMountPoint	= ''
-			self.MountPoint			= f"{baseDir}/{self.__const_MOUNTPOINT_CLOUD_SOURCE}" if self.Role == role_Source else f"{baseDir}/{self.__const_MOUNTPOINT_CLOUD_TARGET}"
+			self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_MOUNTPOINT_CLOUD_SOURCE) if self.Role == role_Source else os.path.join(self.__const_MEDIA_DIR, self.__const_MOUNTPOINT_CLOUD_TARGET)
 		elif self.StorageType == 'internal':
 			self.__TechMountPoint	= ''
-			self.MountPoint			= f"{baseDir}/{self.__const_INTERNAL_BACKUP_DIR}"
+			self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR)
 		else:
 			self.__TechMountPoint	= ''
 			self.MountPoint			= ''
@@ -827,7 +828,7 @@ class storage(object):
 			if self.CloudServiceName:
 				l_drive_ok	+= f': {self.CloudServiceName}'
 
-		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 2}", f":{l_drive_ok}", f":{storsize}", f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
+		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 1.5}", f":{l_drive_ok}", f":{storsize}", f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
 
 	def __split_CameraIdentifier(self,Identifier):
 		try:
@@ -845,39 +846,54 @@ class storage(object):
 def get_mountPoints(setup, parts, path_list_only):
 	#parts: list, any of ['all', 'usb', 'nvme', 'tech', 'cloud']
 
+	const_MEDIA_DIR							= setup.get_val('const_MEDIA_DIR')
+
+	const_MOUNTPOINT_USB_TARGET				= setup.get_val('const_MOUNTPOINT_USB_TARGET')
+	const_MOUNTPOINT_USB_SOURCE				= setup.get_val('const_MOUNTPOINT_USB_SOURCE')
+	const_MOUNTPOINT_TECH_USB_TARGET		= setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET')
+	const_MOUNTPOINT_TECH_USB_SOURCE		= setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE')
+
+	const_MOUNTPOINT_NVME_TARGET			= setup.get_val('const_MOUNTPOINT_NVME_TARGET')
+	const_MOUNTPOINT_NVME_SOURCE			= setup.get_val('const_MOUNTPOINT_NVME_SOURCE')
+	const_MOUNTPOINT_TECH_NVME_TARGET		= setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET')
+	const_MOUNTPOINT_TECH_NVME_SOURCE		= setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE')
+
+	const_MOUNTPOINT_CLOUD_TARGET			= setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')
+	const_MOUNTPOINT_CLOUD_SOURCE			= setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
+
 	mountPoints	= {}
 
 	if (set(parts) & set(['all', 'usb'])):
 		mountPoints.update(
 			{
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_USB_TARGET')}":	'target_usb',
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_USB_SOURCE')}":	'source_usb'
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_USB_TARGET):	'target_usb',
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_USB_SOURCE):	'source_usb'
 			}
 		)
 
 	if (set(parts) & set(['all', 'nvme'])):
 		mountPoints.update(
 			{
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_NVME_TARGET')}":	'target_nvme',
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_NVME_SOURCE')}":	'source_nvme'
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_NVME_TARGET):	'target_nvme',
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_NVME_SOURCE):	'source_nvme'
 			}
 		)
 
 	if (set(parts) & set(['all', 'tech'])):
 		mountPoints.update(
 			{
-				setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET'):												'target_usb',
-				setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE'):												'source_usb',
-				setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET'):												'target_nvme',
-				setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE'):												'source_nvme'
+				const_MOUNTPOINT_TECH_USB_TARGET:									'target_usb',
+				const_MOUNTPOINT_TECH_USB_SOURCE:									'source_usb',
+				const_MOUNTPOINT_TECH_NVME_TARGET:									'target_nvme',
+				const_MOUNTPOINT_TECH_NVME_SOURCE:									'source_nvme'
 			}
 		)
 
 	if (set(parts) & set(['all', 'cloud'])):
 		mountPoints.update(
 			{
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')}":	'target_cloud',
-				f"{setup.get_val('const_MEDIA_DIR')}/{setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')}": 'source_cloud'
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_CLOUD_TARGET):	'target_cloud',
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_CLOUD_SOURCE): 'source_cloud'
 			}
 		)
 
@@ -959,14 +975,14 @@ def get_mounts_list():
 
 	return(f" {' '.join(mountsList)} ")
 
-def get_available_partitions(StorageType='anyusb', TargetDeviceIdentifier='', excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, ignore_fs=False, HumanReadable=False, returnDict=False):
-	#StorageType: one of ['anyusb'*, 'usb', 'nvme'] *anything but usb and nvme will be interpreted as anyusb
+def get_available_partitions(StorageType='all', TargetDeviceIdentifier='', excludePartitions=[], DeviceIdentifierPreset='', MinSizeBytes=0, skipMounted=False, ignore_fs=False, HumanReadable=False, returnDict=False):
+	#StorageType: one of ['anyusb', 'usb', 'nvme'] *anything else but usb and nvme will be interpreted as all
 
 	setup	= lib_setup.setup()
 
 	TargetDevice_lum_alpha	= ''
 
-	if StorageType == 'usb':
+	if StorageType in ['anyusb', 'usb']:
 		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}"
 	elif StorageType == 'nvme':
 		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"

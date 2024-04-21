@@ -726,6 +726,9 @@ if [ -f './install-error.log' ]; then
 	echo
 fi
 
+# remove raspberry pi imagers wifi settings (as late as possible)
+sudo rm /etc/NetworkManager/system-connections/preconfigured.nmconnection
+
 # reboot
 echo "All done! Rebooting..."
 sleep 3
