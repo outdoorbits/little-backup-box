@@ -1081,7 +1081,7 @@ if __name__ == "__main__":
 		'--sync-database',
 		'-sd',
 		required	= False,
-		default		= False,
+		default		= 'False',
 		help		= 'Should the View database be synchronized after backup? [\'True\', \'False\'] If not set, use config value.'
 	)
 
@@ -1154,7 +1154,7 @@ if __name__ == "__main__":
 	args	= vars(parser.parse_args())
 
 	# clean boolean args
-	args['move_files']			= args['move_files'].lower() == 'true'	if args['move_files'] != 'setup'	else 'setup'
+	args['move_files']			= args['move_files'].lower() == 'true'			if args['move_files'] != 'setup'	else 'setup'
 	args['sync_database']		= args['sync_database'].lower() == 'true'
 	args['generate_thumbnails']	= args['generate_thumbnails'].lower() == 'true'	if args['generate_thumbnails'] != 'setup'	else 'setup'
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'

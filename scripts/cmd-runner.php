@@ -68,18 +68,14 @@
 	<body>
 		<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
-		<?php
+	<?php
 // 			allowed parameters
 
-			if ($CMD !== '') {
-				echo '<div id="command_output"></div>';
-			} else {
-				echo "NOT AUTHORISED";
+			if ($CMD == '') {
+				echo 'NOT AUTHORISED</body</html>';
+				exit('NOT AUTHORISED');
 			}
-		?>
-	</body>
-</html>
-<?php
+
 	if ($CMD !== '') {
 
 		switch($CMD) {
@@ -345,7 +341,7 @@
 
 			$RESULT = '';
 			while ($s = fgets($pipes[1], ini_get('output_buffering'))) {
-				echo $s."<br>";
+				echo(str_replace("\n", "<br>\n", $s));
 				$RESULT .= $s;
 				doFlush();
 			}
@@ -376,3 +372,5 @@
 
 
 ?>
+	</body>
+</html>
