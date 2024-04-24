@@ -42,7 +42,8 @@ class ip_info(object):
 		self.__IPs	= []
 
 	def get_IPs(self):
-		self.__IPs	= lib_network.get_IPs().split('\n')
+		self.__IPs		= lib_network.get_IPs().split('\n')
+		self.__IPs[:]	= [element for element in self.__IPs if element]
 
 	def display_ip(self,FrameTime=None, force=False):
 

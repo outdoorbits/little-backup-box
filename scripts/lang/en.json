@@ -197,7 +197,8 @@
       "network": "Network",
       "comitup_reset": "Reset Comitup",
       "backup_mode_cloud_rsync": "rsync server",
-      "vpn_stop": "Disconnect VPN"
+      "vpn_stop": "Disconnect VPN",
+      "backup_mode_nvme": "NVMe SSD"
     },
     "backup_local": "Backup locally",
     "finished": "finished",

@@ -556,7 +556,8 @@
       "network": "Red",
       "comitup_reset": "Restablecer Comitup",
       "backup_mode_cloud_rsync": "Servidor rsync",
-      "vpn_stop": "Desconectar VPN"
+      "vpn_stop": "Desconectar VPN",
+      "backup_mode_nvme": "NVMe SSD"
     },
     "backup_local": "localmente",
     "finished": "finalizado",

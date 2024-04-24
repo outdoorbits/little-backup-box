@@ -81,6 +81,11 @@ class menu(object):
 		local_sources	= ['usb','internal','camera']
 		local_targets	= ['usb','internal']
 
+		## NVMe available?
+		if lib_storage.get_available_partitions(StorageType='nvme'):
+			local_sources.append('nvme')
+			local_targets.append('nvme')
+
 		self.MENU_BACKUP_LOCAL	= []
 		for source in local_sources:
 			for target in local_targets:
