@@ -75,6 +75,15 @@ class backup_autorun(object):
 		except:
 			pass
 
+		# init new cmd logfile
+		const_CMD_LOGFILE				= self.__setup.get_val('const_CMD_LOGFILE')
+		try:
+			with open(const_CMD_LOGFILE,'w') as f:
+				f.write('Little Backup Box\n')
+			shutil.chown(const_CMD_LOGFILE, user='www-data', group='www-data')
+		except:
+			pass
+
 		# remove mountpoints
 		lib_storage.remove_all_mountpoints(self.__setup)
 

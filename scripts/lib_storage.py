@@ -307,7 +307,7 @@ class storage(object):
 					if CloudServiceCandidate == self.CloudServiceName:
 						CloudBaseDir	= CloudBaseDirCandidate
 
-				Command	= f'rclone mount {self.CloudServiceName}:{CloudBaseDir} {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --config {self.__RCLONE_CONFIG_FILE}'
+				Command	= f"rclone mount '{self.CloudServiceName}':'{CloudBaseDir}' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --config {self.__RCLONE_CONFIG_FILE}"
 				Command	= f"sh -c '{Command} &'"
 				subprocess.run(Command,shell=True)
 

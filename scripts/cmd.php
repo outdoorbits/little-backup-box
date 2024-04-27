@@ -19,20 +19,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################*/
 
-	ini_set("session.use_only_cookies", 0);
-	ini_set("session.use_trans_sid", 1);
+$WORKING_DIR=dirname(__FILE__);
+$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 
-	session_start();
+$theme = $config["conf_THEME"];
+$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . "/" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-	$WORKING_DIR=dirname(__FILE__);
-	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
-	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
+include("sub-virtual-keyboard.php");
+include("sub-logmonitor.php");
 
-	$theme = $config["conf_THEME"];
-	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . "/" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
-
-	include("sub-virtual-keyboard.php");
-	include("sub-logmonitor.php");
+$run_command	= false
 
 # expected parameters:
 # CMD: "update", "format", "f3"
@@ -51,7 +48,7 @@
 	<script src="js/logmonitor.js"></script>
 </head>
 
-<body <?php echo $background; ?> onload="refreshLogMonitor('false')">
+<body <?php echo $background; ?> onload="refreshLogMonitor('true')">
 <?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 <?php
@@ -65,15 +62,13 @@ if (count($_GET) > 0) {
 $PWD						= isset($INPUT['PWD']) ? $INPUT['PWD'] : '';
 $MAIL_ASKED					= isset($INPUT['MAIL_ASKED']) ? $INPUT['MAIL_ASKED'] : '';
 
-$_SESSION['MAIL_RESULT']	= isset($INPUT['MAIL_RESULT']);
+$MAIL_RESULT	= isset($INPUT['MAIL_RESULT']);
 
-$_SESSION['CMD']			= isset($INPUT['CMD']) ? $INPUT['CMD'] : '';
-$_SESSION['PARAM1']			= isset($INPUT['PARAM1']) ? $INPUT['PARAM1'] : '';
-$_SESSION['PARAM2']			= isset($INPUT['PARAM2']) ? $INPUT['PARAM2'] : '';
+$CMD			= isset($INPUT['CMD']) ? $INPUT['CMD'] : '';
+$PARAM1			= isset($INPUT['PARAM1']) ? $INPUT['PARAM1'] : '';
+$PARAM2			= isset($INPUT['PARAM2']) ? $INPUT['PARAM2'] : '';
 
-session_write_close();
-
-switch($_SESSION['CMD']) {
+switch($CMD) {
 	case 'update':
 		$CMD_HEADER			= L::cmd_update_header;
 		$INFO_TEXT			= L::cmd_update_warning;
@@ -94,14 +89,14 @@ switch($_SESSION['CMD']) {
 		$CMD_HEADER			= L::cmd_fsck_header;
 		$INFO_TEXT			= L::cmd_fsck_warning;
 		$CMD_DESCRIPTION	= "";
-		$PASSWORD_REQ		= ($_SESSION['PARAM2'] == 'repair');
+		$PASSWORD_REQ		= ($PARAM2 == 'repair');
 		$ALLOW_MAIL_RESULT	= True;
 		break;
 
 	case 'format':
 		$CMD_HEADER			= L::cmd_format_header;
 		$INFO_TEXT			= L::cmd_format_warning;
-		$CMD_DESCRIPTION	= L::cmd_format_description.": <ul class='danger'><li>" . L::cmd_format_header . ": " . $_SESSION['PARAM1'] . " &rarr; " . $_SESSION['PARAM2'] . "</li></ul>";
+		$CMD_DESCRIPTION	= L::cmd_format_description.": <ul class='danger'><li>" . L::cmd_format_header . ": " . $PARAM1 . " &rarr; " . $PARAM2 . "</li></ul>";
 		$PASSWORD_REQ		= True;
 		$ALLOW_MAIL_RESULT	= True;
 		break;
@@ -113,11 +108,11 @@ switch($_SESSION['CMD']) {
 		$PASSWORD_REQ		= False;
 		$ALLOW_MAIL_RESULT	= False;
 
-		switch($_SESSION['PARAM2']) {
+		switch($PARAM2) {
 			case 'f3probe_non_destructive':
 				$CMD_HEADER			= L::cmd_f3_header;
 				$INFO_TEXT			= L::cmd_f3_warning_non_destructive;
-				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": " . $_SESSION['PARAM1'] . " &rarr; " . L::cmd_f3_description_non_destructive . "</li></ul>";
+				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": " . $PARAM1 . " &rarr; " . L::cmd_f3_description_non_destructive . "</li></ul>";
 				$PASSWORD_REQ		= True;
 				$ALLOW_MAIL_RESULT	= True;
 				break;
@@ -125,7 +120,7 @@ switch($_SESSION['CMD']) {
 			case 'f3probe_destructive':
 				$CMD_HEADER			= L::cmd_f3_header;
 				$INFO_TEXT			= L::cmd_f3_warning_destructive;
-				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": " . $_SESSION['PARAM1'] . " &rarr; " . L::cmd_f3_description_destructive . "</li></ul>";
+				$CMD_DESCRIPTION	= L::cmd_f3_description.": <ul class='danger'><li>" . L::cmd_f3_header . ": " . $PARAM1 . " &rarr; " . L::cmd_f3_description_destructive . "</li></ul>";
 				$PASSWORD_REQ		= True;
 				$ALLOW_MAIL_RESULT	= True;
 				break;
@@ -185,9 +180,9 @@ if (isset($CMD_HEADER)) {
 			if ($config['conf_PASSWORD'] != "") {
 	?>
 			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
-				<input type="hidden" name="CMD" value="<?php echo $_SESSION['CMD']; ?>">
-				<input type="hidden" name="PARAM1" value="<?php echo $_SESSION['PARAM1']; ?>">
-				<input type="hidden" name="PARAM2" value="<?php echo $_SESSION['PARAM2']; ?>">
+				<input type="hidden" name="CMD" value="<?php echo $CMD; ?>">
+				<input type="hidden" name="PARAM1" value="<?php echo $PARAM1; ?>">
+				<input type="hidden" name="PARAM2" value="<?php echo $PARAM2; ?>">
 
 				<div class="card" style="margin-top: 2em;">
 
@@ -222,9 +217,10 @@ if (isset($CMD_HEADER)) {
 					<a href="/"><?php echo L::cmd_link_text_home; ?></a>
 				</p>
 			<?php
-		} elseif (isset($_SESSION['CMD'])) {
-//  			run command
-			logmonitor($sourcefile="/cmd-runner.php?" . htmlspecialchars(SID), $title='', $allow_logfile_operations=false);
+		} elseif (isset($CMD)) {
+//  			run command later
+			$run_command	= true;
+			logmonitor(sourcefile: $constants['const_CMD_LOGFILE'], title: '', allow_logfile_operations: true);
 			?>
 		<p>
 			<a href="/"><?php echo L::cmd_link_text_home_running; ?></a>
@@ -237,3 +233,295 @@ if (isset($CMD_HEADER)) {
 </body>
 </html>
 
+<?php
+if ($run_command) {exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT);}
+
+function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {
+	# call this function at the end of the code: if $MAIL_RESULT==true the script will wait until the process is finished
+
+	$WORKING_DIR=dirname(__FILE__);
+	$config = parse_ini_file($WORKING_DIR . "/config.cfg", false);
+	$constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
+
+	$theme = $config["conf_THEME"];
+	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
+
+	include "${WORKING_DIR}/sub-security.php";
+
+// 			allowed parameters
+
+			if ($CMD == '') {
+				echo 'NOT AUTHORISED</body</html>';
+				exit('NOT AUTHORISED');
+			}
+
+	if ($CMD !== '') {
+
+		switch($CMD) {
+			case 'update':
+				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_start1 . "' ':" . L::box_cmd_update_start2 . "'";
+				$COMMAND_LINE	.= ";cd ~pi; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | sudo -u pi bash";
+				break;
+
+			case 'update_development':
+				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_start1 . "' ':" . L::box_cmd_update_start2 . "'";
+				$COMMAND_LINE	.= ";cd ~pi; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/development/install-little-backup-box.sh | sudo -u pi bash -s -- development";
+				break;
+
+			case 'fsck':
+				$DEVICE_FSTYPE	= exec("sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep /dev/".clean_argument($PARAM1));
+				$DEVICE_FSTYPE	= explode('FSTYPE=',$DEVICE_FSTYPE)[1];
+				$DEVICE_FSTYPE	= explode('"',$DEVICE_FSTYPE)[1];
+
+				if ($PARAM2 == 'repair') {
+					if ($DEVICE_FSTYPE	== 'exfat') {
+						$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE -p '/dev/".clean_argument($PARAM1)."'";
+					}
+					else {
+						$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE -f -p '/dev/".clean_argument($PARAM1)."'";
+					}
+				}
+				else {
+// 					check only
+					$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE '/dev/".clean_argument($PARAM1)."'";
+				}
+
+				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_fsck_start1 . "' ':" . L::box_cmd_fsck_start2 . "' ':" . clean_argument($PARAM2,array(' ')) . "'";
+				$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+				$COMMAND_LINE	.= ";echo ''";
+				$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+				$COMMAND_LINE	.= ";echo ''";
+				$COMMAND_LINE	.= ";echo 'FINISHED.'";
+				$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_fsck_stop1 . "' ':" . L::box_cmd_fsck_stop2 . "' ':" . clean_argument($PARAM2,array(' ')) . "'";
+				break;
+
+			case 'format':
+				if (($PARAM1 !== "-") and ($PARAM1 !== " ") and ($PARAM2 !== "-") and ($PARAM2 !== " ")) {
+					if ($PARAM2 == "FAT32") {
+						$MAIN_COMMAND	= "mkfs.vfat -v -I -F32 '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+					}
+
+					elseif ($PARAM2 == "exFAT") {
+						$MAIN_COMMAND	= "mkfs.exfat '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+					}
+
+					elseif ($PARAM2 == "NTFS (compression enabled)") {
+						$MAIN_COMMAND	= "mkfs.ntfs --enable-compression --force --verbose '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+					}
+
+					elseif ($PARAM2 == "NTFS (no compression)") {
+						$MAIN_COMMAND	= "mkfs.ntfs --force --verbose '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+					}
+
+					elseif ($PARAM2 == "Ext4") {
+						$MAIN_COMMAND	= "mkfs.ext4 -v -F '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+					}
+
+					elseif ($PARAM2 == "Ext3") {
+						$MAIN_COMMAND	= "mkfs.ext3 -v -F '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+					}
+
+					elseif ($PARAM2 == "HFS Plus") {
+						$MAIN_COMMAND	= "mkfs.hfsplus '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fsck.hfsplus '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+					}
+
+					elseif ($PARAM2 == "HFS") {
+						$MAIN_COMMAND	= "mkfs.hfs '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo fsck.hfs '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+					}
+
+					else {
+						$COMMAND_LINE	= '';
+					}
+
+				} else {
+					$COMMAND_LINE	= '';
+				}
+				break;
+
+			case 'f3':
+				switch($PARAM2) {
+					case 'f3probe_non_destructive':
+						$MAIN_COMMAND	= "f3probe --time-ops '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_start1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_non_destructive . "' ':" . L::box_cmd_f3_probe_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_non_destructive . "' ':" . L::box_cmd_f3_probe_stop2 . "'";
+						break;
+
+					case 'f3probe_destructive':
+						$MAIN_COMMAND	= "f3probe --destructive --time-ops '/dev/".clean_argument($PARAM1)."'";
+
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_start1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_destructive . "' ':" . L::box_cmd_f3_probe_start2 . "'";
+						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+						$COMMAND_LINE	.= ";echo ''";
+						$COMMAND_LINE	.= ";echo 'FINISHED.'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_destructive . "' ':" . L::box_cmd_f3_probe_stop2 . "'";
+						break;
+
+					default:
+						$COMMAND_LINE	= "";
+				}
+				break;
+
+			case 'comitup_reset':
+				$MAIN_COMMAND	= "$WORKING_DIR/comitup-reset.sh";
+
+				$COMMAND_LINE	= "cat $MAIN_COMMAND | grep '^[^# ]'";
+				$COMMAND_LINE	.= ";echo ''";
+				$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
+				$COMMAND_LINE	.= ";echo ''";
+				$COMMAND_LINE	.= ";echo 'FINISHED.'";
+				$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::config_comitup_section . "' ':" . L::cmd_reset . "'";
+				break;
+
+			default:
+				$COMMAND_LINE	= "";
+		}
+
+		# write lockfile
+		$lockfile = fopen($constants["const_CMD_RUNNER_LOCKFILE"],"w");
+			fwrite($lockfile, $COMMAND_LINE);
+			fclose($lockfile);
+
+		# start command in background
+		$PID	= intval(shell_exec(sprintf('sh -c "%s" > %s 2>&1 & echo $!', $COMMAND_LINE, $constants['const_CMD_LOGFILE'])));
+
+		# mail result
+		if ($MAIL_RESULT) {
+			# no more output to the web ui
+			flush();
+
+			# wait until process is finished
+			if ($PID > 0) {
+				while (posix_getpgid($PID)) {sleep(0.5);}
+			}
+
+			# read result from logfile
+			$RESULT	= file_get_contents($constants['const_CMD_LOGFILE']);
+
+			shell_exec('sudo python3 ' . $WORKING_DIR . '/lib_mail.py "' . $CMD . ' ' . clean_argument($PARAM1,array(' ')) . ' ' . clean_argument($PARAM2,array(' ')) . '" "' . $RESULT . '"');
+		}
+
+		unlink($constants["const_CMD_RUNNER_LOCKFILE"]);
+	}
+
+}
+?>
