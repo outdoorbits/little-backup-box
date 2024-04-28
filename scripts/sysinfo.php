@@ -39,7 +39,7 @@
 	<script src="js/refresh_site.js"></script>
 </head>
 
-<body onload="refreshLogMonitor('true'); refresh_site()" <?php echo $background; ?>>
+<body onload="refreshLogMonitor(); refresh_site()" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>

@@ -31,7 +31,7 @@ function logmonitor($sourcefile, $title='', $allow_logfile_operations=false) {
 				<?php
 					if ($allow_logfile_operations) {
 						?>
-							<button name="refresh" onclick="window.location.reload();"><?php echo L::log_refresh_button; ?></button>
+							<button name="refresh" onclick="refreshLogMonitor()"><?php echo L::log_refresh_button; ?></button>
 							<a role="button" href="<?php echo str_replace('/var/www/little-backup-box', '' ,$sourcefile); ?>" download="<?php echo basename($sourcefile); ?>"><button>Download</button></a>
 							<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 								<button style="margin-top: 2em;" type="delete" name="delete_logfile" class="danger"><?php echo (L::log_delete_button); ?></button>

@@ -6,20 +6,13 @@
 // and '<iframe id="logmonitor" ...'
 
 let LogMonitorInterval = 'undefined';
-let reload_content_remember	= 'undefined';
 
-function refreshLogMonitor(reload_content) {
+function refreshLogMonitor() {
 	var logmonitor = document.getElementById("logmonitor");
-
-	if (reload_content_remember === 'undefined') {
-		reload_content_remember = reload_content;
-	}
 
 	if (!(logmonitor === document.activeElement)) {
 
-		if (reload_content_remember === 'true') {
-			logmonitor.contentWindow.location.reload();
-		}
+		logmonitor.contentWindow.location.reload();
 
 		if (LogMonitorInterval === 'undefined') {
 			LogMonitorInterval = setInterval('logmonitor.contentWindow.scrollTo(0, 999999)',200);

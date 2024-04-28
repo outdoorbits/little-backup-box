@@ -96,7 +96,7 @@
 	<script src="js/logmonitor.js"></script>
 </head>
 
-<body onload="refreshLogMonitor('true')" <?php echo $background; ?>>
+<body onload="refreshLogMonitor()" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>

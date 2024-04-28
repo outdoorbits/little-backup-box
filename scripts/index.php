@@ -112,7 +112,7 @@
 <?php
 	$OldSource = isset($_POST['SourceDevice']) ? $_POST['SourceDevice'] : 'anyusb';
 ?>
-<body onload="refreshLogMonitor('true');HideDisallowedButtons(document.getElementById('Source_<?php echo $OldSource; ?>'))" <?php echo $background; ?>>
+<body onload="refreshLogMonitor();HideDisallowedButtons(document.getElementById('Source_<?php echo $OldSource; ?>'))" <?php echo $background; ?>>
 	<?php include "sub-standards-body-loader.php"; ?>
 	<?php include "sub-menu.php"; ?>
 

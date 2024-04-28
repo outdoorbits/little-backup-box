@@ -48,7 +48,7 @@ $run_command	= false
 	<script src="js/logmonitor.js"></script>
 </head>
 
-<body <?php echo $background; ?> onload="refreshLogMonitor('true')">
+<body <?php echo $background; ?> onload="refreshLogMonitor()">
 <?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 <?php
