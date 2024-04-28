@@ -211,18 +211,13 @@ echo "const_SOFTWARE_VERSION='${branch}'" | sudo tee -a "${INSTALLER_DIR}/script
 # read new constants
 source "${INSTALLER_DIR}/scripts/constants.sh"
 
-# keep config file
+# clean web root, keep still needed files
 if [ "${SCRIPT_MODE}" = "update" ]; then
-	if [ -f "${const_WEB_ROOT_LBB}/config.cfg" ]; then
-		echo "keep config..."
-		yes | sudo cp -f "${const_WEB_ROOT_LBB}/config.cfg" "${INSTALLER_DIR}/scripts/"
-	fi
+	# remove files
+	sudo find ${const_WEB_ROOT_LBB} -type f -not -wholename "${const_WEB_ROOT_LBB}/config.cfg" -not -wholename "${const_CMD_RUNNER_LOCKFILE}" -not -wholename "${const_CMD_LOGFILE}" -delete
 
-	if [ -f "${const_CMD_RUNNER_LOCKFILE}" ]; then
-		yes | sudo cp -f "${const_CMD_RUNNER_LOCKFILE}" "${INSTALLER_DIR}/scripts/"
-	fi
-
-	sudo rm -R ${const_WEB_ROOT_LBB}/*
+	# remove empty directories
+	sudo find ${const_WEB_ROOT_LBB} -type d -empty -delete
 fi
 
 # install little-backup-box-files
