@@ -29,13 +29,38 @@ $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $consta
 include("sub-virtual-keyboard.php");
 include("sub-logmonitor.php");
 
-$run_command	= false
+$run_command	= false;
 
 # expected parameters:
 # CMD: "update", "format", "f3"
 # optional parameters:
 # PARAM1, PARAM2
 
+function doFlush() {
+		if (!headers_sent()) {
+			// Disable gzip in PHP.
+			ini_set('zlib.output_compression', 0);
+
+			// Force disable compression in a header.
+			// Required for flush in some cases (Apache + mod_proxy, nginx, php-fpm).
+			header('Content-Encoding: none');
+		}
+
+		// Fill-up buffer (should be enough in most cases).
+		echo str_pad('', ini_get('output_buffering')),"\n";
+
+		// Flush all buffers.
+		do {
+			$flushed = @ob_end_flush();
+		} while ($flushed);
+
+		@ob_flush();
+		flush();
+	}
+
+ob_implicit_flush(true);
+ob_start();
+doFlush();
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
@@ -234,6 +259,7 @@ if (isset($CMD_HEADER)) {
 </html>
 
 <?php
+doFlush();
 if ($run_command) {exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT);}
 
 function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {

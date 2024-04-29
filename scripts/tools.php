@@ -45,7 +45,7 @@
 
 	$MountableStorages	= array_merge($LocalServices,$CloudServices_marked);
 
-	function get_device_selector($name, $id='', $nullName='-', $nullValue='-', $storage_type='',$list_partitions=true, $skip_mounted=false, $ignore_fs=false, $OptionValue_is_DeviceIdentifier=false, $html_options='') {
+	function get_device_selector($name, $id='', $nullName='-', $nullValue='-', $storage_type='', $list_partitions=true, $skip_mounted=false, $ignore_fs=false, $OptionValue_is_DeviceIdentifier=false, $html_options='') {
 		global $WORKING_DIR;
 
 		$skip_mounted	= $skip_mounted ? 'True' : 'False';
@@ -214,7 +214,7 @@
 			<form class="text-center" style="margin-top: 1em;" method="POST">
 					<label for="PARAM1"><?php echo l::tools_select_partition; ?>:</label>
 					<br>
-					<?php echo(get_device_selector(name: "PARAM1",ignore_fs: false)); ?>
+					<?php echo(get_device_selector(name: "PARAM1", list_partitions: false)); ?>
 					<br>
 					<label for="PARAM2"><?php echo l::tools_f3_select_action; ?>:</label>
 					<br>
