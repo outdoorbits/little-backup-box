@@ -37,7 +37,7 @@ fi
 OS_RELEASE=$(lsb_release -a | grep 'Release:' | cut -d':' -f 2 | xargs)
 
 if  (( ${OS_RELEASE} <= 11 )); then
-	echo "I'm sorry. Updates are currently only possible for Raspberry Pi OS Bookworm. A solution is already being worked on."
+	echo "Sorry: Installation or updates are only possible for Raspberry Pi OS Bookworm. Older versions are no longer supported."
 	exit
 fi
 
@@ -181,16 +181,13 @@ sudo DEBIAN_FRONTEND=noninteractive \
 sudo systemctl disable openvpn.service
 
 # raspberry pi 5: usb_max_current_enable
-if  (( ${OS_RELEASE} > 11 )); then
-		# older os cant be used with raspberry pi 5
-		CONFIG_TXT="/boot/firmware/config.txt"
-		VAR="usb_max_current_enable"
-		VALUE=1
-		if ! grep -q "${VAR}" "${CONFIG_TXT}"; then
-				echo "${VAR}=${VALUE}" | sudo tee -a "${CONFIG_TXT}"
-		else
-				sudo sed -i "/^${VAR}/s/\(.[^=]*\)\([ \t]*=[ \t]*\)\(.[^=]*\)/\1\2${VALUE}/" "${CONFIG_TXT}"
-		fi
+CONFIG_TXT="/boot/firmware/config.txt"
+VAR="usb_max_current_enable"
+VALUE=1
+if ! grep -q "${VAR}" "${CONFIG_TXT}"; then
+	echo "${VAR}=${VALUE}" | sudo tee -a "${CONFIG_TXT}"
+else
+	sudo sed -i "/^${VAR}/s/\(.[^=]*\)\([ \t]*=[ \t]*\)\(.[^=]*\)/\1\2${VALUE}/" "${CONFIG_TXT}"
 fi
 
 # Clone Little Backup Box
@@ -292,23 +289,12 @@ fi
 sudo raspi-config nonint do_i2c 0
 sudo raspi-config nonint do_spi 0
 
-if  (( ${OS_RELEASE} > 11 )); then
-	# bookworm or later
-	sudo DEBIAN_FRONTEND=noninteractive \
-			apt \
-			-o "Dpkg::Options::=--force-confold" \
-			-o "Dpkg::Options::=--force-confdef" \
-			install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-			libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools python3-luma.core python3-luma.emulator python3-luma.lcd python3-luma.led-matrix python3-luma.oled
-else
-	sudo DEBIAN_FRONTEND=noninteractive \
-			apt \
-			-o "Dpkg::Options::=--force-confold" \
-			-o "Dpkg::Options::=--force-confdef" \
-			install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-			libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5 i2c-tools
-	sudo -H pip3 install luma.oled
-fi
+sudo DEBIAN_FRONTEND=noninteractive \
+	apt \
+	-o "Dpkg::Options::=--force-confold" \
+	-o "Dpkg::Options::=--force-confdef" \
+	install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+	libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools python3-luma.core python3-luma.emulator python3-luma.lcd python3-luma.led-matrix python3-luma.oled
 
 ## Raspberry Pi 5 workaround
 sudo python3 "${INSTALLER_DIR}/luma/install_workaround.py"

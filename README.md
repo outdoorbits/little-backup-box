@@ -1,5 +1,7 @@
 <h1>Little Backup Box</h1>
 <h2>About</h2>
+Depending on your needs and options, little-backup-box can be operated in a simple housing, with a display (possibly with buttons for the display menu) or even with a touchscreen. \
+Thanks to the web interface, functionality is fully guaranteed in any case.
 <img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/lbb-orange.jpg"  align="left" title="Little Backup Box in its 3D printed case"><BR CLEAR="all">
 Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little-backup-box">3D printed case</a><br />
 <br />
