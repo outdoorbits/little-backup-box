@@ -75,7 +75,10 @@
     "cameras": "Kameras/Smartphones",
     "system": "System",
     "model": "Modell",
-    "device_states": "Gerätestatus"
+    "device_states": "Gerätestatus",
+    "wifi": {
+      "header": "WLAN"
+    }
   },
   "config": {
     "config": "Einstellungen",

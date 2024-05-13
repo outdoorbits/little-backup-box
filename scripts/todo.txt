@@ -1,6 +1,20 @@
-Tests:
-reset
+sysinfo:
 
-status
+# add wlan information
 
-installation from scratch
+## get wlan devices
+iw dev | awk '$1=="Interface"{print $2}'
+
+## get status information
+iwconfig wlan0
+
+
+cron: powermanagement off
+@reboot: iw dev wlan0 set power_save off
+
+# set powermanagement off for all wlan
+iw dev | awk '$1=="Interface"{print $2}' | xargs -I {} sudo iw dev {} set power_save off
+
+
+echo "iw dev | awk '\$1==\"Interface\"{print \$2}' | xargs -I {} sudo iw dev {} set power_save off"
+

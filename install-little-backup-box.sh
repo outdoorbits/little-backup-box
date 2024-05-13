@@ -417,6 +417,12 @@ echo "conf_BACKUP_DEFAULT_TARGET2=\"${conf_BACKUP_DEFAULT_TARGET2}\"" | sudo tee
 crontab -r
 
 # write basic crontab
+## disable power management for all wlan
+crontab -l | {
+    cat
+    echo "@reboot sudo bash -c \"iw dev | awk '\\\$1==\\\"Interface\\\"{print \\\$2}' | xargs -I {} iw dev {} set power_save off\""
+} | crontab
+
 crontab -l | {
     cat
     echo "@reboot sudo python3 ${const_WEB_ROOT_LBB}/backup-autorun.py"

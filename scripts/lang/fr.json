@@ -75,7 +75,10 @@
     "cameras": "Appareils photo/smartphones",
     "system": "Système",
     "model": "Modèle",
-    "device_states": "Statut du périphérique"
+    "device_states": "Statut du périphérique",
+    "wifi": {
+      "header": "Wifi"
+    }
   },
   "config": {
     "config": "Réglages",

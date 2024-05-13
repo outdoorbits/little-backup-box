@@ -75,7 +75,10 @@
     "cameras": "Cámaras/teléfonos inteligentes",
     "system": "Sistema",
     "model": "Modelo",
-    "device_states": "Estado del dispositivo"
+    "device_states": "Estado del dispositivo",
+    "wifi": {
+      "header": "Wifi"
+    }
   },
   "config": {
     "config": "Ajustes",

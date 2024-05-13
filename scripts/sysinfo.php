@@ -272,6 +272,19 @@
 			?>
 	</div>
 
+	<div class="card">
+		<h3><?php echo L::sysinfo_wifi_header; ?></h3>
+			<?php
+				echo '<pre>';
+				exec("iw dev | awk '$1==\"Interface\"{print $2}'", $WiFi_array);
+				asort($WiFi_array);
+				foreach($WiFi_array as $WiFi) {
+					passthru("iwconfig $WiFi");
+				}
+				echo '</pre>';
+			?>
+	</div>
+
 	<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::sysinfo_refresh_button); ?></button></div>
 
 	<?php include "sub-logmonitor.php";
