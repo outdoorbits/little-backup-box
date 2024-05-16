@@ -37,6 +37,7 @@
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 	<script src="js/logmonitor.js"></script>
 	<script src="js/refresh_site.js"></script>
+	<script src="js/copy2clipboard.js"></script>
 </head>
 
 <body onload="refreshLogMonitor(); refresh_site()" <?php echo $background; ?>>
@@ -240,8 +241,8 @@
 
 														echo "<li>$STORAGE<br>" . L::config_backup_camera_device_folder_pattern . ':';
 														echo "<ul>";
-															echo "<li>" . L::config_backup_camera_model_folders_header . ':<br><b>' . $MODEL . ':!' . $STORAGE . "</b></li>";
-															echo "<li>" . L::config_backup_camera_specific_device_folders_header . ':<br><b>' . $MODEL . '_' . $SERIAL . ':!' . $STORAGE . "</b></li>";
+															echo "<li>" . L::config_backup_camera_model_folders_header . ':<br><b>' . $MODEL . ':!' . $STORAGE . "</b> <button style=\"padding: 0; border: none; background: none;\" onclick=\"copy2clipboard('" . $MODEL . ':!' . $STORAGE . "')\"><img style=\"height: 1.5em;\" src=\"/img/copy2clipboard.gif\"></button></li>";
+															echo "<li>" . L::config_backup_camera_specific_device_folders_header . ':<br><b>' . $MODEL . '_' . $SERIAL . ':!' . $STORAGE . "</b> <button style=\"padding: 0; border: none; background: none;\" onclick=\"copy2clipboard('" . $MODEL . '_' . $SERIAL . ':!' . $STORAGE . "')\"><img style=\"height: 1.5em;\" src=\"/img/copy2clipboard.gif\"></button></li>";
 														echo "</ul>";
 														echo "</li>";
 													}
