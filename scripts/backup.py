@@ -443,7 +443,7 @@ class backup(object):
 							ErrorsOld	= self.__reporter.get_errors()
 							continue
 
-						self.TargetDevice.set_perms_mountpoint()
+						self.TargetDevice.set_mountpoint_permissions()
 
 						SyncReturnCode	= 0
 

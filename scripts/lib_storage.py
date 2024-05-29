@@ -152,7 +152,11 @@ class storage(object):
 		# returns uuid or false (if not mounted), "na" for not available
 		# checks and remounts all by UUID_USBX given devices
 
-		self.__log.message (f"mount device: {self.StorageType}, {self.Role}; WaitForDevice={self.WaitForDevice}; DeviceIdentifierPresetThis={self.DeviceIdentifierPresetThis}; DeviceIdentifierPresetOther={self.DeviceIdentifierPresetOther}",3)
+		self.__log.message(f"mount device: {self.StorageType}, {self.Role}; WaitForDevice={self.WaitForDevice}; DeviceIdentifierPresetThis={self.DeviceIdentifierPresetThis}; DeviceIdentifierPresetOther={self.DeviceIdentifierPresetOther}",3)
+
+		if not self.MountPoint:
+			self.__display.message(['Error', 'mout', 'no mountpoint'])
+			return()
 
 		self.umount()
 
@@ -165,19 +169,19 @@ class storage(object):
 		else:
 			sys.exit(101)
 
-		if self.MountPoint:
-			self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
+		self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
 
 		# identify device, wait for it if self.WaitForDevice is True
 		USB_DeviceList_old			= []
 		DeviceChosenIdentifier		= ''
 		EndTime	= time.time()+self.__setup.get_val('const_MOUNT_LOCAL_TIMEOUT')
 
-		while self.MountPoint:
+		while True:
 			# force to re-scan usb-devices
 			Command	= ['udevadm','trigger']
 			subprocess.run(Command)
 
+			# get USB_DeviceList
 			USB_DeviceList = get_available_partitions(StorageType=self.StorageType, TargetDeviceIdentifier=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, ignore_fs=False, returnDict=True)
 
 			# log if list of devices changed
@@ -187,6 +191,7 @@ class storage(object):
 
 				USB_DeviceList_old = USB_DeviceList
 
+			if USB_DeviceList:
 				# find USB
 				DeviceChosen	= {}
 				if not self.DeviceIdentifierPresetThis:
@@ -200,10 +205,10 @@ class storage(object):
 				if DeviceChosen:
 					DeviceChosenIdentifier	= DeviceChosen['identifier']
 
-				if DeviceChosenIdentifier:
-					self.__log.message (f"DeviceChosenIdentifier='{DeviceChosenIdentifier}' ('{DeviceChosen['lum']}') prepared to mount at '{self.MountPoint}', {DeviceChosen['fs_type']}")
-					self.FS_Type	= DeviceChosen['fs_type']
-					break
+					if DeviceChosenIdentifier:
+						self.__log.message (f"DeviceChosenIdentifier='{DeviceChosenIdentifier}' ('{DeviceChosen['lum']}') prepared to mount at '{self.MountPoint}', {DeviceChosen['fs_type']}")
+						self.FS_Type	= DeviceChosen['fs_type']
+						break
 
 			# Check if device is identified
 			if DeviceChosenIdentifier or not self.WaitForDevice:
@@ -225,11 +230,10 @@ class storage(object):
 				l_mount_device = f"{self.StorageType}, {self.Role}"
 
 			if not self.mounted():
-				# device not mounted
-
 				# clean mountpoint
 				self.__clean_mountpoint()
 
+				# create path
 				self.createPath()
 
 				Result	= None
@@ -533,12 +537,12 @@ class storage(object):
 		MountPoint = MountPoint if MountPoint else self.MountPoint
 
 		pathlib.Path(MountPoint, SubPathBelowMountPoint).mkdir(parents=True, exist_ok=True)
-		self.set_perms_mountpoint(MountPoint)
+		self.set_mountpoint_permissions(MountPoint)
 
-		Command	= ['service','smbd','restart']
-		subprocess.run(Command)
+		Command	= 'service smbd restart &'
+		subprocess.run(Command, shell=True)
 
-	def set_perms_mountpoint(self, MountPoint=''):
+	def set_mountpoint_permissions(self, MountPoint=''):
 		MountPoint	= MountPoint if MountPoint else self.MountPoint
 
 		Command	= ["chown", f"{self.__mount_user}:{self.__mount_group}", MountPoint, "-R"]
