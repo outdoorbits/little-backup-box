@@ -155,7 +155,7 @@ class storage(object):
 		self.__log.message(f"mount device: {self.StorageType}, {self.Role}; WaitForDevice={self.WaitForDevice}; DeviceIdentifierPresetThis={self.DeviceIdentifierPresetThis}; DeviceIdentifierPresetOther={self.DeviceIdentifierPresetOther}",3)
 
 		if not self.MountPoint:
-			self.__display.message(['Error', 'mout', 'no mountpoint'])
+			self.__display.message(['Error', 'mount', 'no mountpoint'])
 			return()
 
 		self.umount()
