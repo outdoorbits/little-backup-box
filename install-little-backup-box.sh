@@ -435,12 +435,13 @@ crontab -l | {
 
 crontab -l | {
     cat
-    echo "*/1 * * * * sudo python3 ${const_WEB_ROOT_LBB}/lib_cron_ip.py"
+    echo "* * * * * sudo python3 ${const_WEB_ROOT_LBB}/lib_cron_ip.py"
+    echo "* * * * * for n in {1..3}; do sleep 15; sudo python3 ${const_WEB_ROOT_LBB}/lib_cron_ip.py; done"
 } | crontab
 
 crontab -l | {
     cat
-    echo "*/1 * * * * sudo python3 ${const_WEB_ROOT_LBB}/cron_idletime.py"
+    echo "* * * * * sudo python3 ${const_WEB_ROOT_LBB}/cron_idletime.py"
 } | crontab
 
 # tinyfilemanager

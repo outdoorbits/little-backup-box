@@ -205,7 +205,7 @@
     "comitup": {
       "status": {
         "HOTSPOT": "hotspot",
-        "CONNECTING": "connecting",
+        "CONNECTING": "connecting...",
         "CONNECTED": "connected"
       }
     }

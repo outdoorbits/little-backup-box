@@ -567,7 +567,7 @@
     "comitup": {
       "status": {
         "HOTSPOT": "point d'accès",
-        "CONNECTING": "de liaison",
+        "CONNECTING": "de liaison...",
         "CONNECTED": "connecté"
       }
     }

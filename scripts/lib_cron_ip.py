@@ -192,9 +192,7 @@ class ip_info(object):
 	{sambaLinksHTML}"""
 	)
 
-
-
-
 if __name__ == "__main__":
-	ip_info().display_ip()
-	ip_info().mail_ip()
+	ip	= ip_info()
+	ip.display_ip()
+	ip.mail_ip()

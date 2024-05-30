@@ -567,7 +567,7 @@
     "comitup": {
       "status": {
         "HOTSPOT": "Hotspot",
-        "CONNECTING": "verbinden",
+        "CONNECTING": "verbinde...",
         "CONNECTED": "verbunden"
       }
     }
