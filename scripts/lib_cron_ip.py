@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import argparse
 import base64
 import os
 
@@ -105,9 +106,9 @@ class ip_info(object):
 		self.get_IPs()
 
 		if (
-			self.__IPs and
-			conf_MAIL_NOTIFICATIONS and
-			lib_network.get_internet_status()
+			self.__IPs
+			and conf_MAIL_NOTIFICATIONS
+			and lib_network.get_internet_status()
 		):
 
 			# read lockfile
@@ -193,6 +194,30 @@ class ip_info(object):
 	)
 
 if __name__ == "__main__":
-	ip	= ip_info()
-	ip.display_ip()
-	ip.mail_ip()
+	parser = argparse.ArgumentParser(
+		description	= 'This library handles the output of the IP on the display and by email.',
+		add_help	= True,
+		epilog		= 'This script is called by a cronjob, among others.'
+	)
+
+	parser.add_argument(
+		'--display',
+		action	= argparse.BooleanOptionalAction,
+		help	= 'If configured, the IP address will be displayed on the screen every minute.'
+	)
+
+	parser.add_argument(
+		'--mail',
+		action	= argparse.BooleanOptionalAction,
+		help	= 'If an Internet connection exists, changes to the IP addresses will be sent by email if configured.'
+	)
+
+	args	= vars(parser.parse_args())
+
+	if args['display'] or args['mail']:
+		ip	= ip_info()
+
+		if args['display']:
+			ip.display_ip()
+		if args['mail']:
+			ip.mail_ip()

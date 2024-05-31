@@ -1125,14 +1125,6 @@ if __name__ == "__main__":
 		help		= 'Power off after backup? [\'True\', \'False\']. If not set, use config value.'
 	)
 
-	#parser.add_argument(
-		#'--secondary-backup-follows',
-		#'-sb',
-		#required	= False,
-		#default		= False,
-		#help		= 'Will another backup follow? If not, the process can be completed. [\'True\', \'False\']'
-	#)
-
 	SecSourceChoices	= ['usb', 'internal', 'nvme']
 	parser.add_argument(
 		'--SecSourceName',

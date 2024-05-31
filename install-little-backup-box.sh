@@ -435,8 +435,8 @@ crontab -l | {
 
 crontab -l | {
     cat
-    echo "* * * * * sudo python3 ${const_WEB_ROOT_LBB}/lib_cron_ip.py"
-    echo "* * * * * for n in {1..3}; do sleep 15; sudo python3 ${const_WEB_ROOT_LBB}/lib_cron_ip.py; done"
+    echo "* * * * * sudo python3 ${const_WEB_ROOT_LBB}/lib_cron_ip.py --display --mail"
+    echo "* * * * * for n in {1..3}; do sleep 15; sudo python3 ${const_WEB_ROOT_LBB}/lib_cron_ip.py --mail; done"
 } | crontab
 
 crontab -l | {
