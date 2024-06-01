@@ -162,11 +162,14 @@ class ip_info(object):
 
 			#send mail
 			if newIP:
-				mailObj.sendmail(
-					Subject		= f"{self.__lan.l('box_cronip_mail_info')}: {', '.join(self.__IPs)}",
-					TextPlain	= self.__getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain),
-					TextHTML	= self.__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML)
-				)
+				# returns thread of mail process
+				return(
+						mailObj.sendmail(
+						Subject		= f"{self.__lan.l('box_cronip_mail_info')}: {', '.join(self.__IPs)}",
+						TextPlain	= self.__getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain),
+						TextHTML	= self.__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML)
+						)
+					)
 
 	def __getTextPlain(self,indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain):
 		return(f"""
@@ -220,4 +223,5 @@ if __name__ == "__main__":
 		if args['display']:
 			ip.display_ip()
 		if args['mail']:
-			ip.mail_ip()
+			thread	= ip.mail_ip()
+			thread.join()

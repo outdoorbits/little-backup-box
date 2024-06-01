@@ -334,6 +334,9 @@ class DISPLAY(object):
 
 			if ContentFile:
 
+				if not os.path.isfile(ContentFile):
+					continue
+
 				# file could be in writing process, wait for minimal file age
 				if time.time() - os.stat(ContentFile).st_mtime < 0.2:
 					time.sleep(0.2)

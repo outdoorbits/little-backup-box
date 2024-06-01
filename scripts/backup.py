@@ -150,8 +150,9 @@ class backup(object):
 		if VPN_Mode in ['OpenVPN','WireGuard']:
 			self.vpn	= lib_vpn.vpn(VPN_Mode)
 			if self.vpn.start():
-				lib_cron_ip.ip_info().display_ip()
-				lib_cron_ip.ip_info().mail_ip()
+				ip_info	= lib_cron_ip.ip_info()
+				ip_info.display_ip()
+				self.__mail_threads_started.append( ip_info.mail_ip() )
 			else:
 				self.__display.message([self.__lan.l('box_backup_break1'), self.__lan.l('box_backup_break2'), self.__lan.l('box_backup_vpn_connecting_failed')])
 
@@ -617,8 +618,9 @@ class backup(object):
 		if self.vpn:
 			self.vpn.stop()
 			del self.vpn
-			lib_cron_ip.ip_info().display_ip()
-			lib_cron_ip.ip_info().mail_ip()
+			ip_info	= lib_cron_ip.ip_info()
+			ip_info.display_ip()
+			self.__mail_threads_started.append( ip_info.mail_ip() )
 
 	def __checkLostDevice(self):
 		lostTargetDevice	= False

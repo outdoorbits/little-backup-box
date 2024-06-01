@@ -35,15 +35,25 @@ class backup_autorun(object):
 	def __init__(self):
 		self.WORKING_DIR	= os.path.dirname(__file__)
 
-		self.__setup	= lib_setup.setup(rewrite_configfile=True)
-		self.__display	= lib_display.display()
-		self.__lan		= lib_language.language()
+		self.__setup				= lib_setup.setup(rewrite_configfile=True)
+		self.__display				= lib_display.display()
+		self.__lan					= lib_language.language()
+
+		self.conf_MAIL_TIMEOUT_SEC	= self.__setup.get_val('conf_MAIL_TIMEOUT_SEC')
+
+		self.__mail_threads_started	= []
 
 	def run(self):
 		self.__cleanup_at_boot()
 		self.__display_hello()
-		threading.Thread(target=lib_cron_ip.ip_info().mail_ip).start()
+
+		ip_info	= lib_cron_ip.ip_info()
+		ip_info.display_ip()
+		self.__mail_threads_started.append( ip_info.mail_ip() )
+
 		self.__default_backup()
+
+		self.__terminate_threads()
 
 	def __cleanup_at_boot(self):
 		# remove IP_SENT_MARKERFILE
@@ -130,6 +140,21 @@ class backup_autorun(object):
 		if PrimaryBackupConfig:
 			Command	= ['python3', f"{self.WORKING_DIR}/backup.py"] + PrimaryBackupConfig + SecundaryBackupConfig
 			subprocess.run(Command)
+
+	def __terminate_threads(self):
+		# Wait for running threads (mails to send)
+		wait_for_outgoing_mails	= False
+		TimeLimit	= time.time() + self.conf_MAIL_TIMEOUT_SEC
+		for thread in self.__mail_threads_started:
+			while thread.is_alive():
+				if time.time() >= TimeLimit:
+					break
+
+				if not wait_for_outgoing_mails:
+					wait_for_outgoing_mails	= True
+					self.__display.message([f":{self.__lan.l('box_poweroff_waiting_outgoing_mails1')}", f":{self.__lan.l('box_poweroff_waiting_outgoing_mails2')}"])
+
+				time.sleep(0.5)
 
 if __name__ == "__main__":
 	backup_autorun().run()
