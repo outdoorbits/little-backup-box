@@ -146,6 +146,9 @@ class backup_autorun(object):
 		wait_for_outgoing_mails	= False
 		TimeLimit	= time.time() + self.conf_MAIL_TIMEOUT_SEC
 		for thread in self.__mail_threads_started:
+			if thread is None:
+				continue
+
 			while thread.is_alive():
 				if time.time() >= TimeLimit:
 					break

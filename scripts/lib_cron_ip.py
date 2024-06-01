@@ -162,7 +162,7 @@ class ip_info(object):
 
 			#send mail
 			if newIP:
-				# returns thread of mail process
+				# returns thread of sendmail process
 				return(
 						mailObj.sendmail(
 						Subject		= f"{self.__lan.l('box_cronip_mail_info')}: {', '.join(self.__IPs)}",
