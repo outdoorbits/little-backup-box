@@ -233,7 +233,7 @@ if (isset($CMD_HEADER)) {
 			} else {
 	?>
 				<div class="card" style="margin-top: 2em;">
-					<?php echo l::cmd_password_input_info . "<br><a href ='/config.php'>" . l::cmd_password_set_link . '</a>'; ?><br>
+					<?php echo l::cmd_password_input_info . "<br><a href ='/setup.php'>" . l::cmd_password_set_link . '</a>'; ?><br>
 				</div>
 	<?php
 			}

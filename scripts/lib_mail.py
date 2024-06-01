@@ -25,6 +25,7 @@ import re
 import sys
 
 import smtplib, ssl
+import threading
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email import encoders
@@ -54,8 +55,14 @@ class mail(object):
 		return(self.conf_SMTP_SERVER and self.conf_SMTP_PORT and self.conf_MAIL_SECURITY and self.conf_MAIL_USER and self.conf_MAIL_PASSWORD and self.conf_MAIL_FROM and self.conf_MAIL_TO)
 
 	def sendmail(self, Subject, TextPlain, TextHTML='', File_name=None, File_content_disposition='attachment', File_content_ID=''):
-		# File_content_disposition cloud be attachment or inline
+		# File_content_disposition could be 'attachment' or 'inline'
 
+		# start self.__sendmail but don't wait for it
+		thread	= threading.Thread(target=self.__sendmail, args=(Subject, TextPlain, TextHTML, File_name, File_content_disposition, File_content_ID))
+		thread.start()
+		return(thread)
+
+	def __sendmail(self, Subject, TextPlain, TextHTML, File_name, File_content_disposition, File_content_ID):
 		if not self.mail_configured():
 			self.log.message('Mail not fully configured.')
 			return

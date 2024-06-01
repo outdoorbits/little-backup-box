@@ -175,8 +175,8 @@ class DISPLAY(object):
 		## start display menu
 		if self.conf_MENU_ENABLED:
 			# start displaymenu as iternal background process
-			watch_thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines,self.__setup))
-			watch_thread.start()
+			thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines,self.__setup))
+			thread.start()
 
 	def calculate_LineSize(self):
 		if self.hardware_ready:

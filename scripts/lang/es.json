@@ -195,7 +195,9 @@
       "testmail_sent": "Se envió correo de prueba",
       "sender_header": "Ausente",
       "sender_label": "Dirección de correo electrónico del remitente",
-      "security_header": "Seguridad de conexion"
+      "security_header": "Seguridad de conexion",
+      "timeout_header": "Tiempo de espera del correo",
+      "timeout_label": "¿Después de qué límite de tiempo se debe detener el envío de informes de respaldo?"
     },
     "alert_password_change_after_reboot_set": "Conjunto de contraseñas globales\nLos cambios serán aplicados después del reinicio",
     "alert_password_change_after_reboot_remove": "Se eliminó la contraseña global\nLos cambios serán aplicados después del reinicio",
@@ -512,7 +514,9 @@
       "rebooting": "Reiniciando",
       "while_act_led_on_1": "mientras que",
       "while_act_led_on_2": "el LED está encendido. ¡Chau!",
-      "idle_time_reached": "Tiempo de inactividad alcanzado"
+      "idle_time_reached": "Tiempo de inactividad alcanzado",
+      "waiting_outgoing_mails1": "Esperando",
+      "waiting_outgoing_mails2": "entrega de correo"
     },
     "cmd": {
       "format": {

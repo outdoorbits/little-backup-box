@@ -268,6 +268,7 @@ conf_BACKUP_UPDATE_EXIF=$conf_BACKUP_UPDATE_EXIF
 conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
 conf_VIEW_WRITE_RATING_EXIF=$conf_VIEW_WRITE_RATING_EXIF
 conf_MAIL_NOTIFICATIONS=$conf_MAIL_NOTIFICATIONS
+conf_MAIL_TIMEOUT_SEC=$conf_MAIL_TIMEOUT_SEC
 conf_MAIL_HTML=$conf_MAIL_HTML
 conf_SMTP_SERVER='$conf_SMTP_SERVER'
 conf_SMTP_PORT='$conf_SMTP_PORT'
@@ -911,6 +912,17 @@ function upload_settings() {
 				<h3><?php echo L::config_mail_recipient_header; ?></h3>
 					<label for="conf_MAIL_TO"><?php echo L::config_mail_recipient_label; ?></label><br>
 					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MAIL_TO" name="conf_MAIL_TO" size="20" value="<?php echo $config['conf_MAIL_TO']; ?>">
+
+				<h3><?php echo L::config_mail_timeout_header; ?></h3>
+					<label for="conf_MAIL_TIMEOUT_SEC"><?php echo L::config_mail_timeout_label; ?></label><br>
+					<select name="conf_MAIL_TIMEOUT_SEC" id="conf_MAIL_TIMEOUT_SEC">
+						<?php
+							$mail_timeouts	= array(5,10,20,30,40,50,60,90,120,300,600);
+							foreach($mail_timeouts as $mail_timeout) {
+								echo "<option value='" . $mail_timeout . "' " . ($config["conf_MAIL_TIMEOUT_SEC"] == $mail_timeout?" selected":"") . ">" . $mail_timeout . ' ' . L::seconds_short . "</option>";
+							}
+						?>
+					</select>
 
 				<h3><?php echo L::config_mail_testmail_header; ?></h3>
 					<label for="send_testmail"><?php echo L::config_mail_testmail_label; ?></label><br>

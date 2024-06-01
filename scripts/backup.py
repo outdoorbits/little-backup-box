@@ -84,8 +84,6 @@ class backup(object):
 		# Basics
 		self.__WORKING_DIR	= os.path.dirname(__file__)
 
-
-
 		# Setup
 		self.const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC	= self.__setup.get_val('const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC')
 		self.const_SYNC_TIME_OVERHEATING_WAIT_SEC		= self.__setup.get_val('const_SYNC_TIME_OVERHEATING_WAIT_SEC')
@@ -94,6 +92,7 @@ class backup(object):
 
 		self.conf_BACKUP_MOVE_FILES						= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
 		self.conf_MAIL_NOTIFICATIONS					= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
+		self.conf_MAIL_TIMEOUT_SEC						= self.__setup.get_val('conf_MAIL_TIMEOUT_SEC')
 		self.__conf_LOG_SYNC							= self.__setup.get_val('conf_LOG_SYNC')
 
 		if self.move_files == 'setup':
@@ -120,6 +119,7 @@ class backup(object):
 		self.SourceDevice		= None
 		self.TargetDevice		= None
 		self.TIMSCopyPossible	= False
+		self.__mail_threads_started	= []
 
 		# define TransferMode
 		if self.SourceStorageType == 'camera':
@@ -163,7 +163,9 @@ class backup(object):
 						lib_network.get_internet_status()
 						): # Check internet connection
 
-						mail.sendmail(f"Little Backup Box: {self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}",f"{self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
+						self.__mail_threads_started.append(
+							mail.sendmail(f"Little Backup Box: {self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}",f"{self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
+						)
 
 				return(None)
 
@@ -601,7 +603,9 @@ class backup(object):
 
 						self.__reporter.prepare_mail()
 
-						mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
+						self.__mail_threads_started.append(
+							mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
+						)
 
 				# exit loop?
 				if not dynamicSources:
@@ -1016,6 +1020,20 @@ class backup(object):
 		else:
 			self.__reporter.prepare_display_summary()
 			display_summary	= self.__reporter.display_summary
+
+		# Wait for running threads (mails to send)
+		wait_for_outgoing_mails	= False
+		TimeLimit	= time.time() + self.conf_MAIL_TIMEOUT_SEC
+		for thread in self.__mail_threads_started:
+			while thread.is_alive():
+				if time.time() >= TimeLimit:
+					break
+
+				if not wait_for_outgoing_mails:
+					wait_for_outgoing_mails	= True
+					self.__display.message([f":{self.__lan.l('box_poweroff_waiting_outgoing_mails1')}", f":{self.__lan.l('box_poweroff_waiting_outgoing_mails2')}"])
+
+				time.sleep(0.5)
 
 		if self.SecundaryBackupFollows:
 			self.__display.message(display_summary)

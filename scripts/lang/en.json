@@ -139,7 +139,9 @@
       "rebooting": "Rebooting",
       "power_down_via_gui_1": "Power down via",
       "power_down_via_gui_2": "web UI",
-      "idle_time_reached": "Idle time reached"
+      "idle_time_reached": "Idle time reached",
+      "waiting_outgoing_mails1": "Waiting for",
+      "waiting_outgoing_mails2": "mailing"
     },
     "cronip": {
       "online": "online",
@@ -410,7 +412,9 @@
       "testmail_sent": "Test mail was sent",
       "sender_header": "Sender",
       "sender_label": "Mailaddress of the sender",
-      "security_header": "Connection security"
+      "security_header": "Connection security",
+      "timeout_header": "Mail timeout",
+      "timeout_label": "After what time limit should the sending of backup reports be canceled?"
     },
     "alert_password_change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
     "alert_password_change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",

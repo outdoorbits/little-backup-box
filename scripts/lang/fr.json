@@ -195,7 +195,9 @@
       "testmail_sent": "L'e-mail de test a été envoyé",
       "sender_header": "Expéditeur",
       "sender_label": "Adresse e-mail de l'expéditeur",
-      "security_header": "Sécurité de la connexion"
+      "security_header": "Sécurité de la connexion",
+      "timeout_header": "Délai d'expiration du courrier",
+      "timeout_label": "Au bout de quel délai faut-il arrêter l'envoi des rapports de sauvegarde ?"
     },
     "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
     "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
@@ -512,7 +514,9 @@
       "rebooting": "Redémarrage",
       "while_act_led_on_1": "tandis que l'ACT",
       "while_act_led_on_2": "La LED est allumée. Au revoir!",
-      "idle_time_reached": "Temps mort atteint"
+      "idle_time_reached": "Temps mort atteint",
+      "waiting_outgoing_mails1": "Attendre",
+      "waiting_outgoing_mails2": "la livraison du courrier"
     },
     "cmd": {
       "format": {
