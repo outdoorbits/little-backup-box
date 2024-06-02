@@ -116,16 +116,15 @@ class ip_info(object):
 			if os.path.isfile(IP_sent_Markerfile):
 				with open(IP_sent_Markerfile,'r') as f:
 					MarkerfileContent	= f.read()
+			known_IPs	= MarkerfileContent.split(',')
 
-			# check for new IP
-			newIP	= False
-			for IP in self.__IPs:
-				if IP not in MarkerfileContent:
-					newIP	= True
+			# check for changed IP
+			IPs_changed      = sorted(self.__IPs) != sorted(known_IPs)
 
 			# write lockfile
-			with open(IP_sent_Markerfile,'w') as f:
-				f.write(', '.join(self.__IPs))
+			if IPs_changed:
+				with open(IP_sent_Markerfile,'w') as f:
+					f.write(','.join(self.__IPs))
 
 			# create links
 			indexLinksPlainSSL		= ''
@@ -161,7 +160,7 @@ class ip_info(object):
 				sambaLinksHTML		+= f'  <a href="smb://{IP}">smb://{IP}</a><br>\n'
 
 			#send mail
-			if newIP:
+			if IPs_changed:
 				# returns thread of sendmail process
 				return(
 						mailObj.sendmail(
@@ -224,4 +223,5 @@ if __name__ == "__main__":
 			ip.display_ip()
 		if args['mail']:
 			thread	= ip.mail_ip()
-			thread.join()
+			if not thread is None:
+				thread.join()
