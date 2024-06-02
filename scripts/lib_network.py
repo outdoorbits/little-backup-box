@@ -107,7 +107,7 @@ def get_internet_status():
 
 	return(False)
 
-def get_qr_links():
+def get_qr_links(protocol='https'):
 	qr_links	= ''
 
 	__setup	= lib_setup.setup()
@@ -125,7 +125,7 @@ def get_qr_links():
 	for IP in IPs:
 		IP_QR_FILE	= create_ip_link_qr_image(IP=IP, OnlineStatus=True, IP_QR_FILE=const_IP_QR_FILE_PATTERN, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 		IP_QR_FILE	= IP_QR_FILE.replace(const_WEB_ROOT_LBB,'',1)
-		qr_links	= f'{qr_links}<img src="{IP_QR_FILE}" style="padding: 5px;"> '
+		qr_links	= f'{qr_links}<a href="{protocol}://{IP}"><img src="{IP_QR_FILE}" style="padding: 5px;"></a> '
 
 	return(qr_links)
 
@@ -143,4 +143,9 @@ if __name__ == "__main__":
 		print (get_internet_status())
 
 	elif Mode == 'qr_links':
-		print(get_qr_links())
+		try:
+			protocol	= sys.argv[2]
+		except:
+			protocol	= 'https'
+
+		print(get_qr_links(protocol))

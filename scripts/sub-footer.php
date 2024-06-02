@@ -38,7 +38,13 @@
 </div>
 
 <?php
-	$qr_links	= shell_exec("sudo python3 $WORKING_DIR/lib_network.py qr_links");
+	if (isset($_SERVER['HTTPS'])) {
+		$PROTOCOL	= "https";
+	} else {
+		$PROTOCOL	= "http";
+	}
+
+	$qr_links	= shell_exec("sudo python3 $WORKING_DIR/lib_network.py qr_links $PROTOCOL");
 
 	$info_box	= '';
 	if ($qr_links != '') {
