@@ -116,9 +116,9 @@ class backup(object):
 			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
 
 		# Common variables
-		self.SourceDevice			= None
-		self.TargetDevice			= None
-		self.__TIMSCopyPossible		= False
+		self.SourceDevice		= None
+		self.TargetDevice		= None
+		self.TIMSCopyPossible	= False
 		self.__TIMSCopied			= False
 		self.__mail_threads_started	= []
 
@@ -224,7 +224,7 @@ class backup(object):
 		## don't sync tims to cloud
 		if self.TargetDevice.isLocal and SourceStorageType in ['usb', 'internal', 'nvme']:
 			excludeTIMS	= []
-			self.__TIMSCopyPossible	= True
+			self.TIMSCopyPossible	= True
 		else:
 			excludeTIMS	= ['--exclude', "*tims/"]
 
@@ -432,7 +432,7 @@ class backup(object):
 						DisplayLine2	= ' > ' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") + f" {self.TargetDevice.CloudServiceName}"	# header2
 
 						#define progress object
-						progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2, SourceDevice=self.SourceDevice, TargetDevice=self.TargetDevice, vpn=self.vpn, TIMSCopyPossible=self.__TIMSCopyPossible)
+						progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2, SourceDevice=self.SourceDevice, TargetDevice=self.TargetDevice, vpn=self.vpn)
 
 						SyncStartTime	= lib_system.get_uptime_sec()
 
