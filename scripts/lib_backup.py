@@ -23,7 +23,7 @@ import lib_mail
 import lib_system
 
 class progressmonitor(object):
-	def __init__(self, setup, display, log, lan, FilesToProcess, DisplayLine1, DisplayLine2, SourceDevice=None, TargetDevice=None, vpn=False, TIMSCopyPossible=False):
+	def __init__(self, setup, display, log, lan, FilesToProcess, DisplayLine1, DisplayLine2, SourceDevice=None, TargetDevice=None, vpn=False):
 		self.__setup	= setup
 		self.const_IMAGE_DATABASE_FILENAME			= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')
 		self.conf_MAIL_NOTIFICATIONS				= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
@@ -36,7 +36,6 @@ class progressmonitor(object):
 		self.SourceDevice		= SourceDevice
 		self.TargetDevice		= TargetDevice
 		self.vpn				= vpn
-		self.TIMSCopyPossible	= TIMSCopyPossible
 
 		self.StartTime			= lib_system.get_uptime_sec()
 		self.StopTime			= 0
@@ -81,7 +80,7 @@ class progressmonitor(object):
 					self.CountProgress	+= 1
 					self.CountJustCopied	+= 1
 
-					if self.TIMSCopyPossible and not self.TIMSCopied:
+					if not self.TIMSCopied:
 						self.TIMSCopied	= 'tims/' in SyncOutputLine
 
 		elif TransferMode == 'gphoto2':
