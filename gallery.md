@@ -44,6 +44,13 @@
 	<figcaption>PioB-1999 built the first variant I know of with a display and M.2 SSD. Details can be found in the <a href="https://github.com/outdoorbits/little-backup-box/discussions/278">discussions</a>. The case is available at <a href="https://www.printables.com/model/824210-case-for-raspberry-pi5-with-43-display-and-2tb-nvm">https://www.printables.com/model/824210-case-for-raspberry-pi5-with-43-display-and-2tb-nvm</a>.</figcaption>
 </figure>
 <br />
+<br />
+<h3>Tiny protected housing for Raspberry Pi zero 2W</h3>
+<figure>
+	<img src="https://github.com/outdoorbits/case-for-little-backup-box/blob/main/Raspberry_Pi_zero_2W/images/zero2w_icon.jpg" align="center">
+	<figcaption><a href="https://github.com/SigmaFred">SigmaFred</a> created this <a href="https://github.com/outdoorbits/case-for-little-backup-box/tree/main/Raspberry_Pi_zero_2W">tiny and well protected housing</a>.</figcaption>
+</figure>
+<br />
 
 <h3>Web UI</h3>
 <h2 id="screenshots">Screenshots</h2>
