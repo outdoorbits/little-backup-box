@@ -10,6 +10,10 @@ Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little
 <img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/youtube-lbb-desktop-variant.png"  align="left" title="Little Backup Box in a touchscreen housing"><BR CLEAR="all">
 Little Backup Box in a touchscreen housing - watch Dave's video on YouTube</a><br />
 <br />
+<a href="https://github.com/outdoorbits/case-for-little-backup-box/tree/main/Raspberry_Pi_zero_2W">
+<img src="https://github.com/outdoorbits/case-for-little-backup-box/blob/main/Raspberry_Pi_zero_2W/images/zero2w_icon.jpg"  align="left" title="Housing for Raspberry Pi zero 2W"><BR CLEAR="all">
+Little Backup Box in a tiny protected housing for Raspberry Pi zero 2W</a><br />
+<br />
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br />
 Especially for digital photography, this is the solution for backing up images and media files on mass storage devices when traveling or at events.<br />
 Backups can be made directly from many cameras and smartphones. Of course, USB storages (card reader) can also serve as a source.<br />
