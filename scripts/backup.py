@@ -605,6 +605,10 @@ class backup(object):
 
 		# VPN stop
 		if self.vpn:
+			# Wait for running threads (mails to send)
+			lib_common.join_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+
+			#stop VPN
 			self.vpn.stop()
 			del self.vpn
 			ip_info	= lib_cron_ip.ip_info()
@@ -1012,21 +1016,9 @@ class backup(object):
 			self.__reporter.prepare_display_summary()
 			display_summary	= self.__reporter.display_summary
 
+
 		# Wait for running threads (mails to send)
-		waiting_for_outgoing_mails	= False
-		TimeLimit	= time.time() + self.conf_MAIL_TIMEOUT_SEC
-
-		for thread in self.__mail_threads_started:
-			if thread is None:
-				continue
-
-			while thread.is_alive() and time.time() <= TimeLimit:
-
-				if not waiting_for_outgoing_mails:
-					waiting_for_outgoing_mails	= True
-					self.__display.message([f":{self.__lan.l('box_poweroff_waiting_outgoing_mails1')}", f":{self.__lan.l('box_poweroff_waiting_outgoing_mails2')}"])
-
-				thread.join(timeout=TimeLimit-time.time())
+		lib_common.join_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
 
 		if self.SecundaryBackupFollows:
 			self.__display.message(display_summary)

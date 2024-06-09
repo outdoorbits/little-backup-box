@@ -18,6 +18,7 @@
 #######################################################################
 
 import subprocess
+import time
 
 def pipe(SourceCommand, FilterCommand):
 	if SourceCommand and FilterCommand:
@@ -27,3 +28,19 @@ def pipe(SourceCommand, FilterCommand):
 		return(result)
 	else:
 		return()
+
+def join_threads(display, lan, threads, timeout):
+	waiting_for_outgoing_mails	= False
+	TimeLimit	= time.time() + timeout
+
+	for thread in threads:
+		if thread is None:
+			continue
+
+		while thread.is_alive() and time.time() <= TimeLimit:
+
+			if not waiting_for_outgoing_mails:
+				waiting_for_outgoing_mails	= True
+				display.message([f":{lan.l('box_poweroff_waiting_outgoing_mails1')}", f":{lan.l('box_poweroff_waiting_outgoing_mails2')}"])
+
+			thread.join(timeout=TimeLimit-time.time())

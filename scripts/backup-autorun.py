@@ -25,6 +25,7 @@ import shutil
 import threading
 
 import backup
+import lib_common
 import lib_cron_ip
 import lib_display
 import lib_language
@@ -53,7 +54,8 @@ class backup_autorun(object):
 
 		self.__default_backup()
 
-		self.__terminate_threads()
+		# Wait for running threads (mails to send)
+		lib_common.join_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
 
 	def __cleanup_at_boot(self):
 		# remove IP_SENT_MARKERFILE
@@ -140,24 +142,6 @@ class backup_autorun(object):
 		if PrimaryBackupConfig:
 			Command	= ['python3', f"{self.WORKING_DIR}/backup.py"] + PrimaryBackupConfig + SecundaryBackupConfig
 			subprocess.run(Command)
-
-	def __terminate_threads(self):
-		# Wait for running threads (mails to send)
-		wait_for_outgoing_mails	= False
-		TimeLimit	= time.time() + self.conf_MAIL_TIMEOUT_SEC
-		for thread in self.__mail_threads_started:
-			if thread is None:
-				continue
-
-			while thread.is_alive():
-				if time.time() >= TimeLimit:
-					break
-
-				if not wait_for_outgoing_mails:
-					wait_for_outgoing_mails	= True
-					self.__display.message([f":{self.__lan.l('box_poweroff_waiting_outgoing_mails1')}", f":{self.__lan.l('box_poweroff_waiting_outgoing_mails2')}"])
-
-				time.sleep(0.5)
 
 if __name__ == "__main__":
 	backup_autorun().run()
