@@ -159,14 +159,9 @@ class backup(object):
 				# Mail result
 				if self.conf_MAIL_NOTIFICATIONS:
 					mail	= lib_mail.mail()
-					if (
-						mail.mail_configured() and
-						lib_network.get_internet_status()
-						): # Check internet connection
-
-						self.__mail_threads_started.append(
-							mail.sendmail(f"Little Backup Box: {self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}",f"{self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
-						)
+					self.__mail_threads_started.append(
+						mail.sendmail(f"Little Backup Box: {self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}",f"{self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
+					)
 
 				return(None)
 
@@ -597,16 +592,10 @@ class backup(object):
 				# Mail result
 				if self.conf_MAIL_NOTIFICATIONS:
 					mail	= lib_mail.mail()
-					if (
-						mail.mail_configured() and
-						lib_network.get_internet_status()
-						): # Check internet connection
-
-						self.__reporter.prepare_mail()
-
-						self.__mail_threads_started.append(
-							mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
-						)
+					self.__reporter.prepare_mail()
+					self.__mail_threads_started.append(
+						mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
+					)
 
 				# exit loop?
 				if not dynamicSources:
@@ -1024,21 +1013,20 @@ class backup(object):
 			display_summary	= self.__reporter.display_summary
 
 		# Wait for running threads (mails to send)
-		wait_for_outgoing_mails	= False
+		waiting_for_outgoing_mails	= False
 		TimeLimit	= time.time() + self.conf_MAIL_TIMEOUT_SEC
+
 		for thread in self.__mail_threads_started:
 			if thread is None:
 				continue
 
-			while thread.is_alive():
-				if time.time() >= TimeLimit:
-					break
+			while thread.is_alive() and time.time() <= TimeLimit:
 
-				if not wait_for_outgoing_mails:
-					wait_for_outgoing_mails	= True
+				if not waiting_for_outgoing_mails:
+					waiting_for_outgoing_mails	= True
 					self.__display.message([f":{self.__lan.l('box_poweroff_waiting_outgoing_mails1')}", f":{self.__lan.l('box_poweroff_waiting_outgoing_mails2')}"])
 
-				time.sleep(0.5)
+				thread.join(timeout=TimeLimit-time.time())
 
 		if self.SecundaryBackupFollows:
 			self.__display.message(display_summary)
