@@ -132,29 +132,19 @@
 
 				echo ("<tr><th style='vertical-align:top;'>$Lum</th><td style='padding-left: 10px;'>");
 
-					$KeyWords	= array(
-						'Temperature',
-						'Power On Hours',
-						'Unsafe Shutdowns',
-						'Media and Data Integrity Errors',
-						'Warning  Comp. Temperature Time',
-						'Critical Comp. Temperature Time'
-					);
-
 					unset($States);
 					exec("sudo smartctl -a $Lum", $States);
 
-
 					$StatusMessage	= '';
-					foreach($States as $State) {
-						foreach($KeyWords as $KeyWord) {
-							if (str_starts_with($State, $KeyWord . ':')) {
-								list($Value, $measured)	= explode(':', $State, 2);
+					foreach($States as $Line) {
+						if (strpos($Line, ': ')) {
+							$output	= true;
+
+							list($Value, $measured)	= explode(':', $Line, 2);
 								$Value		= str_pad(trim($Value) . ':', 35, ' ');
 								$measured	= trim($measured);
-								echo($Value . $measured . '<br>');
-								$output	= true;
-							}
+
+							echo ($Value . $measured . '<br>');
 						}
 					}
 
