@@ -188,12 +188,14 @@
 											echo "$MODEL $PORT";
 
 											echo '<h4>' . L::sysinfo_camera_model.'</h4>';
+
 											unset($SUMMARY);
-											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --summary | grep 'Model' | cut -d: -f2 | tr -d ' '",$SUMMARY);
+											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --summary | grep 'Model' | cut -d: -f2",$SUMMARY);
+
 											if (count($SUMMARY)) {
 												echo "<ul>";
 
-													$MODEL	= mb_ereg_replace("([^a-zA-Z0-9-_\.])", '_', $SUMMARY[0]);
+													$MODEL	= mb_ereg_replace("([^a-zA-Z0-9-])", '_', trim($SUMMARY[0]));
 
 													echo "<li>$MODEL</li>";
 
