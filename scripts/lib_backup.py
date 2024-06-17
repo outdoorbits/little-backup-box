@@ -23,33 +23,47 @@ import lib_mail
 import lib_system
 
 class progressmonitor(object):
-	def __init__(self, setup, display, log, lan, FilesToProcess, DisplayLine1, DisplayLine2, SourceDevice=None, TargetDevice=None, vpn=False):
+	def __init__(self,
+			setup,
+			display,
+			log,
+			lan,
+			FilesToProcess,
+			DisplayLine1,
+			DisplayLine2,
+			SourceDevice=None,
+			TargetDevice=None,
+			vpn=False
+		):
 		self.__setup	= setup
 		self.const_IMAGE_DATABASE_FILENAME			= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')
 		self.conf_MAIL_NOTIFICATIONS				= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
 		self.__conf_DISP_FRAME_TIME					= self.__setup.get_val('conf_DISP_FRAME_TIME')
 
-		self.__display			= display	# display object
-		self.__log				= log		# log object
-		self.__lan				= lan		# language object
-		self.FilesToProcess		= FilesToProcess
-		self.SourceDevice		= SourceDevice
-		self.TargetDevice		= TargetDevice
-		self.vpn				= vpn
+		self.__display					= display	# display object
+		self.__log						= log		# log object
+		self.__lan						= lan		# language object
+		self.FilesToProcess				= FilesToProcess
+		self.SourceDevice				= SourceDevice
+		self.TargetDevice				= TargetDevice
+		self.vpn						= vpn
 
-		self.StartTime			= lib_system.get_uptime_sec()
-		self.StopTime			= 0
-		self.CountProgress		= 0
-		self.CountProgress_OLD	= -1
-		self.CountJustCopied		= 0
-		self.LastMessageTime	= 0
-		self.TransferRate		= ''
-		self.TIMSCopied			= False
+		self.StartTime					= lib_system.get_uptime_sec()
+		self.StopTime					= 0
+		self.CountProgress				= 0
+		self.CountProgress_OLD			= -1
+		self.CountJustCopied			= 0
+		self.CountFilesConfirmed		= 0
+		self.CountFilesNotConfirmed		= 0
+		self.countFilesMissing			= 0
+		self.LastMessageTime			= 0
+		self.TransferRate				= ''
+		self.TIMSCopied					= False
 
 		self.DisplayLine1	= DisplayLine1
 		self.DisplayLine2	= DisplayLine2
 
-		self.FilesList_gphoto2		= []
+		self.FilesList		= []
 
 		# start screen
 		self.progress(TransferMode='init', CountProgress=0)
@@ -89,7 +103,8 @@ class progressmonitor(object):
 
 				if SyncOutputLine[0:6] == 'Saving':
 					self.CountJustCopied	+= 1
-					self.FilesList_gphoto2	+= [SyncOutputLine.replace('Saving file as ', '')]
+
+					self.FilesList	+= [SyncOutputLine.replace('Saving file as ', '')]
 		elif TransferMode is None:
 			self.CountProgress	+= 1
 
@@ -308,6 +323,9 @@ class reporter(object):
 
 					if 'Err.: Files missing!' in Report['Errors']:
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_files_missing')}</p>"
+
+					if 'Err.: File validation(s) failed!' in Report['Errors']:
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_files_validation_failed')}</p>"
 
 					if 'Exception' in Report['Errors']:
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_exception')} {Report['SyncReturnCode']} ({self.sync_return_code_decoder(Report['SyncReturnCode'])}).</p>"

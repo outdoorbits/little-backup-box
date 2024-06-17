@@ -56,7 +56,8 @@
         "no_backup": "Error: No backup performed!",
         "remount_device_failed": "Remount failed!",
         "removed_source_blocked": "Transferred files were <u>not</u> deleted from the source because the source was already the backup destination.",
-        "removed_source": "Transferred files have been deleted from the source. (if possible)"
+        "removed_source": "Transferred files have been deleted from the source. (if possible)",
+        "files_validation_failed": "Files could not be found on the target disk during validation."
       },
       "storage_filesystem_short": "FS",
       "exception": "Unknown error",
@@ -129,7 +130,8 @@
       "camera": {
         "removing_files_1": "Delete files",
         "removing_files_2": "from camera"
-      }
+      },
+      "validate_files_from": "Validate files from"
     },
     "poweroff": {
       "poweroff": "Power off",

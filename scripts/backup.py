@@ -425,7 +425,18 @@ class backup(object):
 						DisplayLine2	= ' > ' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") + f" {self.TargetDevice.CloudServiceName}"	# header2
 
 						#define progress object
-						progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2, SourceDevice=self.SourceDevice, TargetDevice=self.TargetDevice, vpn=self.vpn)
+						progress	= lib_backup.progressmonitor(
+							setup	= self.__setup,
+							display				= self.__display,
+							log					= self.__log,
+							lan					= self.__lan,
+							FilesToProcess		= FilesToProcess,
+							DisplayLine1		= DisplayLine1,
+							DisplayLine2		= DisplayLine2,
+							SourceDevice		= self.SourceDevice,
+							TargetDevice		= self.TargetDevice,
+							vpn					= self.vpn
+						)
 
 						SyncStartTime	= lib_system.get_uptime_sec()
 
@@ -444,7 +455,7 @@ class backup(object):
 
 						SyncReturnCode	= 0
 
-	#					# gphoto2 backup
+#						# gphoto2 backup
 						if SourceStorageName == 'camera':
 							# not mountable targets are excluded.
 
@@ -474,7 +485,7 @@ class backup(object):
 
 							os.chdir(os.path.expanduser('~'))
 
-	#					# rsync backup
+#						# rsync backup
 						else:
 							Command	= self.TargetDevice.rsyncSSH + ["rsync"] + RsyncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
 							self.__log.message(' '.join(Command),3)
@@ -563,13 +574,36 @@ class backup(object):
 
 						ErrorsOld	= self.__reporter.get_errors()
 
-						FilesList_gphoto2	= progress.FilesList_gphoto2
+						FilesList	= progress.FilesList
+
 						del progress
 
-						if SourceStorageName == 'camera' and self.move_files and FilesList_gphoto2:
-							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList_gphoto2), self.__lan.l('box_backup_camera_removing_files_1'), self.__lan.l('box_backup_camera_removing_files_2'))
+						# validate files after backup from camera
+						if SourceStorageName == 'camera':
+							DisplayLine1	= self.__lan.l('box_backup_validate_files_from')		# header1
+							DisplayLine2	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"	# header2
+							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList), DisplayLine1, DisplayLine2)
 
-							for FileRemove in FilesList_gphoto2:
+							FilesValidationFailed	= 0
+							FilesListCopy	= FilesList.copy()
+							for File in FilesListCopy:
+								if (not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget, File))):
+									FilesValidationFailed	+= 1
+									FilesList.remove(File) # do not remove this file from camera
+
+								progress.progress()
+
+							del progress
+
+							if (FilesValidationFailed > 0):
+								self.__reporter.add_error('Err.: File validation(s) failed!')
+								self.__log.message(f"{FilesValidationFailed} file validation(s) failed.")
+
+						# delete files from camera
+						if SourceStorageName == 'camera' and self.move_files and FilesList:
+							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList), self.__lan.l('box_backup_camera_removing_files_1'), self.__lan.l('box_backup_camera_removing_files_2'))
+
+							for FileRemove in FilesList:
 								cam_folder	= os.path.dirname(FileRemove)
 								cam_file	= os.path.basename(FileRemove)
 
