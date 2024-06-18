@@ -190,7 +190,7 @@
 											echo '<h4>' . L::sysinfo_camera_model.'</h4>';
 
 											unset($SUMMARY);
-											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --summary | grep 'Model' | cut -d: -f2",$SUMMARY);
+											exec("sudo gphoto2 --camera '$MODEL' --port '$PORT' --summary | grep 'Model' | cut -d: -f2", $SUMMARY);
 
 											if (count($SUMMARY)) {
 												echo "<ul>";

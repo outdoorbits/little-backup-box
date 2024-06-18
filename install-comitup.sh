@@ -17,13 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# define DIRs
-INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [[ ! "${INSTALLER_DIR}" =~ "little-backup-box" ]]; then
-    # in case it is called by regular install command (curl ...)
-    INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/little-backup-box"
-fi
-
 const_WEB_ROOT_LBB="/var/www/little-backup-box"
 
 echo "Installing comitup..."
@@ -33,15 +26,13 @@ wget https://davesteele.github.io/comitup/latest/davesteele-comitup-apt-source_l
 sudo dpkg -i --force-all davesteele-comitup-apt-source_latest.deb
 sudo rm davesteele-comitup-apt-source_latest.deb
 
+# update and upgrade
 sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive \
 		apt \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
-
-# Enable and start NetworkManager
-sudo systemctl enable NetworkManager.service
 
 # Installing comitup*: install comitup
 sudo DEBIAN_FRONTEND=noninteractive \
@@ -50,6 +41,9 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 		python3-networkmanager comitup comitup-watch
+
+# Enable and start NetworkManager
+sudo systemctl enable NetworkManager.service
 
 # Installing comitup*: Allow NetworkManager to manage the wifi interfaces by removing references to them from /etc/network/interfaces
 sudo rm /etc/network/interfaces
