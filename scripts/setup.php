@@ -984,7 +984,7 @@ function upload_settings() {
 								echo L::config_username . ": 'lbb', " . L::config_password . ": 'lbb'";
 							}
 							else {
-								echo L::config_username . ": 'lbb', " . L::config_password_as_set_in . " '" . L::config_password_section . "'";
+								echo L::config_username . ": 'lbb'; " . L::config_password_as_set_in . " '" . L::config_password_section . "'";
 							}
 						?>
 
