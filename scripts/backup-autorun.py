@@ -36,13 +36,16 @@ class backup_autorun(object):
 	def __init__(self):
 		self.WORKING_DIR	= os.path.dirname(__file__)
 
-		self.__setup				= lib_setup.setup(rewrite_configfile=True)
-		self.__display				= lib_display.display()
-		self.__lan					= lib_language.language()
+		self.__setup						= lib_setup.setup(rewrite_configfile=True)
+		self.__display						= lib_display.display()
+		self.__lan							= lib_language.language()
 
-		self.conf_MAIL_TIMEOUT_SEC	= self.__setup.get_val('conf_MAIL_TIMEOUT_SEC')
+		self.const_MEDIA_DIR				= self.__setup.get_val('const_MEDIA_DIR')
+		self.const_RCLONE_CONFIG_FILE		= self.__setup.get_val('const_RCLONE_CONFIG_FILE')
 
-		self.__mail_threads_started	= []
+		self.conf_MAIL_TIMEOUT_SEC			= self.__setup.get_val('conf_MAIL_TIMEOUT_SEC')
+
+		self.__mail_threads_started			= []
 
 	def run(self):
 		self.__cleanup_at_boot()
@@ -86,6 +89,14 @@ class backup_autorun(object):
 			shutil.chown(const_LOGFILE, user='www-data', group='www-data')
 		except:
 			pass
+
+		# dos2unix
+		rclone_conf	= os.path.join(self.const_MEDIA_DIR, self.const_RCLONE_CONFIG_FILE)
+		if os.path.isfile(rclone_conf):
+			try:
+				subprocess.run(['dos2unix', rclone_conf])
+			except:
+				pass
 
 		# init new cmd logfile
 		const_CMD_LOGFILE				= self.__setup.get_val('const_CMD_LOGFILE')

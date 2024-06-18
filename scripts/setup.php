@@ -365,7 +365,10 @@ function upload_settings() {
 					}
 
 					if (file_exists($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"])) {
-						if (rename($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"])) {$Files_Copied=$Files_Copied."\n* '".$constants["const_RCLONE_CONFIG_FILE"]."'";}
+						if (rename($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"])) {
+							$Files_Copied=$Files_Copied."\n* '".$constants["const_RCLONE_CONFIG_FILE"]."'";
+							exec('sudo dos2unix "'.$constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"].'"');
+						}
 					}
 
 					if (file_exists($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {
