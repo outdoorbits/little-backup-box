@@ -112,7 +112,7 @@
     "cloud_header": "L'interface graphique de rcloud s'ouvre dans une nouvelle fenêtre.",
     "username": "Nom d'utilisateur",
     "password": "Mot de passe",
-    "password_as_set_in": "comme défini dans",
+    "password_as_set_in": "Mot de passe tel que défini dans",
     "cloud_rclone_gui": "rclone GUI",
     "update_section": "Mettre à jour",
     "update_text": "<h3>Mettre à jour Little Backup Box</h3><p>Attention :<ul><li>La mise à jour peut rendre le système inutilisable.</li> <li>La mise à jour peut entraîner un volume de téléchargement considérable et donc éventuellement des coûts.</li><li>La mise à jour peut prendre plusieurs minutes ou plus, selon la vitesse d'Internet.</li></ul><br>Uniquement effectuez la mise à jour si vous ...<ul><li>pouvez également effectuer une nouvelle installation si nécessaire</li><li>disposez d'une connexion Internet stable</li><li>disposez d'une alimentation électrique stable</li> </ul></p>",

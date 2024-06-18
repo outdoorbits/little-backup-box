@@ -112,7 +112,7 @@
     "cloud_header": "rcloud GUI wird in einem neuen Fenster geöffnet.",
     "username": "Benutzername",
     "password": "Passwort",
-    "password_as_set_in": "wie eingestellt in",
+    "password_as_set_in": "Passwort wie festgelegt in",
     "cloud_rclone_gui": "rclone GUI",
     "update_section": "Update",
     "update_text": "<h3>Update Little Backup Box</h3><p>Achtung:<ul><li>Das Update kann das System unbrauchbar machen.</li><li>Das Update kann ein erhebliches Downloadvolumen und damit ggf. Kosten verursachen.</li><li>Das Update kann je nach Internetgeschwindigkeit mehrere Minuten oder länger dauern.</li></ul><br>Führen Sie das Update nur durch, wenn Sie ...<ul><li>notfalls auch die Möglichkeit hätten, eine Neuinstallation durchführen</li><li>eine stabile Internetverbindung haben</li><li>eine stabile Stromversorgung haben</li></ul></p>",
