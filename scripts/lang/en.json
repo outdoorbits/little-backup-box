@@ -368,7 +368,7 @@
         "requirements_header": "Target partition requirements",
         "requirements_label": "What is the minimum size of the target partition to be accepted?",
         "requirements_size_ignore": "accept all",
-        "basedir_cloud_header": "Base folder on cloud servers (destination)",
+        "basedir_cloud_header": "Base folder on cloud servers",
         "basedir_cloud_label": "The backup on the cloud server is carried out under this directory."
       },
       "none": "no automatic backup",

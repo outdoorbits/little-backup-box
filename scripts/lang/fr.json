@@ -149,7 +149,7 @@
         "requirements_header": "Exigences de la partition cible",
         "requirements_label": "Quelle est la taille minimale de la partition cible à accepter ?",
         "requirements_size_ignore": "accepter tout",
-        "basedir_cloud_header": "Dossier d'accueil sur les serveurs cloud (destination)",
+        "basedir_cloud_header": "Dossier d'accueil sur les serveurs cloud",
         "basedir_cloud_label": "La sauvegarde est effectuée sous ce répertoire."
       },
       "none": "pas de sauvegarde automatique",

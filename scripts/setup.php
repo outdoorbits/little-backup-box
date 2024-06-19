@@ -377,7 +377,7 @@ function upload_settings() {
 					if (file_exists($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {
 						if (rename($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {
 							$Files_Copied=$Files_Copied."\n* '".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"]."'";
-							exec('sudo dos2unix "'. $constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"] .'"');
+							exec('sudo dos2unix "'. $constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"] . '"');
 						}
 					}
 
@@ -386,7 +386,7 @@ function upload_settings() {
 							exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
 							exec ('sudo mv "' . $targetdir.'/'.$constants['const_VPN_FILENAME_' . $vpn_type] . '" "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
 							$Files_Copied=$Files_Copied."\n* '" . $constants['const_VPN_FILENAME_' . $vpn_type] . "'";
-							exec('sudo dos2unix "'. $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] .'"');
+							exec('sudo dos2unix "'. $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
 
 							## secure VPN config files
 							exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '" -R');

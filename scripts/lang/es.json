@@ -149,7 +149,7 @@
         "requirements_header": "Requisitos de partición de destino",
         "requirements_label": "¿Cuál es el tamaño mínimo de la partición de destino que se aceptará?",
         "requirements_size_ignore": "aceptar todo",
-        "basedir_cloud_header": "Carpeta de inicio en servidores en la nube (destino)",
+        "basedir_cloud_header": "Carpeta de inicio en servidores en la nube",
         "basedir_cloud_label": "Copia de seguridad en el servidor de la nube se realiza en este directorio."
       },
       "none": "sin respaldo automático",

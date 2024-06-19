@@ -149,7 +149,7 @@
         "requirements_header": "Anforderungen an die Zielpartition",
         "requirements_label": "Wie groß muss die Zielpartition mindestens sein, um akzepiert zu werden?",
         "requirements_size_ignore": "akzeptiere alle",
-        "basedir_cloud_header": "Basisordner auf Cloud-Servern (Ziel)",
+        "basedir_cloud_header": "Basisordner auf Cloud-Servern",
         "basedir_cloud_label": "Die Sicherung auf dem Cloud-Server wird unterhalb dieses Verzeichnisses durchgeführt."
       },
       "none": "kein automatisches Backup",
