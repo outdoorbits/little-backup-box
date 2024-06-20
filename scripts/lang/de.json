@@ -148,9 +148,7 @@
       "target": {
         "requirements_header": "Anforderungen an die Zielpartition",
         "requirements_label": "Wie groß muss die Zielpartition mindestens sein, um akzepiert zu werden?",
-        "requirements_size_ignore": "akzeptiere alle",
-        "basedir_cloud_header": "Basisordner auf Cloud-Servern",
-        "basedir_cloud_label": "Die Sicherung auf dem Cloud-Server wird unterhalb dieses Verzeichnisses durchgeführt."
+        "requirements_size_ignore": "akzeptiere alle"
       },
       "none": "kein automatisches Backup",
       "header": "Standard-Backup-Modus",
@@ -167,7 +165,13 @@
         "device_folder_pattern": "Zur Verwendung als Muster in den Einstellungen"
       },
       "general_settings_header": "Allgemeine Einstellungen",
-      "move_files_label": "Dateien verschieben statt sie zu kopieren?<br>Achtung: Von als Ziel-Speicher markierten Partitionen werden keine Dateien gelöscht."
+      "move_files_label": "Dateien verschieben statt sie zu kopieren?<br>Achtung: Von als Ziel-Speicher markierten Partitionen werden keine Dateien gelöscht.",
+      "cloud": {
+        "target_basedir_header": "Basisordner auf Cloud-Servern",
+        "target_basedir_label": "Die Sicherung auf dem Cloud-Server wird unterhalb dieses Verzeichnisses durchgeführt.",
+        "sync_method_header": "Methode der Datenübertragung",
+        "sync_method_label": "Im Allgemeinen sollte rsync schneller sein. Nur bei Kompatibilitätsproblemen mit einem Cloud-Dienst sollte rclone verwendet werden."
+      }
     },
     "imageviewer": {
       "section": "Bildbetrachter View",

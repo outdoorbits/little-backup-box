@@ -367,9 +367,7 @@
       "target": {
         "requirements_header": "Target partition requirements",
         "requirements_label": "What is the minimum size of the target partition to be accepted?",
-        "requirements_size_ignore": "accept all",
-        "basedir_cloud_header": "Base folder on cloud servers",
-        "basedir_cloud_label": "The backup on the cloud server is carried out under this directory."
+        "requirements_size_ignore": "accept all"
       },
       "none": "no automatic backup",
       "header": "Default backup mode",
@@ -386,7 +384,13 @@
         "device_folder_pattern": "For use as pattern in Settings"
       },
       "general_settings_header": "General Settings",
-      "move_files_label": "Move files instead of copying them?<br>Attention: No files will be deleted from partitions marked as target storage."
+      "move_files_label": "Move files instead of copying them?<br>Attention: No files will be deleted from partitions marked as target storage.",
+      "cloud": {
+        "target_basedir_header": "Base folder on cloud servers",
+        "target_basedir_label": "The backup on the cloud server is carried out under this directory.",
+        "sync_method_header": "Method of data transfer",
+        "sync_method_label": "En general, rsync debería ser más rápido. Rclone sólo debe usarse si hay problemas de compatibilidad con un servicio en la nube."
+      }
     },
     "imageviewer": {
       "section": "Image viewer View",

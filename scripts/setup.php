@@ -970,9 +970,9 @@ function upload_settings() {
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_cloud_section; ?></summary>
 
-				<h3><?php echo L::config_backup_target_basedir_cloud_header; ?></h3>
+				<h3><?php echo L::config_backup_cloud_target_basedir_header; ?></h3>
 					<?php
-						echo L::config_backup_target_basedir_cloud_label;
+						echo L::config_backup_cloud_target_basedir_label;
 
 					$CloudBaseDirsRAW	= explode('|;|', $config['conf_BACKUP_TARGET_BASEDIR_CLOUDS']);
 					$CloudBaseDirs	= array();

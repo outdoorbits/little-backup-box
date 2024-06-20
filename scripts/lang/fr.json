@@ -148,9 +148,7 @@
       "target": {
         "requirements_header": "Exigences de la partition cible",
         "requirements_label": "Quelle est la taille minimale de la partition cible à accepter ?",
-        "requirements_size_ignore": "accepter tout",
-        "basedir_cloud_header": "Dossier d'accueil sur les serveurs cloud",
-        "basedir_cloud_label": "La sauvegarde est effectuée sous ce répertoire."
+        "requirements_size_ignore": "accepter tout"
       },
       "none": "pas de sauvegarde automatique",
       "header": "Mode de sauvegarde par défaut",
@@ -167,7 +165,13 @@
         "device_folder_pattern": "À utiliser comme modèle dans les paramètres"
       },
       "general_settings_header": "Réglages généraux",
-      "move_files_label": "Déplacer des fichiers au lieu de les copier ?<br>Attention : aucun fichier ne sera supprimé des partitions marquées comme stockage cible."
+      "move_files_label": "Déplacer des fichiers au lieu de les copier ?<br>Attention : aucun fichier ne sera supprimé des partitions marquées comme stockage cible.",
+      "cloud": {
+        "target_basedir_header": "Dossier d'accueil sur les serveurs cloud",
+        "target_basedir_label": "La sauvegarde est effectuée sous ce répertoire.",
+        "sync_method_header": "Méthode de datation",
+        "sync_method_label": "En général, rsync devrait être plus rapide. Rclone ne doit être utilisé qu'en cas de problèmes de compatibilité avec un service cloud."
+      }
     },
     "imageviewer": {
       "section": "Visionneuse d'images View",
