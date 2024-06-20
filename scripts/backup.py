@@ -51,7 +51,7 @@ class backup(object):
 		# DoSyncDatabase, DoGenerateThumbnails, DoUpdateEXIF	True/False
 
 		# Objects
-		self.__setup		= lib_setup.setup()
+		self.__setup	= lib_setup.setup()
 		self.__display	= lib_display.display()
 		self.__log		= lib_log.log()
 		self.__lan		= lib_language.language()
@@ -85,6 +85,7 @@ class backup(object):
 		self.__WORKING_DIR	= os.path.dirname(__file__)
 
 		# Setup
+		self.conf_BACKUP_SYNC_METHOD_CLOUDS				= self.__setup.get_val('conf_BACKUP_SYNC_METHOD_CLOUDS')
 		self.const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC	= self.__setup.get_val('const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC')
 		self.const_SYNC_TIME_OVERHEATING_WAIT_SEC		= self.__setup.get_val('const_SYNC_TIME_OVERHEATING_WAIT_SEC')
 		self.const_IMAGE_DATABASE_FILENAME				= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')
@@ -125,7 +126,15 @@ class backup(object):
 		if self.SourceStorageType == 'camera':
 			self.TransferMode	= 'gphoto2'
 		else:
-			self.TransferMode	= 'rsync'
+			SyncMethod	= 'rsync'
+
+			CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
+			for CloudSyncMethod in CloudSyncMethods:
+				CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
+				if (CloudSyncMethodCandidate == 'rclone') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
+					SyncMethod	= 'rclone'
+
+			self.TransferMode	= SyncMethod
 
 		# Unmount devices, clean before backup
 		lib_storage.umount(self.__setup,'all')
@@ -485,30 +494,35 @@ class backup(object):
 
 							os.chdir(os.path.expanduser('~'))
 
-#						# rsync backup
+#						# rsync or rclone backup
 						else:
-							Command	= self.TargetDevice.rsyncSSH + ["rsync"] + RsyncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
-							self.__log.message(' '.join(Command),3)
+							if self.TransferMode == 'rsync':
+								Command	= self.TargetDevice.rsyncSSH + ["rsync"] + RsyncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
+								self.__log.message(' '.join(Command),3)
 
-							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True)  as BackupProcess:
+								with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True)  as BackupProcess:
 
-								while True:
-									SyncOutputLine = BackupProcess.stdout.readline()
-									if not SyncOutputLine:
-										break
+									while True:
+										SyncOutputLine = BackupProcess.stdout.readline()
+										if not SyncOutputLine:
+											break
 
-									progress.progress(TransferMode='rsync',SyncOutputLine=SyncOutputLine)
+										progress.progress(TransferMode='rsync',SyncOutputLine=SyncOutputLine)
 
-									if (SyncOutputLine[0] != ' ') and (SyncOutputLine != './\n'):
-										self.__reporter.add_synclog(SyncOutputLine)
+										if (SyncOutputLine[0] != ' ') and (SyncOutputLine != './\n'):
+											self.__reporter.add_synclog(SyncOutputLine)
 
-								self.__reporter.set_values(FilesProcessed=progress.CountProgress)
-								self.__reporter.set_values(FilesCopied=progress.CountJustCopied)
-								self.__TIMSCopied	= progress.TIMSCopied
+									self.__reporter.set_values(FilesProcessed=progress.CountProgress)
+									self.__reporter.set_values(FilesCopied=progress.CountJustCopied)
+									self.__TIMSCopied	= progress.TIMSCopied
 
-								BackupProcess.wait()
-								SyncReturnCode	= BackupProcess.returncode
-								self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
+									BackupProcess.wait()
+									SyncReturnCode	= BackupProcess.returncode
+									self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
+
+							else: # self.TransferMode == 'rclone'
+								#code for rclone follows
+								pass
 
 						SyncStopTime	= lib_system.get_uptime_sec()
 

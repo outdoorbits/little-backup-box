@@ -163,6 +163,15 @@ function write_config() {
 		}
 	}
 
+	$conf_BACKUP_SYNC_METHOD_CLOUDS	= '';
+	foreach($CloudServices as $CloudService) {
+		if (isset(${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService})) {
+			$conf_BACKUP_SYNC_METHOD_CLOUDS	= $conf_BACKUP_SYNC_METHOD_CLOUDS ? $conf_BACKUP_SYNC_METHOD_CLOUDS . '|;|' : $conf_BACKUP_SYNC_METHOD_CLOUDS;
+			${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService}	= trim(${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService});
+			$conf_BACKUP_SYNC_METHOD_CLOUDS	.= $CloudService.'|=|'.${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService};
+		}
+	}
+
 	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?"true":"false";
 	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?"true":"false";
 	$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?"true":"false";
@@ -229,6 +238,7 @@ conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
 conf_BACKUP_TARGET_SIZE_MIN=$conf_BACKUP_TARGET_SIZE_MIN
 conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
 conf_BACKUP_TARGET_BASEDIR_CLOUDS='$conf_BACKUP_TARGET_BASEDIR_CLOUDS'
+conf_BACKUP_SYNC_METHOD_CLOUDS='$conf_BACKUP_SYNC_METHOD_CLOUDS'
 conf_BACKUP_MOVE_FILES=$conf_BACKUP_MOVE_FILES
 conf_POWER_OFF=$conf_POWER_OFF
 conf_DISP=$conf_DISP
@@ -972,19 +982,60 @@ function upload_settings() {
 
 				<h3><?php echo L::config_backup_cloud_target_basedir_header; ?></h3>
 					<?php
-						echo L::config_backup_cloud_target_basedir_label;
+						echo '<p>' . L::config_backup_cloud_target_basedir_label . '</p>';
 
 					$CloudBaseDirsRAW	= explode('|;|', $config['conf_BACKUP_TARGET_BASEDIR_CLOUDS']);
 					$CloudBaseDirs	= array();
+					foreach($CloudServices as $CloudService) {
+						$CloudBaseDirs[$CloudService]	= '';
+					}
 					foreach($CloudBaseDirsRAW as $BaseDir) {
 						list($CloudService, $CloudBaseDir) = explode('|=|', $BaseDir);
 						$CloudBaseDirs[$CloudService]	= $CloudBaseDir;
 					}
 
 					foreach($CloudServices as $CloudService) { ?>
-							<label for="conf_BACKUP_TARGET_BASEDIR_CLOUDS"><?php echo $CloudService; ?>:</label><br>
+							<label for="conf_BACKUP_TARGET_BASEDIR_CLOUDS_"><?php echo $CloudService; ?>:</label><br>
 							<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_TARGET_BASEDIR_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_TARGET_BASEDIR_CLOUDS_<?php echo ($CloudService);?>" size="6" value="<?php echo $CloudBaseDirs[$CloudService]; ?>">
 					<?php } ?>
+
+				<h3><?php echo L::config_backup_cloud_sync_method_header; ?></h3>
+					<?php
+						echo '<p>' . L::config_backup_cloud_sync_method_label . '</p>';
+
+					$CloudSyncMethodsRAW	= explode('|;|', $config['conf_BACKUP_SYNC_METHOD_CLOUDS']);
+					$CloudSyncMethods	= array();
+					foreach($CloudServices as $CloudService) {
+						$CloudSyncMethods[$CloudService]	= '';
+					}
+					foreach($CloudSyncMethodsRAW as $SyncMethod) {
+						list($CloudService, $CloudSyncMethod) = explode('|=|', $SyncMethod);
+						$CloudSyncMethods[$CloudService]	= $CloudSyncMethod;
+					}
+
+					?>
+					<table>
+						<tr>
+							<th></th>
+							<th style="padding-left: 30px; text-align: center">rsync</th>
+							<th style="padding-left: 30px; text-align: center">rclone</th>
+						</tr>
+					<?php
+					foreach($CloudServices as $CloudService) { ?>
+						<tr>
+							<th>
+								<label for="conf_BACKUP_SYNC_METHOD_CLOUDS_"><?php echo $CloudService; ?>:</label>
+							</th>
+
+							<td style="padding-left: 30px; text-align: center;">
+									<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rsync" <?php if ($CloudSyncMethods[$CloudService] != 'rclone') {echo 'checked';} ?>>
+							</td>
+							<td style="padding-left: 30px; text-align: center">
+								<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rclone" <?php if ($CloudSyncMethods[$CloudService] == 'rclone') {echo 'checked';} ?>>
+							</td>
+						</tr>
+					<?php } ?>
+					</table>
 
 				<h3><?php echo L::config_cloud_header; ?></h3>
 					<p>
