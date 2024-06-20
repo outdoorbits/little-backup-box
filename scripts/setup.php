@@ -1107,11 +1107,13 @@ function upload_settings() {
 							<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
 								<?php
 									$display_drivers_array=array(
-										"SSD1306",
-										"SSD1309",
-										"SSD1322",
-										"SSD1331",
-										"SH1106"
+										'SSD1306',
+										'SSD1309',
+										'SSD1322',
+										'SSD1331',
+										'SH1106',
+										'ST7735',
+										'ST7735 WAVESHARE LCD display HAT'
 									);
 									foreach($display_drivers_array as $display_driver) {
 										echo "<option value='" . $display_driver . "' " . ($config["conf_DISP_DRIVER"] == $display_driver?" selected":"") . ">" . $display_driver . "</option>";
@@ -1216,7 +1218,6 @@ function upload_settings() {
 								$button_config_files	= array(
 									$WORKING_DIR.'/'.$constants['const_BUTTONS_CONFIG_FILE'],
 									$constants['const_MEDIA_DIR'].'/'.$constants['const_BUTTONS_PRIVATE_CONFIG_FILE']
-
 								);
 								$BasicLines	= 0;
 								foreach ($button_config_files as $button_config_file) {

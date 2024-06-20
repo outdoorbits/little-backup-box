@@ -60,6 +60,7 @@ from luma.core.interface.serial import i2c, spi, pcf8574
 from luma.core.interface.parallel import bitbang_6800
 from luma.core.render import canvas
 from luma.oled.device import ssd1306, ssd1309, ssd1322, ssd1331, sh1106
+from luma.lcd.device import st7735
 
 from PIL import Image, ImageFont
 
@@ -133,25 +134,34 @@ class DISPLAY(object):
 			if self.conf_DISP_CONNECTION == 'I2C':
 				serial = i2c(port=1, address=self.conf_DISP_I2C_ADDRESS)
 			elif self.conf_DISP_CONNECTION == 'SPI':
-				serial = spi(port=self.conf_DISP_SPI_PORT, device=0)
+				if self.conf_DISP_DRIVER == 'ST7735':
+					serial = spi(port=self.conf_DISP_SPI_PORT, device=0, bus_speed_hz=40000000)
+				elif self.conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
+					serial = spi(port=self.conf_DISP_SPI_PORT, device=0, bus_speed_hz=40000000, gpio_DC=25, gpio_RST=27)
+				else:
+					serial = spi(port=self.conf_DISP_SPI_PORT, device=0)
 			else:
 				print('Error: No valid connection type for display',file=sys.stderr)
-
+				raise Exception('Error: No valid connection type for display')
 		except:
 			self.hardware_ready	= False
 			print(f'Display connection to {self.conf_DISP_CONNECTION} could not be enabled.', file=sys.stderr)
 
 		try:
-			if self.conf_DISP_DRIVER == "SSD1306":
+			if self.conf_DISP_DRIVER == 'SSD1306':
 				self.device = ssd1306(serial)
-			elif self.conf_DISP_DRIVER == "SSD1309":
+			elif self.conf_DISP_DRIVER == 'SSD1309':
 				self.device = ssd1309(serial)
-			elif self.conf_DISP_DRIVER == "SSD1322":
+			elif self.conf_DISP_DRIVER == 'SSD1322':
 				self.device = ssd1322(serial)
-			elif self.conf_DISP_DRIVER == "SSD1331":
+			elif self.conf_DISP_DRIVER == 'SSD1331':
 				self.device = ssd1331(serial)
-			elif self.conf_DISP_DRIVER == "SH1106":
+			elif self.conf_DISP_DRIVER == 'SH1106':
 				self.device = sh1106(serial)
+			elif self.conf_DISP_DRIVER == 'ST7735':
+				self.device = st7735(serial, pin=16, width=128, height=128) # pin: GPIO Backlight
+			elif self.conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
+				self.device = st7735(serial, pin=24, width=128, height=128) # pin: GPIO Backlight
 			else:
 				print('Error: No valid display driver', file=sys.stderr)
 		except:
