@@ -169,7 +169,7 @@ class DISPLAY(object):
 			print(f'Display driver {self.conf_DISP_DRIVER} could not be enabled.', file=sys.stderr)
 
 		if self.hardware_ready:
-			self.device.capabilities(width=self.conf_DISP_RESOLUTION_X, height=self.conf_DISP_RESOLUTION_Y, rotate=self.conf_DISP_ROTATE, mode=self.conf_DISP_COLOR_MODEL)
+			self.device.capabilities(self.conf_DISP_RESOLUTION_X,self.conf_DISP_RESOLUTION_Y,self.conf_DISP_ROTATE,mode=self.conf_DISP_COLOR_MODEL)
 
 			self.device.contrast(self.conf_DISP_CONTRAST)
 
