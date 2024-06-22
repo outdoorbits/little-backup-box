@@ -159,9 +159,9 @@ class DISPLAY(object):
 			elif self.conf_DISP_DRIVER == 'SH1106':
 				self.device = sh1106(serial)
 			elif self.conf_DISP_DRIVER == 'ST7735':
-				self.device = st7735(serial, pin=16, width=128, height=128) # pin: GPIO Backlight
+				self.device = st7735(serial, pin=16, bgr=True) # pin: GPIO Backlight
 			elif self.conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
-				self.device = st7735(serial, pin=24, width=128, height=128) # pin: GPIO Backlight
+				self.device = st7735(serial, pin=24, bgr=True) # pin: GPIO Backlight
 			else:
 				print('Error: No valid display driver', file=sys.stderr)
 		except:
@@ -169,7 +169,7 @@ class DISPLAY(object):
 			print(f'Display driver {self.conf_DISP_DRIVER} could not be enabled.', file=sys.stderr)
 
 		if self.hardware_ready:
-			self.device.capabilities(self.conf_DISP_RESOLUTION_X,self.conf_DISP_RESOLUTION_Y,self.conf_DISP_ROTATE,mode=self.conf_DISP_COLOR_MODEL)
+			self.device.capabilities(width=self.conf_DISP_RESOLUTION_X, height=self.conf_DISP_RESOLUTION_Y, rotate=self.conf_DISP_ROTATE, mode=self.conf_DISP_COLOR_MODEL)
 
 			self.device.contrast(self.conf_DISP_CONTRAST)
 
