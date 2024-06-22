@@ -522,7 +522,9 @@
       "while_act_led_on_2": "LED leuchtet. Bye!",
       "idle_time_reached": "Leerlaufzeit erreicht",
       "waiting_outgoing_mails1": "Warte auf",
-      "waiting_outgoing_mails2": "Mailversand"
+      "waiting_outgoing_mails2": "Mailversand",
+      "finished_outgoing_mails2": "beendet",
+      "finished_outgoing_mails1": "Mailversand"
     },
     "cmd": {
       "format": {

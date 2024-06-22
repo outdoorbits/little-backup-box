@@ -44,3 +44,6 @@ def join_threads(display, lan, threads, timeout):
 				display.message([f":{lan.l('box_poweroff_waiting_outgoing_mails1')}", f":{lan.l('box_poweroff_waiting_outgoing_mails2')}"])
 
 			thread.join(timeout=TimeLimit-time.time())
+
+	if waiting_for_outgoing_mails:
+		display.message([f":{lan.l('box_poweroff_finished_outgoing_mails1')}", f":{lan.l('box_poweroff_finished_outgoing_mails2')}"])

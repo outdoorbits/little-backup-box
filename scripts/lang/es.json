@@ -522,7 +522,9 @@
       "while_act_led_on_2": "el LED está encendido. ¡Chau!",
       "idle_time_reached": "Tiempo de inactividad alcanzado",
       "waiting_outgoing_mails1": "Esperando",
-      "waiting_outgoing_mails2": "entrega de correo"
+      "waiting_outgoing_mails2": "entrega de correo",
+      "finished_outgoing_mails2": "electrónico finalizó",
+      "finished_outgoing_mails1": "La entrega de correo"
     },
     "cmd": {
       "format": {

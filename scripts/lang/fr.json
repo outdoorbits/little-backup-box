@@ -522,7 +522,9 @@
       "while_act_led_on_2": "La LED est allumée. Au revoir!",
       "idle_time_reached": "Temps mort atteint",
       "waiting_outgoing_mails1": "Attendre",
-      "waiting_outgoing_mails2": "la livraison du courrier"
+      "waiting_outgoing_mails2": "la livraison du courrier",
+      "finished_outgoing_mails2": "électronique est terminé",
+      "finished_outgoing_mails1": "L'envoi du courrier"
     },
     "cmd": {
       "format": {
