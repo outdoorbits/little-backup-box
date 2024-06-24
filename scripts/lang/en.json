@@ -516,7 +516,9 @@
       "color_high_label": "Font color for highlighted text",
       "contrast_label": "Contrast",
       "rotate_label": "Display rotation",
-      "rotate_header": "Rotate screen"
+      "rotate_header": "Rotate screen",
+      "offset_x_label": "Display shift horizontally (in pixels)",
+      "offset_y_label": "Display shift vertically (in pixels)"
     },
     "menu": {
       "section": "Display menu",

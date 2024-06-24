@@ -295,7 +295,9 @@
       "color_high_label": "Schriftfarbe für hervorgehobenen Text",
       "contrast_label": "Kontrast",
       "rotate_label": "Display-Rotation",
-      "rotate_header": "Display drehen"
+      "rotate_header": "Display drehen",
+      "offset_x_label": "Display-Verschiebung horizontal (in Pixeln)",
+      "offset_y_label": "Display-Verschiebung vertikal (in Pixeln)"
     },
     "menu": {
       "section": "Display-Menü",

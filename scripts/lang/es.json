@@ -295,7 +295,9 @@
       "color_high_label": "Color de fuente para el texto resaltado",
       "contrast_label": "Contraste",
       "rotate_label": "Rotación de pantalla",
-      "rotate_header": "Girar pantalla"
+      "rotate_header": "Girar pantalla",
+      "offset_x_label": "Desplazamiento de la pantalla horizontalmente (en píxeles)",
+      "offset_y_label": "Desplazamiento de la pantalla verticalmente (en píxeles)"
     },
     "menu": {
       "section": "Mostrar menú",

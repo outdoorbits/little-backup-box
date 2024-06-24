@@ -83,6 +83,8 @@ class DISPLAY(object):
 		self.conf_DISP_SPI_PORT				= self.__setup.get_val('conf_DISP_SPI_PORT')
 		self.conf_DISP_RESOLUTION_X			= self.__setup.get_val('conf_DISP_RESOLUTION_X')
 		self.conf_DISP_RESOLUTION_Y			= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		self.conf_DISP_OFFSET_X				= self.__setup.get_val('conf_DISP_OFFSET_X')
+		self.conf_DISP_OFFSET_Y				= self.__setup.get_val('conf_DISP_OFFSET_Y')
 		self.conf_DISP_ROTATE				= self.__setup.get_val('conf_DISP_ROTATE')
 		self.conf_DISP_CONTRAST				= self.__setup.get_val('conf_DISP_CONTRAST')
 		self.conf_DISP_COLOR_MODEL			= self.__setup.get_val('conf_DISP_COLOR_MODEL')
@@ -149,19 +151,19 @@ class DISPLAY(object):
 
 		try:
 			if self.conf_DISP_DRIVER == 'SSD1306':
-				self.device = ssd1306(serial)
+				self.device = ssd1306(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'SSD1309':
-				self.device = ssd1309(serial)
+				self.device = ssd1309(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'SSD1322':
-				self.device = ssd1322(serial)
+				self.device = ssd1322(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'SSD1331':
-				self.device = ssd1331(serial)
+				self.device = ssd1331(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'SH1106':
-				self.device = sh1106(serial)
+				self.device = sh1106(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'ST7735':
-				self.device = st7735(serial, pin=16, bgr=True) # pin: GPIO Backlight
+				self.device = st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, pin=16, bgr=True) # pin: GPIO Backlight
 			elif self.conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
-				self.device = st7735(serial, pin=24, bgr=True) # pin: GPIO Backlight
+				self.device = st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, pin=24, bgr=True) # pin: GPIO Backlight
 			else:
 				print('Error: No valid display driver', file=sys.stderr)
 		except:

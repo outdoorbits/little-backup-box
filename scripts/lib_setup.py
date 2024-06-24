@@ -205,6 +205,8 @@ class setup(object):
 					'conf_DISP_SPI_PORT':							{'value': '0', 'type': 'int'},
 					'conf_DISP_RESOLUTION_X':						{'value': 128, 'type': 'int'},
 					'conf_DISP_RESOLUTION_Y':						{'value': 64, 'type': 'int'},
+					'conf_DISP_OFFSET_X':							{'value': 0, 'type': 'int'},
+					'conf_DISP_OFFSET_Y':							{'value': 0, 'type': 'int'},
 					'conf_DISP_ROTATE':								{'value': 0, 'type': 'int'},
 					'conf_DISP_CONTRAST':							{'value': 255, 'type': 'int'},
 					'conf_DISP_COLOR_MODEL':						{'value': '1', 'type': 'str'},

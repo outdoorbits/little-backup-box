@@ -238,6 +238,8 @@ conf_DISP_I2C_ADDRESS='$conf_DISP_I2C_ADDRESS'
 conf_DISP_SPI_PORT='$conf_DISP_SPI_PORT'
 conf_DISP_RESOLUTION_X=$conf_DISP_RESOLUTION_X
 conf_DISP_RESOLUTION_Y=$conf_DISP_RESOLUTION_Y
+conf_DISP_OFFSET_X=$conf_DISP_OFFSET_X
+conf_DISP_OFFSET_Y=$conf_DISP_OFFSET_Y
 conf_DISP_ROTATE='$conf_DISP_ROTATE'
 conf_DISP_CONTRAST=$conf_DISP_CONTRAST
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
@@ -1189,6 +1191,28 @@ function upload_settings() {
 									$display_resolutions_array=array(32, 64, 128);
 									foreach($display_resolutions_array as $display_resolution) {
 										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_OFFSET_X"><?php echo L::config_display_offset_x_label; ?></label><br>
+							<select name="conf_DISP_OFFSET_X" id="conf_DISP_OFFSET_X">
+								<?php
+									for ($display_offset=-5; $display_offset<6; $display_offset++) {
+										echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_X"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_OFFSET_Y"><?php echo L::config_display_offset_y_label; ?></label><br>
+							<select name="conf_DISP_OFFSET_Y" id="conf_DISP_OFFSET_Y">
+								<?php
+									for ($display_offset=-5; $display_offset<6; $display_offset++) {
+										echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_Y"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
 									}
 								?>
 							</select>
