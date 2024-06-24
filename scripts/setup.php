@@ -153,14 +153,19 @@ function write_config() {
 	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\r\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
 	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
 
-	$conf_BACKUP_TARGET_BASEDIR_CLOUDS	= '';
+	$conf_BACKUP_CLOUDS_TARGET_BASEDIR		= '';
+	$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	= '';
 	foreach($CloudServices as $CloudService) {
-		if (isset(${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService})) {
-			$conf_BACKUP_TARGET_BASEDIR_CLOUDS	= $conf_BACKUP_TARGET_BASEDIR_CLOUDS ? $conf_BACKUP_TARGET_BASEDIR_CLOUDS . '|;|' : $conf_BACKUP_TARGET_BASEDIR_CLOUDS;
-			${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService}	= trim(${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService});
-			${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService}	= trim(${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService}, '/\\');
-			$conf_BACKUP_TARGET_BASEDIR_CLOUDS	.= $CloudService.'|=|'.${'conf_BACKUP_TARGET_BASEDIR_CLOUDS_'.$CloudService};
+		if (isset(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService})) {
+			$conf_BACKUP_CLOUDS_TARGET_BASEDIR	= $conf_BACKUP_CLOUDS_TARGET_BASEDIR ? $conf_BACKUP_CLOUDS_TARGET_BASEDIR . '|;|' : $conf_BACKUP_CLOUDS_TARGET_BASEDIR;
+			${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}	= trim(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService});
+			${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}	= trim(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}, '/\\');
+			$conf_BACKUP_CLOUDS_TARGET_BASEDIR	.= $CloudService.'|=|'.${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService};
 		}
+
+		$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	= $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE ? $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE . '|;|' : $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE;
+		${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService}	= (isset(${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService})) ? 'true':'false';
+		$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	.= $CloudService.'|=|'.${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService};
 	}
 
 	$conf_BACKUP_SYNC_METHOD_CLOUDS	= '';
@@ -172,23 +177,23 @@ function write_config() {
 		}
 	}
 
-	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?"true":"false";
-	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?"true":"false";
-	$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?"true":"false";
-	$conf_POWER_OFF								= isset($conf_POWER_OFF)?"true":"false";
-	$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?"true":"false";
-	$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?"true":"false";
-	$conf_DISP									= isset($conf_DISP)?"true":"false";
-	$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?"true":"false";
-	$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?"true":"false";
-	$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?"true":"false";
-	$conf_VIRTUAL_KEYBOARD_ENABLED				= isset($conf_VIRTUAL_KEYBOARD_ENABLED)?"true":"false";
-	$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?"true":"false";
-	$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?"true":"false";
-	$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?"true":"false";
-	$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?"true":"false";
-	$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?"true":"false";
-	$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?"true":"false";
+	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?'true':'false';
+	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?'true':'false';
+	$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?'true':'false';
+	$conf_POWER_OFF								= isset($conf_POWER_OFF)?'true':'false';
+	$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?'true':'false';
+	$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?'true':'false';
+	$conf_DISP									= isset($conf_DISP)?'true':'false';
+	$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?'true':'false';
+	$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?'true':'false';
+	$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?'true':'false';
+	$conf_VIRTUAL_KEYBOARD_ENABLED				= isset($conf_VIRTUAL_KEYBOARD_ENABLED)?'true':'false';
+	$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?'true':'false';
+	$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?'true':'false';
+	$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?'true':'false';
+	$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?'true':'false';
+	$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
+	$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?'true':'false';
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
 
@@ -237,7 +242,8 @@ conf_BACKUP_DEFAULT_SOURCE2='$conf_BACKUP_DEFAULT_SOURCE2'
 conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
 conf_BACKUP_TARGET_SIZE_MIN=$conf_BACKUP_TARGET_SIZE_MIN
 conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
-conf_BACKUP_TARGET_BASEDIR_CLOUDS='$conf_BACKUP_TARGET_BASEDIR_CLOUDS'
+conf_BACKUP_CLOUDS_TARGET_BASEDIR='$conf_BACKUP_CLOUDS_TARGET_BASEDIR'
+conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE='$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE'
 conf_BACKUP_SYNC_METHOD_CLOUDS='$conf_BACKUP_SYNC_METHOD_CLOUDS'
 conf_BACKUP_MOVE_FILES=$conf_BACKUP_MOVE_FILES
 conf_POWER_OFF=$conf_POWER_OFF
@@ -984,7 +990,7 @@ function upload_settings() {
 					<?php
 						echo '<p>' . L::config_backup_cloud_target_basedir_label . '</p>';
 
-					$CloudBaseDirsRAW	= explode('|;|', $config['conf_BACKUP_TARGET_BASEDIR_CLOUDS']);
+					$CloudBaseDirsRAW	= explode('|;|', $config['conf_BACKUP_CLOUDS_TARGET_BASEDIR']);
 					$CloudBaseDirs	= array();
 					foreach($CloudServices as $CloudService) {
 						$CloudBaseDirs[$CloudService]	= '';
@@ -995,47 +1001,72 @@ function upload_settings() {
 					}
 
 					foreach($CloudServices as $CloudService) { ?>
-							<label for="conf_BACKUP_TARGET_BASEDIR_CLOUDS_"><?php echo $CloudService; ?>:</label><br>
-							<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_TARGET_BASEDIR_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_TARGET_BASEDIR_CLOUDS_<?php echo ($CloudService);?>" size="6" value="<?php echo $CloudBaseDirs[$CloudService]; ?>">
+							<label for="conf_BACKUP_CLOUDS_TARGET_BASEDIR_"><?php echo $CloudService; ?>:</label><br>
+							<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_CLOUDS_TARGET_BASEDIR_<?php echo ($CloudService);?>" name="conf_BACKUP_CLOUDS_TARGET_BASEDIR_<?php echo ($CloudService);?>" size="6" value="<?php echo $CloudBaseDirs[$CloudService]; ?>">
 					<?php } ?>
 
-				<h3><?php echo L::config_backup_cloud_sync_method_header; ?></h3>
-					<?php
-						echo '<p>' . L::config_backup_cloud_sync_method_label . '</p>';
+					<h3><?php echo L::config_backup_cloud_sync_parameter_header; ?></h3>
 
-					$CloudSyncMethodsRAW	= explode('|;|', $config['conf_BACKUP_SYNC_METHOD_CLOUDS']);
-					$CloudSyncMethods	= array();
-					foreach($CloudServices as $CloudService) {
-						$CloudSyncMethods[$CloudService]	= '';
-					}
-					foreach($CloudSyncMethodsRAW as $SyncMethod) {
-						list($CloudService, $CloudSyncMethod) = explode('|=|', $SyncMethod);
-						$CloudSyncMethods[$CloudService]	= $CloudSyncMethod;
-					}
+						<h4><?php echo L::config_backup_cloud_sync_method_header; ?></h4>
+							<p><?php echo L::config_backup_cloud_sync_method_label; ?></p>
 
-					?>
-					<table>
-						<tr>
-							<th></th>
-							<th style="padding-left: 30px; text-align: center">rsync</th>
-							<th style="padding-left: 30px; text-align: center">rclone</th>
-						</tr>
-					<?php
-					foreach($CloudServices as $CloudService) { ?>
-						<tr>
-							<th>
-								<label for="conf_BACKUP_SYNC_METHOD_CLOUDS_"><?php echo $CloudService; ?>:</label>
-							</th>
+						<h4><?php echo L::config_backup_cloud_files_stay_in_place_header; ?></h4>
+							<p><?php echo L::config_backup_cloud_files_stay_in_place_label; ?> </p>
 
-							<td style="padding-left: 30px; text-align: center;">
-									<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rsync" <?php if ($CloudSyncMethods[$CloudService] != 'rclone') {echo 'checked';} ?>>
-							</td>
-							<td style="padding-left: 30px; text-align: center">
-								<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rclone" <?php if ($CloudSyncMethods[$CloudService] == 'rclone') {echo 'checked';} ?>>
-							</td>
-						</tr>
-					<?php } ?>
-					</table>
+						<?php
+							$CloudSyncMethodsRAW	= explode('|;|', $config['conf_BACKUP_SYNC_METHOD_CLOUDS']);
+							$CloudSyncMethods	= array();
+							foreach($CloudServices as $CloudService) {
+								$CloudSyncMethods[$CloudService]	= '';
+							}
+							foreach($CloudSyncMethodsRAW as $SyncMethod) {
+								list($CloudService, $CloudSyncMethod) = explode('|=|', $SyncMethod);
+								$CloudSyncMethods[$CloudService]	= $CloudSyncMethod;
+							}
+
+							$CloudFilesStayInPlacesRAW	= explode('|;|', $config['conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE']);
+							$CloudFilesStayInPlaces	= array();
+							foreach($CloudServices as $CloudService) {
+								$CloudFilesStayInPlaces[$CloudService]	= True;
+							}
+							foreach($CloudFilesStayInPlacesRAW as $CloudFilesStayInPlaceRAW) {
+								list($CloudService, $CloudFilesStayInPlace) = explode('|=|', $CloudFilesStayInPlaceRAW);
+								$CloudFilesStayInPlaces[$CloudService]	= $CloudFilesStayInPlace == 'true';
+							}
+
+						?>
+						<table>
+							<tr>
+								<th style="padding-left: 30px; text-align: center"></th>
+								<th style="padding-left: 30px; text-align: center" colspan=2><?php echo L::config_backup_cloud_sync_method_header; ?></th>
+								<th style="padding-left: 30px; text-align: center"><?php echo L::config_backup_cloud_files_stay_in_place_header; ?></th>
+							</tr>
+							<tr>
+								<th></th>
+								<th style="padding-left: 30px; text-align: center">rsync</th>
+								<th style="padding-left: 30px; text-align: center">rclone</th>
+								<th style="padding-left: 30px; text-align: center"></th>
+							</tr>
+						<?php
+						foreach($CloudServices as $CloudService) { ?>
+							<tr>
+								<th>
+									<label for="conf_BACKUP_SYNC_METHOD_CLOUDS_"><?php echo $CloudService; ?>:</label>
+								</th>
+
+								<td style="padding-left: 30px; text-align: center;">
+										<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rsync" <?php if ($CloudSyncMethods[$CloudService] != 'rclone') {echo 'checked';} ?>>
+								</td>
+								<td style="padding-left: 30px; text-align: center">
+									<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rclone" <?php if ($CloudSyncMethods[$CloudService] == 'rclone') {echo 'checked';} ?>>
+								</td>
+
+								<td style="padding-left: 30px; text-align: center">
+									<input type="checkbox" id="conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_<?php echo ($CloudService);?>" name="conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_<?php echo ($CloudService);?>" <?php if ($CloudFilesStayInPlaces[$CloudService]) {echo 'checked';} ?>>
+								</td>
+							</tr>
+						<?php } ?>
+						</table>
 
 				<h3><?php echo L::config_cloud_header; ?></h3>
 					<p>

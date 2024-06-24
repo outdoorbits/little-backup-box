@@ -97,6 +97,28 @@ class progressmonitor(object):
 					if not self.TIMSCopied:
 						self.TIMSCopied	= 'tims/' in SyncOutputLine
 
+		elif TransferMode == 'rclone':
+			# xxx
+			# transfer message: 2024/06/22 20:00:37 INFO  : GX010880.MP4: Copied (new)
+			#               or: "2024/06/22 20:18:27 INFO  : subdir/GL010871.LRV: Copied (new)"
+			# transfer rate: " *                                  GX010874.MP4: 54% /1.529Gi, 3.640Mi/s, 3m16s"
+			#            or: "Transferred:        2.066 GiB / 2.762 GiB, 75%, 3.635 MiB/s, ETA 3m16s"
+
+			if len(SyncOutputLine) > 0:
+				if SyncOutputLine[:2] == ' *' or SyncOutputLine.startswith == 'Transferred:':
+					# transfer info line? - get transfer data
+					try:
+						self.TransferRate	= SyncOutputLine.split(',')[-2].strip()
+					except:
+						pass
+				elif SyncOutputLine.endswith(': Copied (new)'):
+					# interpret line as file
+					self.CountProgress	+= 1
+					self.CountJustCopied	+= 1
+
+					if not self.TIMSCopied:
+						self.TIMSCopied	= 'tims/' in SyncOutputLine
+
 		elif TransferMode == 'gphoto2':
 			if SyncOutputLine[0:6] == 'Saving' or  SyncOutputLine[0:4] == 'Skip':
 				self.CountProgress	+= 1
