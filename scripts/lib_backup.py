@@ -22,6 +22,9 @@ from datetime import datetime, timedelta
 import lib_mail
 import lib_system
 
+import lib_debug
+xxx=lib_debug.debug()
+
 class progressmonitor(object):
 	def __init__(self,
 			setup,
@@ -98,12 +101,6 @@ class progressmonitor(object):
 						self.TIMSCopied	= 'tims/' in SyncOutputLine
 
 		elif TransferMode == 'rclone':
-			# xxx
-			# transfer message: 2024/06/22 20:00:37 INFO  : GX010880.MP4: Copied (new)
-			#               or: "2024/06/22 20:18:27 INFO  : subdir/GL010871.LRV: Copied (new)"
-			# transfer rate: " *                                  GX010874.MP4: 54% /1.529Gi, 3.640Mi/s, 3m16s"
-			#            or: "Transferred:        2.066 GiB / 2.762 GiB, 75%, 3.635 MiB/s, ETA 3m16s"
-
 			if len(SyncOutputLine) > 0:
 				if SyncOutputLine[:2] == ' *' or SyncOutputLine.startswith == 'Transferred:':
 					# transfer info line? - get transfer data
@@ -246,7 +243,7 @@ class reporter(object):
 			'Errors':				[]
 		})
 
-	def set_values(self,FilesToProcess=None,FilesProcessed=None,FilesCopied=None,FilesToProcessPost=None,SyncReturnCode=None):
+	def set_values(self, FilesToProcess=None, FilesProcessed=None, FilesCopied=None, FilesToProcessPost=None, SyncReturnCode=None):
 		if not FilesToProcess is None:
 			self.__BackupReports[self.__Folder][-1]['FilesToProcess']	= FilesToProcess
 

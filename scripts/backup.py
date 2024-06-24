@@ -42,6 +42,9 @@ import lib_system
 import lib_view
 import lib_vpn
 
+import lib_debug
+xxx=lib_debug.debug()
+
 class backup(object):
 
 	def __init__(self, SourceName, TargetName, move_files=False, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
@@ -131,9 +134,12 @@ class backup(object):
 
 			CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
 			for CloudSyncMethod in CloudSyncMethods:
-				CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
-				if (CloudSyncMethodCandidate == 'rclone') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
-					SyncMethod	= 'rclone'
+				try:
+					CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
+					if (CloudSyncMethodCandidate == 'rclone') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
+						SyncMethod	= 'rclone'
+				except:
+					pass
 
 			self.TransferMode	= SyncMethod
 
@@ -210,7 +216,7 @@ class backup(object):
 
 		self.finish()
 
-	def getsyncOptions(self, TransferMode):
+	def getsyncOptions(self, TransferMode, dry_run=False):
 		syncOptions	= []
 
 		if TransferMode	== 'rsync':
@@ -225,11 +231,17 @@ class backup(object):
 			if self.move_files and not self.SourceDevice.wasTarget:
 				syncOptions	+= ['--remove-source-files']
 
+			if dry_run:
+				syncOptions	+= ['--dry-run']
+
 		elif TransferMode == 'rclone':
-			if self.move_files and not self.SourceDevice.wasTarget:
-				syncOptions	= ['move']
+			if dry_run:
+				syncOptions	= ['check']
 			else:
-				syncOptions	= ['copy']
+				if self.move_files and not self.SourceDevice.wasTarget:
+					syncOptions	= ['move']
+				else:
+					syncOptions	= ['copy']
 
 			syncOptions		+= ['-v', '--min-size=1B', '--exclude', '*.id', '--exclude', '*.lbbid', '--exclude', '*.lbbflag', '--exclude', self.const_IMAGE_DATABASE_FILENAME]
 
@@ -423,8 +435,9 @@ class backup(object):
 
 							continue
 
-						if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace: # not cloud_rsync
+						if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace: # not cloud_rsync, not rclone in case of moving files at target
 							FilesCountStoragePre = self.get_FilesCount(os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget))
+							xxx.d(f'FilesCountStoragePre: {FilesCountStoragePre}')
 
 						self.__display.message([f":{self.__lan.l('box_backup_working')}..."])
 
@@ -513,13 +526,10 @@ class backup(object):
 								Command	= self.TargetDevice.rsyncSSH + ['rsync'] + syncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
 
 							elif self.TransferMode == 'rclone':
-								# xxx code for rclone follows
-								# transfer from rsync:
-								# Command	= self.TargetDevice.rsyncSSH + ['rsync'] + syncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
 								Command	= ['rclone', '--config', self.__RCLONE_CONFIG_FILE] + syncOptions + excludeTIMS + \
 									[
-										f"{self.SourceDevice.CloudServiceName}:'{self.SourceDevice.rclonePath}'" if self.SourceDevice.CloudServiceName else os.path.join(self.SourceDevice.MountPoint, SubPathAtSource),
-										f"{self.TargetDevice.CloudServiceName}:'{os.path.join(self.TargetDevice.rclonePath, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.rclonePath}'" if self.TargetDevice.CloudServiceName else os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)
+										f'{self.SourceDevice.CloudServiceName}:{self.SourceDevice.rclonePath}' if self.SourceDevice.CloudServiceName else os.path.join(self.SourceDevice.MountPoint, SubPathAtSource),
+										f'{self.TargetDevice.CloudServiceName}:{os.path.join(self.TargetDevice.rclonePath, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.rclonePath}' if self.TargetDevice.CloudServiceName else os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)
 									]
 
 							else:
@@ -527,10 +537,8 @@ class backup(object):
 								return(None)
 
 							self.__log.message(' '.join(Command),3)
-							print(f'xxx Command: {" ".join(Command)}',file=sys.stderr)
-
+							xxx.d(f'{Command}')
 							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
-
 								while True:
 									SyncOutputLine = BackupProcess.stdout.readline()
 									if not SyncOutputLine:
@@ -547,7 +555,6 @@ class backup(object):
 
 								BackupProcess.wait()
 								SyncReturnCode	= BackupProcess.returncode
-								print(f'xxx SyncReturnCode: {SyncReturnCode}',file=sys.stderr)
 								self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
 							pass
 
@@ -569,13 +576,15 @@ class backup(object):
 						FilesToProcessPost	= 0
 						if SourceStorageName == 'camera':
 							FilesToProcessPost	= FilesToProcess - progress.CountProgress
-						elif self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
+						elif self.TargetDevice.mountable and self.TransferMode != 'rclone':
 							FilesCountStoragePost	= self.get_FilesCount(os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget))
 							FilesToProcessPost	= FilesToProcess - FilesCountStoragePost + FilesCountStoragePre
+							xxx.d(f'FilesToProcessPost	= FilesToProcess - FilesCountStoragePost + FilesCountStoragePre: {FilesToProcessPost}	= {FilesToProcess} - {FilesCountStoragePost} + {FilesCountStoragePre}')
 						elif self.TargetDevice.FilesStayInPlace:
 							FilesToProcessPost	= self.calculate_files_to_sync(SubPathAtSource)
 						else:
 							FilesToProcessPost	= 0
+						xxx.d(f'xxxxxxxxxxxxxxxxx FilesToProcessPost: {FilesToProcessPost}')
 
 						self.__reporter.set_values(FilesToProcessPost=FilesToProcessPost)
 
@@ -1028,32 +1037,46 @@ class backup(object):
 		if self.SourceDevice.StorageType in ['usb','internal', 'nvme','cloud','cloud_rsync']:
 			## Source is mounted (mountable) device
 
-			syncOptions	= self.getsyncOptions(TransferMode=self.TransferMode)
+			syncOptions	= self.getsyncOptions(TransferMode=self.TransferMode, dry_run=True)
 			excludeTIMS	= self.get_excludeTIMS(SourceStorageType=self.SourceDevice.StorageType)
 
 			for SubPathAtSource in checkPathsList:
 				if self.TransferMode == 'rsync':
-					SourceCommand	= self.TargetDevice.rsyncSSH + ['rsync'] + syncOptions + excludeTIMS + ['--dry-run', os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
-					FilterCommand		= ['grep', 'Number of regular files transferred']
+					SourceCommand	= self.TargetDevice.rsyncSSH + ['rsync'] + syncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
+					FilterCommand		= ['grep', 'Number of created files:']
 				elif self.TransferMode == 'rclone':
-					SourceCommand	= ['rclone', '--config', self.__RCLONE_CONFIG_FILE] + syncOptions + excludeTIMS + ['--dry-run'] + \
+					SourceCommand	= ['rclone', '--config', self.__RCLONE_CONFIG_FILE] + syncOptions + excludeTIMS + \
 									[
-										f"{self.SourceDevice.CloudServiceName}:'{self.SourceDevice.rclonePath}'" if self.SourceDevice.CloudServiceName else os.path.join(self.SourceDevice.MountPoint, SubPathAtSource),
-										f"{self.TargetDevice.CloudServiceName}:'{os.path.join(self.TargetDevice.rclonePath, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.rclonePath}'" if self.TargetDevice.CloudServiceName else os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)
+										f'{self.SourceDevice.CloudServiceName}:{self.SourceDevice.rclonePath}' if self.SourceDevice.CloudServiceName else os.path.join(self.SourceDevice.MountPoint, SubPathAtSource),
+										f'{self.TargetDevice.CloudServiceName}:{os.path.join(self.TargetDevice.rclonePath, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.rclonePath}' if self.TargetDevice.CloudServiceName else os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)
 									]
 					FilterCommand	= []
 
 				self.__log.message(' '.join(SourceCommand),3)
 				self.__log.message(' '.join(FilterCommand),3)
-
+				xxx.d(f'calculate_files_to_sync Command: ' + " ".join(SourceCommand))
 				try:
 					if self.TransferMode == 'rsync':
-						FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(':')[1].strip().replace(',',''))
+						xxx.d(f'lib_common.pipe(SourceCommand, FilterCommand).decode(): {lib_common.pipe(SourceCommand, FilterCommand).decode()}')
+						try:
+							FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(' ')[6].strip().replace(',',''))
+						except:
+							FilesToProcessPart	= 0
 					elif self.TransferMode == 'rclone':
-						rclone_output	= subprocess.check_output(SourceCommand, stderr=subprocess.STDOUT).decode().split('\n')
+						rclone_output	= []
+						with subprocess.Popen(SourceCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
+							while True:
+								OutputLine = BackupProcess.stdout.readline()
+								if not OutputLine:
+									break
+
+								rclone_output	+= [OutputLine.strip()]
+
+						xxx.d(f'++++++++++ rclone_output: ' + "\n".join(rclone_output))
+						FilesToProcessPart	= 0
 						for line in reversed(rclone_output):
-							if 'Transferred: ' in line and '100%' in line:
-								FilesToProcessPart	= int(line.split()[-4])
+							if 'Failed to check with' in line and line.endswith('differences found'):
+								FilesToProcessPart	= int(line.split()[-3])
 								break
 				except:
 					FilesToProcessPart	= 0
@@ -1077,14 +1100,15 @@ class backup(object):
 
 				self.__log.message(f"Files in folder '{SubPathAtSource}': {FilesToProcessPart}")
 
+		xxx.d(f'+++++++++++++++++++ calculate_files_to_sync:{FilesToProcess}')
 		return(FilesToProcess)
 
-	def get_FilesCount(self,Path):
+	def get_FilesCount(self, Path):
 		SourceCommand	= ["find", Path, "-type", "f"]
 		FilterCommand	= ["wc", "-l"]
 
 		FilesCount		= int(lib_common.pipe(SourceCommand, FilterCommand).decode())
-
+		xxx.d(f'get_FilesCount({Path}): {FilesCount}')
 		return(FilesCount)
 
 	def get_BannedPathsViewCaseInsensitive(self):
