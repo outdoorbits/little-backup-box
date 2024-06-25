@@ -75,7 +75,7 @@ class progressmonitor(object):
 
 	def progress(self, TransferMode=None, SyncOutputLine='', CountProgress=None):
 		SyncOutputLine	= SyncOutputLine.strip('\n')
-		xxx.d(f'SyncOutputLine ({TransferMode}): {SyncOutputLine}')
+
 		if CountProgress:
 			self.CountProgress	= CountProgress
 
@@ -97,7 +97,7 @@ class progressmonitor(object):
 				):
 					# interpret line as file
 					self.CountProgress		+= 1
-					xxx.d(f'FILE: {SyncOutputLine}')
+
 					if not self.TIMSCopied:
 						self.TIMSCopied	= 'tims/' in SyncOutputLine
 
@@ -120,6 +120,7 @@ class progressmonitor(object):
 					# interpret line as file
 					self.CountProgress		+= 1
 					self.CountJustCopied	+= 1
+
 				elif SyncOutputLine.endswith(': Unchanged skipping'):
 					self.CountProgress		+= 1
 
@@ -136,7 +137,6 @@ class progressmonitor(object):
 					self.FilesList	+= [SyncOutputLine.replace('Saving file as ', '')]
 		elif TransferMode is None:
 			self.CountProgress	+= 1
-			xxx.d('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx NONE')
 
 		if self.CountProgress > self.CountProgress_OLD:
 			self.CountProgress_OLD	= self.CountProgress

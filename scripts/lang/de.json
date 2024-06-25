@@ -607,7 +607,7 @@
       "return_link": "Zurück zu Little Backup Box - NICHT KLICKEN, BEVOR DAS UPDATE ABGESCHLOSSEN IST!",
       "header": "Little Backup Box Updater",
       "development_header": "Little Backup Box Updater - development-branch",
-      "development_warning": "Während des Vorgangs NICHT STOPPEN oder nachladen!"
+      "development_warning": "Während des Vorgangs NICHT STOPPEN oder neu laden!"
     },
     "no_cmd": "Kein gültiger Befehl angegeben.",
     "link_text_home": "Zurück zu Little Backup Box",
