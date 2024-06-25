@@ -71,30 +71,30 @@ class storage(object):
 
 		self.__setup	= lib_setup.setup()
 
-		self.__const_MEDIA_DIR								= self.__setup.get_val('const_MEDIA_DIR')
+		self.__const_MEDIA_DIR									= self.__setup.get_val('const_MEDIA_DIR')
 
-		self.__const_MOUNTPOINT_USB_TARGET				= self.__setup.get_val('const_MOUNTPOINT_USB_TARGET')
-		self.__const_MOUNTPOINT_USB_SOURCE				= self.__setup.get_val('const_MOUNTPOINT_USB_SOURCE')
-		self.__const_MOUNTPOINT_TECH_USB_TARGET			= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET')
-		self.__const_MOUNTPOINT_TECH_USB_SOURCE			= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE')
+		self.__const_MOUNTPOINT_USB_TARGET						= self.__setup.get_val('const_MOUNTPOINT_USB_TARGET')
+		self.__const_MOUNTPOINT_USB_SOURCE						= self.__setup.get_val('const_MOUNTPOINT_USB_SOURCE')
+		self.__const_MOUNTPOINT_TECH_USB_TARGET					= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET')
+		self.__const_MOUNTPOINT_TECH_USB_SOURCE					= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE')
 
-		self.__const_MOUNTPOINT_NVME_TARGET				= self.__setup.get_val('const_MOUNTPOINT_NVME_TARGET')
-		self.__const_MOUNTPOINT_NVME_SOURCE				= self.__setup.get_val('const_MOUNTPOINT_NVME_SOURCE')
-		self.__const_MOUNTPOINT_TECH_NVME_TARGET		= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET')
-		self.__const_MOUNTPOINT_TECH_NVME_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE')
+		self.__const_MOUNTPOINT_NVME_TARGET						= self.__setup.get_val('const_MOUNTPOINT_NVME_TARGET')
+		self.__const_MOUNTPOINT_NVME_SOURCE						= self.__setup.get_val('const_MOUNTPOINT_NVME_SOURCE')
+		self.__const_MOUNTPOINT_TECH_NVME_TARGET				= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET')
+		self.__const_MOUNTPOINT_TECH_NVME_SOURCE				= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE')
 
-		self.__const_MOUNTPOINT_CLOUD_TARGET			= self.__setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')
-		self.__const_MOUNTPOINT_CLOUD_SOURCE			= self.__setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
+		self.__const_MOUNTPOINT_CLOUD_TARGET					= self.__setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')
+		self.__const_MOUNTPOINT_CLOUD_SOURCE					= self.__setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
 
-		self.__const_INTERNAL_BACKUP_DIR				= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
+		self.__const_INTERNAL_BACKUP_DIR						= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
 
-		self.__conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
-		self.__conf_BACKUP_TARGET_SIZE_MIN				= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
+		self.__conf_DISP_FRAME_TIME								= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__conf_BACKUP_TARGET_SIZE_MIN						= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
 
-		self.__conf_BACKUP_CLOUDS_TARGET_BASEDIR		= self.__setup.get_val('conf_BACKUP_CLOUDS_TARGET_BASEDIR')
-		self.__conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE		= self.__setup.get_val('conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE')
+		self.__conf_BACKUP_CLOUDS_TARGET_BASEDIR				= self.__setup.get_val('conf_BACKUP_CLOUDS_TARGET_BASEDIR')
+		self.__conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	= self.__setup.get_val('conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE')
 
-		self.__RCLONE_CONFIG_FILE						= os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_RCLONE_CONFIG_FILE'))
+		self.__RCLONE_CONFIG_FILE								= os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_RCLONE_CONFIG_FILE'))
 
 		self.__mount_user		= "www-data"
 		self.__mount_group		= "www-data"
@@ -113,7 +113,7 @@ class storage(object):
 
 		# for use in rclone mode only
 		self.rclonePath			= ''
-		self.FilesStayInPlace			= True # When used as target, use source specific subdir? (config - cloud)
+		self.FilesStayInPlace	= True # When used as target, use source specific subdir? (config - cloud)
 
 		# global backup parameters #####################
 		self.LbbDeviceID			= ''
@@ -319,7 +319,6 @@ class storage(object):
 					except:
 						pass
 
-				self.FilesStayInPlace	= True
 				CloudFilesStayInPlaceConfigs	= self.__conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE.split('|;|')
 				for CloudFilesStayInPlaceConfig in CloudFilesStayInPlaceConfigs:
 					try:

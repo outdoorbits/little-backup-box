@@ -243,7 +243,7 @@ class backup(object):
 				else:
 					syncOptions	= ['copy']
 
-			syncOptions		+= ['-v', '--min-size=1B', '--exclude', '*.id', '--exclude', '*.lbbid', '--exclude', '*.lbbflag', '--exclude', self.const_IMAGE_DATABASE_FILENAME]
+			syncOptions		+= ['-vv', '--min-size=1B', '--exclude', '*.id', '--exclude', '*.lbbid', '--exclude', '*.lbbflag', '--exclude', self.const_IMAGE_DATABASE_FILENAME]
 
 		return(syncOptions)
 
@@ -537,7 +537,7 @@ class backup(object):
 								return(None)
 
 							self.__log.message(' '.join(Command),3)
-							xxx.d(f'{Command}')
+							xxx.d(f'{" ".join(Command)}')
 							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
 								while True:
 									SyncOutputLine = BackupProcess.stdout.readline()
@@ -573,18 +573,7 @@ class backup(object):
 								self.__log.message(f"Error: '{' '.join(Command)}'")
 
 						# Re-calculate FilesToProcess
-						FilesToProcessPost	= 0
-						if SourceStorageName == 'camera':
-							FilesToProcessPost	= FilesToProcess - progress.CountProgress
-						elif self.TargetDevice.mountable and self.TransferMode != 'rclone':
-							FilesCountStoragePost	= self.get_FilesCount(os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget))
-							FilesToProcessPost	= FilesToProcess - FilesCountStoragePost + FilesCountStoragePre
-							xxx.d(f'FilesToProcessPost	= FilesToProcess - FilesCountStoragePost + FilesCountStoragePre: {FilesToProcessPost}	= {FilesToProcess} - {FilesCountStoragePost} + {FilesCountStoragePre}')
-						elif self.TargetDevice.FilesStayInPlace:
-							FilesToProcessPost	= self.calculate_files_to_sync(SubPathAtSource)
-						else:
-							FilesToProcessPost	= 0
-						xxx.d(f'xxxxxxxxxxxxxxxxx FilesToProcessPost: {FilesToProcessPost}')
+						FilesToProcessPost	= FilesToProcess - progress.CountProgress
 
 						self.__reporter.set_values(FilesToProcessPost=FilesToProcessPost)
 
@@ -1043,7 +1032,7 @@ class backup(object):
 			for SubPathAtSource in checkPathsList:
 				if self.TransferMode == 'rsync':
 					SourceCommand	= self.TargetDevice.rsyncSSH + ['rsync'] + syncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
-					FilterCommand		= ['grep', 'Number of created files:']
+					FilterCommand		= ['grep', 'Number of regular files transferred:']
 				elif self.TransferMode == 'rclone':
 					SourceCommand	= ['rclone', '--config', self.__RCLONE_CONFIG_FILE] + syncOptions + excludeTIMS + \
 									[
@@ -1059,9 +1048,10 @@ class backup(object):
 					if self.TransferMode == 'rsync':
 						xxx.d(f'lib_common.pipe(SourceCommand, FilterCommand).decode(): {lib_common.pipe(SourceCommand, FilterCommand).decode()}')
 						try:
-							FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(' ')[6].strip().replace(',',''))
+							FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(':')[1].strip(' ,'))
 						except:
 							FilesToProcessPart	= 0
+
 					elif self.TransferMode == 'rclone':
 						rclone_output	= []
 						with subprocess.Popen(SourceCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
@@ -1075,9 +1065,17 @@ class backup(object):
 						xxx.d(f'++++++++++ rclone_output: ' + "\n".join(rclone_output))
 						FilesToProcessPart	= 0
 						for line in reversed(rclone_output):
-							if 'Failed to check with' in line and line.endswith('differences found'):
-								FilesToProcessPart	= int(line.split()[-3])
-								break
+							if ': file not in webdav root' in line:
+								FilesToProcessPart	+= 1
+								continue
+							if line.endswith('matching files'):
+								try:
+									FilesToProcessPart	= int(line.split()[-3])
+									break
+								except:
+									pass
+
+
 				except:
 					FilesToProcessPart	= 0
 
