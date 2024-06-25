@@ -38,8 +38,8 @@ import lib_setup
 
 ### debug
 
-#import lib_debug
-
+import lib_debug
+xxx	= lib_debug.debug()
 ### /debug
 
 role_Source	= 'source'
@@ -71,29 +71,30 @@ class storage(object):
 
 		self.__setup	= lib_setup.setup()
 
-		self.__const_MEDIA_DIR								= self.__setup.get_val('const_MEDIA_DIR')
+		self.__const_MEDIA_DIR									= self.__setup.get_val('const_MEDIA_DIR')
 
-		self.__const_MOUNTPOINT_USB_TARGET				= self.__setup.get_val('const_MOUNTPOINT_USB_TARGET')
-		self.__const_MOUNTPOINT_USB_SOURCE				= self.__setup.get_val('const_MOUNTPOINT_USB_SOURCE')
-		self.__const_MOUNTPOINT_TECH_USB_TARGET			= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET')
-		self.__const_MOUNTPOINT_TECH_USB_SOURCE			= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE')
+		self.__const_MOUNTPOINT_USB_TARGET						= self.__setup.get_val('const_MOUNTPOINT_USB_TARGET')
+		self.__const_MOUNTPOINT_USB_SOURCE						= self.__setup.get_val('const_MOUNTPOINT_USB_SOURCE')
+		self.__const_MOUNTPOINT_TECH_USB_TARGET					= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_TARGET')
+		self.__const_MOUNTPOINT_TECH_USB_SOURCE					= self.__setup.get_val('const_MOUNTPOINT_TECH_USB_SOURCE')
 
-		self.__const_MOUNTPOINT_NVME_TARGET				= self.__setup.get_val('const_MOUNTPOINT_NVME_TARGET')
-		self.__const_MOUNTPOINT_NVME_SOURCE				= self.__setup.get_val('const_MOUNTPOINT_NVME_SOURCE')
-		self.__const_MOUNTPOINT_TECH_NVME_TARGET		= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET')
-		self.__const_MOUNTPOINT_TECH_NVME_SOURCE		= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE')
+		self.__const_MOUNTPOINT_NVME_TARGET						= self.__setup.get_val('const_MOUNTPOINT_NVME_TARGET')
+		self.__const_MOUNTPOINT_NVME_SOURCE						= self.__setup.get_val('const_MOUNTPOINT_NVME_SOURCE')
+		self.__const_MOUNTPOINT_TECH_NVME_TARGET				= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_TARGET')
+		self.__const_MOUNTPOINT_TECH_NVME_SOURCE				= self.__setup.get_val('const_MOUNTPOINT_TECH_NVME_SOURCE')
 
-		self.__const_MOUNTPOINT_CLOUD_TARGET			= self.__setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')
-		self.__const_MOUNTPOINT_CLOUD_SOURCE			= self.__setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
+		self.__const_MOUNTPOINT_CLOUD_TARGET					= self.__setup.get_val('const_MOUNTPOINT_CLOUD_TARGET')
+		self.__const_MOUNTPOINT_CLOUD_SOURCE					= self.__setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
 
-		self.__const_INTERNAL_BACKUP_DIR				= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
+		self.__const_INTERNAL_BACKUP_DIR						= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
 
-		self.__conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
-		self.__conf_BACKUP_TARGET_SIZE_MIN				= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
+		self.__conf_DISP_FRAME_TIME								= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__conf_BACKUP_TARGET_SIZE_MIN						= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
 
-		self.__conf_BACKUP_TARGET_BASEDIR_CLOUDS		= self.__setup.get_val('conf_BACKUP_TARGET_BASEDIR_CLOUDS')
+		self.__conf_BACKUP_CLOUDS_TARGET_BASEDIR				= self.__setup.get_val('conf_BACKUP_CLOUDS_TARGET_BASEDIR')
+		self.__conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	= self.__setup.get_val('conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE')
 
-		self.__RCLONE_CONFIG_FILE						= os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_RCLONE_CONFIG_FILE'))
+		self.__RCLONE_CONFIG_FILE								= os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_RCLONE_CONFIG_FILE'))
 
 		self.__mount_user		= "www-data"
 		self.__mount_group		= "www-data"
@@ -108,7 +109,11 @@ class storage(object):
 		self.CameraPort			= ''	# will be set on mounting, will never be automatic unset
 
 		# for use in cloud_rsync only:
-		self.rsyncSSH	= []
+		self.rsyncSSH			= []
+
+		# for use in rclone mode only
+		self.rclonePath			= ''
+		self.FilesStayInPlace	= True # When used as target, use source specific subdir? (config - cloud)
 
 		# global backup parameters #####################
 		self.LbbDeviceID			= ''
@@ -302,23 +307,39 @@ class storage(object):
 			self.__clean_mountpoint()
 			self.createPath()
 
-			if self.CloudServiceName and self.MountPoint:
+			if self.CloudServiceName:
 
 				CloudBaseDir	= ''
-				CloudBaseDirConfigs	= self.__conf_BACKUP_TARGET_BASEDIR_CLOUDS.split('|;|')
+				CloudBaseDirConfigs	= self.__conf_BACKUP_CLOUDS_TARGET_BASEDIR.split('|;|')
 				for CloudBaseDirConfig in CloudBaseDirConfigs:
-					CloudServiceCandidate, CloudBaseDirCandidate	= CloudBaseDirConfig.split('|=|')
-					if CloudServiceCandidate == self.CloudServiceName:
-						CloudBaseDir	= CloudBaseDirCandidate
+					try:
+						CloudServiceCandidate, CloudBaseDirCandidate	= CloudBaseDirConfig.split('|=|')
+						if CloudServiceCandidate == self.CloudServiceName:
+							CloudBaseDir	= CloudBaseDirCandidate
+					except:
+						pass
 
-				Command	= f"rclone mount '{self.CloudServiceName}':'{CloudBaseDir}' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --config {self.__RCLONE_CONFIG_FILE}"
-				Command	= f"sh -c '{Command} &'"
-				subprocess.run(Command,shell=True)
+				CloudFilesStayInPlaceConfigs	= self.__conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE.split('|;|')
+				for CloudFilesStayInPlaceConfig in CloudFilesStayInPlaceConfigs:
+					try:
+						CloudServiceCandidate, CloudFilesStayInPlaceCandidate	= CloudFilesStayInPlaceConfig.split('|=|')
+						if CloudServiceCandidate == self.CloudServiceName:
+							self.FilesStayInPlace	= CloudFilesStayInPlaceCandidate == 'true'
+					except:
+						pass
 
-				EndTime	= time.time()+self.__setup.get_val('const_MOUNT_CLOUD_TIMEOUT')
-				while (not MOUNTED) and (EndTime > time.time() or TimeOutActive==False):
-					MOUNTED	= self.mounted()
-					time.sleep(0.5)
+				self.rclonePath			= CloudBaseDir if CloudBaseDir else ''
+
+				if self.MountPoint:
+
+					Command	= f"rclone mount '{self.CloudServiceName}':'{CloudBaseDir}' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --config {self.__RCLONE_CONFIG_FILE}"
+					Command	= f"sh -c '{Command} &'"
+					subprocess.run(Command,shell=True)
+
+					EndTime	= time.time()+self.__setup.get_val('const_MOUNT_CLOUD_TIMEOUT')
+					while (not MOUNTED) and (EndTime > time.time() or TimeOutActive==False):
+						MOUNTED	= self.mounted()
+						time.sleep(0.5)
 
 		if MOUNTED:
 			self.__display_storage_properties()
@@ -347,6 +368,7 @@ class storage(object):
 
 		if configured:
 			self.rsyncSSH			= ["sshpass", "-p", conf_RSYNC_PASSWORD]
+
 			self.MountPoint			= f"rsync://{conf_RSYNC_USER}@{conf_RSYNC_SERVER}:{conf_RSYNC_PORT}/{conf_RSYNC_SERVER_MODULE}"
 			self.LbbDeviceID		= conf_RSYNC_SERVER_MODULE
 
@@ -475,6 +497,9 @@ class storage(object):
 
 				SourceCommand	= ["gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--list-folders"]
 				FilterCommand	= ["grep", "^There are"]
+
+				xxx.d(f'SourceCommand: {" ".join(SourceCommand)}')
+
 				try:
 					CameraFoldersRaw	= lib_common.pipe(SourceCommand,FilterCommand).decode().strip().split('\n')
 				except:
