@@ -130,18 +130,16 @@ class backup(object):
 		if self.SourceStorageType == 'camera':
 			self.TransferMode	= 'gphoto2'
 		else:
-			SyncMethod	= 'rsync'
+			self.TransferMode	= 'rsync'
 
 			CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
 			for CloudSyncMethod in CloudSyncMethods:
 				try:
 					CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
 					if (CloudSyncMethodCandidate == 'rclone') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
-						SyncMethod	= 'rclone'
+						self.TransferMode	= 'rclone'
 				except:
 					pass
-
-			self.TransferMode	= SyncMethod
 
 		# Unmount devices, clean before backup
 		lib_storage.umount(self.__setup,'all')
