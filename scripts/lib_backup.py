@@ -22,6 +22,10 @@ from datetime import datetime, timedelta
 import lib_mail
 import lib_system
 
+
+import lib_debug
+xxx=lib_debug.debug()
+
 class progressmonitor(object):
 	def __init__(self,
 			setup,
@@ -83,16 +87,42 @@ class progressmonitor(object):
 						self.TransferRate	= SyncOutputLine.strip().split()[2]
 					except:
 						pass
+
 				elif (
 					(not ":" in SyncOutputLine) and
 					(SyncOutputLine[-1] != '/') and
 					(SyncOutputLine != 'Ignoring "log file" setting.') and
 					(SyncOutputLine[0:5] != 'sent ') and
-					(SyncOutputLine[0:14] != 'total size is ')
+					(SyncOutputLine[0:13] != 'total size is')
 				):
 					# interpret line as file
-					self.CountProgress	+= 1
+					self.CountProgress		+= 1
+
+					if not self.TIMSCopied:
+						self.TIMSCopied	= 'tims/' in SyncOutputLine
+
+				elif 'Number of created files:' in SyncOutputLine:
+					try:
+						self.CountJustCopied	= int(SyncOutputLine.split(':')[2].strip(' ,)'))
+					except:
+						pass
+
+
+		elif TransferMode == 'rclone':
+			if len(SyncOutputLine) > 0:
+				if SyncOutputLine[:2] == ' *' or SyncOutputLine.startswith == 'Transferred:':
+					# transfer info line? - get transfer data
+					try:
+						self.TransferRate	= SyncOutputLine.split(',')[-2].strip()
+					except:
+						pass
+				elif SyncOutputLine.endswith(': Copied (new)'):
+					# interpret line as file
+					self.CountProgress		+= 1
 					self.CountJustCopied	+= 1
+
+				elif SyncOutputLine.endswith(': Unchanged skipping'):
+					self.CountProgress		+= 1
 
 					if not self.TIMSCopied:
 						self.TIMSCopied	= 'tims/' in SyncOutputLine
@@ -224,7 +254,7 @@ class reporter(object):
 			'Errors':				[]
 		})
 
-	def set_values(self,FilesToProcess=None,FilesProcessed=None,FilesCopied=None,FilesToProcessPost=None,SyncReturnCode=None):
+	def set_values(self, FilesToProcess=None, FilesProcessed=None, FilesCopied=None, FilesToProcessPost=None, SyncReturnCode=None):
 		if not FilesToProcess is None:
 			self.__BackupReports[self.__Folder][-1]['FilesToProcess']	= FilesToProcess
 

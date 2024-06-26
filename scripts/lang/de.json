@@ -170,7 +170,10 @@
         "target_basedir_header": "Basisordner auf Cloud-Servern",
         "target_basedir_label": "Die Sicherung auf dem Cloud-Server wird unterhalb dieses Verzeichnisses durchgeführt.",
         "sync_method_header": "Methode der Datenübertragung",
-        "sync_method_label": "Im Allgemeinen sollte rsync schneller sein. Nur bei Kompatibilitätsproblemen mit einem Cloud-Dienst sollte rclone verwendet werden."
+        "sync_method_label": "Im Allgemeinen sollte rsync schneller sein. Nur bei Kompatibilitätsproblemen mit einem Cloud-Dienst sollte rclone verwendet werden.",
+        "sync_parameter_header": "Übertragungseinstellungen",
+        "files_stay_in_place_header": "Speicherort statisch",
+        "files_stay_in_place_label": "Verbleiben die Dateien unmittelbar nach dem Upload am Ablageort oder werden sie wegsortiert? (Dies betrifft nur rclone!)"
       }
     },
     "imageviewer": {
@@ -606,7 +609,7 @@
       "return_link": "Zurück zu Little Backup Box - NICHT KLICKEN, BEVOR DAS UPDATE ABGESCHLOSSEN IST!",
       "header": "Little Backup Box Updater",
       "development_header": "Little Backup Box Updater - development-branch",
-      "development_warning": "Während des Vorgangs NICHT STOPPEN oder nachladen!"
+      "development_warning": "Während des Vorgangs NICHT STOPPEN oder neu laden!"
     },
     "no_cmd": "Kein gültiger Befehl angegeben.",
     "link_text_home": "Zurück zu Little Backup Box",

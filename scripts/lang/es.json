@@ -170,7 +170,10 @@
         "target_basedir_header": "Carpeta de inicio en servidores en la nube",
         "target_basedir_label": "Copia de seguridad en el servidor de la nube se realiza en este directorio.",
         "sync_method_header": "Método de transferencia de datos",
-        "sync_method_label": "En general, rsync debería ser más rápido. Sólo debes cambiar a rclone si tienes problemas de compatibilidad con un servicio en la nube."
+        "sync_method_label": "En general, rsync debería ser más rápido. Sólo debes cambiar a rclone si tienes problemas de compatibilidad con un servicio en la nube.",
+        "sync_parameter_header": "Configuración de transferencia",
+        "files_stay_in_place_header": "Ubicación estática",
+        "files_stay_in_place_label": "Les fichiers restent-ils dans l'emplacement de stockage immédiatement après le téléchargement ou sont-ils triés ? (Cela n'affecte que rclone !)"
       }
     },
     "imageviewer": {
