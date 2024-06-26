@@ -564,8 +564,6 @@ class backup(object):
 							SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint,  self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0']
 							FilterCommand	= ['wc', '-l']
 
-							progress.CountProgress	-= int(lib_common.pipe(SourceCommand, FilterCommand).decode())
-
 							try:
 								progress.CountProgress	-= int(lib_common.pipe(SourceCommand, FilterCommand).decode())
 							except:
