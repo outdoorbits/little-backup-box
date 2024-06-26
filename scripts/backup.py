@@ -42,6 +42,10 @@ import lib_system
 import lib_view
 import lib_vpn
 
+
+#import lib_debug
+###=lib_debug.debug()
+
 class backup(object):
 
 	def __init__(self, SourceName, TargetName, move_files=False, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
@@ -492,7 +496,7 @@ class backup(object):
 							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
 
 								while True:
-									SyncOutputLine = BackupProcess.stdout.readline().decode()
+									SyncOutputLine = BackupProcess.stdout.readline()
 									if not SyncOutputLine:
 										break
 
@@ -1054,26 +1058,25 @@ class backup(object):
 							FilesToProcessPart	= 0
 
 					elif self.TransferMode == 'rclone':
-						rclone_output	= []
+						FilesToProcessPart	= 0
+
 						with subprocess.Popen(SourceCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
 							while True:
 								OutputLine = BackupProcess.stdout.readline()
 								if not OutputLine:
 									break
 
-								rclone_output	+= [OutputLine.strip()]
+								OutputLine	= OutputLine.strip()
 
-						FilesToProcessPart	= 0
-						for line in reversed(rclone_output):
-							if ': file not in webdav root' in line:
-								FilesToProcessPart	+= 1
-								continue
-							if line.endswith('matching files'):
-								try:
-									FilesToProcessPart	= int(line.split()[-3])
-									break
-								except:
-									pass
+								if ': md5 = ' in OutputLine:
+									FilesToProcessPart	+= 1
+									continue
+								if OutputLine.endswith('matching files'):
+									try:
+										FilesToProcessPart	= int(line.split()[-3])
+										break
+									except:
+										pass
 
 
 				except:
