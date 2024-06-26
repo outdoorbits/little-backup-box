@@ -535,7 +535,7 @@ class backup(object):
 
 									progress.progress(TransferMode=self.TransferMode, SyncOutputLine=SyncOutputLine)
 
-									if SyncOutputLine[0] != ' ' and not ' DEBUG : ' in SyncOutputLine and not ' NOTICE : ' in SyncOutputLine:
+									if SyncOutputLine[0] != ' ' and not ' DEBUG : ' in SyncOutputLine and not ' NOTICE: ' in SyncOutputLine:
 										LogLine	= SyncOutputLine.strip()
 										LogLine	= LogLine if LogLine[20:24] != 'INFO' else LogLine[27:]
 
