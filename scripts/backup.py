@@ -631,7 +631,7 @@ class backup(object):
 						# validate files after backup
 						if SourceStorageName == 'camera':
 							DisplayLine1	= self.__lan.l('box_backup_validate_files_from')		# header1
-							DisplayLine2	= SourceLabel + f" {self.SourceDevice.StorageType}{f':{self.SourceDevice.CloudServiceName}' if {self.SourceDevice.CloudServiceName} else ''}{SourceFolderFracture}"	# header2
+							DisplayLine2	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"	# header2
 							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList), DisplayLine1, DisplayLine2)
 
 							FilesValidationFailed	= 0
