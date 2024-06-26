@@ -22,10 +22,6 @@ from datetime import datetime, timedelta
 import lib_mail
 import lib_system
 
-
-import lib_debug
-xxx=lib_debug.debug()
-
 class progressmonitor(object):
 	def __init__(self,
 			setup,

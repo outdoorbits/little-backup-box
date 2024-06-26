@@ -38,8 +38,7 @@ import lib_setup
 
 ### debug
 
-import lib_debug
-xxx	= lib_debug.debug()
+#import lib_debug
 ### /debug
 
 role_Source	= 'source'
@@ -497,8 +496,6 @@ class storage(object):
 
 				SourceCommand	= ["gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--list-folders"]
 				FilterCommand	= ["grep", "^There are"]
-
-				xxx.d(f'SourceCommand: {" ".join(SourceCommand)}')
 
 				try:
 					CameraFoldersRaw	= lib_common.pipe(SourceCommand,FilterCommand).decode().strip().split('\n')

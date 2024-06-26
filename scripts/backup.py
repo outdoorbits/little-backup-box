@@ -42,9 +42,6 @@ import lib_system
 import lib_view
 import lib_vpn
 
-import lib_debug
-xxx=lib_debug.debug()
-
 class backup(object):
 
 	def __init__(self, SourceName, TargetName, move_files=False, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
@@ -130,18 +127,16 @@ class backup(object):
 		if self.SourceStorageType == 'camera':
 			self.TransferMode	= 'gphoto2'
 		else:
-			SyncMethod	= 'rsync'
+			self.TransferMode	= 'rsync'
 
 			CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
 			for CloudSyncMethod in CloudSyncMethods:
 				try:
 					CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
 					if (CloudSyncMethodCandidate == 'rclone') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
-						SyncMethod	= 'rclone'
+						self.TransferMode	= 'rclone'
 				except:
 					pass
-
-			self.TransferMode	= SyncMethod
 
 		# Unmount devices, clean before backup
 		lib_storage.umount(self.__setup,'all')
@@ -540,7 +535,7 @@ class backup(object):
 
 									progress.progress(TransferMode=self.TransferMode, SyncOutputLine=SyncOutputLine)
 
-									if SyncOutputLine[0] != ' ' and not ' DEBUG : ' in SyncOutputLine:
+									if SyncOutputLine[0] != ' ' and not ' DEBUG : ' in SyncOutputLine and not ' NOTICE : ' in SyncOutputLine:
 										LogLine	= SyncOutputLine.strip()
 										LogLine	= LogLine if LogLine[20:24] != 'INFO' else LogLine[27:]
 
@@ -573,7 +568,6 @@ class backup(object):
 
 							try:
 								progress.CountProgress	-= int(lib_common.pipe(SourceCommand, FilterCommand).decode())
-								xxx.d(f'int(lib_common.pipe(SourceCommand, FilterCommand).decode()): {int(lib_common.pipe(SourceCommand, FilterCommand).decode())}')
 							except:
 								pass
 
@@ -633,7 +627,7 @@ class backup(object):
 						# validate files after backup
 						if SourceStorageName == 'camera':
 							DisplayLine1	= self.__lan.l('box_backup_validate_files_from')		# header1
-							DisplayLine2	= SourceLabel + f" {self.SourceDevice.StorageType}{f':{self.SourceDevice.CloudServiceName}' if {self.SourceDevice.CloudServiceName} else ''}{SourceFolderFracture}"	# header2
+							DisplayLine2	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"	# header2
 							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList), DisplayLine1, DisplayLine2)
 
 							FilesValidationFailed	= 0
