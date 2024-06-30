@@ -100,9 +100,9 @@ class progressmonitor(object):
 					if not self.TIMSCopied:
 						self.TIMSCopied	= 'tims/' in SyncOutputLine
 
-				elif 'Number of created files:' in SyncOutputLine:
+				elif 'Number of regular files transferred:' in SyncOutputLine:
 					try:
-						self.CountJustCopied	= int(SyncOutputLine.split(':')[2].strip(' ,)'))
+						self.CountJustCopied	= int(SyncOutputLine.split(':')[1].strip())
 					except:
 						pass
 
@@ -303,7 +303,8 @@ class reporter(object):
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 
 		self.mail_content_HTML	+= f"\n  <b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
-		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} '{self.__SourceCloudService}{' ' if self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}'</b> {self.__lan.l('box_backup_mail_to')} <b>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} '{self.__TargetCloudService}{' ' if self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}'</b></br>{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
+		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} '{self.__SourceCloudService}{' ' if self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}'</b> {self.__lan.l('box_backup_mail_to')} <b>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} '{self.__TargetCloudService}{' ' if self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}'</b> ({self.__TransferMode})</br> \
+		{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
 
 		if self.__move_files:
 			if self.__SourceWasTarget:
@@ -450,7 +451,7 @@ class reporter(object):
 
 	def sync_return_code_decoder(self,Code):
 
-		if not self.__TransferMode in ['rsync','gphoto2']:
+		if not self.__TransferMode in ['rsync', 'rclone', 'gphoto2']:
 			Code	= -1
 			ERROR_TEXT	= {
 				Code: "-"
@@ -485,6 +486,21 @@ class reporter(object):
 				25:	'The --max-delete limit stopped deletions',
 				30:	'Timeout in data send/receive',
 				35:	'Timeout waiting for daemon connection'
+			}
+		elif self.__TransferMode == 'rclone':
+			#rclone-codes
+			ERROR_TEXT	= {
+				0:	'success',
+				1:	'Syntax or usage error',
+				2:	'Error not otherwise categorised',
+				3:	'Directory not found',
+				4:	'File not found',
+				5:	'Temporary error (one that more retries might fix) (Retry errors)',
+				6:	'Less serious errors (like 461 errors from dropbox) (NoRetry errors)',
+				7:	'Fatal error (one that more retries won\'t fix, like account suspended) (Fatal errors)',
+				8:	'Transfer exceeded - limit set by --max-transfer reached',
+				9:	'Operation successful, but no files transferred (Requires --error-on-no-transfer)',
+				10:	'Duration exceeded - limit set by --max-duration reached'
 			}
 
 		try:

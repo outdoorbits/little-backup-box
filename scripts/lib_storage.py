@@ -111,7 +111,7 @@ class storage(object):
 		self.rsyncSSH			= []
 
 		# for use in rclone mode only
-		self.rclonePath			= ''
+		self.CloudBaseDir			= ''
 		self.FilesStayInPlace	= True # When used as target, use source specific subdir? (config - cloud)
 
 		# global backup parameters #####################
@@ -318,6 +318,8 @@ class storage(object):
 					except:
 						pass
 
+				self.CloudBaseDir			= CloudBaseDir if CloudBaseDir else ''
+
 				CloudFilesStayInPlaceConfigs	= self.__conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE.split('|;|')
 				for CloudFilesStayInPlaceConfig in CloudFilesStayInPlaceConfigs:
 					try:
@@ -327,11 +329,9 @@ class storage(object):
 					except:
 						pass
 
-				self.rclonePath			= CloudBaseDir if CloudBaseDir else ''
-
 				if self.MountPoint:
 
-					Command	= f"rclone mount '{self.CloudServiceName}':'{CloudBaseDir}' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --config {self.__RCLONE_CONFIG_FILE}"
+					Command	= f"rclone mount '{self.CloudServiceName}':'' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --allow-non-empty --config {self.__RCLONE_CONFIG_FILE}"
 					Command	= f"sh -c '{Command} &'"
 					subprocess.run(Command,shell=True)
 

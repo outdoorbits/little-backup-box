@@ -44,7 +44,7 @@ import lib_vpn
 
 
 #import lib_debug
-###=lib_debug.debug()
+#xx=lib_debug.debug()
 
 class backup(object):
 
@@ -127,20 +127,18 @@ class backup(object):
 		self.__TIMSCopied			= False
 		self.__mail_threads_started	= []
 
-		# define TransferMode
-		if self.SourceStorageType == 'camera':
-			self.TransferMode	= 'gphoto2'
-		else:
-			self.TransferMode	= 'rsync'
+		# define TransferMode for non camera transfers
+		self.TransferMode	= 'rsync'
+		# case 'anyusb' is variable transfer mode, it is
 
-			CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
-			for CloudSyncMethod in CloudSyncMethods:
-				try:
-					CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
-					if (CloudSyncMethodCandidate == 'rclone') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
-						self.TransferMode	= 'rclone'
-				except:
-					pass
+		CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
+		for CloudSyncMethod in CloudSyncMethods:
+			try:
+				CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
+				if (CloudSyncMethodCandidate == 'rclone') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
+					self.TransferMode	= 'rclone'
+			except:
+				pass
 
 		# Unmount devices, clean before backup
 		lib_storage.umount(self.__setup,'all')
@@ -215,45 +213,153 @@ class backup(object):
 
 		self.finish()
 
-	def get_syncOptions(self, TransferMode, dry_run=False):
-		syncOptions	= []
+	def get_excludeTIMS(self):
+		## don't sync tims to cloud
+		excludeTIMS	= []
+
+		if self.SourceDevice.isLocal and not self.TargetDevice.isLocal:
+			if self.TransferMode == 'rsync':
+				excludeTIMS	= ['*tims/']
+			elif self.TransferMode == 'rclone':
+				excludeTIMS	= ['**tims/**']
+
+		return(excludeTIMS)
+
+	def get_syncCommand(self, TransferMode, SubPathAtSource, dry_run=False):
+		syncCommand	= []
+
+		# excludes
+		excludeTIMS	= self.get_excludeTIMS()
+
+		excludes	= [
+			'*.id',
+			'*.lbbid',
+			'*.lbbflag',
+			self.const_IMAGE_DATABASE_FILENAME,
+			'*trash*'
+		] + excludeTIMS
+
+		Excludes	= []
+		for exclude in excludes:
+			Excludes	+= ['--exclude', exclude]
 
 		if TransferMode	== 'rsync':
-			syncOptions		= ['-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--exclude', '*.id', '--exclude', '*.lbbid', '--exclude', '*.lbbflag', '--exclude', self.const_IMAGE_DATABASE_FILENAME]
+			SourcePath	= f'{os.path.join(self.SourceDevice.MountPoint, SubPathAtSource)}'
+			TargetPath	= f'{os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget)}'
+
+			# basic command
+			syncCommand		= self.TargetDevice.rsyncSSH + ['rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--size-only']
 
 			# use compression for cloud syncs only
 			if self.TargetDevice.isLocal and self.SourceDevice.isLocal:
-				syncOptions	+= ['--no-compress', '--whole-file']
+				syncCommand	+= ['--no-compress', '--whole-file']
 			else:
-				syncOptions	+= ['--compress']
+				syncCommand	+= ['--compress']
 
 			if self.move_files and not self.SourceDevice.wasTarget:
-				syncOptions	+= ['--remove-source-files']
+				syncCommand	+= ['--remove-source-files']
+
+			syncCommand	+= Excludes
 
 			if dry_run:
-				syncOptions	+= ['--dry-run']
+				syncCommand	+= ['--dry-run']
 
 		elif TransferMode == 'rclone':
+			SourcePath	= f'{self.SourceDevice.CloudServiceName}:{self.SourceDevice.CloudBaseDir}' if self.SourceDevice.CloudServiceName else f'{os.path.join(self.SourceDevice.MountPoint, SubPathAtSource)}'
+			TargetPath	= f'{self.TargetDevice.CloudServiceName}:{os.path.join(self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.CloudBaseDir}' if self.TargetDevice.CloudServiceName else f'{os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)}'
+
+			# basic command
+			syncCommand	= ['rclone']
+
 			if dry_run:
-				syncOptions	= ['check']
+				syncCommand	+= ['check']
 			else:
 				if self.move_files and not self.SourceDevice.wasTarget:
-					syncOptions	= ['move']
+					syncCommand	+= ['move']
 				else:
-					syncOptions	= ['copy']
+					syncCommand	+= ['copy']
 
-			syncOptions		+= ['-vv', '--min-size=1B', '--exclude', '*.id', '--exclude', '*.lbbid', '--exclude', '*.lbbflag', '--exclude', self.const_IMAGE_DATABASE_FILENAME]
+			syncCommand		+= [SourcePath, TargetPath, '--config', self.__RCLONE_CONFIG_FILE, '-vv', '--min-size=1B', '--ignore-case'] + Excludes
 
-		return(syncOptions)
+		return(syncCommand)
 
-	def get_excludeTIMS(self, SourceStorageType):
-		## don't sync tims to cloud
-		if self.TargetDevice.isLocal and SourceStorageType in ['usb', 'internal', 'nvme']:
-			excludeTIMS	= []
+	def calculate_files_to_sync(self, singleSubPathsAtSource=None):
+		if singleSubPathsAtSource:
+			checkPathsList	= [singleSubPathsAtSource]
 		else:
-			excludeTIMS	= ['--exclude', "*tims/"]
+			checkPathsList	= self.SourceDevice.SubPathsAtSource
 
-		return(excludeTIMS)
+		FilesToProcess		= 0
+		FilesToProcessPart	= 0
+
+		if self.SourceDevice.StorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync']:
+			## Source is mounted (mountable) device
+
+			for SubPathAtSource in checkPathsList:
+
+				SourceCommand	= self.get_syncCommand(TransferMode=self.TransferMode, SubPathAtSource=SubPathAtSource, dry_run=True)
+
+				if self.TransferMode == 'rsync':
+					FilterCommand		= ['grep', 'Number of regular files transferred:']
+				elif self.TransferMode == 'rclone':
+					FilterCommand	= []
+
+				self.__log.message(' '.join(SourceCommand),3)
+				self.__log.message(' '.join(FilterCommand),3)
+
+				if self.TransferMode == 'rsync':
+					try:
+						FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(':')[1].strip(' ,'))
+					except:
+						FilesToProcessPart	= 0
+
+				elif self.TransferMode == 'rclone':
+					FilesToProcessPart	= 0
+
+					try:
+						with subprocess.Popen(SourceCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
+							while True:
+								OutputLine = BackupProcess.stdout.readline()
+								if not OutputLine:
+									break
+
+								OutputLine	= OutputLine.strip()
+
+								if OutputLine.endswith(': OK') or ': file not in ' in OutputLine:
+									FilesToProcessPart	+= 1
+									continue
+
+								if OutputLine.startswith('Checks:') and OutputLine.endswith('100%'):
+									try:
+										FilesToProcessPart	= int(OutputLine.split()[-2].strip(","))
+										break
+									except:
+										pass
+					except:
+						FilesToProcessPart	= 0
+
+				self.__log.message(f"Files to sync from folder '{SubPathAtSource}': {FilesToProcessPart}")
+
+				FilesToProcess	+= FilesToProcessPart
+
+		elif self.SourceDevice.StorageType == 'camera':	# Source camera
+
+			for SubPathAtSource in checkPathsList:
+
+				SourceCommand		= ['gphoto2', '--camera', self.SourceDevice.DeviceIdentifier, '--port', self.SourceDevice.CameraPort, '--list-files', '--folder', f'{SubPathAtSource}']
+				FilterCommand		= ['grep', '^#']
+
+				self.__log.message(' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand),3)
+
+				try:
+					gphoto2			= lib_common.pipe(SourceCommand,FilterCommand).decode()
+					FilesToProcess	+= len(gphoto2.strip().split('\n'))
+				except:
+					FilesToProcess	= 0
+
+				self.__log.message(f"Files in folder '{SubPathAtSource}': {FilesToProcessPart}")
+
+		return(FilesToProcess)
 
 	def backup(self):
 		if self.TargetDevice:
@@ -354,10 +460,10 @@ class backup(object):
 					self.__display.message([f":{SourceStorageName}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
 					return()
 
-				#run backup
+				# create new reporter
 				self.__reporter	= lib_backup.reporter(
 					lan						= self.__lan,
-					SourceStorageType		= SourceStorageType,
+					SourceStorageType		= self.SourceDevice.StorageType,
 					SourceCloudService		= self.SourceDevice.CloudServiceName,
 					SourceDeviceLbbDeviceID	= self.SourceDevice.LbbDeviceID,
 					TargetStorageType		= self.TargetDevice.StorageType,
@@ -378,10 +484,6 @@ class backup(object):
 
 				ErrorsOld				= []
 
-				# define specific parameters
-				syncOptions	= self.get_syncOptions(TransferMode=self.TransferMode)
-				excludeTIMS		= self.get_excludeTIMS(SourceStorageType=SourceStorageType)
-
 				# SubPaths loop
 				for SubPathAtSource in self.SourceDevice.SubPathsAtSource:
 
@@ -394,6 +496,10 @@ class backup(object):
 					SourceFolderFracture	= f"{SourceFolderNumber}/{len(self.SourceDevice.SubPathsAtSource)}" if len(self.SourceDevice.SubPathsAtSource) > 1 else ''
 
 					TriesCount				= 0
+
+					# define specific parameters
+					syncCommand	= self.get_syncCommand(TransferMode=self.TransferMode, SubPathAtSource=SubPathAtSource)
+
 					while TriesCount < self.const_BACKUP_MAX_TRIES and (TriesCount == 0 or self.__reporter.get_errors()):
 						TriesCount	+= 1
 
@@ -469,14 +575,14 @@ class backup(object):
 
 						# RUN BACKUP
 
-						## create target path if not exists and enter dir
+						## create target path if not exists
 						if self.TargetDevice.FilesStayInPlace:
 							try:
-								pathlib.Path(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget).mkdir(parents=True, exist_ok=True)
+								pathlib.Path(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget).mkdir(parents=True, exist_ok=True)
 							except:
 								self.__reporter.add_error('Err.: Lost device!')
-
 								ErrorsOld	= self.__reporter.get_errors()
+
 								continue
 
 							self.TargetDevice.set_mountpoint_permissions()
@@ -484,10 +590,11 @@ class backup(object):
 						SyncReturnCode	= 0
 
 #						# gphoto2 backup
-						if SourceStorageName == 'camera':
+						if SourceStorageName == 'camera' and self.TargetDevice.mountable:
 							# not mountable targets are excluded.
 
-							os.chdir(os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget))
+							# change into target dir
+							os.chdir(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget))
 
 							# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
 							Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, "--filename", "%F/%f.%C", "--get-all-files", "--folder", SubPathAtSource, "--skip-existing"]
@@ -504,8 +611,7 @@ class backup(object):
 
 									self.__reporter.add_synclog(f"{SyncOutputLine}")
 
-								self.__reporter.set_values(FilesProcessed=progress.CountProgress)
-								self.__reporter.set_values(FilesCopied=progress.CountJustCopied)
+								self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
 
 								BackupProcess.wait()
 								SyncReturnCode	= BackupProcess.returncode
@@ -515,23 +621,13 @@ class backup(object):
 
 #						# rsync or rclone backup
 						else:
-							if self.TransferMode == 'rsync':
-								Command	= self.TargetDevice.rsyncSSH + ['rsync'] + syncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
-
-							elif self.TransferMode == 'rclone':
-								Command	= ['rclone', '--config', self.__RCLONE_CONFIG_FILE] + syncOptions + excludeTIMS + \
-									[
-										f'{self.SourceDevice.CloudServiceName}:{self.SourceDevice.rclonePath}' if self.SourceDevice.CloudServiceName else os.path.join(self.SourceDevice.MountPoint, SubPathAtSource),
-										f'{self.TargetDevice.CloudServiceName}:{os.path.join(self.TargetDevice.rclonePath, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.rclonePath}' if self.TargetDevice.CloudServiceName else os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)
-									]
-
-							else:
+							if not self.TransferMode in ['rsync', 'rclone']:
 								self.__log.message(f'Error: "{self.TransferMode}" is no valid transfer mode.', 1)
 								return(None)
 
-							self.__log.message(' '.join(Command),3)
+							self.__log.message(' '.join(syncCommand),3)
 
-							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
+							with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
 								while True:
 									SyncOutputLine = BackupProcess.stdout.readline()
 									if not SyncOutputLine:
@@ -548,8 +644,7 @@ class backup(object):
 
 										self.__reporter.add_synclog(LogLine)
 
-								self.__reporter.set_values(FilesProcessed=progress.CountProgress)
-								self.__reporter.set_values(FilesCopied=progress.CountJustCopied)
+								self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
 								self.__TIMSCopied	= progress.TIMSCopied
 
 								BackupProcess.wait()
@@ -565,7 +660,7 @@ class backup(object):
 
 						# Remove empty files (maybe can result from disconnection of a source-device)
 						if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
-							SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint,  self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0']
+							SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0']
 							FilterCommand	= ['wc', '-l']
 
 							try:
@@ -635,7 +730,7 @@ class backup(object):
 							FilesValidationFailed	= 0
 							FilesListCopy	= FilesList.copy()
 							for File in FilesListCopy:
-								if (not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget, File))):
+								if (not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, File))):
 									FilesValidationFailed	+= 1
 									FilesList.remove(File) # do not remove this file from camera
 
@@ -655,7 +750,7 @@ class backup(object):
 								cam_folder	= os.path.dirname(FileRemove)
 								cam_file	= os.path.basename(FileRemove)
 
-								if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget, cam_folder, cam_file)):
+								if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, cam_folder, cam_file)):
 									continue
 
 								Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', f"/{cam_folder}", '--delete-file', cam_file]
@@ -1018,92 +1113,6 @@ class backup(object):
 
 				del progress
 				self.__display.message([f":{self.__lan.l('box_finished')}"])
-
-	def calculate_files_to_sync(self, singleSubPathsAtSource=None):
-		if singleSubPathsAtSource:
-			checkPathsList	= [singleSubPathsAtSource]
-		else:
-			checkPathsList	= self.SourceDevice.SubPathsAtSource
-
-		FilesToProcess		= 0
-		FilesToProcessPart	= 0
-
-		# To define a new method, add an elif block (example below)
-
-		if self.SourceDevice.StorageType in ['usb','internal', 'nvme','cloud','cloud_rsync']:
-			## Source is mounted (mountable) device
-
-			syncOptions	= self.get_syncOptions(TransferMode=self.TransferMode, dry_run=True)
-			excludeTIMS	= self.get_excludeTIMS(SourceStorageType=self.SourceDevice.StorageType)
-
-			for SubPathAtSource in checkPathsList:
-				if self.TransferMode == 'rsync':
-					SourceCommand	= self.TargetDevice.rsyncSSH + ['rsync'] + syncOptions + excludeTIMS + [os.path.join(self.SourceDevice.MountPoint, SubPathAtSource), os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)]
-					FilterCommand		= ['grep', 'Number of regular files transferred:']
-				elif self.TransferMode == 'rclone':
-					SourceCommand	= ['rclone', '--config', self.__RCLONE_CONFIG_FILE] + syncOptions + excludeTIMS + \
-									[
-										f'{self.SourceDevice.CloudServiceName}:{self.SourceDevice.rclonePath}' if self.SourceDevice.CloudServiceName else os.path.join(self.SourceDevice.MountPoint, SubPathAtSource),
-										f'{self.TargetDevice.CloudServiceName}:{os.path.join(self.TargetDevice.rclonePath, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.rclonePath}' if self.TargetDevice.CloudServiceName else os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)
-									]
-					FilterCommand	= []
-
-				self.__log.message(' '.join(SourceCommand),3)
-				self.__log.message(' '.join(FilterCommand),3)
-				try:
-					if self.TransferMode == 'rsync':
-						try:
-							FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(':')[1].strip(' ,'))
-						except:
-							FilesToProcessPart	= 0
-
-					elif self.TransferMode == 'rclone':
-						FilesToProcessPart	= 0
-
-						with subprocess.Popen(SourceCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
-							while True:
-								OutputLine = BackupProcess.stdout.readline()
-								if not OutputLine:
-									break
-
-								OutputLine	= OutputLine.strip()
-
-								if ': md5 = ' in OutputLine:
-									FilesToProcessPart	+= 1
-									continue
-								if OutputLine.endswith('matching files'):
-									try:
-										FilesToProcessPart	= int(line.split()[-3])
-										break
-									except:
-										pass
-
-
-				except:
-					FilesToProcessPart	= 0
-
-				self.__log.message(f"Files to sync from folder '{SubPathAtSource}': {FilesToProcessPart}")
-
-				FilesToProcess	+= FilesToProcessPart
-
-		elif self.SourceDevice.StorageType == 'camera':	# Source camera
-
-			for SubPathAtSource in checkPathsList:
-
-				SourceCommand		= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, "--list-files", "--folder", f"{SubPathAtSource}"]
-				FilterCommand		= ["grep", "^#"]
-
-				self.__log.message(' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand),3)
-
-				try:
-					gphoto2			= lib_common.pipe(SourceCommand,FilterCommand).decode()
-					FilesToProcess	+= len(gphoto2.strip().split('\n'))
-				except:
-					FilesToProcess	= 0
-
-				self.__log.message(f"Files in folder '{SubPathAtSource}': {FilesToProcessPart}")
-
-		return(FilesToProcess)
 
 	def get_BannedPathsViewCaseInsensitive(self):
 		# create list of banned paths
