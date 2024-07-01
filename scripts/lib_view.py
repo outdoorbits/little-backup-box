@@ -152,6 +152,10 @@ class viewdb(object):
 			if EXIF_Field == "ID":
 				EXIF_Field="ID_CAMERA"
 
+			# do not accept field names shorter then 2 characters
+			if len(EXIF_Field) < 2:
+				continue
+
 			ImageRecord[EXIF_Field]	= EXIF_Value
 
 		# define/overwrite elements of ImageRecord
