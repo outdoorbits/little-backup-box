@@ -128,15 +128,14 @@ class backup(object):
 		self.__mail_threads_started	= []
 
 		# define TransferMode for non camera transfers
-		self.TransferMode	= 'rsync'
-		# case 'anyusb' is variable transfer mode, it is
+		self.TransferMode	= 'rclone'
 
 		CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
 		for CloudSyncMethod in CloudSyncMethods:
 			try:
 				CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
-				if (CloudSyncMethodCandidate == 'rclone') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
-					self.TransferMode	= 'rclone'
+				if (CloudSyncMethodCandidate == 'rsync') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
+					self.TransferMode	= 'rsync'
 			except:
 				pass
 

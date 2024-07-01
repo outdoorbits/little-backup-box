@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2024-07-01: Speed up transfer to cloud by using rclone (use setup to switch back to rsync)</li>
 	<li>2024-04-08: Add support for NVMe SSD storage on Raspberry Pi 5</li>
 	<li>2024-03-04: Add USB auto source option. All connected devices (cameras and storages) will be backed up.</li>
 	<li>2024-02-26: A minimum size of the partition to be used on the target device can be set in the configuration. This allows smaller partitions to be skipped as a destination.</li>

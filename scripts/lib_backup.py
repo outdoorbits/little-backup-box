@@ -23,7 +23,7 @@ import lib_mail
 import lib_system
 
 #import lib_debug
-###=lib_debug.debug()
+#xx=lib_debug.debug()
 
 class progressmonitor(object):
 	def __init__(self,
@@ -232,7 +232,7 @@ class reporter(object):
 
 		self.display_summary		= []
 
-	def new_folder(self,Folder):
+	def new_folder(self, Folder):
 		if not Folder:
 			Folder	= '/'
 		self.__Folder	= Folder

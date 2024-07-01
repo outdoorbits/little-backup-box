@@ -170,7 +170,7 @@
         "target_basedir_header": "Dossier d'accueil sur les serveurs cloud",
         "target_basedir_label": "La sauvegarde est effectuée sous ce répertoire.",
         "sync_method_header": "Méthode de datation",
-        "sync_method_label": "En général, rsync devrait être plus rapide. Rclone ne doit être utilisé qu'en cas de problèmes de compatibilité avec un service cloud.",
+        "sync_method_label": "Avec une connexion Internet stable, le transfert avec rclone semble être nettement plus rapide.<br>\nrsync peut cependant présenter des avantages en cas d'interruptions de transfert, notamment avec des fichiers volumineux.",
         "sync_parameter_header": "Paramètres de transfert",
         "files_stay_in_place_header": "Emplacement statique",
         "files_stay_in_place_label": "¿Los archivos permanecen en la ubicación de almacenamiento inmediatamente después de cargarlos o se clasifican? (¡Esto sólo afecta a rclone!)"

@@ -112,7 +112,7 @@ class storage(object):
 
 		# for use in rclone mode only
 		self.CloudBaseDir			= ''
-		self.FilesStayInPlace	= True # When used as target, use source specific subdir? (config - cloud)
+		self.FilesStayInPlace	= True # When used as target: use source specific subdir? (config - cloud)
 
 		# global backup parameters #####################
 		self.LbbDeviceID			= ''

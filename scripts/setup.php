@@ -147,6 +147,8 @@ function write_config() {
 
 	extract ($_POST, EXTR_SKIP);
 
+// 	prepare variables for saving
+
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)	= explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)	= explode(" ",$BACKUP_MODE_2,2);
 
@@ -243,8 +245,8 @@ conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
 conf_BACKUP_TARGET_SIZE_MIN=$conf_BACKUP_TARGET_SIZE_MIN
 conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
 conf_BACKUP_CLOUDS_TARGET_BASEDIR='$conf_BACKUP_CLOUDS_TARGET_BASEDIR'
-conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE='$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE'
 conf_BACKUP_SYNC_METHOD_CLOUDS='$conf_BACKUP_SYNC_METHOD_CLOUDS'
+conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE='$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE'
 conf_BACKUP_MOVE_FILES=$conf_BACKUP_MOVE_FILES
 conf_POWER_OFF=$conf_POWER_OFF
 conf_DISP=$conf_DISP
@@ -1045,8 +1047,8 @@ function upload_settings() {
 							</tr>
 							<tr>
 								<th></th>
-								<th style="padding-left: 30px; text-align: center">rsync</th>
 								<th style="padding-left: 30px; text-align: center">rclone</th>
+								<th style="padding-left: 30px; text-align: center">rsync</th>
 								<th style="padding-left: 30px; text-align: center"></th>
 							</tr>
 						<?php
@@ -1056,11 +1058,12 @@ function upload_settings() {
 									<label for="conf_BACKUP_SYNC_METHOD_CLOUDS_"><?php echo $CloudService; ?>:</label>
 								</th>
 
-								<td style="padding-left: 30px; text-align: center;">
-										<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rsync" <?php if ($CloudSyncMethods[$CloudService] != 'rclone') {echo 'checked';} ?>>
-								</td>
 								<td style="padding-left: 30px; text-align: center">
-									<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rclone" <?php if ($CloudSyncMethods[$CloudService] == 'rclone') {echo 'checked';} ?>>
+									<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rclone" <?php if ($CloudSyncMethods[$CloudService] != 'rsync') {echo 'checked';} ?>>
+								</td>
+
+								<td style="padding-left: 30px; text-align: center;">
+										<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rsync" <?php if ($CloudSyncMethods[$CloudService] == 'rsync') {echo 'checked';} ?>>
 								</td>
 
 								<td style="padding-left: 30px; text-align: center">

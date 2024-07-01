@@ -391,7 +391,7 @@
         "target_basedir_header": "Base folder on cloud servers",
         "target_basedir_label": "The backup on the cloud server is carried out under this directory.",
         "sync_method_header": "Method of data transfer",
-        "sync_method_label": "En general, rsync debería ser más rápido. Rclone sólo debe usarse si hay problemas de compatibilidad con un servicio en la nube.",
+        "sync_method_label": "With a stable internet connection, the transfer with rclone seems to be significantly faster.<br>\nrsync, however, can have advantages in the event of transfer interruptions, especially with large files.",
         "sync_parameter_header": "Transfer settings",
         "files_stay_in_place_header": "Storage location static",
         "files_stay_in_place_label": "Do the files remain in the storage location immediately after uploading or are they sorted away? (This only applies to rclone!)"

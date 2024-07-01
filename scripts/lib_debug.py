@@ -30,7 +30,7 @@ class debug(object):
 		Message	= f"{int(datetime.now().timestamp()) - self.debugbasetime}\t{__name__}\t{debugstring}"
 		print(Message,file=sys.stderr)
 
-		with open('/var/www/little-backup-box/lbb.log','a') as f:
+		with open('/media/debug.log','a') as f:
 			f.write(f"{Message}\n")
 
 def checkPathlibPath(*parts):
