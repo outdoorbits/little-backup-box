@@ -100,6 +100,7 @@ class backup(object):
 		self.conf_MAIL_TIMEOUT_SEC						= self.__setup.get_val('conf_MAIL_TIMEOUT_SEC')
 		self.__conf_LOG_SYNC							= self.__setup.get_val('conf_LOG_SYNC')
 		self.__RCLONE_CONFIG_FILE						= os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_RCLONE_CONFIG_FILE'))
+		self.__const_VIEW_BANNED_PATHS					= self.__setup.get_val('const_VIEW_BANNED_PATHS').split(';')
 
 		if self.move_files == 'setup':
 			self.move_files				= self.conf_BACKUP_MOVE_FILES
@@ -128,7 +129,7 @@ class backup(object):
 		self.__mail_threads_started	= []
 
 		# define TransferMode for non camera transfers
-		self.TransferMode	= 'rclone'
+		self.TransferMode	= 'rclone' if self.SourceStorageType == 'cloud' or TargetStorageType == 'cloud' else 'rsync'
 
 		CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
 		for CloudSyncMethod in CloudSyncMethods:
@@ -153,7 +154,7 @@ class backup(object):
 
 		# VPN start
 		VPN_Mode	= None
-		if 'cloud' in [self.SourceStorageType,TargetStorageType]:
+		if 'cloud' in [self.SourceStorageType, TargetStorageType]:
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_CLOUD')
 		elif 'cloud_rsync' in [self.SourceStorageType,TargetStorageType]:
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_RSYNC')
@@ -228,7 +229,12 @@ class backup(object):
 		syncCommand	= []
 
 		# excludes
-		excludeTIMS	= self.get_excludeTIMS()
+		excludeTIMS		= self.get_excludeTIMS()
+
+		if TransferMode	== 'rclone':
+			excludePaths	= [f'*{Path}*' for Path in self.__const_VIEW_BANNED_PATHS]
+		else:
+			excludePaths	= self.__const_VIEW_BANNED_PATHS
 
 		excludes	= [
 			'*.id',
@@ -236,7 +242,7 @@ class backup(object):
 			'*.lbbflag',
 			self.const_IMAGE_DATABASE_FILENAME,
 			'*trash*'
-		] + excludeTIMS
+		] + excludeTIMS + excludePaths
 
 		Excludes	= []
 		for exclude in excludes:
@@ -1117,9 +1123,7 @@ class backup(object):
 		# create list of banned paths
 		BannedPathsList		= []
 
-		BannedPathsArray	= self.__setup.get_val('const_VIEW_BANNED_PATHS').split(';')
-
-		for BannedPath in BannedPathsArray:
+		for BannedPath in self.__const_VIEW_BANNED_PATHS:
 			BannedPathsList += ["-not", "-ipath", BannedPath]
 
 		return(BannedPathsList)

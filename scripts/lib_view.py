@@ -187,7 +187,7 @@ class viewdb(object):
 		for EXIF_Field in ImageRecord.keys():
 			# add column to the table if doesn't exist
 			if not EXIF_Field in self.__EXIF_KnownColumnsList:
-				self.__cur.execute(f"alter table EXIF_DATA add column {EXIF_Field} text;")
+				self.__cur.execute(f"alter table EXIF_DATA add column '{EXIF_Field}' text;")
 				self.__EXIF_KnownColumnsList.append(EXIF_Field)
 
 			# create dbFields and dbValues for db query
