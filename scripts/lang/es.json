@@ -676,7 +676,11 @@
     },
     "ratings_save_button": "Guardar",
     "ratings_1_delete_button": "Eliminar archivos multimedia",
-    "date_format": "d.m.Y"
+    "date_format": "d.m.Y",
+    "slideshow": {
+      "header": "Diapositivas",
+      "stop": "detener"
+    }
   },
   "units": {
     "minutes_long": "minutos",
