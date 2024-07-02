@@ -270,7 +270,6 @@
     "anyusb_button": "any USB (cameras and storage)"
   },
   "sysinfo": {
-    "sysinfo": "System info",
     "temp": "Temperature",
     "cpuload": "CPU Load",
     "conditions": "Conditions",
@@ -312,7 +311,6 @@
     "alert_settings_upload_not_zip": "The file you are trying to upload is not a .zip file. Please try again.",
     "alert_settings_upload_success": "Your settings file has been uploaded and this files have been installed:",
     "alert_settings_upload_problem": "There was a problem with the upload. Please try again.",
-    "config": "Settings",
     "lang_header": "Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
     "lang_browser_detect": "Browser detect",
@@ -637,7 +635,6 @@
     }
   },
   "view": {
-    "view": "Image viewer",
     "filter": {
       "medium": "Storage medium",
       "section": "Filter",

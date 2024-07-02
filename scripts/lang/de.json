@@ -60,7 +60,6 @@
     "anyusb_button": "alle USB (Kameras und Speicher)"
   },
   "sysinfo": {
-    "sysinfo": "Systeminformationen",
     "temp": "Temperatur",
     "cpuload": "CPU-Last",
     "devices": "Geräte",
@@ -81,7 +80,6 @@
     }
   },
   "config": {
-    "config": "Einstellungen",
     "lang_header": "Sprache auswählen/Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
     "lang_browser_detect": "Browser-Erkennung/Browser detect",
@@ -637,7 +635,6 @@
     }
   },
   "view": {
-    "view": "Bildbetrachter",
     "filter": {
       "medium": "Speichermedium",
       "section": "Filter",

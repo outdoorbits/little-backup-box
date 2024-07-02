@@ -101,7 +101,6 @@
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
-	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo l::tools_tools; ?></h1>
 	<div class="card">
 		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::tools_mount_header; ?></h3>
 		<hr>

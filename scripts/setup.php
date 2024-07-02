@@ -96,7 +96,6 @@
 
 	?>
 
-	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;"><?php echo L::config_config; ?></h1>
 	<?php
 
 function get_wifi_country_selector($ID,$NAME) {
