@@ -413,12 +413,13 @@ class reporter(object):
 			Completed	= True if Completed and not self.__BackupReports[Folder][-1]['Errors'] else False
 
 			TriesCount		= 0
-			for Report in (self.__BackupReports[Folder]):
+			for Report in (self.__BackupReports[Folder]): # tries
 
 				TriesCount		+= 1
 
-				if Report['FilesToProcess'] > 0:
-					FilesToProcess	+= Report['FilesToProcess']
+				FilesToProcessReport	= 0
+				if Report['FilesToProcess'] > FilesToProcessReport:
+					FilesToProcessReport	= Report['FilesToProcess']
 
 				if Report['FilesProcessed'] > 0:
 					FilesProcessed	+= Report['FilesProcessed']
@@ -428,6 +429,8 @@ class reporter(object):
 
 					for Error in Report['Errors']:
 						Errors	+= [f"{Report['SyncReturnCode']}:{Error}"]
+
+			FilesToProcess	= FilesToProcessReport
 
 		if Completed:
 			self.display_summary.append(f":{self.__lan.l('box_backup_complete')}.")
