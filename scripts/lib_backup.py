@@ -413,11 +413,11 @@ class reporter(object):
 			Completed	= True if Completed and not self.__BackupReports[Folder][-1]['Errors'] else False
 
 			TriesCount		= 0
+			FilesToProcessReport	= 0
 			for Report in (self.__BackupReports[Folder]): # tries
 
 				TriesCount		+= 1
 
-				FilesToProcessReport	= 0
 				if Report['FilesToProcess'] > FilesToProcessReport:
 					FilesToProcessReport	= Report['FilesToProcess']
 
