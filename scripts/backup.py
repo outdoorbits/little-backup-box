@@ -43,8 +43,8 @@ import lib_view
 import lib_vpn
 
 
-#import lib_debug
-#xx=lib_debug.debug()
+import lib_debug
+dbg=lib_debug.debug()
 
 class backup(object):
 
@@ -633,6 +633,7 @@ class backup(object):
 							self.__log.message(' '.join(syncCommand),3)
 
 							with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
+
 								while True:
 									SyncOutputLine = BackupProcess.stdout.readline()
 									if not SyncOutputLine:
@@ -912,7 +913,7 @@ class backup(object):
 					f":{self.__lan.l('box_backup_generating_thumbnails_finding_images3')}"
 					])
 
-				#find all images; replace "space" by substitute of space "##**##"
+				#find all images
 				AllowedExtensionsList	= (
 					const_FILE_EXTENSIONS_LIST_WEB_IMAGES + ';' +
 					const_FILE_EXTENSIONS_LIST_HEIC + ';' +
@@ -938,10 +939,11 @@ class backup(object):
 				ImagesList[:]	= [element for element in ImagesList if element]
 				ImagesList.sort()
 				ImagesList = [i.replace(self.TargetDevice.MountPoint,'',1) for i in ImagesList]
+				dbg.d(f'ImagesList: {", ".join(ImagesList)}')
 
 				# find all tims
 				Command	= f"find '{self.TargetDevice.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
-
+				dbg.d(Command)
 				TIMSList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 				TIMSList[:]	= [element for element in TIMSList if element]
 				TIMSList.sort()
@@ -949,9 +951,11 @@ class backup(object):
 				for i, TIMS in enumerate(TIMSList):
 					TIMSList[i]	= TIMS.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0] 			# remove self.TargetDevice.MountPoint and second extension
 					TIMSList[i]	= '/'.join(TIMSList[i].rsplit('/tims/', 1))									# remove /tims from folder
+				dbg.d(f'TIMSList: {", ".join(TIMSList)}')
 
 				#remove from ImagesList all items known in TIMSList
 				MissingTIMSList	= list(set(ImagesList) - set(TIMSList))
+				dbg.d(f'MissingTIMSList: {", ".join(MissingTIMSList)}')
 
 				#prepare loop to create thumbnails
 				FilesToProcess	= len(MissingTIMSList)
