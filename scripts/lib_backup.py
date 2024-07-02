@@ -120,11 +120,11 @@ class progressmonitor(object):
 					self.CountProgress		+= 1
 					self.CountJustCopied	+= 1
 
-				elif SyncOutputLine.endswith(': Unchanged skipping'):
-					self.CountProgress		+= 1
-
 					if not self.TIMSCopied:
 						self.TIMSCopied	= 'tims/' in SyncOutputLine
+
+				elif SyncOutputLine.endswith(': Unchanged skipping'):
+					self.CountProgress		+= 1
 
 		elif TransferMode == 'gphoto2':
 			if SyncOutputLine[0:6] == 'Saving' or  SyncOutputLine[0:4] == 'Skip':

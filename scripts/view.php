@@ -129,7 +129,7 @@
 		} else {
 // 			$view_mode="single"
 			?>
-			<input type="hidden" name="slideshow_next_link" id="slideshow_next_link" value="<?php echo ($IMAGE_ID_POST < $IMAGE_ID_LAST ? $GET_PARAMETER . "&ID=" . $IMAGE_ID_POST : $GET_PARAMETER . "&ID=" . $IMAGE_ID_FIRST); ?>">
+			<input type="hidden" name="slideshow_next_link" id="slideshow_next_link" value="<?php echo ($IMAGE_ID_POST ==  0 ? $GET_PARAMETER . "&ID=" . $IMAGE_ID_FIRST : $GET_PARAMETER . "&ID=" . $IMAGE_ID_POST); ?>">
 
 			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
 				<div style="float:left;width: 50%;padding: 5px;">
@@ -140,7 +140,7 @@
 
 				<div style="float:right;width: 50%;padding: 5px;">
 					<?php echo L::view_slideshow_header; ?>
-					<select style="margin-top: 0;" onchange="slideshow_run()" name="slideshow_timer" id="slideshow_timer">
+					<select style="margin-top: 0;" onchange="slideshow_run()" id="slideshow_timer">
 						<option value="-" <?php echo ($slideshow_timer=='-'?'selected':''); ?>>-</option>
 						<?php
 							$slideshow_options	= array('1', '2', '3', '4', '5');
