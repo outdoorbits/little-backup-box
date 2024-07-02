@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2024-07-01: View: Add slideshow function to single view mode</li>
 	<li>2024-07-01: Speed up transfer to cloud by using rclone (use setup to switch back to rsync)</li>
 	<li>2024-04-08: Add support for NVMe SSD storage on Raspberry Pi 5</li>
 	<li>2024-03-04: Add USB auto source option. All connected devices (cameras and storages) will be backed up.</li>

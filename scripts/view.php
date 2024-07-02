@@ -48,7 +48,7 @@
 		);
 	}
 
-	function navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,$label_filename,$label_creationdate,$label_id) {
+	function navigator($view_mode, $imagecount, $filter_images_per_page, $select_offset, $filter_rating, $IMAGE_ID_PRE, $IMAGE_ID, $IMAGE_ID_POST, $IMAGE_ID_FIRST, $IMAGE_ID_LAST, $GET_PARAMETER, $order_by, $order_dir, $label_filename, $label_creationdate, $label_id, $slideshow_timer) {
 		if ($view_mode == "grid") {
 			?>
 			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
@@ -129,11 +129,27 @@
 		} else {
 // 			$view_mode="single"
 			?>
+			<input type="hidden" name="slideshow_next_link" id="slideshow_next_link" value="<?php echo ($IMAGE_ID_POST < $IMAGE_ID_LAST ? $GET_PARAMETER . "&ID=" . $IMAGE_ID_POST : $GET_PARAMETER . "&ID=" . $IMAGE_ID_FIRST); ?>">
+
 			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
 				<div style="float:left;width: 50%;padding: 5px;">
 					<a href="<?php echo $GET_PARAMETER . '&view_mode=grid&ID=' . $IMAGE_ID; ?>">
 						<?php echo L::view_images_back_to_grid; ?>
 					</a>
+				</div>
+
+				<div style="float:right;width: 50%;padding: 5px;">
+					<?php echo L::view_slideshow_header; ?>
+					<select style="margin-top: 0;" onchange="slideshow_run()" name="slideshow_timer" id="slideshow_timer">
+						<option value="-" <?php echo ($slideshow_timer=='-'?'selected':''); ?>>-</option>
+						<?php
+							$slideshow_options	= array('1', '2', '3', '4', '5');
+							foreach($slideshow_options as $slideshow_option) {
+							 echo '<option value="'.$slideshow_option.'" '.($slideshow_timer==$slideshow_option?'selected':'').'>'.$slideshow_option.' '.L::seconds_short.'</option>';
+							}
+						?>
+					</select>
+					<button style="margin-top: 0;" type="button" onclick="slideshow_stop()" name="slideshow_stop_button" id="slideshow_stop_button"><?php echo L::view_slideshow_stop; ?></button>
 				</div>
 
 				<div style="float:left;width: 100%;padding: 5px;text-align: right;">
@@ -222,6 +238,7 @@
 	$order_by          				= isset($order_by) ? $order_by :  "Create_Date";
 	$order_dir						= isset($order_dir) ? $order_dir :  "DESC";
 	$select_offset					= isset($select_offset) ? $select_offset :  0;
+	$slideshow_timer				= isset($slideshow_timer) ? $slideshow_timer : '-';
 
 	$FIELDS_BLOCKED_ARRAY	= array(
 		"ID",
@@ -516,10 +533,11 @@
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 	<link rel="stylesheet" href="css/mglass.css">
-	<script src="js/mglass.js"></script>
+	<script type="text/javascript" src="js/mglass.js"></script>
+	<script type="text/javascript" src="js/slideshow.js"></script>
 </head>
 
-<body <?php echo $background; ?>>
+<body <?php echo $background; ?> onload="slideshow_run()">
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
@@ -700,7 +718,7 @@
 
 		<?php
 			echo $HIDDEN_INPUTS;
-			navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id);
+			navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id, $slideshow_timer);
 		?>
 
 		<div class="card" style="margin-top: 2em;display: inline-block">
@@ -901,7 +919,7 @@
 
 		</div>
 
-		<?php navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id); ?>
+		<?php navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id, $slideshow_timer); ?>
 
 	</form>
 

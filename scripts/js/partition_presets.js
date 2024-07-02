@@ -1,4 +1,4 @@
-function PresetPartitionChange(field) {
+function PresetPartitionChange() {
 	var PresetTarget = document.getElementById("preset_target");
 	var PresetSource = document.getElementById("preset_source");
 
