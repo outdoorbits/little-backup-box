@@ -330,14 +330,14 @@ class backup(object):
 
 								OutputLine	= OutputLine.strip()
 
-								if OutputLine.endswith(': OK') or ': file not in ' in OutputLine:
-									FilesToProcessPart	+= 1
-									continue
-
-								if OutputLine.startswith('Checks:') and OutputLine.endswith('100%'):
+								if OutputLine.endswith('matching files'):
 									try:
-										FilesToProcessPart	= int(OutputLine.split()[-2].strip(","))
-										break
+										FilesToProcessPart	+= int(OutputLine.split()[-3].strip())
+									except:
+										pass
+								elif OutputLine.endswith('errors while checking'):
+									try:
+										FilesToProcessPart	+= int(OutputLine.split()[-4].strip())
 									except:
 										pass
 					except:
