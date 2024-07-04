@@ -139,12 +139,14 @@ class viewdb(object):
 			EXIF_Field	= EXIF_Field.strip()
 			EXIF_Value	= EXIF_Value.strip()
 
-			EXIF_Field	= re.sub('[^a-zA-Z0-9_\.]', '_', EXIF_Field)
+			EXIF_Field	= re.sub('[^a-zA-Z0-9]', '_', EXIF_Field)
 
 			if not EXIF_Field in ['File_Name','Directory']:
+				EXIF_Value	= EXIF_Value.replace('\r', '')
+				EXIF_Value	= EXIF_Value.replace('\n', '<br>')
 				EXIF_Value	= EXIF_Value.replace('"', '&#34;')
 				EXIF_Value	= EXIF_Value.replace("'", '&#39;')
-				EXIF_Value	= re.sub('[^a-zA-Z0-9_\-+\.,:;\ &#/()\[\]]', '_', EXIF_Value)
+				EXIF_Value	= re.sub('[^a-zA-Z0-9_\-+\.,:;\ &#/()\[\]]<>', '_', EXIF_Value)
 
 			if not EXIF_Field:
 				continue

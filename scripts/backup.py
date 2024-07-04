@@ -821,6 +821,7 @@ class backup(object):
 				# remove duplicates
 				db.dbExecute("delete from EXIF_DATA where ID not in (select min(ID) from EXIF_DATA group by File_Name, Directory);")
 
+				# verfify files exists or clean from db
 				KnownFilesList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA")
 
 				FilesToProcess	=	len(KnownFilesList)
@@ -844,7 +845,7 @@ class backup(object):
 				# vacuum database
 				db.dbExecute('VACUUM;')
 
-				# import preexisting tims into database
+				## import preexisting tims into database
 				self.__display.message(['set:clear',f":{self.__lan.l('box_backup_generating_database_finding_images1')}",':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),f":{self.__lan.l('box_backup_counting_images')}",f":{self.__lan.l('box_backup_generating_database_finding_images3')}"])
 
 				# find all tims and convert their filename to the estimated original filename:
@@ -986,14 +987,14 @@ class backup(object):
 
 						# file-type: heic/heif
 						# convert heif to jpg
-						Command	= ["heif-convert", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f"{SourceFilePathName}.JPG")]
+						Command	= ['heif-convert', os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f'{SourceFilePathName}.JPG')]
 						try:
 							subprocess.run(Command)
 						except:
 							print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 						# transfer exif from heif to jpg
-						Command	= ["exiftool", "-overwrite_original", "-TagsFromFile", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f"{SourceFilePathName}.JPG")]
+						Command	= ['exiftool', '-overwrite_original', '-ignoreMinorErrors', '-TagsFromFile', os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f'{SourceFilePathName}.JPG')]
 						try:
 							subprocess.run(Command)
 						except:
