@@ -73,7 +73,7 @@ class setup(object):
 				return(int(value,16) if value else 0)
 
 		elif val_type == 'float':
-			return(int(value))
+			return(float(value))
 
 		elif val_type == 'bool':
 			return(
@@ -216,7 +216,7 @@ class setup(object):
 					'conf_DISP_COLOR_HIGH':								{'value': 'white', 'type': 'str'},
 					'conf_DISP_COLOR_ALERT':							{'value': 'orange', 'type': 'str'},
 					'conf_DISP_FONT_SIZE':								{'value': 12, 'type': 'int'},
-					'conf_DISP_FRAME_TIME':								{'value': 2, 'type': 'int'},
+					'conf_DISP_FRAME_TIME':								{'value': 1, 'type': 'float'},
 					'conf_DISP_BLACK_ON_POWER_OFF':						{'value': True, 'type': 'bool'},
 					'conf_DISP_IP_REPEAT':								{'value': True, 'type': 'bool'},
 					'conf_MENU_ENABLED':								{'value': True, 'type': 'bool'},

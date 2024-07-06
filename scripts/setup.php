@@ -750,7 +750,7 @@ function upload_settings() {
 						<label for="conf_DISP_FRAME_TIME"><?php echo L::config_display_frame_time_label; ?></label><br>
 							<select name="conf_DISP_FRAME_TIME" id="conf_DISP_FRAME_TIME">
 								<?php
-									$display_frame_times_array=array("0.5","1","2","3");
+									$display_frame_times_array=array('0.1', '0.25', '0.5', '1', '2', '3');
 									foreach($display_frame_times_array as $display_frame_time) {
 										echo "<option value='" . $display_frame_time . "' " . ($config["conf_DISP_FRAME_TIME"] == $display_frame_time?" selected":"") . ">" . $display_frame_time . "</option>";
 									}
