@@ -125,20 +125,21 @@ class progressmonitor(object):
 					if FileName in self.FilesList:
 						return()
 
-					if SyncOutputLine.endswith(': Copied (new)'):
+					try:
+						Result	= SyncOutputLine.split(':')[-1].strip()
+					except:
+						return()
 
-						self.CountProgress		+= 1
+					if Result == ('Copied (new)'):
 						self.CountJustCopied	+= 1
+
+					if 'Copied' in Result:
+						self.CountProgress		+= 1
 
 						self.FilesList	+= [FileName]
 
 						if not self.TIMSCopied:
 							self.TIMSCopied	= 'tims/' in SyncOutputLine
-
-					elif SyncOutputLine.endswith(': Unchanged skipping'):
-						self.CountProgress		+= 1
-
-						self.FilesList	+= [FileName]
 
 		elif TransferMode == 'gphoto2':
 			if SyncOutputLine[0:6] == 'Saving' or  SyncOutputLine[0:4] == 'Skip':

@@ -286,6 +286,9 @@ class backup(object):
 
 			syncCommand		+= [SourcePath, TargetPath, '--config', self.__RCLONE_CONFIG_FILE, '-vv', '--min-size=1B', '--ignore-case'] + Excludes
 
+			if dry_run:
+				syncCommand	+= ['--one-way']
+
 		return(syncCommand)
 
 	def calculate_files_to_sync(self, singleSubPathsAtSource=None):
@@ -330,9 +333,9 @@ class backup(object):
 
 								OutputLine	= OutputLine.strip()
 
-								if OutputLine.startswith('Checks:'):
+								if OutputLine.startswith('Errors:'):
 									try:
-										FilesToProcessPart	= int(OutputLine.split()[-2].strip(' ,'))
+										FilesToProcessPart	+= int(OutputLine.split(':')[1].strip().split()[0])
 									except:
 										pass
 					except:
@@ -635,14 +638,16 @@ class backup(object):
 
 									progress.progress(TransferMode=self.TransferMode, SyncOutputLine=SyncOutputLine)
 
-									if SyncOutputLine[0] != ' ' and not ' DEBUG : ' in SyncOutputLine and not ' NOTICE: ' in SyncOutputLine:
-										LogLine	= SyncOutputLine.strip()
-										LogLine	= LogLine if LogLine[20:24] != 'INFO' else LogLine[27:]
+									try:
+										LineType	= SyncOutputLine.split(':')[2].split()[1].strip()
+									except:
+										LineType	= ''
 
-										if LogLine=='./':
-											continue
-
-										self.__reporter.add_synclog(LogLine)
+									if LineType=='INFO':
+										try:
+											self.__reporter.add_synclog(SyncOutputLine.split('INFO',1)[1].strip(' :'))
+										except:
+											pass
 
 								self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
 								self.__TIMSCopied	= progress.TIMSCopied
