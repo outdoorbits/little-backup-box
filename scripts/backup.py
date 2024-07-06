@@ -286,6 +286,9 @@ class backup(object):
 
 			syncCommand		+= [SourcePath, TargetPath, '--config', self.__RCLONE_CONFIG_FILE, '-vv', '--min-size=1B', '--ignore-case'] + Excludes
 
+			if dry_run:
+				syncCommand	+= ['--dry-run']
+
 		return(syncCommand)
 
 	def calculate_files_to_sync(self, singleSubPathsAtSource=None):
@@ -330,14 +333,9 @@ class backup(object):
 
 								OutputLine	= OutputLine.strip()
 
-								if OutputLine.endswith('matching files'):
+								if OutputLine.startswith('Checks:'):
 									try:
-										FilesToProcessPart	+= int(OutputLine.split()[-3].strip())
-									except:
-										pass
-								elif OutputLine.endswith('errors while checking'):
-									try:
-										FilesToProcessPart	+= int(OutputLine.split()[-4].strip())
+										FilesToProcessPart	= int(OutputLine.split()[-2].strip(' ,'))
 									except:
 										pass
 					except:
