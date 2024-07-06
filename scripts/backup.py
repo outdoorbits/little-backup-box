@@ -335,7 +335,7 @@ class backup(object):
 
 								if OutputLine.startswith('Errors:'):
 									try:
-										FilesToProcessPart	+= int(OutputLine.split(':')[1].strip().split()[0])
+										FilesToProcessPart	= int(OutputLine.split(':')[1].strip().split()[0])
 									except:
 										pass
 					except:

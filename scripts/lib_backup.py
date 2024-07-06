@@ -130,11 +130,9 @@ class progressmonitor(object):
 					except:
 						return()
 
-					if Result == ('Copied (new)'):
-						self.CountJustCopied	+= 1
-
 					if 'Copied' in Result:
 						self.CountProgress		+= 1
+						self.CountJustCopied	+= 1
 
 						self.FilesList	+= [FileName]
 
