@@ -163,9 +163,7 @@ class progressmonitor(object):
 				(self.FilesToProcess == self.CountProgress)
 		): # print changed progress
 
-			if self.TransferRate in ['','0.00kB/s']:
-				self.TransferRate	= ''
-			else:
+			if len(self.TransferRate) > 0 and self.TransferRate[0] != ',':
 				self.TransferRate	= f", {self.TransferRate}"
 
 			DisplayLine3	= f"{self.CountProgress} " + self.__lan.l('box_backup_of') + f" {self.FilesToProcess}{self.TransferRate}"

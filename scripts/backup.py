@@ -286,9 +286,6 @@ class backup(object):
 
 			syncCommand		+= [SourcePath, TargetPath, '--config', self.__RCLONE_CONFIG_FILE, '-vv', '--min-size=1B', '--ignore-case'] + Excludes
 
-			if dry_run:
-				syncCommand	+= ['--dry-run']
-
 		return(syncCommand)
 
 	def calculate_files_to_sync(self, singleSubPathsAtSource=None):
