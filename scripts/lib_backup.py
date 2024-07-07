@@ -117,20 +117,12 @@ class progressmonitor(object):
 						pass
 				else:
 					# interpret line as file
-					try:
-						FileName	= SyncOutputLine.split(' : ')[1].split(':')[0].strip()
-					except:
-						return()
+					LineType, LineResult, FileName	= self.rclone_analyse_line(SyncOutputLine)
 
 					if FileName in self.FilesList:
 						return()
 
-					try:
-						Result	= SyncOutputLine.split(':')[-1].strip()
-					except:
-						return()
-
-					if 'Copied' in Result:
+					if LineType=='INFO' and 'Copied' in LineResult:
 						self.CountProgress		+= 1
 						self.CountJustCopied	+= 1
 
@@ -154,6 +146,27 @@ class progressmonitor(object):
 			self.CountProgress_OLD	= self.CountProgress
 
 			self.__display_progress()
+
+	def rclone_analyse_line(self, Line):
+		# LineType
+		try:
+			LineType	= Line.split(':')[2].split()[1].strip()
+		except:
+			LineType	= ''
+
+		# FileName
+		try:
+			FileName	= Line.split(' : ')[1].split(':')[0].strip()
+		except:
+			FileName	= ''
+
+		# LineResult
+		try:
+			LineResult	= Line.split(':')[-1].strip()
+		except:
+			LineResult	= ''
+
+		return(LineType, LineResult, FileName)
 
 	def __display_progress(self):
 		if (
@@ -399,8 +412,9 @@ class reporter(object):
 
 					self.mail_content_HTML	+= f"\n\n  <h4>{tryNumber}. {self.__lan.l('box_backup_try')}</h4>"
 
-					self.mail_content_HTML	+= f'\n<p style="{CSS_margins_left_1}">    '
-					self.mail_content_HTML	+= '</br>\n    '.join(Report['SyncLogs'])
+					self.mail_content_HTML	+= f'\n<p style="{CSS_margins_left_1}">'
+					SyncLogs	= [f'{str(i+1)+".": <4}: {Report["SyncLogs"][i]}' for i in range(len(Report['SyncLogs']))]
+					self.mail_content_HTML	+= '</br>\n    '.join(SyncLogs)
 					self.mail_content_HTML	+= '</p>'
 
 		self.mail_content_PLAIN	= lib_mail.remove_HTML_tags(self.mail_content_HTML)

@@ -638,10 +638,7 @@ class backup(object):
 
 									progress.progress(TransferMode=self.TransferMode, SyncOutputLine=SyncOutputLine)
 
-									try:
-										LineType	= SyncOutputLine.split(':')[2].split()[1].strip()
-									except:
-										LineType	= ''
+									LineType, LineResult, FileName	= progress.rclone_analyse_line(SyncOutputLine)
 
 									if LineType=='INFO':
 										try:
