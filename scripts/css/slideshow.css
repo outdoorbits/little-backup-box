@@ -1,5 +1,5 @@
-/* The Modal (background) */
-.modal {
+/* The slideshow background */
+.slideshow {
   display: none;
   position: fixed;
   z-index: 1;
@@ -13,16 +13,16 @@
   background-color: rgba(0,0,0,0.9);
 }
 
-/* Modal Content (image) */
-.modal-content {
+/* slideshow Content */
+.slideshow-content {
   margin: auto;
   display: block;
-  width: 90%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
-/* Caption of Modal Image */
+/* Caption of slideshow Content */
 #caption {
   margin: auto;
   display: block;
@@ -52,3 +52,7 @@
   cursor: pointer;
 }
 
+.slideshow-button {
+	font-size: 200%;
+	cursor: pointer;
+}

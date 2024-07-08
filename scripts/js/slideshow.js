@@ -4,7 +4,7 @@ function slideshow_stop() {
 	document.getElementById("slideshow_timer").value	= '-';
 	slideshow_init();
 
-	document.getElementById("slideshowContentModal").style.display = "none";
+	document.getElementById("slideshowContent").style.display = "none";
 }
 
 function slideshow_init() {
@@ -18,15 +18,13 @@ function slideshow_init() {
 		slideshow_stop_button.style.visibility = 'visible';
 		if (slideshow_timeout != '') {clearTimeout(slideshow_timeout);}
 		slideshow_timeout = setTimeout('slideshow_redirect(' + slideshow_sec + ')', Number(slideshow_sec) * 1000);
+		slideshow_display();
 	}
 }
 
-function slideshow_run() {
-	var modal = document.getElementById("slideshowContentModal");
-	var span = document.getElementsByClassName("slideshowContentModal")[0];
-
+function slideshow_display() {
 	// show slide
-	modal.style.display = "block";
+	document.getElementById("slideshowContent").style.display = "block";
 }
 
 function slideshow_redirect(slideshow_sec) {
