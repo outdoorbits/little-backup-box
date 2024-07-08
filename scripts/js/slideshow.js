@@ -2,10 +2,12 @@ let slideshow_timeout	= '';
 
 function slideshow_stop() {
 	document.getElementById("slideshow_timer").value	= '-';
-	slideshow_run();
+	slideshow_init();
+
+	document.getElementById("slideshowContentModal").style.display = "none";
 }
 
-function slideshow_run() {
+function slideshow_init() {
 	var slideshow_sec	= document.getElementById("slideshow_timer").value
 	var slideshow_stop_button	= document.getElementById("slideshow_stop_button")
 
@@ -19,6 +21,15 @@ function slideshow_run() {
 	}
 }
 
+function slideshow_run() {
+	var modal = document.getElementById("slideshowContentModal");
+	var span = document.getElementsByClassName("slideshowContentModal")[0];
+
+	// show slide
+	modal.style.display = "block";
+}
+
 function slideshow_redirect(slideshow_sec) {
 	window.location = document.getElementById("slideshow_next_link").value + '&slideshow_timer=' + slideshow_sec
 }
+

@@ -140,7 +140,7 @@
 
 				<div style="float:right;width: 50%;padding: 5px;">
 					<?php echo L::view_slideshow_header; ?>
-					<select style="margin-top: 0;" onchange="slideshow_run()" id="slideshow_timer">
+					<select style="margin-top: 0;" onchange="slideshow_init()" id="slideshow_timer">
 						<option value="-" <?php echo ($slideshow_timer=='-'?'selected':''); ?>>-</option>
 						<?php
 							$slideshow_options	= array('1', '2', '3', '4', '5');
@@ -531,13 +531,16 @@
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
 
 <head>
-	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
+	<?php
+		include "${WORKING_DIR}/sub-standards-header-loader.php";
+		if ($slideshow_timer !== '-') {echo '<link rel="stylesheet" href="css/slideshow.css">';}
+	?>
 	<link rel="stylesheet" href="css/mglass.css">
 	<script type="text/javascript" src="js/mglass.js"></script>
 	<script type="text/javascript" src="js/slideshow.js"></script>
 </head>
 
-<body <?php echo $background; ?> onload="slideshow_run()">
+<body <?php echo $background; ?> onload="slideshow_init();">
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
@@ -807,6 +810,17 @@
 											<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%;border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($FILENAME_DISPLAY); ?>">
 										</div>
 
+										<?php
+											if ($slideshow_timer !== '-') {
+												?>
+													<div id="slideshowContentModal" class="modal">
+														<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+														<img class="modal-content" src="<?php echo urlencode_keep_slashes($FILENAME_DISPLAY); ?>">
+													</div>
+												<?php
+											}
+										?>
+
 									</div>
 
 									<?php
@@ -906,6 +920,7 @@
 
 						<?php
 
+						if ($slideshow_timer !== '-') {echo '<script type="text/javascript">slideshow_run();</script>';}
 					}
 				} else {
 // 					imagecount=0
