@@ -140,7 +140,7 @@
 
 				<div style="float:right;width: 50%;padding: 5px;">
 					<?php echo L::view_slideshow_header; ?>
-					<select style="margin-top: 0;" onchange="slideshow_run()" id="slideshow_timer">
+					<select style="margin-top: 0;" onchange="slideshow_init();" id="slideshow_timer">
 						<option value="-" <?php echo ($slideshow_timer=='-'?'selected':''); ?>>-</option>
 						<?php
 							$slideshow_options	= array('1', '2', '3', '4', '5');
@@ -531,13 +531,16 @@
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
 
 <head>
-	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
+	<?php
+		include "${WORKING_DIR}/sub-standards-header-loader.php";
+	?>
+	<link rel="stylesheet" href="css/slideshow.css">
 	<link rel="stylesheet" href="css/mglass.css">
 	<script type="text/javascript" src="js/mglass.js"></script>
 	<script type="text/javascript" src="js/slideshow.js"></script>
 </head>
 
-<body <?php echo $background; ?> onload="slideshow_run()">
+<body <?php echo $background; ?> onload="slideshow_init();">
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
@@ -793,7 +796,7 @@
 						<div style="float:left;width: 100%;padding: 5px;">
 							<?php
 								if (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_WEB_IMAGES'] . ";" . $constants['const_FILE_EXTENSIONS_LIST_HEIC'] . ";" . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . ";" . $constants['const_FILE_EXTENSIONS_LIST_TIF'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
-// 										image-file
+// 		image-file
 
 									if (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_WEB_IMAGES'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
 										$FILENAME_DISPLAY	= $IMAGE_FILENAME;
@@ -803,15 +806,20 @@
 							?>
 									<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 
+										<div id="slideshowContent" class="slideshow">
+											<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+											<img class="slideshow-content" src="<?php echo urlencode_keep_slashes($FILENAME_DISPLAY); ?>">
+										</div>
+
 										<div class="img-magnifier-container">
 											<img id="fullsizeimage" onClick="magnify('fullsizeimage', <?php echo $constants['const_VIEW_MAGNIFYING_GLASS_ZOOM']; ?>)" style="max-width: 100%;border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($FILENAME_DISPLAY); ?>">
 										</div>
 
 									</div>
 
+<!-- 									RAW-image or TIF image -->
 									<?php
 										if (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_RAW'] . ";" . $constants['const_FILE_EXTENSIONS_LIST_TIF'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
-// 											RAW-image or TIF image
 											echo "<div style=\"width: 100%\">";
 												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_image . "</p>";
 											echo "</div>";
@@ -830,13 +838,13 @@
 										</div>
 
 										<div style="float:left;width: 33%;text-align: right;padding: 0;">
-											<?php echo L::view_images_magnifying_glass; ?>
+											<?php echo L::view_images_magnifying_glass; ?> <span class="slideshow-button" onclick="slideshow_display();">&#10541;</span>
 										</div>
 									</div>
 
 							<?php
 								} elseif (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_VIDEO'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
-// 										video-file
+// 		video-file
 									$IMAGE_FILENAME_PREVIEW	= $IMAGE_FILENAME;
 									$LOW_RES	= false;
 									if (isset($IMAGE['Compressor_Name']) and (strpos($IMAGE['Compressor_Name'],"GoPro H.265 encoder") !== false)) {
@@ -849,13 +857,21 @@
 									}
 									?>
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
-											<video width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
+
+											<div id="slideshowContent" class="slideshow">
+												<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+												<video class="slideshow-content" width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
+													<source src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_PREVIEW); ?>" type="video/<?php echo $IMAGE_TYPE; ?>"></source>
+												</video>
+											</div>
+
+											<video width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls <?php if ($slideshow_timer == '-') {echo "autoplay";}?>>
 												<source src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_PREVIEW); ?>" type="video/<?php echo $IMAGE_TYPE; ?>"></source>
 											</video>
 
 											<?php
 											if ($LOW_RES) {
-	// 											RAW-image
+// 		low resolution video
 												echo "<p style=\"text-align: center;font-weight: bold;\">" . L::view_images_preview_low_resolution_video . "</p>";
 											}
 											?>
@@ -863,7 +879,9 @@
 
 										<div padding: 5px;font-size:0.8em;">
 											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
+										</div>
 
+										<div style="float:left;width: 34%;text-align: center;padding: 0;">
 											<a href="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" target="_blank">
 												<?php echo L::view_images_download; ?>
 											</a>
@@ -871,10 +889,20 @@
 
 									<?php
 								} elseif (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_AUDIO'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
-// 										audio-file
+// 		audio-file
 									?>
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
-											<audio width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
+
+											<div id="slideshowContent" class="slideshow">
+												<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+												<audio class="slideshow-content" width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
+													<source src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" type="audio/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>">">
+												</audio>
+											</div>
+
+											<img style="max-width: 100%;border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_TIMS); ?>">
+
+											<audio width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls <?php if ($slideshow_timer == '-') {echo "autoplay";}?>>
 												<source src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" type="audio/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>">">
 											</audio>
 										</div>
@@ -906,6 +934,7 @@
 
 						<?php
 
+						if ($slideshow_timer !== '-') {echo '<script type="text/javascript">slideshow_display();</script>';}
 					}
 				} else {
 // 					imagecount=0
