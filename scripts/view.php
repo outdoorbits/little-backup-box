@@ -831,14 +831,18 @@
 											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
 										</div>
 
-										<div style="float:left;width: 34%;text-align: center;padding: 0;">
+										<div style="float:left;width: 30%;text-align: center;padding: 0;">
 											<a href="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" target="_blank">
 												<?php echo L::view_images_download; ?>
 											</a>
 										</div>
 
-										<div style="float:left;width: 33%;text-align: right;padding: 0;">
-											<?php echo L::view_images_magnifying_glass; ?> <span class="slideshow-button" onclick="slideshow_display();">&#10541;</span>
+										<div style="float:left;width: 30%;text-align: center;padding: 0;">
+											<?php echo L::view_images_magnifying_glass; ?>
+										</div>
+
+										<div style="float:right;text-align: right;padding: 0;">
+											<span class="slideshow-button" onclick="slideshow_display();">&#10541;</span>
 										</div>
 									</div>
 
