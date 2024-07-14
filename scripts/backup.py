@@ -472,7 +472,7 @@ class backup(object):
 					TargetStorageType		= self.TargetDevice.StorageType,
 					TargetCloudService		= self.TargetDevice.CloudServiceName,
 					TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
-					TransferMode			= self.TransferMode,
+					TransferMode			= 'gphoto2' if SourceStorageName == 'camera' else self.TransferMode,
 					move_files				= self.move_files,
 					SourceWasTarget			= self.SourceDevice.wasTarget,
 					SyncLog					= self.__conf_LOG_SYNC
