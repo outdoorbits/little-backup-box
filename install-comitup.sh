@@ -21,10 +21,15 @@ const_WEB_ROOT_LBB="/var/www/little-backup-box"
 
 echo "Installing comitup..."
 
-# Installing comitup*: install comitup sources
-wget https://davesteele.github.io/comitup/latest/davesteele-comitup-apt-source_latest.deb
-sudo dpkg -i --force-all davesteele-comitup-apt-source_latest.deb
-sudo rm davesteele-comitup-apt-source_latest.deb
+#clean download dir
+if [ -d davesteele.github.io ]; then
+	sudo rm -R davesteele.github.io
+fi
+
+#download installation file following meta http-equiv="refresh"
+wget -r https://davesteele.github.io/comitup/latest/davesteele-comitup-apt-source_latest.html
+
+sudo dpkg -i -R --force-all davesteele.github.io/comitup/deb
 
 # update and upgrade
 sudo apt update
