@@ -640,7 +640,9 @@ class backup(object):
 
 									LineType, LineResult, FileName	= progress.rclone_analyse_line(SyncOutputLine)
 
-									if LineType=='INFO':
+									if self.TransferMode == 'rsync' and SyncOutputLine[1:2] != ' ':
+										self.__reporter.add_synclog(SyncOutputLine)
+									elif self.TransferMode == 'rclone' and LineType=='INFO':
 										try:
 											self.__reporter.add_synclog(SyncOutputLine.split('INFO',1)[1].strip(' :'))
 										except:
