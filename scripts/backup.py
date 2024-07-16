@@ -612,7 +612,8 @@ class backup(object):
 
 									progress.progress(TransferMode='gphoto2',SyncOutputLine=SyncOutputLine)
 
-									self.__reporter.add_synclog(f"{SyncOutputLine}")
+									if not SyncOutputLine.startswith('Skip existing file'):
+										self.__reporter.add_synclog(f"{SyncOutputLine}")
 
 								self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
 
@@ -638,15 +639,16 @@ class backup(object):
 
 									progress.progress(TransferMode=self.TransferMode, SyncOutputLine=SyncOutputLine)
 
-									LineType, LineResult, FileName	= progress.rclone_analyse_line(SyncOutputLine)
-
 									if self.TransferMode == 'rsync' and SyncOutputLine[1:2] != ' ':
 										self.__reporter.add_synclog(SyncOutputLine)
-									elif self.TransferMode == 'rclone' and LineType=='INFO':
-										try:
-											self.__reporter.add_synclog(SyncOutputLine.split('INFO',1)[1].strip(' :'))
-										except:
-											pass
+									elif self.TransferMode == 'rclone':
+										LineType, LineResult, FileName	= progress.rclone_analyse_line(SyncOutputLine)
+
+										if LineType=='INFO':
+											try:
+												self.__reporter.add_synclog(SyncOutputLine.split('INFO',1)[1].strip(' :'))
+											except:
+												pass
 
 								self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
 								self.__TIMSCopied	= progress.TIMSCopied
