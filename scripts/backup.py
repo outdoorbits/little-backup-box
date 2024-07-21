@@ -317,7 +317,7 @@ class backup(object):
 
 				if self.TransferMode == 'rsync':
 					try:
-						FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(':')[1].strip(' ,'))
+						FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(':')[1].strip(' ,').replace(',', ''))
 					except:
 						FilesToProcessPart	= 0
 
