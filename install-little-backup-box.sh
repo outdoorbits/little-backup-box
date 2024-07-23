@@ -680,6 +680,7 @@ fi
 
 # post-install-information
 IP=$(python3 "${const_WEB_ROOT_LBB}/lib_network.py" ip)
+IP=${IP/'\n'/''}
 
 echo ""
 echo "********************************************************************************************"
