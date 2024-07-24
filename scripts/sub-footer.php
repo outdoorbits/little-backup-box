@@ -44,7 +44,7 @@
 		$PROTOCOL	= "http";
 	}
 
-	$qr_links	= shell_exec("sudo python3 $WORKING_DIR/lib_network.py qr_links $PROTOCOL");
+	$qr_links	= shell_exec("sudo python3 $WORKING_DIR/lib_network.py --Mode qr_links --Protocol $PROTOCOL");
 
 	$info_box	= '';
 	if ($qr_links != '') {

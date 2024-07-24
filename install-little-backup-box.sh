@@ -679,8 +679,7 @@ fi
 	source "${const_WEB_ROOT_LBB}/set_hardware.sh"
 
 # post-install-information
-IP=$(python3 "${const_WEB_ROOT_LBB}/lib_network.py" ip)
-IP=${IP/'\n'/''}
+IP=$(python3 "${const_WEB_ROOT_LBB}/lib_network.py" --Mode 'ip' --OneLine)
 
 echo ""
 echo "********************************************************************************************"

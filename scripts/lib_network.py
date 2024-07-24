@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import argparse
 import os
 from PIL import Image, ImageDraw, ImageFont
 import qrcode
@@ -26,10 +27,21 @@ import sys
 
 import lib_setup
 
-def get_IPs():
-	IPs	= subprocess.check_output(['hostname','-I']).decode().replace(' ','\n').strip()
+def get_IPs(OneLine=False):
 
-	return(IPs)
+	IPs	= subprocess.check_output(['hostname','-I']).decode().strip().split(' ')
+
+	if OneLine:
+		if len(IPs) < 1:
+			return('???.???.???.???')
+		elif len(IPs) == 1:
+			return(IPs[0])
+		else:
+			return(f'[{"|".join(IPs)}]')
+
+	else:
+		return('\n'.join(IPs))
+
 
 def create_ip_link_qr_image(IP, OnlineStatus, IP_QR_FILE, width, height, font=None, fontsize=8):
 
@@ -130,22 +142,47 @@ def get_qr_links(protocol='https'):
 	return(qr_links)
 
 if __name__ == "__main__":
-	Mode	= None
-	try:
-		Mode	= sys.argv[1]
-	except:
-		pass
+	parser = argparse.ArgumentParser(
+		description	= 'Provides network related functions',
+		add_help	= True,
+		epilog		= 'This script is designed to be used by other lbb scripts.'
+	)
 
-	if Mode == 'ip':
-		print (get_IPs())
+	ModeChoices	= ['ip', 'internet_status', 'qr_links']
+	parser.add_argument(
+		'--Mode',
+		'-m',
+		choices		= ModeChoices,
+		required =	True,
+		help=f'Mode, one of {ModeChoices}'
+	)
 
-	elif Mode == 'internet_status':
+	parser.add_argument(
+		'--OneLine',
+		'-o',
+		action='store_true',
+		required =	False,
+		help=f'If set, the output will be string type. (Mode=ip only)'
+	)
+
+	parser.add_argument(
+		'--Protocol',
+		'-p',
+		required =	False,
+		help=f'Protocol (http or https). (Mode=qr_links only)'
+	)
+
+	args	= vars(parser.parse_args())
+
+	if args['Mode'] == 'ip':
+		print (get_IPs(OneLine=args['OneLine']))
+
+	elif args['Mode'] == 'internet_status':
 		print (get_internet_status())
 
-	elif Mode == 'qr_links':
-		try:
-			protocol	= sys.argv[2]
-		except:
-			protocol	= 'https'
+	elif args['Mode'] == 'qr_links':
 
-		print(get_qr_links(protocol))
+		if not 'Protocol' in args.keys():
+			args['Protocol']	= 'https'
+
+		print(get_qr_links(args['Protocol']))
