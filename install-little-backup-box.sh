@@ -203,7 +203,7 @@ if [ "${GIT_CLONE}" -gt 0 ]; then
 fi
 
 #write branch into constants
-echo "const_SOFTWARE_VERSION='${branch}'" | sudo tee -a "${INSTALLER_DIR}/scripts/constants.sh"
+echo "const_SOFTWARE_BRANCH='${branch}'" | sudo tee -a "${INSTALLER_DIR}/scripts/constants.sh"
 
 # read new constants
 source "${INSTALLER_DIR}/scripts/constants.sh"
@@ -223,6 +223,9 @@ yes | sudo cp -Rf "${INSTALLER_DIR}/scripts/"* "${const_WEB_ROOT_LBB}/"
 
 # rewrite config files
 sudo python3 "${const_WEB_ROOT_LBB}/lib_setup.py"
+
+# write conf_SOFTWARE_DATE_INSTALLED into setup
+sudo python3 "${const_WEB_ROOT_LBB}/lib_git.py --write-installed"
 
 # set file permissions in const_WEB_ROOT_LBB
 sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R

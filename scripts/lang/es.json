@@ -12,7 +12,8 @@
     "config": "Ajustes",
     "tools": "Herramientas",
     "filebrowser": "Archivos",
-    "view": "View"
+    "view": "View",
+    "update": "actualización"
   },
   "main": {
     "internal_button": "Almacenamiento int.",

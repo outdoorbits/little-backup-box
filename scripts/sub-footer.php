@@ -51,8 +51,8 @@
 		$info_box	= $qr_links;
 	}
 
-	if (isset($constants['const_SOFTWARE_VERSION']) and $constants['const_SOFTWARE_VERSION'] != 'main') {
-		$info_box	= $info_box . "<div style='float: right;'>" . $constants['const_SOFTWARE_VERSION'] . "</div>";
+	if (isset($constants['const_SOFTWARE_BRANCH']) and $constants['const_SOFTWARE_BRANCH'] != 'main') {
+		$info_box	= $info_box . "<div style='float: right;'>" . $constants['const_SOFTWARE_BRANCH'] . "</div>";
 	}
 
 	if ($info_box != '') {

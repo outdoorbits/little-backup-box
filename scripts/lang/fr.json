@@ -12,7 +12,8 @@
     "config": "Réglages",
     "tools": "Outils",
     "filebrowser": "Des dossiers",
-    "view": "View"
+    "view": "View",
+    "update": "mise à jour"
   },
   "main": {
     "internal_button": "stockage interne",

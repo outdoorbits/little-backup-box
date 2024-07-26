@@ -21,6 +21,7 @@
 // sub expects from calling script:
 // - included language
 // - $config
+// - $WORKING_DIR
 
     $HTTP_HOST	= $_SERVER['SERVER_PORT']==80?$_SERVER['HTTP_HOST'] . ":80":$_SERVER['HTTP_HOST'];
 
@@ -62,6 +63,13 @@
 
 		<div class="navbar-collapse collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<?php
+					if (trim(shell_exec("python3 $WORKING_DIR/lib_git.py --update-available")) == 'True') {
+						?>
+							<li class="nav-item"><a class="nav-link" href="/cmd.php?CMD=update"><nobr><?php echo L::mainmenue_update; ?></nobr></a></li>
+						<?php
+					}
+				?>
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="setup.php"?" active":""; ?>" href="/setup.php"><?php echo L::mainmenue_config; ?></a></li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPower" role="button" data-bs-toggle="dropdown" aria-expanded="false">&#9211;</a>

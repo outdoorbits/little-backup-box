@@ -12,7 +12,8 @@
     "config": "Einstellungen",
     "tools": "Tools",
     "filebrowser": "Dateien",
-    "view": "View"
+    "view": "View",
+    "update": "Update"
   },
   "main": {
     "internal_button": "int. Speicher",

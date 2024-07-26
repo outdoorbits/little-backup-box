@@ -31,9 +31,9 @@ class setup(object):
 
 		WORKING_DIR	= os.path.dirname(__file__)
 
-		config_file_path 			= "{}/config.cfg".format(WORKING_DIR)
-		standard_config_file_path	= "{}/config-standards.cfg".format(WORKING_DIR)
-		constants_file_path = "{}/constants.sh".format(WORKING_DIR)
+		self.config_file_path 			= f'{WORKING_DIR}/config.cfg'
+		self.constants_file_path 		= f'{WORKING_DIR}/constants.sh'
+		self.standard_config_file_path	= f'{WORKING_DIR}/config-standards.cfg'
 
 		self.__mount_user		= "www-data"
 		self.__mount_group		= "www-data"
@@ -42,28 +42,32 @@ class setup(object):
 
 		# constants
 		constants=self.__get_constants_types()
-		self.constants	= self.__get_constants(constants_file_path,constants)
+		self.constants	= self.__get_constants(constants)
 
 		# config
 		self.config	= self.__get_config_standard()
 
+		# write to standards file
 		if rewrite_configfile:
-			self.rewrite_configfile(standard_config_file_path)
-			self.rewrite_buttons_private_config_file()
+			self.rewrite_configfile(standards=True)
 
-		self.__get_config_configured(config_file_path)
+		self.__get_config_configured()
 
 		self.setup	= self.config | self.constants
 
 		if rewrite_configfile:
-			self.rewrite_configfile(config_file_path)
+			self.rewrite_configfile(standards=False)
+			self.rewrite_buttons_private_config_file()
 
 
-	def get_val(self,setup_var):
+	def get_val(self, setup_var):
 		if setup_var in self.setup:
 			return (self.setup[setup_var]['value'])
 		else:
 			return('Error: Unknown VARIABLE {}'.format(setup_var))
+
+	def set_val(self, config_var, value):
+		self.config[config_var]	= {'value': value, 'type': self.config[config_var]['type']}
 
 	def __norm_value(self,value,val_type):
 		if val_type == 'int':
@@ -86,8 +90,10 @@ class setup(object):
 		else:
 			return(str(value))
 
-	def rewrite_configfile(self,ConfigFilePath):
-		with open(ConfigFilePath,'w') as f:
+	def rewrite_configfile(self, standards=False):
+		file_path	= self.standard_config_file_path if standards else self.config_file_path
+
+		with open(file_path,'w') as f:
 			for ConfigVar in self.config:
 
 				if self.config[ConfigVar]['type'] == 'str':
@@ -102,7 +108,7 @@ class setup(object):
 
 				f.write(f"{ConfigVar}={Separator}{self.config[ConfigVar]['value']}{Separator}\n")
 
-		os.chown(ConfigFilePath, self.__uid, self.__gid)
+		os.chown(file_path, self.__uid, self.__gid)
 
 	def rewrite_buttons_private_config_file(self):
 		FilePath	= os.path.join(self.constants['const_MEDIA_DIR']['value'],self.constants['const_BUTTONS_PRIVATE_CONFIG_FILE']['value'])
@@ -130,11 +136,10 @@ class setup(object):
 
 		os.chown(FilePath, self.__uid, self.__gid)
 
+	def __get_config_configured(self):
+		if os.path.isfile(self.config_file_path):
 
-	def __get_config_configured(self,ConfigFilePath):
-		if os.path.isfile(ConfigFilePath):
-
-			config_file = ConfigObj(ConfigFilePath)
+			config_file = ConfigObj(self.config_file_path)
 
 			for conf_var in config_file:
 
@@ -181,6 +186,8 @@ class setup(object):
 	def __get_config_standard(self):
 		return(
 				{
+					'conf_SOFTWARE_DATE_INSTALLED':						{'value': '', 'type': 'str'},
+					'conf_SOFTWARE_DATE_AVAILABLE':						{'value': '', 'type': 'str'},
 					'conf_LANGUAGE':									{'value': '', 'type': 'str'},
 					'conf_TIME_ZONE':									{'value': 'Europe/London', 'type': 'str'},
 					'conf_BACKUP_DEFAULT_SOURCE':						{'value': 'none', 'type': 'str'},
@@ -207,8 +214,8 @@ class setup(object):
 					'conf_DISP_SPI_PORT':								{'value': '0', 'type': 'int'},
 					'conf_DISP_RESOLUTION_X':							{'value': 128, 'type': 'int'},
 					'conf_DISP_RESOLUTION_Y':							{'value': 64, 'type': 'int'},
-					'conf_DISP_OFFSET_X':							{'value': 0, 'type': 'int'},
-					'conf_DISP_OFFSET_Y':							{'value': 0, 'type': 'int'},
+					'conf_DISP_OFFSET_X':								{'value': 0, 'type': 'int'},
+					'conf_DISP_OFFSET_Y':								{'value': 0, 'type': 'int'},
 					'conf_DISP_ROTATE':									{'value': 0, 'type': 'int'},
 					'conf_DISP_CONTRAST':								{'value': 255, 'type': 'int'},
 					'conf_DISP_COLOR_MODEL':							{'value': '1', 'type': 'str'},
@@ -258,9 +265,9 @@ class setup(object):
 		)
 
 
-	def __get_constants(self,constants_file_path,constants):
-		if os.path.isfile(constants_file_path):
-			constants_file = ConfigObj(constants_file_path)
+	def __get_constants(self,constants):
+		if os.path.isfile(self.constants_file_path):
+			constants_file = ConfigObj(self.constants_file_path)
 			for const_var in constants_file:
 				if const_var in constants:
 					const_type	= constants[const_var]['type']
@@ -275,16 +282,16 @@ class setup(object):
 		return(
 				{
 					'const_MEDIA_DIR':								{'type': 'str'},
-					'const_MOUNTPOINT_USB_TARGET':	{'type': 'str'},
-					'const_MOUNTPOINT_USB_SOURCE':	{'type': 'str'},
+					'const_MOUNTPOINT_USB_TARGET':					{'type': 'str'},
+					'const_MOUNTPOINT_USB_SOURCE':					{'type': 'str'},
 					'const_MOUNTPOINT_TECH_USB_TARGET':				{'type': 'str'},
 					'const_MOUNTPOINT_TECH_USB_SOURCE':				{'type': 'str'},
-					'const_MOUNTPOINT_NVME_TARGET':	{'type': 'str'},
-					'const_MOUNTPOINT_NVME_SOURCE':	{'type': 'str'},
-					'const_MOUNTPOINT_TECH_NVME_TARGET':				{'type': 'str'},
-					'const_MOUNTPOINT_TECH_NVME_SOURCE':				{'type': 'str'},
-					'const_MOUNTPOINT_CLOUD_TARGET':		{'type': 'str'},
-					'const_MOUNTPOINT_CLOUD_SOURCE':		{'type': 'str'},
+					'const_MOUNTPOINT_NVME_TARGET':					{'type': 'str'},
+					'const_MOUNTPOINT_NVME_SOURCE':					{'type': 'str'},
+					'const_MOUNTPOINT_TECH_NVME_TARGET':			{'type': 'str'},
+					'const_MOUNTPOINT_TECH_NVME_SOURCE':			{'type': 'str'},
+					'const_MOUNTPOINT_CLOUD_TARGET':				{'type': 'str'},
+					'const_MOUNTPOINT_CLOUD_SOURCE':				{'type': 'str'},
 					'const_MOUNT_LOCAL_TIMEOUT':					{'type': 'int'},
 					'const_MOUNT_CLOUD_TIMEOUT':					{'type': 'int'},
 					'const_INTERNAL_BACKUP_DIR':					{'type': 'str'},
@@ -321,7 +328,7 @@ class setup(object):
 					'const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC':	{'type': 'int'},
 					'const_SYNC_TIME_OVERHEATING_WAIT_SEC':			{'type': 'int'},
 					'const_BACKUP_MAX_TRIES':						{'type': 'int'},
-					'const_SOFTWARE_VERSION':						{'type': 'str'},
+					'const_SOFTWARE_BRANCH':						{'type': 'str'},
 					'const_FONT_PATH':								{'type': 'str'}
 				}
 		)
@@ -329,7 +336,7 @@ class setup(object):
 
 if __name__ == "__main__":
 	# write config files
-	__setup	= setup(True)
+	setup	= setup(True)
 
 
 

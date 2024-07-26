@@ -140,6 +140,7 @@ function write_config() {
 
 	global $WORKING_DIR;
 	global $WIFI_COUNTRY;
+	global $config;
 	global $constants;
 	global $vpn_types;
 	global $CloudServices;
@@ -177,6 +178,9 @@ function write_config() {
 			$conf_BACKUP_SYNC_METHOD_CLOUDS	.= $CloudService.'|=|'.${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService};
 		}
 	}
+
+	$conf_SOFTWARE_DATE_INSTALLED				= $config["conf_SOFTWARE_DATE_INSTALLED"];
+	$conf_SOFTWARE_DATE_AVAILABLE				= $config["conf_SOFTWARE_DATE_AVAILABLE"];
 
 	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?'true':'false';
 	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?'true':'false';
@@ -233,6 +237,8 @@ function write_config() {
 	$config_file_handle = fopen($CONFIGFILE, "w");
 
 	$config_file_content = <<<CONFIGDATA
+conf_SOFTWARE_DATE_INSTALLED='$conf_SOFTWARE_DATE_INSTALLED'
+conf_SOFTWARE_DATE_AVAILABLE='$conf_SOFTWARE_DATE_AVAILABLE'
 conf_LANGUAGE='$conf_LANGUAGE'
 conf_TIME_ZONE='$conf_TIME_ZONE'
 conf_BACKUP_DEFAULT_SOURCE='$conf_BACKUP_DEFAULT_SOURCE'
@@ -1559,14 +1565,14 @@ function upload_settings() {
 				<?php echo L::config_update_text; ?>
 <!-- 				<ul> -->
 <!-- 					<li> -->
-						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'main' ? '<b>' : ''); ?>
+						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'main' ? '<b>' : ''); ?>
 							<button onclick="window.location.href='/cmd.php?CMD=update';"><?php echo L::config_update_linktext ?></button>
-						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'main' ? '</b>' : ''); ?>
+						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'main' ? '</b>' : ''); ?>
 <!-- 					</li> -->
 <!-- 					<li> -->
-<!-- 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '<b>' : ''); ?> -->
+<!-- 						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'development' ? '<b>' : ''); ?> -->
 <!-- 								<button onclick="window.location.href='/cmd.php?CMD=update_development';"><?php echo L::config_update_development_linktext ?></button> -->
-<!-- 						<?php echo ($constants['const_SOFTWARE_VERSION'] == 'development' ? '</b>' : ''); ?> -->
+<!-- 						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'development' ? '</b>' : ''); ?> -->
 <!-- 					</li> -->
 <!-- 				</ul> -->
 			</details>

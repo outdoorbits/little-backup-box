@@ -28,6 +28,7 @@ import backup
 import lib_common
 import lib_cron_ip
 import lib_display
+import lib_git
 import lib_language
 import lib_setup
 import lib_storage
@@ -57,9 +58,15 @@ class backup_autorun(object):
 		self.__cleanup_at_boot()
 		self.__display_hello()
 
+		# ip info
 		ip_info	= lib_cron_ip.ip_info()
 		ip_info.display_ip()
-		self.__mail_threads_started.append( ip_info.mail_ip() )
+		self.__mail_threads_started.append(ip_info.mail_ip())
+
+		# check for updates
+		gitObj	= lib_git.git()
+		thread	= threading.Thread(target=gitObj.UpdateSetup, args=())
+		thread.start()
 
 		self.__default_backup()
 

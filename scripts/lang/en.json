@@ -222,7 +222,8 @@
     "config": "Settings",
     "tools": "Tools",
     "filebrowser": "Files",
-    "view": "View"
+    "view": "View",
+    "update": "update"
   },
   "main": {
     "internal_button": "int. storage",
