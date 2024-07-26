@@ -229,11 +229,11 @@ sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R
 sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 
 # write conf_SOFTWARE_DATE_INSTALLED and conf_SOFTWARE_DATE_AVAILABLE into setup
-sudo python3 "${const_WEB_ROOT_LBB}/lib_git.py --write-installed"
+sudo python3 "${const_WEB_ROOT_LBB}/lib_git.py" --write-installed
 
 # read config file
 CONFIG="${const_WEB_ROOT_LBB}/config.cfg"
-echo "Loading old settings from ${CONFIG}"
+echo "Loading restored settings from ${CONFIG}"
 source "${CONFIG}"
 
 # Install rclone
