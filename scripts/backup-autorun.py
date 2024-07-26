@@ -63,12 +63,13 @@ class backup_autorun(object):
 		ip_info.display_ip()
 		self.__mail_threads_started.append(ip_info.mail_ip())
 
+		self.__default_backup()
+
 		# check for updates
 		gitObj	= lib_git.git()
-		thread	= threading.Thread(target=gitObj.UpdateSetup, args=())
-		thread.start()
-
-		self.__default_backup()
+		git_thread	= threading.Thread(target=gitObj.UpdateSetup, args=())
+		git_thread.start()
+		git_thread.join(timeout=15)
 
 		# Wait for running threads (mails to send)
 		lib_common.join_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
