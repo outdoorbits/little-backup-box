@@ -113,8 +113,6 @@
     "password": "Mot de passe",
     "password_as_set_in": "Mot de passe tel que défini dans",
     "cloud_rclone_gui": "rclone GUI",
-    "update_section": "Mettre à jour",
-    "update_text": "<h3>Mettre à jour Little Backup Box</h3><p>Attention :<ul><li>La mise à jour peut rendre le système inutilisable.</li> <li>La mise à jour peut entraîner un volume de téléchargement considérable et donc éventuellement des coûts.</li><li>La mise à jour peut prendre plusieurs minutes ou plus, selon la vitesse d'Internet.</li></ul><br>Uniquement effectuez la mise à jour si vous ...<ul><li>pouvez également effectuer une nouvelle installation si nécessaire</li><li>disposez d'une connexion Internet stable</li><li>disposez d'une alimentation électrique stable</li> </ul></p>",
     "save_settings_download_link_text": "Paramètres de téléchargement",
     "save_settings_download_text": "Obtenez une archive zip avec vos paramètres",
     "save_settings_section": "Paramètres de téléchargement / téléchargement",
@@ -334,7 +332,12 @@
     "time_zone_header": "Veuillez sélectionner votre fuseau horaire",
     "update": {
       "development_linktext": "Mettez à jour maintenant - development branch",
-      "linktext": "Mettez à jour maintenant"
+      "linktext": "Mettez à jour maintenant",
+      "text": "<h3>Mettre à jour Little Backup Box</h3><p>Attention :<ul><li>La mise à jour peut rendre le système inutilisable.</li> <li>La mise à jour peut entraîner un volume de téléchargement considérable et donc éventuellement des coûts.</li><li>La mise à jour peut prendre plusieurs minutes ou plus, selon la vitesse d'Internet.</li></ul><br>Uniquement effectuez la mise à jour si vous ...<ul><li>pouvez également effectuer une nouvelle installation si nécessaire</li><li>disposez d'une connexion Internet stable</li><li>disposez d'une alimentation électrique stable</li> </ul></p>",
+      "section": "Mettre à jour",
+      "available": "Mise à jour disponible",
+      "not_available": "Pas de mise a jour disponible",
+      "check_label": "Rechercher une nouvelle mise à jour"
     },
     "display_message_settings_uploaded_1": "Paramètres",
     "display_message_settings_uploaded_2": "importés.",

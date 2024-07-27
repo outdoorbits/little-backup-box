@@ -75,6 +75,15 @@
 			exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "' > /dev/null 2>&1 &");
 		}
 
+		if (isset($_GET['check_update'])) {
+				$UpdateAvailable	= trim(shell_exec("sudo python3 $WORKING_DIR/lib_git.py --write-available --update-available"));
+				if ($UpdateAvailable == 'True') {
+					popup(L::config_update_available, true);
+				} else {
+					popup(L::config_update_not_available, true);
+				}
+			}
+
 		// Upload settings
 		if (isset($_POST['upload_settings'])) {
 			upload_settings();
@@ -1575,6 +1584,9 @@ function upload_settings() {
 <!-- 						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'development' ? '</b>' : ''); ?> -->
 <!-- 					</li> -->
 <!-- 				</ul> -->
+				<p>
+					<a href="/setup.php?check_update=true"><?php echo L::config_update_check_label; ?></a>
+				</p>
 			</details>
 		</div>
 

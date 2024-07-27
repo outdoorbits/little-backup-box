@@ -113,8 +113,6 @@
     "password": "Contraseña",
     "password_as_set_in": "Contraseña establecida en",
     "cloud_rclone_gui": "rclone GUI",
-    "update_section": "Actualizar",
-    "update_text": "<h3> Actualizar Little Backup Box </h3> <p> Precaución: <ul><li> La actualización puede inutilizar el sistema. </li> <li> La actualización puede causar un volumen de descarga de datos considerable y, por lo tanto, podria incurrir en costos. </li> <li> La actualización puede demorar varios minutos o más, dependiendo de la velocidad de Internet. </li> </ul> <br> Solo realice la actualización si ... <ul> <li> también podría realizar una nueva instalación de ser necesario </li> <li> tiene una conexión a Internet estable </li> <li> esta conectado a una fuente de alimentación estable </li> </ul> </p>",
     "save_settings_download_link_text": "Configuraciones de descarga",
     "save_settings_download_text": "Descargar un archivo zip con su configuración",
     "save_settings_section": "Configuración de descarga / carga",
@@ -334,7 +332,12 @@
     "time_zone_header": "Por favor seleccione su zona horaria",
     "update": {
       "development_linktext": "Actualizar ahora - development branch",
-      "linktext": "Actualizar ahora"
+      "linktext": "Actualizar ahora",
+      "text": "<h3> Actualizar Little Backup Box </h3> <p> Precaución: <ul><li> La actualización puede inutilizar el sistema. </li> <li> La actualización puede causar un volumen de descarga de datos considerable y, por lo tanto, podria incurrir en costos. </li> <li> La actualización puede demorar varios minutos o más, dependiendo de la velocidad de Internet. </li> </ul> <br> Solo realice la actualización si ... <ul> <li> también podría realizar una nueva instalación de ser necesario </li> <li> tiene una conexión a Internet estable </li> <li> esta conectado a una fuente de alimentación estable </li> </ul> </p>",
+      "section": "Actualizar",
+      "available": "Actualización disponible",
+      "not_available": "Actualización no disponible",
+      "check_label": "Buscar nueva actualización"
     },
     "display_message_settings_uploaded_1": "Ajustes",
     "display_message_settings_uploaded_2": "importados.",
