@@ -68,6 +68,7 @@ class setup(object):
 
 	def set_val(self, config_var, value):
 		self.config[config_var]	= {'value': value, 'type': self.config[config_var]['type']}
+		self.setup	= self.config | self.constants
 
 	def __norm_value(self,value,val_type):
 		if val_type == 'int':
