@@ -17,17 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################*/
 
-	function popup($MESSAGE,$POPUP_ALLOWED=true, $ECHO_OUTPUT=true) {
-		$MESSAGE=str_replace("\n","\\n",$MESSAGE);
-		if ($POPUP_ALLOWED) {
-			$OUTPUT	= '<script>alert("' . $MESSAGE . '");</script>';
-
-			if ($ECHO_OUTPUT) {
-				echo ($OUTPUT);
-			} else {
-				return ($OUTPUT);
-			}
-		}
-	}
+	// include i18n class and initialize it
+	require_once 'i18n.class.helper.php';
+	$i18n = i18n_setup($config['conf_LANGUAGE']);
 ?>
-

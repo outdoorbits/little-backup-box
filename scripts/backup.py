@@ -248,7 +248,17 @@ class backup(object):
 		for exclude in excludes:
 			Excludes	+= ['--exclude', exclude]
 
-		if TransferMode	== 'rsync':
+		if TransferMode == 'gphoto2':
+			syncCommand	= ['gphoto2', '--camera', self.SourceDevice.DeviceIdentifier, '--port', self.SourceDevice.CameraPort, '--folder', f'{SubPathAtSource}']
+
+			if dry_run:
+				syncCommand	+= ['--list-files']
+			else:
+				syncCommand	+= ['--filename', '%F/%f.%C', '--get-all-files', '--skip-existing']
+
+			#gphoto2 does not support exclude files by pattern
+
+		elif TransferMode == 'rsync':
 			SourcePath	= f'{os.path.join(self.SourceDevice.MountPoint, SubPathAtSource)}'
 			TargetPath	= f'{os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget)}'
 
@@ -307,6 +317,7 @@ class backup(object):
 
 				SourceCommand	= self.get_syncCommand(TransferMode=self.TransferMode, SubPathAtSource=SubPathAtSource, dry_run=True)
 
+				#define FilterCommand
 				if self.TransferMode == 'rsync':
 					FilterCommand		= ['grep', 'Number of regular files transferred:']
 				elif self.TransferMode == 'rclone':
@@ -315,6 +326,7 @@ class backup(object):
 				self.__log.message(' '.join(SourceCommand),3)
 				self.__log.message(' '.join(FilterCommand),3)
 
+				#execute check
 				if self.TransferMode == 'rsync':
 					try:
 						FilesToProcessPart	= int(lib_common.pipe(SourceCommand, FilterCommand).decode().split(':')[1].strip(' ,').replace(',', ''))
@@ -349,7 +361,7 @@ class backup(object):
 
 			for SubPathAtSource in checkPathsList:
 
-				SourceCommand		= ['gphoto2', '--camera', self.SourceDevice.DeviceIdentifier, '--port', self.SourceDevice.CameraPort, '--list-files', '--folder', f'{SubPathAtSource}']
+				SourceCommand		= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=True)
 				FilterCommand		= ['grep', '^#']
 
 				self.__log.message(' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand),3)
@@ -500,9 +512,6 @@ class backup(object):
 
 					TriesCount				= 0
 
-					# define specific parameters
-					syncCommand	= self.get_syncCommand(TransferMode=self.TransferMode, SubPathAtSource=SubPathAtSource)
-
 					while TriesCount < self.const_BACKUP_MAX_TRIES and (TriesCount == 0 or self.__reporter.get_errors()):
 						TriesCount	+= 1
 
@@ -600,7 +609,7 @@ class backup(object):
 							os.chdir(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget))
 
 							# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
-							Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, "--filename", "%F/%f.%C", "--get-all-files", "--folder", SubPathAtSource, "--skip-existing"]
+							Command	= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=False)
 							self.__log.message(' '.join(Command),3)
 
 							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
@@ -628,6 +637,8 @@ class backup(object):
 							if not self.TransferMode in ['rsync', 'rclone']:
 								self.__log.message(f'Error: "{self.TransferMode}" is no valid transfer mode.', 1)
 								return(None)
+
+							syncCommand	= self.get_syncCommand(TransferMode=self.TransferMode, SubPathAtSource=SubPathAtSource, dry_run=False)
 
 							self.__log.message(' '.join(syncCommand),3)
 

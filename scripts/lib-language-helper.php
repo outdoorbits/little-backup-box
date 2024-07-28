@@ -26,7 +26,7 @@
 	$key="$argv[1]";
 
 	require_once 'i18n.class.helper.php';
-	$i18n = i18n_setup($config);
+	$i18n = i18n_setup($config['conf_LANGUAGE']);
 
 	try {
 		echo L::$key();

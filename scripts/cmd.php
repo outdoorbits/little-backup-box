@@ -26,6 +26,8 @@ $constants = parse_ini_file($WORKING_DIR . "/constants.sh", false);
 $theme = $config["conf_THEME"];
 $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . "/" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
+include("sub-i18n-loader.php");
+
 include("sub-virtual-keyboard.php");
 include("sub-logmonitor.php");
 

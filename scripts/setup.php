@@ -41,211 +41,201 @@
 	$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
 
 	$vpn_types		= array('OpenVPN','WireGuard');
-?>
 
-<html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
+	$SetupMessages	= '';
 
-<head>
-	<?php
-		include "${WORKING_DIR}/sub-standards-header-loader.php";
-		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
-	?>
-</head>
+	// load i18n languages
+	if (isset($_POST['conf_LANGUAGE'])) {
+		$config['conf_LANGUAGE']	= $_POST['conf_LANGUAGE'];
+	}
+	include("sub-i18n-loader.php");
 
-<body <?php echo $background; ?>>
-	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
-	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	// write new config
+	if (isset($_POST['save'])) {
+		// write new config to config.cfg
+		write_config();
 
-	<?php
-		// write new config
-		if (isset($_POST['save'])) {
-			write_config();
-
-			if (isset($_POST['send_testmail'])) {
-				shell_exec("sudo python3 $WORKING_DIR/lib_mail.py '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "'");
-				echo '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
-			}
-
-			if (isset($_POST['restart_rclone_gui'])) {
-				exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null 2>/dev/null &");
-				echo '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
-			}
-
-			exec("sudo pkill -f ${WORKING_DIR}/display.py");
-			exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "' > /dev/null 2>&1 &");
+		// testmail
+		if (isset($_POST['send_testmail'])) {
+			shell_exec("sudo python3 $WORKING_DIR/lib_mail.py '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "'");
+			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
 		}
 
-		if (isset($_GET['check_update'])) {
-				$UpdateAvailable	= trim(shell_exec("sudo python3 $WORKING_DIR/lib_git.py --write-available --update-available"));
-				if ($UpdateAvailable == 'True') {
-					popup(L::config_update_available, true);
-				} else {
-					popup(L::config_update_not_available, true);
+		// rclone_gui
+		if (isset($_POST['restart_rclone_gui'])) {
+			exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null 2>/dev/null &");
+			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
+		}
+
+		// restart display using new config
+		exec("sudo pkill -f ${WORKING_DIR}/display.py");
+		exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "' > /dev/null 2>&1 &");
+	}
+
+	if (isset($_GET['check_update'])) {
+			$UpdateAvailable	= trim(shell_exec("sudo python3 $WORKING_DIR/lib_git.py --write-available --update-available"));
+			if ($UpdateAvailable == 'True') {
+				$SetupMessages	.= popup(L::config_update_available, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+			} else {
+				$SetupMessages	.= popup(L::config_update_not_available,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+			}
+	}
+
+	// Upload settings
+	if (isset($_POST['upload_settings'])) {
+		upload_settings();
+	};
+
+	// read (new) config
+	$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
+
+	# set timezone
+	if ($TIME_ZONE_old !== $config["conf_TIME_ZONE"]) {
+		shell_exec("sudo raspi-config nonint do_change_timezone ".$config["conf_TIME_ZONE"]);
+	}
+
+	# write wifi country-code from config.cfg
+	if (($WIFI_COUNTRY !== $config["conf_WIFI_COUNTRY"]) and ($config["conf_WIFI_COUNTRY"] !== "")) {
+		shell_exec("sudo raspi-config nonint do_wifi_country ".$config["conf_WIFI_COUNTRY"]);
+		$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
+	}
+
+	function get_wifi_country_selector($ID,$NAME) {
+		global $WIFI_COUNTRY;
+
+		$wifi_country_selector	= '<select id="'.$ID.'" name="'.$NAME.'">';
+
+			exec("sed '/^#/d' /usr/share/zoneinfo/iso3166.tab",$COUNTRIES);
+			foreach($COUNTRIES as $COUNTRY) {
+				$COUNTRY_ARRAY	= explode("\t",$COUNTRY,2);
+				$COUNTRYCODE	= trim($COUNTRY_ARRAY[0]);
+				$COUNTRYNAME	= trim($COUNTRY_ARRAY[1]);
+				$selected		= $WIFI_COUNTRY==$COUNTRYCODE ? " selected" : "";
+
+				$wifi_country_selector	.= '<option value="'.$COUNTRYCODE.'"'.$selected.'>'.$COUNTRYCODE.' '.$COUNTRYNAME.'</option>';
+			}
+		$wifi_country_selector	.= '</select>';
+		return ($wifi_country_selector);
+	}
+
+	function check_new_password($title, $pwd_1, $pwd_2) {
+		global $SetupMessages;
+
+		$pwd_valid = false;
+			if ($pwd_1 !== $pwd_2) {
+				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_not_identical,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+			} elseif (strlen($pwd_1) < 5) {
+				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_short,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+			} elseif (
+					strpos("_" . $pwd_1,"\\") or
+					strpos("_" . $pwd_1,"'") or
+					strpos("_" . $pwd_1," ")
+					) {
+				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_characters_not_allowed,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+			} else {
+				$pwd_valid=true;
+			}
+
+		return($pwd_valid);
+	}
+
+	function write_config() {
+		# write config.cfg
+
+		global $WORKING_DIR, $WIFI_COUNTRY, $config, $constants, $vpn_types, $CloudServices, $SetupMessages;
+
+		extract ($_POST, EXTR_SKIP);
+
+	// 	prepare variables for saving
+
+		list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)	= explode(" ",$BACKUP_MODE,2);
+		list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)	= explode(" ",$BACKUP_MODE_2,2);
+
+		$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\r\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
+		$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
+
+		$conf_BACKUP_CLOUDS_TARGET_BASEDIR		= '';
+		$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	= '';
+		foreach($CloudServices as $CloudService) {
+			if (isset(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService})) {
+				$conf_BACKUP_CLOUDS_TARGET_BASEDIR	= $conf_BACKUP_CLOUDS_TARGET_BASEDIR ? $conf_BACKUP_CLOUDS_TARGET_BASEDIR . '|;|' : $conf_BACKUP_CLOUDS_TARGET_BASEDIR;
+				${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}	= trim(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService});
+				${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}	= trim(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}, '/\\');
+				$conf_BACKUP_CLOUDS_TARGET_BASEDIR	.= $CloudService.'|=|'.${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService};
+			}
+
+			$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	= $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE ? $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE . '|;|' : $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE;
+			${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService}	= (isset(${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService})) ? 'true':'false';
+			$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	.= $CloudService.'|=|'.${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService};
+		}
+
+		$conf_BACKUP_SYNC_METHOD_CLOUDS	= '';
+		foreach($CloudServices as $CloudService) {
+			if (isset(${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService})) {
+				$conf_BACKUP_SYNC_METHOD_CLOUDS	= $conf_BACKUP_SYNC_METHOD_CLOUDS ? $conf_BACKUP_SYNC_METHOD_CLOUDS . '|;|' : $conf_BACKUP_SYNC_METHOD_CLOUDS;
+				${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService}	= trim(${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService});
+				$conf_BACKUP_SYNC_METHOD_CLOUDS	.= $CloudService.'|=|'.${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService};
+			}
+		}
+
+		$conf_SOFTWARE_DATE_INSTALLED				= $config["conf_SOFTWARE_DATE_INSTALLED"];
+		$conf_SOFTWARE_DATE_AVAILABLE				= $config["conf_SOFTWARE_DATE_AVAILABLE"];
+
+		$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?'true':'false';
+		$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?'true':'false';
+		$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?'true':'false';
+		$conf_POWER_OFF								= isset($conf_POWER_OFF)?'true':'false';
+		$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?'true':'false';
+		$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?'true':'false';
+		$conf_DISP									= isset($conf_DISP)?'true':'false';
+		$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?'true':'false';
+		$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?'true':'false';
+		$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?'true':'false';
+		$conf_VIRTUAL_KEYBOARD_ENABLED				= isset($conf_VIRTUAL_KEYBOARD_ENABLED)?'true':'false';
+		$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?'true':'false';
+		$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?'true':'false';
+		$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?'true':'false';
+		$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?'true':'false';
+		$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
+		$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?'true':'false';
+
+		$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
+
+		if ($conf_MAIL_PASSWORD != '') {
+			if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
+				$conf_MAIL_PASSWORD	= "";
+			}
+		}
+
+		if ($conf_RSYNC_PASSWORD != '') {
+			if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_PASSWORD, $conf_RSYNC_PASSWORD)) {
+				$conf_RSYNC_PASSWORD	= "";
+			}
+		}
+
+		if (isset($conf_PASSWORD_REMOVE)) {
+			$conf_PASSWORD_LINE="conf_PASSWORD=''";
+
+			exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py"); # remove password
+
+			$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_remove, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+		} elseif ($conf_PASSWORD_1 != '') {
+			if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
+				$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
+
+				exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $conf_PASSWORD_1 . "'");
+
+				if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
+					$SetupMessages	.= popup(L::config_alert_password_wifi_size_error, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 				}
+				$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 			}
-
-		// Upload settings
-		if (isset($_POST['upload_settings'])) {
-			upload_settings();
-		};
-
-		// read (new) config
-		$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
-
-		# set timezone
-		if ($TIME_ZONE_old !== $config["conf_TIME_ZONE"]) {
-			shell_exec("sudo raspi-config nonint do_change_timezone ".$config["conf_TIME_ZONE"]);
 		}
 
-		# write wifi country-code from config.cfg
-		if (($WIFI_COUNTRY !== $config["conf_WIFI_COUNTRY"]) and ($config["conf_WIFI_COUNTRY"] !== "")) {
-			shell_exec("sudo raspi-config nonint do_wifi_country ".$config["conf_WIFI_COUNTRY"]);
-			$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
-		}
+		$CONFIGFILE = "$WORKING_DIR/config.cfg";
+		$config_file_handle = fopen($CONFIGFILE, "w");
 
-	?>
-
-	<?php
-
-function get_wifi_country_selector($ID,$NAME) {
-	global $WIFI_COUNTRY;
-
-	$wifi_country_selector	= '<select id="'.$ID.'" name="'.$NAME.'">';
-
-		exec("sed '/^#/d' /usr/share/zoneinfo/iso3166.tab",$COUNTRIES);
-		foreach($COUNTRIES as $COUNTRY) {
-			$COUNTRY_ARRAY	= explode("\t",$COUNTRY,2);
-			$COUNTRYCODE	= trim($COUNTRY_ARRAY[0]);
-			$COUNTRYNAME	= trim($COUNTRY_ARRAY[1]);
-			$selected		= $WIFI_COUNTRY==$COUNTRYCODE ? " selected" : "";
-
-			$wifi_country_selector	.= '<option value="'.$COUNTRYCODE.'"'.$selected.'>'.$COUNTRYCODE.' '.$COUNTRYNAME.'</option>';
-		}
-	$wifi_country_selector	.= '</select>';
-	return ($wifi_country_selector);
-}
-
-function check_new_password($title, $pwd_1, $pwd_2) {
-	$pwd_valid = false;
-		if ($pwd_1 !== $pwd_2) {
-			popup($title . "\n" . L::config_alert_password_not_identical, true);
-		} elseif (strlen($pwd_1) < 5) {
-			popup($title . "\n" . L::config_alert_password_too_short, true);
-		} elseif (
-				strpos("_" . $pwd_1,"\\") or
-				strpos("_" . $pwd_1,"'") or
-				strpos("_" . $pwd_1," ")
-				  ) {
-			popup($title . "\n" . L::config_alert_password_characters_not_allowed, true);
-		} else {
-			$pwd_valid=true;
-		}
-
-	return($pwd_valid);
-}
-
-function write_config() {
-	# write config.cfg
-
-	global $WORKING_DIR;
-	global $WIFI_COUNTRY;
-	global $config;
-	global $constants;
-	global $vpn_types;
-	global $CloudServices;
-
-	extract ($_POST, EXTR_SKIP);
-
-// 	prepare variables for saving
-
-	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)	= explode(" ",$BACKUP_MODE,2);
-	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)	= explode(" ",$BACKUP_MODE_2,2);
-
-	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\r\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
-	$conf_BACKUP_CAMERA_FOLDER_MASK	= str_replace("\n", ';', $conf_BACKUP_CAMERA_FOLDER_MASK);
-
-	$conf_BACKUP_CLOUDS_TARGET_BASEDIR		= '';
-	$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	= '';
-	foreach($CloudServices as $CloudService) {
-		if (isset(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService})) {
-			$conf_BACKUP_CLOUDS_TARGET_BASEDIR	= $conf_BACKUP_CLOUDS_TARGET_BASEDIR ? $conf_BACKUP_CLOUDS_TARGET_BASEDIR . '|;|' : $conf_BACKUP_CLOUDS_TARGET_BASEDIR;
-			${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}	= trim(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService});
-			${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}	= trim(${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService}, '/\\');
-			$conf_BACKUP_CLOUDS_TARGET_BASEDIR	.= $CloudService.'|=|'.${'conf_BACKUP_CLOUDS_TARGET_BASEDIR_'.$CloudService};
-		}
-
-		$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	= $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE ? $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE . '|;|' : $conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE;
-		${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService}	= (isset(${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService})) ? 'true':'false';
-		$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE	.= $CloudService.'|=|'.${'conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_'.$CloudService};
-	}
-
-	$conf_BACKUP_SYNC_METHOD_CLOUDS	= '';
-	foreach($CloudServices as $CloudService) {
-		if (isset(${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService})) {
-			$conf_BACKUP_SYNC_METHOD_CLOUDS	= $conf_BACKUP_SYNC_METHOD_CLOUDS ? $conf_BACKUP_SYNC_METHOD_CLOUDS . '|;|' : $conf_BACKUP_SYNC_METHOD_CLOUDS;
-			${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService}	= trim(${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService});
-			$conf_BACKUP_SYNC_METHOD_CLOUDS	.= $CloudService.'|=|'.${'conf_BACKUP_SYNC_METHOD_CLOUDS_'.$CloudService};
-		}
-	}
-
-	$conf_SOFTWARE_DATE_INSTALLED				= $config["conf_SOFTWARE_DATE_INSTALLED"];
-	$conf_SOFTWARE_DATE_AVAILABLE				= $config["conf_SOFTWARE_DATE_AVAILABLE"];
-
-	$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?'true':'false';
-	$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?'true':'false';
-	$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?'true':'false';
-	$conf_POWER_OFF								= isset($conf_POWER_OFF)?'true':'false';
-	$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?'true':'false';
-	$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?'true':'false';
-	$conf_DISP									= isset($conf_DISP)?'true':'false';
-	$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?'true':'false';
-	$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?'true':'false';
-	$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?'true':'false';
-	$conf_VIRTUAL_KEYBOARD_ENABLED				= isset($conf_VIRTUAL_KEYBOARD_ENABLED)?'true':'false';
-	$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?'true':'false';
-	$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?'true':'false';
-	$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?'true':'false';
-	$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?'true':'false';
-	$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
-	$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?'true':'false';
-
-	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
-
-	if ($conf_MAIL_PASSWORD != '') {
-		if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
-			$conf_MAIL_PASSWORD	= "";
-		}
-	}
-
-	if ($conf_RSYNC_PASSWORD != '') {
-		if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_PASSWORD, $conf_RSYNC_PASSWORD)) {
-			$conf_RSYNC_PASSWORD	= "";
-		}
-	}
-
-	if (isset($conf_PASSWORD_REMOVE)) {
-		$conf_PASSWORD_LINE="conf_PASSWORD=''";
-
-		exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py"); # remove password
-
-		popup(L::config_alert_password_change_after_reboot_remove,true);
-	} elseif ($conf_PASSWORD_1 != '') {
-		if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
-			$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
-
-			exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $conf_PASSWORD_1 . "'");
-
-			if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
-				popup(L::config_alert_password_wifi_size_error,true);
-			}
-			popup(L::config_alert_password_change_after_reboot_set,true);
-		}
-	}
-
-	$CONFIGFILE = "$WORKING_DIR/config.cfg";
-	$config_file_handle = fopen($CONFIGFILE, "w");
-
-	$config_file_content = <<<CONFIGDATA
+		$config_file_content = <<<CONFIGDATA
 conf_SOFTWARE_DATE_INSTALLED='$conf_SOFTWARE_DATE_INSTALLED'
 conf_SOFTWARE_DATE_AVAILABLE='$conf_SOFTWARE_DATE_AVAILABLE'
 conf_LANGUAGE='$conf_LANGUAGE'
@@ -324,153 +314,166 @@ $conf_PASSWORD_LINE
 
 CONFIGDATA;
 
-	fwrite($config_file_handle, $config_file_content);
-	fclose($config_file_handle);
+		fwrite($config_file_handle, $config_file_content);
+		fclose($config_file_handle);
 
-	# remove vpn config file
-	foreach($vpn_types as $vpn_type) {
-		if (isset($_POST['vpn_remove_' . $vpn_type])) {
-			exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
-		}
-	}
-
-	# save vpn config file
-	if ($vpn_upload_type !== 'none') {
-		if(file_exists($_FILES["vpn_conf_file"]["tmp_name"])) {
-			exec ('sudo mkdir -p "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '"');
-			exec ('sudo mv "' . $_FILES["vpn_conf_file"]["tmp_name"] . '" "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
-			exec ('sudo chown root:root "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
-			exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
-		}
-	}
-
-	# write hardware-settings
-	exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/set_hardware.sh");
-
-	# response
-	echo '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
-}
-
-function upload_settings() {
-	global $WORKING_DIR, $config, $constants, $vpn_types;
-
-	if($_FILES["settings_file"]["name"]) {
-		$filename = $_FILES["settings_file"]["name"];
-		$source = $_FILES["settings_file"]["tmp_name"];
-		$type = $_FILES["settings_file"]["type"];
-		$name = explode(".", $filename);
-		$accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
-
-		$FILETYPE_ZIP	= false;
-		foreach($accepted_types as $mime_type) {
-			if($mime_type == $type) {
-				$FILETYPE_ZIP = true;
-				break;
+		# remove vpn config file
+		foreach($vpn_types as $vpn_type) {
+			if (isset($_POST['vpn_remove_' . $vpn_type])) {
+				exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
 			}
 		}
-		$continue = ((strtolower($name[1]) == 'zip') and $FILETYPE_ZIP) ? true : false;
-		if(!$continue) {
-			exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_upload_error_1 . "' '" . L::config_display_message_settings_upload_error_2 . "' '" . L::config_display_message_settings_upload_error_3 . "' > /dev/null 2>&1 &");
-			popup(L::config_alert_settings_upload_not_zip,true);
-		} else {
-			/* PHP current path */
 
-			$targetdir = $constants["const_WEB_ROOT_LBB"].'/tmp/unzip';
-			$targetzip = $targetdir . '/' . $filename;
-			/* create directory if not exists' */
-			@mkdir($targetdir, 0777);
+		# save vpn config file
+		if ($vpn_upload_type !== 'none') {
+			if(file_exists($_FILES["vpn_conf_file"]["tmp_name"])) {
+				exec ('sudo mkdir -p "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '"');
+				exec ('sudo mv "' . $_FILES["vpn_conf_file"]["tmp_name"] . '" "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
+				exec ('sudo chown root:root "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
+				exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_upload_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_upload_type] . '"');
+			}
+		}
 
-			/* here it is really happening */
+		# write hardware-settings
+		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/set_hardware.sh");
 
-			if(move_uploaded_file($source, $targetzip)) {
-				$zip = new ZipArchive();
-				$file_opened = $zip->open($targetzip);  // open the zip file to extract
-				if ($file_opened === true) {
-					$zip->extractTo($targetdir); // place in the directory with same name
-					$zip->close();
+		# response
+		$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
+	}
 
-					unlink($targetzip);
-					$Files_Copied="";
+	function upload_settings() {
+		global $WORKING_DIR, $config, $constants, $vpn_types, $SetupMessages;
 
-					if (file_exists($targetdir."/config.cfg")) {
-						@unlink($constants["const_WEB_ROOT_LBB"].'/config.cfg');
-						if (rename($targetdir."/config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {
-							$Files_Copied="\n* 'config.cfg'";
-							exec('sudo dos2unix "' . $constants["const_WEB_ROOT_LBB"] . '/config.cfg"');
+		if($_FILES["settings_file"]["name"]) {
+			$filename = $_FILES["settings_file"]["name"];
+			$source = $_FILES["settings_file"]["tmp_name"];
+			$type = $_FILES["settings_file"]["type"];
+			$name = explode(".", $filename);
+			$accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
+
+			$FILETYPE_ZIP	= false;
+			foreach($accepted_types as $mime_type) {
+				if($mime_type == $type) {
+					$FILETYPE_ZIP = true;
+					break;
+				}
+			}
+			$continue = ((strtolower($name[1]) == 'zip') and $FILETYPE_ZIP) ? true : false;
+			if(!$continue) {
+				exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_upload_error_1 . "' '" . L::config_display_message_settings_upload_error_2 . "' '" . L::config_display_message_settings_upload_error_3 . "' > /dev/null 2>&1 &");
+				$SetupMessages	.= popup(L::config_alert_settings_upload_not_zip, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+			} else {
+				/* PHP current path */
+
+				$targetdir = $constants["const_WEB_ROOT_LBB"].'/tmp/unzip';
+				$targetzip = $targetdir . '/' . $filename;
+				/* create directory if not exists' */
+				@mkdir($targetdir, 0777);
+
+				/* here it is really happening */
+
+				if(move_uploaded_file($source, $targetzip)) {
+					$zip = new ZipArchive();
+					$file_opened = $zip->open($targetzip);  // open the zip file to extract
+					if ($file_opened === true) {
+						$zip->extractTo($targetdir); // place in the directory with same name
+						$zip->close();
+
+						unlink($targetzip);
+						$Files_Copied="";
+
+						if (file_exists($targetdir."/config.cfg")) {
+							@unlink($constants["const_WEB_ROOT_LBB"].'/config.cfg');
+							if (rename($targetdir."/config.cfg",$constants["const_WEB_ROOT_LBB"]."/config.cfg")) {
+								$Files_Copied="\n* 'config.cfg'";
+								exec('sudo dos2unix "' . $constants["const_WEB_ROOT_LBB"] . '/config.cfg"');
+							}
+
 						}
 
-					}
-
-					if (file_exists($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"])) {
-						if (rename($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"])) {
-							$Files_Copied=$Files_Copied."\n* '".$constants["const_RCLONE_CONFIG_FILE"]."'";
-							exec('sudo dos2unix "' . $constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"] . '"');
-						}
-					}
-
-					if (file_exists($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {
-						if (rename($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {
-							$Files_Copied=$Files_Copied."\n* '".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"]."'";
-							exec('sudo dos2unix "'. $constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"] . '"');
-						}
-					}
-
-					foreach($vpn_types as $vpn_type) {
-						if (file_exists($targetdir.'/'.$constants['const_VPN_FILENAME_' . $vpn_type])) {
-							exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
-							exec ('sudo mv "' . $targetdir.'/'.$constants['const_VPN_FILENAME_' . $vpn_type] . '" "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
-							$Files_Copied=$Files_Copied."\n* '" . $constants['const_VPN_FILENAME_' . $vpn_type] . "'";
-							exec('sudo dos2unix "'. $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
-
-							## secure VPN config files
-							exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '" -R');
-						}
-					}
-
-					#Background images
-					if (is_dir($targetdir.'/bg-images')){
-
-						exec ("sudo mkdir -p '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] . "'");
-						exec ("sudo chown www-data:www-data '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ."' -R");
-
-						$background_images	= scandir($targetdir.'/bg-images');
-						foreach ($background_images as $BACKGROUND_IMAGE) {
-							if (is_file($targetdir . '/bg-images/' . $BACKGROUND_IMAGE)) {
-								$Files_Copied=$Files_Copied."\n* '" . $BACKGROUND_IMAGE . "'";
+						if (file_exists($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"])) {
+							if (rename($targetdir."/".$constants["const_RCLONE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"])) {
+								$Files_Copied=$Files_Copied."\n* '".$constants["const_RCLONE_CONFIG_FILE"]."'";
+								exec('sudo dos2unix "' . $constants["const_MEDIA_DIR"] . '/' . $constants["const_RCLONE_CONFIG_FILE"] . '"');
 							}
 						}
-						exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
-						exec ("sudo chown www-data:www-data '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
+
+						if (file_exists($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {
+							if (rename($targetdir."/".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"],$constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"])) {
+								$Files_Copied=$Files_Copied."\n* '".$constants["const_BUTTONS_PRIVATE_CONFIG_FILE"]."'";
+								exec('sudo dos2unix "'. $constants["const_MEDIA_DIR"] . '/' . $constants["const_BUTTONS_PRIVATE_CONFIG_FILE"] . '"');
+							}
+						}
+
+						foreach($vpn_types as $vpn_type) {
+							if (file_exists($targetdir.'/'.$constants['const_VPN_FILENAME_' . $vpn_type])) {
+								exec ('sudo rm "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
+								exec ('sudo mv "' . $targetdir.'/'.$constants['const_VPN_FILENAME_' . $vpn_type] . '" "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
+								$Files_Copied=$Files_Copied."\n* '" . $constants['const_VPN_FILENAME_' . $vpn_type] . "'";
+								exec('sudo dos2unix "'. $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '"');
+
+								## secure VPN config files
+								exec ('sudo chmod 700 "' . $constants['const_VPN_DIR_' . $vpn_type] . '/' . $constants['const_VPN_FILENAME_' . $vpn_type] . '" -R');
+							}
+						}
+
+						#Background images
+						if (is_dir($targetdir.'/bg-images')){
+
+							exec ("sudo mkdir -p '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] . "'");
+							exec ("sudo chown www-data:www-data '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ."' -R");
+
+							$background_images	= scandir($targetdir.'/bg-images');
+							foreach ($background_images as $BACKGROUND_IMAGE) {
+								if (is_file($targetdir . '/bg-images/' . $BACKGROUND_IMAGE)) {
+									$Files_Copied=$Files_Copied."\n* '" . $BACKGROUND_IMAGE . "'";
+								}
+							}
+							exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
+							exec ("sudo chown www-data:www-data '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
+						}
+
+						# Feedback files in place
+						exec("sudo python3 $WORKING_DIR/lib_display.py ':" . L::config_display_message_settings_uploaded_1 . "' ':" . L::config_display_message_settings_uploaded_2 . "' > /dev/null 2>&1 &");
+						$SetupMessages	.= popup(L::config_alert_settings_upload_success. " ". $Files_Copied, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+
+						# reload config
+						$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
+
+						# set new password
+						if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
+							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $config["conf_PASSWORD"] . "'");
+							$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+						} else {
+							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py");
+							$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_remove, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+						}
 					}
 
-					# Feedback files in place
-					exec("sudo python3 $WORKING_DIR/lib_display.py ':" . L::config_display_message_settings_uploaded_1 . "' ':" . L::config_display_message_settings_uploaded_2 . "' > /dev/null 2>&1 &");
-					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
-
-					# reload config
-					$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
-
-					# set new password
-					if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
-						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $config["conf_PASSWORD"] . "'");
-						popup(L::config_alert_password_change_after_reboot_set,true);
-					} else {
-						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py");
-						popup(L::config_alert_password_change_after_reboot_remove,true);
-					}
+				} else {
+					exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_upload_error_1 . "' '" . L::config_display_message_settings_upload_error_2 . "' '" . L::config_display_message_settings_upload_error_3 . "' > /dev/null 2>&1 &");
+					$SetupMessages	.= popup(L::config_alert_settings_upload_problem, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 				}
 
-			} else {
-				exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_upload_error_1 . "' '" . L::config_display_message_settings_upload_error_2 . "' '" . L::config_display_message_settings_upload_error_3 . "' > /dev/null 2>&1 &");
-				popup(L::config_alert_settings_upload_problem,$config["conf_POPUP_MESSAGES"]);
 			}
-
+			exec("sudo rm -R ".$targetdir);
 		}
-		exec("sudo rm -R ".$targetdir);
 	}
-}
 ?>
+<html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
 
+<head>
+	<?php
+		include "${WORKING_DIR}/sub-standards-header-loader.php";
+		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
+	?>
+</head>
+
+<body <?php echo $background; ?>>
+	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
+	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+
+	<?php echo($SetupMessages); ?>
 
 	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
 
@@ -1574,14 +1577,14 @@ function upload_settings() {
 				<?php echo L::config_update_text; ?>
 <!-- 				<ul> -->
 <!-- 					<li> -->
-						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'main' ? '<b>' : ''); ?>
+						<?php echo ((isset($constants['const_SOFTWARE_BRANCH']) and $constants['const_SOFTWARE_BRANCH'] == 'main') ? '<b>' : ''); ?>
 							<button onclick="window.location.href='/cmd.php?CMD=update';"><?php echo L::config_update_linktext ?></button>
-						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'main' ? '</b>' : ''); ?>
+						<?php echo ((isset($constants['const_SOFTWARE_BRANCH']) and $constants['const_SOFTWARE_BRANCH'] == 'main') ? '</b>' : ''); ?>
 <!-- 					</li> -->
 <!-- 					<li> -->
-<!-- 						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'development' ? '<b>' : ''); ?> -->
+<!-- 						<?php echo ((isset($constants['const_SOFTWARE_BRANCH']) and $constants['const_SOFTWARE_BRANCH'] == 'development') ? '<b>' : ''); ?> -->
 <!-- 								<button onclick="window.location.href='/cmd.php?CMD=update_development';"><?php echo L::config_update_development_linktext ?></button> -->
-<!-- 						<?php echo ($constants['const_SOFTWARE_BRANCH'] == 'development' ? '</b>' : ''); ?> -->
+<!-- 						<?php echo ((isset($constants['const_SOFTWARE_BRANCH']) and $constants['const_SOFTWARE_BRANCH'] == 'development') ? '</b>' : ''); ?> -->
 <!-- 					</li> -->
 <!-- 				</ul> -->
 				<p>
