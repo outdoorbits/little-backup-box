@@ -542,7 +542,9 @@
       },
       "update": {
         "start1": "Actualizar",
-        "start2": "a débuté..."
+        "start2": "a débuté...",
+        "stop2": "terminado",
+        "stop1": "Actualizar"
       },
       "f3": {
         "probe_start1": "Examen",
@@ -613,7 +615,11 @@
       "development_header": "Little Backup Box Actualizador - development-branch",
       "development_warning": "¡NO SE DETENGA ni recargue mientras corre!",
       "libraw_header": "Actualizar biblioteca a 0.21.2-2.1",
-      "libraw_warning": "Ejecute esto solo si no se pueden crear imágenes de vista previa a partir de imágenes RAW con la versión estándar."
+      "libraw_warning": "Ejecute esto solo si no se pueden crear imágenes de vista previa a partir de imágenes RAW con la versión estándar.",
+      "mods": {
+        "header": "Modificaciones de instalación",
+        "description": "Estos cambios se sobrescriben con actualizaciones y es posible que sea necesario volver a realizarlos."
+      }
     },
     "no_cmd": "No se ha dado ningún comando válido.",
     "link_text_home": "Regrese a Little Backup Box",

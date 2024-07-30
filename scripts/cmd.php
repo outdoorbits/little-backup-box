@@ -307,6 +307,7 @@ function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {
 			case 'update_libraw':
 				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_start1 . "' ':" . L::box_cmd_update_start2 . "'";
 				$COMMAND_LINE	.= ";sudo bash $WORKING_DIR/mods/update_libraw.sh";
+				$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_stop1 . "' ':" . L::box_cmd_update_stop2 . "'";
 				break;
 
 			case 'fsck':
