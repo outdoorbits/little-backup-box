@@ -609,10 +609,10 @@ class backup(object):
 							os.chdir(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget))
 
 							# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
-							Command	= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=False)
-							self.__log.message(' '.join(Command),3)
+							syncCommand	= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=False)
+							self.__log.message(' '.join(syncCommand),3)
 
-							with subprocess.Popen(Command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
+							with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
 
 								while True:
 									SyncOutputLine = BackupProcess.stdout.readline()

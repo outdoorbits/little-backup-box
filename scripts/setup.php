@@ -1587,8 +1587,15 @@ CONFIGDATA;
 <!-- 						<?php echo ((isset($constants['const_SOFTWARE_BRANCH']) and $constants['const_SOFTWARE_BRANCH'] == 'development') ? '</b>' : ''); ?> -->
 <!-- 					</li> -->
 <!-- 				</ul> -->
+
 				<p>
 					<a href="/setup.php?check_update=true"><?php echo L::config_update_check_label; ?></a>
+				</p>
+
+				<p>
+					<h3><?php echo L::cmd_update_libraw_header; ?></h3>
+					<label><?php echo L::cmd_update_libraw_warning; ?></label>
+					<button onclick="window.location.href='/cmd.php?CMD=update_libraw';"><?php echo L::cmd_update_libraw_header ?></button>
 				</p>
 			</details>
 		</div>

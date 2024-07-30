@@ -613,7 +613,9 @@
       "warning": "Do NOT STOP or reload while running!",
       "return_link": "Return to Little Backup Box - DO NOT CLICK BEFORE THE UPDATE HAS FINISHED!",
       "development_header": "Little Backup Box Updater - development-branch",
-      "development_warning": "Do NOT STOP or reload while running!"
+      "development_warning": "Do NOT STOP or reload while running!",
+      "libraw_header": "Update libraw to 0.21.2-2.1",
+      "libraw_warning": "Please only run this if preview images cannot be generated from RAW images using the standard version."
     },
     "format": {
       "header": "Format device",
