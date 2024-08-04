@@ -63,7 +63,7 @@ class display(object):
 			# grep: returncode=1 if no matches found
 			subprocess.run(f"sh -c '{self.python} {self.WORKING_DIR}/display.py &'",shell=True)
 
-	def message(self, RawLines): # Lines = ['abc','def',...]
+	def message(self, RawLines, logging=True): # Lines = ['abc','def',...]
 		self.__start_display()
 
 		# cut RawLines (if a RawLine contains newline) and assemble Lines
@@ -109,7 +109,7 @@ class display(object):
 
 				LogLines.append(Line)
 
-			if LogLines:
+			if LogLines and logging:
 				LogMessage = '\n'.join(LogLines)
 				self.log.message(LogMessage)
 

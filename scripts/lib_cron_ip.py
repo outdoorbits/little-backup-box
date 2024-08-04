@@ -80,16 +80,16 @@ class ip_info(object):
 
 					if not IP_QR_FILE is None:
 						FrameTime	= 5 if FrameTime is None else FrameTime
-						self.__display.message([f'set:time={FrameTime},temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"])
+						self.__display.message([f'set:time={FrameTime},temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"], logging=False)
 					else:
 						self.__IPsFormatted.append(f":{IP}")
 
 			if self.__IPsFormatted:
 				FrameTime	= 3 if FrameTime is None else FrameTime
-				self.__display.message(['set:time={FrameTime}', f":{OnlineMessage}, IP:"] + self.__IPsFormatted)
+				self.__display.message(['set:time={FrameTime}', f":{OnlineMessage}, IP:"] + self.__IPsFormatted, logging=False)
 
 		elif force and not self.__IPs:
-			self.__display.message(['set:clear', f":{self.__lan.l('box_cronip_offline')}"])
+			self.__display.message(['set:clear', f":{self.__lan.l('box_cronip_offline')}"], logging=False)
 
 	def mail_ip(self):
 		IP_sent_Markerfile			= self.__setup.get_val('const_IP_SENT_MARKERFILE')

@@ -384,7 +384,7 @@ class storage(object):
 	def __get_CameraDeviceID(self, CameraModel, CameraSerial):
 		return(f"{CameraModel}_{CameraSerial}")
 
-	def __mount_camera(self,TimeOutActive=False):
+	def __mount_camera(self, TimeOutActive=False):
 		self.__display.message([f":{self.__lan.l('box_backup_connect_camera_1')}", f":{self.__lan.l('box_backup_connect_camera_2')}"])
 
 		EndTime	= time.time()+self.__setup.get_val('const_MOUNT_LOCAL_TIMEOUT')
