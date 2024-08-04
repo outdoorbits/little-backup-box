@@ -18,6 +18,7 @@
 #######################################################################
 
 import os
+from pathlib import Path
 import subprocess
 import time
 
@@ -70,8 +71,17 @@ class idletime(object):
 				return(f'idletime: logfile rclone gui idletime not reached ({ApacheRcloneLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 			# check processes
-			for process in ['rsync','gphoto2']:
-				if subprocess.run(['pgrep','-x',process]).returncode == 0:
+			for process in [
+				['--exact',	'rsync'],
+				['--exact',	'gphoto2'],
+				['--full',	'rclone check'],
+				['--full',	'rclone copy'],
+				['--full',	'rclone move']
+			]:
+				if subprocess.run(['pgrep'] + process).returncode == 0:
+					# secure gap between processes by updating timestamp of logfile
+					Path(self.const_LOGFILE).touch()
+
 					return(f'idletime: active process={process}')
 
 			# CmdRunnerActive?
