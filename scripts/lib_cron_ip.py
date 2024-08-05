@@ -79,7 +79,7 @@ class ip_info(object):
 					IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, OnlineStatus=OnlineStatus, IP_QR_FILE=const_IP_QR_FILE_PATTERN, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
 					if not IP_QR_FILE is None:
-						FrameTime	= 5 if FrameTime is None else FrameTime
+						FrameTime	= 3 if FrameTime is None else FrameTime
 						self.__display.message([f'set:time={FrameTime},temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"], logging=False)
 					else:
 						self.__IPsFormatted.append(f":{IP}")
