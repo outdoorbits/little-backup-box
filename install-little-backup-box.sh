@@ -164,7 +164,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl libimobiledevice6 ifuse sshpass f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard openresolv hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-gpiozero python3-qrcode smartmontools dos2unix
+		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl libimobiledevice6 ifuse sshpass f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard openresolv hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-rpi-lgpio python3-qrcode smartmontools dos2unix
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -295,10 +295,6 @@ sudo raspi-config nonint do_spi 0
 sudo DEBIAN_FRONTEND=noninteractive apt -o "Dpkg::Options::=--force-confold" -o "Dpkg::Options::=--force-confdef" \
 	install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 	libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools python3-luma.core python3-luma.emulator python3-luma.lcd python3-luma.led-matrix python3-luma.oled
-
-## Raspberry Pi 5 workaround
-sudo python3 "${INSTALLER_DIR}/luma/install_workaround.py"
-
 
 # Enable OLED screen support if available
 ## append new line to config-file
