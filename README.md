@@ -1,4 +1,5 @@
 <h1>Little Backup Box</h1>
+<a href="#installation"><b>Jump to installation instructions</b></a>
 <h2>About</h2>
 Depending on your needs and options, little-backup-box can be operated in a simple housing, with a display (possibly with buttons for the display menu) or even with a touchscreen. <br />
 Thanks to the web interface, functionality is fully guaranteed in any case.<br /><br />
@@ -32,7 +33,7 @@ Media content can be viewed and rated for the subsequent process.<br /><br /><br
 	</tr>
 </table>
 These languages are already available. Do you want to maintain or create a translation?<br /><br />
-<a href="#installation"><b>Jump to installation instructions</b></a><br /><br />
+<br />
 <a href="changelog.md">Changelog</a><br />
 <a href="gallery.md">Have a look at the gallery</a><br />
 <a href="resources.md">Web resources</a><br /><br />

@@ -70,7 +70,7 @@ class setup(object):
 		self.config[config_var]	= {'value': value, 'type': self.config[config_var]['type']}
 		self.setup	= self.config | self.constants
 
-	def __norm_value(self,value,val_type):
+	def __norm_value(self, value, val_type):
 		if val_type == 'int':
 			return(int(value) if value else 0)
 
@@ -224,7 +224,8 @@ class setup(object):
 					'conf_DISP_COLOR_HIGH':								{'value': 'white', 'type': 'str'},
 					'conf_DISP_COLOR_ALERT':							{'value': 'orange', 'type': 'str'},
 					'conf_DISP_FONT_SIZE':								{'value': 12, 'type': 'int'},
-					'conf_DISP_FRAME_TIME':								{'value': 1, 'type': 'float'},
+					'conf_DISP_FRAME_TIME':								{'value': 0.5, 'type': 'float'},
+					'conf_DISP_FRAME_TIME_IP':							{'value': 2.0, 'type': 'float'},
 					'conf_DISP_BLACK_ON_POWER_OFF':						{'value': True, 'type': 'bool'},
 					'conf_DISP_IP_REPEAT':								{'value': True, 'type': 'bool'},
 					'conf_MENU_ENABLED':								{'value': True, 'type': 'bool'},

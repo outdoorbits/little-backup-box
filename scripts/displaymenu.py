@@ -48,6 +48,7 @@ class menu(object):
 
 		self.const_MEDIA_DIR							= self.__setup.get_val('const_MEDIA_DIR')
 		self.conf_DISP_FRAME_TIME						= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.conf_DISP_FRAME_TIME_IP					= self.__setup.get_val('conf_DISP_FRAME_TIME_IP')
 		self.conf_RSYNC_SERVER							= self.__setup.get_val('conf_RSYNC_SERVER')
 		self.conf_RSYNC_PORT							= self.__setup.get_val('conf_RSYNC_PORT')
 		self.conf_RSYNC_USER							= self.__setup.get_val('conf_RSYNC_USER')
@@ -385,11 +386,9 @@ class menu(object):
 			# shift down
 			self.MENU_SHIFT[self.MENU_LEVEL] = self.HEAD_LINES + self.MENU_POS[self.MENU_LEVEL] + 1 - self.DISPLAY_LINES
 
-	def get_INFO(self,action):
-		FrameTime	= self.conf_DISP_FRAME_TIME
-
+	def get_INFO(self, action):
 		if action == 'ip':
-			FrameTime	= FrameTime * 3
+			FrameTime	= self.conf_DISP_FRAME_TIME_IP
 			lib_cron_ip.ip_info().display_ip(FrameTime=FrameTime, force=True)
 
 			return([], FrameTime)

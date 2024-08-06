@@ -67,6 +67,9 @@ from PIL import Image, ImageFont
 import displaymenu
 from lib_display import display_content_files
 
+#import lib_debug
+#xx	= lib_debug.debug()
+
 WORKING_DIR = os.path.dirname(__file__)
 
 class DISPLAY(object):
@@ -372,7 +375,8 @@ class DISPLAY(object):
 								if '=' in setting:
 									SettingType, SettingValue = setting.split('=',1)
 								else:
-									SettingType = setting
+									SettingType	= setting
+									SettingValue	= ''
 
 								if SettingType == 'clear':
 									import_old_file = False

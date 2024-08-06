@@ -297,7 +297,8 @@
       "rotate_label": "Rotación de pantalla",
       "rotate_header": "Girar pantalla",
       "offset_x_label": "Desplazamiento de la pantalla horizontalmente (en píxeles)",
-      "offset_y_label": "Desplazamiento de la pantalla verticalmente (en píxeles)"
+      "offset_y_label": "Desplazamiento de la pantalla verticalmente (en píxeles)",
+      "frame_time_ip_label": "Tiempo mínimo de visualización de la IP en segundos"
     },
     "menu": {
       "section": "Mostrar menú",

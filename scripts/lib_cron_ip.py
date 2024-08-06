@@ -46,7 +46,7 @@ class ip_info(object):
 		self.__IPs		= lib_network.get_IPs().split('\n')
 		self.__IPs[:]	= [element for element in self.__IPs if element]
 
-	def display_ip(self,FrameTime=None, force=False):
+	def display_ip(self, FrameTime=None, force=False):
 
 		if not (self.__conf_DISP_IP_REPEAT or force):
 			return()
@@ -58,6 +58,9 @@ class ip_info(object):
 		conf_DISP_RESOLUTION_Y			= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
 		const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
 		conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
+		conf_DISP_FRAME_TIME_IP			= self.__setup.get_val('conf_DISP_FRAME_TIME_IP')
+
+		FrameTime	= conf_DISP_FRAME_TIME_IP if FrameTime is None else FrameTime
 
 		self.get_IPs()
 
@@ -79,14 +82,12 @@ class ip_info(object):
 					IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, OnlineStatus=OnlineStatus, IP_QR_FILE=const_IP_QR_FILE_PATTERN, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
 
 					if not IP_QR_FILE is None:
-						FrameTime	= 3 if FrameTime is None else FrameTime
 						self.__display.message([f'set:time={FrameTime},temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"], logging=False)
 					else:
 						self.__IPsFormatted.append(f":{IP}")
 
 			if self.__IPsFormatted:
-				FrameTime	= 3 if FrameTime is None else FrameTime
-				self.__display.message(['set:time={FrameTime}', f":{OnlineMessage}, IP:"] + self.__IPsFormatted, logging=False)
+				self.__display.message([f'set:time={FrameTime}', f":{OnlineMessage}, IP:"] + self.__IPsFormatted, logging=False)
 
 		elif force and not self.__IPs:
 			self.__display.message(['set:clear', f":{self.__lan.l('box_cronip_offline')}"], logging=False)

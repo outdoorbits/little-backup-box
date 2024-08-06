@@ -297,7 +297,8 @@
       "rotate_label": "Rotation de l'affichage",
       "rotate_header": "Rotation de l'écran",
       "offset_x_label": "Décalage d'affichage horizontal (en pixels)",
-      "offset_y_label": "Décalage d'affichage vertical (en pixels)"
+      "offset_y_label": "Décalage d'affichage vertical (en pixels)",
+      "frame_time_ip_label": "Temps d'affichage minimum de l'IP en secondes"
     },
     "menu": {
       "section": "Afficher le menu",

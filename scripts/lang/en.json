@@ -520,7 +520,8 @@
       "rotate_label": "Display rotation",
       "rotate_header": "Rotate screen",
       "offset_x_label": "Display shift horizontally (in pixels)",
-      "offset_y_label": "Display shift vertically (in pixels)"
+      "offset_y_label": "Display shift vertically (in pixels)",
+      "frame_time_ip_label": "Minimum display time of the IP in seconds"
     },
     "menu": {
       "section": "Display menu",

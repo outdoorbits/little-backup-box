@@ -297,7 +297,8 @@
       "rotate_label": "Display-Rotation",
       "rotate_header": "Display drehen",
       "offset_x_label": "Display-Verschiebung horizontal (in Pixeln)",
-      "offset_y_label": "Display-Verschiebung vertikal (in Pixeln)"
+      "offset_y_label": "Display-Verschiebung vertikal (in Pixeln)",
+      "frame_time_ip_label": "Minimale Anzeigedauer der IP in Sekunden"
     },
     "menu": {
       "section": "Display-Menü",

@@ -270,6 +270,7 @@ conf_DISP_COLOR_HIGH='$conf_DISP_COLOR_HIGH'
 conf_DISP_COLOR_ALERT='$conf_DISP_COLOR_ALERT'
 conf_DISP_FONT_SIZE=$conf_DISP_FONT_SIZE
 conf_DISP_FRAME_TIME=$conf_DISP_FRAME_TIME
+conf_DISP_FRAME_TIME_IP=$conf_DISP_FRAME_TIME_IP
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_MENU_ENABLED=$conf_MENU_ENABLED
@@ -784,6 +785,16 @@ CONFIGDATA;
 					<div>
 						<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
 						<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+						<br>
+						<label for="conf_DISP_FRAME_TIME_IP"><?php echo L::config_display_frame_time_ip_label; ?></label><br>
+							<select name="conf_DISP_FRAME_TIME_IP" id="conf_DISP_FRAME_TIME_IP">
+								<?php
+									$display_frame_times_ip_array=array('1', '1.5', '2', '2.5', '3', '4', '5');
+									foreach($display_frame_times_ip_array as $display_frame_time_ip) {
+										echo "<option value='" . $display_frame_time_ip . "' " . ($config["conf_DISP_FRAME_TIME_IP"] == $display_frame_time_ip?" selected":"") . ">" . $display_frame_time_ip . "</option>";
+									}
+								?>
+							</select>
 					</div>
 
 					<div>
