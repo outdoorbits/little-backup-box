@@ -152,11 +152,11 @@ class ip_info(object):
 						base64_image	= ''
 						qr_link	= ''
 
-				indexLinksPlainSSL	+= f'  https://{IP}\n'
+				indexLinksPlainSSL	+= f'\n  https://{IP}\n'
 				indexLinksPlain8000	+= f'  http://{IP}:8000\n'
 				sambaLinksPlain		+= f'  smb://{IP}\n'
 
-				indexLinksHTMLSSL	+= f'  <a href="https://{IP}">https://{IP}{qr_link}</a><br>\n'
+				indexLinksHTMLSSL	+= f'<br>\n  <a href="https://{IP}">https://{IP}{qr_link}</a><br>\n'
 				indexLinksHTML8000	+= f'  <a href="http://{IP}:8000">http://{IP}:8000</a><br>\n'
 				sambaLinksHTML		+= f'  <a href="smb://{IP}">smb://{IP}</a><br>\n'
 
