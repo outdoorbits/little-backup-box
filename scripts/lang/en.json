@@ -690,7 +690,9 @@
     "slideshow": {
       "header": "Slideshow",
       "stop": "stop"
-    }
+    },
+    "ratings_save_button_next": "next",
+    "ratings_save_button_back": "back"
   },
   "units": {
     "minutes_long": "minutes",

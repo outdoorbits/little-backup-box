@@ -156,23 +156,26 @@
 
 				<div style="float:left;width: 100%;padding: 5px;text-align: right;">
 					<div style="float:left;width: 33%;text-align: left;padding: 0;">
+<!-- 						previous -->
 						<?php
 							if ($IMAGE_ID_PRE > 0) {
-								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"ID\" value=\"" . $IMAGE_ID_PRE . "\">&lt; " . L::view_ratings_save_button . "</button>";
+								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"ID\" value=\"" . $IMAGE_ID_PRE . "\">&lt; " . L::view_ratings_save_button_back . "</button>";
 							} else {
 								echo "&nbsp;";
 							}
 						?>
 					</div>
 
+<!-- 					this -->
 					<div style="float:left;width: 34%;text-align: center;padding: 0;">
 						<button style="margin-top: 2em;" type="submit" name="ID" value="<?php echo $IMAGE_ID; ?>"><?php echo L::view_ratings_save_button ?></button>
 					</div>
 
+<!-- 					next -->
 					<div style="float:left;width: 33%;text-align: right;padding: 0;">
 						<?php
 							if ($IMAGE_ID_POST > 0) {
-								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"ID\" value=\"" . $IMAGE_ID_POST . "\">" . L::view_ratings_save_button . " &gt;</button>";
+								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"ID\" value=\"" . $IMAGE_ID_POST . "\">" . L::view_ratings_save_button_next . " &gt;</button>";
 							} else {
 								echo "&nbsp;";
 							}

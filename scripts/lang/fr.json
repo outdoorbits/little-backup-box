@@ -690,7 +690,9 @@
     "slideshow": {
       "header": "Diaporama",
       "stop": "arrêt"
-    }
+    },
+    "ratings_save_button_next": "suivante",
+    "ratings_save_button_back": "dos"
   },
   "units": {
     "minutes_long": "minutes",
