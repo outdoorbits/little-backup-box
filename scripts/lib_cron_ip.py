@@ -129,11 +129,11 @@ class ip_info(object):
 
 			# create links
 			indexLinksPlainSSL		= ''
-			indexLinksPlain8000		= ''
+			indexLinksPlain8080		= ''
 			sambaLinksPlain			= ''
 
 			indexLinksHTMLSSL		= ''
-			indexLinksHTML8000		= ''
+			indexLinksHTML8080		= ''
 			sambaLinksHTML			= ''
 
 			for IP in self.__IPs:
@@ -153,11 +153,11 @@ class ip_info(object):
 						qr_link	= ''
 
 				indexLinksPlainSSL	+= f'\n  https://{IP}\n'
-				indexLinksPlain8000	+= f'  http://{IP}:8000\n'
+				indexLinksPlain8080	+= f'  http://{IP}:8080\n'
 				sambaLinksPlain		+= f'  smb://{IP}\n'
 
 				indexLinksHTMLSSL	+= f'<br>\n  <a href="https://{IP}">https://{IP}{qr_link}</a><br>\n'
-				indexLinksHTML8000	+= f'  <a href="http://{IP}:8000">http://{IP}:8000</a><br>\n'
+				indexLinksHTML8080	+= f'  <a href="http://{IP}:8080">http://{IP}:8080</a><br>\n'
 				sambaLinksHTML		+= f'  <a href="smb://{IP}">smb://{IP}</a><br>\n'
 
 			#send mail
@@ -166,31 +166,31 @@ class ip_info(object):
 				return(
 						mailObj.sendmail(
 						Subject		= f"{self.__lan.l('box_cronip_mail_info')}: {', '.join(self.__IPs)}",
-						TextPlain	= self.__getTextPlain(indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain),
-						TextHTML	= self.__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML)
+						TextPlain	= self.__getTextPlain(indexLinksPlainSSL,indexLinksPlain8080,sambaLinksPlain),
+						TextHTML	= self.__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8080,sambaLinksHTML)
 						)
 					)
 
-	def __getTextPlain(self,indexLinksPlainSSL,indexLinksPlain8000,sambaLinksPlain):
+	def __getTextPlain(self,indexLinksPlainSSL,indexLinksPlain8080,sambaLinksPlain):
 		return(f"""
 	*** {self.__lan.l('box_cronip_mail_main')}: ***
 	{self.__lan.l('box_cronip_mail_description_https')}:
 	{indexLinksPlainSSL}
 
 	{self.__lan.l('box_cronip_mail_description_http')}:
-	{indexLinksPlain8000}
+	{indexLinksPlain8080}
 
 	*** {self.__lan.l('box_cronip_mail_open_samba')}: ***
 	{sambaLinksPlain}""")
 
-	def __getTextHTML(self,indexLinksHTMLSSL,indexLinksHTML8000,sambaLinksHTML):
+	def __getTextHTML(self,indexLinksHTMLSSL,indexLinksHTML8080,sambaLinksHTML):
 		return(f"""
 	<b>{self.__lan.l('box_cronip_mail_main')}:</b><br>
 	{self.__lan.l('box_cronip_mail_description_https')}:<br>
 	{indexLinksHTMLSSL}
 	<br>
 	{self.__lan.l('box_cronip_mail_description_http')}:<br>
-	{indexLinksHTML8000}
+	{indexLinksHTML8080}
 	<br>
 	<b>{self.__lan.l('box_cronip_mail_open_samba')}:</b><br>
 	{sambaLinksHTML}"""

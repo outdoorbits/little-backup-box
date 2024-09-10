@@ -21,13 +21,6 @@
 ## const_WEB_ROOT_LBB
 ## USER_WWW_DATA
 
-# settings
-USER="lbb-desktop"
-
-# create user
-sudo useradd --create-home -s /bin/bash ${USER}
-
-
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
     echo "Run the script as a regular user"
@@ -38,6 +31,12 @@ fi
 if [ ! -f "/usr/bin/startx" ]; then
 	return
 fi
+
+# settings
+USER="lbb-desktop"
+
+# create user
+sudo useradd --create-home -s /bin/bash ${USER}
 
 # auto logon $USER
 ## enable auto login
@@ -92,6 +91,6 @@ sudo -u $USER mkdir -p $AUTOSTART_USER_DIR
 echo """[Desktop Entry]
 Type=Application
 Name=little-backup-box
-Exec="firefox -setDefaultBrowser --kiosk http://localhost"
+Exec="firefox -setDefaultBrowser --kiosk http://localhost:8080"
 """ | sudo -u $USER tee $AUTOSTART_USER_DIR/little-backup-box.desktop
 

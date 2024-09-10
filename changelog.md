@@ -1,5 +1,7 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2024-09-09: Integrate comitup into web UI</li>
+	<li>2024-09-09: Web UI: Change port for http from 8000 to 8080</li>
 	<li>2024-07-01: View: Add slideshow function to single view mode</li>
 	<li>2024-07-01: Speed up transfer to cloud by using rclone (use setup to switch back to rsync)</li>
 	<li>2024-04-08: Add support for NVMe SSD storage on Raspberry Pi 5</li>

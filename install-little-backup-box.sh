@@ -147,6 +147,11 @@ EOM
 	clear
 fi
 
+## re-install (update) comitup if installed
+if [ "$(dpkg-query -W --showformat='${db:Status-Status}' "comitup" 2>&1)" = "installed" ]; then
+	CHOICE_COMITUP="0"
+fi
+
 # Update source and perform the full system upgrade
 echo "apt update..."
 sudo apt update
@@ -511,6 +516,10 @@ yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_ports.conf" "/etc/apache2/ports.c
 yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_conf-available_ssl-params.conf" "/etc/apache2/conf-available/ssl-params.conf"
 yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_sites-available_little-backup-box.conf" "/etc/apache2/sites-available/little-backup-box.conf"
 
+if [ "${CHOICE_COMITUP}" = "0" ]; then
+	yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_sites-available_comitup.conf" "/etc/apache2/sites-available/comitup.conf"
+fi
+
 sudo mkdir -p /etc/apache2/includes
 sudo touch /etc/apache2/includes/password.conf
 
@@ -518,9 +527,13 @@ sudo a2enmod ssl
 sudo a2enmod headers
 sudo a2enmod proxy
 sudo a2enmod proxy_http
-# sudo a2enconf ssl-params # forces https
+
 sudo a2dissite 000-default
 sudo a2ensite little-backup-box
+
+if [ "${CHOICE_COMITUP}" = "0" ]; then
+	sudo a2ensite comitup
+fi
 
 # Configure Samba
 if [ "${SCRIPT_MODE}" = "update" ]; then
@@ -597,12 +610,8 @@ sudo service vsftpd restart
 source "${INSTALLER_DIR}/setup-graphical-environment.sh"
 
 # install comitup
-## re-install (update) if installed
-if [ "$(dpkg-query -W --showformat='${db:Status-Status}' "comitup" 2>&1)" = "installed" ]; then
-	CHOICE_COMITUP="0"
-fi
-
 if [ "${SCRIPT_MODE}" = "install" ] || [ "${CHOICE_COMITUP}" = "0" ]; then
+
 	case $CHOICE_COMITUP in
 	0)
 		if [ "${SCRIPT_MODE}" = "install" ]; then
@@ -631,13 +640,13 @@ Please connect your mobile or notebook to this wifi.
  Connect your mobile or notbook to the same wifi. If you use a display on your lbb, it will
  tell you its new IP. Connect to lbb:
  \Zb\Z1https\Zn://IP.IN.YOUR.WIFI (secure, certificate can't be verified automatically, please confirm it)
- \Zb\Z1http\Zn://IP.IN.YOUR.WIFI:8000 (insecure)
+ \Zb\Z1http\Zn://IP.IN.YOUR.WIFI:8080 (insecure)
 
  2. Alternatively can reach the web UI of Little Backup Box when you are connected to its
  hotspot as follows:
 
  \Zb\Z1https\Zn://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)
- \Zb\Z1http\Zn://10.41.0.1:8000 (insecure)
+ \Zb\Z1http\Zn://10.41.0.1:8080 (insecure)
 
  Please use the settings of the web UI to optimally adapt the Little Backup Box for you.
 
@@ -663,6 +672,7 @@ EOM
 		echo "You can install comitup later by script install-comitup.sh"
 		;;
 	esac
+
 fi
 
 # re-establish passwords
@@ -684,7 +694,7 @@ echo "*** Assuming your Little Backup Box gets the same IP address again after t
 echo "*** you can then reach the web UI as follows:"
 echo "*** "
 echo "*** https://${IP} (secure, certificate cannot be verified automatically, please confirm it)"
-echo "*** http://${IP}:8000 (insecure)"
+echo "*** http://${IP}:8080 (insecure)"
 echo "*** "
 echo "*** Please use the settings of the web UI to optimally adapt the Little Backup Box for you."
 echo "***"

@@ -68,10 +68,11 @@ class comitup(object):
 		ApachePortsConf	= '/etc/apache2/ports.conf'
 
 		BasicPorts	= [
-			8000,
-			443,
 			81,
-			8443
+			443,
+			8080,
+			8443,
+			8843
 		]
 
 		with open(ApachePortsConf,'w') as f:
@@ -83,6 +84,15 @@ class comitup(object):
 					f.write(f'Listen 80\n')
 
 		subprocess.run('service apache2 restart || service apache2 start', shell=True)
+
+	def check_hotspot(self):
+		try:
+			if '10.41.0.1' in subprocess.check_output(['sudo', 'ifconfig']).decode():
+				return('active')
+			else:
+				return('inactive')
+		except:
+			return('Error')
 
 	def reset(self):
 		subprocess.run(['sudo', 'comitup-cli', 'd'])
@@ -103,7 +113,7 @@ if __name__ == "__main__":
 
 		comitup().config(Password)
 
-	elif Mode == '--status':
+	elif Mode == '--set_status':
 		try:
 			Status	= sys.argv[2]
 		except:
@@ -111,6 +121,9 @@ if __name__ == "__main__":
 
 		if Status:
 			comitup().new_status(Status)
+
+	elif Mode == '--check_hotspot':
+		print(comitup().check_hotspot())
 
 	elif Mode == '--reset':
 		comitup().reset()

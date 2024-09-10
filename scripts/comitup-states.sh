@@ -19,4 +19,4 @@
 
 # catches the command from comitup and executes lib_comitup.py.py
 
-sudo python3 /var/www/little-backup-box/lib_comitup.py --status "${1}"
+sudo python3 /var/www/little-backup-box/lib_comitup.py --set_status "${1}"

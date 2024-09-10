@@ -36,6 +36,7 @@
 	}
 
 	$framed_pages	= array(
+		'comitup'		=> $PROTOCOL.$_SERVER['SERVER_ADDR'].($PROTOCOL == 'https://'?':8843':''),
 		'files'			=> '/files',
 		'rclone_gui'	=> $PROTOCOL.$HTTP_HOST.($PROTOCOL == "https://"?":8443":":81")
 	);
@@ -60,7 +61,6 @@
 <body <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-
 	<div style="position: absolute; left: 0; width: 100%; height: 90%; border: none; background: #FF0000;">
 		<iframe id="pageframe" src="<?php echo $framed_pages[$frame_index]; ?>" style="width: 100%; height: 100%; border: none; background: #FFFFFF;"></iframe>
 	<div>

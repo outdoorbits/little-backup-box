@@ -32,11 +32,13 @@
 	}
 
 	if ($config["conf_THEME"]=="dark") {
-		$nav_theme_class="navbar-dark bg-dark";
+		$nav_theme_class 	= "navbar-dark bg-dark";
 	} else {
-		$nav_theme_class="navbar-light bg-light";
+		$nav_theme_class	= "navbar-light bg-light";
 	}
 	$scriptname=basename($_SERVER["SCRIPT_FILENAME"]);
+
+	$comitup_hotspot	= trim(shell_exec("sudo python3 $WORKING_DIR/lib_comitup.py --check_hotspot")) == 'active';
 ?>
 
 <nav class="navbar navbar-expand-sm <?php echo $nav_theme_class; ?>">
@@ -58,6 +60,13 @@
 		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
 				<li class="nav-item"><a class="nav-link" href="/frame.php?page=files"><?php echo L::mainmenue_filebrowser; ?></a></li>
+				<?php
+					if ($comitup_hotspot) {
+						?>
+							<li class="nav-item"><a class="nav-link" href="/frame.php?page=comitup">comitup</a></li>
+						<?php
+					}
+				?>
 			</ul>
 		</div>
 
