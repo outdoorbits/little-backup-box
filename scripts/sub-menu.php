@@ -38,6 +38,8 @@
 	}
 	$scriptname=basename($_SERVER["SCRIPT_FILENAME"]);
 
+	exec('which comitup', $comitup_path, $return_code);
+	$comitup_installed	= $return_code == 0;
 	$comitup_hotspot	= trim(shell_exec("sudo python3 $WORKING_DIR/lib_comitup.py --check_hotspot")) == 'active';
 ?>
 
@@ -61,9 +63,9 @@
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
 				<li class="nav-item"><a class="nav-link" href="/frame.php?page=files"><?php echo L::mainmenue_filebrowser; ?></a></li>
 				<?php
-					if ($comitup_hotspot) {
+					if ($comitup_installed) {
 						?>
-							<li class="nav-item"><a class="nav-link" href="/frame.php?page=comitup">comitup</a></li>
+							<li class="nav-item"><a class="nav-link<?php echo $comitup_hotspot?'':' disabled'; ?>" href="/frame.php?page=comitup">comitup</a></li>
 						<?php
 					}
 				?>
