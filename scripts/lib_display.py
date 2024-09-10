@@ -61,7 +61,10 @@ class display(object):
 	def __start_display(self):
 		if self.conf_DISP and subprocess.run(f"pgrep -af 'python3' | grep '{self.WORKING_DIR}/display.p[y]'",shell=True,stdout=subprocess.DEVNULL).returncode == 1:
 			# grep: returncode=1 if no matches found
-			subprocess.run(f"sh -c '{self.python} {self.WORKING_DIR}/display.py &'",shell=True)
+			try:
+				subprocess.run(f"sh -c '{self.python} {self.WORKING_DIR}/display.py &'",shell=True)
+			except:
+				print('Error: Display daemon not started')
 
 	def message(self, RawLines, logging=True): # Lines = ['abc','def',...]
 		self.__start_display()

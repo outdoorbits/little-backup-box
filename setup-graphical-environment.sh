@@ -38,6 +38,13 @@ USER="lbb-desktop"
 # create user
 sudo useradd --create-home -s /bin/bash ${USER}
 
+# remove wireplumber - causing high cpu load
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt purge wireplumber -y
+
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt autoremove -y
+
 # auto logon $USER
 ## enable auto login
 sudo raspi-config nonint do_boot_behaviour B4
