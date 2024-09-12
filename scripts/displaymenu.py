@@ -302,7 +302,10 @@ class menu(object):
 				ButtonFunction	= 'left'
 
 		# define button
-		self.buttons[GPIO_PIN]				= Button(pin=GPIO_PIN, pull_up=self.GPIO_MENU_BUTTON_RESISTOR_PULL_UP, bounce_time=self.conf_MENU_BUTTON_BOUNCETIME / 1000)
+		try:
+			self.buttons[GPIO_PIN]				= Button(pin=GPIO_PIN, pull_up=self.GPIO_MENU_BUTTON_RESISTOR_PULL_UP, bounce_time=self.conf_MENU_BUTTON_BOUNCETIME / 1000)
+		except:
+			return()
 
 		# add events to buttons
 		if ButtonFunction == 'up':

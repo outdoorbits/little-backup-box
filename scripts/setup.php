@@ -67,9 +67,10 @@
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
 		}
 
-		// restart display using new config xxx disabled because of bug: https://raspberrypi.stackexchange.com/questions/148946/lgpio-can-not-open-gpiochip-lgpio-seems-unable-to-open-gpiochip-devices
-// 		exec("sudo pkill -f ${WORKING_DIR}/display.py");
-// 		exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "' > /dev/null 2>&1 &");
+		// restart display using new config
+		exec("sudo python3 $WORKING_DIR/lib_display.py 'set:kill'");
+		exec("sudo pkill -f '$WORKING_DIR/lib_display.py'");
+		exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'");
 	}
 
 	if (isset($_GET['check_update'])) {

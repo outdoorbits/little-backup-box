@@ -47,6 +47,7 @@
 # time=2:	Display time in seconds (empty for standard config)
 # temp:		show previous screen again after this
 # hidden:	markertext to write into const_DISPLAY_CONTENT_OLD_FILE
+# kill:		terminate display daemen
 
 import os
 import shutil
@@ -190,8 +191,11 @@ class DISPLAY(object):
 		## start display menu
 		if self.conf_MENU_ENABLED:
 			# start displaymenu as iternal background process
-			thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines,self.__setup))
-			thread.start()
+			try:
+				thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines,self.__setup))
+				thread.start()
+			except:
+				pass
 
 	def calculate_LineSize(self):
 		if self.hardware_ready:
@@ -339,7 +343,7 @@ class DISPLAY(object):
 		# start endless loop to display content
 		while(True):
 			import_old_file 		= True
-			temp_screen	= False
+			temp_screen				= False
 			hidden_info				= ''
 
 			# check for new files earlier than conf_DISP_FRAME_TIME
@@ -378,17 +382,25 @@ class DISPLAY(object):
 									SettingType	= setting
 									SettingValue	= ''
 
+								if SettingType == 'kill':
+									# remove content file
+									os.remove(ContentFile)
+
+									# exit function
+									return('display.py process killed.')
+									sys.exit(0)
+
 								if SettingType == 'clear':
-									import_old_file = False
+									import_old_file	= False
 
 								if SettingType == 'temp':
-									temp_screen = True
+									temp_screen		= True
 
 								if SettingType == 'hidden':
-									hidden_info	= SettingValue
+									hidden_info		= SettingValue
 
 								if SettingType == 'time' and float(SettingValue) >= 0:
-									FrameTime	= float(SettingValue)
+									FrameTime		= float(SettingValue)
 
 						elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
 
@@ -444,4 +456,6 @@ class DISPLAY(object):
 if __name__ == "__main__":
 	display	= DISPLAY()
 	display.main()
+
+	sys.exit()
 

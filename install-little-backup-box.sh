@@ -199,7 +199,7 @@ fi
 echo "Cloning Little Backup Box"
 cd
 
-rm -R ${INSTALLER_DIR}
+sudo rm -R ${INSTALLER_DIR}
 git clone --branch "${branch}" https://github.com/outdoorbits/little-backup-box.git
 GIT_CLONE=$?
 if [ "${GIT_CLONE}" -gt 0 ]; then
@@ -533,6 +533,8 @@ sudo a2ensite little-backup-box
 
 if [ "${CHOICE_COMITUP}" = "0" ]; then
 	sudo a2ensite comitup
+else
+  echo 'XXXX'
 fi
 
 # Configure Samba
