@@ -189,10 +189,12 @@ class DISPLAY(object):
 		self.calculate_LineSize()
 
 		## start display menu
+		self.menu_controller	= displaymenu.MENU_CONTROLLER()
+
 		if self.conf_MENU_ENABLED:
 			# start displaymenu as iternal background process
 			try:
-				thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines,self.__setup))
+				thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines, self.__setup, self.menu_controller))
 				thread.start()
 			except:
 				pass
@@ -385,6 +387,10 @@ class DISPLAY(object):
 								if SettingType == 'kill':
 									# remove content file
 									os.remove(ContentFile)
+
+									# stop menu
+									self.menu_controller.terminate()
+									time.sleep(1) # wait until menu is stopped
 
 									# exit function
 									return('display.py process killed.')

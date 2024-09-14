@@ -533,8 +533,6 @@ sudo a2ensite little-backup-box
 
 if [ "${CHOICE_COMITUP}" = "0" ]; then
 	sudo a2ensite comitup
-else
-  echo 'XXXX'
 fi
 
 # Configure Samba

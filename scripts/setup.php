@@ -69,7 +69,7 @@
 
 		// restart display using new config
 		exec("sudo python3 $WORKING_DIR/lib_display.py 'set:kill'");
-		exec("sudo pkill -f '$WORKING_DIR/lib_display.py'");
+		sleep(2.5); // Time until display and menu are down takes up to two seconds.
 		exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'");
 	}
 

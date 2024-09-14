@@ -59,7 +59,7 @@ class display(object):
 		self.__start_display()
 
 	def __start_display(self):
-		if self.conf_DISP and subprocess.run(f"sudo pgrep -f '{self.WORKING_DIR}/display.p[y]'", shell=True, stdout=subprocess.DEVNULL).returncode != 0:
+		if self.conf_DISP and subprocess.run(f'sudo pgrep -fa "{self.WORKING_DIR}/display.p[y]" | grep -v "pgrep"', shell=True, stdout=subprocess.DEVNULL).returncode != 0:
 			# grep: returncode=1 if no matches found
 			try:
 				subprocess.run(f"sh -c 'sudo {self.python} {self.WORKING_DIR}/display.py &'", shell=True)

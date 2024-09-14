@@ -21,7 +21,6 @@
 # It can be used by hardware-buttons. Please read the Wiki at https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu.
 
 from gpiozero import Button
-from signal import pause
 import sys
 import time
 import os
@@ -33,10 +32,19 @@ import lib_network
 import lib_storage
 import lib_system
 
+#import lib_debug
+#xx	= lib_debug.debug()
+
+class MENU_CONTROLLER(object):
+	def __init__(self):
+		self.proceed	= True
+
+	def terminate(self):
+		self.proceed	= False
 
 class menu(object):
 
-	def __init__(self,DISPLAY_LINES,setup):
+	def __init__(self, DISPLAY_LINES, setup, menu_controller):
 
 		self.DISPLAY_LINES	= DISPLAY_LINES;
 		self.__setup			= setup
@@ -256,8 +264,9 @@ class menu(object):
 
 		self.GPIO_init()
 
-		while True:
-			pause()
+		# iternal loop
+		while menu_controller.proceed:
+			time.sleep(1)
 
 	def GPIO_init(self):
 		if self.conf_MENU_BUTTON_COMBINATION:
@@ -316,7 +325,7 @@ class menu(object):
 
 		if ButtonFunction == 'down':
 			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
-				self.buttons[GPIO_PIN].when_pressed	= self.move_down
+				self.buttons[GPIO_PIN].when_pressed		= self.move_down
 			else:
 				self.buttons[GPIO_PIN].when_released	= self.move_down
 
@@ -331,12 +340,6 @@ class menu(object):
 				self.buttons[GPIO_PIN].when_pressed	= self.move_right
 			else:
 				self.buttons[GPIO_PIN].when_released	= self.move_right
-
-	def __del__(self):
-		for GPIO_PIN in self.buttons.keys():
-			self.buttons[GPIO_PIN].when_pressed		= None
-			self.buttons[GPIO_PIN].when_released	= None
-
 
 	def reset(self, ShowMenu=False):
 		self.MENU_LEVEL		= 0 # integer
@@ -521,7 +524,9 @@ class menu(object):
 
 	#setup=lib_setup.setup()
 
-	#menuobj	= menu(DISPLAY_LINES=10, setup=setup)
+	#menu_controller	= MENU_CONTROLLER()
+
+	#menuobj	= menu(DISPLAY_LINES=10, setup=setup, menu_controller=menu_controller)
 
 	#menuobj.move_right()#debug
 	#menuobj.move_right()#debug
