@@ -678,7 +678,7 @@ fi
 # re-establish passwords
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "Restore password-protection"
-	sudo python3 "${const_WEB_ROOT_LBB}/lib_password.py" "${conf_PASSWORD}"
+	sudo python3 "${const_WEB_ROOT_LBB}/lib_password.py" "$(echo $conf_PASSWORD | base64 --decode)"
 fi
 
 # setup hardware

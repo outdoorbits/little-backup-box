@@ -19,6 +19,7 @@
 
 import lib_setup
 
+import base64
 import datetime
 import os
 import pathlib
@@ -42,7 +43,7 @@ class log(object):
 
 			#replace passwords out of logfile
 			for PWD_var in self.hide_passwords_list:
-				PWD	= self.setup.get_val(PWD_var)
+				PWD	= base64.b64decode(self.setup.get_val(PWD_var)).decode("utf-8")
 				if PWD != '':
 					Message	= Message.replace(PWD, '***')
 

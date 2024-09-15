@@ -130,6 +130,7 @@
 			} elseif (
 					strpos("_" . $pwd_1,"\\") or
 					strpos("_" . $pwd_1,"'") or
+					strpos("_" . $pwd_1,"\"") or
 					strpos("_" . $pwd_1," ")
 					) {
 				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_characters_not_allowed,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
@@ -200,31 +201,31 @@
 		$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
 		$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?'true':'false';
 
-		$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
-
 		if ($conf_MAIL_PASSWORD != '') {
 			if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
-				$conf_MAIL_PASSWORD	= "";
+				$conf_MAIL_PASSWORD	= '';
+			} else {
+				$conf_MAIL_PASSWORD					= base64_encode($conf_MAIL_PASSWORD);
 			}
 		}
 
 		if ($conf_RSYNC_PASSWORD != '') {
 			if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_PASSWORD, $conf_RSYNC_PASSWORD)) {
-				$conf_RSYNC_PASSWORD	= "";
+				$conf_RSYNC_PASSWORD	= '';
+			} else {
+				$conf_RSYNC_PASSWORD				= base64_encode($conf_RSYNC_PASSWORD);
 			}
 		}
 
+		$conf_PASSWORD								= $conf_PASSWORD_OLD; // conf_PASSWORD_OLD is given as base64
 		if (isset($conf_PASSWORD_REMOVE)) {
-			$conf_PASSWORD_LINE="conf_PASSWORD=''";
-
+			$conf_PASSWORD='';
 			exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py"); # remove password
-
 			$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_remove, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 		} elseif ($conf_PASSWORD_1 != '') {
 			if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
-				$conf_PASSWORD_LINE="conf_PASSWORD='$conf_PASSWORD_1'";
-
 				exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $conf_PASSWORD_1 . "'");
+				$conf_PASSWORD=base64_encode($conf_PASSWORD_1);
 
 				if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
 					$SetupMessages	.= popup(L::config_alert_password_wifi_size_error, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
@@ -312,7 +313,8 @@ conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
 conf_VPN_TYPE_RSYNC='$conf_VPN_TYPE_RSYNC'
 conf_VPN_TYPE_CLOUD='$conf_VPN_TYPE_CLOUD'
 conf_VPN_TIMEOUT=$conf_VPN_TIMEOUT
-$conf_PASSWORD_LINE
+conf_PASSWORD='$conf_PASSWORD'
+conf_PASSWORD_ENCRYPTION='$conf_PASSWORD_ENCRYPTION'
 
 CONFIGDATA;
 
@@ -435,7 +437,10 @@ CONFIGDATA;
 							exec ("sudo chown www-data:www-data '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
 						}
 
-						# Feedback files in place
+						# rewrite config to actual version
+						exec("sudo python3 $WORKING_DIR/lib_setup.py");
+
+						# Feedback: Files in place
 						exec("sudo python3 $WORKING_DIR/lib_display.py ':" . L::config_display_message_settings_uploaded_1 . "' ':" . L::config_display_message_settings_uploaded_2 . "' > /dev/null 2>&1 &");
 						$SetupMessages	.= popup(L::config_alert_settings_upload_success. " ". $Files_Copied, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 
@@ -443,8 +448,8 @@ CONFIGDATA;
 						$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
 
 						# set new password
-						if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,$config["conf_PASSWORD"],$config["conf_PASSWORD"])) {
-							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $config["conf_PASSWORD"] . "'");
+						if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,base64_decode($config["conf_PASSWORD"]),base64_decode($config["conf_PASSWORD"]))) {
+							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . base64_decode($config["conf_PASSWORD"]) . "'");
 							$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 						} else {
 							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py");
@@ -962,7 +967,7 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_mail_password_header; ?></h3>
 					<label for="conf_MAIL_PASSWORD"><?php echo L::config_mail_password_label; ?></label><br>
-					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MAIL_PASSWORD" name="conf_MAIL_PASSWORD" size="20" value="<?php echo $config['conf_MAIL_PASSWORD']; ?>">
+					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MAIL_PASSWORD" name="conf_MAIL_PASSWORD" size="20" value="<?php echo base64_decode($config['conf_MAIL_PASSWORD']); ?>">
 
 				<h3><?php echo L::config_mail_sender_header; ?></h3>
 					<label for="conf_MAIL_FROM"><?php echo L::config_mail_sender_label; ?></label><br>
@@ -1007,7 +1012,7 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_rsync_password_header; ?></h3>
 					<label for="conf_RSYNC_PASSWORD"><?php echo L::config_rsync_password_label; ?></label><br>
-					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_RSYNC_PASSWORD" name="conf_RSYNC_PASSWORD" size="20" value="<?php echo $config['conf_RSYNC_PASSWORD']; ?>">
+					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_RSYNC_PASSWORD" name="conf_RSYNC_PASSWORD" size="20" value="<?php echo base64_decode($config['conf_RSYNC_PASSWORD']); ?>">
 
 				<h3><?php echo L::config_rsync_module_header; ?></h3>
 					<label for="conf_RSYNC_SERVER_MODULE"><?php echo L::config_rsync_module_label1 .  $config_standard['conf_RSYNC_SERVER_MODULE'] . L::config_rsync_module_label2; ?></label><br>
@@ -1531,6 +1536,7 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_password_header; ?></h3>
 					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
+					<input type="hidden" id="conf_PASSWORD_ENCRYPTION" name="conf_PASSWORD_ENCRYPTION" value="<?php echo $config['conf_PASSWORD_ENCRYPTION']; ?>">
 					<label for="conf_PASSWORD_1"><p><?php echo L::config_password_global_lbb_label . '</p><p style="text-decoration: underline;">' . L::config_password_global_wifi_label . '</p><p><b>' . L::config_alert_password_characters_not_allowed . '</b>'; ?></label></p>
 					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
 					<label for="conf_PASSWORD_2"><?php echo L::config_password_repeat_label; ?></label><br>

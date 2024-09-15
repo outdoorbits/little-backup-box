@@ -309,7 +309,6 @@
     "alert_password_global": "Global password",
     "alert_password_not_identical": "Repeated password is not identical.",
     "alert_password_too_short": "Password must be at least 5 characters long.",
-    "alert_password_characters_not_allowed": "The password cannot contain double quotes (&quot;), spaces or backslash (&bsol;).",
     "message_settings_saved": "config.cfg was written successfully.",
     "alert_settings_upload_not_zip": "The file you are trying to upload is not a .zip file. Please try again.",
     "alert_settings_upload_success": "Your settings file has been uploaded and this files have been installed:",
@@ -575,7 +574,8 @@
       "virtual_keyboard_enable_header": "Virtual keyboard",
       "virtual_keyboard_enable_label": "Enable virtual keyboard",
       "description": "Settings that affect a screen with a graphical user interface (desktop)."
-    }
+    },
+    "alert_password_characters_not_allowed": "The password must not contain quotation marks (&sbquo;), double quotation marks (&quot;), spaces or backslashes (&bsol;)."
   },
   "tools": {
     "tools": "Tools",

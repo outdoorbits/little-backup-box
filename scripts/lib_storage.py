@@ -18,6 +18,7 @@
 #######################################################################
 
 import argparse
+import base64
 import glob
 import datetime
 import math
@@ -352,7 +353,7 @@ class storage(object):
 	def __mount_cloud_rsync(self):
 
 		conf_RSYNC_USER				= self.__setup.get_val('conf_RSYNC_USER')
-		conf_RSYNC_PASSWORD			= self.__setup.get_val('conf_RSYNC_PASSWORD')
+		conf_RSYNC_PASSWORD			= base64.b64decode(self.__setup.get_val('conf_RSYNC_PASSWORD')).decode("utf-8")
 		conf_RSYNC_SERVER			= self.__setup.get_val('conf_RSYNC_SERVER')
 		conf_RSYNC_PORT				= self.__setup.get_val('conf_RSYNC_PORT')
 		conf_RSYNC_SERVER_MODULE	= self.__setup.get_val('conf_RSYNC_SERVER_MODULE')

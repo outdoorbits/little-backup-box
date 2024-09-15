@@ -120,7 +120,6 @@
     "save_settings_download_header": "Herunterladen",
     "save_settings_upload_header": "Hochladen",
     "save_settings_upload_label": "Wählen Sie die Einstellungsdatei",
-    "alert_password_characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&quot;), Leerzeichen oder Backslash (&bsol;) enthalten.",
     "alert_password_not_identical": "Wiederholtes Passwort ist nicht identisch.",
     "alert_password_too_short": "Das Passwort muss mindestens 5 Zeichen lang sein.",
     "alert_settings_upload_not_zip": "Die Datei, die Sie hochladen möchten, ist keine ZIP-Datei. Bitte versuche es erneut.",
@@ -352,7 +351,8 @@
       "virtual_keyboard_enable_header": "Virtuelle Tastatur",
       "virtual_keyboard_enable_label": "Virtuelle Tastatur aktivieren",
       "description": "Einstellungen, welche einen Bildschirm mit grafischer Benutzeroberfläche (Desktop) betreffen."
-    }
+    },
+    "alert_password_characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&sbquo;), doppelte Anführungszeichen (&quot;), Leerzeichen oder Backslashs (&bsol;) enthalten."
   },
   "tools": {
     "tools": "Werkzeug",

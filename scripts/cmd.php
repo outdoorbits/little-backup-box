@@ -180,7 +180,7 @@ switch($CMD) {
 $PASSWORD_ASK	= false;
 if ($PASSWORD_REQ) {
 	if ($PWD !== '') {
-		$PASSWORD_ASK	= ($PWD !== $config['conf_PASSWORD']);
+		$PASSWORD_ASK	= ($PWD !== base64_decode($config['conf_PASSWORD']));
 	} else {
 		$PASSWORD_ASK	= true;
 	}

@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import base64
 import os
 import subprocess
 import sys
@@ -40,7 +41,7 @@ class comitup(object):
 	def config(self, Password=None): # use general password if None is given
 
 		if Password is None:
-			Password	= self.__setup.get_val('conf_PASSWORD')
+			Password	= base64.b64decode(self.__setup.get_val('conf_PASSWORD')).decode("utf-8")
 
 		try:
 			with open(self.configfile,'w') as f:

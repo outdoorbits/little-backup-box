@@ -120,7 +120,6 @@
     "save_settings_download_header": "Descargar",
     "save_settings_upload_header": "Subir",
     "save_settings_upload_label": "Seleccione el archivo de configuración",
-    "alert_password_characters_not_allowed": "La contraseña no puede contener comillas (&quot;), espacios ni barra invertida (&bsol;).",
     "alert_password_not_identical": "La contraseña repetida no es idéntica.",
     "alert_password_too_short": "La contraseña debe contener al menos 5 caracteres.",
     "alert_settings_upload_not_zip": "El archivo que está intentando cargar no es un archivo .zip. Inténtelo de nuevo.",
@@ -352,7 +351,8 @@
       "virtual_keyboard_enable_header": "Teclado virtual",
       "virtual_keyboard_enable_label": "Habilitar teclado virtual",
       "description": "Configuraciones que afectan a una pantalla con interfaz gráfica de usuario (escritorio)."
-    }
+    },
+    "alert_password_characters_not_allowed": "La contraseña no puede contener comillas (&sbquo;), comillas dobles (&quot;), espacios ni barras invertidas (&bsol;)."
   },
   "tools": {
     "tools": "Herramientas",

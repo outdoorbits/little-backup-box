@@ -120,7 +120,6 @@
     "save_settings_download_header": "Télécharger",
     "save_settings_upload_header": "Télécharger",
     "save_settings_upload_label": "Sélectionnez le fichier de paramètres",
-    "alert_password_characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&quot;), d'espaces ou de barre oblique inverse (&bsol;).",
     "alert_password_not_identical": "Le mot de passe répété n'est pas identique.",
     "alert_password_too_short": "Le mot de passe doit comporter au moins 5 caractères.",
     "alert_settings_upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",
@@ -352,7 +351,8 @@
       "virtual_keyboard_enable_header": "Clavier virtuel",
       "virtual_keyboard_enable_label": "Activer le clavier virtuel",
       "description": "Paramètres qui affectent un écran avec une interface utilisateur graphique (bureau)."
-    }
+    },
+    "alert_password_characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&sbquo;), de guillemets doubles (« &quot;), d'espaces ou de barres obliques inverses (&bsol;)."
   },
   "tools": {
     "tools": "Outils",

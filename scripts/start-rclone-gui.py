@@ -34,7 +34,7 @@ class start_rclone_gui(object):
 		#setup
 		self.RCLONE_CONFIG_FILE	= f"{self.__setup.get_val('const_MEDIA_DIR')}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 
-		self.conf_PASSWORD				= self.__setup.get_val('conf_PASSWORD')
+		self.conf_PASSWORD				= base64.b64decode(self.__setup.get_val('conf_PASSWORD')).decode("utf-8")
 
 	def run(self):
 		# kill rclone-gui

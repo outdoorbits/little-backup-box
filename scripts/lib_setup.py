@@ -19,6 +19,7 @@
 
 # Provides the standard-setup,the types of constants and routines to handle the setup
 
+import base64
 import os
 import subprocess
 import sys
@@ -182,7 +183,14 @@ class setup(object):
 				# set value
 				self.config[conf_var]	= {'value': self.__norm_value(conf_val, conf_type), 'type': conf_type}
 
-			return
+			# migrate all passwords to base64
+			if self.config['conf_PASSWORD_ENCRYPTION']['value'] == 'plain':
+				for PWD in ['conf_MAIL_PASSWORD', 'conf_RSYNC_PASSWORD', 'conf_PASSWORD']:
+					self.config[PWD]['value']	= base64.b64encode(bytes(self.config[PWD]['value'], 'utf-8')).decode('utf-8')
+
+				self.config['conf_PASSWORD_ENCRYPTION']['value']	= 'base64'
+
+			return()
 
 	def __get_config_standard(self):
 		return(
@@ -262,7 +270,8 @@ class setup(object):
 					'conf_VPN_TYPE_RSYNC':								{'value': 'none', 'type': 'str'},
 					'conf_VPN_TYPE_CLOUD':								{'value': 'none', 'type': 'str'},
 					'conf_VPN_TIMEOUT':									{'value': 20, 'type': 'int'},
-					'conf_PASSWORD':									{'value': '', 'type': 'str'}
+					'conf_PASSWORD':									{'value': '', 'type': 'str'},
+					'conf_PASSWORD_ENCRYPTION':							{'value': 'plain', 'type': 'str'}
 				}
 		)
 
@@ -338,7 +347,7 @@ class setup(object):
 
 if __name__ == "__main__":
 	# write config files
-	setup	= setup(True)
+	setup	= setup(rewrite_configfile=True)
 
 
 

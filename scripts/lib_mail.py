@@ -20,6 +20,7 @@
 import lib_log
 import lib_setup
 
+import base64
 import os
 import re
 import sys
@@ -43,7 +44,7 @@ class mail(object):
 		self.conf_SMTP_PORT 		= self.setup.get_val('conf_SMTP_PORT')
 		self.conf_MAIL_SECURITY 	= self.setup.get_val('conf_MAIL_SECURITY')
 		self.conf_MAIL_USER 		= self.setup.get_val('conf_MAIL_USER')
-		self.conf_MAIL_PASSWORD 	= self.setup.get_val('conf_MAIL_PASSWORD')
+		self.conf_MAIL_PASSWORD 	= base64.b64decode(self.setup.get_val('conf_MAIL_PASSWORD')).decode("utf-8")
 		self.conf_MAIL_FROM 		= self.setup.get_val('conf_MAIL_FROM')
 		self.conf_MAIL_TO 			= self.setup.get_val('conf_MAIL_TO')
 
