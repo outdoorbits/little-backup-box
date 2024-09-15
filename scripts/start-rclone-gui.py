@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import base64
 import os
 import subprocess
 import sys
@@ -39,7 +40,7 @@ class start_rclone_gui(object):
 	def run(self):
 		# kill rclone-gui
 		try:
-			subprocess.run("sudo pkill -f 'rclone rcd --rc-web-gui'",shell=True)
+			subprocess.run(['sudo', 'pkill', '-f', 'rclone rcd --rc-web-gui'])
 		except:
 			print("Error: sudo pkill -f 'rclone rcd --rc-web-gui'")
 
@@ -51,7 +52,7 @@ class start_rclone_gui(object):
 				print(f"open({self.RCLONE_CONFIG_FILE},'w')")
 
 		try:
-			subprocess.run(f"sudo chmod 777 {self.RCLONE_CONFIG_FILE}")
+			subprocess.run(['sudo', 'chmod', '777', self.RCLONE_CONFIG_FILE])
 		except:
 			print(f"Error: sudo chmod 777 {self.RCLONE_CONFIG_FILE}")
 
