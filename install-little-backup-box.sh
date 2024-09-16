@@ -185,6 +185,9 @@ sudo DEBIAN_FRONTEND=noninteractive \
 # disable services
 sudo systemctl disable openvpn.service
 
+# change hostname
+sudo raspi-config nonint do_hostname little-backup-box
+
 # raspberry pi 5: usb_max_current_enable
 CONFIG_TXT="/boot/firmware/config.txt"
 VAR="usb_max_current_enable"

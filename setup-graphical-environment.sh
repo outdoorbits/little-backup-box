@@ -98,6 +98,7 @@ sudo -u $USER mkdir -p $AUTOSTART_USER_DIR
 echo """[Desktop Entry]
 Type=Application
 Name=little-backup-box
-Exec="firefox -setDefaultBrowser --kiosk http://localhost:8080"
+Exec=firefox -setDefaultBrowser -private --kiosk=http://localhost:8080
+Terminal=false
 """ | sudo -u $USER tee $AUTOSTART_USER_DIR/little-backup-box.desktop
 
