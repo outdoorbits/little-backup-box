@@ -91,15 +91,15 @@ As there is no manual available anymore, the github-wiki should replace it one d
 An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select "Raspberry Pi OS (other)" > "Raspberry Pi OS Lite (32-bit)" or "Raspberry Pi OS Lite (64-bit)".<br />
 In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens the options-dialog. Here you can ...
 		<ul>
-			<li>enable ssh</li>
-			<li>change the password for user pi (standard password is "raspberry")</li>
-			<li>define wifi settings</li>
+			<li>enable ssh (obligatory!)</li>
+			<li>set a password for user pi (obligatory!)</li>
+			<li>define wifi settings (optional)</li>
 		</ul>
 	</li>
-	<li>If you couldn't activate ssh in the previous step, just add an empty (text-)file "ssh" to the new boot-partition to enable ssh.</li>
-	<li>Do not change any more settings (language!).</li>
+	<li><b>Keep user pi!!!</b></li>
+	<li><b>Do not change any more settings (language!).</b></li>
 	<li>Make sure that your Raspberry Pi is connected to the internet.</li>
-	<li>login to your Raspberry Pi. If you are using ssh, there is a report about problems using WINSCP. While WINSCP itself uses putty, it's reported to work with native putty.</li>
+	<li>Login to your Raspberry Pi. If you are using ssh, there is a report about problems using WINSCP. While WINSCP itself uses putty, it's reported to work with native putty.</li>
 	<li>
 	Run the following command on the Raspberry Pi:<br />
 	<code>branch='main'; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/${branch}/install-little-backup-box.sh | bash -s -- ${branch} 2> install-error.log</code><br /><br />
