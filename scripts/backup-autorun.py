@@ -147,7 +147,8 @@ class backup_autorun(object):
 		conf_BACKUP_DEFAULT_SOURCE2				= self.__setup.get_val('conf_BACKUP_DEFAULT_SOURCE2')
 		conf_BACKUP_DEFAULT_TARGET2				= self.__setup.get_val('conf_BACKUP_DEFAULT_TARGET2')
 
-		conf_BACKUP_MOVE_FILES					= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
+		conf_BACKUP_DEFAULT_MOVE_FILES			= self.__setup.get_val('conf_BACKUP_DEFAULT_MOVE_FILES')
+		conf_BACKUP_DEFAULT2_MOVE_FILES			= self.__setup.get_val('conf_BACKUP_DEFAULT2_MOVE_FILES')
 		conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= self.__setup.get_val('conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS')
 		conf_BACKUP_DEFAULT_UPDATE_EXIF			= self.__setup.get_val('conf_BACKUP_DEFAULT_UPDATE_EXIF')
 		conf_POWER_OFF							= self.__setup.get_val('conf_POWER_OFF')
@@ -158,7 +159,7 @@ class backup_autorun(object):
 			PrimaryBackupConfig	= [
 				f"--SourceName", f"{conf_BACKUP_DEFAULT_SOURCE}",
 				f"--TargetName", f"{conf_BACKUP_DEFAULT_TARGET}",
-				f"--move-files", f"{conf_BACKUP_MOVE_FILES}",
+				f"--move-files", f"{conf_BACKUP_DEFAULT_MOVE_FILES}",
 				f"--sync-database", "False",
 				f"--generate-thumbnails", f"{conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS}",
 				f"--update-exif", f"{conf_BACKUP_DEFAULT_UPDATE_EXIF}",
@@ -169,7 +170,8 @@ class backup_autorun(object):
 		if conf_BACKUP_DEFAULT_SOURCE2 != 'none' and conf_BACKUP_DEFAULT_TARGET2 != 'none':
 			SecundaryBackupConfig	= [
 				f"--SecSourceName", f"{conf_BACKUP_DEFAULT_SOURCE2}",
-				f"--SecTargetName", f"{conf_BACKUP_DEFAULT_TARGET2}"
+				f"--SecTargetName", f"{conf_BACKUP_DEFAULT_TARGET2}",
+				f"--move-files2", f"{conf_BACKUP_DEFAULT2_MOVE_FILES}",
 			]
 
 		if PrimaryBackupConfig:

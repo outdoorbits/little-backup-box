@@ -161,7 +161,7 @@
         "device_folder_pattern": "Para usar como patrón en Configuración"
       },
       "general_settings_header": "Configuración general",
-      "move_files_label": "Déplacer des fichiers au lieu de les copier ?<br>Attention : aucun fichier ne sera supprimé des partitions marquées comme stockage cible.",
+      "move_files_label": "¿Mover archivos en lugar de copiarlos?",
       "cloud": {
         "target_basedir_header": "Carpeta de inicio en servidores en la nube",
         "target_basedir_label": "Copia de seguridad en el servidor de la nube se realiza en este directorio.",
@@ -170,7 +170,9 @@
         "sync_parameter_header": "Configuración de transferencia",
         "files_stay_in_place_header": "Ubicación estática",
         "files_stay_in_place_label": "Les fichiers restent-ils dans l'emplacement de stockage immédiatement après le téléchargement ou sont-ils triés ? (Cela n'affecte que rclone !)"
-      }
+      },
+      "move_files_header": "Copiar o mover archivos",
+      "default2_settings_header": "Configuración de copia de seguridad secundaria predeterminada"
     },
     "imageviewer": {
       "section": "Visor de imágenes View",
@@ -426,7 +428,6 @@
         "summary": "Resumen",
         "no_backup": "Error: No se realizó ninguna copia de seguridad!",
         "remount_device_failed": "¡El montaje falló!",
-        "removed_source_blocked": "Los archivos transferidos <u>no</u> se eliminaron del origen porque el origen ya era el destino de la copia de seguridad.",
         "removed_source": "Los archivos transferidos se han eliminado de la fuente. (si es posible)",
         "files_validation_failed": "No se pudieron encontrar archivos en el disco de destino durante la validación."
       },

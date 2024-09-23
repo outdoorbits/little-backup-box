@@ -161,7 +161,7 @@
         "device_folder_pattern": "Zur Verwendung als Muster in den Einstellungen"
       },
       "general_settings_header": "Allgemeine Einstellungen",
-      "move_files_label": "Dateien verschieben statt sie zu kopieren?<br>Achtung: Von als Ziel-Speicher markierten Partitionen werden keine Dateien gelöscht.",
+      "move_files_label": "Dateien verschieben statt sie zu kopieren?",
       "cloud": {
         "target_basedir_header": "Basisordner auf Cloud-Servern",
         "target_basedir_label": "Die Sicherung auf dem Cloud-Server wird unterhalb dieses Verzeichnisses durchgeführt.",
@@ -170,7 +170,9 @@
         "sync_parameter_header": "Übertragungseinstellungen",
         "files_stay_in_place_header": "Speicherort statisch",
         "files_stay_in_place_label": "Verbleiben die Dateien unmittelbar nach dem Upload am Ablageort oder werden sie wegsortiert? (Dies betrifft nur rclone!)"
-      }
+      },
+      "move_files_header": "Dateien kopieren oder verschieben",
+      "default2_settings_header": "Einstellungen für das sekundäre Standard-Backup"
     },
     "imageviewer": {
       "section": "Bildbetrachter View",
@@ -414,7 +416,7 @@
       "of": "v.",
       "try_backup": "Backup Vers.",
       "working": "arbeite",
-      "time_remaining": "Zeit",
+      "time_remaining": "Dauer",
       "mail": {
         "backup_type": "Typ",
         "log": "Backup-Log",
@@ -429,7 +431,6 @@
         "summary": "Zusammenfassung",
         "no_backup": "Fehler: Kein Backup durchgeführt!",
         "remount_device_failed": "Remount fehlgeschlagen!",
-        "removed_source_blocked": "Übertragene Dateien wurden <u>nicht</u> von der Quelle gelöscht, weil die Quelle zuvor auch schon Backup-Ziel war.",
         "removed_source": "Übertragene Dateien wurden von der Quelle gelöscht. (falls möglich)",
         "files_validation_failed": "Dateien konnten bei der Validierung auf dem Zieldatenträger nicht gefunden werden."
       },
@@ -505,7 +506,7 @@
       "nvme_target_ok": "Ziel o.k.",
       "camera": {
         "removing_files_1": "Lösche Dateien",
-        "removing_files_2": "von Kamera"
+        "removing_files_2": "von der Kamera"
       },
       "validate_files_from": "Validiere Dateien von"
     },

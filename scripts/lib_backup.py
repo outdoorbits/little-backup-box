@@ -22,8 +22,8 @@ from datetime import datetime, timedelta
 import lib_mail
 import lib_system
 
-#import lib_debug
-#xx=lib_debug.debug()
+# import lib_debug
+# xx=lib_debug.debug()
 
 class progressmonitor(object):
 	def __init__(self,
@@ -75,7 +75,7 @@ class progressmonitor(object):
 	def progress(self, TransferMode=None, SyncOutputLine='', CountProgress=None):
 		SyncOutputLine	= SyncOutputLine.strip('\n')
 
-		if CountProgress:
+		if not CountProgress is None:
 			self.CountProgress	= CountProgress
 
 		if TransferMode == 'rsync':
@@ -223,7 +223,7 @@ class progressmonitor(object):
 
 class reporter(object):
 	# collects information during the backup process and provides ready to use summarys
-	def __init__(self, lan, SourceStorageType, SourceCloudService, SourceDeviceLbbDeviceID, TargetStorageType, TargetCloudService, TargetDeviceLbbDeviceID, TransferMode, move_files, SourceWasTarget, SyncLog=True):
+	def __init__(self, lan, SourceStorageType, SourceCloudService, SourceDeviceLbbDeviceID, TargetStorageType, TargetCloudService, TargetDeviceLbbDeviceID, TransferMode, move_files, SyncLog=True):
 
 		self.__lan						= lan
 
@@ -238,7 +238,6 @@ class reporter(object):
 		self.__TransferMode				= TransferMode
 
 		self.__move_files				= move_files
-		self.__SourceWasTarget			= SourceWasTarget
 
 		self.__SyncLog				= SyncLog
 
@@ -331,10 +330,7 @@ class reporter(object):
 		{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
 
 		if self.__move_files:
-			if self.__SourceWasTarget:
-				self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_removed_source_blocked')}</b></p></br>\n"
-			else:
-				self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_removed_source')}</b></p></br>\n"
+			self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_removed_source')}</b></p></br>\n"
 
 		separator	= False
 
@@ -443,7 +439,7 @@ class reporter(object):
 
 				TriesCount		+= 1
 
-				if Report['FilesToProcess'] > FilesToProcessReport:
+				if Report['FilesToProcess'] > FilesToProcessReport and TriesCount == 1:
 					FilesToProcessReport	= Report['FilesToProcess']
 
 				if Report['FilesProcessed'] > 0:
@@ -455,7 +451,7 @@ class reporter(object):
 					for Error in Report['Errors']:
 						Errors	+= [f"{Report['SyncReturnCode']}:{Error}"]
 
-			FilesToProcess	= FilesToProcessReport
+			FilesToProcess	+= FilesToProcessReport
 
 		if Completed:
 			self.display_summary.append(f":{self.__lan.l('box_backup_complete')}.")

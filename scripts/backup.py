@@ -43,8 +43,8 @@ import lib_view
 import lib_vpn
 
 
-#import lib_debug
-#xx=lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class backup(object):
 
@@ -61,28 +61,54 @@ class backup(object):
 		self.__lan		= lib_language.language()
 		self.__reporter	= None
 
-		# Arguments
+		## Arguments
+
+		# devices
 		self.SourceName										= SourceName
 		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
 		TargetStorageType, TargetCloudService				= lib_storage.extractCloudService(TargetName)
 
-		self.move_files										= move_files
-
-		self.DoSyncDatabase									= DoSyncDatabase
-		self.DoGenerateThumbnails							= DoGenerateThumbnails
-		self.DoUpdateEXIF									= DoUpdateEXIF
-
 		self.DeviceIdentifierPresetSource					= DeviceIdentifierPresetSource
-
 		if self.DeviceIdentifierPresetSource:
 			self.__log.message(f'Preset source: {self.DeviceIdentifierPresetSource}')
 
 		self.DeviceIdentifierPresetTarget					= DeviceIdentifierPresetTarget
-
 		if self.DeviceIdentifierPresetTarget:
 			self.__log.message(f'Preset target: {self.DeviceIdentifierPresetTarget}')
 
+		# move files
+		self.move_files										= move_files
+		if self.move_files == 'setup':
+			self.move_files				= self.conf_BACKUP_MOVE_FILES
+
+		# sync database
+		self.DoSyncDatabase									= DoSyncDatabase
+		if self.SourceStorageType == 'database':
+			self.DoSyncDatabase			= True
+		self.DoSyncDatabase	= self.DoSyncDatabase or self.move_files
+
+		# thumbnails
+		self.DoGenerateThumbnails							= DoGenerateThumbnails
+		if self.DoGenerateThumbnails == 'setup':
+			self.DoGenerateThumbnails					= self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
+
+		if self.SourceStorageType == 'thumbnails':
+			self.DoGenerateThumbnails	= True
+
+		# exif
+		self.DoUpdateEXIF									= DoUpdateEXIF
+		if self.DoUpdateEXIF == 'setup':
+			self.DoUpdateEXIF							= self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
+
+		if self.SourceStorageType == 'exif':
+			self.DoUpdateEXIF			= True
+
+		# power off
 		self.PowerOff										= PowerOff
+		if self.PowerOff == 'setup':
+			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
+
+		# secondary backup
 		self.SecundaryBackupFollows							= SecundaryBackupFollows
 
 		# Basics
@@ -101,26 +127,6 @@ class backup(object):
 		self.__conf_LOG_SYNC							= self.__setup.get_val('conf_LOG_SYNC')
 		self.__RCLONE_CONFIG_FILE						= os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_RCLONE_CONFIG_FILE'))
 		self.__const_VIEW_BANNED_PATHS					= self.__setup.get_val('const_VIEW_BANNED_PATHS').split(';')
-
-		if self.move_files == 'setup':
-			self.move_files				= self.conf_BACKUP_MOVE_FILES
-
-		if self.SourceStorageType == 'database':
-			self.DoSyncDatabase			= True
-
-		if self.DoGenerateThumbnails == 'setup':
-			self.DoGenerateThumbnails					= self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
-
-		if self.SourceStorageType == 'thumbnails':
-			self.DoGenerateThumbnails	= True
-
-		if self.DoUpdateEXIF == 'setup':
-			self.DoUpdateEXIF							= self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
-		if self.SourceStorageType == 'exif':
-			self.DoUpdateEXIF			= True
-
-		if self.PowerOff == 'setup':
-			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
 
 		# Common variables
 		self.SourceDevice			= None
@@ -271,7 +277,7 @@ class backup(object):
 			else:
 				syncCommand	+= ['--compress']
 
-			if self.move_files and not self.SourceDevice.wasTarget:
+			if self.move_files:
 				syncCommand	+= ['--remove-source-files']
 
 			syncCommand	+= Excludes
@@ -289,7 +295,7 @@ class backup(object):
 			if dry_run:
 				syncCommand	+= ['check']
 			else:
-				if self.move_files and not self.SourceDevice.wasTarget:
+				if self.move_files:
 					syncCommand	+= ['move']
 				else:
 					syncCommand	+= ['copy']
@@ -486,7 +492,6 @@ class backup(object):
 					TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
 					TransferMode			= 'gphoto2' if SourceStorageName == 'camera' else self.TransferMode,
 					move_files				= self.move_files,
-					SourceWasTarget			= self.SourceDevice.wasTarget,
 					SyncLog					= self.__conf_LOG_SYNC
 				)
 
@@ -751,7 +756,7 @@ class backup(object):
 									FilesValidationFailed	+= 1
 									FilesList.remove(File) # do not remove this file from camera
 
-								progress.progress(TransferMode='gphoto2')
+								progress.progress()
 
 							del progress
 
@@ -773,9 +778,10 @@ class backup(object):
 								Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', f"/{cam_folder}", '--delete-file', cam_file]
 								try:
 									subprocess.run(Command)
-									progress.progress(TransferMode='gphoto2')
 								except:
 									pass
+
+								progress.progress()
 
 							del progress
 
@@ -826,6 +832,7 @@ class backup(object):
 		if self.TargetDevice:
 			if self.TargetDevice.isLocal:
 				lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
+
 				# prepare database
 				db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
 
@@ -847,8 +854,17 @@ class backup(object):
 					FileName	= os.path.join(self.TargetDevice.MountPoint, KnownFile[1].strip('/'))
 
 					if not os.path.isfile(FileName):
+						# remove from database
 						db.dbExecute(f"DELETE from EXIF_DATA WHERE ID={ID};")
 						self.__log.message(f"DELETE from EXIF_DATA WHERE ID={ID};", 3)
+
+						# delete tims file
+						TimsFileName	= os.path.join(os.path.dirname(FileName), 'tims', os.path.basename(f"{FileName}.JPG"))
+						if os.path.isfile(TimsFileName):
+							try:
+								os.remove(TimsFileName)
+							except:
+								pass
 
 					progress.progress()
 
@@ -1155,7 +1171,7 @@ class backup(object):
 
 
 		# Wait for running threads (mails to send)
-		lib_common.join_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+		lib_common.join_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
 
 		if self.SecundaryBackupFollows:
 			self.__display.message(display_summary)
@@ -1283,10 +1299,19 @@ if __name__ == "__main__":
 		help		= f'Target name, one of {SecTargetChoices}'
 	)
 
+	parser.add_argument(
+		'--move-files2',
+		'-move2',
+		required	= False,
+		default		= 'setup',
+		help		= 'Remove source files after backup from secondary storage? [\'True\', \'False\']'
+	)
+
 	args	= vars(parser.parse_args())
 
 	# clean boolean args
 	args['move_files']			= args['move_files'].lower() == 'true'			if args['move_files'] != 'setup'			else 'setup'
+	args['move_files2']			= args['move_files2'].lower() == 'true'			if args['move_files2'] != 'setup'			else 'setup'
 	args['sync_database']		= args['sync_database'].lower() == 'true'
 	args['generate_thumbnails']	= args['generate_thumbnails'].lower() == 'true'	if args['generate_thumbnails'] != 'setup'	else 'setup'
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
@@ -1299,16 +1324,16 @@ if __name__ == "__main__":
 		display.message([f":{lan.l('box_backup_primary')}"])
 
 	backupObj	= backup(
-		SourceName=args['SourceName'],
-		TargetName=args['TargetName'],
-		move_files=args['move_files'],
-		DoSyncDatabase=args['sync_database'],
-		DoGenerateThumbnails=args['generate_thumbnails'],
-		DoUpdateEXIF=args['update_exif'],
-		DeviceIdentifierPresetSource=args['device_identifier_preset_source'],
-		DeviceIdentifierPresetTarget=args['device_identifier_preset_target'],
-		PowerOff=args['power_off'],
-		SecundaryBackupFollows=SecundaryBackupFollows
+		SourceName							= args['SourceName'],
+		TargetName							= args['TargetName'],
+		move_files							= args['move_files'],
+		DoSyncDatabase						= args['sync_database'],
+		DoGenerateThumbnails				= False if args['move_files2'] == True else args['generate_thumbnails'],
+		DoUpdateEXIF						= args['update_exif'],
+		DeviceIdentifierPresetSource		= args['device_identifier_preset_source'],
+		DeviceIdentifierPresetTarget		= args['device_identifier_preset_target'],
+		PowerOff							= args['power_off'],
+		SecundaryBackupFollows				= SecundaryBackupFollows
 	)
 	backupObj.run()
 
@@ -1325,16 +1350,16 @@ if __name__ == "__main__":
 				pass
 
 		backup(
-			SourceName=args['SecSourceName'],
-			TargetName=args['SecTargetName'],
-			move_files=args['move_files'],
-			DoSyncDatabase=False,
-			DoGenerateThumbnails=False,
-			DoUpdateEXIF=False,
-			DeviceIdentifierPresetSource=secSourceDeviceIdentifier,
-			DeviceIdentifierPresetTarget=None,
-			PowerOff=args['power_off'],
-			SecundaryBackupFollows=False
+			SourceName						= args['SecSourceName'],
+			TargetName						= args['SecTargetName'],
+			move_files						= args['move_files2'],
+			DoSyncDatabase					= False,
+			DoGenerateThumbnails			= False,
+			DoUpdateEXIF					= False,
+			DeviceIdentifierPresetSource	= secSourceDeviceIdentifier,
+			DeviceIdentifierPresetTarget	= None,
+			PowerOff						= args['power_off'],
+			SecundaryBackupFollows			= False
 		).run()
 
 

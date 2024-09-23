@@ -55,7 +55,6 @@
         "summary": "Summary",
         "no_backup": "Error: No backup performed!",
         "remount_device_failed": "Remount failed!",
-        "removed_source_blocked": "Transferred files were <u>not</u> deleted from the source because the source was already the backup destination.",
         "removed_source": "Transferred files have been deleted from the source. (if possible)",
         "files_validation_failed": "Files could not be found on the target disk during validation."
       },
@@ -384,7 +383,7 @@
         "device_folder_pattern": "For use as pattern in Settings"
       },
       "general_settings_header": "General Settings",
-      "move_files_label": "Move files instead of copying them?<br>Attention: No files will be deleted from partitions marked as target storage.",
+      "move_files_label": "Move files instead of copying them?",
       "cloud": {
         "target_basedir_header": "Base folder on cloud servers",
         "target_basedir_label": "The backup on the cloud server is carried out under this directory.",
@@ -393,7 +392,9 @@
         "sync_parameter_header": "Transfer settings",
         "files_stay_in_place_header": "Storage location static",
         "files_stay_in_place_label": "Do the files remain in the storage location immediately after uploading or are they sorted away? (This only applies to rclone!)"
-      }
+      },
+      "move_files_header": "Copy or move files",
+      "default2_settings_header": "Settings for the secondary standard backup"
     },
     "imageviewer": {
       "section": "Image viewer View",

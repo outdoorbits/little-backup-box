@@ -161,7 +161,7 @@
         "device_folder_pattern": "À utiliser comme modèle dans les paramètres"
       },
       "general_settings_header": "Réglages généraux",
-      "move_files_label": "Déplacer des fichiers au lieu de les copier ?<br>Attention : aucun fichier ne sera supprimé des partitions marquées comme stockage cible.",
+      "move_files_label": "Déplacer des fichiers au lieu de les copier?",
       "cloud": {
         "target_basedir_header": "Dossier d'accueil sur les serveurs cloud",
         "target_basedir_label": "La sauvegarde est effectuée sous ce répertoire.",
@@ -170,7 +170,9 @@
         "sync_parameter_header": "Paramètres de transfert",
         "files_stay_in_place_header": "Emplacement statique",
         "files_stay_in_place_label": "¿Los archivos permanecen en la ubicación de almacenamiento inmediatamente después de cargarlos o se clasifican? (¡Esto sólo afecta a rclone!)"
-      }
+      },
+      "move_files_header": "Copier ou déplacer des fichiers",
+      "default2_settings_header": "Paramètres de sauvegarde secondaire par défaut"
     },
     "imageviewer": {
       "section": "Visionneuse d'images View",
@@ -426,7 +428,6 @@
         "summary": "Résumé",
         "no_backup": "Erreur: Aucune sauvegarde effectuée!",
         "remount_device_failed": "Le remontage a échoué !",
-        "removed_source_blocked": "Les fichiers transférés n'ont <u>pas</u> supprimés de la source car la source était déjà la destination de la sauvegarde.",
         "removed_source": "Les fichiers transférés ont été supprimés de la source. (si possible)",
         "files_validation_failed": "Les dates ne correspondent pas à la validation auf dem Zieldatenträger nicht gefunden werden."
       },

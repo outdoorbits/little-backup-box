@@ -183,6 +183,8 @@
 		$conf_SOFTWARE_DATE_INSTALLED				= $config["conf_SOFTWARE_DATE_INSTALLED"];
 		$conf_SOFTWARE_DATE_AVAILABLE				= $config["conf_SOFTWARE_DATE_AVAILABLE"];
 
+		$conf_BACKUP_DEFAULT_MOVE_FILES				= isset($conf_BACKUP_DEFAULT_MOVE_FILES)?'true':'false';
+		$conf_BACKUP_DEFAULT2_MOVE_FILES			= isset($conf_BACKUP_DEFAULT2_MOVE_FILES)?'true':'false';
 		$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?'true':'false';
 		$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?'true':'false';
 		$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?'true':'false';
@@ -244,10 +246,12 @@ conf_LANGUAGE='$conf_LANGUAGE'
 conf_TIME_ZONE='$conf_TIME_ZONE'
 conf_BACKUP_DEFAULT_SOURCE='$conf_BACKUP_DEFAULT_SOURCE'
 conf_BACKUP_DEFAULT_TARGET='$conf_BACKUP_DEFAULT_TARGET'
+conf_BACKUP_DEFAULT_MOVE_FILES=$conf_BACKUP_DEFAULT_MOVE_FILES
 conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS=$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS
 conf_BACKUP_DEFAULT_UPDATE_EXIF=$conf_BACKUP_DEFAULT_UPDATE_EXIF
 conf_BACKUP_DEFAULT_SOURCE2='$conf_BACKUP_DEFAULT_SOURCE2'
 conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
+conf_BACKUP_DEFAULT2_MOVE_FILES=$conf_BACKUP_DEFAULT2_MOVE_FILES
 conf_BACKUP_TARGET_SIZE_MIN=$conf_BACKUP_TARGET_SIZE_MIN
 conf_BACKUP_CAMERA_FOLDER_MASK='$conf_BACKUP_CAMERA_FOLDER_MASK'
 conf_BACKUP_CLOUDS_TARGET_BASEDIR='$conf_BACKUP_CLOUDS_TARGET_BASEDIR'
@@ -618,6 +622,11 @@ CONFIGDATA;
 					</select>
 
 				<h4><?php echo L::config_backup_default_settings_header; ?></h4>
+
+					<h5><?php echo L::config_backup_move_files_header; ?></h5>
+						<label for="conf_BACKUP_DEFAULT_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?"checked":""; ?>><br>
+
 					<h5><?php echo L::config_backup_generate_thumbnails_header; ?></h5>
 						<label for="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
 						<input type="checkbox" id="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" name="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
@@ -632,6 +641,13 @@ CONFIGDATA;
 					<?php
 						get_secondary_backup_selector("BACKUP_MODE_2", $CloudServices, $config, $NVMe_available);
 					?>
+
+					<h4><?php echo L::config_backup_default2_settings_header; ?></h4>
+
+						<h5><?php echo L::config_backup_move_files_header; ?></h5>
+							<label for="conf_BACKUP_DEFAULT2_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
+							<input type="checkbox" id="conf_BACKUP_DEFAULT2_MOVE_FILES" name="conf_BACKUP_DEFAULT2_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT2_MOVE_FILES']=="1"?"checked":""; ?>><br>
+
 
 				<h3><?php echo L::config_backup_target_requirements_header; ?></h3>
 					<label for="conf_BACKUP_TARGET_SIZE_MIN"><?php echo L::config_backup_target_requirements_label; ?></label><br>

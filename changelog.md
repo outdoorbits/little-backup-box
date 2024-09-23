@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2024-09-09: In the settings for both default backups, specify separately whether the files should be copied or moved; Allow moving files from former target devices; bugfixes</li>
 	<li>2024-09-09: Integrate comitup into web UI</li>
 	<li>2024-09-09: Web UI: Change port for http from 8000 to 8080</li>
 	<li>2024-07-01: View: Add slideshow function to single view mode</li>
