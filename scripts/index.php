@@ -50,7 +50,7 @@
 	include("sub-popup.php");
 
 	include("sub-common.php");
-	$NVMe_available	= get_nvme_available($WORKING_DIR, $constants, false);
+	$NVMe_available	= get_nvme_available(WORKING_DIR: $WORKING_DIR, constants: $constants, ignore_fs: false);
 	$CloudServices	= get_cloudservices($constants);
 
 	$LocalAutoServices	= array('anyusb');
