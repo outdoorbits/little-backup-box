@@ -96,7 +96,7 @@ class backup_autorun(object):
 			pass
 
 		# init new logfile
-		const_LOGFILE					= self.__setup.get_val('const_LOGFILE')
+		const_LOGFILE	= self.__setup.get_val('const_LOGFILE')
 		try:
 			with open(const_LOGFILE,'w') as f:
 				f.write('Little Backup Box\n')

@@ -34,30 +34,31 @@ class log(object):
 		self.setup	= lib_setup.setup()
 
 		self.LogFilePath			= self.setup.get_val('const_LOGFILE')
-		self.conf_LOGLEVEL				= self.setup.get_val('conf_LOGLEVEL')
+		self.conf_LOGLEVEL			= self.setup.get_val('conf_LOGLEVEL')
 
 		self.hide_passwords_list	= ['conf_PASSWORD', 'conf_MAIL_PASSWORD', 'conf_RSYNC_PASSWORD']
 
-	def message(self,Message,LogLevel=10):
-		if LogLevel >= self.conf_LOGLEVEL:
+	def message(self, Message, LogLevel=10):
+		if LogLevel < self.conf_LOGLEVEL:
+			return()
 
-			#replace passwords out of logfile
-			for PWD_var in self.hide_passwords_list:
-				PWD	= base64.b64decode(self.setup.get_val(PWD_var)).decode("utf-8")
-				if PWD != '':
-					Message	= Message.replace(PWD, '***')
+		#replace passwords out of logfile
+		for PWD_var in self.hide_passwords_list:
+			PWD	= base64.b64decode(self.setup.get_val(PWD_var)).decode("utf-8")
+			if PWD != '':
+				Message	= Message.replace(PWD, '***')
 
-			# ensure path and logfile exists
-			if not os.path.isfile(self.LogFilePath):
-				pathlib.Path(os.path.join(self.WORKING_DIR,'tmp')).mkdir(parents=True, exist_ok=True)
-				open(self.LogFilePath,'w').close()
+		# ensure path and logfile exists
+		if not os.path.isfile(self.LogFilePath):
+			pathlib.Path(os.path.join(self.WORKING_DIR,'tmp')).mkdir(parents=True, exist_ok=True)
+			open(self.LogFilePath,'w').close()
 
-			# write to logfile
-			date_str	= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-			with open(self.LogFilePath,'a') as f:
-				f.write(f"{date_str}\n{Message}\n\n")
+		# write to logfile
+		date_str	= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+		with open(self.LogFilePath,'a') as f:
+			f.write(f"{date_str}\n{Message}\n\n")
 
-	def execute(self,Message,Command,LogLevel=10,LogCommand=True):
+	def execute(self, Message, Command, LogLevel=10, LogCommand=True):
 		log	= ''
 
 		if Message != '':

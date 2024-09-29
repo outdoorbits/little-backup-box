@@ -57,13 +57,13 @@ class comitup(object):
 		except:
 			print("Error writing comitup config file.")
 
-	def new_status(self,status):
+	def new_status(self, status):
 		# display new status
 		if status:
 			status_translated	= self.__lan.l(f'box_comitup_status_{status}')
 			status_translated	= status_translated if status_translated!=f'box_comitup_status_{status}' else status
 
-			self.__display.message([':Comitup:', f':{status_translated}'])
+			self.__display.message([':Comitup:', f':{status_translated}'], logging=False)
 
 		# setup apache ports
 		ApachePortsConf	= '/etc/apache2/ports.conf'
