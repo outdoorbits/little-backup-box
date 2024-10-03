@@ -54,6 +54,7 @@ class progressmonitor(object):
 		self.StartTime					= lib_system.get_uptime_sec()
 		self.StopTime					= 0
 		self.CountProgress				= 0
+		self.CountSkip					= 0
 		self.CountProgress_OLD			= -1
 		self.CountJustCopied			= 0
 		self.CountFilesConfirmed		= 0
@@ -137,8 +138,10 @@ class progressmonitor(object):
 
 				if SyncOutputLine[0:6] == 'Saving':
 					self.CountJustCopied	+= 1
-
 					self.FilesList	+= [SyncOutputLine.replace('Saving file as ', '')]
+				elif SyncOutputLine[0:4] == 'Skip':
+					self.CountSkip		+= 1
+
 		elif TransferMode is None:
 			self.CountProgress	+= 1
 
@@ -196,7 +199,7 @@ class progressmonitor(object):
 			if self.CountProgress > 0:
 
 				TimeElapsed		= lib_system.get_uptime_sec() - self.StartTime
-				TimeRemaining	= TimeElapsed * (self.FilesToProcess - self.CountProgress) / self.CountProgress
+				TimeRemaining	= TimeElapsed  / (self.CountProgress - self.CountSkip if self.CountProgress > self.CountSkip else 1) * (self.FilesToProcess - self.CountProgress)
 				TimeRemainingFormatted	= str(timedelta(seconds=TimeRemaining)).split('.')[0]
 			else:
 

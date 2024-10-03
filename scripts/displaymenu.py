@@ -394,7 +394,7 @@ class menu(object):
 
 	def get_INFO(self, action):
 		if action == 'ip':
-			FrameTime	= self.conf_DISP_FRAME_TIME_IP
+			FrameTime	= self.conf_DISP_FRAME_TIME_IP * 2
 			lib_cron_ip.ip_info().display_ip(FrameTime=FrameTime, force=True)
 
 			return([], FrameTime)
