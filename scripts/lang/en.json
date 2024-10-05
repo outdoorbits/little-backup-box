@@ -56,7 +56,8 @@
         "no_backup": "Error: No backup performed!",
         "remount_device_failed": "Remount failed!",
         "removed_source": "Transferred files have been deleted from the source. (if possible)",
-        "files_validation_failed": "Files could not be found on the target disk during validation."
+        "files_validation_failed": "Files could not be found on the target disk during validation.",
+        "empty_files": "The following files were received empty and deleted from the destination storage. Please check if they are also empty on the source. If so, please delete them there to avoid future error messages.<br>Empty files:"
       },
       "storage_filesystem_short": "FS",
       "exception": "Unknown error",

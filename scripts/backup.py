@@ -683,18 +683,25 @@ class backup(object):
 						# Remove empty files (maybe can result from disconnection of a source-device)
 						if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
 							SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0']
-							FilterCommand	= ['wc', '-l']
 
+							emptyFiles	= []
 							try:
-								progress.CountProgress	-= int(lib_common.pipe(SourceCommand, FilterCommand).decode())
+								emptyFilesRaw	= subprocess.check_output(SourceCommand).decode().strip()
+								if emptyFilesRaw:
+									emptyFiles= emptyFilesRaw.split('\n')
 							except:
 								pass
 
-							SourceCommand	+= ['-delete']
-							try:
-								subprocess.run(SourceCommand)
-							except:
-								self.__log.message(f"Error: '{' '.join(SourceCommand)}'")
+							if len(emptyFiles) > 0:
+								emptyFilesString	= '|#|'.join(emptyFiles)
+								self.__reporter.add_error(Error=f'Empty files Err.:{emptyFilesString}')
+								progress.CountProgress	-= len(emptyFiles)
+
+								SourceCommand	+= ['-delete']
+								try:
+									subprocess.run(SourceCommand)
+								except:
+									self.__log.message(f"Error: '{' '.join(SourceCommand)}'")
 
 						# Re-calculate FilesToProcess
 						FilesToProcessPost	= FilesToProcess - progress.CountProgress

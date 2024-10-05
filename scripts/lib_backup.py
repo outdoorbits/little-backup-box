@@ -196,14 +196,11 @@ class progressmonitor(object):
 				DisplayLine5="PGBAR=0"
 
 			# calculte remaining time
-			if self.CountProgress > 0:
-
+			if self.CountProgress > self.CountSkip:
 				TimeElapsed		= lib_system.get_uptime_sec() - self.StartTime
-				TimeRemaining	= TimeElapsed  / (self.CountProgress - self.CountSkip if self.CountProgress > self.CountSkip else 1) * (self.FilesToProcess - self.CountProgress)
+				TimeRemaining	= (self.FilesToProcess - self.CountProgress) * TimeElapsed  / (self.CountProgress - self.CountSkip)
 				TimeRemainingFormatted	= str(timedelta(seconds=TimeRemaining)).split('.')[0]
 			else:
-
-				self.CountProgress	= 0
 				TimeRemainingFormatted	= '?'
 
 			# DisplayLine4
@@ -295,15 +292,15 @@ class reporter(object):
 		if not SyncReturnCode is None:
 			self.__BackupReports[self.__Folder][-1]['SyncReturnCode']	= SyncReturnCode
 
-	def add_synclog(self,SyncLog=''):
+	def add_synclog(self, SyncLog=''):
 		SyncLog	= SyncLog.strip()
 		if self.__SyncLog and SyncLog:
 			self.__BackupReports[self.__Folder][-1]['SyncLogs'].append(SyncLog)
 
-	def add_result(self,Result=''):
+	def add_result(self, Result=''):
 		self.__BackupReports[self.__Folder][-1]['Results'].append(Result)
 
-	def add_error(self,Error=''):
+	def add_error(self, Error=''):
 		self.__BackupReports[self.__Folder][-1]['Errors'].append(Error)
 
 	def get_errors(self):
@@ -382,6 +379,16 @@ class reporter(object):
 
 					if 'Exception' in Report['Errors']:
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_exception')} {Report['SyncReturnCode']} ({self.sync_return_code_decoder(Report['SyncReturnCode'])}).</p>"
+
+					if len([Error for Error in Report['Errors'] if Error.startswith('Empty files Err.:')]) > 0:
+						EmptyFiles	= []
+						for Error in Report['Errors']:
+							if Error.startswith('Empty files Err.:'):
+								EmptyFiles	+= Error.split(':',1)[1].split('|#|')
+
+						EmptyFilesString	= '</li>\n<li>'.join(EmptyFiles)
+						EmptyFilesString	= f'\n<ul><li>{EmptyFilesString}</li></ul>'
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_empty_files')} {EmptyFilesString}</p>"
 
 				FilesCopiedAll	= Report['FilesToProcess'] - Report['FilesToProcessPost'] if not Report['FilesToProcessPost'] is None else '?'
 				self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')}. ({Report['FilesCopied']} {self.__lan.l('box_backup_files_just_copied')})</p>"

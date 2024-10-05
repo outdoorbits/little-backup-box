@@ -429,7 +429,8 @@
         "no_backup": "Erreur: Aucune sauvegarde effectuée!",
         "remount_device_failed": "Le remontage a échoué !",
         "removed_source": "Les fichiers transférés ont été supprimés de la source. (si possible)",
-        "files_validation_failed": "Les dates ne correspondent pas à la validation auf dem Zieldatenträger nicht gefunden werden."
+        "files_validation_failed": "Les dates ne correspondent pas à la validation auf dem Zieldatenträger nicht gefunden werden.",
+        "empty_files": "Les fichiers suivants ont été reçus vides et supprimés du stockage de destination. Veuillez vérifier s'ils sont également vides sur la source. Si tel est le cas, veuillez le supprimer ici pour éviter de futurs messages d'erreur.<br>Fichiers vides:"
       },
       "try": "essayer",
       "checking_old_files": "comparant",

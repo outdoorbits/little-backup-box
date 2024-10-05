@@ -429,7 +429,8 @@
         "no_backup": "Error: No se realizó ninguna copia de seguridad!",
         "remount_device_failed": "¡El montaje falló!",
         "removed_source": "Los archivos transferidos se han eliminado de la fuente. (si es posible)",
-        "files_validation_failed": "No se pudieron encontrar archivos en el disco de destino durante la validación."
+        "files_validation_failed": "No se pudieron encontrar archivos en el disco de destino durante la validación.",
+        "empty_files": "Los siguientes archivos se recibieron vacíos y se eliminaron del almacenamiento de destino. Compruebe si también están en blanco en la fuente. Si es así, elimínelo allí para evitar futuros mensajes de error.<br>Archivos vacíos:"
       },
       "try": "Intentar",
       "checking_old_files": "comparando",

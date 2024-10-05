@@ -168,6 +168,7 @@ def remove_HTML_tags(HTML):
 
 	replaceings	= {
 		'<hr style="width:50%;">':			' *****',
+		'<li>':								'  - ',
 		'&quot;':							'"',
 	}
 

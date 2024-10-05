@@ -26,7 +26,8 @@ class debug(object):
 	def __init__(self):
 		self.debugbasetime=int(datetime.now().timestamp())
 
-	def d(self, debugstring):
+	def d(self, debugmessage):
+		debugstring	= str(debugmessage)
 		debugstring	= debugstring.strip()
 		Message	= f"{int(datetime.now().timestamp()) - self.debugbasetime}\t{__name__}\t{debugstring}"
 		print(Message,file=sys.stderr)
