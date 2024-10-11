@@ -33,7 +33,7 @@ class idletime(object):
 		self.WORKING_DIR	= os.path.dirname(__file__)
 		self.ApacheAccessLogfile		= '/var/log/apache2/lbb-access.log'
 		self.ApacheRcloneAccessLogfile	= '/var/log/apache2/rclone-access.log'
-		vsftpdAccessLogfile				= '/var/log/vsftpd.log'
+		self.vsftpdAccessLogfile				= '/var/log/vsftpd.log'
 
 		#objects
 		self.__setup	= lib_setup.setup()
