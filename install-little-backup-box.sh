@@ -517,9 +517,14 @@ sudo systemctl daemon-reload
 sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/O=little-backup-box/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/private/little-backup-box.key -out /etc/ssl/certs/little-backup-box.crt
 sudo cat /etc/ssl/private/little-backup-box.key | sudo tee /etc/ssl/private/little-backup-box.pem
 sudo cat /etc/ssl/certs/little-backup-box.crt | sudo tee -a /etc/ssl/private/little-backup-box.pem
-sudo chmod 600 /etc/ssl/private/little-backup-box.key
-sudo chmod 600 /etc/ssl/private/little-backup-box.pem
-sudo chmod 600 /etc/ssl/certs/little-backup-box.crt
+
+sudo chown root:ssl-cert /etc/ssl/private/little-backup-box.key
+sudo chmod 640 /etc/ssl/private/little-backup-box.key
+
+sudo chown root:ssl-cert /etc/ssl/private/little-backup-box.pem
+sudo chmod 640 /etc/ssl/private/little-backup-box.pem
+
+sudo chmod 644 /etc/ssl/certs/little-backup-box.crt
 
  # Apache-config-files
 if [ "${SCRIPT_MODE}" = "install" ]; then
