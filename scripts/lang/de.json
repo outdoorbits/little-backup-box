@@ -519,7 +519,8 @@
         "info": "Little Backup Box Info",
         "main": "web UI",
         "open_samba": "Im Dateimanager öffnen (Samba / Windows)",
-        "description_https": "https (sicher, Zertifikat kann nicht automatisch verifiziert werden, bitte bestätigen)"
+        "description_https": "https (sicher, Zertifikat kann nicht automatisch verifiziert werden, bitte bestätigen)",
+        "open_ftp": "Per FTP zugreifen"
       }
     },
     "poweroff": {

@@ -131,10 +131,12 @@ class ip_info(object):
 			indexLinksPlainSSL		= ''
 			indexLinksPlain8080		= ''
 			sambaLinksPlain			= ''
+			ftpLinksPlain			= ''
 
 			indexLinksHTMLSSL		= ''
 			indexLinksHTML8080		= ''
 			sambaLinksHTML			= ''
+			ftpLinksHTML			= ''
 
 			for IP in self.__IPs:
 				# create qr link
@@ -152,13 +154,15 @@ class ip_info(object):
 						base64_image	= ''
 						qr_link	= ''
 
-				indexLinksPlainSSL	+= f'\n  https://{IP}\n'
-				indexLinksPlain8080	+= f'  http://{IP}:8080\n'
-				sambaLinksPlain		+= f'  smb://{IP}\n'
+				indexLinksPlainSSL	+= f'\n\t\t https://{IP}'
+				indexLinksPlain8080	+= f'\n\t\thttp://{IP}:8080'
+				sambaLinksPlain		+= f'\n\t\tsmb://{IP}'
+				ftpLinksPlain		+= f'\n\t ftp://lbb@{IP}'
 
-				indexLinksHTMLSSL	+= f'<br>\n  <a href="https://{IP}">https://{IP}{qr_link}</a><br>\n'
-				indexLinksHTML8080	+= f'  <a href="http://{IP}:8080">http://{IP}:8080</a><br>\n'
-				sambaLinksHTML		+= f'  <a href="smb://{IP}">smb://{IP}</a><br>\n'
+				indexLinksHTMLSSL	+= f'<br>\n<a href="https://{IP}">https://{IP}{qr_link}</a>'
+				indexLinksHTML8080	+= f'<br>\n<a href="http://{IP}:8080">http://{IP}:8080</a>'
+				sambaLinksHTML		+= f'<br>\n<a href="smb://{IP}">smb://{IP}</a>'
+				ftpLinksHTML		+= f'<br>\n<a href="ftp://lbb@{IP}">ftp://lbb@{IP}</a>'
 
 			#send mail
 			if IPs_changed:
@@ -166,34 +170,40 @@ class ip_info(object):
 				return(
 						mailObj.sendmail(
 						Subject		= f"{self.__lan.l('box_cronip_mail_info')}: {', '.join(self.__IPs)}",
-						TextPlain	= self.__getTextPlain(indexLinksPlainSSL,indexLinksPlain8080,sambaLinksPlain),
-						TextHTML	= self.__getTextHTML(indexLinksHTMLSSL,indexLinksHTML8080,sambaLinksHTML)
+						TextPlain	= self.__getTextPlain(indexLinksPlainSSL, indexLinksPlain8080, sambaLinksPlain, ftpLinksPlain),
+						TextHTML	= self.__getTextHTML(indexLinksHTMLSSL, indexLinksHTML8080, sambaLinksHTML, ftpLinksHTML)
 						)
 					)
 
-	def __getTextPlain(self,indexLinksPlainSSL,indexLinksPlain8080,sambaLinksPlain):
+	def __getTextPlain(self, indexLinksPlainSSL, indexLinksPlain8080, sambaLinksPlain, ftpLinksPlain):
 		return(f"""
 	*** {self.__lan.l('box_cronip_mail_main')}: ***
 	{self.__lan.l('box_cronip_mail_description_https')}:
-	{indexLinksPlainSSL}
+{indexLinksPlainSSL}
 
 	{self.__lan.l('box_cronip_mail_description_http')}:
-	{indexLinksPlain8080}
+{indexLinksPlain8080}
 
 	*** {self.__lan.l('box_cronip_mail_open_samba')}: ***
-	{sambaLinksPlain}""")
+{sambaLinksPlain}
 
-	def __getTextHTML(self,indexLinksHTMLSSL,indexLinksHTML8080,sambaLinksHTML):
+	*** {self.__lan.l('box_cronip_mail_open_ftp')}: ***
+{ftpLinksPlain}""")
+
+	def __getTextHTML(self, indexLinksHTMLSSL, indexLinksHTML8080, sambaLinksHTML, ftpLinksHTML):
 		return(f"""
-	<b>{self.__lan.l('box_cronip_mail_main')}:</b><br>
-	{self.__lan.l('box_cronip_mail_description_https')}:<br>
+	<h2>{self.__lan.l('box_cronip_mail_main')}:</h2>
+	<h3>{self.__lan.l('box_cronip_mail_description_https')}:</h3>
 	{indexLinksHTMLSSL}
-	<br>
-	{self.__lan.l('box_cronip_mail_description_http')}:<br>
+	<br><br>
+	<h3>{self.__lan.l('box_cronip_mail_description_http')}:</h3>
 	{indexLinksHTML8080}
-	<br>
-	<b>{self.__lan.l('box_cronip_mail_open_samba')}:</b><br>
-	{sambaLinksHTML}"""
+	<br><br>
+	<h2>{self.__lan.l('box_cronip_mail_open_samba')}:</h2>
+	{sambaLinksHTML}
+	<br><br>
+	<h2>{self.__lan.l('box_cronip_mail_open_ftp')}:</h2>
+	{ftpLinksHTML}"""
 	)
 
 if __name__ == "__main__":

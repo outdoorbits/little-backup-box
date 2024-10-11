@@ -519,7 +519,8 @@
         "info": "Información Little Backup Box",
         "main": "web UI",
         "open_samba": "Abrir en el administrador de archivos (Samba / Windows)",
-        "description_https": "https (seguro, el certificado no se puede verificar automáticamente, confirme)"
+        "description_https": "https (seguro, el certificado no se puede verificar automáticamente, confirme)",
+        "open_ftp": "Acceso vía FTP"
       }
     },
     "poweroff": {

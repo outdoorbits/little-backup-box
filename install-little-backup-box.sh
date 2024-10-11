@@ -514,7 +514,10 @@ WantedBy=multi-user.target" | tee /etc/systemd/system/multi-user.target.wants/ph
 sudo systemctl daemon-reload
 
 #openssl
-sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/O=little-backup-box/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/certs/little-backup-box.key -out /etc/ssl/certs/little-backup-box.crt
+sudo cat /etc/ssl/certs/little-backup-box.key | sudo tee /etc/ssl/certs/little-backup-box.pem
+sudo cat /etc/ssl/certs/little-backup-box.crt | sudo tee -a /etc/ssl/certs/little-backup-box.pem
+sudo chmod 600 /etc/ssl/certs/little-backup-box.*
 
  # Apache-config-files
 if [ "${SCRIPT_MODE}" = "install" ]; then
@@ -544,74 +547,18 @@ if [ "${CHOICE_COMITUP}" = "0" ]; then
 fi
 
 # Configure Samba
-if [ "${SCRIPT_MODE}" = "update" ]; then
-	yes | sudo cp -f /etc/samba/smb.conf.orig /etc/samba/smb.conf
-else
-	sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
-fi
-sudo sh -c "echo '' >> /etc/samba/smb.conf"
-sudo sh -c "echo '### Global Settings ###' > /etc/samba/smb.conf"
-sudo sh -c "echo '[global]' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'workgroup = WORKGROUP' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'wide links = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'unix extensions = no' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'dns proxy = no' >> /etc/samba/smb.conf"
-sudo sh -c "echo '' >> /etc/samba/smb.conf"
-
-sudo sh -c "echo '### Debugging/Accounting ###' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'log file = /var/log/samba/log.%m' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'max log size = 1000' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'syslog = 0' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'panic action = /usr/share/samba/panic-action %d' >> /etc/samba/smb.conf"
-sudo sh -c "echo '' >> /etc/samba/smb.conf"
-
-sudo sh -c "echo '### Authentication ###' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'security = user' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'map to guest = Bad User' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'guest account = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
-sudo sh -c "echo '' >> /etc/samba/smb.conf"
-
-sudo sh -c "echo '### Better Mac OS X support ###' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'vfs objects = fruit streams_xattr' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'fruit:metadata = stream' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'fruit:model = MacSamba' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'fruit:posix_rename = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'fruit:veto_appledouble = no' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'fruit:nfs_aces = no' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'fruit:wipe_intentionally_left_blank_rfork = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo 'fruit:delete_empty_adfiles = yes' >> /etc/samba/smb.conf"
-sudo sh -c "echo '' >> /etc/samba/smb.conf"
-
-sudo sh -c "echo '### Share Definitions ###' >> /etc/samba/smb.conf"
-
-DIRECTORIES=("${const_MEDIA_DIR}/${const_MOUNTPOINT_USB_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_USB_SOURCE}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_NVME_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_NVME_SOURCE}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_CLOUD_TARGET}" "${const_MEDIA_DIR}/${const_MOUNTPOINT_CLOUD_SOURCE}" "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}")
-for DIRECTORY in "${DIRECTORIES[@]}"; do
-    PATHNAME=$(basename ${DIRECTORY})
-
-    sudo sh -c "echo '' >> /etc/samba/smb.conf"
-    sudo sh -c "echo '[${PATHNAME}]' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'comment = Little Backup Box ${PATHNAME}' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'include = /etc/samba/login.conf' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'path = ${DIRECTORY}' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'browseable = yes' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'force user = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'force group = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'admin users = ${USER_WWW_DATA}' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'writeable = yes' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'read only = no' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'create mask = 0777' >> /etc/samba/smb.conf"
-    sudo sh -c "echo 'directory mask = 0777' >> /etc/samba/smb.conf"
-done
-
-echo "guest ok = yes" | sudo tee "/etc/samba/login.conf"
-
-sudo samba restart
-cd
+yes | sudo cp -f "${INSTALLER_DIR}/etc_samba_smb.conf" "/etc/samba/smb.conf"
+sudo chmod 0440 "/etc/samba/smb.conf"
 
 # Configure vsftpd
-if [ "${SCRIPT_MODE}" = "install" ]; then
-	sudo sh -c "echo 'write_enable=YES' >> /etc/vsftpd.conf"
-fi
+yes | sudo cp -f "${INSTALLER_DIR}/etc_vsftpd.conf" "/etc/vsftpd.conf.conf"
+sudo chmod 0440 "/etc/vsftpd.conf.conf"
+
+sudo useradd -s /bin/false -r ftpsecure
+
+sudo mkdir -p /var/run/vsftpd/empty
+sudo chown ftpsecure /var/run/vsftpd/empty
+
 sudo service vsftpd restart
 
 # setup graphical environment
@@ -683,11 +630,10 @@ EOM
 
 fi
 
-# re-establish passwords
-if [ "${SCRIPT_MODE}" = "update" ]; then
-	echo "Restore password-protection"
-	sudo python3 "${const_WEB_ROOT_LBB}/lib_password.py" "$(echo $conf_PASSWORD | base64 --decode)"
-fi
+# (re-)establish passwords
+echo "(Restore) password-protection"
+sudo python3 "${const_WEB_ROOT_LBB}/lib_password.py" "$(echo $conf_PASSWORD | base64 --decode)"
+sudo samba restart
 
 # setup hardware
 	source "${const_WEB_ROOT_LBB}/set_hardware.sh"

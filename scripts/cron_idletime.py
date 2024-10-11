@@ -31,8 +31,9 @@ class idletime(object):
 	def __init__(self):
 		#definitions
 		self.WORKING_DIR	= os.path.dirname(__file__)
-		self.ApacheAccessLogfile		= "/var/log/apache2/lbb-access.log"
-		self.ApacheRcloneAccessLogfile	= "/var/log/apache2/rclone-access.log"
+		self.ApacheAccessLogfile		= '/var/log/apache2/lbb-access.log'
+		self.ApacheRcloneAccessLogfile	= '/var/log/apache2/rclone-access.log'
+		vsftpdAccessLogfile				= '/var/log/vsftpd.log'
 
 		#objects
 		self.__setup	= lib_setup.setup()
@@ -58,12 +59,12 @@ class idletime(object):
 			return(f'idletime: uptime < idletime ({UpTime}s < {IdleSecToPowerOff}s)')
 
 		# logfile logmonitor
-		LbbLogfileAgeSec	= CompareTime - os.stat(self.const_LOGFILE).st_mtime if os.path.isfile(self.const_LOGFILE) else IdleSecToPowerOff
+		LbbLogfileAgeSec			= CompareTime - os.stat(self.const_LOGFILE).st_mtime if os.path.isfile(self.const_LOGFILE) else IdleSecToPowerOff
 		if LbbLogfileAgeSec < IdleSecToPowerOff:
 			return(f'idletime: logfile logmonitor idletime not reached ({LbbLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 		# logfile apache2
-		ApacheLogfileAgeSec	= CompareTime - os.stat(self.ApacheAccessLogfile).st_mtime if os.path.isfile(self.ApacheAccessLogfile) else IdleSecToPowerOff
+		ApacheLogfileAgeSec			= CompareTime - os.stat(self.ApacheAccessLogfile).st_mtime if os.path.isfile(self.ApacheAccessLogfile) else IdleSecToPowerOff
 		if ApacheLogfileAgeSec < IdleSecToPowerOff:
 			return(f'idletime: logfile apache2 idletime not reached ({ApacheLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
@@ -71,6 +72,11 @@ class idletime(object):
 		ApacheRcloneLogfileAgeSec	= CompareTime - os.stat(self.ApacheRcloneAccessLogfile).st_mtime if os.path.isfile(self.ApacheRcloneAccessLogfile) else IdleSecToPowerOff
 		if ApacheRcloneLogfileAgeSec < IdleSecToPowerOff:
 			return(f'idletime: logfile rclone gui idletime not reached ({ApacheRcloneLogfileAgeSec}s < {IdleSecToPowerOff}s)')
+
+		# logfile vsftpd
+		vsftpdLogfileAgeSec			= CompareTime - os.stat(self.vsftpdAccessLogfile).st_mtime if os.path.isfile(self.vsftpdAccessLogfile) else IdleSecToPowerOff
+		if vsftpdLogfileAgeSec < IdleSecToPowerOff:
+			return(f'idletime: logfile vsftpd idletime not reached ({vsftpdLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 		# check processes
 		for process in [

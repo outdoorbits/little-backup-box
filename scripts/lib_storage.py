@@ -558,9 +558,6 @@ class storage(object):
 		pathlib.Path(MountPoint, SubPathBelowMountPoint).mkdir(parents=True, exist_ok=True)
 		self.set_mountpoint_permissions(MountPoint)
 
-		Command	= 'service smbd restart &'
-		subprocess.run(Command, shell=True)
-
 	def set_mountpoint_permissions(self, MountPoint=''):
 		MountPoint	= MountPoint if MountPoint else self.MountPoint
 
