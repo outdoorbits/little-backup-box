@@ -514,10 +514,12 @@ WantedBy=multi-user.target" | tee /etc/systemd/system/multi-user.target.wants/ph
 sudo systemctl daemon-reload
 
 #openssl
-sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/O=little-backup-box/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/certs/little-backup-box.key -out /etc/ssl/certs/little-backup-box.crt
-sudo cat /etc/ssl/certs/little-backup-box.key | sudo tee /etc/ssl/certs/little-backup-box.pem
-sudo cat /etc/ssl/certs/little-backup-box.crt | sudo tee -a /etc/ssl/certs/little-backup-box.pem
-sudo chmod 600 /etc/ssl/certs/little-backup-box.*
+sudo openssl req -x509 -nodes -days 3650 -subj '/C=OW/ST=MilkyWay/L=Earth/O=little-backup-box/CN=10.42.0.1' -newkey rsa:2048 -keyout /etc/ssl/private/little-backup-box.key -out /etc/ssl/certs/little-backup-box.crt
+sudo cat /etc/ssl/private/little-backup-box.key | sudo tee /etc/ssl/private/little-backup-box.pem
+sudo cat /etc/ssl/certs/little-backup-box.crt | sudo tee -a /etc/ssl/private/little-backup-box.pem
+sudo chmod 600 /etc/ssl/private/little-backup-box.key
+sudo chmod 600 /etc/ssl/private/little-backup-box.pem
+sudo chmod 600 /etc/ssl/certs/little-backup-box.crt
 
  # Apache-config-files
 if [ "${SCRIPT_MODE}" = "install" ]; then
