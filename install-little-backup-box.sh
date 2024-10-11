@@ -553,7 +553,7 @@ yes | sudo cp -f "${INSTALLER_DIR}/etc_samba_smb.conf" "/etc/samba/smb.conf"
 sudo chmod 0440 "/etc/samba/smb.conf"
 
 # Configure vsftpd
-yes | sudo cp -f "${INSTALLER_DIR}/etc_vsftpd.conf" "/etc/vsftpd.conf.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc_vsftpd.conf" "/etc/vsftpd.conf"
 sudo chmod 0440 "/etc/vsftpd.conf.conf"
 
 sudo useradd -s /bin/false -r ftpsecure
