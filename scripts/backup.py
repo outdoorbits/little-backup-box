@@ -43,8 +43,8 @@ import lib_view
 import lib_vpn
 
 
-import lib_debug
-xxx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class backup(object):
 
@@ -863,39 +863,44 @@ class backup(object):
 
 		# find all not renamed media files
 		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9] [0-2][0-9]-[0-5][0-9]-[0-5][0-9] - *'"
+
 		FilesToRename	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		FilesToRename = list(filter(None, FilesToRename))
 
 		FilesToProcess	= len(FilesToRename)
-		xxx.d(f'FilesToRename: {FilesToProcess}; {"-".join(FilesToRename)}')
+
 		DisplayLine1	= self.__lan.l('box_backup_rename_files_renaming_files') # header1
 		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
 
 		progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
 
 		DateTags	= ['-DateTimeOriginal', '-CreateDate']
+
 		for FileToRename in FilesToRename:
 			if not FileToRename:
 				continue
 
 			FileCreateDate	= None
 			for Tag in DateTags:
-				FileCreateDate	= subprocess.check_output(['exiftool', '-dateFormat', '%Y-%m-%d %k-%M-%S', Tag, '-S', '-s', FileToRename]).decode().strip()
+				Command	= ['exiftool', '-dateFormat', '%Y-%m-%d %k-%M-%S', Tag, '-S', '-s', FileToRename]
+
+				try:
+					FileCreateDate	= subprocess.check_output(Command).decode().strip()
+				except:
+					continue
+
 				if FileCreateDate:
 					break
 
-			if FileCreateDate:
-				FilePath	= os.path.dirname(FileToRename)
-				FileName	= os.path.basename(FileToRename)
-				FileNameNew	= os.path.join(FilePath, f'{FileCreateDate} - {FileName}')
+			if not FileCreateDate:
+				FileCreateDate	= '0000-00-00 00-00-00'
 
-				if not os.path.isfile(FileNameNew):
-					xxx.d(f'rename "{FileToRename}" "{FileNameNew}"')
-					os.rename(FileToRename, FileNameNew)
-				else:
-					xxx.d(f'no file {FileNameNew}')
-			else:
-				xxx.d(f'no date {FileNameNew}')
+			FilePath	= os.path.dirname(FileToRename)
+			FileName	= os.path.basename(FileToRename)
+			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate} - {FileName}')
+
+			if not os.path.isfile(FileNameNew):
+				os.rename(FileToRename, FileNameNew)
 
 			progress.progress()
 

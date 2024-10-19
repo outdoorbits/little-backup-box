@@ -270,7 +270,8 @@
       "primary": "Primary backup",
       "secondary": "Secondary backup",
       "general": "General",
-      "secondary_label": "Should a cloud backup be performed after the primary backup?"
+      "secondary_label": "Should a cloud backup be performed after the primary backup?",
+      "rename_files_checkbox_label": "Rename files (only for local storage)"
     },
     "logout_button": "Logout",
     "nvme_button": "NVMe SSD",

@@ -54,7 +54,8 @@
       "primary": "Primäres Backup",
       "secondary": "Sekundärs Backup",
       "general": "Allgemein",
-      "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?"
+      "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?",
+      "rename_files_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)"
     },
     "logout_button": "Ausloggen",
     "nvme_button": "NVMe SSD",

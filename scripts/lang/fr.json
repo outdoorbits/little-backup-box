@@ -54,7 +54,8 @@
       "primary": "Sauvegarde principale",
       "secondary": "Sauvegarde secondaire",
       "general": "Général",
-      "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?"
+      "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?",
+      "rename_files_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)"
     },
     "logout_button": "Se déconnecter",
     "nvme_button": "NVMe SSD",

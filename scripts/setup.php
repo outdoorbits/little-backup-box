@@ -57,20 +57,18 @@
 
 		// testmail
 		if (isset($_POST['send_testmail'])) {
-			shell_exec("sudo python3 $WORKING_DIR/lib_mail.py '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "'");
+			exec("sudo python3 $WORKING_DIR/lib_mail.py '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "' /dev/null 2>&1 &");
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
 		}
 
 		// rclone_gui
 		if (isset($_POST['restart_rclone_gui'])) {
-			exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null 2>/dev/null &");
+			exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null /dev/null 2>&1 &");
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
 		}
 
 		// restart display using new config
-		exec("sudo python3 $WORKING_DIR/lib_display.py 'set:kill'");
-		sleep(2.5); // Time until display and menu are down takes up to two seconds.
-		exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'");
+		exec("sudo python3 $WORKING_DIR/lib_display.py 'set:kill'; sleep 2.5; sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'  > /dev/null 2>&1 &");
 	}
 
 	if (isset($_GET['check_update'])) {

@@ -54,7 +54,8 @@
       "primary": "Ejecución principal",
       "secondary": "Ejecución secundaria",
       "general": "General",
-      "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?"
+      "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?",
+      "rename_files_checkbox_label": "Cambiar el nombre de los archivos (solo para almacenamiento local)"
     },
     "logout_button": "Cerrar sesión",
     "nvme_button": "NVMe SSD",
