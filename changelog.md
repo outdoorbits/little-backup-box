@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2021-10-19: Add option to rename media files after backup based on the files creation date and time. Example: &quot;Image.jpg&quot; from 2024/10/19 12:42:14 will be renamed to &quot;2024-10-19_12-42-14_-_Image.jpg&quot;</li>
 	<li>2024-09-09: In the settings for both default backups, specify separately whether the files should be copied or moved; Allow moving files from former target devices; bugfixes</li>
 	<li>2024-09-09: Integrate comitup into web UI</li>
 	<li>2024-09-09: Web UI: Change port for http from 8000 to 8080</li>

@@ -762,6 +762,7 @@ class backup(object):
 						ErrorsOld	= self.__reporter.get_errors()
 
 						FilesList	= progress.FilesList
+
 						del progress
 
 						# validate files after backup
@@ -881,7 +882,7 @@ class backup(object):
 
 			FileCreateDate	= None
 			for Tag in DateTags:
-				Command	= ['exiftool', '-dateFormat', '%Y-%m-%d %k-%M-%S', Tag, '-S', '-s', FileToRename]
+				Command	= ['exiftool', '-dateFormat', '%Y-%m-%d_%k-%M-%S', Tag, '-S', '-s', FileToRename]
 
 				try:
 					FileCreateDate	= subprocess.check_output(Command).decode().strip()
@@ -892,11 +893,11 @@ class backup(object):
 					break
 
 			if not FileCreateDate:
-				FileCreateDate	= '0000-00-00 00-00-00'
+				FileCreateDate	= '0000-00-00_00-00-00'
 
 			FilePath	= os.path.dirname(FileToRename)
 			FileName	= os.path.basename(FileToRename)
-			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate} - {FileName}')
+			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
 
 			if not os.path.isfile(FileNameNew):
 				os.rename(FileToRename, FileNameNew)
