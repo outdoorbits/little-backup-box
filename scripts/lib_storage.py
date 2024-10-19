@@ -536,6 +536,9 @@ class storage(object):
 			self.SubPathsAtSource=['/']
 		self.SubPathAtTarget		= f"{self.LbbDeviceID}"
 
+		# remove duplicates from SubPathsAtSource
+		self.SubPathsAtSource = list(dict.fromkeys(self.SubPathsAtSource))
+
 		# log self.SubPathsAtSource
 		self.__log.message(f"{self.__lan.l('config_backup_camera_model_folders_header')} '{CameraModel}':", 1)
 		for SourcePath in self.SubPathsAtSource:

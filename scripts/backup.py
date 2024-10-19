@@ -591,7 +591,7 @@ class backup(object):
 
 						#define progress object
 						progress	= lib_backup.progressmonitor(
-							setup	= self.__setup,
+							setup				= self.__setup,
 							display				= self.__display,
 							log					= self.__log,
 							lan					= self.__lan,
@@ -762,7 +762,6 @@ class backup(object):
 						ErrorsOld	= self.__reporter.get_errors()
 
 						FilesList	= progress.FilesList
-
 						del progress
 
 						# validate files after backup
