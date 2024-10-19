@@ -54,7 +54,8 @@
       "primary": "Ejecución principal",
       "secondary": "Ejecución secundaria",
       "general": "General",
-      "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?"
+      "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?",
+      "rename_files_checkbox_label": "Cambiar el nombre de los archivos (solo para almacenamiento local)"
     },
     "logout_button": "Cerrar sesión",
     "nvme_button": "NVMe SSD",
@@ -172,7 +173,11 @@
         "files_stay_in_place_label": "Les fichiers restent-ils dans l'emplacement de stockage immédiatement après le téléchargement ou sont-ils triés ? (Cela n'affecte que rclone !)"
       },
       "move_files_header": "Copiar o mover archivos",
-      "default2_settings_header": "Configuración de copia de seguridad secundaria predeterminada"
+      "default2_settings_header": "Configuración de copia de seguridad secundaria predeterminada",
+      "rename_files": {
+        "header": "Cambiar el nombre de los archivos",
+        "label": "Se intenta leer la fecha de creación de todos los archivos multimedia en los medios de almacenamiento locales. Si esto es posible, se cambiará el nombre del archivo según el siguiente patrón:<br>\nDe &quot;Imagen0123.jpg&quot; será, por ejemplo, \"2024-10-18 23-47-26 - Imagen.jpg\"."
+      }
     },
     "imageviewer": {
       "section": "Visor de imágenes View",
@@ -509,7 +514,10 @@
         "removing_files_1": "Borrar archivos",
         "removing_files_2": "desde la cámara"
       },
-      "validate_files_from": "Validar archivos de"
+      "validate_files_from": "Validar archivos de",
+      "rename_files": {
+        "renaming_files": "Cambiar el nombre de los archivos"
+      }
     },
     "cronip": {
       "offline": "desconectado",

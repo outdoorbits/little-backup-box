@@ -54,7 +54,8 @@
       "primary": "Primäres Backup",
       "secondary": "Sekundärs Backup",
       "general": "Allgemein",
-      "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?"
+      "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?",
+      "rename_files_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)"
     },
     "logout_button": "Ausloggen",
     "nvme_button": "NVMe SSD",
@@ -172,7 +173,11 @@
         "files_stay_in_place_label": "Verbleiben die Dateien unmittelbar nach dem Upload am Ablageort oder werden sie wegsortiert? (Dies betrifft nur rclone!)"
       },
       "move_files_header": "Dateien kopieren oder verschieben",
-      "default2_settings_header": "Einstellungen für das sekundäre Standard-Backup"
+      "default2_settings_header": "Einstellungen für das sekundäre Standard-Backup",
+      "rename_files": {
+        "header": "Dateien umbenennen",
+        "label": "Aus allen Medien-Dateien auf lokalen Datenträgern wird versucht, das Erstell-Datum auszulesen. Ist dies möglich, wird die Datei nach folgendem Muster umbenannt:<br>\nAus &quot;Image0123.jpg&quot; wird z.B. &quot;2024-10-18 23-47-26 - Image.jpg&quot;."
+      }
     },
     "imageviewer": {
       "section": "Bildbetrachter View",
@@ -509,7 +514,10 @@
         "removing_files_1": "Lösche Dateien",
         "removing_files_2": "von der Kamera"
       },
-      "validate_files_from": "Validiere Dateien von"
+      "validate_files_from": "Validiere Dateien von",
+      "rename_files": {
+        "renaming_files": "Umbenennen von Dateien"
+      }
     },
     "cronip": {
       "offline": "offline",

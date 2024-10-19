@@ -48,11 +48,11 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, move_files=False, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
+	def __init__(self, SourceName, TargetName, move_files=False, DoRenameFiles=False, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
 
 		# SourceName:	one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
 		# TargetName:	one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
-		# DoSyncDatabase, DoGenerateThumbnails, DoUpdateEXIF	True/False
+		# DoRenameFiles, DoSyncDatabase, DoGenerateThumbnails, DoUpdateEXIF	True/False
 
 		# Objects
 		self.__setup	= lib_setup.setup()
@@ -79,7 +79,12 @@ class backup(object):
 		# move files
 		self.move_files										= move_files
 		if self.move_files == 'setup':
-			self.move_files				= self.conf_BACKUP_MOVE_FILES
+			self.move_files						= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
+
+		# rename files
+		self.DoRenameFiles									= DoRenameFiles
+		if self.DoRenameFiles == 'setup':
+			self.DoRenameFiles					= self.__setup.get_val('conf_BACKUP_RENAME_FILES')
 
 		# sync database
 		self.DoSyncDatabase									= DoSyncDatabase
@@ -127,6 +132,13 @@ class backup(object):
 		self.__conf_LOG_SYNC							= self.__setup.get_val('conf_LOG_SYNC')
 		self.__RCLONE_CONFIG_FILE						= os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_RCLONE_CONFIG_FILE'))
 		self.__const_VIEW_BANNED_PATHS					= self.__setup.get_val('const_VIEW_BANNED_PATHS').split(';')
+
+		self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_WEB_IMAGES')
+		self.const_FILE_EXTENSIONS_LIST_HEIC			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_HEIC')
+		self.const_FILE_EXTENSIONS_LIST_RAW				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW')
+		self.const_FILE_EXTENSIONS_LIST_TIF				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TIF')
+		self.const_FILE_EXTENSIONS_LIST_VIDEO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO')
+		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
 
 		# Common variables
 		self.SourceDevice			= None
@@ -201,6 +213,9 @@ class backup(object):
 
 		if self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif']):
 			self.backup()
+
+		if self.DoRenameFiles:
+			self.RenameFiles()
 
 		if (
 				self.TargetDevice and
@@ -576,7 +591,7 @@ class backup(object):
 
 						#define progress object
 						progress	= lib_backup.progressmonitor(
-							setup	= self.__setup,
+							setup				= self.__setup,
 							display				= self.__display,
 							log					= self.__log,
 							lan					= self.__lan,
@@ -747,7 +762,6 @@ class backup(object):
 						ErrorsOld	= self.__reporter.get_errors()
 
 						FilesList	= progress.FilesList
-
 						del progress
 
 						# validate files after backup
@@ -835,6 +849,65 @@ class backup(object):
 
 		return (lostTargetDevice or lostSourceDevice)
 
+	def RenameFiles(self):
+		if not self.TargetDevice:
+			return()
+
+		if not self.TargetDevice.isLocal:
+			return()
+
+		lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
+
+		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
+
+		# find all not renamed media files
+		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9] [0-2][0-9]-[0-5][0-9]-[0-5][0-9] - *'"
+
+		FilesToRename	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
+		FilesToRename = list(filter(None, FilesToRename))
+
+		FilesToProcess	= len(FilesToRename)
+
+		DisplayLine1	= self.__lan.l('box_backup_rename_files_renaming_files') # header1
+		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
+
+		progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
+
+		DateTags	= ['-DateTimeOriginal', '-CreateDate']
+
+		for FileToRename in FilesToRename:
+			if not FileToRename:
+				continue
+
+			FileCreateDate	= None
+			for Tag in DateTags:
+				Command	= ['exiftool', '-dateFormat', '%Y-%m-%d %k-%M-%S', Tag, '-S', '-s', FileToRename]
+
+				try:
+					FileCreateDate	= subprocess.check_output(Command).decode().strip()
+				except:
+					continue
+
+				if FileCreateDate:
+					break
+
+			if not FileCreateDate:
+				FileCreateDate	= '0000-00-00 00-00-00'
+
+			FilePath	= os.path.dirname(FileToRename)
+			FileName	= os.path.basename(FileToRename)
+			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate} - {FileName}')
+
+			if not os.path.isfile(FileNameNew):
+				os.rename(FileToRename, FileNameNew)
+
+			progress.progress()
+
+		del progress
+		self.__display.message([f":{self.__lan.l('box_finished')}"])
+
+
+
 	def syncDatabase(self):
 		if self.TargetDevice:
 			if self.TargetDevice.isLocal:
@@ -889,7 +962,7 @@ class backup(object):
 
 				BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
-				Command	= ["find", self.TargetDevice.MountPoint, "-type", "f", "-iname", "*.jpg", "-path", "*/tims/*"] + BannedPathsViewCaseInsensitive
+				Command	= ['find', self.TargetDevice.MountPoint, '-type', 'f', '-iname', '*.jpg', '-path', '*/tims/*'] + BannedPathsViewCaseInsensitive
 				TIMSList	= subprocess.check_output(Command).decode().strip().split('\n')
 				TIMSList[:]	= [element for element in TIMSList if element]
 
@@ -914,6 +987,28 @@ class backup(object):
 				del progress
 				self.__display.message([f":{self.__lan.l('box_finished')}"])
 
+	def get_AllowedExtensionsFindOptions(self):
+
+		AllowedExtensionsList	= (
+			self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES + ';' +
+			self.const_FILE_EXTENSIONS_LIST_HEIC + ';' +
+			self.const_FILE_EXTENSIONS_LIST_RAW + ';' +
+			self.const_FILE_EXTENSIONS_LIST_TIF + ';' +
+			self.const_FILE_EXTENSIONS_LIST_VIDEO + ';' +
+			self.const_FILE_EXTENSIONS_LIST_AUDIO
+		)
+		AllowedExtensionsList	= AllowedExtensionsList.split(';')
+
+		# create find options of valid extensions
+		AllowedExtensionsFindOptions	= []
+		for AllowedExtension in AllowedExtensionsList:
+			if AllowedExtensionsFindOptions:
+				AllowedExtensionsFindOptions	+= ["-o"]
+
+			AllowedExtensionsFindOptions	+= ["-iname", f"'*.{AllowedExtension}'"]
+
+		return(AllowedExtensionsFindOptions)
+
 	def generateThumbnails(self):
 		if self.TargetDevice:
 			if self.TargetDevice.isLocal:
@@ -928,15 +1023,6 @@ class backup(object):
 					except:
 						DCRAW_EMU	= 'dcraw_emu'
 
-				const_FILE_EXTENSIONS_LIST_WEB_IMAGES		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_WEB_IMAGES')
-				const_FILE_EXTENSIONS_LIST_HEIC		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_HEIC')
-				const_FILE_EXTENSIONS_LIST_RAW		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW')
-				const_FILE_EXTENSIONS_LIST_TIF		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TIF')
-				const_FILE_EXTENSIONS_LIST_VIDEO	= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO')
-				const_FILE_EXTENSIONS_LIST_AUDIO	= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
-
-				conf_VIEW_CONVERT_HEIC				= self.__setup.get_val('conf_VIEW_CONVERT_HEIC')
-
 				# prepare database
 				db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
 
@@ -948,27 +1034,8 @@ class backup(object):
 					f":{self.__lan.l('box_backup_generating_thumbnails_finding_images3')}"
 					])
 
-				#find all images; replace "space" by substitute of space "##**##"
-				AllowedExtensionsList	= (
-					const_FILE_EXTENSIONS_LIST_WEB_IMAGES + ';' +
-					const_FILE_EXTENSIONS_LIST_HEIC + ';' +
-					const_FILE_EXTENSIONS_LIST_RAW + ';' +
-					const_FILE_EXTENSIONS_LIST_TIF + ';' +
-					const_FILE_EXTENSIONS_LIST_VIDEO + ';' +
-					const_FILE_EXTENSIONS_LIST_AUDIO
-					)
-				AllowedExtensionsList	= AllowedExtensionsList.split(';')
-
-				# create list of valid extensions
-				AllowedExtensionsOptions	= []
-				for AllowedExtension in AllowedExtensionsList:
-					if AllowedExtensionsOptions:
-						AllowedExtensionsOptions	+= ["-o"]
-
-					AllowedExtensionsOptions	+= ["-iname", f"'*.{AllowedExtension}'"]
-
 				BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
-				Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(AllowedExtensionsOptions)} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+				Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 				ImagesList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 				ImagesList[:]	= [element for element in ImagesList if element]
@@ -1011,14 +1078,14 @@ class backup(object):
 					FileName				= os.path.basename(SourceFilePathName)
 					TIMS_SubpathFilename	= os.path.join(TIMS_Dir, f"{FileName}.JPG")
 
-					if SourceFilePathNameExt in f"{const_FILE_EXTENSIONS_LIST_WEB_IMAGES};{const_FILE_EXTENSIONS_LIST_TIF}".split(';'):
+					if SourceFilePathNameExt in f"{self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES};{self.const_FILE_EXTENSIONS_LIST_TIF}".split(';'):
 						# file-types: jpeg, tif image
 						Command	= ["convert", f"{os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)}[0]", "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
 						try:
 							subprocess.run(Command)
 						except:
 							print(f"Error: {' '.join(Command)}",file=sys.stderr)
-					elif SourceFilePathNameExt in const_FILE_EXTENSIONS_LIST_HEIC.split(';'):
+					elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_HEIC.split(';'):
 
 						# file-type: heic/heif
 						# convert heif to jpg
@@ -1042,6 +1109,8 @@ class backup(object):
 						except:
 							print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
+						conf_VIEW_CONVERT_HEIC				= self.__setup.get_val('conf_VIEW_CONVERT_HEIC')
+
 						if conf_VIEW_CONVERT_HEIC:
 							MissingTIMSList.append(f"{SourceFilePathName}.JPG")
 						else:
@@ -1051,7 +1120,7 @@ class backup(object):
 							except:
 								print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-					elif SourceFilePathNameExt in const_FILE_EXTENSIONS_LIST_RAW.split(';'):
+					elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
 						# file-type: raw-image
 						SourceCommand	= [DCRAW_EMU, "-w", "-Z", "-", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)]
 						FilterCommand	= ["convert", "-", "-resize", "800", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
@@ -1060,7 +1129,7 @@ class backup(object):
 						except:
 							print(f"Error: {' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand)}",file=sys.stderr)
 
-					elif SourceFilePathNameExt in const_FILE_EXTENSIONS_LIST_VIDEO.split(';'):
+					elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_VIDEO.split(';'):
 						# file-type: video
 						Command	= ["ffmpeg", "-i", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), "-ss", "00:00:01", "-vframes", "1", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
 						try:
@@ -1085,7 +1154,7 @@ class backup(object):
 						except:
 							print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-					elif SourceFilePathNameExt in const_FILE_EXTENSIONS_LIST_AUDIO.split(';'):
+					elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_AUDIO.split(';'):
 						Command	= ["cp", "/var/www/little-backup-box/img/audio.JPG", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
 						try:
 							subprocess.run(Command)
@@ -1142,7 +1211,6 @@ class backup(object):
 				progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
 
 				for FileTuple in FilesTupleList:
-					#replace substitute of space by space
 					MediaID			= FileTuple[0]
 					MediaPathFile	= os.path.join(self.TargetDevice.MountPoint, FileTuple[1].strip('/'))
 					MediaLbbRating	= FileTuple[2]
@@ -1160,7 +1228,7 @@ class backup(object):
 		BannedPathsList		= []
 
 		for BannedPath in self.__const_VIEW_BANNED_PATHS:
-			BannedPathsList += ["-not", "-ipath", BannedPath]
+			BannedPathsList += ['-not', '-ipath', BannedPath]
 
 		return(BannedPathsList)
 
@@ -1238,6 +1306,14 @@ if __name__ == "__main__":
 		required	= False,
 		default		= 'setup',
 		help		= 'Remove source files after backup from primary storage? [\'True\', \'False\']'
+	)
+
+	parser.add_argument(
+		'--rename-files',
+		'-rf',
+		required	= False,
+		default		= 'False',
+		help		= 'Should the files in local storage be renamed? [\'True\', \'False\'] If not set, use config value.'
 	)
 
 	parser.add_argument(
@@ -1320,6 +1396,7 @@ if __name__ == "__main__":
 	args['move_files']			= args['move_files'].lower() == 'true'			if args['move_files'] != 'setup'			else 'setup'
 	args['move_files2']			= args['move_files2'].lower() == 'true'			if args['move_files2'] != 'setup'			else 'setup'
 	args['sync_database']		= args['sync_database'].lower() == 'true'
+	args['rename_files']		= args['rename_files'].lower() == 'true'		if args['rename_files'] != 'setup'			else 'setup'
 	args['generate_thumbnails']	= args['generate_thumbnails'].lower() == 'true'	if args['generate_thumbnails'] != 'setup'	else 'setup'
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
 	args['power_off']			= args['power_off'].lower() == 'true'			if args['power_off'] != 'setup'				else 'setup'
@@ -1335,6 +1412,7 @@ if __name__ == "__main__":
 		TargetName							= args['TargetName'],
 		move_files							= args['move_files'],
 		DoSyncDatabase						= args['sync_database'],
+		DoRenameFiles						= args['rename_files'],
 		DoGenerateThumbnails				= False if args['move_files2'] == True else args['generate_thumbnails'],
 		DoUpdateEXIF						= args['update_exif'],
 		DeviceIdentifierPresetSource		= args['device_identifier_preset_source'],
@@ -1361,6 +1439,7 @@ if __name__ == "__main__":
 			TargetName						= args['SecTargetName'],
 			move_files						= args['move_files2'],
 			DoSyncDatabase					= False,
+			DoRenameFiles					= False,
 			DoGenerateThumbnails			= False,
 			DoUpdateEXIF					= False,
 			DeviceIdentifierPresetSource	= secSourceDeviceIdentifier,

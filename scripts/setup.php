@@ -57,20 +57,18 @@
 
 		// testmail
 		if (isset($_POST['send_testmail'])) {
-			shell_exec("sudo python3 $WORKING_DIR/lib_mail.py '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "'");
+			exec("sudo python3 $WORKING_DIR/lib_mail.py '" . L::config_mail_testmail_subject . "' '" . L::config_mail_testmail_content . "' /dev/null 2>&1 &");
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
 		}
 
 		// rclone_gui
 		if (isset($_POST['restart_rclone_gui'])) {
-			exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null 2>/dev/null &");
+			exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null /dev/null 2>&1 &");
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
 		}
 
 		// restart display using new config
-		exec("sudo python3 $WORKING_DIR/lib_display.py 'set:kill'");
-		sleep(2.5); // Time until display and menu are down takes up to two seconds.
-		exec("sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'");
+		exec("sudo python3 $WORKING_DIR/lib_display.py 'set:kill'; sleep 2.5; sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'  > /dev/null 2>&1 &");
 	}
 
 	if (isset($_GET['check_update'])) {
@@ -184,6 +182,7 @@
 		$conf_SOFTWARE_DATE_AVAILABLE				= $config["conf_SOFTWARE_DATE_AVAILABLE"];
 
 		$conf_BACKUP_DEFAULT_MOVE_FILES				= isset($conf_BACKUP_DEFAULT_MOVE_FILES)?'true':'false';
+		$conf_BACKUP_DEFAULT_RENAME_FILES			= isset($conf_BACKUP_DEFAULT_RENAME_FILES)?'true':'false';
 		$conf_BACKUP_DEFAULT2_MOVE_FILES			= isset($conf_BACKUP_DEFAULT2_MOVE_FILES)?'true':'false';
 		$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?'true':'false';
 		$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?'true':'false';
@@ -198,6 +197,7 @@
 		$conf_VIRTUAL_KEYBOARD_ENABLED				= isset($conf_VIRTUAL_KEYBOARD_ENABLED)?'true':'false';
 		$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?'true':'false';
 		$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?'true':'false';
+		$conf_BACKUP_RENAME_FILES					= isset($conf_BACKUP_RENAME_FILES)?'true':'false';
 		$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?'true':'false';
 		$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?'true':'false';
 		$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
@@ -247,6 +247,7 @@ conf_TIME_ZONE='$conf_TIME_ZONE'
 conf_BACKUP_DEFAULT_SOURCE='$conf_BACKUP_DEFAULT_SOURCE'
 conf_BACKUP_DEFAULT_TARGET='$conf_BACKUP_DEFAULT_TARGET'
 conf_BACKUP_DEFAULT_MOVE_FILES=$conf_BACKUP_DEFAULT_MOVE_FILES
+conf_BACKUP_DEFAULT_RENAME_FILES=$conf_BACKUP_DEFAULT_RENAME_FILES
 conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS=$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS
 conf_BACKUP_DEFAULT_UPDATE_EXIF=$conf_BACKUP_DEFAULT_UPDATE_EXIF
 conf_BACKUP_DEFAULT_SOURCE2='$conf_BACKUP_DEFAULT_SOURCE2'
@@ -294,6 +295,7 @@ conf_POPUP_MESSAGES=$conf_POPUP_MESSAGES
 conf_LOGLEVEL=$conf_LOGLEVEL
 conf_LOG_SYNC=$conf_LOG_SYNC
 conf_POWER_OFF_IDLE_TIME=$conf_POWER_OFF_IDLE_TIME
+conf_BACKUP_RENAME_FILES=$conf_BACKUP_RENAME_FILES
 conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
 conf_BACKUP_UPDATE_EXIF=$conf_BACKUP_UPDATE_EXIF
 conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
@@ -627,6 +629,10 @@ CONFIGDATA;
 						<label for="conf_BACKUP_DEFAULT_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
 						<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?"checked":""; ?>><br>
 
+					<h5><?php echo L::config_backup_rename_files_header; ?></h5>
+						<label for="conf_BACKUP_DEFAULT_RENAME_FILES"><?php echo L::config_backup_rename_files_label; ?></label><br>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_RENAME_FILES" name="conf_BACKUP_DEFAULT_RENAME_FILES" <?php echo $config['conf_BACKUP_DEFAULT_RENAME_FILES']=="1"?"checked":""; ?>><br>
+
 					<h5><?php echo L::config_backup_generate_thumbnails_header; ?></h5>
 						<label for="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
 						<input type="checkbox" id="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" name="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
@@ -693,9 +699,11 @@ CONFIGDATA;
 					<label for="conf_BACKUP_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
 					<input type="checkbox" id="conf_BACKUP_MOVE_FILES" name="conf_BACKUP_MOVE_FILES" <?php echo $config['conf_BACKUP_MOVE_FILES']=="1"?"checked":""; ?>><br>
 					<br>
+					<label for="conf_BACKUP_RENAME_FILES"><?php echo L::config_backup_rename_files_header; ?><br><?php echo L::config_backup_rename_files_label; ?></label><br>
+					<input type="checkbox" id="conf_BACKUP_RENAME_FILES" name="conf_BACKUP_RENAME_FILES" <?php echo $config['conf_BACKUP_RENAME_FILES']=="1"?"checked":""; ?>><br>
+					<br>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
 					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
-
 
 			</details>
 		</div>
