@@ -148,6 +148,7 @@ class backup_autorun(object):
 		conf_BACKUP_DEFAULT_TARGET2				= self.__setup.get_val('conf_BACKUP_DEFAULT_TARGET2')
 
 		conf_BACKUP_DEFAULT_MOVE_FILES			= self.__setup.get_val('conf_BACKUP_DEFAULT_MOVE_FILES')
+		conf_BACKUP_DEFAULT_RENAME_FILES		= self.__setup.get_val('conf_BACKUP_DEFAULT_RENAME_FILES')
 		conf_BACKUP_DEFAULT2_MOVE_FILES			= self.__setup.get_val('conf_BACKUP_DEFAULT2_MOVE_FILES')
 		conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= self.__setup.get_val('conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS')
 		conf_BACKUP_DEFAULT_UPDATE_EXIF			= self.__setup.get_val('conf_BACKUP_DEFAULT_UPDATE_EXIF')
@@ -160,6 +161,7 @@ class backup_autorun(object):
 				f"--SourceName", f"{conf_BACKUP_DEFAULT_SOURCE}",
 				f"--TargetName", f"{conf_BACKUP_DEFAULT_TARGET}",
 				f"--move-files", f"{conf_BACKUP_DEFAULT_MOVE_FILES}",
+				f"--rename-files", f"{conf_BACKUP_DEFAULT_RENAME_FILES}",
 				f"--sync-database", "False",
 				f"--generate-thumbnails", f"{conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS}",
 				f"--update-exif", f"{conf_BACKUP_DEFAULT_UPDATE_EXIF}",
