@@ -908,6 +908,9 @@ class backup(object):
 		if not self.TargetDevice:
 			return()
 
+		if not self.TargetDevice.isLocal:
+			return()
+
 		if self.TargetDevice.isLocal:
 			lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
 
@@ -1008,184 +1011,187 @@ class backup(object):
 		return(AllowedExtensionsFindOptions)
 
 	def generateThumbnails(self):
-		if self.TargetDevice:
-			if self.TargetDevice.isLocal:
+		if not self.TargetDevice:
+			return()
 
-				lib_system.rpi_leds(trigger='timer',delay_on=900,delay_off=100)
+		if not self.TargetDevice.isLocal:
+			return()
 
-				if os.path.isfile('/usr/lib/libraw/dcraw_emu'):
-					DCRAW_EMU	= '/usr/lib/libraw/dcraw_emu'
+		lib_system.rpi_leds(trigger='timer',delay_on=900,delay_off=100)
+
+		if os.path.isfile('/usr/lib/libraw/dcraw_emu'):
+			DCRAW_EMU	= '/usr/lib/libraw/dcraw_emu'
+		else:
+			try:
+				DCRAW_EMU	= subprocess.check_output(['whereis', 'dcraw_emu']).decode().strip().split('\n')[0].split(' ')[1]
+			except:
+				DCRAW_EMU	= 'dcraw_emu'
+
+		# prepare database
+		db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
+
+		self.__display.message([
+			"set:clear",
+			f":{self.__lan.l('box_backup_generating_thumbnails_finding_images1')}",
+			':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),
+			f":{self.__lan.l('box_backup_counting_images')}",
+			f":{self.__lan.l('box_backup_generating_thumbnails_finding_images3')}"
+			])
+
+		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
+		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+
+		ImagesList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
+		ImagesList[:]	= [element for element in ImagesList if element]
+		ImagesList.sort()
+		ImagesList = [i.replace(self.TargetDevice.MountPoint,'',1) for i in ImagesList]
+
+		# find all tims
+		Command	= f"find '{self.TargetDevice.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+
+		TIMSList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
+		TIMSList[:]	= [element for element in TIMSList if element]
+		TIMSList.sort()
+		#convert tims filenames to original filenames
+		for i, TIMS in enumerate(TIMSList):
+			TIMSList[i]	= TIMS.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0] 			# remove self.TargetDevice.MountPoint and second extension
+			TIMSList[i]	= '/'.join(TIMSList[i].rsplit('/tims/', 1))									# remove /tims from folder
+
+		#remove from ImagesList all items known in TIMSList
+		MissingTIMSList	= list(set(ImagesList) - set(TIMSList))
+
+		#prepare loop to create thumbnails
+		FilesToProcess	= len(MissingTIMSList)
+
+		DisplayLine1	= self.__lan.l('box_backup_generating_thumbnails') # header1
+		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
+
+		progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
+
+		for SourceFilePathName in MissingTIMSList:
+			SourceFilePathName	= SourceFilePathName.strip('/')
+			#extract Extension from filename
+			try:
+				SourceFilePathNameExt	= SourceFilePathName.rsplit('.',1)[1].lower()
+			except:
+				SourceFilePathNameExt	= ''
+
+			TIMS_Dir				= os.path.join(os.path.dirname(SourceFilePathName), 'tims')
+			pathlib.Path(self.TargetDevice.MountPoint, TIMS_Dir).mkdir(parents=True, exist_ok=True)
+
+			FileName				= os.path.basename(SourceFilePathName)
+			TIMS_SubpathFilename	= os.path.join(TIMS_Dir, f"{FileName}.JPG")
+
+			if SourceFilePathNameExt in f"{self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES};{self.const_FILE_EXTENSIONS_LIST_TIF}".split(';'):
+				# file-types: jpeg, tif image
+				Command	= ["convert", f"{os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)}[0]", "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
+			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_HEIC.split(';'):
+
+				# file-type: heic/heif
+				# convert heif to jpg
+				Command	= ['heif-convert', os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f'{SourceFilePathName}.JPG')]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
+
+				# transfer exif from heif to jpg
+				Command	= ['exiftool', '-overwrite_original', '-ignoreMinorErrors', '-TagsFromFile', os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f'{SourceFilePathName}.JPG')]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
+
+				# create tims file
+				Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, f"{SourceFilePathName}.JPG"), "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
+
+				conf_VIEW_CONVERT_HEIC				= self.__setup.get_val('conf_VIEW_CONVERT_HEIC')
+
+				if conf_VIEW_CONVERT_HEIC:
+					MissingTIMSList.append(f"{SourceFilePathName}.JPG")
 				else:
+					Command	= ["rm", os.path.join(self.TargetDevice.MountPoint, f"{SourceFilePathName}.JPG")]
 					try:
-						DCRAW_EMU	= subprocess.check_output(['whereis', 'dcraw_emu']).decode().strip().split('\n')[0].split(' ')[1]
-					except:
-						DCRAW_EMU	= 'dcraw_emu'
-
-				# prepare database
-				db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
-
-				self.__display.message([
-					"set:clear",
-					f":{self.__lan.l('box_backup_generating_thumbnails_finding_images1')}",
-					':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),
-					f":{self.__lan.l('box_backup_counting_images')}",
-					f":{self.__lan.l('box_backup_generating_thumbnails_finding_images3')}"
-					])
-
-				BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
-				Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
-
-				ImagesList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
-				ImagesList[:]	= [element for element in ImagesList if element]
-				ImagesList.sort()
-				ImagesList = [i.replace(self.TargetDevice.MountPoint,'',1) for i in ImagesList]
-
-				# find all tims
-				Command	= f"find '{self.TargetDevice.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
-
-				TIMSList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
-				TIMSList[:]	= [element for element in TIMSList if element]
-				TIMSList.sort()
-				#convert tims filenames to original filenames
-				for i, TIMS in enumerate(TIMSList):
-					TIMSList[i]	= TIMS.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0] 			# remove self.TargetDevice.MountPoint and second extension
-					TIMSList[i]	= '/'.join(TIMSList[i].rsplit('/tims/', 1))									# remove /tims from folder
-
-				#remove from ImagesList all items known in TIMSList
-				MissingTIMSList	= list(set(ImagesList) - set(TIMSList))
-
-				#prepare loop to create thumbnails
-				FilesToProcess	= len(MissingTIMSList)
-
-				DisplayLine1	= self.__lan.l('box_backup_generating_thumbnails') # header1
-				DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
-
-				progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
-
-				for SourceFilePathName in MissingTIMSList:
-					SourceFilePathName	= SourceFilePathName.strip('/')
-					#extract Extension from filename
-					try:
-						SourceFilePathNameExt	= SourceFilePathName.rsplit('.',1)[1].lower()
-					except:
-						SourceFilePathNameExt	= ''
-
-					TIMS_Dir				= os.path.join(os.path.dirname(SourceFilePathName), 'tims')
-					pathlib.Path(self.TargetDevice.MountPoint, TIMS_Dir).mkdir(parents=True, exist_ok=True)
-
-					FileName				= os.path.basename(SourceFilePathName)
-					TIMS_SubpathFilename	= os.path.join(TIMS_Dir, f"{FileName}.JPG")
-
-					if SourceFilePathNameExt in f"{self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES};{self.const_FILE_EXTENSIONS_LIST_TIF}".split(';'):
-						# file-types: jpeg, tif image
-						Command	= ["convert", f"{os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)}[0]", "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
-					elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_HEIC.split(';'):
-
-						# file-type: heic/heif
-						# convert heif to jpg
-						Command	= ['heif-convert', os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f'{SourceFilePathName}.JPG')]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
-
-						# transfer exif from heif to jpg
-						Command	= ['exiftool', '-overwrite_original', '-ignoreMinorErrors', '-TagsFromFile', os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f'{SourceFilePathName}.JPG')]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
-
-						# create tims file
-						Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, f"{SourceFilePathName}.JPG"), "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
-
-						conf_VIEW_CONVERT_HEIC				= self.__setup.get_val('conf_VIEW_CONVERT_HEIC')
-
-						if conf_VIEW_CONVERT_HEIC:
-							MissingTIMSList.append(f"{SourceFilePathName}.JPG")
-						else:
-							Command	= ["rm", os.path.join(self.TargetDevice.MountPoint, f"{SourceFilePathName}.JPG")]
-							try:
-								subprocess.run(Command)
-							except:
-								print(f"Error: {' '.join(Command)}",file=sys.stderr)
-
-					elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
-						# file-type: raw-image
-						SourceCommand	= [DCRAW_EMU, "-w", "-Z", "-", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)]
-						FilterCommand	= ["convert", "-", "-resize", "800", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							lib_common.pipe(SourceCommand,FilterCommand)
-						except:
-							print(f"Error: {' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand)}",file=sys.stderr)
-
-					elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_VIDEO.split(';'):
-						# file-type: video
-						Command	= ["ffmpeg", "-i", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), "-ss", "00:00:01", "-vframes", "1", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
-
-						if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)):
-							# tims file not generated. Video too short? Try at second 0
-							Command	= ["ffmpeg", "-i", f"{self.TargetDevice.MountPoint}/{SourceFilePathName}", "-ss", "00:00:00", "-vframes", "1", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-							try:
-								subprocess.run(Command)
-							except:
-								print(f"Error: {' '.join(Command)}",file=sys.stderr)
-
-						Command	= ["mogrify", "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
 						subprocess.run(Command)
+					except:
+						print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-						Command	=["composite", "-gravity", "center", "/var/www/little-backup-box/img/play.png", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
+			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
+				# file-type: raw-image
+				SourceCommand	= [DCRAW_EMU, "-w", "-Z", "-", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)]
+				FilterCommand	= ["convert", "-", "-resize", "800", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					lib_common.pipe(SourceCommand,FilterCommand)
+				except:
+					print(f"Error: {' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand)}",file=sys.stderr)
 
-					elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_AUDIO.split(';'):
-						Command	= ["cp", "/var/www/little-backup-box/img/audio.JPG", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
+			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_VIDEO.split(';'):
+				# file-type: video
+				Command	= ["ffmpeg", "-i", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), "-ss", "00:00:01", "-vframes", "1", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-						Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
+				if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)):
+					# tims file not generated. Video too short? Try at second 0
+					Command	= ["ffmpeg", "-i", f"{self.TargetDevice.MountPoint}/{SourceFilePathName}", "-ss", "00:00:00", "-vframes", "1", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+					try:
+						subprocess.run(Command)
+					except:
+						print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-					if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)):
-						self.__log.message(f"ERROR: TIMS of '{os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)}' ('{os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)}') not regular created.")
+				Command	= ["mogrify", "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				subprocess.run(Command)
 
-						Command	= ["cp", "/var/www/little-backup-box/img/unknown.JPG", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
+				Command	=["composite", "-gravity", "center", "/var/www/little-backup-box/img/play.png", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-						Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
-						try:
-							subprocess.run(Command)
-						except:
-							print(f"Error: {' '.join(Command)}",file=sys.stderr)
+			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_AUDIO.split(';'):
+				Command	= ["cp", "/var/www/little-backup-box/img/audio.JPG", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-					db.dbInsertImage(SourceFilePathName)
+				Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-					progress.progress()
+			if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)):
+				self.__log.message(f"ERROR: TIMS of '{os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)}' ('{os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)}') not regular created.")
 
-				del progress
-				self.__display.message([f":{self.__lan.l('box_finished')}"])
+				Command	= ["cp", "/var/www/little-backup-box/img/unknown.JPG", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
+
+				Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
+
+			db.dbInsertImage(SourceFilePathName)
+
+			progress.progress()
+
+		del progress
+		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
 	def updateEXIF(self):	# update exif-information in original files on local drive
 
