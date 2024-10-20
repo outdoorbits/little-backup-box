@@ -79,7 +79,10 @@
 		$CloudServices_marked	=array_merge(['cloud_rsync'],$CloudServices_marked);
 	}
 
-	$TargetServices	= array_merge($LocalServices, $CloudServices_marked);
+	$TargetServices			= array(
+		'usb'		=> $LocalServices,
+		'cloud'		=> $CloudServices_marked
+	);
 ?>
 
 <html lang="<?php echo $config["conf_LANGUAGE"]; ?>" data-theme="<?php echo $theme; ?>">
@@ -91,7 +94,14 @@
 
 	<script>
 		function HideDisallowedButtons(ActiveSource) {
-			let TargetServices = [<?php $Separator = ''; foreach ($TargetServices as $TargetService) {print($Separator . "'" . $TargetService . "'"); $Separator = ', ';}; ?>];
+			let TargetServices = [<?php 	$Separator = '';
+											foreach ($TargetServices as $Group) {
+												foreach ($Group as $TargetService)
+												{
+													print($Separator . "'" . $TargetService . "'");
+													$Separator = ', ';
+												}
+											};?>];
 
 			for (i in TargetServices) {
 				let TargetService = TargetServices[i];
@@ -170,38 +180,30 @@
 				<div class="column" style="display: block;">
 					<?php
 						print("<h3>" . l::main_target . "</h3>" . l::main_target_execute);
+						foreach($TargetServices as $ButtonClass => $Group) {
 							print("<div class='backup-buttons'>");
-							foreach($TargetServices as $Storage) {
+							foreach($Group as $Storage) {
 								$LabelNameExplode		= explode(':', $Storage, 2);
 								$LabelName				= end($LabelNameExplode);
-								if (@substr_compare($Storage, 'cloud:', 0, strlen('cloud:'))==0) { /* use "@" to suppress error messages*/
-									$ButtonClass	= 'cloud';
-								}
-								elseif ($LabelName == 'cloud_rsync') {
-									$ButtonClass	= 'cloud';
-									$LabelName		= l::box_backup_mode_cloud_rsync;
-								}
-								elseif ($LabelName == 'usb') {
-									$ButtonClass	= 'usb';
+
+								if ($LabelName == 'usb') {
 									$LabelName		= l::tools_mount_usb;
 								}
 								elseif ($LabelName == 'internal') {
-									$ButtonClass	= 'usb';
 									$LabelName		= l::box_backup_mode_internal;
 								}
 								elseif ($LabelName == 'nvme') {
-									$ButtonClass	= 'usb';
 									$LabelName		= l::box_backup_mode_nvme;
 								}
-								elseif ($LabelName == 'camera') {
-									$ButtonClass	= 'camera';
-									$LabelName		= l::box_backup_mode_camera;
+								elseif ($LabelName == 'cloud_rsync') {
+									$LabelName		= l::box_backup_mode_cloud_rsync;
 								}
 
 								print("<button class='$ButtonClass' name='TargetDevice' value='$Storage' id='Target_$Storage'>$LabelName</button></br>");
 
 							}
 							print("</div>");
+						}
 
 
 					?>
