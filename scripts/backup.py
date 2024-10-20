@@ -857,7 +857,7 @@ class backup(object):
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
 		# find all not renamed media files
-		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
+		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)}  -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
 
 		FilesToRename	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		FilesToRename = list(filter(None, FilesToRename))
@@ -870,6 +870,8 @@ class backup(object):
 		progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
 
 		DateTags	= ['-DateTimeOriginal', '-CreateDate']
+
+		db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
 
 		for FileToRename in FilesToRename:
 			if not FileToRename:
@@ -894,8 +896,17 @@ class backup(object):
 			FileName	= os.path.basename(FileToRename)
 			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
 
-			if not os.path.isfile(FileNameNew):
-				os.rename(FileToRename, FileNameNew)
+			if os.path.isfile(FileNameNew):
+				# replace old by new
+				os.remove(FileNameNew)
+
+				# drop file from database (to enable exif update)
+				DropFileName	= FileNameNew.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
+				ImageFilePath	= os.path.dirname(DropFileName)
+				ImageFileName	= os.path.basename(DropFileName)
+				db.dbExecute(f"delete from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'")
+
+			os.rename(FileToRename, FileNameNew)
 
 			progress.progress()
 
