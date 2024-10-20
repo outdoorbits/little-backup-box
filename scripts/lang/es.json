@@ -55,11 +55,17 @@
       "secondary": "Ejecución secundaria",
       "general": "General",
       "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?",
-      "rename_files_checkbox_label": "Cambiar el nombre de los archivos (solo para almacenamiento local)"
+      "rename_files_checkbox_label": "Cambiar el nombre de los archivos (solo para almacenamiento local)",
+      "on": "en"
     },
     "logout_button": "Cerrar sesión",
     "nvme_button": "NVMe SSD",
-    "anyusb_button": "todo USB (cámaras y almacenamiento)"
+    "anyusb_button": "todo USB (cámaras y almacenamiento)",
+    "function": {
+      "thumbnails": "Creando miniaturas",
+      "exif": "Actualizar datos EXIF",
+      "sync": "Sincronizar base de datos"
+    }
   },
   "sysinfo": {
     "temp": "Temperatura",

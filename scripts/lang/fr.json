@@ -55,11 +55,17 @@
       "secondary": "Sauvegarde secondaire",
       "general": "Général",
       "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?",
-      "rename_files_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)"
+      "rename_files_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)",
+      "on": "sur"
     },
     "logout_button": "Se déconnecter",
     "nvme_button": "NVMe SSD",
-    "anyusb_button": "tout USB (caméras et stockage)"
+    "anyusb_button": "tout USB (caméras et stockage)",
+    "function": {
+      "thumbnails": "Création de vignettes",
+      "exif": "Mettre à jour les données EXIF ​​​​",
+      "sync": "Synchroniser la base de données"
+    }
   },
   "sysinfo": {
     "temp": "Température",

@@ -55,11 +55,17 @@
       "secondary": "Sekundärs Backup",
       "general": "Allgemein",
       "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?",
-      "rename_files_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)"
+      "rename_files_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)",
+      "on": "auf"
     },
     "logout_button": "Ausloggen",
     "nvme_button": "NVMe SSD",
-    "anyusb_button": "alle USB (Kameras und Speicher)"
+    "anyusb_button": "alle USB (Kameras und Speicher)",
+    "function": {
+      "thumbnails": "Erzeuge Vorschaubilder",
+      "exif": "Aktualisiere EXIF-Daten",
+      "sync": "Synchronisiere Datenbank"
+    }
   },
   "sysinfo": {
     "temp": "Temperatur",

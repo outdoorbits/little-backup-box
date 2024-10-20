@@ -271,11 +271,17 @@
       "secondary": "Secondary backup",
       "general": "General",
       "secondary_label": "Should a cloud backup be performed after the primary backup?",
-      "rename_files_checkbox_label": "Rename files (only for local storage)"
+      "rename_files_checkbox_label": "Rename files (only for local storage)",
+      "on": "on"
     },
     "logout_button": "Logout",
     "nvme_button": "NVMe SSD",
-    "anyusb_button": "any USB (cameras and storage)"
+    "anyusb_button": "any USB (cameras and storage)",
+    "function": {
+      "thumbnails": "Creating thumbnails",
+      "exif": "Update EXIF ​​data",
+      "sync": "Synchronize database"
+    }
   },
   "sysinfo": {
     "temp": "Temperature",
