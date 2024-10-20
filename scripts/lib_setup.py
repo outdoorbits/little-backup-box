@@ -322,7 +322,7 @@ class setup(object):
 					'const_BUTTONS_CONFIG_FILE':					{'type': 'str'},
 					'const_BUTTONS_PRIVATE_CONFIG_FILE':			{'type': 'str'},
 					'const_STORAGE_EXT_MASK':						{'type': 'str'},
-					'const_STORAGE_INT_MASK':						{'type': 'str'},
+					'const_STORAGE_NVME_MASK':						{'type': 'str'},
 					'const_CMD_RUNNER_LOCKFILE':					{'type': 'str'},
 					'const_IMAGE_DATABASE_FILENAME':				{'type': 'str'},
 					'const_FILE_EXTENSIONS_LIST_WEB_IMAGES':		{'type': 'str'},

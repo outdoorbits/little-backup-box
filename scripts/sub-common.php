@@ -82,7 +82,7 @@ function get_nvme_available($WORKING_DIR, $constants, $ignore_fs = false) {
 	$NVMe_available	= false;
 
 	foreach ($Partitions as $Partition) {
-		if (str_starts_with($Partition,"/dev/".$constants['const_STORAGE_INT_MASK'])) {
+		if (str_starts_with($Partition,"/dev/".$constants['const_STORAGE_NVME_MASK'])) {
 			$NVMe_available	= true;
 		}
 	}

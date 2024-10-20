@@ -991,9 +991,9 @@ def get_available_partitions(StorageType='all', TargetDeviceIdentifier='', exclu
 	if StorageType in ['anyusb', 'usb']:
 		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}"
 	elif StorageType == 'nvme':
-		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
+		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
 	else:
-		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
+		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
 
 	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
 	try:
@@ -1114,7 +1114,7 @@ def get_available_partitions(StorageType='all', TargetDeviceIdentifier='', exclu
 def get_available_devices():
 	setup	= lib_setup.setup()
 
-	StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_INT_MASK')}"
+	StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
 
 	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
 
