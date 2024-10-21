@@ -629,8 +629,8 @@ CONFIGDATA;
 						<label for="conf_BACKUP_DEFAULT_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
 						<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?"checked":""; ?>><br>
 
-					<h5><?php echo L::config_backup_rename_files_header; ?></h5>
-						<label for="conf_BACKUP_DEFAULT_RENAME_FILES"><?php echo L::config_backup_rename_files_label; ?></label><br>
+					<h5><?php echo L::config_backup_rename_header; ?></h5>
+						<label for="conf_BACKUP_DEFAULT_RENAME_FILES"><?php echo L::config_backup_rename_label.'<br>'.L::config_backup_rename_warning; ?></label><br>
 						<input type="checkbox" id="conf_BACKUP_DEFAULT_RENAME_FILES" name="conf_BACKUP_DEFAULT_RENAME_FILES" <?php echo $config['conf_BACKUP_DEFAULT_RENAME_FILES']=="1"?"checked":""; ?>><br>
 
 					<h5><?php echo L::config_backup_generate_thumbnails_header; ?></h5>
@@ -699,7 +699,7 @@ CONFIGDATA;
 					<label for="conf_BACKUP_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
 					<input type="checkbox" id="conf_BACKUP_MOVE_FILES" name="conf_BACKUP_MOVE_FILES" <?php echo $config['conf_BACKUP_MOVE_FILES']=="1"?"checked":""; ?>><br>
 					<br>
-					<label for="conf_BACKUP_RENAME_FILES"><?php echo L::config_backup_rename_files_header; ?><br><?php echo L::config_backup_rename_files_label; ?></label><br>
+					<label for="conf_BACKUP_RENAME_FILES"><?php echo L::config_backup_rename_header; ?><br><?php echo L::config_backup_rename_label.'<br>'.L::config_backup_rename_warning; ?></label><br>
 					<input type="checkbox" id="conf_BACKUP_RENAME_FILES" name="conf_BACKUP_RENAME_FILES" <?php echo $config['conf_BACKUP_RENAME_FILES']=="1"?"checked":""; ?>><br>
 					<br>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>

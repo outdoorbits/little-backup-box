@@ -55,8 +55,8 @@
       "secondary": "Sekundärs Backup",
       "general": "Allgemein",
       "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?",
-      "rename_files_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)",
-      "on": "auf"
+      "on": "auf",
+      "rename_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)"
     },
     "logout_button": "Ausloggen",
     "nvme_button": "NVMe SSD",
@@ -180,9 +180,10 @@
       },
       "move_files_header": "Dateien kopieren oder verschieben",
       "default2_settings_header": "Einstellungen für das sekundäre Standard-Backup",
-      "rename_files": {
+      "rename": {
         "header": "Dateien umbenennen",
-        "label": "Aus allen Medien-Dateien auf lokalen Datenträgern wird versucht, das Erstell-Datum auszulesen. Ist dies möglich, wird die Datei nach folgendem Muster umbenannt:<br>\nAus &quot;Image0123.jpg&quot; wird z.B. &quot;2024-10-18 23-47-26 - Image.jpg&quot;."
+        "label": "Aus allen Medien-Dateien auf lokalen Datenträgern wird versucht, das Erstell-Datum auszulesen. Ist dies möglich, wird die Datei nach folgendem Muster umbenannt:<br>\nAus &quot;Image0123.jpg&quot; wird z.B. &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
+        "warning": "Achtung! Die Dateien sollten danach von der Quelle gelöscht werden. Ansonsten werden sie beim nächsten Backup erneut übertragen, umbenannt und ersetzen so die Version aus dem vorhergehenden Backup."
       }
     },
     "imageviewer": {

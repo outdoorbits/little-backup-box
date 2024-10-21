@@ -55,8 +55,8 @@
       "secondary": "Ejecución secundaria",
       "general": "General",
       "secondary_label": "¿Se debe realizar una copia de seguridad en la nube después de la copia de seguridad principal?",
-      "rename_files_checkbox_label": "Cambiar el nombre de los archivos (solo para almacenamiento local)",
-      "on": "en"
+      "on": "en",
+      "rename_checkbox_label": "Cambiar el nombre de los archivos (solo para almacenamiento local)"
     },
     "logout_button": "Cerrar sesión",
     "nvme_button": "NVMe SSD",
@@ -180,9 +180,10 @@
       },
       "move_files_header": "Copiar o mover archivos",
       "default2_settings_header": "Configuración de copia de seguridad secundaria predeterminada",
-      "rename_files": {
+      "rename": {
         "header": "Cambiar el nombre de los archivos",
-        "label": "Se intenta leer la fecha de creación de todos los archivos multimedia en los medios de almacenamiento locales. Si esto es posible, se cambiará el nombre del archivo según el siguiente patrón:<br>\nDe &quot;Imagen0123.jpg&quot; será, por ejemplo, \"2024-10-18 23-47-26 - Imagen.jpg\"."
+        "label": "Se intenta leer la fecha de creación de todos los archivos multimedia en los medios de almacenamiento locales. Si esto es posible, se cambiará el nombre del archivo según el siguiente patrón:<br>\nDe &quot;Imagen0123.jpg&quot; será, por ejemplo, &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
+        "warning": "¡Peligro! Luego, los archivos deben eliminarse de la fuente. De lo contrario, se transferirán nuevamente durante la siguiente copia de seguridad, se les cambiará el nombre y así reemplazarán la versión de la copia de seguridad anterior."
       }
     },
     "imageviewer": {

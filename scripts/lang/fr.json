@@ -55,8 +55,8 @@
       "secondary": "Sauvegarde secondaire",
       "general": "Général",
       "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?",
-      "rename_files_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)",
-      "on": "sur"
+      "on": "sur",
+      "rename_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)"
     },
     "logout_button": "Se déconnecter",
     "nvme_button": "NVMe SSD",
@@ -180,9 +180,10 @@
       },
       "move_files_header": "Copier ou déplacer des fichiers",
       "default2_settings_header": "Paramètres de sauvegarde secondaire par défaut",
-      "rename_files": {
+      "rename": {
         "header": "Renommer les fichiers",
-        "label": "Une tentative est effectuée pour lire la date de création de tous les fichiers multimédias sur le support de stockage local. Si cela est possible, le fichier sera renommé selon le modèle suivant :<br>\nÀ partir de &quot;Image0123.jpg&quot; sera par exemple &quot;2024-10-18 23-47-26 - Image.jpg&quot;."
+        "label": "Une tentative est effectuée pour lire la date de création de tous les fichiers multimédias sur le support de stockage local. Si cela est possible, le fichier sera renommé selon le modèle suivant :<br>\nÀ partir de &quot;Image0123.jpg&quot; sera par exemple &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
+        "warning": "Danger! Les fichiers doivent ensuite être supprimés de la source. Dans le cas contraire, ils seront à nouveau transférés lors de la prochaine sauvegarde, renommés et ainsi remplacer la version de la sauvegarde précédente."
       }
     },
     "imageviewer": {

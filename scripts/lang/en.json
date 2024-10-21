@@ -271,8 +271,8 @@
       "secondary": "Secondary backup",
       "general": "General",
       "secondary_label": "Should a cloud backup be performed after the primary backup?",
-      "rename_files_checkbox_label": "Rename files (only for local storage)",
-      "on": "on"
+      "on": "on",
+      "rename_checkbox_label": "Rename files (only for local storage)"
     },
     "logout_button": "Logout",
     "nvme_button": "NVMe SSD",
@@ -407,9 +407,10 @@
       },
       "move_files_header": "Copy or move files",
       "default2_settings_header": "Settings for the secondary standard backup",
-      "rename_files": {
+      "rename": {
         "header": "Rename files",
-        "label": "An attempt is made to read the creation date from all media files on local storage devices. If this is possible, the file is renamed according to the following pattern:<br>\nFor example, &quot;Image0123.jpg&quot; becomes &quot;2024-10-18 23-47-26 - Image.jpg&quot;."
+        "label": "An attempt is made to read the creation date from all media files on local storage devices. If this is possible, the file is renamed according to the following pattern:<br>\nFor example, &quot;Image0123.jpg&quot; becomes &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
+        "warning": "Attention! The files should then be deleted from the source. Otherwise they will be transferred again during the next backup, renamed and replacing the version from the previous backup."
       }
     },
     "imageviewer": {

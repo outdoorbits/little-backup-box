@@ -237,7 +237,7 @@
 								<input type="checkbox" id="rename_files" name="rename_files" <?php echo $rename_files=="True"?"checked":""; ?>>
 							</td>
 							<td>
-								<label for="rename_files"><?php echo L::main_backup_rename_files_checkbox_label; ?></label>
+								<label for="rename_files"><?php echo L::main_backup_rename_checkbox_label; ?> <a title="<?php echo L::config_backup_rename_warning; ?>">&#x1F6C8;</a></label>
 							</td>
 						</tr>
 
