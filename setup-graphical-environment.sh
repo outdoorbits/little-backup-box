@@ -40,10 +40,10 @@ sudo useradd --create-home -s /bin/bash ${USER}
 
 # remove wireplumber - causing high cpu load
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt purge wireplumber -y
+		apt-get purge wireplumber -y
 
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt autoremove -y
+		apt-get autoremove -y
 
 # auto logon $USER
 ## enable auto login

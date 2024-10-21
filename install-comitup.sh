@@ -32,16 +32,16 @@ wget -r https://davesteele.github.io/comitup/latest/davesteele-comitup-apt-sourc
 sudo dpkg -i -R --force-all davesteele.github.io/comitup/deb
 
 # update and upgrade
-sudo apt update
+sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
+		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Installing comitup*: install comitup
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
+		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \

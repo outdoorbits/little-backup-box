@@ -46,23 +46,23 @@ if [ "${SCRIPT_MODE}" = "update" ]; then
 fi
 
 # Update source and perform the full system upgrade
-sudo apt update
+sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
+		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Install the required packages
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
+		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 		zip php-zip php-mbstring
 
 # Remove obsolete packages
-sudo apt autoremove -y
+sudo apt-get autoremove -y
 
 # get files
 sudo rm ./tinyfilemanager -R

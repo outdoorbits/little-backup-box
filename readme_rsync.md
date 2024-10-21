@@ -1,6 +1,6 @@
 **Setup a RSYNC-Server**\
 *Install rsync*\
-`sudo apt install rsync -y`\
+`sudo apt-get install rsync -y`\
 \
 *Config-Files*\
 /etc/rsyncd.conf:

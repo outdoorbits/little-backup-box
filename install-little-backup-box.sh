@@ -86,7 +86,7 @@ else
 	SCRIPT_MODE="install"
 	echo "Installer-script running as INSTALLER"
 	sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
+		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
@@ -153,19 +153,19 @@ if [ "$(dpkg-query -W --showformat='${db:Status-Status}' "comitup" 2>&1)" = "ins
 fi
 
 # Update source and perform the full system upgrade
-echo "apt update..."
-sudo apt update
+echo "apt-get update..."
+sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
+		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		full-upgrade -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 # Install the required packages
 
-echo "apt install..."
+echo "apt-get install..."
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
+		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
@@ -173,14 +173,14 @@ sudo DEBIAN_FRONTEND=noninteractive \
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
-	echo "apt purge..."
+	echo "apt-get purge..."
 	sudo DEBIAN_FRONTEND=noninteractive \
-		apt purge minidlna -y
+		apt-get purge minidlna -y
 fi
 
 # Remove obsolete packages
 sudo DEBIAN_FRONTEND=noninteractive \
-	apt autoremove -y
+	apt-get autoremove -y
 
 # disable services
 sudo systemctl disable openvpn.service
@@ -305,7 +305,7 @@ fi
 sudo raspi-config nonint do_i2c 0
 sudo raspi-config nonint do_spi 0
 
-sudo DEBIAN_FRONTEND=noninteractive apt -o "Dpkg::Options::=--force-confold" -o "Dpkg::Options::=--force-confdef" \
+sudo DEBIAN_FRONTEND=noninteractive apt-get -o "Dpkg::Options::=--force-confold" -o "Dpkg::Options::=--force-confdef" \
 	install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 	libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6 i2c-tools python3-luma.core python3-luma.emulator python3-luma.lcd python3-luma.led-matrix python3-luma.oled
 
@@ -462,7 +462,7 @@ sudo find /etc/php/ -name "php.ini" -exec sudo sed -i "s/^\(upload_max_filesize\
 
 ## install apache2
 sudo DEBIAN_FRONTEND=noninteractive \
-		apt \
+		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
