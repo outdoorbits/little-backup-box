@@ -913,8 +913,6 @@ class backup(object):
 		del progress
 		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
-
-
 	def syncDatabase(self):
 		if not self.TargetDevice:
 			return()

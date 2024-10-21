@@ -68,7 +68,7 @@
 		}
 
 		// restart display using new config
-		exec("sudo python3 $WORKING_DIR/lib_display.py 'set:kill'; sleep 2.5; sudo python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'  > /dev/null 2>&1 &");
+		exec("sudo bash -c \"python3 $WORKING_DIR/lib_display.py 'set:kill'; sleep ".($config['conf_DISP_FRAME_TIME']>$config['conf_DISP_FRAME_TIME_IP']?$config['conf_DISP_FRAME_TIME']:$config['conf_DISP_FRAME_TIME_IP'])+0.2."; python3 $WORKING_DIR/lib_display.py '" . L::config_display_message_settings_saved_1 . "' '" . L::config_display_message_settings_saved_2 . "'  > /dev/null 2>&1 &\"");
 	}
 
 	if (isset($_GET['check_update'])) {
