@@ -426,7 +426,7 @@
 					$IMAGE_ID_FIRST = $FETCH_IMAGE['ID'];
 				}
 				if ($FETCH_IMAGE['ID'] == $ID) {
-					$select_offset = intdiv($n,$filter_images_per_page) * $filter_images_per_page - 2;
+					$select_offset = intdiv($n-1, $filter_images_per_page) * $filter_images_per_page;
 				}
 				$IMAGE_ID_LAST = $FETCH_IMAGE['ID'];
 			}

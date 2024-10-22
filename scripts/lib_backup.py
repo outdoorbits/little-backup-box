@@ -22,8 +22,8 @@ from datetime import datetime, timedelta
 import lib_mail
 import lib_system
 
-# import lib_debug
-# xx=lib_debug.debug()
+import lib_debug
+xxx=lib_debug.debug()
 
 class progressmonitor(object):
 	def __init__(self,
@@ -96,7 +96,12 @@ class progressmonitor(object):
 					(SyncOutputLine[0:13] != 'total size is')
 				):
 					# interpret line as file
+					if SyncOutputLine in self.FilesList:
+						return()
+
 					self.CountProgress		+= 1
+
+					self.FilesList	+= [SyncOutputLine]
 
 					if not self.TIMSCopied:
 						self.TIMSCopied	= 'tims/' in SyncOutputLine

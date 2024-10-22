@@ -229,40 +229,23 @@ class backup(object):
 
 		self.finish()
 
-	def get_excludeTIMS(self):
-		## don't sync tims to cloud
-		excludeTIMS	= []
-
-		if self.SourceDevice.isLocal and not self.TargetDevice.isLocal:
-			if self.TransferMode == 'rsync':
-				excludeTIMS	= ['*tims/']
-			elif self.TransferMode == 'rclone':
-				excludeTIMS	= ['**tims/**']
-
-		return(excludeTIMS)
-
 	def get_syncCommand(self, TransferMode, SubPathAtSource, dry_run=False):
 		syncCommand	= []
 
-		# excludes
-		excludeTIMS		= self.get_excludeTIMS()
+		## excludes
+		# don't sync tims from local to cloud
+		excludeTIMS	= []
+		if self.SourceDevice.isLocal and not self.TargetDevice.isLocal:
+			excludeTIMS	= ['*/tims*']
+
+		excludePaths	= self.__const_VIEW_BANNED_PATHS + ['*.id', '*.lbbid', self.const_IMAGE_DATABASE_FILENAME] + excludeTIMS
 
 		if TransferMode	== 'rclone':
-			excludePaths	= [f'*{Path}*' for Path in self.__const_VIEW_BANNED_PATHS]
-		else:
-			excludePaths	= self.__const_VIEW_BANNED_PATHS
+			excludePaths	= [Path.replace('*', '**') for Path in excludePaths]
 
-		excludes	= [
-			'*.id',
-			'*.lbbid',
-			'*.lbbflag',
-			self.const_IMAGE_DATABASE_FILENAME,
-			'*trash*'
-		] + excludeTIMS + excludePaths
-
-		Excludes	= []
-		for exclude in excludes:
-			Excludes	+= ['--exclude', exclude]
+		ExcludeOptions	= []
+		for excludePath in excludePaths:
+			ExcludeOptions	+= ['--exclude', excludePath]
 
 		if TransferMode == 'gphoto2':
 			syncCommand	= ['gphoto2', '--camera', self.SourceDevice.DeviceIdentifier, '--port', self.SourceDevice.CameraPort, '--folder', f'{SubPathAtSource}']
@@ -290,7 +273,7 @@ class backup(object):
 			if self.move_files:
 				syncCommand	+= ['--remove-source-files']
 
-			syncCommand	+= Excludes
+			syncCommand	+= ExcludeOptions
 
 			if dry_run:
 				syncCommand	+= ['--dry-run']
@@ -310,7 +293,7 @@ class backup(object):
 				else:
 					syncCommand	+= ['copy']
 
-			syncCommand		+= [SourcePath, TargetPath, '--config', self.__RCLONE_CONFIG_FILE, '-vv', '--min-size=1B', '--ignore-case', '--no-update-modtime', '--no-update-dir-modtime'] + Excludes
+			syncCommand		+= [SourcePath, TargetPath, '--config', self.__RCLONE_CONFIG_FILE, '-vv', '--min-size=1B', '--ignore-case', '--no-update-modtime', '--no-update-dir-modtime'] + ExcludeOptions
 
 			if dry_run:
 				syncCommand	+= ['--one-way']
@@ -857,7 +840,7 @@ class backup(object):
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
 		# find all not renamed media files
-		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -path '*/tims/*' -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
+		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
 
 		FilesToRename	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		FilesToRename = list(filter(None, FilesToRename))
@@ -897,8 +880,11 @@ class backup(object):
 			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
 
 			if os.path.isfile(FileNameNew):
-				# replace old by new
-				os.remove(FileNameNew)
+				# to replace old by new one, delete the pre existing
+				try:
+					os.remove(FileNameNew)
+				except:
+					pass
 
 				# drop file from database (to enable exif update)
 				DropFileName	= FileNameNew.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
@@ -906,7 +892,11 @@ class backup(object):
 				ImageFileName	= os.path.basename(DropFileName)
 				db.dbExecute(f"delete from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'")
 
-			os.rename(FileToRename, FileNameNew)
+			# rename new file
+			try:
+				os.rename(FileToRename, FileNameNew)
+			except:
+				pass
 
 			progress.progress()
 
