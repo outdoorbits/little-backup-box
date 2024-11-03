@@ -162,7 +162,7 @@ class backup_autorun(object):
 				f"--TargetName", f"{conf_BACKUP_DEFAULT_TARGET}",
 				f"--move-files", f"{conf_BACKUP_DEFAULT_MOVE_FILES}",
 				f"--rename-files", f"{conf_BACKUP_DEFAULT_RENAME_FILES}",
-				f"--sync-database", "False",
+				f"--force-sync-database", "False",
 				f"--generate-thumbnails", f"{conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS}",
 				f"--update-exif", f"{conf_BACKUP_DEFAULT_UPDATE_EXIF}",
 				f"--power-off", f"{conf_POWER_OFF}"

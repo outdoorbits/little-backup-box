@@ -48,11 +48,12 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, move_files=False, DoRenameFiles=False, DoSyncDatabase=True, DoGenerateThumbnails=True, DoUpdateEXIF=True, DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff=False, SecundaryBackupFollows=False):
+	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', DoUpdateEXIF='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecundaryBackupFollows=False):
 
-		# SourceName:	one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
-		# TargetName:	one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
-		# DoRenameFiles, DoSyncDatabase, DoGenerateThumbnails, DoUpdateEXIF	True/False
+		# SourceName:											one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
+		# TargetName:											one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
+		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF:	one of ['setup', True, False]
+		# ForceSyncDatabase:										one of [True, False]
 
 		# Objects
 		self.__setup	= lib_setup.setup()
@@ -79,18 +80,16 @@ class backup(object):
 		# move files
 		self.move_files										= move_files
 		if self.move_files == 'setup':
-			self.move_files						= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
+			self.move_files		= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
 
 		# rename files
 		self.DoRenameFiles									= DoRenameFiles
 		if self.DoRenameFiles == 'setup':
-			self.DoRenameFiles					= self.__setup.get_val('conf_BACKUP_RENAME_FILES')
+			self.DoRenameFiles	= self.__setup.get_val('conf_BACKUP_RENAME_FILES')
 
 		# sync database
-		self.DoSyncDatabase									= DoSyncDatabase
-		if self.SourceStorageType == 'database':
-			self.DoSyncDatabase			= True
-		self.DoSyncDatabase	= self.DoSyncDatabase or self.move_files
+		self.ForceSyncDatabase									= ForceSyncDatabase
+		self.ForceSyncDatabase	= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files
 
 		# thumbnails
 		self.DoGenerateThumbnails							= DoGenerateThumbnails
@@ -146,8 +145,8 @@ class backup(object):
 		self.__TIMSCopied			= False
 		self.__mail_threads_started	= []
 
-		# define TransferMode for non camera transfers
-		self.TransferMode	= 'rclone' if self.SourceStorageType == 'cloud' or TargetStorageType == 'cloud' else 'rsync'
+		# define TransferMode for _non_ camera transfers
+		self.TransferMode	= 'rsync' if self.SourceStorageType == 'cloud_rsync' or TargetStorageType == 'cloud_rsync' else 'rclone'
 
 		CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
 		for CloudSyncMethod in CloudSyncMethods:
@@ -174,7 +173,7 @@ class backup(object):
 		VPN_Mode	= None
 		if 'cloud' in [self.SourceStorageType, TargetStorageType]:
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_CLOUD')
-		elif 'cloud_rsync' in [self.SourceStorageType,TargetStorageType]:
+		elif 'cloud_rsync' in [self.SourceStorageType, TargetStorageType]:
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_RSYNC')
 
 		self.vpn	= False
@@ -218,7 +217,7 @@ class backup(object):
 		if self.DoRenameFiles:
 			self.RenameFiles()
 
-		if self.DoSyncDatabase or self.__TIMSCopied:
+		if self.ForceSyncDatabase or self.__TIMSCopied:
 			self.syncDatabase()
 
 		if self.TargetDevice and self.DoGenerateThumbnails:
@@ -262,7 +261,8 @@ class backup(object):
 			TargetPath	= f'{os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget)}'
 
 			# basic command
-			syncCommand		= self.TargetDevice.rsyncSSH + ['rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--size-only']
+			rsyncSSH	= self.TargetDevice.rsyncSSH if self.TargetDevice.StorageType == 'cloud_rsync' else self.SourceDevice.rsyncSSH
+			syncCommand		= rsyncSSH + ['rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--size-only']
 
 			# use compression for cloud syncs only
 			if self.TargetDevice.isLocal and self.SourceDevice.isLocal:
@@ -309,8 +309,8 @@ class backup(object):
 		FilesToProcess		= 0
 		FilesToProcessPart	= 0
 
-		if self.SourceDevice.StorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync']:
-			## Source is mounted (mountable) device
+		if  self.SourceDevice.StorageType != 'camera':
+			## Source is mounted (mountable) device or treated like that (cloud_rsync)
 
 			for SubPathAtSource in checkPathsList:
 
@@ -356,7 +356,7 @@ class backup(object):
 
 				FilesToProcess	+= FilesToProcessPart
 
-		elif self.SourceDevice.StorageType == 'camera':	# Source camera
+		else:	# Source camera
 
 			for SubPathAtSource in checkPathsList:
 
@@ -377,7 +377,6 @@ class backup(object):
 
 	def backup(self):
 		if self.TargetDevice:
-
 			# loop to backup multiple sources
 			SourceStorageName			= self.SourceName
 			SourceStorageType			= self.SourceStorageType
@@ -403,7 +402,6 @@ class backup(object):
 				self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
 
 			while True: # backup loops until break
-
 				# define next source
 				if dynamicSources:
 					# add last run to completedSources
@@ -467,7 +465,6 @@ class backup(object):
 						self.TargetDevice.StorageType == 'cloud' and
 						self.SourceDevice.CloudServiceName == self.TargetDevice.CloudServiceName
 					) or
-					(SourceStorageName == 'cloud_rsync') or																				# can't write device identifier to rsync server
 					(self.TargetDevice.StorageType == 'camera') or																		# camera never can be target
 					(SourceStorageName	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')									# camera can't rsync to rsyncserver as this is not supported by gphoto2
 				):
@@ -492,14 +489,11 @@ class backup(object):
 
 				# define variables for backup
 				SourceFolderNumber		= 0
-
 				FilesToProcess			= 0
-
 				ErrorsOld				= []
 
 				# SubPaths loop
 				for SubPathAtSource in self.SourceDevice.SubPathsAtSource:
-
 					self.__reporter.new_folder(SubPathAtSource)
 
 					self.__log.message(f"Backup from {SourceStorageName}: {SubPathAtSource}",3)
@@ -512,7 +506,6 @@ class backup(object):
 
 					while TriesCount < self.const_BACKUP_MAX_TRIES and (TriesCount == 0 or self.__reporter.get_errors()):
 						TriesCount	+= 1
-
 						self.__reporter.new_try()
 
 						if self.vpn:
@@ -584,7 +577,6 @@ class backup(object):
 						SyncStartTime	= lib_system.get_uptime_sec()
 
 						# RUN BACKUP
-
 						## create target path if not exists
 						if self.TargetDevice.FilesStayInPlace:
 							try:
@@ -675,7 +667,7 @@ class backup(object):
 
 						# Remove empty files (maybe can result from disconnection of a source-device)
 						if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
-							SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0']
+							SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0', '-not', '-name', '*.lbbid']
 
 							emptyFiles	= []
 							try:
@@ -1315,12 +1307,12 @@ if __name__ == "__main__":
 		'--rename-files',
 		'-rf',
 		required	= False,
-		default		= 'False',
+		default		= 'setup',
 		help		= 'Should the files in local storage be renamed? [\'True\', \'False\'] If not set, use config value.'
 	)
 
 	parser.add_argument(
-		'--sync-database',
+		'--force-sync-database',
 		'-sd',
 		required	= False,
 		default		= 'False',
@@ -1338,7 +1330,7 @@ if __name__ == "__main__":
 	parser.add_argument(
 		'--update-exif',
 		'-ue',
-		required=False,
+		required	= False,
 		default		= 'setup',
 		help='New media without their own rating receive the standard rating. If possible, this is written to the original file. [\'True\', \'False\']. If not set, use config value.'
 	)
@@ -1398,7 +1390,7 @@ if __name__ == "__main__":
 	# clean boolean args
 	args['move_files']			= args['move_files'].lower() == 'true'			if args['move_files'] != 'setup'			else 'setup'
 	args['move_files2']			= args['move_files2'].lower() == 'true'			if args['move_files2'] != 'setup'			else 'setup'
-	args['sync_database']		= args['sync_database'].lower() == 'true'
+	args['force_sync_database']	= args['force_sync_database'].lower() == 'true'
 	args['rename_files']		= args['rename_files'].lower() == 'true'		if args['rename_files'] != 'setup'			else 'setup'
 	args['generate_thumbnails']	= args['generate_thumbnails'].lower() == 'true'	if args['generate_thumbnails'] != 'setup'	else 'setup'
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
@@ -1414,7 +1406,7 @@ if __name__ == "__main__":
 		SourceName							= args['SourceName'],
 		TargetName							= args['TargetName'],
 		move_files							= args['move_files'],
-		DoSyncDatabase						= args['sync_database'],
+		ForceSyncDatabase					= args['force_sync_database'],
 		DoRenameFiles						= args['rename_files'],
 		DoGenerateThumbnails				= False if args['move_files2'] == True else args['generate_thumbnails'],
 		DoUpdateEXIF						= args['update_exif'],
@@ -1441,7 +1433,7 @@ if __name__ == "__main__":
 			SourceName						= args['SecSourceName'],
 			TargetName						= args['SecTargetName'],
 			move_files						= args['move_files2'],
-			DoSyncDatabase					= False,
+			ForceSyncDatabase				= False,
 			DoRenameFiles					= False,
 			DoGenerateThumbnails			= False,
 			DoUpdateEXIF					= False,

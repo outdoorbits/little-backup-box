@@ -581,26 +581,31 @@
       }
     },
     "menu": {
-      "backup": "Sauvegarde",
-      "backup_local": "Sauvegarde locale",
-      "backup_cloud": "S. sur le cloud",
       "confirm": "Confirmation?",
       "yes": "Oui >",
       "to": "->",
-      "backup_mode_camera": "Caméra",
-      "backup_mode_cloud": "Cloud",
-      "backup_mode_internal": "Int.",
-      "backup_mode_usb": "USB ",
-      "backup_stop": "ARRÊTER sauvegarde",
       "ip": "Adresse IP",
       "power_shutdown": "Éteindre",
       "power_reboot": "Redémarrer",
       "system": "Système",
       "network": "Réseau",
       "comitup_reset": "Réinitialiser Comitup",
-      "backup_mode_cloud_rsync": "Serveur rsync",
       "vpn_stop": "Déconnecter le VPN",
-      "backup_mode_nvme": "NVMe SSD"
+      "backup": {
+        "backup": "Sauvegarde",
+        "cloud": "S. sur le cloud",
+        "local": "Sauvegarde locale",
+        "mode": {
+          "camera": "Caméra",
+          "cloud": "Cloud",
+          "cloud_rsync": "Serveur rsync",
+          "internal": "Int.",
+          "nvme": "NVMe SSD",
+          "usb": "USB ",
+          "anyusb": "tout USB"
+        },
+        "stop": "ARRÊTER sauvegarde"
+      }
     },
     "backup_local": "localement",
     "finished": "fini",

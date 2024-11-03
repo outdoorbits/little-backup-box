@@ -87,7 +87,7 @@ class menu(object):
 		start_backup_trunk	= ['sudo','python3',f'{self.WORKING_DIR}/backup.py']
 
 		# local backups
-		local_sources	= ['usb','internal','camera']
+		local_sources	= ['anyusb', 'usb', 'internal','camera']
 		local_targets	= ['usb','internal']
 
 		## NVMe available?
@@ -131,12 +131,12 @@ class menu(object):
 				# impossible combinations
 				if source == target:
 					continue
-				if source == 'cloud_rsync':
+
+				if target in ['anyusb', 'camera']:
 					continue
-				if source == 'camera' and target == 'cloud_rsync':
+				if target == 'cloud_rsync' and source in ['anyusb', 'camera']:
 					continue
-				if target == 'camera':
-					continue
+
 				if (not source in cloudservices) and (not target in cloudservices):
 					continue
 
@@ -241,7 +241,7 @@ class menu(object):
 		self.MENU_MAIN	= [
 			{
 				'type':		'menu',
-				'title':	self.__lan.l('box_menu_backup'),
+				'title':	self.__lan.l('box_menu_backup_backup'),
 				'action':	self.MENU_BACKUP,
 			},
 

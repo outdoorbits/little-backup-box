@@ -365,6 +365,8 @@ class storage(object):
 			self.MountPoint			= f"rsync://{conf_RSYNC_USER}@{conf_RSYNC_SERVER}:{conf_RSYNC_PORT}/{conf_RSYNC_SERVER_MODULE}"
 			self.LbbDeviceID		= conf_RSYNC_SERVER_MODULE
 
+			self.SubPathsAtSource	= ['']
+
 		return(configured)
 
 	def __mount_internal(self):
