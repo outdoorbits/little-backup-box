@@ -593,8 +593,6 @@
       "vpn_stop": "VPN trennen",
       "backup": {
         "backup": "Backup",
-        "cloud": "Cloud-Backup",
-        "local": "Lokales Backup",
         "mode": {
           "camera": "Kamera",
           "cloud": "Cloud",

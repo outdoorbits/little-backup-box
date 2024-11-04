@@ -32,8 +32,8 @@ import lib_network
 import lib_storage
 import lib_system
 
-#import lib_debug
-#xx	= lib_debug.debug()
+import lib_debug
+xxx	= lib_debug.debug()
 
 class MENU_CONTROLLER(object):
 	def __init__(self):
@@ -87,29 +87,14 @@ class menu(object):
 		start_backup_trunk	= ['sudo','python3',f'{self.WORKING_DIR}/backup.py']
 
 		# local backups
-		local_sources	= ['anyusb', 'usb', 'internal','camera']
-		local_targets	= ['usb','internal']
+		local_services	= ['anyusb', 'usb', 'internal','camera']
 
 		## NVMe available?
 		if lib_storage.get_available_partitions(StorageType='nvme'):
-			local_sources.append('nvme')
+			local_services.append('nvme')
 			local_targets.append('nvme')
 
-		self.MENU_BACKUP_LOCAL	= []
-		for source in local_sources:
-			for target in local_targets:
-				self.MENU_BACKUP_LOCAL.append(
-					{
-					'type':		'item',
-					'title':	self.__lan.l(f'box_menu_backup_mode_{source}') + '|' + self.__lan.l('box_menu_to') + '|' + self.__lan.l(f'box_menu_backup_mode_{target}'),
-					'action':	self.create_confirmed_shell_action(
-									title	= self.__lan.l(f'box_menu_backup_mode_{source}') + '|' + self.__lan.l('box_menu_to') + '|' + self.__lan.l(f'box_menu_backup_mode_{target}'),
-									command	= [ kill_backup_process, start_backup_trunk + ['--SourceName', source, '--TargetName', target] ]
-								),
-					}
-				)
-
-		# cloud backups
+		# backups
 		cloudservices	= []
 
 		## rsyncserver
@@ -119,16 +104,25 @@ class menu(object):
 		## rclone services
 		rclone_cloudservices	= subprocess.check_output('sudo rclone config show --config "{}" | grep "^\[.*\]$" | sed "s/^\[//" | sed "s/\]$//"'.format(self.RCLONE_CONFIG_FILE),shell=True).decode('UTF-8').strip().split('\n')
 		for i in range(len(rclone_cloudservices)):
-			rclone_cloudservices[i]	= f'cloud:{rclone_cloudservices[i]}'
+			cloudservices.append(f'cloud:{rclone_cloudservices[i]}')
 
-		cloudservices			+= rclone_cloudservices
+		# generate menues
+		BACKUP_SOURCES_MENU		= []
 
-		self.MENU_BACKUP_CLOUD	= []
+		for source in (local_services + cloudservices):
+			BACKUP_SOURCE_MENU	= []
 
-		for source in (local_sources + cloudservices):
-			for target in (local_sources + cloudservices):
+			# format service parameters
+			sourceType, sourceCloudServiceName		= lib_storage.extractCloudService(source)
 
-				# impossible combinations
+			if sourceType == 'cloud':
+				sourceName	= sourceCloudServiceName
+			else:
+				sourceName	= self.__lan.l(f'box_menu_backup_mode_{sourceType}')
+
+			for target in (local_services + cloudservices):
+
+				# check invalid combinations of Source and Target
 				if source == target:
 					continue
 
@@ -140,22 +134,19 @@ class menu(object):
 				if (not source in cloudservices) and (not target in cloudservices):
 					continue
 
-				sourceType, sourceCloudServiceName		= lib_storage.extractCloudService(source)
+				# format service parameters
 				targetType, targetCloudServiceName		= lib_storage.extractCloudService(target)
 
-				if sourceType == 'cloud':
-					sourceName	= sourceCloudServiceName
-				else:
-					sourceName	= self.__lan.l(f'box_menu_backup_mode_{sourceType}')
 				if targetType == 'cloud':
 					targetName	= targetCloudServiceName
 				else:
 					targetName	= self.__lan.l(f'box_menu_backup_mode_{targetType}')
 
-				self.MENU_BACKUP_CLOUD.append(
+				# add to submenu
+				BACKUP_SOURCE_MENU.append(
 					{
 						'type':		'item',
-						'title':	sourceName + '|' + self.__lan.l('box_menu_to') + '|' + targetName,
+						'title':	self.__lan.l('box_menu_to') + '|' + targetName,
 						'action':	self.create_confirmed_shell_action(
 										title	= sourceName + '|' + self.__lan.l('box_menu_to') + '|' + targetName,
 										command	= [ kill_backup_process, start_backup_trunk + ['--SourceName', source, '--TargetName', target] ]
@@ -163,17 +154,22 @@ class menu(object):
 					}
 				)
 
-		self.MENU_BACKUP	= [
-			{
-				'type':		'menu',
-				'title':	self.__lan.l('box_menu_backup_local'),
-				'action':	self.MENU_BACKUP_LOCAL,
-			},
+			# combine BACKUP_SOURCE_MENU to BACKUP_SOURCES_MENU
+			menutitle	= self.__lan.l(f'box_menu_backup_mode_{sourceType}') if sourceType != 'cloud' else sourceName
+			BACKUP_SOURCES_MENU.append(
+				{
+					'type':		'menu',
+					'title':	menutitle + ' ' + self.__lan.l('box_menu_to'),
+					'action':	BACKUP_SOURCE_MENU
+				}
+			)
 
+		# create menu
+		MENU_BACKUP	= [
 			{
 				'type':		'menu',
-				'title':	self.__lan.l('box_menu_backup_cloud'),
-				'action':	self.MENU_BACKUP_CLOUD,
+				'title':	self.__lan.l('box_menu_backup_backup'),
+				'action':	BACKUP_SOURCES_MENU
 			},
 
 			{
@@ -182,7 +178,7 @@ class menu(object):
 				'action':	self.create_confirmed_shell_action(
 								title	= self.__lan.l('box_menu_backup_stop'),
 								command	= [kill_backup_process]
-							),
+							)
 			},
 		]
 
@@ -242,7 +238,7 @@ class menu(object):
 			{
 				'type':		'menu',
 				'title':	self.__lan.l('box_menu_backup_backup'),
-				'action':	self.MENU_BACKUP,
+				'action':	MENU_BACKUP,
 			},
 
 			{
@@ -518,34 +514,34 @@ class menu(object):
 		self.display()
 
 ##debug
-#if __name__ == "__main__":
+if __name__ == "__main__":
+	xxx.d('start')
+	import lib_setup
 
-	#import lib_setup
+	setup=lib_setup.setup()
 
-	#setup=lib_setup.setup()
+	menu_controller	= MENU_CONTROLLER()
 
-	#menu_controller	= MENU_CONTROLLER()
+	menuobj	= menu(DISPLAY_LINES=10, setup=setup, menu_controller=menu_controller)
 
-	#menuobj	= menu(DISPLAY_LINES=10, setup=setup, menu_controller=menu_controller)
-
-	#menuobj.move_right()#debug
-	#menuobj.move_right()#debug
-	#menuobj.move_right()#debug
-	#menuobj.move_right()#debug
-	#menuobj.move_right()#debug
-
-	#time.sleep (0.5)
-	#menuobj.move_right()#debug
-	#time.sleep (0.5)
-	#menuobj.move_right()#debug
-	#time.sleep (0.5)
-	#menuobj.move_right()#debug
-
-	#menuobj.move_down(0)#debug
-	#menuobj.move_down(0)#debug
+	menuobj.move_right()#debug
+	menuobj.move_right()#debug
+	menuobj.move_right()#debug
+	# menuobj.move_right()#debug
+	# menuobj.move_right()#debug
+ #
+	# time.sleep (0.5)
+	# menuobj.move_right()#debug
+	# time.sleep (0.5)
+	# menuobj.move_right()#debug
+	# time.sleep (0.5)
+	# menuobj.move_right()#debug
+ #
+	# menuobj.move_down(0)#debug
+	# menuobj.move_down(0)#debug
+	# menuobj.move_right(0)#debug
+	# menuobj.move_down(0)#debug
 	#menuobj.move_right(0)#debug
-	#menuobj.move_down(0)#debug
-	##menuobj.move_right(0)#debug
-	##menuobj.move_right(0)#debug
-	#time.sleep(20)
-	#print('End.')
+	#menuobj.move_right(0)#debug
+	# time.sleep(20)
+	xxx.d('End.')

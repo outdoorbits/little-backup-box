@@ -593,8 +593,6 @@
       "vpn_stop": "Desconectar VPN",
       "backup": {
         "backup": "Respaldo",
-        "cloud": "R. en la nube",
-        "local": "Copia de seg. local",
         "mode": {
           "camera": "Cámara",
           "cloud": "Nube",

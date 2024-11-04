@@ -203,8 +203,6 @@
       "vpn_stop": "Disconnect VPN",
       "backup": {
         "backup": "Backup",
-        "cloud": "Cloud backup",
-        "local": "Local backup",
         "mode": {
           "camera": "Camera",
           "cloud": "Cloud",
