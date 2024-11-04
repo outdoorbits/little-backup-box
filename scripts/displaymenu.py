@@ -123,15 +123,12 @@ class menu(object):
 			for target in (local_services + cloudservices):
 
 				# check invalid combinations of Source and Target
-				if source == target:
+				if (source == target) and (source != 'usb'):
 					continue
 
 				if target in ['anyusb', 'camera']:
 					continue
 				if target == 'cloud_rsync' and source in ['anyusb', 'camera']:
-					continue
-
-				if (not source in cloudservices) and (not target in cloudservices):
 					continue
 
 				# format service parameters
