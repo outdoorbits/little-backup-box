@@ -225,7 +225,10 @@ class DISPLAY(object):
 			ImageLine = Content.split("=",1)
 			ImageFilename = ImageLine[1]
 
-			image = Image.open(ImageFilename).convert(self.device.mode).resize((self.device.width, self.device.height))
+			try:
+				image = Image.open(ImageFilename).convert(self.device.mode).resize((self.device.width, self.device.height))
+			except:
+				return()
 
 			self.device.display(image)
 

@@ -188,6 +188,7 @@
 		$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?'true':'false';
 		$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?'true':'false';
 		$conf_POWER_OFF								= isset($conf_POWER_OFF)?'true':'false';
+		$conf_MAIL_IP								= isset($conf_MAIL_IP)?'true':'false';
 		$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?'true':'false';
 		$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?'true':'false';
 		$conf_DISP									= isset($conf_DISP)?'true':'false';
@@ -300,6 +301,7 @@ conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
 conf_BACKUP_UPDATE_EXIF=$conf_BACKUP_UPDATE_EXIF
 conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
 conf_VIEW_WRITE_RATING_EXIF=$conf_VIEW_WRITE_RATING_EXIF
+conf_MAIL_IP=$conf_MAIL_IP
 conf_MAIL_NOTIFICATIONS=$conf_MAIL_NOTIFICATIONS
 conf_MAIL_TIMEOUT_SEC=$conf_MAIL_TIMEOUT_SEC
 conf_MAIL_HTML=$conf_MAIL_HTML
@@ -626,20 +628,20 @@ CONFIGDATA;
 				<h4><?php echo L::config_backup_default_settings_header; ?></h4>
 
 					<h5><?php echo L::config_backup_move_files_header; ?></h5>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?"checked":""; ?>>
 						<label for="conf_BACKUP_DEFAULT_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?"checked":""; ?>><br>
 
 					<h5><?php echo L::config_backup_rename_header; ?></h5>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_RENAME_FILES" name="conf_BACKUP_DEFAULT_RENAME_FILES" <?php echo $config['conf_BACKUP_DEFAULT_RENAME_FILES']=="1"?"checked":""; ?>>
 						<label for="conf_BACKUP_DEFAULT_RENAME_FILES"><?php echo L::config_backup_rename_label.'<br>'.L::config_backup_rename_warning; ?></label><br>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_RENAME_FILES" name="conf_BACKUP_DEFAULT_RENAME_FILES" <?php echo $config['conf_BACKUP_DEFAULT_RENAME_FILES']=="1"?"checked":""; ?>><br>
 
 					<h5><?php echo L::config_backup_generate_thumbnails_header; ?></h5>
-						<label for="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
 						<input type="checkbox" id="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" name="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
+						<label for="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
 
 					<h5><?php echo L::config_backup_update_exif_header; ?></h5>
-						<label for="conf_BACKUP_DEFAULT_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br>
 						<input type="checkbox" id="conf_BACKUP_DEFAULT_UPDATE_EXIF" name="conf_BACKUP_DEFAULT_UPDATE_EXIF" <?php echo $config['conf_BACKUP_DEFAULT_UPDATE_EXIF']=="1"?"checked":""; ?>>
+						<label for="conf_BACKUP_DEFAULT_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br>
 
 				<h3><?php echo L::config_backup_header2; ?></h3>
 					<label for="BACKUP_MODE_2"><?php echo L::config_backup_label2; ?></label><br>
@@ -651,8 +653,8 @@ CONFIGDATA;
 					<h4><?php echo L::config_backup_default2_settings_header; ?></h4>
 
 						<h5><?php echo L::config_backup_move_files_header; ?></h5>
+							<input type="checkbox" id="conf_BACKUP_DEFAULT2_MOVE_FILES" name="conf_BACKUP_DEFAULT2_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT2_MOVE_FILES']=="1"?"checked":""; ?>>
 							<label for="conf_BACKUP_DEFAULT2_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
-							<input type="checkbox" id="conf_BACKUP_DEFAULT2_MOVE_FILES" name="conf_BACKUP_DEFAULT2_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT2_MOVE_FILES']=="1"?"checked":""; ?>><br>
 
 
 				<h3><?php echo L::config_backup_target_requirements_header; ?></h3>
@@ -696,14 +698,14 @@ CONFIGDATA;
 					<textarea <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" rows="8" style="width: 100%;"><?php echo str_replace(';', "\n", $config['conf_BACKUP_CAMERA_FOLDER_MASK']); ?></textarea>
 
 				<h3><?php echo L::config_backup_general_settings_header; ?></h3>
+					<input type="checkbox" id="conf_BACKUP_MOVE_FILES" name="conf_BACKUP_MOVE_FILES" <?php echo $config['conf_BACKUP_MOVE_FILES']=="1"?"checked":""; ?>>
 					<label for="conf_BACKUP_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br>
-					<input type="checkbox" id="conf_BACKUP_MOVE_FILES" name="conf_BACKUP_MOVE_FILES" <?php echo $config['conf_BACKUP_MOVE_FILES']=="1"?"checked":""; ?>><br>
 					<br>
+					<input type="checkbox" id="conf_BACKUP_RENAME_FILES" name="conf_BACKUP_RENAME_FILES" <?php echo $config['conf_BACKUP_RENAME_FILES']=="1"?"checked":""; ?>>
 					<label for="conf_BACKUP_RENAME_FILES"><?php echo L::config_backup_rename_header; ?><br><?php echo L::config_backup_rename_label.'<br>'.L::config_backup_rename_warning; ?></label><br>
-					<input type="checkbox" id="conf_BACKUP_RENAME_FILES" name="conf_BACKUP_RENAME_FILES" <?php echo $config['conf_BACKUP_RENAME_FILES']=="1"?"checked":""; ?>><br>
 					<br>
-					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
 					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
+					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>
 
 			</details>
 		</div>
@@ -722,8 +724,8 @@ CONFIGDATA;
 					</select>
 
 				<h3><?php echo L::config_behavior_log_sync_protokoll_header; ?></h3>
-					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
 					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
+					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
 
 				<h3><?php echo L::config_behavior_power_off_idle_time_header; ?></h3>
 					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_behavior_power_off_idle_time_label; ?></label><br>
@@ -767,8 +769,8 @@ CONFIGDATA;
 						</select>
 
 				<h3><?php echo L::config_view_popup_header; ?></h3>
-					<label for="conf_POPUP_MESSAGES"><?php echo L::config_view_popup_label; ?></label><br>
 					<input type="checkbox" id="conf_POPUP_MESSAGES" name="conf_POPUP_MESSAGES" <?php echo $config['conf_POPUP_MESSAGES']=="1"?"checked":""; ?>>
+					<label for="conf_POPUP_MESSAGES"><?php echo L::config_view_popup_label; ?></label><br>
 
 			</details>
 		</div>
@@ -779,8 +781,8 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_display_behavior_header; ?></h3>
 					<div>
-						<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br>
 						<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+						<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br>
 					</div>
 
 					<div>
@@ -813,8 +815,8 @@ CONFIGDATA;
 					</div>
 
 					<div>
-						<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
 						<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+						<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
 						<br>
 						<label for="conf_DISP_FRAME_TIME_IP"><?php echo L::config_display_frame_time_ip_label; ?></label><br>
 							<select name="conf_DISP_FRAME_TIME_IP" id="conf_DISP_FRAME_TIME_IP">
@@ -828,8 +830,8 @@ CONFIGDATA;
 					</div>
 
 					<div>
-						<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_display_black_on_power_off_label; ?></label><br>
 						<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
+						<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_display_black_on_power_off_label; ?></label><br>
 					</div>
 
 					<div>
@@ -898,8 +900,8 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_menu_enable_header; ?></h3>
 					<div>
-						<label for="conf_MENU_ENABLED"><?php echo L::config_menu_enable_label; ?></label><br>
 						<input type="checkbox" id="conf_MENU_ENABLED" name="conf_MENU_ENABLED" <?php echo $config['conf_MENU_ENABLED']=="1"?"checked":""; ?>>
+						<label for="conf_MENU_ENABLED"><?php echo L::config_menu_enable_label; ?></label><br>
 					</div>
 
 				<h3><?php echo L::config_menu_rotate_header; ?></h3>
@@ -929,8 +931,8 @@ CONFIGDATA;
 				</p>
 				<h3><?php echo L::config_screen_virtual_keyboard_enable_header; ?></h3>
 					<div>
-						<label for="conf_VIRTUAL_KEYBOARD_ENABLED"><?php echo L::config_screen_virtual_keyboard_enable_label; ?></label><br>
 						<input type="checkbox" id="conf_VIRTUAL_KEYBOARD_ENABLED" name="conf_VIRTUAL_KEYBOARD_ENABLED" <?php echo $config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1"?"checked":""; ?>>
+						<label for="conf_VIRTUAL_KEYBOARD_ENABLED"><?php echo L::config_screen_virtual_keyboard_enable_label; ?></label><br>
 					</div>
 
 			</details>
@@ -941,20 +943,20 @@ CONFIGDATA;
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_imageviewer_section; ?></summary>
 
 				<h3><?php echo L::config_backup_generate_thumbnails_header; ?></h3>
-					<label for="conf_BACKUP_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
 					<input type="checkbox" id="conf_BACKUP_GENERATE_THUMBNAILS" name="conf_BACKUP_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
+					<label for="conf_BACKUP_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br>
 
 				<h3><?php echo L::config_imageviewer_convert_heic_header; ?></h3>
-					<label for="conf_VIEW_CONVERT_HEIC"><?php echo L::config_imageviewer_convert_heic_label; ?></label><br>
 					<input type="checkbox" id="conf_VIEW_CONVERT_HEIC" name="conf_VIEW_CONVERT_HEIC" <?php echo $config['conf_VIEW_CONVERT_HEIC']=="1"?"checked":""; ?>>
+					<label for="conf_VIEW_CONVERT_HEIC"><?php echo L::config_imageviewer_convert_heic_label; ?></label><br>
 
 				<h3><?php echo L::config_backup_update_exif_header; ?></h3>
-					<label for="conf_BACKUP_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br>
 					<input type="checkbox" id="conf_BACKUP_UPDATE_EXIF" name="conf_BACKUP_UPDATE_EXIF" <?php echo $config['conf_BACKUP_UPDATE_EXIF']=="1"?"checked":""; ?>>
+					<label for="conf_BACKUP_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br>
 
 				<h3><?php echo L::config_imageviewer_write_rating_exif_header; ?></h3>
-					<label for="conf_VIEW_WRITE_RATING_EXIF"><?php echo L::config_imageviewer_write_rating_exif_label; ?></label><br>
 					<input type="checkbox" id="conf_VIEW_WRITE_RATING_EXIF" name="conf_VIEW_WRITE_RATING_EXIF" <?php echo $config['conf_VIEW_WRITE_RATING_EXIF']=="1"?"checked":""; ?>>
+					<label for="conf_VIEW_WRITE_RATING_EXIF"><?php echo L::config_imageviewer_write_rating_exif_label; ?></label><br>
 
 			</details>
 		</div>
@@ -963,13 +965,16 @@ CONFIGDATA;
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_mail_section; ?></summary>
 
-				<h3><?php echo L::config_behavior_notify_header; ?></h3>
-					<label for="conf_MAIL_NOTIFICATIONS"><?php echo L::config_behavior_notify_label; ?></label><br>
+				<h3><?php echo L::config_mail_notify_header; ?></h3>
 					<input type="checkbox" id="conf_MAIL_NOTIFICATIONS" name="conf_MAIL_NOTIFICATIONS"<?php echo $config['conf_MAIL_NOTIFICATIONS']=="1"?"checked":""; ?>>
+					<label for="conf_MAIL_NOTIFICATIONS"><?php echo L::config_mail_notify_backup_label; ?></label><br>
+
+					<input type="checkbox" id="conf_MAIL_IP" name="conf_MAIL_IP"<?php echo $config['conf_MAIL_IP']=="1"?"checked":""; ?>>
+					<label for="conf_MAIL_IP"><?php echo L::config_mail_notify_ip_label; ?></label><br>
 
 				<h3><?php echo L::config_behavior_mail_html_header; ?></h3>
-					<label for="conf_MAIL_HTML"><?php echo L::config_behavior_mail_html_label; ?></label><br>
 					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
+					<label for="conf_MAIL_HTML"><?php echo L::config_behavior_mail_html_label; ?></label><br>
 
 				<h3><?php echo L::config_mail_smtp_header; ?></h3>
 					<label for="conf_SMTP_SERVER"><?php echo L::config_mail_smtp_label; ?></label><br>
@@ -982,6 +987,7 @@ CONFIGDATA;
 				<h3><?php echo L::config_mail_security_header; ?></h3>
 					<input type="radio" id="conf_MAIL_SECURITY_STARTTLS" name="conf_MAIL_SECURITY" value="STARTTLS" <?php echo $config['conf_MAIL_SECURITY']!=="SSL"?"checked":""; ?>>
 					<label for="conf_MAIL_SECURITY_STARTTLS">STARTTLS</label><br>
+
 					<input type="radio" id="conf_MAIL_SECURITY_SSL" name="conf_MAIL_SECURITY" value="SSL" <?php echo $config['conf_MAIL_SECURITY']=="SSL"?"checked":""; ?>>
 					<label for="conf_MAIL_SECURITY_SSL">SSL</label><br>
 
@@ -1013,8 +1019,8 @@ CONFIGDATA;
 					</select>
 
 				<h3><?php echo L::config_mail_testmail_header; ?></h3>
-					<label for="send_testmail"><?php echo L::config_mail_testmail_label; ?></label><br>
 					<input type="checkbox" id="send_testmail" name="send_testmail">
+					<label for="send_testmail"><?php echo L::config_mail_testmail_label; ?></label><br>
 			</details>
 		</div>
 
@@ -1147,8 +1153,8 @@ CONFIGDATA;
 					<a href="/frame.php?page=rclone_gui" target="_blank"><?php echo L::config_cloud_rclone_gui; ?></a>
 
 				<h3><?php echo L::config_cloud_restart_header; ?></h3>
-					<label for="restart_rclone_gui"><?php echo L::config_cloud_restart_label; ?></label><br>
 					<input type="checkbox" id="restart_rclone_gui" name="restart_rclone_gui">
+					<label for="restart_rclone_gui"><?php echo L::config_cloud_restart_label; ?></label><br>
 
 			</details>
 		</div>
@@ -1220,8 +1226,8 @@ CONFIGDATA;
 									foreach($vpn_types as $vpn_type) {
 										if ($vpn_file_exists[$vpn_type]) {
 											echo "<p>";
+											echo ('<input type="checkbox" id="vpn_remove_' . $vpn_type . '" name="vpn_remove_' . $vpn_type . '">&nbsp;');
 											echo ('<label for="vpn_remove_' . $vpn_type . '">' . $vpn_type . '</label><br>');
-											echo ('<input type="checkbox" id="vpn_remove_' . $vpn_type . '" name="vpn_remove_' . $vpn_type . '">');
 											echo "</p>";
 										}
 									}
@@ -1570,8 +1576,8 @@ CONFIGDATA;
 						if ($config['conf_PASSWORD'] != "") {
 							echo "<h3>" . L::config_password_remove_header . "</h3>";
 							echo "<p>";
-							echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label ."</label><br>";
 							echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">&nbsp;";
+							echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label ."</label><br>";
 							echo "</p>";
 						}
 					?>

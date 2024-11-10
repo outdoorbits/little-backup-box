@@ -97,7 +97,7 @@ class ip_info(object):
 		const_IP_QR_FILE_PATTERN	= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
 		const_FONT_PATH				= self.__setup.get_val('const_FONT_PATH')
 
-		conf_MAIL_NOTIFICATIONS		= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
+		conf_MAIL_IP		= self.__setup.get_val('conf_MAIL_IP')
 		conf_DISP_RESOLUTION_X		= self.__setup.get_val('conf_DISP_RESOLUTION_X')
 		conf_DISP_RESOLUTION_Y		= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
 		conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
@@ -108,7 +108,7 @@ class ip_info(object):
 
 		if (
 			self.__IPs
-			and conf_MAIL_NOTIFICATIONS
+			and conf_MAIL_IP
 			and lib_network.get_internet_status()
 		):
 

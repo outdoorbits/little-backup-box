@@ -849,7 +849,7 @@ class backup(object):
 		db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
 
 		for FileToRename in FilesToRename:
-			if not FileToRename:
+			if not os.path.isfile(FileToRename):
 				continue
 
 			FileCreateDate	= None
@@ -872,21 +872,15 @@ class backup(object):
 			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
 
 			if os.path.isfile(FileNameNew):
-				# to replace old by new one, delete the pre existing
-				try:
-					os.remove(FileNameNew)
-				except:
-					pass
-
 				# drop file from database (to enable exif update)
 				DropFileName	= FileNameNew.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
 				ImageFilePath	= os.path.dirname(DropFileName)
 				ImageFileName	= os.path.basename(DropFileName)
 				db.dbExecute(f"delete from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'")
 
-			# rename new file
+			# rename new file (overwrite in destination if already exists)
 			try:
-				os.rename(FileToRename, FileNameNew)
+				os.replace(FileToRename, FileNameNew)
 			except:
 				pass
 

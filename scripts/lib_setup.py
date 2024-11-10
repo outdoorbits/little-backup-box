@@ -255,6 +255,7 @@ class setup(object):
 					'conf_LOGLEVEL':									{'value': 1, 'type': 'int'},
 					'conf_LOG_SYNC':									{'value': True, 'type': 'bool'},
 					'conf_POWER_OFF_IDLE_TIME':							{'value': 0, 'type': 'int'},
+					'conf_MAIL_IP':										{'value': False, 'type': 'bool'},
 					'conf_MAIL_NOTIFICATIONS':							{'value': False, 'type': 'bool'},
 					'conf_MAIL_TIMEOUT_SEC':							{'value': 60, 'type': 'int'},
 					'conf_MAIL_HTML':									{'value': True, 'type': 'bool'},

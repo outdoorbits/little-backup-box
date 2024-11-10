@@ -214,7 +214,10 @@
       "sender_label": "Adresse e-mail de l'expéditeur",
       "security_header": "Sécurité de la connexion",
       "timeout_header": "Délai d'expiration du courrier",
-      "timeout_label": "Au bout de quel délai faut-il arrêter l'envoi des rapports de sauvegarde ?"
+      "timeout_label": "Au bout de quel délai faut-il arrêter l'envoi des rapports de sauvegarde ?",
+      "notify_header": "Envoyer des e-mails",
+      "notify_backup_label": "Si possible, envoyer des rapports de sauvegarde par e-mail ?",
+      "notify_ip_label": "Si possible, envoyer les liens actuels de cette Little Backup Box par email ?"
     },
     "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
     "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
@@ -233,8 +236,6 @@
       "loglevel_text": "Consigner les événements système (dans Log Monitor) ?<br>(Fichier journal :",
       "mail_html_header": "Envoyer des e-mails au format HTML",
       "mail_html_label": "Si les mails sont activés, doivent-ils être formatés en HTML ?",
-      "notify_header": "Envoyer des e-mails",
-      "notify_label": "Essayez d'envoyer des e-mails sur les liens réels vers cette petite boîte de sauvegarde et sur les sauvegardes terminées ?",
       "power_off_idle_time_header": "Mise hors tension après une période d'inactivité",
       "power_off_idle_time_label": "Sélectionnez le temps d'inactivité après lequel le système doit être arrêté.",
       "power_off_idle_time_none": "Certainement pas",

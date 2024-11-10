@@ -444,7 +444,10 @@
       "sender_label": "Mailaddress of the sender",
       "security_header": "Connection security",
       "timeout_header": "Mail timeout",
-      "timeout_label": "After what time limit should the sending of backup reports be canceled?"
+      "timeout_label": "After what time limit should the sending of backup reports be canceled?",
+      "notify_header": "Send mails",
+      "notify_backup_label": "If possible, send backup reports via email?",
+      "notify_ip_label": "If possible, send the current links of this Little Backup Box via email?"
     },
     "alert_password_change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
     "alert_password_change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",
@@ -463,8 +466,6 @@
       "loglevel_text": "Log system-events (to Log Monitor)?<br>(Logfile:",
       "mail_html_header": "Send mails in HTML-format",
       "mail_html_label": "If mails are activated, should they be Formatted in HTML?",
-      "notify_header": "Send mails",
-      "notify_label": "Try to send mails about actual links to this Little Backup Box and about finished backups?",
       "power_off_idle_time_header": "Power down after idle-time",
       "power_off_idle_time_label": "Select the idle time after which the system should be stopped.",
       "power_off_idle_time_none": "never",

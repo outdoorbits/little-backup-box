@@ -214,7 +214,10 @@
       "sender_label": "Dirección de correo electrónico del remitente",
       "security_header": "Seguridad de conexion",
       "timeout_header": "Tiempo de espera del correo",
-      "timeout_label": "¿Después de qué límite de tiempo se debe detener el envío de informes de respaldo?"
+      "timeout_label": "¿Después de qué límite de tiempo se debe detener el envío de informes de respaldo?",
+      "notify_header": "Enviar correos",
+      "notify_backup_label": "Si es posible, ¿enviar informes de respaldo por correo electrónico?",
+      "notify_ip_label": "Si es posible, ¿enviar enlaces actuales a esta Little Backup Box por correo electrónico?"
     },
     "alert_password_change_after_reboot_set": "Conjunto de contraseñas globales\nLos cambios serán aplicados después del reinicio",
     "alert_password_change_after_reboot_remove": "Se eliminó la contraseña global\nLos cambios serán aplicados después del reinicio",
@@ -233,8 +236,6 @@
       "loglevel_text": "¿Registrar eventos del sistema (en el Monitor de registro)? <br> (Archivo de registro:",
       "mail_html_header": "Enviar correos en formato HTML",
       "mail_html_label": "Si los correos están activados, ¿deberían estar formateados en HTML?",
-      "notify_header": "Enviar correos",
-      "notify_label": "¿Intenta enviar correos electrónicos sobre enlaces reales a este Little Backup Box y sobre copias de seguridad terminadas?",
       "power_off_idle_time_header": "Apagar después de un tiempo de inactividad",
       "power_off_idle_time_label": "Seleccione el tiempo de inactividad después del cual se debe detener el sistema.",
       "power_off_idle_time_none": "Nunca",
