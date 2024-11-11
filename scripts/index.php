@@ -214,130 +214,128 @@
 			<div class='backupsection'>
 				<button name="stopbackup" class="danger"><?php echo L::main_stopbackup_button; ?>
 			</div>
-		</div>
 
-		<div class="card" style="margin-top: 3em;">
-			<details>
+				<details>
 
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_backup_modifications; ?></summary>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_backup_modifications; ?></summary>
 
-				<div class='backupsection'>
-					<h4><?php echo L::main_backup_primary; ?></h4>
-					<table style='border: 0;'>
-						<tr>
-							<td style='padding-right: 10pt; vertical-align: top;'>
-								<input type="checkbox" id="move_files" name="move_files" <?php echo $move_files=="True"?"checked":""; ?>>
-							</td>
-							<td>
-								<label for="move_files"><?php echo L::config_backup_move_files_label; ?></label>
-							</td>
-						</tr>
+					<div class='backupsection'>
+						<h4><?php echo L::main_backup_primary; ?></h4>
+						<table style='border: 0;'>
+							<tr>
+								<td style='padding-right: 10pt; vertical-align: top;'>
+									<input type="checkbox" id="move_files" name="move_files" <?php echo $move_files=="True"?"checked":""; ?>>
+								</td>
+								<td>
+									<label for="move_files"><?php echo L::config_backup_move_files_label; ?></label>
+								</td>
+							</tr>
 
-						<tr>
-							<td style='padding-right: 10pt; vertical-align: top;'>
-								<input type="checkbox" id="rename_files" name="rename_files" <?php echo $rename_files=="True"?"checked":""; ?>>
-							</td>
-							<td>
-								<label for="rename_files"><?php echo L::main_backup_rename_checkbox_label; ?> <a title="<?php echo L::config_backup_rename_warning; ?>">&#x1F6C8;</a></label>
-							</td>
-						</tr>
+							<tr>
+								<td style='padding-right: 10pt; vertical-align: top;'>
+									<input type="checkbox" id="rename_files" name="rename_files" <?php echo $rename_files=="True"?"checked":""; ?>>
+								</td>
+								<td>
+									<label for="rename_files"><?php echo L::main_backup_rename_checkbox_label; ?> <a title="<?php echo L::config_backup_rename_warning; ?>">&#x1F6C8;</a></label>
+								</td>
+							</tr>
 
-						<tr>
-							<td style='padding-right: 10pt;'>
-								<input type="checkbox" id="generate_thumbnails" name="generate_thumbnails" <?php echo $generate_thumbnails=="True"?"checked":""; ?>>
-							</td>
-							<td>
-								<label for="generate_thumbnails"><?php echo L::main_backup_generate_thumbnails_checkbox_label; ?></label>
-							</td>
-						</tr>
+							<tr>
+								<td style='padding-right: 10pt;'>
+									<input type="checkbox" id="generate_thumbnails" name="generate_thumbnails" <?php echo $generate_thumbnails=="True"?"checked":""; ?>>
+								</td>
+								<td>
+									<label for="generate_thumbnails"><?php echo L::main_backup_generate_thumbnails_checkbox_label; ?></label>
+								</td>
+							</tr>
 
-						<tr>
-							<td style='padding-right: 10pt;'>
-								<input type="checkbox" id="update_exif" name="update_exif" <?php echo $update_exif=="True"?"checked":""; ?>>
-							</td>
-							<td>
-								<label for="update_exif"><?php echo L::main_backup_update_exif_checkbox_label; ?></label>
-							</td>
-						</tr>
-					</table>
+							<tr>
+								<td style='padding-right: 10pt;'>
+									<input type="checkbox" id="update_exif" name="update_exif" <?php echo $update_exif=="True"?"checked":""; ?>>
+								</td>
+								<td>
+									<label for="update_exif"><?php echo L::main_backup_update_exif_checkbox_label; ?></label>
+								</td>
+							</tr>
+						</table>
 
-					<?php
-						unset($Partitions);
-						exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False", $Partitions);
-					?>
+						<?php
+							unset($Partitions);
+							exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False", $Partitions);
+						?>
 
-					<table style='border: 0;'>
+						<table style='border: 0;'>
 
-						<tr>
-							<td>
-								<label for="preset_source"><?php echo L::main_backup_preset_source_label; ?>:</label>
-							</td>
-							<td style='padding-right: 10pt;'>
-								<select id="preset_source" name="preset_source" onchange="PresetPartitionChange()">
-									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
-									<?php
-										foreach ($Partitions as $Partition) {
-											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
-											$Lum	= str_replace('/dev/', '', $Lum);
-											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
-										}
-									?>
-								</select>
-							</td>
-						</tr>
+							<tr>
+								<td>
+									<label for="preset_source"><?php echo L::main_backup_preset_source_label; ?>:</label>
+								</td>
+								<td style='padding-right: 10pt;'>
+									<select id="preset_source" name="preset_source" onchange="PresetPartitionChange()">
+										<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
+										<?php
+											foreach ($Partitions as $Partition) {
+												list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
+												$Lum	= str_replace('/dev/', '', $Lum);
+												echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
+											}
+										?>
+									</select>
+								</td>
+							</tr>
 
-						<tr>
-							<td>
-								<label for="preset_target"><?php echo L::main_backup_preset_target_label; ?>:</label>
-							</td>
-							<td style='padding-right: 10pt;'>
-								<select id="preset_target" name="preset_target" onchange="PresetPartitionChange()">
-									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
-									<?php
-										foreach ($Partitions as $Partition) {
-											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
-											$Lum	= str_replace('/dev/', '', $Lum);
-											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
-										}
-									?>
-								</select>
-							</td>
-						</tr>
+							<tr>
+								<td>
+									<label for="preset_target"><?php echo L::main_backup_preset_target_label; ?>:</label>
+								</td>
+								<td style='padding-right: 10pt;'>
+									<select id="preset_target" name="preset_target" onchange="PresetPartitionChange()">
+										<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
+										<?php
+											foreach ($Partitions as $Partition) {
+												list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
+												$Lum	= str_replace('/dev/', '', $Lum);
+												echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
+											}
+										?>
+									</select>
+								</td>
+							</tr>
 
-					</table>
-				</div>
+						</table>
+					</div>
 
-				<div class='backupsection'>
-					<h4><?php echo L::main_backup_secondary; ?></h4>
-					<table style='border: 0;'>
-						<tr>
-							<td style='padding-right: 10pt;'>
-								<?php get_secondary_backup_selector('BACKUP_MODE_2', $CloudServices, $config, $NVMe_available, true); ?>
-							</td>
-							<td>
-								<label for="preset_target"><?php echo L::main_backup_secondary_label; ?></label>
-							</td>
-						</tr>
-					</table>
-				</div>
+					<div class='backupsection'>
+						<h4><?php echo L::main_backup_secondary; ?></h4>
+						<table style='border: 0;'>
+							<tr>
+								<td style='padding-right: 10pt;'>
+									<?php get_secondary_backup_selector('BACKUP_MODE_2', $CloudServices, $config, $NVMe_available, true); ?>
+								</td>
+								<td>
+									<label for="preset_target"><?php echo L::main_backup_secondary_label; ?></label>
+								</td>
+							</tr>
+						</table>
+					</div>
 
-				<div class='backupsection'>
-					<h4><?php echo L::main_backup_general; ?></h4>
-					<table style='border: 0;'>
-						<tr>
-							<td style='padding-right: 10pt;'>
-								<input type="checkbox" id="power_off" name="power_off" <?php echo $power_off_force=="True"?"checked":""; ?>>
-							</td>
-							<td>
-								<label for="power_off"><?php echo L::main_backup_power_off_checkbox_label; ?></label>
-							</td>
-						</tr>
-					</table>
-				</div>
+					<div class='backupsection'>
+						<h4><?php echo L::main_backup_general; ?></h4>
+						<table style='border: 0;'>
+							<tr>
+								<td style='padding-right: 10pt;'>
+									<input type="checkbox" id="power_off" name="power_off" <?php echo $power_off_force=="True"?"checked":""; ?>>
+								</td>
+								<td>
+									<label for="power_off"><?php echo L::main_backup_power_off_checkbox_label; ?></label>
+								</td>
+							</tr>
+						</table>
+					</div>
 
 
-			</details>
-		</div>
+				</details>
+			</div>
 
 		<div class="card" style="margin-top: 3em;">
 			<details>
@@ -362,6 +360,18 @@
 					<button name="backup_function" value="exif_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
 					<button name="backup_function" value="exif_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
 					<?php if ($NVMe_available) {echo('<button name="backup_function" value="exif_nvme" class="usb">'.L::right_arrow.L::main_nvme_button.'</button>');} ?>
+				</div>
+
+			</details>
+
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_file_operations; ?></summary>
+
+				<div class='backupsection'>
+					<h3><?php echo L::main_backup_rename_checkbox_label; ?> <a title="<?php echo L::config_backup_rename_warning; ?>">&#x1F6C8;</a></h3>
+					<button name="backup_function" value="rename_usb" class="usb"><?php echo L::right_arrow . L::main_usb_button; ?></button>
+					<button name="backup_function" value="rename_internal" class="usb"><?php echo L::right_arrow . L::main_internal_button; ?></button>
+					<?php if ($NVMe_available) {echo('<button name="backup_function" value="rename_nvme" class="usb">'.L::right_arrow.L::main_nvme_button.'</button>');} ?>
 				</div>
 
 			</details>
@@ -434,13 +444,22 @@
 
 				$ButtonLabel_Function	= L::main_function_exif;
 			}
+			elseif ($Function == 'rename') {
+				$rename_files			= 'True';
+				$generate_thumbnails	= 'False';
+				$update_exif			= 'False';
 
-			$ButtonLabel_Target	= L::main_usb_button;
+				$ButtonLabel_Function	= L::main_function_exif;
+			}
+
 			if ($Target == 'internal') {
 				$ButtonLabel_Target	= L::main_internal_button;
 			}
 			elseif ($Target == 'nvme') {
 				$ButtonLabel_Target	= L::main_nvme_button;
+			}
+			else {
+				$ButtonLabel_Target	= L::main_usb_button;
 			}
 
 			shell_exec("sudo $WORKING_DIR/stop_backup.sh");

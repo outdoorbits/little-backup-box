@@ -65,7 +65,8 @@
       "thumbnails": "Erzeuge Vorschaubilder",
       "exif": "Aktualisiere EXIF-Daten",
       "sync": "Synchronisiere Datenbank"
-    }
+    },
+    "file_operations": "Dateioperationen"
   },
   "sysinfo": {
     "temp": "Temperatur",

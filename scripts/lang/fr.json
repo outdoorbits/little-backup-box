@@ -65,7 +65,8 @@
       "thumbnails": "Création de vignettes",
       "exif": "Mettre à jour les données EXIF ​​​​",
       "sync": "Synchroniser la base de données"
-    }
+    },
+    "file_operations": "Opérations sur les fichiers"
   },
   "sysinfo": {
     "temp": "Température",

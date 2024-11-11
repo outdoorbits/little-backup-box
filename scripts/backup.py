@@ -86,6 +86,7 @@ class backup(object):
 		self.DoRenameFiles									= DoRenameFiles
 		if self.DoRenameFiles == 'setup':
 			self.DoRenameFiles	= self.__setup.get_val('conf_BACKUP_RENAME_FILES')
+		self.DoRenameFiles	= self.DoRenameFiles or (self.SourceStorageType == 'rename')
 
 		# sync database
 		self.ForceSyncDatabase									= ForceSyncDatabase
@@ -95,6 +96,7 @@ class backup(object):
 		self.DoGenerateThumbnails							= DoGenerateThumbnails
 		if self.DoGenerateThumbnails == 'setup':
 			self.DoGenerateThumbnails					= self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
+		self.DoGenerateThumbnails	= self.DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
 
 		if self.SourceStorageType == 'thumbnails':
 			self.DoGenerateThumbnails	= True
@@ -103,9 +105,7 @@ class backup(object):
 		self.DoUpdateEXIF									= DoUpdateEXIF
 		if self.DoUpdateEXIF == 'setup':
 			self.DoUpdateEXIF							= self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
-
-		if self.SourceStorageType == 'exif':
-			self.DoUpdateEXIF			= True
+		self.DoUpdateEXIF	= self.DoUpdateEXIF or (self.SourceStorageType == 'exif')
 
 		# power off
 		self.PowerOff										= PowerOff
@@ -1271,7 +1271,7 @@ if __name__ == "__main__":
 		epilog		= 'This script can ideally be configured and started via the Little Backup Box web UI.'
 	)
 
-	SourceChoices	= ['anyusb', 'usb', 'internal', 'nvme', 'camera'] + CloudServices + ['cloud_rsync', 'thumbnails', 'database', 'exif']
+	SourceChoices	= ['anyusb', 'usb', 'internal', 'nvme', 'camera'] + CloudServices + ['cloud_rsync', 'thumbnails', 'database', 'exif', 'rename']
 	parser.add_argument(
 		'--SourceName',
 		'-s',

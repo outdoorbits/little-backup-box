@@ -65,7 +65,8 @@
       "thumbnails": "Creando miniaturas",
       "exif": "Actualizar datos EXIF",
       "sync": "Sincronizar base de datos"
-    }
+    },
+    "file_operations": "Operaciones de archivos"
   },
   "sysinfo": {
     "temp": "Temperatura",

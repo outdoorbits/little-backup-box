@@ -284,7 +284,8 @@
       "thumbnails": "Creating thumbnails",
       "exif": "Update EXIF ​​data",
       "sync": "Synchronize database"
-    }
+    },
+    "file_operations": "File operations"
   },
   "sysinfo": {
     "temp": "Temperature",
