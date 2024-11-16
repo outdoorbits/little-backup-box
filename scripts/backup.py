@@ -1434,8 +1434,12 @@ if __name__ == "__main__":
 	args['power_off']			= args['power_off'].lower() == 'true'			if args['power_off'] != 'setup'				else 'setup'
 
 
-	SecondaryBackupFollows	= (not args['SecSourceName'] is None) and (args['SecSourceName'] != '') and (not args['SecTargetName'] is None) and (args['SecTargetName'] != '')
-	SecondaryBackupFollows	= SecondaryBackupFollows if not SecondaryBackupFollows is None else False
+	SecondaryBackupFollows	= (
+		(not args['SecSourceName'] is None) and \
+		(args['SecSourceName'] != '') and \
+		(not args['SecTargetName'] is None) and \
+		(args['SecTargetName'] != '') \
+	) == True # else could be None
 
 	# generate thumbnails in secondary backup while uploading?
 	shiftGenerateThumbnails	= SecondaryBackupFollows and (args['TargetName'] == args['SecSourceName']) and (lib_storage.extractCloudService(args['SecTargetName'])[0] in ['cloud', 'cloud_rsync'])
