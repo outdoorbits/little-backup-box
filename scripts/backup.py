@@ -44,8 +44,8 @@ import lib_view
 import lib_vpn
 
 
-import lib_debug
-xxx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class backup(object):
 
@@ -561,7 +561,6 @@ class backup(object):
 							self.__break_generateThumbnails	= False
 							thread_thumbnails	= threading.Thread(target=self.generateThumbnails, kwargs={'Device': self.SourceDevice})
 							thread_thumbnails.start()
-							xxx.d('thread_thumbnails started *****************************************************')
 
 						self.__display.message([f":{self.__lan.l('box_backup_working')}..."])
 
@@ -1044,8 +1043,7 @@ class backup(object):
 				DCRAW_EMU	= 'dcraw_emu'
 
 		# remove all empty tims files
-		Command	= ['find',  Device.MountPoint, '-type', 'f','-size', '0', '-path', '*/tims/*', '-not', '-name', '*.lbbid', '-delete']
-		xxx.d(' '.join(Command))
+		Command	= ['find',  Device.MountPoint, '-type', 'f','-size', '0', '-path', '*/tims/*', '-delete']
 		try:
 			subprocess.run(Command)
 		except:
@@ -1098,8 +1096,8 @@ class backup(object):
 			if self.__break_generateThumbnails:
 				return()
 
-			SourceFilePathName	= SourceFilePathName.strip('/')
 			#extract Extension from filename
+			SourceFilePathName	= SourceFilePathName.strip('/')
 			try:
 				SourceFilePathNameExt	= SourceFilePathName.rsplit('.',1)[1].lower()
 			except:
