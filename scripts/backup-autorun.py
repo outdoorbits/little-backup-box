@@ -72,7 +72,7 @@ class backup_autorun(object):
 		git_thread.join(timeout=15)
 
 		# Wait for running threads (mails to send)
-		lib_common.join_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+		lib_common.join_mail_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
 
 	def __cleanup_at_boot(self):
 		# remove IP_SENT_MARKERFILE
@@ -168,16 +168,16 @@ class backup_autorun(object):
 				f"--power-off", f"{conf_POWER_OFF}"
 			]
 
-		SecundaryBackupConfig	= []
+		SecondaryBackupConfig	= []
 		if conf_BACKUP_DEFAULT_SOURCE2 != 'none' and conf_BACKUP_DEFAULT_TARGET2 != 'none':
-			SecundaryBackupConfig	= [
+			SecondaryBackupConfig	= [
 				f"--SecSourceName", f"{conf_BACKUP_DEFAULT_SOURCE2}",
 				f"--SecTargetName", f"{conf_BACKUP_DEFAULT_TARGET2}",
 				f"--move-files2", f"{conf_BACKUP_DEFAULT2_MOVE_FILES}",
 			]
 
 		if PrimaryBackupConfig:
-			Command	= ['python3', f"{self.WORKING_DIR}/backup.py"] + PrimaryBackupConfig + SecundaryBackupConfig
+			Command	= ['python3', f"{self.WORKING_DIR}/backup.py"] + PrimaryBackupConfig + SecondaryBackupConfig
 			subprocess.run(Command)
 
 if __name__ == "__main__":

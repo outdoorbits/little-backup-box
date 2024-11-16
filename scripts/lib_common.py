@@ -29,7 +29,7 @@ def pipe(SourceCommand, FilterCommand):
 	else:
 		return()
 
-def join_threads(display, lan, threads, timeout):
+def join_mail_threads(display, lan, threads, timeout):
 	waiting_for_outgoing_mails	= False
 	TimeLimit	= time.time() + timeout
 
