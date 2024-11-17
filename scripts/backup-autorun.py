@@ -85,7 +85,7 @@ class backup_autorun(object):
 		# remove display content files
 		const_DISPLAY_CONTENT_FOLDER	= self.__setup.get_val('const_DISPLAY_CONTENT_FOLDER')
 		try:
-			subprocess.run(f"rm {const_DISPLAY_CONTENT_FOLDER}/*",shell=True)
+			subprocess.run(f'rm {const_DISPLAY_CONTENT_FOLDER}/*',shell=True)
 		except:
 			pass
 
@@ -134,9 +134,9 @@ class backup_autorun(object):
 
 	def __display_hello(self):
 		if self.__setup.get_val('conf_DISP_COLOR_MODEL') == '1':
-			self.__display.message(["set:time=2", f":IMAGE={self.WORKING_DIR}/little-backup-box.bmp"])
+			self.__display.message(['set:time=2', f':IMAGE={self.WORKING_DIR}/little-backup-box.bmp'])
 		else:
-			self.__display.message(["set:time=2", f":IMAGE={self.WORKING_DIR}/little-backup-box.jpg"])
+			self.__display.message(['set:time=2', f':IMAGE={self.WORKING_DIR}/little-backup-box.jpg'])
 
 		lib_cron_ip.ip_info().display_ip()
 
@@ -158,28 +158,28 @@ class backup_autorun(object):
 		PrimaryBackupConfig		= []
 		if conf_BACKUP_DEFAULT_SOURCE != 'none' and conf_BACKUP_DEFAULT_TARGET != 'none':
 			PrimaryBackupConfig	= [
-				f"--SourceName", f"{conf_BACKUP_DEFAULT_SOURCE}",
-				f"--TargetName", f"{conf_BACKUP_DEFAULT_TARGET}",
-				f"--move-files", f"{conf_BACKUP_DEFAULT_MOVE_FILES}",
-				f"--rename-files", f"{conf_BACKUP_DEFAULT_RENAME_FILES}",
-				f"--force-sync-database", "False",
-				f"--generate-thumbnails", f"{conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS}",
-				f"--update-exif", f"{conf_BACKUP_DEFAULT_UPDATE_EXIF}",
-				f"--power-off", f"{conf_POWER_OFF}"
+				f'--SourceName', f'{conf_BACKUP_DEFAULT_SOURCE}',
+				f'--TargetName', f'{conf_BACKUP_DEFAULT_TARGET}',
+				f'--move-files', f'{conf_BACKUP_DEFAULT_MOVE_FILES}',
+				f'--rename-files', f'{conf_BACKUP_DEFAULT_RENAME_FILES}',
+				f'--force-sync-database', 'False',
+				f'--generate-thumbnails', f'{conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS}',
+				f'--update-exif', f'{conf_BACKUP_DEFAULT_UPDATE_EXIF}',
+				f'--power-off', f'{conf_POWER_OFF}'
 			]
 
 		SecondaryBackupConfig	= []
 		if conf_BACKUP_DEFAULT_SOURCE2 != 'none' and conf_BACKUP_DEFAULT_TARGET2 != 'none':
 			SecondaryBackupConfig	= [
-				f"--SecSourceName", f"{conf_BACKUP_DEFAULT_SOURCE2}",
-				f"--SecTargetName", f"{conf_BACKUP_DEFAULT_TARGET2}",
-				f"--move-files2", f"{conf_BACKUP_DEFAULT2_MOVE_FILES}",
+				f'--SecSourceName', f'{conf_BACKUP_DEFAULT_SOURCE2}',
+				f'--SecTargetName', f'{conf_BACKUP_DEFAULT_TARGET2}',
+				f'--move-files2', f'{conf_BACKUP_DEFAULT2_MOVE_FILES}',
 			]
 
 		if PrimaryBackupConfig:
-			Command	= ['python3', f"{self.WORKING_DIR}/backup.py"] + PrimaryBackupConfig + SecondaryBackupConfig
+			Command	= ['python3', f'{self.WORKING_DIR}/backup.py'] + PrimaryBackupConfig + SecondaryBackupConfig
 			subprocess.run(Command)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	backup_autorun().run()
 

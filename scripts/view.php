@@ -768,7 +768,7 @@
 											}
 										?>
 										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . ($IMAGE['ID']); ?>">
-											<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_TIMS); ?>">
+											<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_TIMS); ?>" onerror="this.src='/img/unknown.JPG';">
 										</a>
 									</div>
 

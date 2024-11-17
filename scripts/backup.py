@@ -54,7 +54,7 @@ class backup(object):
 		# SourceName:											one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
 		# TargetName:											one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF:	one of ['setup', True, False]
-		# ForceSyncDatabase:										one of [True, False]
+		# ForceSyncDatabase:									one of [True, False]
 
 		# Objects
 		self.__setup	= lib_setup.setup()
@@ -86,18 +86,18 @@ class backup(object):
 		self.DoRenameFiles									= self.DoRenameFiles or (self.SourceStorageType == 'rename')
 
 		# sync database
-		self.ForceSyncDatabase									= ForceSyncDatabase
-		self.ForceSyncDatabase	= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files
+		self.ForceSyncDatabase								= ForceSyncDatabase
+		self.ForceSyncDatabase								= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files
 
 		# secondary backup
 		self.SecondaryBackupFollows							= SecondaryBackupFollows
 
 		# thumbnails
-		DoGenerateThumbnails 								= DoGenerateThumbnails if DoGenerateThumbnails != 'setup' else self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
-		DoGenerateThumbnails								= DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
+		self.DoGenerateThumbnails 								= DoGenerateThumbnails if DoGenerateThumbnails != 'setup' else self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
+		self.DoGenerateThumbnails								= self.DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
 
-		self.DoGenerateThumbnails_primary	= DoGenerateThumbnails and not shiftGenerateThumbnails
-		self.DoGenerateThumbnails_secondary	= DoGenerateThumbnails and shiftGenerateThumbnails and not self.SecondaryBackupFollows
+		self.DoGenerateThumbnails_primary	= self.DoGenerateThumbnails and not shiftGenerateThumbnails
+		self.DoGenerateThumbnails_secondary	= self.DoGenerateThumbnails and shiftGenerateThumbnails
 
 		# exif
 		self.DoUpdateEXIF									= DoUpdateEXIF if DoUpdateEXIF != 'setup' else self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
@@ -211,16 +211,16 @@ class backup(object):
 			self.RenameFiles()
 
 		# sync database
-		if self.ForceSyncDatabase or self.__TIMSCopied:
+		if self.ForceSyncDatabase or self.__TIMSCopied or (self.DoGenerateThumbnails_secondary and self.SecondaryBackupFollows):
 			self.syncDatabase()
+
+		# generate thumbnails
+		if self.TargetDevice and self.DoGenerateThumbnails_primary:
+				self.generateThumbnails(Device=self.TargetDevice)
 
 		# update exif
 		if self.TargetDevice and self.DoUpdateEXIF:
 			self.updateEXIF()
-
-		# generate thumbnails
-		if self.TargetDevice and self.DoGenerateThumbnails_primary:
-			self.generateThumbnails(Device=self.TargetDevice)
 
 		self.finish()
 
@@ -539,7 +539,7 @@ class backup(object):
 							continue
 
 						# start generate thumbnails as Thread if shiftGenerateThumbnails
-						if self.DoGenerateThumbnails_secondary and self.SourceDevice and thread_thumbnails is None:
+						if self.DoGenerateThumbnails_secondary and not self.SecondaryBackupFollows and self.SourceDevice and thread_thumbnails is None:
 							self.__break_generateThumbnails	= False
 							thread_thumbnails	= threading.Thread(target=self.generateThumbnails, kwargs={'Device': self.SourceDevice})
 							thread_thumbnails.start()
@@ -918,7 +918,7 @@ class backup(object):
 			# remove duplicates
 			db.dbExecute("delete from EXIF_DATA where ID not in (select min(ID) from EXIF_DATA group by File_Name, Directory);")
 
-			# verfify files exists or clean from db
+			# verfify if files exists or clean from db
 			KnownFilesList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA")
 
 			FilesToProcess	=	len(KnownFilesList)
@@ -1085,6 +1085,7 @@ class backup(object):
 			except:
 				SourceFilePathNameExt	= ''
 
+			# generate thumbnails
 			TIMS_Dir				= os.path.join(os.path.dirname(SourceFilePathName), 'tims')
 			pathlib.Path(Device.MountPoint, TIMS_Dir).mkdir(parents=True, exist_ok=True)
 
@@ -1195,6 +1196,7 @@ class backup(object):
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
+			# insert image into database
 			db.dbInsertImage(SourceFilePathName)
 
 			progress.progress()
@@ -1210,18 +1212,18 @@ class backup(object):
 				lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
 
 				# prepare database
-				db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
+				db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
 
 				# select directory and filename as DirFile
 				FilesTupleList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile, LbbRating from EXIF_DATA where LbbRating != Rating or Rating is null")
 
-				#prepare loop to create thumbnails
+				#prepare loop to update EXIF
 				FilesToProcess	= len(FilesTupleList)
 
 				DisplayLine1	= self.__lan.l('box_backup_updating_exif') # header1
 				DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
 
-				progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
+				progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log,self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
 
 				for FileTuple in FilesTupleList:
 					MediaID			= FileTuple[0]

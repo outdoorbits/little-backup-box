@@ -24,6 +24,9 @@ import sqlite3
 import subprocess
 import sys
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class viewdb(object):
 
 	def __init__(self,setup,log,MountPoint):
@@ -208,9 +211,13 @@ class viewdb(object):
 
 		#insert data
 		if dbFields:
-			Command	= f"insert into EXIF_DATA ({dbFields}) values ({dbValues});"
+			# delete item if pre exists:
+			Command	= f"delete from EXIF_DATA where File_Name='{ImageRecord['File_Name']}' and Directory='{ImageRecord['Directory']}'"
 			self.dbExecute(Command)
 
+			# insert new image
+			Command	= f"insert into EXIF_DATA ({dbFields}) values ({dbValues});"
+			self.dbExecute(Command)
 
 if __name__ == "__main__":
 	import sys
