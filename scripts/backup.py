@@ -93,16 +93,16 @@ class backup(object):
 		self.ForceSyncDatabase									= ForceSyncDatabase
 		self.ForceSyncDatabase	= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files
 
+		# secondary backup
+		self.SecondaryBackupFollows							= SecondaryBackupFollows
+
 		# thumbnails
-		self.DoGenerateThumbnails							= DoGenerateThumbnails
-		if self.DoGenerateThumbnails == 'setup':
-			self.DoGenerateThumbnails					= self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
-		self.DoGenerateThumbnails	= self.DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
+		if DoGenerateThumbnails == 'setup':
+			DoGenerateThumbnails					= self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
+		DoGenerateThumbnails	= DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
 
-		self.shiftGenerateThumbnails	= shiftGenerateThumbnails
-
-		if self.SourceStorageType == 'thumbnails':
-			self.DoGenerateThumbnails	= True
+		self.DoGenerateThumbnails_primary	= DoGenerateThumbnails and not shiftGenerateThumbnails
+		self.DoGenerateThumbnails_secondary	= DoGenerateThumbnails and shiftGenerateThumbnails and not self.SecondaryBackupFollows
 
 		# exif
 		self.DoUpdateEXIF									= DoUpdateEXIF
@@ -114,9 +114,6 @@ class backup(object):
 		self.PowerOff										= PowerOff
 		if self.PowerOff == 'setup':
 			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
-
-		# secondary backup
-		self.SecondaryBackupFollows							= SecondaryBackupFollows
 
 		# Basics
 		self.__WORKING_DIR	= os.path.dirname(__file__)
@@ -231,7 +228,7 @@ class backup(object):
 			self.updateEXIF()
 
 		# generate thumbnails
-		if self.TargetDevice and self.DoGenerateThumbnails and not self.shiftGenerateThumbnails:
+		if self.TargetDevice and self.DoGenerateThumbnails_primary:
 			self.generateThumbnails(Device=self.TargetDevice)
 
 		self.finish()
@@ -551,13 +548,7 @@ class backup(object):
 							continue
 
 						# start generate thumbnails as Thread if shiftGenerateThumbnails
-						if (\
-								self.DoGenerateThumbnails and \
-								self.shiftGenerateThumbnails and \
-								(not self.SecondaryBackupFollows) and \
-								self.SourceDevice and \
-								thread_thumbnails is None \
-							):
+						if self.DoGenerateThumbnails_secondary and self.SourceDevice and thread_thumbnails is None:
 							self.__break_generateThumbnails	= False
 							thread_thumbnails	= threading.Thread(target=self.generateThumbnails, kwargs={'Device': self.SourceDevice})
 							thread_thumbnails.start()
