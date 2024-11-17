@@ -115,7 +115,6 @@ class viewdb(object):
 		ImageFileSubpathFilename	= ImageFileSubpathFilename.strip('/')
 
 		ImageFilePath		= os.path.dirname(ImageFileSubpathFilename).strip('/')
-		ImageFilePath		= f"/{ImageFilePath}"
 		ImageFileName		= os.path.basename(ImageFileSubpathFilename)
 
 		try:
@@ -124,7 +123,7 @@ class viewdb(object):
 			ImageFileExtension	= ''
 
 		try:
-			EXIF_List	= subprocess.check_output(f"sudo exiftool '{self.MountPoint}{ImageFilePath}/{ImageFileName}' | grep ':'",shell=True).decode().strip().split('\n')
+			EXIF_List	= subprocess.check_output(f"sudo exiftool '{os.path.join(self.MountPoint, ImageFilePath, ImageFileName)}' | grep ':'",shell=True).decode().strip().split('\n')
 		except:
 			EXIF_List	= []
 
