@@ -24,6 +24,9 @@ import sqlite3
 import subprocess
 import sys
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class viewdb(object):
 
 	def __init__(self,setup,log,MountPoint):
@@ -112,7 +115,6 @@ class viewdb(object):
 		ImageFileSubpathFilename	= ImageFileSubpathFilename.strip('/')
 
 		ImageFilePath		= os.path.dirname(ImageFileSubpathFilename).strip('/')
-		ImageFilePath		= f"/{ImageFilePath}"
 		ImageFileName		= os.path.basename(ImageFileSubpathFilename)
 
 		try:
@@ -121,7 +123,7 @@ class viewdb(object):
 			ImageFileExtension	= ''
 
 		try:
-			EXIF_List	= subprocess.check_output(f"sudo exiftool '{self.MountPoint}{ImageFilePath}/{ImageFileName}' | grep ':'",shell=True).decode().strip().split('\n')
+			EXIF_List	= subprocess.check_output(f"sudo exiftool '{os.path.join(self.MountPoint, ImageFilePath, ImageFileName)}' | grep ':'",shell=True).decode().strip().split('\n')
 		except:
 			EXIF_List	= []
 
@@ -208,9 +210,13 @@ class viewdb(object):
 
 		#insert data
 		if dbFields:
-			Command	= f"insert into EXIF_DATA ({dbFields}) values ({dbValues});"
+			# delete item if pre exists:
+			Command	= f"delete from EXIF_DATA where File_Name='{ImageRecord['File_Name']}' and Directory='{ImageRecord['Directory']}'"
 			self.dbExecute(Command)
 
+			# insert new image
+			Command	= f"insert into EXIF_DATA ({dbFields}) values ({dbValues});"
+			self.dbExecute(Command)
 
 if __name__ == "__main__":
 	import sys

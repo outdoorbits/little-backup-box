@@ -25,6 +25,7 @@ import random
 from string import digits
 import subprocess
 import sys
+import threading
 import time
 
 import lib_backup
@@ -48,12 +49,12 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', DoUpdateEXIF='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecundaryBackupFollows=False):
+	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecondaryBackupFollows=False):
 
 		# SourceName:											one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
 		# TargetName:											one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF:	one of ['setup', True, False]
-		# ForceSyncDatabase:										one of [True, False]
+		# ForceSyncDatabase:									one of [True, False]
 
 		# Objects
 		self.__setup	= lib_setup.setup()
@@ -78,42 +79,32 @@ class backup(object):
 			self.__log.message(f'Preset target: {self.DeviceIdentifierPresetTarget}')
 
 		# move files
-		self.move_files										= move_files
-		if self.move_files == 'setup':
-			self.move_files		= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
+		self.move_files										= move_files if move_files != 'setup' else self.__setup.get_val('conf_BACKUP_MOVE_FILES')
 
 		# rename files
-		self.DoRenameFiles									= DoRenameFiles
-		if self.DoRenameFiles == 'setup':
-			self.DoRenameFiles	= self.__setup.get_val('conf_BACKUP_RENAME_FILES')
-		self.DoRenameFiles	= self.DoRenameFiles or (self.SourceStorageType == 'rename')
+		self.DoRenameFiles									= DoRenameFiles if DoRenameFiles != 'setup' else self.__setup.get_val('conf_BACKUP_RENAME_FILES')
+		self.DoRenameFiles									= self.DoRenameFiles or (self.SourceStorageType == 'rename')
 
 		# sync database
-		self.ForceSyncDatabase									= ForceSyncDatabase
-		self.ForceSyncDatabase	= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files
-
-		# thumbnails
-		self.DoGenerateThumbnails							= DoGenerateThumbnails
-		if self.DoGenerateThumbnails == 'setup':
-			self.DoGenerateThumbnails					= self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
-		self.DoGenerateThumbnails	= self.DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
-
-		if self.SourceStorageType == 'thumbnails':
-			self.DoGenerateThumbnails	= True
-
-		# exif
-		self.DoUpdateEXIF									= DoUpdateEXIF
-		if self.DoUpdateEXIF == 'setup':
-			self.DoUpdateEXIF							= self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
-		self.DoUpdateEXIF	= self.DoUpdateEXIF or (self.SourceStorageType == 'exif')
-
-		# power off
-		self.PowerOff										= PowerOff
-		if self.PowerOff == 'setup':
-			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
+		self.ForceSyncDatabase								= ForceSyncDatabase
+		self.ForceSyncDatabase								= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files
 
 		# secondary backup
-		self.SecundaryBackupFollows							= SecundaryBackupFollows
+		self.SecondaryBackupFollows							= SecondaryBackupFollows
+
+		# thumbnails
+		self.DoGenerateThumbnails 								= DoGenerateThumbnails if DoGenerateThumbnails != 'setup' else self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
+		self.DoGenerateThumbnails								= self.DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
+
+		self.DoGenerateThumbnails_primary	= self.DoGenerateThumbnails and not shiftGenerateThumbnails
+		self.DoGenerateThumbnails_secondary	= self.DoGenerateThumbnails and shiftGenerateThumbnails
+
+		# exif
+		self.DoUpdateEXIF									= DoUpdateEXIF if DoUpdateEXIF != 'setup' else self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
+		self.DoUpdateEXIF									= self.DoUpdateEXIF or (self.SourceStorageType == 'exif')
+
+		# power off
+		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
 
 		# Basics
 		self.__WORKING_DIR	= os.path.dirname(__file__)
@@ -140,10 +131,11 @@ class backup(object):
 		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
 
 		# Common variables
-		self.SourceDevice			= None
-		self.TargetDevice			= None
-		self.__TIMSCopied			= False
-		self.__mail_threads_started	= []
+		self.SourceDevice				= None
+		self.TargetDevice				= None
+		self.__TIMSCopied				= False
+		self.__mail_threads_started		= []
+		self.__break_generateThumbnails	= False
 
 		# define TransferMode for _non_ camera transfers
 		self.TransferMode	= 'rsync' if self.SourceStorageType == 'cloud_rsync' or TargetStorageType == 'cloud_rsync' else 'rclone'
@@ -210,19 +202,23 @@ class backup(object):
 		# Set the PWR LED ON to indicate that the backup has not yet started
 		lib_system.rpi_leds(trigger='none',brightness=1)
 
+		# backup
 		if self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif']):
 			self.backup()
 
-		# In any case run rename if configured
+		# rename
 		if self.DoRenameFiles:
 			self.RenameFiles()
 
+		# sync database
 		if self.ForceSyncDatabase or self.__TIMSCopied:
 			self.syncDatabase()
 
-		if self.TargetDevice and self.DoGenerateThumbnails:
-			self.generateThumbnails()
+		# generate thumbnails
+		if self.TargetDevice and self.DoGenerateThumbnails_primary:
+				self.generateThumbnails(Device=self.TargetDevice)
 
+		# update exif
 		if self.TargetDevice and self.DoUpdateEXIF:
 			self.updateEXIF()
 
@@ -384,6 +380,7 @@ class backup(object):
 			completedSources_camera		= []
 			Identifier					= self.DeviceIdentifierPresetSource
 			Identifier_OLD				= ''
+			thread_thumbnails			= None
 
 			dynamicSources	= self.SourceStorageType in ['anyusb', 'usb', 'nvme', 'camera'] and not self.DeviceIdentifierPresetSource
 
@@ -540,6 +537,12 @@ class backup(object):
 							ErrorsOld	= self.__reporter.get_errors()
 
 							continue
+
+						# start generate thumbnails as Thread if shiftGenerateThumbnails
+						if self.DoGenerateThumbnails_secondary and not self.SecondaryBackupFollows and self.SourceDevice and thread_thumbnails is None:
+							self.__break_generateThumbnails	= False
+							thread_thumbnails	= threading.Thread(target=self.generateThumbnails, kwargs={'Device': self.SourceDevice})
+							thread_thumbnails.start()
 
 						self.__display.message([f":{self.__lan.l('box_backup_working')}..."])
 
@@ -712,6 +715,11 @@ class backup(object):
 							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
 							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
+							# kill thread_thumbnails
+							self.__break_generateThumbnails	= True
+							thread_thumbnails.join()
+							thread_thumbnails	= None
+
 
 						# Controller-overheating-error?
 						SyncTimeDiff	= SyncStopTime - SyncStartTime
@@ -777,6 +785,10 @@ class backup(object):
 
 							del progress
 
+				# finish threads
+				if not thread_thumbnails is None:
+					thread_thumbnails.join()
+
 				# umount source
 				if self.SourceDevice.mountable:
 					self.SourceDevice.umount()
@@ -798,7 +810,7 @@ class backup(object):
 		# VPN stop
 		if self.vpn:
 			# Wait for running threads (mails to send)
-			lib_common.join_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+			lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
 
 			#stop VPN
 			self.vpn.stop()
@@ -871,18 +883,16 @@ class backup(object):
 			FileName	= os.path.basename(FileToRename)
 			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
 
-			if os.path.isfile(FileNameNew):
-				# drop file from database (to enable exif update)
-				DropFileName	= FileNameNew.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
-				ImageFilePath	= os.path.dirname(DropFileName)
-				ImageFileName	= os.path.basename(DropFileName)
-				db.dbExecute(f"delete from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'")
-
 			# rename new file (overwrite in destination if already exists)
 			try:
 				os.replace(FileToRename, FileNameNew)
 			except:
 				pass
+
+			if os.path.isfile(FileNameNew):
+				# overwrite database entry (to enable exif update)
+				FileName	= FileNameNew.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
+				db.dbInsertImage(FileName)
 
 			progress.progress()
 
@@ -896,82 +906,82 @@ class backup(object):
 		if not self.TargetDevice.isLocal:
 			return()
 
-		if self.TargetDevice.isLocal:
-			lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
+		# set LEDs
+		lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
 
-			# prepare database
-			db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
+		# prepare database
+		db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
 
-			## clean database
-			# remove duplicates
-			db.dbExecute("delete from EXIF_DATA where ID not in (select min(ID) from EXIF_DATA group by File_Name, Directory);")
+## clean database
+		# remove duplicates
+		db.dbExecute("delete from EXIF_DATA where ID not in (select min(ID) from EXIF_DATA group by File_Name, Directory);")
 
-			# verfify files exists or clean from db
-			KnownFilesList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA")
+		# verfify if files exists or clean from db
+		KnownFilesList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA")
 
-			FilesToProcess	=	len(KnownFilesList)
-			DisplayLine1	= self.__lan.l('box_backup_cleaning_database')						# header1
-			DisplayLine2	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}")	# header2
+		FilesToProcess	=	len(KnownFilesList)
+		DisplayLine1	= self.__lan.l('box_backup_cleaning_database')						# header1
+		DisplayLine2	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}")	# header2
 
-			progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
+		progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
 
-			for KnownFile in KnownFilesList:
-				ID			= KnownFile[0]
-				FileName	= os.path.join(self.TargetDevice.MountPoint, KnownFile[1].strip('/'))
+		for KnownFile in KnownFilesList:
+			ID			= KnownFile[0]
+			FileName	= os.path.join(self.TargetDevice.MountPoint, KnownFile[1].strip('/'))
 
-				if not os.path.isfile(FileName):
-					# remove from database
-					db.dbExecute(f"DELETE from EXIF_DATA WHERE ID={ID};")
-					self.__log.message(f"DELETE from EXIF_DATA WHERE ID={ID};", 3)
+			if not os.path.isfile(FileName):
+				# remove from database
+				db.dbExecute(f"DELETE from EXIF_DATA WHERE ID={ID};")
+				self.__log.message(f"DELETE from EXIF_DATA WHERE ID={ID};", 3)
 
-					# delete tims file
-					TimsFileName	= os.path.join(os.path.dirname(FileName), 'tims', os.path.basename(f"{FileName}.JPG"))
-					if os.path.isfile(TimsFileName):
-						try:
-							os.remove(TimsFileName)
-						except:
-							pass
+				# delete tims file
+				TimsFileName	= os.path.join(os.path.dirname(FileName), 'tims', os.path.basename(f"{FileName}.JPG"))
+				if os.path.isfile(TimsFileName):
+					try:
+						os.remove(TimsFileName)
+					except:
+						pass
 
-				progress.progress()
+			progress.progress()
 
-			del progress
+		del progress
 
-			# vacuum database
-			db.dbExecute('VACUUM;')
+	## vacuum database
+		db.dbExecute('VACUUM;')
 
-			## import preexisting tims into database
-			self.__display.message(['set:clear',f":{self.__lan.l('box_backup_generating_database_finding_images1')}",':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),f":{self.__lan.l('box_backup_counting_images')}",f":{self.__lan.l('box_backup_generating_database_finding_images3')}"])
+		## import preexisting tims into database
+		self.__display.message(['set:clear',f":{self.__lan.l('box_backup_generating_database_finding_images1')}",':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),f":{self.__lan.l('box_backup_counting_images')}",f":{self.__lan.l('box_backup_generating_database_finding_images3')}"])
 
-			# find all tims and convert their filename to the estimated original filename:
-			## 1. replace only last '/tims/' by '/'
-			## 2. remove last part of file extension
+		# find all tims and convert their filename to the estimated original filename:
+		## 1. replace only last '/tims/' by '/'
+		## 2. remove last part of file extension
 
-			BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
+		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
-			Command	= ['find', self.TargetDevice.MountPoint, '-type', 'f', '-iname', '*.jpg', '-path', '*/tims/*'] + BannedPathsViewCaseInsensitive
-			TIMSList	= subprocess.check_output(Command).decode().strip().split('\n')
-			TIMSList[:]	= [element for element in TIMSList if element]
+		Command	= ['find', self.TargetDevice.MountPoint, '-type', 'f', '-iname', '*.jpg', '-path', '*/tims/*'] + BannedPathsViewCaseInsensitive
+		TIMSList	= subprocess.check_output(Command).decode().strip().split('\n')
+		TIMSList[:]	= [element for element in TIMSList if element]
 
-			# prepare loop to insert images into the database
-			FilesToProcess	= len(TIMSList)
+		# prepare loop to insert images into the database
+		FilesToProcess	= len(TIMSList)
 
-			DisplayLine1	= self.__lan.l('box_backup_generating_database')					# header1
-			DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')	# header2
+		DisplayLine1	= self.__lan.l('box_backup_generating_database')					# header1
+		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')	# header2
 
-			progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
+		progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
 
-			for TimsFileName in TIMSList:
-				OrigFileName	= TimsFileName.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0]	# remove mountpoint and remove second extension from tims
-				OrigFileName	= '/'.join(OrigFileName.rsplit('/tims/', 1)) 								# remove /tims from folder
-				ImageFilePath	= os.path.dirname(OrigFileName)
-				ImageFileName	= os.path.basename(OrigFileName)
-				if not db.dbSelect(f"select ID from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'"):
-					db.dbInsertImage(OrigFileName)
+		for TimsFileName in TIMSList:
+			OrigFileName	= TimsFileName.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0]	# remove mountpoint and remove second extension from tims
+			OrigFileName	= '/'.join(OrigFileName.rsplit('/tims/', 1)) 								# remove /tims from folder
+			ImageFilePath	= os.path.dirname(OrigFileName)
+			ImageFileName	= os.path.basename(OrigFileName)
+			if not db.dbSelect(f"select ID from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'"):
+				db.dbInsertImage(OrigFileName)
 
-				progress.progress()
+			progress.progress()
 
-			del progress
-			self.__display.message([f":{self.__lan.l('box_finished')}"])
+		del progress
+		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
 	def get_AllowedExtensionsFindOptions(self):
 
@@ -995,11 +1005,11 @@ class backup(object):
 
 		return(AllowedExtensionsFindOptions)
 
-	def generateThumbnails(self):
-		if not self.TargetDevice:
+	def generateThumbnails(self, Device=None):
+		if Device is None:
 			return()
 
-		if not self.TargetDevice.isLocal:
+		if not Device.isLocal:
 			return()
 
 		lib_system.rpi_leds(trigger='timer',delay_on=900,delay_off=100)
@@ -1012,34 +1022,41 @@ class backup(object):
 			except:
 				DCRAW_EMU	= 'dcraw_emu'
 
+		# remove all empty tims files
+		Command	= ['find',  Device.MountPoint, '-type', 'f','-size', '0', '-path', '*/tims/*', '-delete']
+		try:
+			subprocess.run(Command)
+		except:
+			pass
+
 		# prepare database
-		db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
+		db	= lib_view.viewdb(self.__setup,self.__log, Device.MountPoint)
 
 		self.__display.message([
 			"set:clear",
 			f":{self.__lan.l('box_backup_generating_thumbnails_finding_images1')}",
-			':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),
+			':' + self.__lan.l(f"box_backup_mode_{Device.StorageType}"),
 			f":{self.__lan.l('box_backup_counting_images')}",
 			f":{self.__lan.l('box_backup_generating_thumbnails_finding_images3')}"
 			])
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
-		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= f"find '{Device.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		ImagesList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 		ImagesList[:]	= [element for element in ImagesList if element]
 		ImagesList.sort()
-		ImagesList = [i.replace(self.TargetDevice.MountPoint,'',1) for i in ImagesList]
+		ImagesList = [i.replace(Device.MountPoint,'',1) for i in ImagesList]
 
 		# find all tims
-		Command	= f"find '{self.TargetDevice.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= f"find '{Device.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		TIMSList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 		TIMSList[:]	= [element for element in TIMSList if element]
 		TIMSList.sort()
 		#convert tims filenames to original filenames
 		for i, TIMS in enumerate(TIMSList):
-			TIMSList[i]	= TIMS.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0] 			# remove self.TargetDevice.MountPoint and second extension
+			TIMSList[i]	= TIMS.replace(Device.MountPoint,'',1).rsplit('.',1)[0] 			# remove Device.MountPoint and second extension
 			TIMSList[i]	= '/'.join(TIMSList[i].rsplit('/tims/', 1))									# remove /tims from folder
 
 		#remove from ImagesList all items known in TIMSList
@@ -1049,27 +1066,33 @@ class backup(object):
 		FilesToProcess	= len(MissingTIMSList)
 
 		DisplayLine1	= self.__lan.l('box_backup_generating_thumbnails') # header1
-		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
+		DisplayLine2	= self.__lan.l(f'box_backup_mode_{Device.StorageType}') # header2
 
 		progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
 
 		for SourceFilePathName in MissingTIMSList:
-			SourceFilePathName	= SourceFilePathName.strip('/')
+
+			# allow to stop process remote (when running as thread)
+			if self.__break_generateThumbnails:
+				return()
+
 			#extract Extension from filename
+			SourceFilePathName	= SourceFilePathName.strip('/')
 			try:
 				SourceFilePathNameExt	= SourceFilePathName.rsplit('.',1)[1].lower()
 			except:
 				SourceFilePathNameExt	= ''
 
+			# generate thumbnails
 			TIMS_Dir				= os.path.join(os.path.dirname(SourceFilePathName), 'tims')
-			pathlib.Path(self.TargetDevice.MountPoint, TIMS_Dir).mkdir(parents=True, exist_ok=True)
+			pathlib.Path(Device.MountPoint, TIMS_Dir).mkdir(parents=True, exist_ok=True)
 
 			FileName				= os.path.basename(SourceFilePathName)
 			TIMS_SubpathFilename	= os.path.join(TIMS_Dir, f"{FileName}.JPG")
 
 			if SourceFilePathNameExt in f"{self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES};{self.const_FILE_EXTENSIONS_LIST_TIF}".split(';'):
 				# file-types: jpeg, tif image
-				Command	= ["convert", f"{os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)}[0]", "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["convert", f"{os.path.join(Device.MountPoint, SourceFilePathName)}[0]", "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
@@ -1078,21 +1101,21 @@ class backup(object):
 
 				# file-type: heic/heif
 				# convert heif to jpg
-				Command	= ['heif-convert', os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f'{SourceFilePathName}.JPG')]
+				Command	= ['heif-convert', os.path.join(Device.MountPoint, SourceFilePathName), os.path.join(Device.MountPoint, f'{SourceFilePathName}.JPG')]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 				# transfer exif from heif to jpg
-				Command	= ['exiftool', '-overwrite_original', '-ignoreMinorErrors', '-TagsFromFile', os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), os.path.join(self.TargetDevice.MountPoint, f'{SourceFilePathName}.JPG')]
+				Command	= ['exiftool', '-overwrite_original', '-ignoreMinorErrors', '-TagsFromFile', os.path.join(Device.MountPoint, SourceFilePathName), os.path.join(Device.MountPoint, f'{SourceFilePathName}.JPG')]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 				# create tims file
-				Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, f"{SourceFilePathName}.JPG"), "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["convert", os.path.join(Device.MountPoint, f"{SourceFilePathName}.JPG"), "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
@@ -1103,7 +1126,7 @@ class backup(object):
 				if conf_VIEW_CONVERT_HEIC:
 					MissingTIMSList.append(f"{SourceFilePathName}.JPG")
 				else:
-					Command	= ["rm", os.path.join(self.TargetDevice.MountPoint, f"{SourceFilePathName}.JPG")]
+					Command	= ["rm", os.path.join(Device.MountPoint, f"{SourceFilePathName}.JPG")]
 					try:
 						subprocess.run(Command)
 					except:
@@ -1111,8 +1134,8 @@ class backup(object):
 
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
 				# file-type: raw-image
-				SourceCommand	= [DCRAW_EMU, "-w", "-Z", "-", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)]
-				FilterCommand	= ["convert", "-", "-resize", "800", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				SourceCommand	= [DCRAW_EMU, "-w", "-Z", "-", os.path.join(Device.MountPoint, SourceFilePathName)]
+				FilterCommand	= ["convert", "-", "-resize", "800", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					lib_common.pipe(SourceCommand,FilterCommand)
 				except:
@@ -1120,57 +1143,58 @@ class backup(object):
 
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_VIDEO.split(';'):
 				# file-type: video
-				Command	= ["ffmpeg", "-i", os.path.join(self.TargetDevice.MountPoint, SourceFilePathName), "-ss", "00:00:01", "-vframes", "1", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["ffmpeg", "-i", os.path.join(Device.MountPoint, SourceFilePathName), "-ss", "00:00:01", "-vframes", "1", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-				if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)):
+				if not os.path.isfile(os.path.join(Device.MountPoint, TIMS_SubpathFilename)):
 					# tims file not generated. Video too short? Try at second 0
-					Command	= ["ffmpeg", "-i", f"{self.TargetDevice.MountPoint}/{SourceFilePathName}", "-ss", "00:00:00", "-vframes", "1", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+					Command	= ["ffmpeg", "-i", f"{Device.MountPoint}/{SourceFilePathName}", "-ss", "00:00:00", "-vframes", "1", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 					try:
 						subprocess.run(Command)
 					except:
 						print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-				Command	= ["mogrify", "-resize", "800>", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["mogrify", "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				subprocess.run(Command)
 
-				Command	=["composite", "-gravity", "center", "/var/www/little-backup-box/img/play.png", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	=["composite", "-gravity", "center", "/var/www/little-backup-box/img/play.png", os.path.join(Device.MountPoint, TIMS_SubpathFilename), os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_AUDIO.split(';'):
-				Command	= ["cp", "/var/www/little-backup-box/img/audio.JPG", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["cp", "/var/www/little-backup-box/img/audio.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-				Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-			if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)):
-				self.__log.message(f"ERROR: TIMS of '{os.path.join(self.TargetDevice.MountPoint, SourceFilePathName)}' ('{os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)}') not regular created.")
+			if not os.path.isfile(os.path.join(Device.MountPoint, TIMS_SubpathFilename)):
+				self.__log.message(f"ERROR: TIMS of '{os.path.join(Device.MountPoint, SourceFilePathName)}' ('{os.path.join(Device.MountPoint, TIMS_SubpathFilename)}') not regular created.")
 
-				Command	= ["cp", "/var/www/little-backup-box/img/unknown.JPG", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["cp", "/var/www/little-backup-box/img/unknown.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-				Command	= ["convert", os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(self.TargetDevice.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
+			# insert image into database
 			db.dbInsertImage(SourceFilePathName)
 
 			progress.progress()
@@ -1186,18 +1210,18 @@ class backup(object):
 				lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
 
 				# prepare database
-				db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
+				db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
 
 				# select directory and filename as DirFile
 				FilesTupleList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile, LbbRating from EXIF_DATA where LbbRating != Rating or Rating is null")
 
-				#prepare loop to create thumbnails
+				#prepare loop to update EXIF
 				FilesToProcess	= len(FilesTupleList)
 
 				DisplayLine1	= self.__lan.l('box_backup_updating_exif') # header1
 				DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
 
-				progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
+				progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log,self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
 
 				for FileTuple in FilesTupleList:
 					MediaID			= FileTuple[0]
@@ -1234,10 +1258,10 @@ class backup(object):
 			display_summary	= self.__reporter.display_summary
 
 
-		# Wait for running threads (mails to send)
-		lib_common.join_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+		# Wait for running mail threads (mails to send)
+		lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
 
-		if self.SecundaryBackupFollows:
+		if self.SecondaryBackupFollows:
 			self.__display.message(display_summary)
 		else:
 			# Power off
@@ -1382,6 +1406,7 @@ if __name__ == "__main__":
 	args	= vars(parser.parse_args())
 
 	# clean boolean args
+
 	args['move_files']			= args['move_files'].lower() == 'true'			if args['move_files'] != 'setup'			else 'setup'
 	args['move_files2']			= args['move_files2'].lower() == 'true'			if args['move_files2'] != 'setup'			else 'setup'
 	args['force_sync_database']	= args['force_sync_database'].lower() == 'true'
@@ -1390,36 +1415,46 @@ if __name__ == "__main__":
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
 	args['power_off']			= args['power_off'].lower() == 'true'			if args['power_off'] != 'setup'				else 'setup'
 
-	SecundaryBackupFollows	= args['SecSourceName'] and args['SecTargetName']
+
+	SecondaryBackupFollows	= (
+		(not args['SecSourceName'] is None) and \
+		(args['SecSourceName'] != '') and \
+		(not args['SecTargetName'] is None) and \
+		(args['SecTargetName'] != '') \
+	) == True # else could be None
+
+	# generate thumbnails in secondary backup while uploading?
+	shiftGenerateThumbnails	= SecondaryBackupFollows and (args['TargetName'] == args['SecSourceName']) and (lib_storage.extractCloudService(args['SecTargetName'])[0] in ['cloud', 'cloud_rsync'])
 
 	# primary backup
-	if SecundaryBackupFollows:
+	if SecondaryBackupFollows:
 		display.message([f":{lan.l('box_backup_primary')}"])
 
-	backupObj	= backup(
+	backup_primary	= backup(
 		SourceName							= args['SourceName'],
 		TargetName							= args['TargetName'],
 		move_files							= args['move_files'],
 		ForceSyncDatabase					= args['force_sync_database'],
 		DoRenameFiles						= args['rename_files'],
 		DoGenerateThumbnails				= False if args['move_files2'] == True else args['generate_thumbnails'],
+		shiftGenerateThumbnails				= shiftGenerateThumbnails,
 		DoUpdateEXIF						= args['update_exif'],
 		DeviceIdentifierPresetSource		= args['device_identifier_preset_source'],
 		DeviceIdentifierPresetTarget		= args['device_identifier_preset_target'],
 		PowerOff							= args['power_off'],
-		SecundaryBackupFollows				= SecundaryBackupFollows
+		SecondaryBackupFollows				= SecondaryBackupFollows
 	)
-	backupObj.run()
+	backup_primary.run()
 
 	# secondary backup
 	secSourceDeviceIdentifier	= None
-	if SecundaryBackupFollows:
+	if SecondaryBackupFollows:
 		display.message([f":{lan.l('box_backup_secondary')}"])
 
 		secSourceDeviceIdentifier	= None
 		if  args['TargetName'] == 'usb' and args['SecSourceName'] == 'usb':
 			try:
-				secSourceDeviceIdentifier	= backupObj.TargetDevice.DeviceIdentifier
+				secSourceDeviceIdentifier	= backup_primary.TargetDevice.DeviceIdentifier
 			except:
 				pass
 
@@ -1429,12 +1464,13 @@ if __name__ == "__main__":
 			move_files						= args['move_files2'],
 			ForceSyncDatabase				= False,
 			DoRenameFiles					= False,
-			DoGenerateThumbnails			= False,
+			DoGenerateThumbnails			= False if args['move_files2'] == True else args['generate_thumbnails'],
+			shiftGenerateThumbnails			= shiftGenerateThumbnails,
 			DoUpdateEXIF					= False,
 			DeviceIdentifierPresetSource	= secSourceDeviceIdentifier,
 			DeviceIdentifierPresetTarget	= None,
 			PowerOff						= args['power_off'],
-			SecundaryBackupFollows			= False
+			SecondaryBackupFollows			= False
 		).run()
 
 
