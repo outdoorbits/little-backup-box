@@ -891,7 +891,8 @@ class backup(object):
 
 			if os.path.isfile(FileNameNew):
 				# overwrite database entry (to enable exif update)
-				db.dbInsertImage(FileNameNew)
+				FileName	= FileNameNew.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
+				db.dbInsertImage(FileName)
 
 			progress.progress()
 
