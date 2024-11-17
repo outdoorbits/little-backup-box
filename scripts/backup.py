@@ -79,15 +79,11 @@ class backup(object):
 			self.__log.message(f'Preset target: {self.DeviceIdentifierPresetTarget}')
 
 		# move files
-		self.move_files										= move_files
-		if self.move_files == 'setup':
-			self.move_files		= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
+		self.move_files										= move_files if move_files != 'setup' else self.__setup.get_val('conf_BACKUP_MOVE_FILES')
 
 		# rename files
-		self.DoRenameFiles									= DoRenameFiles
-		if self.DoRenameFiles == 'setup':
-			self.DoRenameFiles	= self.__setup.get_val('conf_BACKUP_RENAME_FILES')
-		self.DoRenameFiles	= self.DoRenameFiles or (self.SourceStorageType == 'rename')
+		self.DoRenameFiles									= DoRenameFiles if DoRenameFiles != 'setup' else self.__setup.get_val('conf_BACKUP_RENAME_FILES')
+		self.DoRenameFiles									= self.DoRenameFiles or (self.SourceStorageType == 'rename')
 
 		# sync database
 		self.ForceSyncDatabase									= ForceSyncDatabase
@@ -97,23 +93,18 @@ class backup(object):
 		self.SecondaryBackupFollows							= SecondaryBackupFollows
 
 		# thumbnails
-		if DoGenerateThumbnails == 'setup':
-			DoGenerateThumbnails					= self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
-		DoGenerateThumbnails	= DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
+		DoGenerateThumbnails 								= DoGenerateThumbnails if DoGenerateThumbnails != 'setup' else self.__setup.get_val('conf_BACKUP_GENERATE_THUMBNAILS')
+		DoGenerateThumbnails								= DoGenerateThumbnails or (self.SourceStorageType == 'thumbnails')
 
 		self.DoGenerateThumbnails_primary	= DoGenerateThumbnails and not shiftGenerateThumbnails
 		self.DoGenerateThumbnails_secondary	= DoGenerateThumbnails and shiftGenerateThumbnails and not self.SecondaryBackupFollows
 
 		# exif
-		self.DoUpdateEXIF									= DoUpdateEXIF
-		if self.DoUpdateEXIF == 'setup':
-			self.DoUpdateEXIF							= self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
-		self.DoUpdateEXIF	= self.DoUpdateEXIF or (self.SourceStorageType == 'exif')
+		self.DoUpdateEXIF									= DoUpdateEXIF if DoUpdateEXIF != 'setup' else self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
+		self.DoUpdateEXIF									= self.DoUpdateEXIF or (self.SourceStorageType == 'exif')
 
 		# power off
-		self.PowerOff										= PowerOff
-		if self.PowerOff == 'setup':
-			self.PowerOff								= self.__setup.get_val('conf_POWER_OFF')
+		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
 
 		# Basics
 		self.__WORKING_DIR	= os.path.dirname(__file__)
