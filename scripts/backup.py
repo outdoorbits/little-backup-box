@@ -211,7 +211,7 @@ class backup(object):
 			self.RenameFiles()
 
 		# sync database
-		if self.ForceSyncDatabase or self.__TIMSCopied or (self.DoGenerateThumbnails_secondary and self.SecondaryBackupFollows):
+		if self.ForceSyncDatabase or self.__TIMSCopied:
 			self.syncDatabase()
 
 		# generate thumbnails
@@ -883,18 +883,15 @@ class backup(object):
 			FileName	= os.path.basename(FileToRename)
 			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
 
-			if os.path.isfile(FileNameNew):
-				# drop file from database (to enable exif update)
-				DropFileName	= FileNameNew.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
-				ImageFilePath	= os.path.dirname(DropFileName)
-				ImageFileName	= os.path.basename(DropFileName)
-				db.dbExecute(f"delete from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'")
-
 			# rename new file (overwrite in destination if already exists)
 			try:
 				os.replace(FileToRename, FileNameNew)
 			except:
 				pass
+
+			if os.path.isfile(FileNameNew):
+				# overwrite database entry (to enable exif update)
+				db.dbInsertImage(FileNameNew)
 
 			progress.progress()
 
@@ -908,82 +905,82 @@ class backup(object):
 		if not self.TargetDevice.isLocal:
 			return()
 
-		if self.TargetDevice.isLocal:
-			lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
+		# set LEDs
+		lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
 
-			# prepare database
-			db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
+		# prepare database
+		db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
 
-			## clean database
-			# remove duplicates
-			db.dbExecute("delete from EXIF_DATA where ID not in (select min(ID) from EXIF_DATA group by File_Name, Directory);")
+## clean database
+		# remove duplicates
+		db.dbExecute("delete from EXIF_DATA where ID not in (select min(ID) from EXIF_DATA group by File_Name, Directory);")
 
-			# verfify if files exists or clean from db
-			KnownFilesList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA")
+		# verfify if files exists or clean from db
+		KnownFilesList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA")
 
-			FilesToProcess	=	len(KnownFilesList)
-			DisplayLine1	= self.__lan.l('box_backup_cleaning_database')						# header1
-			DisplayLine2	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}")	# header2
+		FilesToProcess	=	len(KnownFilesList)
+		DisplayLine1	= self.__lan.l('box_backup_cleaning_database')						# header1
+		DisplayLine2	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}")	# header2
 
-			progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
+		progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
 
-			for KnownFile in KnownFilesList:
-				ID			= KnownFile[0]
-				FileName	= os.path.join(self.TargetDevice.MountPoint, KnownFile[1].strip('/'))
+		for KnownFile in KnownFilesList:
+			ID			= KnownFile[0]
+			FileName	= os.path.join(self.TargetDevice.MountPoint, KnownFile[1].strip('/'))
 
-				if not os.path.isfile(FileName):
-					# remove from database
-					db.dbExecute(f"DELETE from EXIF_DATA WHERE ID={ID};")
-					self.__log.message(f"DELETE from EXIF_DATA WHERE ID={ID};", 3)
+			if not os.path.isfile(FileName):
+				# remove from database
+				db.dbExecute(f"DELETE from EXIF_DATA WHERE ID={ID};")
+				self.__log.message(f"DELETE from EXIF_DATA WHERE ID={ID};", 3)
 
-					# delete tims file
-					TimsFileName	= os.path.join(os.path.dirname(FileName), 'tims', os.path.basename(f"{FileName}.JPG"))
-					if os.path.isfile(TimsFileName):
-						try:
-							os.remove(TimsFileName)
-						except:
-							pass
+				# delete tims file
+				TimsFileName	= os.path.join(os.path.dirname(FileName), 'tims', os.path.basename(f"{FileName}.JPG"))
+				if os.path.isfile(TimsFileName):
+					try:
+						os.remove(TimsFileName)
+					except:
+						pass
 
-				progress.progress()
+			progress.progress()
 
-			del progress
+		del progress
 
-			# vacuum database
-			db.dbExecute('VACUUM;')
+	## vacuum database
+		db.dbExecute('VACUUM;')
 
-			## import preexisting tims into database
-			self.__display.message(['set:clear',f":{self.__lan.l('box_backup_generating_database_finding_images1')}",':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),f":{self.__lan.l('box_backup_counting_images')}",f":{self.__lan.l('box_backup_generating_database_finding_images3')}"])
+		## import preexisting tims into database
+		self.__display.message(['set:clear',f":{self.__lan.l('box_backup_generating_database_finding_images1')}",':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),f":{self.__lan.l('box_backup_counting_images')}",f":{self.__lan.l('box_backup_generating_database_finding_images3')}"])
 
-			# find all tims and convert their filename to the estimated original filename:
-			## 1. replace only last '/tims/' by '/'
-			## 2. remove last part of file extension
+		# find all tims and convert their filename to the estimated original filename:
+		## 1. replace only last '/tims/' by '/'
+		## 2. remove last part of file extension
 
-			BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
+		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
-			Command	= ['find', self.TargetDevice.MountPoint, '-type', 'f', '-iname', '*.jpg', '-path', '*/tims/*'] + BannedPathsViewCaseInsensitive
-			TIMSList	= subprocess.check_output(Command).decode().strip().split('\n')
-			TIMSList[:]	= [element for element in TIMSList if element]
+		Command	= ['find', self.TargetDevice.MountPoint, '-type', 'f', '-iname', '*.jpg', '-path', '*/tims/*'] + BannedPathsViewCaseInsensitive
+		TIMSList	= subprocess.check_output(Command).decode().strip().split('\n')
+		TIMSList[:]	= [element for element in TIMSList if element]
 
-			# prepare loop to insert images into the database
-			FilesToProcess	= len(TIMSList)
+		# prepare loop to insert images into the database
+		FilesToProcess	= len(TIMSList)
 
-			DisplayLine1	= self.__lan.l('box_backup_generating_database')					# header1
-			DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')	# header2
+		DisplayLine1	= self.__lan.l('box_backup_generating_database')					# header1
+		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')	# header2
 
-			progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
+		progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
 
-			for TimsFileName in TIMSList:
-				OrigFileName	= TimsFileName.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0]	# remove mountpoint and remove second extension from tims
-				OrigFileName	= '/'.join(OrigFileName.rsplit('/tims/', 1)) 								# remove /tims from folder
-				ImageFilePath	= os.path.dirname(OrigFileName)
-				ImageFileName	= os.path.basename(OrigFileName)
-				if not db.dbSelect(f"select ID from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'"):
-					db.dbInsertImage(OrigFileName)
+		for TimsFileName in TIMSList:
+			OrigFileName	= TimsFileName.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0]	# remove mountpoint and remove second extension from tims
+			OrigFileName	= '/'.join(OrigFileName.rsplit('/tims/', 1)) 								# remove /tims from folder
+			ImageFilePath	= os.path.dirname(OrigFileName)
+			ImageFileName	= os.path.basename(OrigFileName)
+			if not db.dbSelect(f"select ID from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'"):
+				db.dbInsertImage(OrigFileName)
 
-				progress.progress()
+			progress.progress()
 
-			del progress
-			self.__display.message([f":{self.__lan.l('box_finished')}"])
+		del progress
+		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
 	def get_AllowedExtensionsFindOptions(self):
 
