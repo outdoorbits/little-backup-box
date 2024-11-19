@@ -753,7 +753,7 @@
 							}
 							$IMAGE_DATE	= date_format($interpretedDate,L::view_date_format);
 
-							$Directory				= $STORAGE_PATH . $IMAGE['Directory'];
+							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];
 							$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
 							?>
@@ -790,7 +790,7 @@
 					elseif ($view_mode == "single") {
 // SINGLE
 						$IMAGE = $IMAGES_ARRAY[0];
-						$Directory				= $STORAGE_PATH . $IMAGE['Directory'];
+						$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 						$IMAGE_ID				= $IMAGE['ID'];
 						$IMAGE_FILENAME			= $Directory . '/' . $IMAGE['File_Name'];
 						$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
