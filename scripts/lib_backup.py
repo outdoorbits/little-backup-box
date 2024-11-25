@@ -22,8 +22,8 @@ from datetime import datetime, timedelta
 import lib_mail
 import lib_system
 
-import lib_debug
-xxx=lib_debug.debug()
+# import lib_debug
+# xx=lib_debug.debug()
 
 class progressmonitor(object):
 	def __init__(self,
@@ -32,8 +32,9 @@ class progressmonitor(object):
 			log,
 			lan,
 			FilesToProcess,
-			DisplayLine1,
-			DisplayLine2,
+			FilesToProcess_possible_more=False,
+			DisplayLine1='',
+			DisplayLine2='',
 			SourceDevice=None,
 			TargetDevice=None,
 			vpn=False
@@ -43,26 +44,27 @@ class progressmonitor(object):
 		self.conf_MAIL_NOTIFICATIONS				= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
 		self.__conf_DISP_FRAME_TIME					= self.__setup.get_val('conf_DISP_FRAME_TIME')
 
-		self.__display					= display	# display object
-		self.__log						= log		# log object
-		self.__lan						= lan		# language object
-		self.FilesToProcess				= FilesToProcess
-		self.SourceDevice				= SourceDevice
-		self.TargetDevice				= TargetDevice
-		self.vpn						= vpn
+		self.__display						= display	# display object
+		self.__log							= log		# log object
+		self.__lan							= lan		# language object
+		self.FilesToProcess					= FilesToProcess
+		self.FilesToProcess_possible_more	= FilesToProcess_possible_more
+		self.SourceDevice					= SourceDevice
+		self.TargetDevice					= TargetDevice
+		self.vpn							= vpn
 
-		self.StartTime					= lib_system.get_uptime_sec()
-		self.StopTime					= 0
-		self.CountProgress				= 0
-		self.CountSkip					= 0
-		self.CountProgress_OLD			= -1
-		self.CountJustCopied			= 0
-		self.CountFilesConfirmed		= 0
-		self.CountFilesNotConfirmed		= 0
-		self.countFilesMissing			= 0
-		self.LastMessageTime			= 0
-		self.TransferRate				= ''
-		self.TIMSCopied					= False
+		self.StartTime						= lib_system.get_uptime_sec()
+		self.StopTime						= 0
+		self.CountProgress					= 0
+		self.CountSkip						= 0
+		self.CountProgress_OLD				= -1
+		self.CountJustCopied				= 0
+		self.CountFilesConfirmed			= 0
+		self.CountFilesNotConfirmed			= 0
+		self.countFilesMissing				= 0
+		self.LastMessageTime				= 0
+		self.TransferRate					= ''
+		self.TIMSCopied						= False
 
 		self.DisplayLine1	= DisplayLine1
 		self.DisplayLine2	= DisplayLine2
@@ -186,7 +188,7 @@ class progressmonitor(object):
 			if len(self.TransferRate) > 0 and self.TransferRate[0] != ',':
 				self.TransferRate	= f", {self.TransferRate}"
 
-			DisplayLine3	= f"{self.CountProgress} " + self.__lan.l('box_backup_of') + f" {self.FilesToProcess}{self.TransferRate}"
+			DisplayLine3	= f"{self.CountProgress} " + self.__lan.l('box_backup_of') + f" {self.FilesToProcess}{'+' if self.FilesToProcess_possible_more else ''}{self.TransferRate}"
 
 			# calculate progress
 			PercentFinished	= None
@@ -271,31 +273,35 @@ class reporter(object):
 	def new_try(self):
 		# append report
 		self.__BackupReports[self.__Folder].append({
-			'FilesToProcess':		0,
-			'FilesProcessed':		0,
-			'FilesCopied'	:		0,
-			'FilesToProcessPost':	None,
-			'SyncReturnCode':		0,
-			'SyncLogs':				[],
-			'Results':				[],
-			'Errors':				[]
+			'FilesToProcess':				0,
+			'FilesToProcess_possible_more':	False,
+			'FilesProcessed':				0,
+			'FilesCopied'	:				0,
+			'FilesToProcessPost':			None,
+			'SyncReturnCode':				0,
+			'SyncLogs':						[],
+			'Results':						[],
+			'Errors':						[]
 		})
 
-	def set_values(self, FilesToProcess=None, FilesProcessed=None, FilesCopied=None, FilesToProcessPost=None, SyncReturnCode=None):
+	def set_values(self, FilesToProcess=None, FilesToProcess_possible_more=None, FilesProcessed=None, FilesCopied=None, FilesToProcessPost=None, SyncReturnCode=None):
 		if not FilesToProcess is None:
 			self.__BackupReports[self.__Folder][-1]['FilesToProcess']	= FilesToProcess
 
+		if not FilesToProcess_possible_more is None:
+			self.__BackupReports[self.__Folder][-1]['FilesToProcess_possible_more']	= FilesToProcess_possible_more
+
 		if not FilesProcessed is None:
-			self.__BackupReports[self.__Folder][-1]['FilesProcessed']	= FilesProcessed
+			self.__BackupReports[self.__Folder][-1]['FilesProcessed']				= FilesProcessed
 
 		if not FilesCopied is None:
-			self.__BackupReports[self.__Folder][-1]['FilesCopied']	= FilesCopied
+			self.__BackupReports[self.__Folder][-1]['FilesCopied']					= FilesCopied
 
 		if not FilesToProcessPost is None:
-			self.__BackupReports[self.__Folder][-1]['FilesToProcessPost']	= FilesToProcessPost
+			self.__BackupReports[self.__Folder][-1]['FilesToProcessPost']			= FilesToProcessPost
 
 		if not SyncReturnCode is None:
-			self.__BackupReports[self.__Folder][-1]['SyncReturnCode']	= SyncReturnCode
+			self.__BackupReports[self.__Folder][-1]['SyncReturnCode']				= SyncReturnCode
 
 	def add_synclog(self, SyncLog=''):
 		SyncLog	= SyncLog.strip()
@@ -396,7 +402,7 @@ class reporter(object):
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{self.__lan.l('box_backup_mail_empty_files')} {EmptyFilesString}</p>"
 
 				FilesCopiedAll	= Report['FilesToProcess'] - Report['FilesToProcessPost'] if not Report['FilesToProcessPost'] is None else '?'
-				self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']} {self.__lan.l('box_backup_files_copied')}. ({Report['FilesCopied']} {self.__lan.l('box_backup_files_just_copied')})</p>"
+				self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'>{FilesCopiedAll} {self.__lan.l('box_backup_of')} {Report['FilesToProcess']}{'+' if Report['FilesToProcess_possible_more'] else ''} {self.__lan.l('box_backup_files_copied')}. ({Report['FilesCopied']} {self.__lan.l('box_backup_files_just_copied')})</p>"
 
 			self.mail_content_HTML	+= f"<br>\n\n    <p style='{CSS_margins_left_1}'>{len(self.__BackupReports[Folder])} {self.__lan.l('box_backup_mail_tries_needed')}.</p>"
 
@@ -483,7 +489,7 @@ class reporter(object):
 				elif ErrorSign == 'Exception':
 					self.display_summary	+= [f":{self.sync_return_code_decoder(Error.split(':',1)[0])}"]
 
-		self.display_summary.append(f":{FilesProcessed} {self.__lan.l('box_backup_of')} {FilesToProcess} {self.__lan.l('box_backup_files_copied')}")
+		self.display_summary.append(f":{FilesProcessed} {self.__lan.l('box_backup_of')} {FilesToProcess}{'+' if Report['FilesToProcess_possible_more'] else ''} {self.__lan.l('box_backup_files_copied')}")
 		self.display_summary.append(f":{FailedTriesCountAll} {self.__lan.l('box_backup_failed_attempts')}")
 		self.display_summary.append(f":{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}")
 

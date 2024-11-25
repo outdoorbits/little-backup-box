@@ -302,8 +302,10 @@ class backup(object):
 		else:
 			checkPathsList	= self.SourceDevice.SubPathsAtSource
 
-		FilesToProcess		= 0
-		FilesToProcessPart	= 0
+		FilesToProcess				= 0
+		FilesToProcess_possible_more	= False
+
+		FilesToProcessPart			= 0
 
 		if  self.SourceDevice.StorageType != 'camera':
 			## Source is mounted (mountable) device or treated like that (cloud_rsync)
@@ -340,6 +342,9 @@ class backup(object):
 
 								OutputLine	= OutputLine.strip()
 
+								if OutputLine.endswith(': OK - could not check hash'):
+									FilesToProcess_possible_more	= True
+
 								if OutputLine.startswith('Errors:'):
 									try:
 										FilesToProcessPart	= int(OutputLine.split(':')[1].strip().split()[0])
@@ -369,7 +374,7 @@ class backup(object):
 
 				self.__log.message(f"Files in folder '{SubPathAtSource}': {FilesToProcessPart}")
 
-		return(FilesToProcess)
+		return(FilesToProcess, FilesToProcess_possible_more)
 
 	def backup(self):
 		if self.TargetDevice:
@@ -546,9 +551,10 @@ class backup(object):
 
 						self.__display.message([f":{self.__lan.l('box_backup_working')}..."])
 
-						FilesToProcess	= self.calculate_files_to_sync(SubPathAtSource)
-						self.__reporter.set_values(FilesToProcess=FilesToProcess)
-						self.__log.message(f"Files to sync before backup: {FilesToProcess}",3)
+						FilesToProcess, FilesToProcess_possible_more	= self.calculate_files_to_sync(SubPathAtSource)
+
+						self.__reporter.set_values(FilesToProcess=FilesToProcess, FilesToProcess_possible_more=FilesToProcess_possible_more)
+						self.__log.message(f"Files to sync before backup: {FilesToProcess}{'+' if FilesToProcess_possible_more else ''}",3)
 
 						if SourceStorageName == 'camera' and self.SourceDevice.LbbDeviceID:
 							SourceLabel	= self.SourceDevice.LbbDeviceID
@@ -565,16 +571,17 @@ class backup(object):
 
 						#define progress object
 						progress	= lib_backup.progressmonitor(
-							setup				= self.__setup,
-							display				= self.__display,
-							log					= self.__log,
-							lan					= self.__lan,
-							FilesToProcess		= FilesToProcess,
-							DisplayLine1		= DisplayLine1,
-							DisplayLine2		= DisplayLine2,
-							SourceDevice		= self.SourceDevice,
-							TargetDevice		= self.TargetDevice,
-							vpn					= self.vpn
+							setup						= self.__setup,
+							display						= self.__display,
+							log							= self.__log,
+							lan							= self.__lan,
+							FilesToProcess				= FilesToProcess,
+							FilesToProcess_possible_more	= FilesToProcess_possible_more,
+							DisplayLine1				= DisplayLine1,
+							DisplayLine2				= DisplayLine2,
+							SourceDevice				= self.SourceDevice,
+							TargetDevice				= self.TargetDevice,
+							vpn							= self.vpn
 						)
 
 						SyncStartTime	= lib_system.get_uptime_sec()
@@ -747,7 +754,15 @@ class backup(object):
 						if SourceStorageName == 'camera':
 							DisplayLine1	= self.__lan.l('box_backup_validate_files_from')		# header1
 							DisplayLine2	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"	# header2
-							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList), DisplayLine1, DisplayLine2)
+							progress	= lib_backup.progressmonitor(
+								setup			= self.__setup,
+								display			= self.__display,
+								log				= self.__log,
+								lan				= self.__lan,
+								FilesToProcess	= len(FilesList),
+								DisplayLine1	= DisplayLine1,
+								DisplayLine2	= DisplayLine2
+							)
 
 							FilesValidationFailed	= 0
 							FilesListCopy	= FilesList.copy()
@@ -766,7 +781,15 @@ class backup(object):
 
 						# delete files from camera
 						if SourceStorageName == 'camera' and self.move_files and FilesList:
-							progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, len(FilesList), self.__lan.l('box_backup_camera_removing_files_1'), self.__lan.l('box_backup_camera_removing_files_2'))
+							progress	= lib_backup.progressmonitor(
+								setup			= self.__setup,
+								display			= self.__display,
+								log				= self.__log,
+								lan				= self.__lan,
+								FilesToProcess	= len(FilesList),
+								DisplayLine1	= self.__lan.l('box_backup_camera_removing_files_1'),
+								DisplayLine2	= self.__lan.l('box_backup_camera_removing_files_2')
+							)
 
 							for FileRemove in FilesList:
 								cam_folder	= os.path.dirname(FileRemove)
@@ -854,7 +877,15 @@ class backup(object):
 		DisplayLine1	= self.__lan.l('box_backup_rename_files_renaming_files') # header1
 		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
 
-		progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
+		progress	= lib_backup.progressmonitor(
+			setup			= self.__setup,
+			display			= self.__display,
+			log				= self.__log,
+			lan				= self.__lan,
+			FilesToProcess	= FilesToProcess,
+			DisplayLine1	= DisplayLine1,
+			DisplayLine2	= DisplayLine2
+		)
 
 		DateTags	= ['-DateTimeOriginal', '-CreateDate']
 
@@ -923,7 +954,15 @@ class backup(object):
 		DisplayLine1	= self.__lan.l('box_backup_cleaning_database')						# header1
 		DisplayLine2	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}")	# header2
 
-		progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log, self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
+		progress	= lib_backup.progressmonitor(
+			setup			= self.__setup,
+			display			= self.__display,
+			log				= self.__log,
+			lan				= self.__lan,
+			FilesToProcess	= FilesToProcess,
+			DisplayLine1	= DisplayLine1,
+			DisplayLine2	= DisplayLine2
+		)
 
 		for KnownFile in KnownFilesList:
 			ID			= KnownFile[0]
@@ -968,7 +1007,15 @@ class backup(object):
 		DisplayLine1	= self.__lan.l('box_backup_generating_database')					# header1
 		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')	# header2
 
-		progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
+		progress	= lib_backup.progressmonitor(
+			setup			= self.__setup,
+			display			= self.__display,
+			log				= self.__log,
+			lan				= self.__lan,
+			FilesToProcess	= FilesToProcess,
+			DisplayLine1	= DisplayLine1,
+			DisplayLine2	= DisplayLine2
+		)
 
 		for TimsFileName in TIMSList:
 			OrigFileName	= TimsFileName.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0]	# remove mountpoint and remove second extension from tims
@@ -1068,7 +1115,15 @@ class backup(object):
 		DisplayLine1	= self.__lan.l('box_backup_generating_thumbnails') # header1
 		DisplayLine2	= self.__lan.l(f'box_backup_mode_{Device.StorageType}') # header2
 
-		progress	= lib_backup.progressmonitor(self.__setup,self.__display,self.__log,self.__lan,FilesToProcess,DisplayLine1,DisplayLine2)
+		progress	= lib_backup.progressmonitor(
+			setup			= self.__setup,
+			display			= self.__display,
+			log				= self.__log,
+			lan				= self.__lan,
+			FilesToProcess	= FilesToProcess,
+			DisplayLine1	= DisplayLine1,
+			DisplayLine2	= DisplayLine2
+		)
 
 		for SourceFilePathName in MissingTIMSList:
 
@@ -1221,7 +1276,15 @@ class backup(object):
 				DisplayLine1	= self.__lan.l('box_backup_updating_exif') # header1
 				DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
 
-				progress	= lib_backup.progressmonitor(self.__setup, self.__display, self.__log,self.__lan, FilesToProcess, DisplayLine1, DisplayLine2)
+				progress	= lib_backup.progressmonitor(
+					setup			= self.__setup,
+					display			= self.__display,
+					log				= self.__log,
+					lan				= self.__lan,
+					FilesToProcess	= FilesToProcess,
+					DisplayLine1	= DisplayLine1,
+					DisplayLine2	= DisplayLine2
+				)
 
 				for FileTuple in FilesTupleList:
 					MediaID			= FileTuple[0]
