@@ -130,29 +130,30 @@
 					$DeviceIdentifier	= '';
 				}
 
-				echo ("<tr><th style='vertical-align:top;'>$Lum</th><td style='padding-left: 10px;'>");
+				if ($Lum) {
+					echo ("<tr><th style='vertical-align:top;'>$Lum</th><td style='padding-left: 10px;'>");
 
-					unset($States);
-					exec("sudo smartctl -a $Lum", $States);
+						unset($States);
+						exec("sudo smartctl -a $Lum", $States);
 
-					$StatusMessage	= '';
-					foreach($States as $Line) {
-						if (strpos($Line, ': ')) {
-							$output	= true;
+						$StatusMessage	= '';
+						foreach($States as $Line) {
+							if (strpos($Line, ': ')) {
+								$output	= true;
 
-							list($Value, $measured)	= explode(':', $Line, 2);
-								$Value		= str_pad(trim($Value) . ':', 35, ' ');
-								$measured	= trim($measured);
+								list($Value, $measured)	= explode(':', $Line, 2);
+									$Value		= str_pad(trim($Value) . ':', 35, ' ');
+									$measured	= trim($measured);
 
-							echo ($Value . $measured . '<br>');
+								echo ($Value . $measured . '<br>');
+							}
 						}
-					}
 
-					if (! $output) {
-						echo ('-');
-					}
-
-				echo ("</td></tr>");
+					echo ("</td></tr>");
+				}
+			}
+			if (! $output) {
+				echo ('<tr><td>-</td></tr>');
 			}
 			echo '</table></pre>';
 			?>

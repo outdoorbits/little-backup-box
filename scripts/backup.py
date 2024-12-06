@@ -1487,7 +1487,12 @@ if __name__ == "__main__":
 	) == True # else could be None
 
 	# generate thumbnails in secondary backup while uploading?
-	shiftGenerateThumbnails	= SecondaryBackupFollows and (args['TargetName'] == args['SecSourceName']) and (lib_storage.extractCloudService(args['SecTargetName'])[0] in ['cloud', 'cloud_rsync'])
+	shiftGenerateThumbnails	= ( \
+								SecondaryBackupFollows and \
+								(args['TargetName'] == args['SecSourceName']) and \
+								(args['TargetName'] in ['internal', 'usb', 'nvme']) and \
+								(lib_storage.extractCloudService(args['SecTargetName'])[0] in ['cloud', 'cloud_rsync'])
+	)
 
 	# primary backup
 	if SecondaryBackupFollows:
