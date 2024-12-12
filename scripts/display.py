@@ -208,8 +208,10 @@ class DISPLAY(object):
 			self.line_height = bottom - top
 
 			self.maxLines = int(self.device.height / self.line_height)
+
 			if self.maxLines > self.const_DISPLAY_LINES_LIMIT:
 				self.maxLines = self.const_DISPLAY_LINES_LIMIT
+			elif self.show
 		else:
 			self.maxLines = self.const_DISPLAY_LINES_LIMIT
 
