@@ -51,6 +51,7 @@
 # kill:		terminate display daemen
 
 import os
+import RPi.GPIO
 import shutil
 import subprocess
 import sys
@@ -70,14 +71,17 @@ from PIL import Image, ImageFont
 import displaymenu
 from lib_display import display_content_files
 
-import lib_debug
-xxx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 WORKING_DIR = os.path.dirname(__file__)
 
 class DISPLAY(object):
 
 	def __init__(self):
+		# cleanup pins
+		RPi.GPIO.cleanup()
+
 		# objects
 		self.__setup					= lib_setup.setup()
 		self.__display_content_files	= display_content_files(self.__setup)
