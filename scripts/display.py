@@ -237,6 +237,18 @@ class DISPLAY(object):
 					status_bar	+= ['WiFi']
 				break
 
+		# CPU usage
+		try:
+			vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
+		except:
+			vmstat	= []
+
+		if vmstat:
+			vmstat_fields	= vmstat[-1].split()
+
+			if len(vmstat_fields) >= 14:
+				status_bar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+
 		# temperature
 		try:
 			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
@@ -387,7 +399,7 @@ class DISPLAY(object):
 
 						i	= 0
 						for item in status_bar:
-							xxx.d(f'statusbar: {item}')
+
 							if i < len(status_bar) - 1:
 								# align left
 								x	= int(i * self.device.width / len(status_bar))
