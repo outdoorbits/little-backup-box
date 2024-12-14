@@ -217,35 +217,34 @@ class DISPLAY(object):
 		else:
 			self.maxLines = self.const_DISPLAY_LINES_LIMIT
 
-	def get_status_line(self):
+	def get_status_bar(self):
+		status_bar	= []
+
 		#comitup
 		try:
 			comitup_status	= subprocess.check_output(['comitup-cli', 'i']).decode().split('\n')
 		except:
 			comitup_status	= []
 
-		comitup	= ''
 		for status in comitup_status:
 			if status.endswith(' state'):
-				comitup	= status.split(' ', 1)[0]
 
-				if comitup == 'HOTSPOT':
-					comitup	= 'HOT'
-				elif comitup == 'CONNECTING':
-					comitup	= '..?'
-				elif comitup == 'CONNECTED':
-					comitup	= 'WiFi'
-
+				if status.startswith('HOTSPOT'):
+					status_bar	+= ['HOT']
+				elif status.startswith('CONNECTING'):
+					status_bar	+= ['..?']
+				elif status.startswith('CONNECTED'):
+					status_bar	+= ['WiFi']
 				break
 
 		# temperature
 		try:
 			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
-			temp_c	= f'{temp_c:.0f}'
+			status_bar	+= [f'{temp_c:.0f}°C']
 		except:
-			temp_c	= ''
+			pass
 
-		return(f'{comitup}|{temp_c}°C|bat:0')
+		return(status_bar)
 
 	def show(self, Lines):
 
@@ -270,7 +269,7 @@ class DISPLAY(object):
 			# Write lines
 
 			if self.conf_DISP_SHOW_STATUSBAR:
-				Lines[self.maxLines-1]	= f's=s:{self.get_status_line()}'
+				Lines[self.maxLines-1]	= f's=s:STATUSBAR'
 
 			with canvas(self.device) as draw:
 
@@ -382,22 +381,27 @@ class DISPLAY(object):
 						draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
 
 					# Write text
+					## status bar
 					if FormatType == 's' and FormatValue == 's':
-						statusbar_items	= Content.split('|')
+						status_bar	= self.get_status_bar()
 
 						i	= 0
-						for item in statusbar_items:
-							if i == len(statusbar_items) - 1:
+						for item in status_bar:
+							xxx.d(f'statusbar: {item}')
+							if i < len(status_bar) - 1:
+								# align left
+								x	= int(i * self.device.width / len(status_bar))
+							else:
+								# align right
 								(left, top, right, bottom) = draw.textbbox((0,0), item,font=self.FONT)
 								pgbar_text_length = right - left
-								x				= self.device.width - pgbar_text_length - 1
-							else:
-								x				= int(i * self.device.width / len(statusbar_items))
+								x	= self.device.width - pgbar_text_length - 1
 
 							draw.text((x + 1, y), item, font=self.FONT, fill=fg_fill)
 
 							i	+= 1
 					else:
+						## regular text
 						draw.text((x + 1, y), Content, font=self.FONT, fill=fg_fill)
 
 					if underline:

@@ -194,6 +194,7 @@
 		$conf_DISP									= isset($conf_DISP)?'true':'false';
 		$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?'true':'false';
 		$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?'true':'false';
+		$conf_DISP_SHOW_STATUSBAR					= isset($conf_DISP_SHOW_STATUSBAR)?'true':'false';
 		$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?'true':'false';
 		$conf_VIRTUAL_KEYBOARD_ENABLED				= isset($conf_VIRTUAL_KEYBOARD_ENABLED)?'true':'false';
 		$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?'true':'false';
@@ -281,6 +282,7 @@ conf_DISP_FRAME_TIME=$conf_DISP_FRAME_TIME
 conf_DISP_FRAME_TIME_IP=$conf_DISP_FRAME_TIME_IP
 conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
+conf_DISP_SHOW_STATUSBAR=$conf_DISP_SHOW_STATUSBAR
 conf_MENU_ENABLED=$conf_MENU_ENABLED
 conf_MENU_BUTTON_COMBINATION='$conf_MENU_BUTTON_COMBINATION'
 conf_MENU_BUTTON_ROTATE='$conf_MENU_BUTTON_ROTATE'
@@ -817,6 +819,9 @@ CONFIGDATA;
 					<div>
 						<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
 						<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br>
+						<br>
+						<input type="checkbox" id="conf_DISP_SHOW_STATUSBAR" name="conf_DISP_SHOW_STATUSBAR" <?php echo $config['conf_DISP_SHOW_STATUSBAR']=="1"?"checked":""; ?>>
+						<label for="conf_DISP_SHOW_STATUSBAR"><?php echo L::config_display_statusbar_label; ?></label><br>
 						<br>
 						<label for="conf_DISP_FRAME_TIME_IP"><?php echo L::config_display_frame_time_ip_label; ?></label><br>
 							<select name="conf_DISP_FRAME_TIME_IP" id="conf_DISP_FRAME_TIME_IP">
