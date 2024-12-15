@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2024-12-14: Add status bar to display</li>
 	<li>2021-11-16: To optimize automatic backups, thumbnails are now created during the secondary backup (to cloud storage) instead of between the primary (to local disk) and secondary backups. This approach maximizes computing and network efficiency, significantly reducing the overall backup time.</li>
 	<li>2021-10-19: Add option to rename media files after backup based on the files creation date and time. Example: &quot;Image.jpg&quot; from 2024/10/19 12:42:14 will be renamed to &quot;2024-10-19_12-42-14_-_Image.jpg&quot;</li>
 	<li>2024-09-09: In the settings for both default backups, specify separately whether the files should be copied or moved; Allow moving files from former target devices; bugfixes</li>
