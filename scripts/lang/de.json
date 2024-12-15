@@ -278,7 +278,7 @@
       "connection_label": "Welche Schnittstelle soll verwendet werden?",
       "i2c_address_label": "i2c-Adresse des Displays",
       "i2c_header": "I2C-Display-Konfiguration",
-      "ip_label": "Wenn die Anzeige aktiviert ist, IP minütlich einblenden.",
+      "ip_label": "IP minütlich einblenden.",
       "black_on_power_off_label": "Display beim Herunterfahren ausschalten",
       "device_available": "Gerät erkannt",
       "behavior_header": "Display-Verhalten",
@@ -313,7 +313,10 @@
       "rotate_header": "Display drehen",
       "offset_x_label": "Display-Verschiebung horizontal (in Pixeln)",
       "offset_y_label": "Display-Verschiebung vertikal (in Pixeln)",
-      "frame_time_ip_label": "Minimale Anzeigedauer der IP in Sekunden"
+      "frame_time_ip_label": "Minimale Anzeigedauer der IP in Sekunden",
+      "statusbar": {
+        "label": "Statusleiste einblenden"
+      }
     },
     "menu": {
       "section": "Display-Menü",

@@ -30,6 +30,7 @@
 # s=b: BASIC
 # s=h: HIGHLIGHT
 # s=a: ALERT
+# s=s: statusbar
 #
 ## u: underline
 #
@@ -50,7 +51,9 @@
 # kill:		terminate display daemen
 
 import os
+import RPi.GPIO
 import shutil
+import subprocess
 import sys
 import threading
 import time
@@ -68,14 +71,17 @@ from PIL import Image, ImageFont
 import displaymenu
 from lib_display import display_content_files
 
-#import lib_debug
-#xx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 WORKING_DIR = os.path.dirname(__file__)
 
 class DISPLAY(object):
 
 	def __init__(self):
+		# cleanup pins
+		RPi.GPIO.cleanup()
+
 		# objects
 		self.__setup					= lib_setup.setup()
 		self.__display_content_files	= display_content_files(self.__setup)
@@ -98,6 +104,7 @@ class DISPLAY(object):
 		self.conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
 		self.conf_DISP_BLACK_ON_POWER_OFF	= self.__setup.get_val('conf_DISP_BLACK_ON_POWER_OFF')
 		self.conf_DISP_FRAME_TIME			= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.conf_DISP_SHOW_STATUSBAR		= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
 		self.conf_MENU_ENABLED				= self.__setup.get_val('conf_MENU_ENABLED')
 
 		self.const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
@@ -208,10 +215,52 @@ class DISPLAY(object):
 			self.line_height = bottom - top
 
 			self.maxLines = int(self.device.height / self.line_height)
+
 			if self.maxLines > self.const_DISPLAY_LINES_LIMIT:
 				self.maxLines = self.const_DISPLAY_LINES_LIMIT
 		else:
 			self.maxLines = self.const_DISPLAY_LINES_LIMIT
+
+	def get_status_bar(self):
+		status_bar	= []
+
+		#comitup
+		try:
+			comitup_status	= subprocess.check_output(['comitup-cli', 'i']).decode().split('\n')
+		except:
+			comitup_status	= []
+
+		for status in comitup_status:
+			if status.endswith(' state'):
+
+				if status.startswith('HOTSPOT'):
+					status_bar	+= ['HOT']
+				elif status.startswith('CONNECTING'):
+					status_bar	+= ['..?']
+				elif status.startswith('CONNECTED'):
+					status_bar	+= ['WiFi']
+				break
+
+		# CPU usage
+		try:
+			vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
+		except:
+			vmstat	= []
+
+		if vmstat:
+			vmstat_fields	= vmstat[-1].split()
+
+			if len(vmstat_fields) >= 14:
+				status_bar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+
+		# temperature
+		try:
+			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
+			status_bar	+= [f'{temp_c:.0f}°C']
+		except:
+			pass
+
+		return(status_bar)
 
 	def show(self, Lines):
 
@@ -234,6 +283,10 @@ class DISPLAY(object):
 
 		else:
 			# Write lines
+
+			if self.conf_DISP_SHOW_STATUSBAR:
+				Lines[self.maxLines-1]	= f's=s:STATUSBAR'
+
 			with canvas(self.device) as draw:
 
 				# define constants
@@ -272,8 +325,11 @@ class DISPLAY(object):
 								if FormatValue == 'h': # highlight
 									fg_fill = self.color_bg
 									bg_fill = self.color_text
-								if FormatValue == 'a': # alert
+								elif FormatValue == 'a': # alert
 									underline = True
+								elif FormatValue == 's': # statusbar
+									fg_fill = self.color_bg
+									bg_fill = self.color_text
 							else:
 								# RGB(A)
 								if FormatValue == 'h' or FormatValue == 'hc': # highlight or highlight color
@@ -286,6 +342,9 @@ class DISPLAY(object):
 										bg_fill = self.color_high
 									else:
 										underline = True
+								elif FormatValue == 's': # statusbar
+									fg_fill = self.color_bg
+									bg_fill = self.color_text
 
 						if FormatType == 'u':
 							underline = True
@@ -294,7 +353,7 @@ class DISPLAY(object):
 
 					# Draw a filled box in case of inverted output
 					if bg_fill != self.color_bg:
-						draw.rectangle((x, y, self.device.width, y + self.line_height), outline=bg_fill, fill=bg_fill)
+						draw.rectangle((x, y + 2, self.device.width, y + self.line_height + 1 if y + self.line_height + 1 <= self.device.height else self.device.height ), outline=bg_fill, fill=bg_fill)
 
 					if Content[0:6] == "IMAGE=":
 						Content = ''
@@ -338,7 +397,28 @@ class DISPLAY(object):
 						draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
 
 					# Write text
-					draw.text((x + 1, y), Content, font=self.FONT, fill=fg_fill)
+					## status bar
+					if FormatType == 's' and FormatValue == 's':
+						status_bar	= self.get_status_bar()
+
+						i	= 0
+						for item in status_bar:
+
+							if i < len(status_bar) - 1:
+								# align left
+								x	= int(i * self.device.width / len(status_bar))
+							else:
+								# align right
+								(left, top, right, bottom) = draw.textbbox((0,0), item,font=self.FONT)
+								pgbar_text_length = right - left
+								x	= self.device.width - pgbar_text_length - 1
+
+							draw.text((x + 1, y), item, font=self.FONT, fill=fg_fill)
+
+							i	+= 1
+					else:
+						## regular text
+						draw.text((x + 1, y), Content, font=self.FONT, fill=fg_fill)
 
 					if underline:
 						(left, top, right, bottom) = draw.textbbox((0,0),Content,font=self.FONT)

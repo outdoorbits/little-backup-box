@@ -508,7 +508,7 @@
       "connection_label": "Which interface should be used?",
       "i2c_address_label": "i2c address of the display",
       "i2c_header": "I2C display configuration",
-      "ip_label": "If display is activated, print IP every minute.",
+      "ip_label": "Print IP every minute.",
       "black_on_power_off_label": "Display off when shutting down",
       "device_available": "Device detected",
       "behavior_header": "Display behavior",
@@ -543,7 +543,10 @@
       "rotate_header": "Rotate screen",
       "offset_x_label": "Display shift horizontally (in pixels)",
       "offset_y_label": "Display shift vertically (in pixels)",
-      "frame_time_ip_label": "Minimum display time of the IP in seconds"
+      "frame_time_ip_label": "Minimum display time of the IP in seconds",
+      "statusbar": {
+        "label": "Show status bar"
+      }
     },
     "menu": {
       "section": "Display menu",

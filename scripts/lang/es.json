@@ -278,7 +278,7 @@
       "connection_label": "¿Qué interfaz se debe utilizar?",
       "i2c_address_label": "Dirección i2c de la pantalla",
       "i2c_header": "Configuración de pantalla I2C",
-      "ip_label": "Si la pantalla está activada, imprimir IP cada minuto.",
+      "ip_label": "Imprimir IP cada minuto.",
       "black_on_power_off_label": "Apague la pantalla al apagar",
       "device_available": "Dispositivo detectado",
       "behavior_header": "Comportamiento de visualización",
@@ -313,7 +313,10 @@
       "rotate_header": "Girar pantalla",
       "offset_x_label": "Desplazamiento de la pantalla horizontalmente (en píxeles)",
       "offset_y_label": "Desplazamiento de la pantalla verticalmente (en píxeles)",
-      "frame_time_ip_label": "Tiempo mínimo de visualización de la IP en segundos"
+      "frame_time_ip_label": "Tiempo mínimo de visualización de la IP en segundos",
+      "statusbar": {
+        "label": "Mostrar barra de estado"
+      }
     },
     "menu": {
       "section": "Mostrar menú",
