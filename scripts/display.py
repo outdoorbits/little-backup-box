@@ -87,29 +87,30 @@ class DISPLAY(object):
 		self.__display_content_files	= display_content_files(self.__setup)
 
 		# setup
-		self.conf_DISP_CONNECTION			= self.__setup.get_val('conf_DISP_CONNECTION')
-		self.conf_DISP_DRIVER				= self.__setup.get_val('conf_DISP_DRIVER')
-		self.conf_DISP_I2C_ADDRESS			= self.__setup.get_val('conf_DISP_I2C_ADDRESS')
-		self.conf_DISP_SPI_PORT				= self.__setup.get_val('conf_DISP_SPI_PORT')
-		self.conf_DISP_RESOLUTION_X			= self.__setup.get_val('conf_DISP_RESOLUTION_X')
-		self.conf_DISP_RESOLUTION_Y			= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
-		self.conf_DISP_OFFSET_X				= self.__setup.get_val('conf_DISP_OFFSET_X')
-		self.conf_DISP_OFFSET_Y				= self.__setup.get_val('conf_DISP_OFFSET_Y')
-		self.conf_DISP_ROTATE				= self.__setup.get_val('conf_DISP_ROTATE')
-		self.conf_DISP_CONTRAST				= self.__setup.get_val('conf_DISP_CONTRAST')
-		self.conf_DISP_COLOR_MODEL			= self.__setup.get_val('conf_DISP_COLOR_MODEL')
-		self.conf_DISP_COLOR_TEXT			= self.__setup.get_val('conf_DISP_COLOR_TEXT')
-		self.conf_DISP_COLOR_HIGH			= self.__setup.get_val('conf_DISP_COLOR_HIGH')
-		self.conf_DISP_COLOR_ALERT			= self.__setup.get_val('conf_DISP_COLOR_ALERT')
-		self.conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
-		self.conf_DISP_BLACK_ON_POWER_OFF	= self.__setup.get_val('conf_DISP_BLACK_ON_POWER_OFF')
-		self.conf_DISP_FRAME_TIME			= self.__setup.get_val('conf_DISP_FRAME_TIME')
-		self.conf_DISP_SHOW_STATUSBAR		= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
-		self.conf_MENU_ENABLED				= self.__setup.get_val('conf_MENU_ENABLED')
+		self.conf_DISP_CONNECTION				= self.__setup.get_val('conf_DISP_CONNECTION')
+		self.conf_DISP_DRIVER					= self.__setup.get_val('conf_DISP_DRIVER')
+		self.conf_DISP_I2C_ADDRESS				= self.__setup.get_val('conf_DISP_I2C_ADDRESS')
+		self.conf_DISP_SPI_PORT					= self.__setup.get_val('conf_DISP_SPI_PORT')
+		self.conf_DISP_RESOLUTION_X				= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		self.conf_DISP_RESOLUTION_Y				= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		self.conf_DISP_OFFSET_X					= self.__setup.get_val('conf_DISP_OFFSET_X')
+		self.conf_DISP_OFFSET_Y					= self.__setup.get_val('conf_DISP_OFFSET_Y')
+		self.conf_DISP_ROTATE					= self.__setup.get_val('conf_DISP_ROTATE')
+		self.conf_DISP_CONTRAST					= self.__setup.get_val('conf_DISP_CONTRAST')
+		self.conf_DISP_COLOR_MODEL				= self.__setup.get_val('conf_DISP_COLOR_MODEL')
+		self.conf_DISP_COLOR_TEXT				= self.__setup.get_val('conf_DISP_COLOR_TEXT')
+		self.conf_DISP_COLOR_HIGH				= self.__setup.get_val('conf_DISP_COLOR_HIGH')
+		self.conf_DISP_COLOR_ALERT				= self.__setup.get_val('conf_DISP_COLOR_ALERT')
+		self.conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
+		self.conf_DISP_BLACK_ON_POWER_OFF		= self.__setup.get_val('conf_DISP_BLACK_ON_POWER_OFF')
+		self.conf_DISP_FRAME_TIME				= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.conf_DISP_SHOW_STATUSBAR			= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
+		self.conf_MENU_ENABLED					= self.__setup.get_val('conf_MENU_ENABLED')
 
-		self.const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-		self.const_DISPLAY_LINES_LIMIT		= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
-		self.const_FONT_PATH				= self.__setup.get_val('const_FONT_PATH')
+		self.const_DISPLAY_CONTENT_OLD_FILE		= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		self.const_DISPLAY_LINES_LIMIT			= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
+		self.const_DISPLAY_STATUSBAR_MAX_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_MAX_SEC')
+		self.const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
 
 		#define colors
 		color = {}
@@ -221,8 +222,11 @@ class DISPLAY(object):
 		else:
 			self.maxLines = self.const_DISPLAY_LINES_LIMIT
 
-	def get_status_bar(self):
-		status_bar	= []
+	def get_Statusbar(self, active):
+		if not active:
+			return(None)
+
+		Statusbar	= []
 
 		#comitup
 		try:
@@ -234,11 +238,11 @@ class DISPLAY(object):
 			if status.endswith(' state'):
 
 				if status.startswith('HOTSPOT'):
-					status_bar	+= ['HOT']
+					Statusbar	+= ['HOT']
 				elif status.startswith('CONNECTING'):
-					status_bar	+= ['..?']
+					Statusbar	+= ['..?']
 				elif status.startswith('CONNECTED'):
-					status_bar	+= ['WiFi']
+					Statusbar	+= ['WiFi']
 				break
 
 		# CPU usage
@@ -251,18 +255,18 @@ class DISPLAY(object):
 			vmstat_fields	= vmstat[-1].split()
 
 			if len(vmstat_fields) >= 14:
-				status_bar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+				Statusbar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
 
 		# temperature
 		try:
 			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
-			status_bar	+= [f'{temp_c:.0f}°C']
+			Statusbar	+= [f'{temp_c:.0f}°C']
 		except:
 			pass
 
-		return(status_bar)
+		return(Statusbar)
 
-	def show(self, Lines):
+	def show(self, Lines, Statusbar=None):
 
 		if ":IMAGE=" in Lines[0]:
 			# PRINT IMAGE FROM FILE
@@ -284,7 +288,7 @@ class DISPLAY(object):
 		else:
 			# Write lines
 
-			if self.conf_DISP_SHOW_STATUSBAR:
+			if not Statusbar is None:
 				Lines[self.maxLines-1]	= f's=s:STATUSBAR'
 
 			with canvas(self.device) as draw:
@@ -399,14 +403,13 @@ class DISPLAY(object):
 					# Write text
 					## status bar
 					if FormatType == 's' and FormatValue == 's':
-						status_bar	= self.get_status_bar()
 
 						i	= 0
-						for item in status_bar:
+						for item in Statusbar:
 
-							if i < len(status_bar) - 1:
+							if i < len(Statusbar) - 1:
 								# align left
-								x	= int(i * self.device.width / len(status_bar))
+								x	= int(i * self.device.width / len(Statusbar))
 							else:
 								# align right
 								(left, top, right, bottom) = draw.textbbox((0,0), item,font=self.FONT)
@@ -425,6 +428,9 @@ class DISPLAY(object):
 						draw.line((x + 1, y + self.line_height + y_space, x + 1 + right - left, y + self.line_height + y_space), fill=fg_fill, width=1)
 
 	def main(self):
+		display_time	= time.time()
+		Lines 			= []
+
 		# start endless loop to display content
 		while(True):
 			import_old_file 		= True
@@ -463,6 +469,7 @@ class DISPLAY(object):
 
 								if '=' in setting:
 									SettingType, SettingValue = setting.split('=',1)
+									SettingValue	= SettingValue.strip()
 								else:
 									SettingType	= setting
 									SettingValue	= ''
@@ -512,7 +519,7 @@ class DISPLAY(object):
 								if len(Lines) < self.const_DISPLAY_LINES_LIMIT:
 									Line = Line.split(':',1)[-1]
 									if Line:
-										if Line[0:4] != 'set:':
+										if not Line.startswith('set:'):
 											Line = "s=b:{}".format(Line)
 											Lines.append(Line)
 
@@ -538,7 +545,17 @@ class DISPLAY(object):
 					oCF.write("\n".join(Lines))
 
 				if self.hardware_ready:
-					self.show(Lines)
+					self.show(Lines, self.get_Statusbar(self.conf_DISP_SHOW_STATUSBAR))
+					display_time	= time.time()
+
+			if (
+				self.hardware_ready and
+				self.conf_DISP_SHOW_STATUSBAR and
+				len(Lines) >= self.const_DISPLAY_LINES_LIMIT and
+				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC
+				):
+				self.show(Lines, self.get_Statusbar(self.conf_DISP_SHOW_STATUSBAR))
+				display_time	= time.time()
 
 			time.sleep(FrameTime)
 
