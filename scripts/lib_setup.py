@@ -318,7 +318,7 @@ class setup(object):
 					'const_DISPLAY_LINES_LIMIT':					{'type': 'int'},
 					'const_DISPLAY_CONTENT_FOLDER':					{'type': 'str'},
 					'const_DISPLAY_CONTENT_OLD_FILE':				{'type': 'str'},
-					'const_DISPLAY_STATUSBAR_MAX_SEC':				{'type': 'int'},
+					'const_DISPLAY_STATUSBAR_MAX_SEC':				{'type': 'float'},
 					'const_IP_SENT_MARKERFILE':						{'type': 'str'},
 					'const_MENU_TIMEOUT_SEC':						{'type': 'int'},
 					'const_RCLONE_CONFIG_FILE':						{'type': 'str'},

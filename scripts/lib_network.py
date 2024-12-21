@@ -24,6 +24,7 @@ import qrcode
 import subprocess
 from urllib import request
 import sys
+import time
 
 import lib_setup
 
@@ -140,6 +141,50 @@ def get_qr_links(protocol='https'):
 		qr_links	= f'{qr_links}<a href="{protocol}://{IP}"><img src="{IP_QR_FILE}" style="padding: 5px;"></a> '
 
 	return(qr_links)
+
+class traffic_monitor(object):
+	def __init__(self):
+		self.previous_time		= 0
+		self.previous_transfer	= 0
+
+		# init values
+		self.get_traffic()
+
+	def get_traffic(self):
+		transfer	= 0
+
+		try:
+			with open('/proc/net/dev', 'r') as interfaces:
+				for interface in interfaces:
+					columns = interface.split()
+					if len(columns) >= 9 and columns[0].endswith(':'):
+						if columns[1].isdigit():
+							transfer	+= int(columns[1])
+						if columns[9].isdigit():
+							transfer	+= int(columns[9])
+		except:
+			pass
+
+		actualtime	= time.time()
+		if actualtime - self.previous_time <= 0:
+			return('')
+
+		transferrate	= (transfer - self.previous_transfer) / (actualtime - self.previous_time)
+
+		self.previous_time		= actualtime
+		self.previous_transfer	= transfer
+
+		return(f'{self.format_bytes(transferrate)}/s')
+
+	def format_bytes(self, number_of_bytes):
+		units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']
+
+		i = 0
+		while number_of_bytes >= 1024 and i < len(units) - 1:
+			number_of_bytes /= 1024.0
+			i += 1
+
+		return f"{number_of_bytes:.0f} {units[i]}"
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(
