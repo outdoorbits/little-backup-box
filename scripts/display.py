@@ -58,6 +58,7 @@ import sys
 import threading
 import time
 
+import lib_network
 import lib_setup
 
 from luma.core.interface.serial import i2c, spi, pcf8574
@@ -196,6 +197,11 @@ class DISPLAY(object):
 		# calculate line dimensions
 		self.calculate_LineSize()
 
+		# prepare statusbar
+		if self.conf_DISP_SHOW_STATUSBAR:
+			self.traffic_monitor	= lib_network.traffic_monitor()
+		self.statusbar_toggle	= False
+
 		## start display menu
 		self.menu_controller	= displaymenu.MENU_CONTROLLER()
 
@@ -222,11 +228,11 @@ class DISPLAY(object):
 		else:
 			self.maxLines = self.const_DISPLAY_LINES_LIMIT
 
-	def get_Statusbar(self, active):
-		if not active:
+	def get_statusbar(self):
+		if not self.conf_DISP_SHOW_STATUSBAR:
 			return(None)
 
-		Statusbar	= []
+		statusbar	= []
 
 		#comitup
 		try:
@@ -238,35 +244,42 @@ class DISPLAY(object):
 			if status.endswith(' state'):
 
 				if status.startswith('HOTSPOT'):
-					Statusbar	+= ['HOT']
+					statusbar	+= ['HOT']
 				elif status.startswith('CONNECTING'):
-					Statusbar	+= ['..?']
+					statusbar	+= ['..?']
 				elif status.startswith('CONNECTED'):
-					Statusbar	+= ['WiFi']
+					statusbar	+= ['WiFi']
 				break
 
-		# CPU usage
-		try:
-			vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
-		except:
-			vmstat	= []
+		# dispay network traffic or CPU?
+		self.statusbar_toggle	= not self.statusbar_toggle
 
-		if vmstat:
-			vmstat_fields	= vmstat[-1].split()
+		if self.statusbar_toggle:
+			#network traffic
+			statusbar	+=[self.traffic_monitor.get_traffic()]
+		else:
+			# CPU usage
+			try:
+				vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
+			except:
+				vmstat	= []
 
-			if len(vmstat_fields) >= 14:
-				Statusbar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+			if vmstat:
+				vmstat_fields	= vmstat[-1].split()
 
-		# temperature
-		try:
-			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
-			Statusbar	+= [f'{temp_c:.0f}°C']
-		except:
-			pass
+				if len(vmstat_fields) >= 14:
+					statusbar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
 
-		return(Statusbar)
+			# temperature
+			try:
+				temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
+				statusbar	+= [f'{temp_c:.0f}°C']
+			except:
+				pass
 
-	def show(self, Lines, Statusbar=None):
+		return(statusbar)
+
+	def show(self, Lines, statusbar=None):
 
 		if ":IMAGE=" in Lines[0]:
 			# PRINT IMAGE FROM FILE
@@ -288,7 +301,7 @@ class DISPLAY(object):
 		else:
 			# Write lines
 
-			if not Statusbar is None:
+			if not statusbar is None:
 				Lines[self.maxLines-1]	= f's=s:STATUSBAR'
 
 			with canvas(self.device) as draw:
@@ -405,11 +418,11 @@ class DISPLAY(object):
 					if FormatType == 's' and FormatValue == 's':
 
 						i	= 0
-						for item in Statusbar:
+						for item in statusbar:
 
-							if i < len(Statusbar) - 1:
+							if i < len(statusbar) - 1:
 								# align left
-								x	= int(i * self.device.width / len(Statusbar))
+								x	= int(i * self.device.width / len(statusbar))
 							else:
 								# align right
 								(left, top, right, bottom) = draw.textbbox((0,0), item,font=self.FONT)
@@ -545,16 +558,17 @@ class DISPLAY(object):
 					oCF.write("\n".join(Lines))
 
 				if self.hardware_ready:
-					self.show(Lines, self.get_Statusbar(self.conf_DISP_SHOW_STATUSBAR))
+					self.show(Lines, self.get_statusbar())
 					display_time	= time.time()
 
+			# statusbar
 			if (
 				self.hardware_ready and
 				self.conf_DISP_SHOW_STATUSBAR and
 				len(Lines) >= self.const_DISPLAY_LINES_LIMIT and
 				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC
 				):
-				self.show(Lines, self.get_Statusbar(self.conf_DISP_SHOW_STATUSBAR))
+				self.show(Lines, self.get_statusbar())
 				display_time	= time.time()
 
 			time.sleep(FrameTime)
