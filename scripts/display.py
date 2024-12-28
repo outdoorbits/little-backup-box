@@ -199,8 +199,9 @@ class DISPLAY(object):
 
 		# prepare statusbar
 		if self.conf_DISP_SHOW_STATUSBAR:
-			self.traffic_monitor	= lib_network.traffic_monitor()
-		self.statusbar_toggle	= False
+			self.traffic_monitor		= lib_network.traffic_monitor()
+			self.statusbar_toggle		= False
+			self.statusbar_toggle_time	= 0
 
 		## start display menu
 		self.menu_controller	= displaymenu.MENU_CONTROLLER()
@@ -252,7 +253,9 @@ class DISPLAY(object):
 				break
 
 		# dispay network traffic or CPU?
-		self.statusbar_toggle	= not self.statusbar_toggle
+		if time.time() - self.statusbar_toggle_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC * 2:
+			self.statusbar_toggle_time	= time.time()
+			self.statusbar_toggle	= not self.statusbar_toggle
 
 		if self.statusbar_toggle:
 			#network traffic

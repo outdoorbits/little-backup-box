@@ -51,8 +51,8 @@ class backup(object):
 
 	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecondaryBackupFollows=False):
 
-		# SourceName:											one of ['usb', 'internal', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
-		# TargetName:											one of ['usb', 'internal', 'cloud:SERVICE_NAME', 'cloud_rsync']
+		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
+		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF:	one of ['setup', True, False]
 		# ForceSyncDatabase:									one of [True, False]
 
@@ -138,7 +138,7 @@ class backup(object):
 		self.__break_generateThumbnails	= False
 
 		# define TransferMode for _non_ camera transfers
-		self.TransferMode	= 'rsync' if self.SourceStorageType == 'cloud_rsync' or TargetStorageType == 'cloud_rsync' else 'rclone'
+		self.TransferMode	= 'rsync' if (self.SourceStorageType in ['anyusb', 'usb', 'internal', 'nvme'] and TargetStorageType in ['anyusb', 'usb', 'internal', 'nvme']) or self.SourceStorageType == 'cloud_rsync' or TargetStorageType == 'cloud_rsync' else 'rclone'
 
 		CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
 		for CloudSyncMethod in CloudSyncMethods:
@@ -353,7 +353,8 @@ class backup(object):
 					except:
 						FilesToProcessPart	= 0
 
-				self.__log.message(f"Files to sync from folder '{SubPathAtSource}': {FilesToProcessPart}")
+				if SubPathAtSource:
+					self.__log.message(f"Files to sync from folder '{SubPathAtSource}': {FilesToProcessPart}")
 
 				FilesToProcess	+= FilesToProcessPart
 
