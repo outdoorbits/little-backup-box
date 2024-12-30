@@ -474,17 +474,19 @@ PHP_VERSION=$(php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d".")
 #disable apache php
 sudo a2dismod php*
 
-#disable prefork module
+#disable apache prefork module
 sudo a2dismod mpm_prefork
 
-#enable event mpm module
+#enable apache event mpm module
 sudo a2enmod mpm_event
 
-#enable apache2 proxy_fcgi
+#enable apache modules
 sudo a2enmod proxy_fcgi
-
-#enable apache2 setenvif
 sudo a2enmod setenvif
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod proxy_html
+sudo a2enmod headers
 
 #enable conf php<VERSION>-fpm
 sudo a2enconf php${PHP_VERSION}-fpm
@@ -526,17 +528,19 @@ sudo chmod 640 /etc/ssl/private/little-backup-box.pem
 
 sudo chmod 644 /etc/ssl/certs/little-backup-box.crt
 
- # Apache-config-files
+# Apache-config-files
+## cleanup comitup (will be integrated in little-backup-box.conf)
+sudo a2dissite comitup
+sudo rm /etc/apache2/sites-available/comitup.conf
+
+## setup new files
 if [ "${SCRIPT_MODE}" = "install" ]; then
 	echo "ServerName little-backup-box" | sudo tee -a "/etc/apache2/apache2.conf"
 fi
+
 yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_ports.conf" "/etc/apache2/ports.conf"
 yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_conf-available_ssl-params.conf" "/etc/apache2/conf-available/ssl-params.conf"
 yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_sites-available_little-backup-box.conf" "/etc/apache2/sites-available/little-backup-box.conf"
-
-if [ "${CHOICE_COMITUP}" = "0" ]; then
-	yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_sites-available_comitup.conf" "/etc/apache2/sites-available/comitup.conf"
-fi
 
 sudo mkdir -p /etc/apache2/includes
 sudo touch /etc/apache2/includes/password.conf
@@ -548,10 +552,6 @@ sudo a2enmod proxy_http
 
 sudo a2dissite 000-default
 sudo a2ensite little-backup-box
-
-if [ "${CHOICE_COMITUP}" = "0" ]; then
-	sudo a2ensite comitup
-fi
 
 # Configure Samba
 yes | sudo cp -f "${INSTALLER_DIR}/etc_samba_smb.conf" "/etc/samba/smb.conf"

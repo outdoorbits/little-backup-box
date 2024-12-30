@@ -36,9 +36,9 @@
 	}
 
 	$framed_pages	= array(
-		'comitup'		=> $PROTOCOL.$_SERVER['SERVER_ADDR'].($PROTOCOL == 'https://'?':8843':''),
+		'comitup'		=> '/comitup/',
 		'files'			=> '/files',
-		'rclone_gui'	=> $PROTOCOL.$HTTP_HOST.($PROTOCOL == "https://"?":8443":":81")
+		'rclone_gui'	=> '/rclone/'
 	);
 
 	$frame_index	= '';
