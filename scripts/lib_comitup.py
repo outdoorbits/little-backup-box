@@ -19,6 +19,7 @@
 
 import base64
 import os
+import psutil
 import subprocess
 import sys
 
@@ -26,6 +27,8 @@ import lib_display
 import lib_language
 import lib_setup
 
+# import lib_debug
+# xx=lib_debug.debug()
 
 class comitup(object):
 	def __init__(self):
@@ -80,20 +83,13 @@ class comitup(object):
 			for Port in BasicPorts:
 				f.write(f'Listen {Port}\n')
 
-			if len(sys.argv) > 1:
-				if status == 'CONNECTED':
-					f.write(f'Listen 80\n')
+			if not self.check_hotspot():
+				f.write(f'Listen 80\n')
 
 		subprocess.run('service apache2 restart || service apache2 start', shell=True)
 
 	def check_hotspot(self):
-		try:
-			if '10.41.0.1' in subprocess.check_output(['sudo', 'ifconfig']).decode():
-				return('active')
-			else:
-				return('inactive')
-		except:
-			return('Error')
+		return(len([p for p in psutil.process_iter() if 'comitup-web' in p.name()]) > 0)
 
 	def reset(self):
 		subprocess.run(['sudo', 'comitup-cli', 'd'])
@@ -124,7 +120,7 @@ if __name__ == "__main__":
 			comitup().new_status(Status)
 
 	elif Mode == '--check_hotspot':
-		print(comitup().check_hotspot())
+		print('active' if comitup().check_hotspot() else 'inactive')
 
 	elif Mode == '--reset':
 		comitup().reset()

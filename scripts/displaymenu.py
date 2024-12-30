@@ -29,11 +29,12 @@ import subprocess
 import lib_cron_ip
 import lib_language
 import lib_network
+import lib_setup
 import lib_storage
 import lib_system
 
-import lib_debug
-xxx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class MENU_CONTROLLER(object):
 	def __init__(self):
@@ -512,9 +513,6 @@ class menu(object):
 
 ##debug
 if __name__ == "__main__":
-	xxx.d('start')
-	import lib_setup
-
 	setup=lib_setup.setup()
 
 	menu_controller	= MENU_CONTROLLER()
@@ -541,4 +539,3 @@ if __name__ == "__main__":
 	#menuobj.move_right(0)#debug
 	#menuobj.move_right(0)#debug
 	# time.sleep(20)
-	xxx.d('End.')
