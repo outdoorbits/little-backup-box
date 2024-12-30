@@ -571,22 +571,6 @@ sudo service vsftpd restart
 # setup graphical environment
 source "${INSTALLER_DIR}/setup-graphical-environment.sh"
 
-# eth0 settings: use IPv4, not IPv6
-# echo "[Unit]
-# Description=DHCP Client on eth0
-# After=network.target
-#
-# [Service]
-# Type=simple
-# ExecStart=/sbin/dhclient -4 -d eth0
-# Restart=always
-#
-# [Install]
-# WantedBy=multi-user.target" | sudo tee /etc/systemd/system/dhclient-eth0.service
-#
-# sudo systemctl enable dhclient-eth0
-# sudo systemctl start dhclient-eth0
-
 # install comitup
 if [ "${SCRIPT_MODE}" = "install" ] || [ "${CHOICE_COMITUP}" = "0" ]; then
 
