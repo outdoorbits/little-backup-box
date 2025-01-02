@@ -62,7 +62,7 @@ class comitup(object):
 
 	def new_status(self, status):
 		# display new status
-		if status:
+		if status in ['HOTSPOT', 'CONNECTING', 'CONNECTED']:
 			status_translated	= self.__lan.l(f'box_comitup_status_{status}')
 			status_translated	= status_translated if status_translated!=f'box_comitup_status_{status}' else status
 
@@ -83,7 +83,7 @@ class comitup(object):
 			for Port in BasicPorts:
 				f.write(f'Listen {Port}\n')
 
-			if not self.check_hotspot():
+			if not (status == 'HOTSPOT' or self.check_hotspot()):
 				f.write(f'Listen 80\n')
 
 		subprocess.run('service apache2 restart || service apache2 start', shell=True)
