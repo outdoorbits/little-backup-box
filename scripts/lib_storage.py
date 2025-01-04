@@ -126,7 +126,7 @@ class storage(object):
 
 		self.__camera_connected	= False
 
-	def mount(self,TimeOutActive=None):
+	def mount(self, TimeOutActive=None):
 		mounted	= False
 
 		if self.StorageType in ['usb', 'nvme']:

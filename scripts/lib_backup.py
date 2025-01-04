@@ -379,8 +379,11 @@ class reporter(object):
 					if 'Err.: Lost device!' in Report['Errors']:
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_lost_device')}</p>"
 
-					if 'Err.: Remounting device failed!' in Report['Errors']:
-						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_remount_device_failed')}</p>"
+					if 'Err.: Remounting source device failed!' in Report['Errors']:
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_remount_device_source_failed')}</p>"
+
+					if 'Err.: Remounting target device failed!' in Report['Errors']:
+						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_remount_device_target_failed')}</p>"
 
 					if 'Err.: Files missing!' in Report['Errors']:
 						self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1} {CSS_font_format_alert}'>{self.__lan.l('box_backup_mail_files_missing')}</p>"

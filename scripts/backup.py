@@ -198,6 +198,9 @@ class backup(object):
 			self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
 			return(None)
 
+	def __del__(self):
+		self.__cleanup()
+
 	def run(self):
 		# Set the PWR LED ON to indicate that the backup has not yet started
 		lib_system.rpi_leds(trigger='none',brightness=1)
@@ -378,470 +381,470 @@ class backup(object):
 		return(FilesToProcess, FilesToProcess_possible_more)
 
 	def backup(self):
-		if self.TargetDevice:
-			# loop to backup multiple sources
-			SourceStorageName			= self.SourceName
-			SourceStorageType			= self.SourceStorageType
-			completedSources_usb		= []
-			completedSources_camera		= []
-			Identifier					= self.DeviceIdentifierPresetSource
-			Identifier_OLD				= ''
-			thread_thumbnails			= None
+		if not self.TargetDevice:
+			return()
 
-			dynamicSources	= self.SourceStorageType in ['anyusb', 'usb', 'nvme', 'camera'] and not self.DeviceIdentifierPresetSource
+		# loop to backup multiple sources
+		SourceStorageName			= self.SourceName
+		SourceStorageType			= self.SourceStorageType
+		completedSources_usb		= []
+		completedSources_camera		= []
+		Identifier					= self.DeviceIdentifierPresetSource
+		Identifier_OLD				= ''
+		thread_thumbnails			= None
 
-			# message to connect sources
+		dynamicSources	= self.SourceStorageType in ['anyusb', 'usb', 'nvme', 'camera'] and not self.DeviceIdentifierPresetSource
+
+		# message to connect sources
+		if dynamicSources:
+			if SourceStorageName == 'anyusb':
+				l_box_backup_connect_1	= self.__lan.l('box_backup_connect_source_any_1')
+				l_box_backup_connect_2	= self.__lan.l('box_backup_connect_source_any_2')
+			elif SourceStorageName == 'camera':
+				l_box_backup_connect_1	= self.__lan.l('box_backup_connect_camera_1')
+				l_box_backup_connect_2	= self.__lan.l('box_backup_connect_camera_2')
+			else: # if SourceStorageName == 'usb':
+				l_box_backup_connect_1	= self.__lan.l('box_backup_connect_source_1')
+				l_box_backup_connect_2	= self.__lan.l('box_backup_connect_source_2')
+
+			self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
+
+		while True: # backup loops until break
+			# define next source
 			if dynamicSources:
-				if SourceStorageName == 'anyusb':
-					l_box_backup_connect_1	= self.__lan.l('box_backup_connect_source_any_1')
-					l_box_backup_connect_2	= self.__lan.l('box_backup_connect_source_any_2')
-				elif SourceStorageName == 'camera':
-					l_box_backup_connect_1	= self.__lan.l('box_backup_connect_camera_1')
-					l_box_backup_connect_2	= self.__lan.l('box_backup_connect_camera_2')
-				else: # if SourceStorageName == 'usb':
-					l_box_backup_connect_1	= self.__lan.l('box_backup_connect_source_1')
-					l_box_backup_connect_2	= self.__lan.l('box_backup_connect_source_2')
-
-				self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
-
-			while True: # backup loops until break
-				# define next source
-				if dynamicSources:
-					# add last run to completedSources
-					if Identifier_OLD:
-						if SourceStorageName == 'camera':
-							completedSources_camera.append(Identifier_OLD)
-						else:
-							completedSources_usb.append(Identifier_OLD)
-
-					# get available sources
-					todoSources	= []
-					if self.SourceName in ['anyusb', 'camera']:
-						availableSources_camera	= lib_storage.get_available_cameras()
-
-						# remove disconnected cameras from completedSources_camera
-						completedSources_camera	= list(set(completedSources_camera) & set(availableSources_camera))
-						todoSources				= list(set(availableSources_camera) - set(completedSources_camera))
-						SourceStorageName		= 'camera'
-						SourceStorageType		= SourceStorageName
-
-					if self.SourceName in ['anyusb', 'usb', 'nvme'] and not todoSources:
-						todoSources			= lib_storage.get_available_partitions(StorageType=self.SourceName, TargetDeviceIdentifier=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
-						SourceStorageName	= 'usb' if self.SourceName == 'anyusb' else self.SourceName
-						SourceStorageType	= SourceStorageName
-
-					if todoSources:
-						Identifier	= todoSources[0]
-					elif Identifier_OLD:
-						# break if there is no futher source device (but wait if no source is done)
-						break
+				# add last run to completedSources
+				if Identifier_OLD:
+					if SourceStorageName == 'camera':
+						completedSources_camera.append(Identifier_OLD)
 					else:
-						time.sleep(1)
+						completedSources_usb.append(Identifier_OLD)
+
+				# get available sources
+				todoSources	= []
+				if self.SourceName in ['anyusb', 'camera']:
+					availableSources_camera	= lib_storage.get_available_cameras()
+
+					# remove disconnected cameras from completedSources_camera
+					completedSources_camera	= list(set(completedSources_camera) & set(availableSources_camera))
+					todoSources				= list(set(availableSources_camera) - set(completedSources_camera))
+					SourceStorageName		= 'camera'
+					SourceStorageType		= SourceStorageName
+
+				if self.SourceName in ['anyusb', 'usb', 'nvme'] and not todoSources:
+					todoSources			= lib_storage.get_available_partitions(StorageType=self.SourceName, TargetDeviceIdentifier=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
+					SourceStorageName	= 'usb' if self.SourceName == 'anyusb' else self.SourceName
+					SourceStorageType	= SourceStorageName
+
+				if todoSources:
+					Identifier	= todoSources[0]
+				elif Identifier_OLD:
+					# break if there is no futher source device (but wait if no source is done)
+					break
+				else:
+					time.sleep(1)
+					continue
+
+			# MANAGE SOURCE DEVICE
+			# Set the PWR LED to blink long to indicate waiting for the source device
+			lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
+
+			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync']:
+				self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier)
+
+				self.SourceDevice.mount()
+
+			elif SourceStorageType in ['thumbnails', 'database', 'exif']:
+				pass
+			else:
+				self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
+				return()
+
+			# remember SourceStorageName for next run
+			if SourceStorageName=='camera':
+				Identifier_OLD	= lib_storage.format_CameraIdentifier(self.SourceDevice.DeviceIdentifier, self.SourceDevice.CameraPort)
+			elif SourceStorageName in ['usb', 'nvme']:
+				Identifier_OLD	= self.SourceDevice.DeviceIdentifier
+
+			# check invalid combinations of Source and Target
+			if (
+				(SourceStorageName == self.TargetDevice.StorageType and not (SourceStorageName in ['usb', 'cloud'])) or				# usb to usb and cloud to cloud are the only methods where type of Source and Target can be equal
+				(																													# exclude cloud to cloud for equal cloud services
+					SourceStorageName == 'cloud' and
+					self.TargetDevice.StorageType == 'cloud' and
+					self.SourceDevice.CloudServiceName == self.TargetDevice.CloudServiceName
+				) or
+				(self.TargetDevice.StorageType == 'camera') or																		# camera never can be target
+				(SourceStorageName	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')									# camera can't rsync to rsyncserver as this is not supported by gphoto2
+			):
+				self.__display.message([f":{SourceStorageName}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
+				return()
+
+			# create new reporter
+			self.__reporter	= lib_backup.reporter(
+				lan						= self.__lan,
+				SourceStorageType		= self.SourceDevice.StorageType,
+				SourceCloudService		= self.SourceDevice.CloudServiceName,
+				SourceDeviceLbbDeviceID	= self.SourceDevice.LbbDeviceID,
+				TargetStorageType		= self.TargetDevice.StorageType,
+				TargetCloudService		= self.TargetDevice.CloudServiceName,
+				TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
+				TransferMode			= 'gphoto2' if SourceStorageName == 'camera' else self.TransferMode,
+				move_files				= self.move_files,
+				SyncLog					= self.__conf_LOG_SYNC
+			)
+
+			lib_system.rpi_leds(trigger='heartbeat')
+
+			# define variables for backup
+			SourceFolderNumber		= 0
+			FilesToProcess			= 0
+			ErrorsOld				= []
+
+			# SubPaths loop
+			for SubPathAtSource in self.SourceDevice.SubPathsAtSource:
+				self.__reporter.new_folder(SubPathAtSource)
+
+				self.__log.message(f"Backup from {SourceStorageName}: {SubPathAtSource}",3)
+
+				#define SubPathAtSource specific values
+				SourceFolderNumber	+= 1
+				SourceFolderFracture	= f"{SourceFolderNumber}/{len(self.SourceDevice.SubPathsAtSource)}" if len(self.SourceDevice.SubPathsAtSource) > 1 else ''
+
+				TriesCount				= 0
+
+				while TriesCount < self.const_BACKUP_MAX_TRIES and (TriesCount == 0 or self.__reporter.get_errors()):
+					TriesCount	+= 1
+					self.__reporter.new_try()
+
+					if self.vpn:
+						self.__reporter.add_synclog(f"** VPN: {self.vpn.check_status(0)} **\n\n")
+
+					if TriesCount > 1:
+						self.__display.message([f"s=a:{self.__lan.l('box_backup_try_backup')} {TriesCount} {self.__lan.l('box_backup_of')} {self.const_BACKUP_MAX_TRIES}"])
+
+						self.__display.wait_for_empty_stack()
+
+						time.sleep(2)
+
+					# Remount source devices if "Err.Lost device"
+					if "Err.: Lost device!" in ErrorsOld:
+						self.__log.execute('Lost device: pre remount','lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE',3)
+
+						if not self.SourceDevice.mounted():
+							self.__log.message(f"remount source device {SourceStorageName} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
+							self.__display.message([f"s=a:{self.__lan.l('box_backup_remounting_source')}"])
+							if not self.SourceDevice.mount(TimeOutActive=True):
+								self.__reporter.add_error('Err.: Remounting source device failed!')
+
+					# start generate thumbnails as Thread if shiftGenerateThumbnails
+					if self.DoGenerateThumbnails_secondary and not self.SecondaryBackupFollows and self.SourceDevice and thread_thumbnails is None:
+						self.__break_generateThumbnails	= False
+						thread_thumbnails	= threading.Thread(target=self.generateThumbnails, kwargs={'Device': self.SourceDevice})
+						thread_thumbnails.start()
+
+					# Remount target devices if "Err.Lost device"
+					if "Err.: Lost device!" in ErrorsOld:
+						if not self.TargetDevice.mounted():
+							self.__log.message(f"remount target device {self.TargetDevice.StorageType} {self.TargetDevice.CloudServiceName} {self.TargetDevice.DeviceIdentifier}",3)
+							self.__display.message([f"s=a:{self.__lan.l('box_backup_remounting_target')}"])
+							if not self.TargetDevice.mount(TimeOutActive=True):
+								self.__reporter.add_error('Err.: Remounting target device failed!')
+
+					# Check for lost devices
+					if True in self.__checkLostDevice():
+						self.__reporter.add_error('Err.: Lost device!')
+						self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
+						self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
+
+						ErrorsOld	= self.__reporter.get_errors()
+
 						continue
 
-				# MANAGE SOURCE DEVICE
-				# Set the PWR LED to blink long to indicate waiting for the source device
-				lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
+					self.__display.message([f":{self.__lan.l('box_backup_working')}..."])
 
-				if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync']:
-					self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier)
+					FilesToProcess, FilesToProcess_possible_more	= self.calculate_files_to_sync(SubPathAtSource)
 
-					self.SourceDevice.mount()
+					self.__reporter.set_values(FilesToProcess=FilesToProcess, FilesToProcess_possible_more=FilesToProcess_possible_more)
+					self.__log.message(f"Files to sync before backup: {FilesToProcess}{'+' if FilesToProcess_possible_more else ''}",3)
 
-				elif SourceStorageType in ['thumbnails', 'database', 'exif']:
-					pass
-				else:
-					self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
-					return()
+					if SourceStorageName == 'camera' and self.SourceDevice.LbbDeviceID:
+						SourceLabel	= self.SourceDevice.LbbDeviceID
+					elif SourceStorageName == 'camera' and self.SourceDevice.DeviceIdentifier:
+						SourceLabel	= self.SourceDevice.DeviceIdentifier
+					else:
+						if SourceStorageType in ['usb', 'nvme', 'camera']:
+							SourceLabel	= self.__lan.l(f"box_backup_mode_{SourceStorageType}s")
+						else:
+							SourceLabel	= self.__lan.l(f"box_backup_mode_{SourceStorageType}")
 
-				# remember SourceStorageName for next run
-				if SourceStorageName=='camera':
-					Identifier_OLD	= lib_storage.format_CameraIdentifier(self.SourceDevice.DeviceIdentifier, self.SourceDevice.CameraPort)
-				elif SourceStorageName in ['usb', 'nvme']:
-					Identifier_OLD	= self.SourceDevice.DeviceIdentifier
+					DisplayLine1	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"		# header1
+					DisplayLine2	= ' > ' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") + f" {self.TargetDevice.CloudServiceName}"	# header2
 
-				# check invalid combinations of Source and Target
-				if (
-					(SourceStorageName == self.TargetDevice.StorageType and not (SourceStorageName in ['usb', 'cloud'])) or				# usb to usb and cloud to cloud are the only methods where type of Source and Target can be equal
-					(																													# exclude cloud to cloud for equal cloud services
-						SourceStorageName == 'cloud' and
-						self.TargetDevice.StorageType == 'cloud' and
-						self.SourceDevice.CloudServiceName == self.TargetDevice.CloudServiceName
-					) or
-					(self.TargetDevice.StorageType == 'camera') or																		# camera never can be target
-					(SourceStorageName	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')									# camera can't rsync to rsyncserver as this is not supported by gphoto2
-				):
-					self.__display.message([f":{SourceStorageName}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
-					return()
+					#define progress object
+					progress	= lib_backup.progressmonitor(
+						setup						= self.__setup,
+						display						= self.__display,
+						log							= self.__log,
+						lan							= self.__lan,
+						FilesToProcess				= FilesToProcess,
+						FilesToProcess_possible_more	= FilesToProcess_possible_more,
+						DisplayLine1				= DisplayLine1,
+						DisplayLine2				= DisplayLine2,
+						SourceDevice				= self.SourceDevice,
+						TargetDevice				= self.TargetDevice,
+						vpn							= self.vpn
+					)
 
-				# create new reporter
-				self.__reporter	= lib_backup.reporter(
-					lan						= self.__lan,
-					SourceStorageType		= self.SourceDevice.StorageType,
-					SourceCloudService		= self.SourceDevice.CloudServiceName,
-					SourceDeviceLbbDeviceID	= self.SourceDevice.LbbDeviceID,
-					TargetStorageType		= self.TargetDevice.StorageType,
-					TargetCloudService		= self.TargetDevice.CloudServiceName,
-					TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
-					TransferMode			= 'gphoto2' if SourceStorageName == 'camera' else self.TransferMode,
-					move_files				= self.move_files,
-					SyncLog					= self.__conf_LOG_SYNC
-				)
+					SyncStartTime	= lib_system.get_uptime_sec()
 
-				lib_system.rpi_leds(trigger='heartbeat')
-
-				# define variables for backup
-				SourceFolderNumber		= 0
-				FilesToProcess			= 0
-				ErrorsOld				= []
-
-				# SubPaths loop
-				for SubPathAtSource in self.SourceDevice.SubPathsAtSource:
-					self.__reporter.new_folder(SubPathAtSource)
-
-					self.__log.message(f"Backup from {SourceStorageName}: {SubPathAtSource}",3)
-
-					#define SubPathAtSource specific values
-					SourceFolderNumber	+= 1
-					SourceFolderFracture	= f"{SourceFolderNumber}/{len(self.SourceDevice.SubPathsAtSource)}" if len(self.SourceDevice.SubPathsAtSource) > 1 else ''
-
-					TriesCount				= 0
-
-					while TriesCount < self.const_BACKUP_MAX_TRIES and (TriesCount == 0 or self.__reporter.get_errors()):
-						TriesCount	+= 1
-						self.__reporter.new_try()
-
-						if self.vpn:
-							self.__reporter.add_synclog(f"** VPN: {self.vpn.check_status(0)} **\n\n")
-
-						if TriesCount > 1:
-							self.__display.message([f"s=a:{self.__lan.l('box_backup_try_backup')} {TriesCount} {self.__lan.l('box_backup_of')} {self.const_BACKUP_MAX_TRIES}"])
-
-							self.__display.wait_for_empty_stack()
-
-							time.sleep(2)
-
-						# Remount devices if "Err.Lost device"
-						if "Err.: Lost device!" in ErrorsOld:
-							self.__log.execute('Lost device: pre remount','lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE',3)
-
-							if not self.TargetDevice.mounted():
-								self.__log.message(f"remount target device {self.TargetDevice.StorageType} {self.TargetDevice.CloudServiceName} {self.TargetDevice.DeviceIdentifier}",3)
-								self.TargetDevice.mount(TimeOutActive=False)
-
-							if not self.SourceDevice.mounted():
-								self.__log.message(f"remount source device {SourceStorageName} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
-								if not self.SourceDevice.mount(TimeOutActive=True):
-									self.__reporter.add_error('Err.: Remounting device failed!')
-
-						# Check for lost devices
-						if self.__checkLostDevice():
+					# RUN BACKUP
+					## create target path if not exists
+					if self.TargetDevice.FilesStayInPlace:
+						try:
+							pathlib.Path(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget).mkdir(parents=True, exist_ok=True)
+						except:
 							self.__reporter.add_error('Err.: Lost device!')
-							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
-							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
-
 							ErrorsOld	= self.__reporter.get_errors()
 
 							continue
 
-						# start generate thumbnails as Thread if shiftGenerateThumbnails
-						if self.DoGenerateThumbnails_secondary and not self.SecondaryBackupFollows and self.SourceDevice and thread_thumbnails is None:
-							self.__break_generateThumbnails	= False
-							thread_thumbnails	= threading.Thread(target=self.generateThumbnails, kwargs={'Device': self.SourceDevice})
-							thread_thumbnails.start()
+						self.TargetDevice.set_mountpoint_permissions()
 
-						self.__display.message([f":{self.__lan.l('box_backup_working')}..."])
-
-						FilesToProcess, FilesToProcess_possible_more	= self.calculate_files_to_sync(SubPathAtSource)
-
-						self.__reporter.set_values(FilesToProcess=FilesToProcess, FilesToProcess_possible_more=FilesToProcess_possible_more)
-						self.__log.message(f"Files to sync before backup: {FilesToProcess}{'+' if FilesToProcess_possible_more else ''}",3)
-
-						if SourceStorageName == 'camera' and self.SourceDevice.LbbDeviceID:
-							SourceLabel	= self.SourceDevice.LbbDeviceID
-						elif SourceStorageName == 'camera' and self.SourceDevice.DeviceIdentifier:
-							SourceLabel	= self.SourceDevice.DeviceIdentifier
-						else:
-							if SourceStorageType in ['usb', 'nvme', 'camera']:
-								SourceLabel	= self.__lan.l(f"box_backup_mode_{SourceStorageType}s")
-							else:
-								SourceLabel	= self.__lan.l(f"box_backup_mode_{SourceStorageType}")
-
-						DisplayLine1	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"		# header1
-						DisplayLine2	= ' > ' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") + f" {self.TargetDevice.CloudServiceName}"	# header2
-
-						#define progress object
-						progress	= lib_backup.progressmonitor(
-							setup						= self.__setup,
-							display						= self.__display,
-							log							= self.__log,
-							lan							= self.__lan,
-							FilesToProcess				= FilesToProcess,
-							FilesToProcess_possible_more	= FilesToProcess_possible_more,
-							DisplayLine1				= DisplayLine1,
-							DisplayLine2				= DisplayLine2,
-							SourceDevice				= self.SourceDevice,
-							TargetDevice				= self.TargetDevice,
-							vpn							= self.vpn
-						)
-
-						SyncStartTime	= lib_system.get_uptime_sec()
-
-						# RUN BACKUP
-						## create target path if not exists
-						if self.TargetDevice.FilesStayInPlace:
-							try:
-								pathlib.Path(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget).mkdir(parents=True, exist_ok=True)
-							except:
-								self.__reporter.add_error('Err.: Lost device!')
-								ErrorsOld	= self.__reporter.get_errors()
-
-								continue
-
-							self.TargetDevice.set_mountpoint_permissions()
-
-						SyncReturnCode	= 0
+					SyncReturnCode	= 0
 
 #						# gphoto2 backup
-						if SourceStorageName == 'camera' and self.TargetDevice.mountable:
-							# not mountable targets are excluded.
+					if SourceStorageName == 'camera' and self.TargetDevice.mountable:
+						# not mountable targets are excluded.
 
-							# change into target dir
-							os.chdir(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget))
+						# change into target dir
+						os.chdir(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget))
 
-							# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
-							syncCommand	= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=False)
-							self.__log.message(' '.join(syncCommand),3)
+						# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
+						syncCommand	= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=False)
+						self.__log.message(' '.join(syncCommand),3)
 
-							with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
+						with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
 
-								while True:
-									SyncOutputLine = BackupProcess.stdout.readline()
-									if not SyncOutputLine:
-										break
+							while True:
+								SyncOutputLine = BackupProcess.stdout.readline()
+								if not SyncOutputLine:
+									break
 
-									progress.progress(TransferMode='gphoto2',SyncOutputLine=SyncOutputLine)
+								progress.progress(TransferMode='gphoto2',SyncOutputLine=SyncOutputLine)
 
-									if not SyncOutputLine.startswith('Skip existing file'):
-										self.__reporter.add_synclog(f"{SyncOutputLine}")
+								if not SyncOutputLine.startswith('Skip existing file'):
+									self.__reporter.add_synclog(f"{SyncOutputLine}")
 
-								self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
+							self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
 
-								BackupProcess.wait()
-								SyncReturnCode	= BackupProcess.returncode
-								self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
+							BackupProcess.wait()
+							SyncReturnCode	= BackupProcess.returncode
+							self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
 
-							os.chdir(os.path.expanduser('~'))
+						os.chdir(os.path.expanduser('~'))
 
 #						# rsync or rclone backup
-						else:
-							if not self.TransferMode in ['rsync', 'rclone']:
-								self.__log.message(f'Error: "{self.TransferMode}" is no valid transfer mode.', 1)
-								return(None)
+					else:
+						if not self.TransferMode in ['rsync', 'rclone']:
+							self.__log.message(f'Error: "{self.TransferMode}" is no valid transfer mode.', 1)
+							return(None)
 
-							syncCommand	= self.get_syncCommand(TransferMode=self.TransferMode, SubPathAtSource=SubPathAtSource, dry_run=False)
+						syncCommand	= self.get_syncCommand(TransferMode=self.TransferMode, SubPathAtSource=SubPathAtSource, dry_run=False)
 
-							self.__log.message(' '.join(syncCommand),3)
+						self.__log.message(' '.join(syncCommand),3)
 
-							with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
-								while True:
-									SyncOutputLine = BackupProcess.stdout.readline()
-									if not SyncOutputLine:
-										break
+						with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
+							while True:
+								SyncOutputLine = BackupProcess.stdout.readline()
+								if not SyncOutputLine:
+									break
 
-									progress.progress(TransferMode=self.TransferMode, SyncOutputLine=SyncOutputLine)
+								progress.progress(TransferMode=self.TransferMode, SyncOutputLine=SyncOutputLine)
 
-									if self.TransferMode == 'rsync' and SyncOutputLine[1:2] != ' ':
-										self.__reporter.add_synclog(SyncOutputLine)
-									elif self.TransferMode == 'rclone':
-										LineType, LineResult, FileName	= progress.rclone_analyse_line(SyncOutputLine)
+								if self.TransferMode == 'rsync' and SyncOutputLine[1:2] != ' ':
+									self.__reporter.add_synclog(SyncOutputLine)
+								elif self.TransferMode == 'rclone':
+									LineType, LineResult, FileName	= progress.rclone_analyse_line(SyncOutputLine)
 
-										if LineType=='INFO':
-											try:
-												self.__reporter.add_synclog(SyncOutputLine.split('INFO',1)[1].strip(' :'))
-											except:
-												pass
+									if LineType=='INFO':
+										try:
+											self.__reporter.add_synclog(SyncOutputLine.split('INFO',1)[1].strip(' :'))
+										except:
+											pass
 
-								self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
-								self.__TIMSCopied	= progress.TIMSCopied
+							self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
+							self.__TIMSCopied	= progress.TIMSCopied
 
-								BackupProcess.wait()
-								SyncReturnCode	= BackupProcess.returncode
-								self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
+							BackupProcess.wait()
+							SyncReturnCode	= BackupProcess.returncode
+							self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
+						pass
+
+					SyncStopTime	= lib_system.get_uptime_sec()
+
+					# VPN check
+					if self.vpn:
+						self.__reporter.add_synclog(f"\n** VPN: {self.vpn.check_status(0)} **\n\n")
+
+					# Remove empty files (maybe can result from disconnection of a source-device)
+					if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
+						SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0', '-not', '-name', '*.lbbid']
+
+						emptyFiles	= []
+						try:
+							emptyFilesRaw	= subprocess.check_output(SourceCommand).decode().strip()
+							if emptyFilesRaw:
+								emptyFiles= emptyFilesRaw.split('\n')
+						except:
 							pass
 
-						SyncStopTime	= lib_system.get_uptime_sec()
+						if len(emptyFiles) > 0:
+							emptyFilesString	= '|#|'.join(emptyFiles)
+							self.__reporter.add_error(Error=f'Empty files Err.:{emptyFilesString}')
+							progress.CountProgress	-= len(emptyFiles)
 
-						# VPN check
-						if self.vpn:
-							self.__reporter.add_synclog(f"\n** VPN: {self.vpn.check_status(0)} **\n\n")
-
-						# Remove empty files (maybe can result from disconnection of a source-device)
-						if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
-							SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0', '-not', '-name', '*.lbbid']
-
-							emptyFiles	= []
+							SourceCommand	+= ['-delete']
 							try:
-								emptyFilesRaw	= subprocess.check_output(SourceCommand).decode().strip()
-								if emptyFilesRaw:
-									emptyFiles= emptyFilesRaw.split('\n')
+								subprocess.run(SourceCommand)
 							except:
-								pass
+								self.__log.message(f"Error: '{' '.join(SourceCommand)}'")
 
-							if len(emptyFiles) > 0:
-								emptyFilesString	= '|#|'.join(emptyFiles)
-								self.__reporter.add_error(Error=f'Empty files Err.:{emptyFilesString}')
-								progress.CountProgress	-= len(emptyFiles)
+					# Re-calculate FilesToProcess
+					FilesToProcessPost	= FilesToProcess - progress.CountProgress
 
-								SourceCommand	+= ['-delete']
-								try:
-									subprocess.run(SourceCommand)
-								except:
-									self.__log.message(f"Error: '{' '.join(SourceCommand)}'")
+					self.__reporter.set_values(FilesToProcessPost=FilesToProcessPost)
 
-						# Re-calculate FilesToProcess
-						FilesToProcessPost	= FilesToProcess - progress.CountProgress
+					# Transfer completed?
+					if FilesToProcessPost > 0:
+						self.__reporter.add_error('Err.: Files missing!')
+						self.__log.message(f"Files missing: {FilesToProcessPost} files not synced.")
+						self.__log.execute('Files missing', 'lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE', 3)
+						self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
-						self.__reporter.set_values(FilesToProcessPost=FilesToProcessPost)
+					# check Returncode
+					if SyncReturnCode != 0:
+						self.__reporter.add_error('Exception')
+						self.__log.message(f"Exception: {self.__reporter.sync_return_code_decoder(SyncReturnCode)}")
+						self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
-						# Transfer completed?
-						if FilesToProcessPost > 0:
-							self.__reporter.add_error('Err.: Files missing!')
-							self.__log.message(f"Files missing: {FilesToProcessPost} files not synced.")
-							self.__log.execute('Files missing', 'lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE', 3)
-							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
+					# Re-Check for lost devices
+					lostSourceDevice, lostTargetDevice	= self.__checkLostDevice()
+					if lostSourceDevice or lostTargetDevice:
+						self.__reporter.add_error('Err.: Lost device!')
+						self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
+						self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
-						# check Returncode
-						if SyncReturnCode != 0:
-							self.__reporter.add_error('Exception')
-							self.__log.message(f"Exception: {self.__reporter.sync_return_code_decoder(SyncReturnCode)}")
-							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
 
-						# Re-Check for lost devices
-						if self.__checkLostDevice():
-							self.__reporter.add_error('Err.: Lost device!')
-							self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)
-							self.__log.message(lib_system.get_abnormal_system_conditions(self.__lan),1)
-
-							# kill thread_thumbnails
+						# kill thread_thumbnails
+						if lostSourceDevice and not thread_thumbnails is None:
 							self.__break_generateThumbnails	= True
 							thread_thumbnails.join()
 							thread_thumbnails	= None
 
 
-						# Controller-overheating-error?
-						SyncTimeDiff	= SyncStopTime - SyncStartTime
+					# Controller-overheating-error?
+					SyncTimeDiff	= SyncStopTime - SyncStartTime
 
-						if (
-							'Err.: Lost device!' in self.__reporter.get_errors() and
-							SyncReturnCode > 0 and
-							SyncTimeDiff >= self.const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC and
-							self.const_BACKUP_MAX_TRIES >  TriesCount
-							):
-								self.__display.message([
-									f"s=a:{self.__lan.l('box_backup_error_cooling_1')}",
-									f":{self.__lan.l('box_backup_error_cooling_2')} {self.__setup.get_val('const_SYNC_TIME_OVERHEATING_WAIT_SEC')} {self.__lan.l('seconds_short')} ...",
-									f":{self.__lan.l('box_backup_error_cooling_3')}",f":{self.__lan.l('box_backup_error_cooling_4')}"
-									])
-								time.sleep(self.const_SYNC_TIME_OVERHEATING_WAIT_SEC)
+					if (
+						'Err.: Lost device!' in self.__reporter.get_errors() and
+						SyncReturnCode > 0 and
+						SyncTimeDiff >= self.const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC and
+						self.const_BACKUP_MAX_TRIES >  TriesCount
+						):
+							self.__display.message([
+								f"s=a:{self.__lan.l('box_backup_error_cooling_1')}",
+								f":{self.__lan.l('box_backup_error_cooling_2')} {self.__setup.get_val('const_SYNC_TIME_OVERHEATING_WAIT_SEC')} {self.__lan.l('seconds_short')} ...",
+								f":{self.__lan.l('box_backup_error_cooling_3')}",f":{self.__lan.l('box_backup_error_cooling_4')}"
+								])
+							time.sleep(self.const_SYNC_TIME_OVERHEATING_WAIT_SEC)
 
-						ErrorsOld	= self.__reporter.get_errors()
+					ErrorsOld	= self.__reporter.get_errors()
 
-						FilesList	= progress.FilesList
+					FilesList	= progress.FilesList
+
+					del progress
+
+					# validate files after backup
+					if SourceStorageName == 'camera':
+						DisplayLine1	= self.__lan.l('box_backup_validate_files_from')		# header1
+						DisplayLine2	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"	# header2
+						progress	= lib_backup.progressmonitor(
+							setup			= self.__setup,
+							display			= self.__display,
+							log				= self.__log,
+							lan				= self.__lan,
+							FilesToProcess	= len(FilesList),
+							DisplayLine1	= DisplayLine1,
+							DisplayLine2	= DisplayLine2
+						)
+
+						FilesValidationFailed	= 0
+						FilesListCopy	= FilesList.copy()
+						for File in FilesListCopy:
+							if (not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, File))):
+								FilesValidationFailed	+= 1
+								FilesList.remove(File) # do not remove this file from camera
+
+							progress.progress()
 
 						del progress
 
-						# validate files after backup
-						if SourceStorageName == 'camera':
-							DisplayLine1	= self.__lan.l('box_backup_validate_files_from')		# header1
-							DisplayLine2	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"	# header2
-							progress	= lib_backup.progressmonitor(
-								setup			= self.__setup,
-								display			= self.__display,
-								log				= self.__log,
-								lan				= self.__lan,
-								FilesToProcess	= len(FilesList),
-								DisplayLine1	= DisplayLine1,
-								DisplayLine2	= DisplayLine2
-							)
+						if (FilesValidationFailed > 0):
+							self.__reporter.add_error('Err.: File validation(s) failed!')
+							self.__log.message(f"{FilesValidationFailed} file validation(s) failed.")
 
-							FilesValidationFailed	= 0
-							FilesListCopy	= FilesList.copy()
-							for File in FilesListCopy:
-								if (not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, File))):
-									FilesValidationFailed	+= 1
-									FilesList.remove(File) # do not remove this file from camera
+					# delete files from camera
+					if SourceStorageName == 'camera' and self.move_files and FilesList:
+						progress	= lib_backup.progressmonitor(
+							setup			= self.__setup,
+							display			= self.__display,
+							log				= self.__log,
+							lan				= self.__lan,
+							FilesToProcess	= len(FilesList),
+							DisplayLine1	= self.__lan.l('box_backup_camera_removing_files_1'),
+							DisplayLine2	= self.__lan.l('box_backup_camera_removing_files_2')
+						)
 
-								progress.progress()
+						for FileRemove in FilesList:
+							cam_folder	= os.path.dirname(FileRemove)
+							cam_file	= os.path.basename(FileRemove)
 
-							del progress
+							if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, cam_folder, cam_file)):
+								continue
 
-							if (FilesValidationFailed > 0):
-								self.__reporter.add_error('Err.: File validation(s) failed!')
-								self.__log.message(f"{FilesValidationFailed} file validation(s) failed.")
+							Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', f"/{cam_folder}", '--delete-file', cam_file]
+							try:
+								subprocess.run(Command)
+							except:
+								pass
 
-						# delete files from camera
-						if SourceStorageName == 'camera' and self.move_files and FilesList:
-							progress	= lib_backup.progressmonitor(
-								setup			= self.__setup,
-								display			= self.__display,
-								log				= self.__log,
-								lan				= self.__lan,
-								FilesToProcess	= len(FilesList),
-								DisplayLine1	= self.__lan.l('box_backup_camera_removing_files_1'),
-								DisplayLine2	= self.__lan.l('box_backup_camera_removing_files_2')
-							)
+							progress.progress()
 
-							for FileRemove in FilesList:
-								cam_folder	= os.path.dirname(FileRemove)
-								cam_file	= os.path.basename(FileRemove)
+						del progress
 
-								if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, cam_folder, cam_file)):
-									continue
+			# finish threads
+			if not thread_thumbnails is None:
+				thread_thumbnails.join()
 
-								Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', f"/{cam_folder}", '--delete-file', cam_file]
-								try:
-									subprocess.run(Command)
-								except:
-									pass
+			# umount source
+			if self.SourceDevice.mountable:
+				self.SourceDevice.umount()
 
-								progress.progress()
+			# Mail result
+			if self.conf_MAIL_NOTIFICATIONS:
+				mail	= lib_mail.mail()
+				self.__reporter.prepare_mail()
+				self.__mail_threads_started.append(
+					mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
+				)
 
-							del progress
+			# exit loop?
+			if not dynamicSources:
+				break
 
-				# finish threads
-				if not thread_thumbnails is None:
-					thread_thumbnails.join()
+		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
-				# umount source
-				if self.SourceDevice.mountable:
-					self.SourceDevice.umount()
 
-				# Mail result
-				if self.conf_MAIL_NOTIFICATIONS:
-					mail	= lib_mail.mail()
-					self.__reporter.prepare_mail()
-					self.__mail_threads_started.append(
-						mail.sendmail(self.__reporter.mail_subject,self.__reporter.mail_content_PLAIN,self.__reporter.mail_content_HTML)
-					)
-
-				# exit loop?
-				if not dynamicSources:
-					break
-
-			self.__display.message([f":{self.__lan.l('box_finished')}"])
-
-		# VPN stop
-		if self.vpn:
-			# Wait for running threads (mails to send)
-			lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
-
-			#stop VPN
-			self.vpn.stop()
-			del self.vpn
-			ip_info	= lib_cron_ip.ip_info()
-			ip_info.display_ip()
-			self.__mail_threads_started.append( ip_info.mail_ip() )
 
 	def __checkLostDevice(self):
 		lostTargetDevice	= False
@@ -854,7 +857,7 @@ class backup(object):
 			lostSourceDevice = not self.SourceDevice.mounted()
 			self.__log.message(f"Lost source device {self.SourceDevice.StorageType}? {lostSourceDevice}",3)
 
-		return (lostTargetDevice or lostSourceDevice)
+		return (lostSourceDevice, lostTargetDevice)
 
 	def RenameFiles(self):
 		if not self.TargetDevice:
@@ -1321,9 +1324,7 @@ class backup(object):
 			self.__reporter.prepare_display_summary()
 			display_summary	= self.__reporter.display_summary
 
-
-		# Wait for running mail threads (mails to send)
-		lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+		self.__cleanup()
 
 		if self.SecondaryBackupFollows:
 			self.__display.message(display_summary)
@@ -1335,6 +1336,19 @@ class backup(object):
 				Action	= 'None'
 
 			lib_poweroff.poweroff(Action, display_summary).poweroff()
+
+	def __cleanup(self):
+		# Wait for running threads (mails to send)
+		lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+
+		# VPN stop
+		if self.vpn:
+			#stop VPN
+			self.vpn.stop()
+			del self.vpn
+			ip_info	= lib_cron_ip.ip_info()
+			ip_info.display_ip()
+			self.__mail_threads_started.append(ip_info.mail_ip())
 
 if __name__ == "__main__":
 	setup	= lib_setup.setup()

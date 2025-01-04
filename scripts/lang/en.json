@@ -54,10 +54,11 @@
         "backup_failed": "Backup failed",
         "summary": "Summary",
         "no_backup": "Error: No backup performed!",
-        "remount_device_failed": "Remount failed!",
         "removed_source": "Transferred files have been deleted from the source. (if possible)",
         "files_validation_failed": "Files could not be found on the target disk during validation.",
-        "empty_files": "The following files were received empty and deleted from the destination storage. Please check if they are also empty on the source. If so, please delete them there to avoid future error messages.<br>Empty files:"
+        "empty_files": "The following files were received empty and deleted from the destination storage. Please check if they are also empty on the source. If so, please delete them there to avoid future error messages.<br>Empty files:",
+        "remount_device_target_failed": "Remount of the target failed!",
+        "remount_device_source_failed": "Remount of the source failed!"
       },
       "storage_filesystem_short": "FS",
       "exception": "Unknown error",
@@ -134,6 +135,10 @@
       "validate_files_from": "Validate files from",
       "rename_files": {
         "renaming_files": "Renaming files"
+      },
+      "remounting": {
+        "source": "Remount source...",
+        "target": "Remount target..."
       }
     },
     "poweroff": {

@@ -447,10 +447,11 @@
         "backup_failed": "Backup fehlgeschlagen",
         "summary": "Zusammenfassung",
         "no_backup": "Fehler: Kein Backup durchgeführt!",
-        "remount_device_failed": "Remount fehlgeschlagen!",
         "removed_source": "Übertragene Dateien wurden von der Quelle gelöscht. (falls möglich)",
         "files_validation_failed": "Dateien konnten bei der Validierung auf dem Zieldatenträger nicht gefunden werden.",
-        "empty_files": "Die folgenden Dateien wurden leer empfangen und vom Zielspeicher gelöscht. Bitte prüfen Sie, ob sie auch auf der Quelle leer sind. Falls ja, löschen Sie sie bitte dort, um zukünftige Fehlermeldungen zu vermeiden.<br>Leere Dateien:"
+        "empty_files": "Die folgenden Dateien wurden leer empfangen und vom Zielspeicher gelöscht. Bitte prüfen Sie, ob sie auch auf der Quelle leer sind. Falls ja, löschen Sie sie bitte dort, um zukünftige Fehlermeldungen zu vermeiden.<br>Leere Dateien:",
+        "remount_device_target_failed": "Wiedereinbinden des Ziels fehlgeschlagen!",
+        "remount_device_source_failed": "Wiedereinbinden der Quelle fehlgeschlagen!"
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",
@@ -529,6 +530,10 @@
       "validate_files_from": "Validiere Dateien von",
       "rename_files": {
         "renaming_files": "Umbenennen von Dateien"
+      },
+      "remounting": {
+        "source": "Quelle wieder einbinden...",
+        "target": "Ziel wieder einbinden..."
       }
     },
     "cronip": {
