@@ -531,9 +531,9 @@
       "rename_files": {
         "renaming_files": "Umbenennen von Dateien"
       },
-      "remounting": {
-        "source": "Quelle wieder einbinden...",
-        "target": "Ziel wieder einbinden..."
+      "mounting": {
+        "source": "Quelle einbinden",
+        "target": "Ziel einbinden"
       }
     },
     "cronip": {

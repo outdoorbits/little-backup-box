@@ -136,9 +136,9 @@
       "rename_files": {
         "renaming_files": "Renaming files"
       },
-      "remounting": {
-        "source": "Remount source...",
-        "target": "Remount target..."
+      "mounting": {
+        "source": "Mount source",
+        "target": "Mount target"
       }
     },
     "poweroff": {

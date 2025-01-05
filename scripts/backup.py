@@ -451,6 +451,7 @@ class backup(object):
 			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync']:
 				self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier)
 
+				self.__display.message([f":{self.__lan.l('box_backup_mounting_target')}", f":{self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')} {self.TargetDevice.CloudServiceName}"])
 				self.SourceDevice.mount()
 
 			elif SourceStorageType in ['thumbnails', 'database', 'exif']:
@@ -532,7 +533,7 @@ class backup(object):
 
 						if not self.SourceDevice.mounted():
 							self.__log.message(f"remount source device {SourceStorageName} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
-							self.__display.message([f"s=a:{self.__lan.l('box_backup_remounting_source')}"])
+							self.__display.message([f"s=a:{self.__lan.l('box_backup_mounting_target')}", f"s=a:{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
 							if not self.SourceDevice.mount(TimeOutActive=True):
 								self.__reporter.add_error('Err.: Remounting source device failed!')
 
@@ -546,7 +547,7 @@ class backup(object):
 					if "Err.: Lost device!" in ErrorsOld:
 						if not self.TargetDevice.mounted():
 							self.__log.message(f"remount target device {self.TargetDevice.StorageType} {self.TargetDevice.CloudServiceName} {self.TargetDevice.DeviceIdentifier}",3)
-							self.__display.message([f"s=a:{self.__lan.l('box_backup_remounting_target')}"])
+							self.__display.message([f"s=a:{self.__lan.l('box_backup_mounting_target')}", f"s=a:{self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')} {self.TargetDevice.CloudServiceName}"])
 							if not self.TargetDevice.mount(TimeOutActive=True):
 								self.__reporter.add_error('Err.: Remounting target device failed!')
 
@@ -582,17 +583,17 @@ class backup(object):
 
 					#define progress object
 					progress	= lib_backup.progressmonitor(
-						setup						= self.__setup,
-						display						= self.__display,
-						log							= self.__log,
-						lan							= self.__lan,
-						FilesToProcess				= FilesToProcess,
+						setup							= self.__setup,
+						display							= self.__display,
+						log								= self.__log,
+						lan								= self.__lan,
+						FilesToProcess					= FilesToProcess,
 						FilesToProcess_possible_more	= FilesToProcess_possible_more,
-						DisplayLine1				= DisplayLine1,
-						DisplayLine2				= DisplayLine2,
-						SourceDevice				= self.SourceDevice,
-						TargetDevice				= self.TargetDevice,
-						vpn							= self.vpn
+						DisplayLine1					= DisplayLine1,
+						DisplayLine2					= DisplayLine2,
+						SourceDevice					= self.SourceDevice,
+						TargetDevice					= self.TargetDevice,
+						vpn								= self.vpn
 					)
 
 					SyncStartTime	= lib_system.get_uptime_sec()

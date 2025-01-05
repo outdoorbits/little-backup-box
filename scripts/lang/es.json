@@ -531,9 +531,9 @@
       "rename_files": {
         "renaming_files": "Cambiar el nombre de los archivos"
       },
-      "remounting": {
-        "source": "Reintegrar fuente...",
-        "target": "Volver a montar el objetivo..."
+      "mounting": {
+        "source": "Integrar fuente",
+        "target": "Integrar objetivo"
       }
     },
     "cronip": {
