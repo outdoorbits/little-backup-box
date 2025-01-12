@@ -438,7 +438,7 @@ class backup(object):
 				if todoSources:
 					Identifier	= todoSources[0]
 				elif Identifier_OLD:
-					# break if there is no futher source device (but wait if no source is done)
+					# break if there is no futher source device and at least one source is processed
 					break
 				else:
 					time.sleep(1)
@@ -551,7 +551,7 @@ class backup(object):
 							if not self.TargetDevice.mount(TimeOutActive=True):
 								self.__reporter.add_error('Err.: Remounting target device failed!')
 
-					# Check for lost devices
+					# Check again for lost devices
 					if True in self.__checkLostDevice():
 						self.__reporter.add_error('Err.: Lost device!')
 						self.__log.execute("Lost device", "lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE",3)

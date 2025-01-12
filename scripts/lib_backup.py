@@ -203,7 +203,7 @@ class progressmonitor(object):
 				DisplayLine5="PGBAR=0"
 
 			# calculte remaining time
-			if self.CountProgress > self.CountSkip:
+			if self.CountProgress > self.CountSkip and self.FilesToProcess >= self.CountProgress:
 				TimeElapsed		= lib_system.get_uptime_sec() - self.StartTime
 				TimeRemaining	= (self.FilesToProcess - self.CountProgress) * TimeElapsed  / (self.CountProgress - self.CountSkip)
 				TimeRemainingFormatted	= str(timedelta(seconds=TimeRemaining)).split('.')[0]
