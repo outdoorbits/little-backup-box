@@ -268,7 +268,6 @@
 		}
 	}
 
-
 	# ratings-preparation
 	$RATINGS_ARRAY=array();
 	foreach ($_POST as $key=>$val) {
@@ -371,9 +370,9 @@
 
 		if ($DATABASE_CONNECTED) {
 			# save ratings
-			foreach($RATINGS_ARRAY as $key=>$val) {
-				$key	= intval($key);
-				$val	= intval($val);
+			foreach($RATINGS_ARRAY as $key=>$Rating) {
+				$key	= (int)$key;
+				$Rating	= (int)$Rating;
 
 				if ($config['conf_VIEW_WRITE_RATING_EXIF'] == true) {
 					# get database-values before update
@@ -381,19 +380,19 @@
 					$RATING_IMAGES		= $statement->execute();
 					$RATING_IMAGE		= $RATING_IMAGES->fetchArray(SQLITE3_ASSOC);
 
+					if ((int)$RATING_IMAGE['Rating'] !== $Rating) {
+						#update exif-data of original file
+						shell_exec ("sudo exiftool -overwrite_original -Rating=" . $Rating . " '".$STORAGE_PATH . '/' . $RATING_IMAGE['Directory']. '/' .$RATING_IMAGE['File_Name'] . "'");
+					}
+
 					# define update-command
-					$SQL_UPDATE	= "update EXIF_DATA set LbbRating=". $val . ", Rating=". $val . " where ID=" . $key . ";";
+					$SQL_UPDATE	= "update EXIF_DATA set LbbRating=". $Rating . ", Rating=". $Rating . " where ID=" . $key . ";";
 				} else {
 					# define update-command
-					$SQL_UPDATE	= "update EXIF_DATA set LbbRating=". $val . " where ID=" . $key . ";";
+					$SQL_UPDATE	= "update EXIF_DATA set LbbRating=". $Rating . " where ID=" . $key . ";";
 				}
 
 				$db->exec($SQL_UPDATE);
-
-				if (($config['conf_VIEW_WRITE_RATING_EXIF'] == true) and ((int)$RATING_IMAGE['Rating'] !== (int)$val)) {
-					#update exif-data of original file
-					shell_exec ("sudo exiftool -overwrite_original -Rating=" . (int)$val . " '".$STORAGE_PATH . '/' . $RATING_IMAGE['Directory']. '/' .$RATING_IMAGE['File_Name'] . "'");
-				}
 			}
 
 			# delete media-files

@@ -85,10 +85,6 @@ class backup(object):
 		self.DoRenameFiles									= DoRenameFiles if DoRenameFiles != 'setup' else self.__setup.get_val('conf_BACKUP_RENAME_FILES')
 		self.DoRenameFiles									= self.DoRenameFiles or (self.SourceStorageType == 'rename')
 
-		# sync database
-		self.ForceSyncDatabase								= ForceSyncDatabase
-		self.ForceSyncDatabase								= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files
-
 		# secondary backup
 		self.SecondaryBackupFollows							= SecondaryBackupFollows
 
@@ -102,6 +98,10 @@ class backup(object):
 		# exif
 		self.DoUpdateEXIF									= DoUpdateEXIF if DoUpdateEXIF != 'setup' else self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
 		self.DoUpdateEXIF									= self.DoUpdateEXIF or (self.SourceStorageType == 'exif')
+
+		# sync database
+		self.ForceSyncDatabase								= ForceSyncDatabase
+		self.ForceSyncDatabase								= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files or self.DoGenerateThumbnails or self.DoUpdateEXIF
 
 		# power off
 		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
@@ -217,13 +217,13 @@ class backup(object):
 		if self.ForceSyncDatabase or self.__TIMSCopied:
 			self.syncDatabase()
 
-		# generate thumbnails
-		if self.TargetDevice and self.DoGenerateThumbnails_primary:
-				self.generateThumbnails(Device=self.TargetDevice)
-
 		# update exif
 		if self.TargetDevice and self.DoUpdateEXIF:
 			self.updateEXIF()
+
+		# generate thumbnails
+		if self.TargetDevice and self.DoGenerateThumbnails_primary:
+				self.generateThumbnails(Device=self.TargetDevice)
 
 		self.finish()
 
@@ -867,20 +867,27 @@ class backup(object):
 		if not self.TargetDevice.isLocal:
 			return()
 
+		# set led status
 		lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
+
+		DisplayLine1	= self.__lan.l('box_backup_rename_files_renaming_files') # header1
+		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
+		self.__display.message([f's=hc:{DisplayLine1}', f's=hc:{DisplayLine2}', f"s=hc:{self.__lan.l('box_backup_working')}"])
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
 		# find all not renamed media files
-		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
+		FindCommand	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
 
-		FilesToRename	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
+		FilesPipe	= subprocess.Popen(FindCommand, shell=True, stdout=subprocess.PIPE)
+
+		DateTags	= ['-DateTimeOriginal', '-CreateDate']
+		ExifCommand	= ['exiftool', '-dateFormat', '%Y-%m-%d_%H-%M-%S'] + DateTags + ['-Rating', '-S', '-@', '-']
+
+		FilesToRename	= subprocess.check_output(ExifCommand, stdin=FilesPipe.stdout).decode().strip().split('======== ')
 		FilesToRename = list(filter(None, FilesToRename))
 
 		FilesToProcess	= len(FilesToRename)
-
-		DisplayLine1	= self.__lan.l('box_backup_rename_files_renaming_files') # header1
-		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
 
 		progress	= lib_backup.progressmonitor(
 			setup			= self.__setup,
@@ -892,43 +899,60 @@ class backup(object):
 			DisplayLine2	= DisplayLine2
 		)
 
-		DateTags	= ['-DateTimeOriginal', '-CreateDate']
-
 		db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
 
 		for FileToRename in FilesToRename:
-			if not os.path.isfile(FileToRename):
+			EXIF_Lines	= FileToRename.strip().split('\n')
+
+			if len(EXIF_Lines) == 0:
 				continue
 
-			FileCreateDate	= None
-			for Tag in DateTags:
-				Command	= ['exiftool', '-dateFormat', '%Y-%m-%d_%H-%M-%S', Tag, '-S', '-s', FileToRename]
+			FileNameOld	= EXIF_Lines[0].strip()
 
-				try:
-					FileCreateDate	= subprocess.check_output(Command).decode().strip()
-				except:
-					continue
+			if not os.path.isfile(FileNameOld):
+				continue
 
-				if FileCreateDate:
-					break
+			Rating			= ''
+			FileCreateDate	= '0000-00-00_00-00-00'
 
-			if not FileCreateDate:
-				FileCreateDate	= '0000-00-00_00-00-00'
+			if len(EXIF_Lines) > 1:
+				for EXIF_Line in EXIF_Lines[1:]:
+					try:
+						Var, Val	= EXIF_Line.split(':', 1)
+					except:
+						continue
+					Val	= Val.strip()
 
-			FilePath	= os.path.dirname(FileToRename)
-			FileName	= os.path.basename(FileToRename)
+					if Var == 'Rating':
+						Rating	= Val
+
+					if f'-{Var}' in DateTags:
+						if Val > FileCreateDate:
+							FileCreateDate	= Val
+
+			FilePath	= os.path.dirname(FileNameOld)
+			FileName	= os.path.basename(FileNameOld)
 			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
 
 			# rename new file (overwrite in destination if already exists)
 			try:
-				os.replace(FileToRename, FileNameNew)
+				os.replace(FileNameOld, FileNameNew)
 			except:
 				pass
 
 			if os.path.isfile(FileNameNew):
-				# overwrite database entry (to enable exif update)
-				FileName	= FileNameNew.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
-				db.dbInsertImage(FileName)
+				# overwrite database entry (Rating to enable exif update)
+				ImageFileSubpathFilenameOld	= FileNameOld.replace(self.TargetDevice.MountPoint, '', 1).strip('/')
+				ImageFilePathOld			= os.path.dirname(ImageFileSubpathFilenameOld).strip('/')
+				ImageFileNameOld			= os.path.basename(ImageFileSubpathFilenameOld)
+
+				ImageFileSubpathFilenameNew	= FileNameNew.replace(self.TargetDevice.MountPoint, '', 1).strip('/')
+				ImageFilePathNew			= os.path.dirname(ImageFileSubpathFilenameNew).strip('/')
+				ImageFileNameNew			= os.path.basename(ImageFileSubpathFilenameNew)
+
+				if ImageFilePathOld == ImageFilePathNew:
+					Command	= f"update EXIF_DATA set File_Name='{ImageFileNameNew}', Rating='{Rating}' where Directory='{ImageFilePathOld}' and (File_Name='{ImageFileNameOld}' or File_Name='{ImageFileNameNew}')"
+					db.dbExecute(Command)
 
 			progress.progress()
 
@@ -1025,8 +1049,9 @@ class backup(object):
 		for TimsFileName in TIMSList:
 			OrigFileName	= TimsFileName.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0]	# remove mountpoint and remove second extension from tims
 			OrigFileName	= '/'.join(OrigFileName.rsplit('/tims/', 1)) 								# remove /tims from folder
-			ImageFilePath	= os.path.dirname(OrigFileName)
+			ImageFilePath	= os.path.dirname(OrigFileName).strip('/')
 			ImageFileName	= os.path.basename(OrigFileName)
+
 			if not db.dbSelect(f"select ID from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'"):
 				db.dbInsertImage(OrigFileName)
 
@@ -1253,9 +1278,6 @@ class backup(object):
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
-
-			# insert image into database
-			db.dbInsertImage(SourceFilePathName)
 
 			progress.progress()
 

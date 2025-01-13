@@ -109,7 +109,7 @@ class viewdb(object):
 			return(False)
 
 
-	def dbInsertImage(self,ImageFileSubpathFilename):
+	def dbInsertImage(self, ImageFileSubpathFilename):
 		#read exif-data from file
 
 		ImageFileSubpathFilename	= ImageFileSubpathFilename.strip('/')
