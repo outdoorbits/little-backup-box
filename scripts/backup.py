@@ -884,7 +884,13 @@ class backup(object):
 		DateTags	= ['-DateTimeOriginal', '-CreateDate']
 		ExifCommand	= ['exiftool', '-dateFormat', '%Y-%m-%d_%H-%M-%S'] + DateTags + ['-Rating', '-S', '-@', '-']
 
-		FilesToRename	= subprocess.check_output(ExifCommand, stdin=FilesPipe.stdout).decode().strip().split('======== ')
+		try:
+			# if the FilesPipe is empty,this will fail.
+			FilesToRename	= subprocess.check_output(ExifCommand, stdin=FilesPipe.stdout).decode().strip().split('======== ')
+		except:
+			# nothing todo
+			return()
+
 		FilesToRename = list(filter(None, FilesToRename))
 
 		FilesToProcess	= len(FilesToRename)
