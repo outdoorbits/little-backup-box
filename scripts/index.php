@@ -463,7 +463,6 @@
 			}
 
 			shell_exec("sudo $WORKING_DIR/stop_backup.sh");
-			print("sudo python3 $WORKING_DIR/backup.py --SourceName $Function --TargetName $Target --rename-files '$rename_files' --force-sync-database $sync_database --generate-thumbnails $generate_thumbnails --update-exif $update_exif --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
 			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName $Function --TargetName $Target --rename-files '$rename_files' --force-sync-database $sync_database --generate-thumbnails $generate_thumbnails --update-exif $update_exif --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
 			popup($ButtonLabel_Function . " " . L::main_backup_on . " " . $ButtonLabel_Target . ".",$config["conf_POPUP_MESSAGES"]);
 		}
