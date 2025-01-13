@@ -51,7 +51,7 @@ class backup(object):
 
 	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecondaryBackupFollows=False):
 
-		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif']
+		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif', 'rename]
 		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF:	one of ['setup', True, False]
 		# ForceSyncDatabase:									one of [True, False]
@@ -206,7 +206,7 @@ class backup(object):
 		lib_system.rpi_leds(trigger='none',brightness=1)
 
 		# backup
-		if self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif']):
+		if self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif', 'rename']):
 			self.backup()
 
 		# rename
@@ -1023,21 +1023,20 @@ class backup(object):
 	## vacuum database
 		db.dbExecute('VACUUM;')
 
-		## import preexisting tims into database
+	## import missing images into database
 		self.__display.message(['set:clear',f":{self.__lan.l('box_backup_generating_database_finding_images1')}",':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),f":{self.__lan.l('box_backup_counting_images')}",f":{self.__lan.l('box_backup_generating_database_finding_images3')}"])
 
-		# find all tims and convert their filename to the estimated original filename:
-		## 1. replace only last '/tims/' by '/'
-		## 2. remove last part of file extension
+		# find all images
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
-		Command	= ['find', self.TargetDevice.MountPoint, '-type', 'f', '-iname', '*.jpg', '-path', '*/tims/*'] + BannedPathsViewCaseInsensitive
-		TIMSList	= subprocess.check_output(Command).decode().strip().split('\n')
-		TIMSList[:]	= [element for element in TIMSList if element]
+		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+
+		Images	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
+		Images[:]	= [element for element in Images if element]
 
 		# prepare loop to insert images into the database
-		FilesToProcess	= len(TIMSList)
+		FilesToProcess	= len(Images)
 
 		DisplayLine1	= self.__lan.l('box_backup_generating_database')					# header1
 		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')	# header2
@@ -1052,14 +1051,13 @@ class backup(object):
 			DisplayLine2	= DisplayLine2
 		)
 
-		for TimsFileName in TIMSList:
-			OrigFileName	= TimsFileName.replace(self.TargetDevice.MountPoint,'',1).rsplit('.',1)[0]	# remove mountpoint and remove second extension from tims
-			OrigFileName	= '/'.join(OrigFileName.rsplit('/tims/', 1)) 								# remove /tims from folder
-			ImageFilePath	= os.path.dirname(OrigFileName).strip('/')
-			ImageFileName	= os.path.basename(OrigFileName)
+		for Image in Images:
+			FileName	= Image.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
+			ImageFilePath	= os.path.dirname(FileName).strip('/')
+			ImageFileName	= os.path.basename(FileName)
 
 			if not db.dbSelect(f"select ID from EXIF_DATA where File_Name='{ImageFileName}' and Directory='{ImageFilePath}'"):
-				db.dbInsertImage(OrigFileName)
+				db.dbInsertImage(FileName)
 
 			progress.progress()
 
@@ -1126,7 +1124,7 @@ class backup(object):
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 		Command	= f"find '{Device.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
-		ImagesList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
+		ImagesList	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		ImagesList[:]	= [element for element in ImagesList if element]
 		ImagesList.sort()
 		ImagesList = [i.replace(Device.MountPoint,'',1) for i in ImagesList]

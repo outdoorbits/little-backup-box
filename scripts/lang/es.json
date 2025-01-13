@@ -516,7 +516,8 @@
         "usb": "Almacenamiento USB",
         "usbs": "Almacenamientos USB",
         "nvme": "NVMe SSD",
-        "nvmes": "NVMe SSDs"
+        "nvmes": "NVMe SSDs",
+        "rename": "Rebautizar"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Fuente USB",

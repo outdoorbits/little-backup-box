@@ -121,7 +121,8 @@
         "usb": "USB storage",
         "usbs": "USB storages",
         "nvme": "NVMe SSD",
-        "nvmes": "NVMe SSDs"
+        "nvmes": "NVMe SSDs",
+        "rename": "Rename"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-source",

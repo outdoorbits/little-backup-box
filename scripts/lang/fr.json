@@ -516,7 +516,8 @@
         "usb": "Stockage USB",
         "usbs": "Stockages USB",
         "nvme": "NVMe SSD",
-        "nvmes": "NVMe SSDs"
+        "nvmes": "NVMe SSDs",
+        "rename": "Rebaptiser"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Source USB",

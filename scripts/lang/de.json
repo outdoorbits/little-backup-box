@@ -516,7 +516,8 @@
         "usb": "USB-Speicher",
         "usbs": "USB-Speicher",
         "nvme": "NVMe SSD",
-        "nvmes": "NVMe SSDs"
+        "nvmes": "NVMe SSDs",
+        "rename": "Umbenennen"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-Quelle",
