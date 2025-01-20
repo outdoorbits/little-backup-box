@@ -48,7 +48,6 @@ class poweroff(object):
 		self.conf_POWER_OFF 				= self.__setup.get_val('conf_POWER_OFF')
 		self.conf_DISP_FRAME_TIME			= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.const_LOGFILE					= self.__setup.get_val('const_LOGFILE')
-		self.conf_DISP_BLACK_ON_POWER_OFF	= self.__setup.get_val('conf_DISP_BLACK_ON_POWER_OFF')
 		self.const_DISPLAY_CONTENT_FOLDER	= self.__setup.get_val('const_DISPLAY_CONTENT_FOLDER')
 
 	def poweroff(self):
@@ -95,8 +94,7 @@ class poweroff(object):
 
 			# Power off
 			if self.Action == 'poweroff':
-				if self.conf_DISP_BLACK_ON_POWER_OFF:
-					self.__display.message(['set:clear'])
+				self.__display.message(['set:clear'])
 
 				# Set the PWR LED BLINKING to indicate that the system is shutting down
 				lib_system.rpi_leds(trigger='timer',delay_on=500,delay_off=500)

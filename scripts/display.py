@@ -103,7 +103,6 @@ class DISPLAY(object):
 		self.conf_DISP_COLOR_HIGH				= self.__setup.get_val('conf_DISP_COLOR_HIGH')
 		self.conf_DISP_COLOR_ALERT				= self.__setup.get_val('conf_DISP_COLOR_ALERT')
 		self.conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
-		self.conf_DISP_BLACK_ON_POWER_OFF		= self.__setup.get_val('conf_DISP_BLACK_ON_POWER_OFF')
 		self.conf_DISP_FRAME_TIME				= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.conf_DISP_SHOW_STATUSBAR			= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
 		self.conf_MENU_ENABLED					= self.__setup.get_val('conf_MENU_ENABLED')
@@ -188,8 +187,7 @@ class DISPLAY(object):
 
 			self.device.contrast(self.conf_DISP_CONTRAST)
 
-			if self.conf_DISP_BLACK_ON_POWER_OFF:
-				self.device.persist = True
+			self.device.persist = False
 
 		# define font
 		self.FONT = ImageFont.truetype(self.const_FONT_PATH, self.conf_DISP_FONT_SIZE)

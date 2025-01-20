@@ -192,7 +192,6 @@
 		$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?'true':'false';
 		$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?'true':'false';
 		$conf_DISP									= isset($conf_DISP)?'true':'false';
-		$conf_DISP_BLACK_ON_POWER_OFF				= isset($conf_DISP_BLACK_ON_POWER_OFF)?'true':'false';
 		$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?'true':'false';
 		$conf_DISP_SHOW_STATUSBAR					= isset($conf_DISP_SHOW_STATUSBAR)?'true':'false';
 		$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?'true':'false';
@@ -280,7 +279,6 @@ conf_DISP_COLOR_ALERT='$conf_DISP_COLOR_ALERT'
 conf_DISP_FONT_SIZE=$conf_DISP_FONT_SIZE
 conf_DISP_FRAME_TIME=$conf_DISP_FRAME_TIME
 conf_DISP_FRAME_TIME_IP=$conf_DISP_FRAME_TIME_IP
-conf_DISP_BLACK_ON_POWER_OFF=$conf_DISP_BLACK_ON_POWER_OFF
 conf_DISP_IP_REPEAT=$conf_DISP_IP_REPEAT
 conf_DISP_SHOW_STATUSBAR=$conf_DISP_SHOW_STATUSBAR
 conf_MENU_ENABLED=$conf_MENU_ENABLED
@@ -832,11 +830,6 @@ CONFIGDATA;
 									}
 								?>
 							</select>
-					</div>
-
-					<div>
-						<input type="checkbox" id="conf_DISP_BLACK_ON_POWER_OFF" name="conf_DISP_BLACK_ON_POWER_OFF" <?php echo $config['conf_DISP_BLACK_ON_POWER_OFF']=="1"?"checked":""; ?>>
-						<label for="conf_DISP_BLACK_ON_POWER_OFF"><?php echo L::config_display_black_on_power_off_label; ?></label><br>
 					</div>
 
 					<div>

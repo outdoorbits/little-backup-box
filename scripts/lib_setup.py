@@ -238,7 +238,6 @@ class setup(object):
 					'conf_DISP_FONT_SIZE':								{'value': 12, 'type': 'int'},
 					'conf_DISP_FRAME_TIME':								{'value': 0.5, 'type': 'float'},
 					'conf_DISP_FRAME_TIME_IP':							{'value': 2.0, 'type': 'float'},
-					'conf_DISP_BLACK_ON_POWER_OFF':						{'value': True, 'type': 'bool'},
 					'conf_DISP_IP_REPEAT':								{'value': True, 'type': 'bool'},
 					'conf_DISP_SHOW_STATUSBAR':							{'value': True, 'type': 'bool'},
 					'conf_MENU_ENABLED':								{'value': True, 'type': 'bool'},

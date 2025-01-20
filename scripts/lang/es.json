@@ -279,7 +279,6 @@
       "i2c_address_label": "Dirección i2c de la pantalla",
       "i2c_header": "Configuración de pantalla I2C",
       "ip_label": "Imprimir IP cada minuto.",
-      "black_on_power_off_label": "Apague la pantalla al apagar",
       "device_available": "Dispositivo detectado",
       "behavior_header": "Comportamiento de visualización",
       "spi_header": "Configuración de pantalla SPI",

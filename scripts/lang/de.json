@@ -279,7 +279,6 @@
       "i2c_address_label": "i2c-Adresse des Displays",
       "i2c_header": "I2C-Display-Konfiguration",
       "ip_label": "IP minütlich einblenden.",
-      "black_on_power_off_label": "Display beim Herunterfahren ausschalten",
       "device_available": "Gerät erkannt",
       "behavior_header": "Display-Verhalten",
       "spi_header": "SPI-Display-Konfiguration",

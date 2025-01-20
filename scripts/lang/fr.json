@@ -279,7 +279,6 @@
       "i2c_address_label": "Adresse i2c de l'écran",
       "i2c_header": "Configuration de l'affichage I2C",
       "ip_label": "Imprimez l'IP toutes les minutes.",
-      "black_on_power_off_label": "Éteignez l'écran lors de l'arrêt",
       "device_available": "Périphérique détecté",
       "behavior_header": "Comportement d'affichage",
       "spi_header": "Configuration de l'affichage SPI",
