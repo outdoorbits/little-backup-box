@@ -289,7 +289,7 @@ mv "${INSTALLER_DIR}/scripts/img/backgrounds/"* "${const_MEDIA_DIR}/${const_BACK
 
 # add user www-data to sudoers
 sudo usermod -aG sudo ${USER_WWW_DATA}
-yes | sudo cp -f "${INSTALLER_DIR}/etc_sudoers_d_www-data" "/etc/sudoers.d/www-data"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/sudoers_d_www-data" "/etc/sudoers.d/www-data"
 sudo chmod 0440 "/etc/sudoers.d/www-data"
 
 # change owner and make installer scripts executable
@@ -538,9 +538,9 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	echo "ServerName little-backup-box" | sudo tee -a "/etc/apache2/apache2.conf"
 fi
 
-yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_ports.conf" "/etc/apache2/ports.conf"
-yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_conf-available_ssl-params.conf" "/etc/apache2/conf-available/ssl-params.conf"
-yes | sudo cp -f "${INSTALLER_DIR}/etc_apache2_sites-available_little-backup-box.conf" "/etc/apache2/sites-available/little-backup-box.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/apache2_ports.conf" "/etc/apache2/ports.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/apache2_conf-available_ssl-params.conf" "/etc/apache2/conf-available/ssl-params.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/apache2_sites-available_little-backup-box.conf" "/etc/apache2/sites-available/little-backup-box.conf"
 
 sudo mkdir -p /etc/apache2/includes
 sudo touch /etc/apache2/includes/password.conf
@@ -554,11 +554,11 @@ sudo a2dissite 000-default
 sudo a2ensite little-backup-box
 
 # Configure Samba
-yes | sudo cp -f "${INSTALLER_DIR}/etc_samba_smb.conf" "/etc/samba/smb.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/samba_smb.conf" "/etc/samba/smb.conf"
 sudo chmod 0440 "/etc/samba/smb.conf"
 
 # Configure vsftpd
-yes | sudo cp -f "${INSTALLER_DIR}/etc_vsftpd.conf" "/etc/vsftpd.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/vsftpd.conf" "/etc/vsftpd.conf"
 sudo chmod 0440 "/etc/vsftpd.conf.conf"
 
 sudo useradd -s /bin/false -r ftpsecure
