@@ -85,7 +85,7 @@ if [ -f "./tinyfilemanager/config.php" ]; then
 else
 	echo "<?php" | sudo tee "${WEB_ROOT_TINYFILEMANAGER}/config.php"
 	echo "//Default Configuration" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
-	echo "\$CONFIG = '{\"lang\":\"en\",\"error_reporting\":false,\"show_hidden\":false,\"hide_Cols\":true,\"theme\":\"light\"}';" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
+	echo "\$CONFIG = '{\"lang\":\"en\",\"error_reporting\":false,\"show_hidden\":false,\"hide_Cols\":false,\"theme\":\"light\"}';" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
 	echo "   \$use_auth = false;" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
 	echo "   \$root_path = \"/var/www/tinyfilemanager/media\";" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"
 	echo "   \$root_url = \"files/media\";" | sudo tee -a "${WEB_ROOT_TINYFILEMANAGER}/config.php"

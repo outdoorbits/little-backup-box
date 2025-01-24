@@ -349,6 +349,13 @@ CONFIGDATA;
 		# write hardware-settings
 		exec("sudo " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/set_hardware.sh");
 
+		if (strlen($conf_LANGUAGE) > 1) {
+			include("./tinyfilemanager-config.php");
+			$tinyfilemanager	= new tinyfilemanager\tinyfilemanager;
+			$tinyfilemanager->reconfig(array("lang=" . substr($conf_LANGUAGE,0,2)));
+			$tinyfilemanager	= null;
+		}
+
 		# response
 		$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_message_settings_saved . '</div>';
 	}
