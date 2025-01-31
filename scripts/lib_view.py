@@ -157,15 +157,15 @@ class viewdb(object):
 			if EXIF_Field.lower() in ImageRecord_lower:
 				continue
 
-			ImageRecord[EXIF_Field]	= EXIF_Value
-			ImageRecord_lower.append(EXIF_Field.lower())
-
 			if not EXIF_Field in ['File_Name','Directory']:
 				EXIF_Value	= EXIF_Value.replace('\r', '')
 				EXIF_Value	= EXIF_Value.replace('\n', '<br>')
 				EXIF_Value	= EXIF_Value.replace('"', '&#34;')
 				EXIF_Value	= EXIF_Value.replace("'", '&#39;')
 				EXIF_Value	= re.sub('[^a-zA-Z0-9_\-+\.,:;\ &#/()\[\]]<>', '_', EXIF_Value)
+
+			ImageRecord[EXIF_Field]	= EXIF_Value
+			ImageRecord_lower.append(EXIF_Field.lower())
 
 		# define/overwrite elements of ImageRecord
 		## file: name and directory
