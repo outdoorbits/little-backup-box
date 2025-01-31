@@ -48,7 +48,7 @@ class viewdb(object):
 		res = self.__cur.execute('PRAGMA table_info(EXIF_DATA);')
 		Lines	= res.fetchall()
 		for Line in Lines:
-			self.__EXIF_KnownColumnsList.append(Line[1])
+			self.__EXIF_KnownColumnsList.append(Line[1].lower())
 
 	def __dbCreateUpgrade(self):
 		# define database, append lines for updates, do not change existing lines!
@@ -128,7 +128,8 @@ class viewdb(object):
 			EXIF_List	= []
 
 		# get image record out of exif data
-		ImageRecord	= {}
+		ImageRecord			= {}
+		ImageRecord_lower	= [] # for case insensitive check for known fields
 
 		for EXIF in EXIF_List:
 
@@ -153,7 +154,7 @@ class viewdb(object):
 				continue
 
 			## prevent doubles
-			if EXIF_Field in ImageRecord:
+			if EXIF_Field.lower() in ImageRecord_lower:
 				continue
 
 			if not EXIF_Field in ['File_Name','Directory']:
@@ -164,6 +165,7 @@ class viewdb(object):
 				EXIF_Value	= re.sub('[^a-zA-Z0-9_\-+\.,:;\ &#/()\[\]]<>', '_', EXIF_Value)
 
 			ImageRecord[EXIF_Field]	= EXIF_Value
+			ImageRecord_lower.append(EXIF_Field.lower())
 
 		# define/overwrite elements of ImageRecord
 		## file: name and directory
@@ -197,7 +199,7 @@ class viewdb(object):
 
 		for EXIF_Field in ImageRecord.keys():
 			# add column to the table if doesn't exist
-			if not EXIF_Field in self.__EXIF_KnownColumnsList:
+			if not EXIF_Field.lower() in self.__EXIF_KnownColumnsList:
 				self.__cur.execute(f"alter table EXIF_DATA add column '{EXIF_Field}' text;")
 				self.__EXIF_KnownColumnsList.append(EXIF_Field)
 
