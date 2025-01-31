@@ -143,24 +143,25 @@ class viewdb(object):
 
 			EXIF_Field	= re.sub('[^a-zA-Z0-9]', '_', EXIF_Field)
 
+			# prepare and care database-structure
+			## do not allow to use ID as EXIF-field
+			if EXIF_Field == "ID":
+				EXIF_Field="ID_CAMERA"
+
+			## do not accept field names shorter then 2 characters
+			if len(EXIF_Field) < 2:
+				continue
+
+			## prevent doubles
+			if EXIF_Field in ImageRecord:
+				continue
+
 			if not EXIF_Field in ['File_Name','Directory']:
 				EXIF_Value	= EXIF_Value.replace('\r', '')
 				EXIF_Value	= EXIF_Value.replace('\n', '<br>')
 				EXIF_Value	= EXIF_Value.replace('"', '&#34;')
 				EXIF_Value	= EXIF_Value.replace("'", '&#39;')
 				EXIF_Value	= re.sub('[^a-zA-Z0-9_\-+\.,:;\ &#/()\[\]]<>', '_', EXIF_Value)
-
-			if not EXIF_Field:
-				continue
-
-			# prepare and care database-structure
-			## do not allow to use ID as EXIF-field
-			if EXIF_Field == "ID":
-				EXIF_Field="ID_CAMERA"
-
-			# do not accept field names shorter then 2 characters
-			if len(EXIF_Field) < 2:
-				continue
 
 			ImageRecord[EXIF_Field]	= EXIF_Value
 

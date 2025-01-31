@@ -794,34 +794,34 @@ class backup(object):
 							self.__reporter.add_error('Err.: File validation(s) failed!')
 							self.__log.message(f"{FilesValidationFailed} file validation(s) failed.")
 
-					# delete files from camera
-					if SourceStorageName == 'camera' and self.move_files and FilesList:
-						progress	= lib_backup.progressmonitor(
-							setup			= self.__setup,
-							display			= self.__display,
-							log				= self.__log,
-							lan				= self.__lan,
-							FilesToProcess	= len(FilesList),
-							DisplayLine1	= self.__lan.l('box_backup_camera_removing_files_1'),
-							DisplayLine2	= self.__lan.l('box_backup_camera_removing_files_2')
-						)
+						# delete files from camera
+						if self.move_files and FilesList:
+							progress	= lib_backup.progressmonitor(
+								setup			= self.__setup,
+								display			= self.__display,
+								log				= self.__log,
+								lan				= self.__lan,
+								FilesToProcess	= len(FilesList),
+								DisplayLine1	= self.__lan.l('box_backup_camera_removing_files_1'),
+								DisplayLine2	= self.__lan.l('box_backup_camera_removing_files_2')
+							)
 
-						for FileRemove in FilesList:
-							cam_folder	= os.path.dirname(FileRemove)
-							cam_file	= os.path.basename(FileRemove)
+							for FileRemove in FilesList:
+								cam_folder	= os.path.dirname(FileRemove)
+								cam_file	= os.path.basename(FileRemove)
 
-							if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, cam_folder, cam_file)):
-								continue
+								if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, cam_folder, cam_file)):
+									continue
 
-							Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', f"/{cam_folder}", '--delete-file', cam_file]
-							try:
-								subprocess.run(Command)
-							except:
-								pass
+								Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', f"/{cam_folder}", '--delete-file', cam_file]
+								try:
+									subprocess.run(Command)
+								except:
+									pass
 
-							progress.progress()
+								progress.progress()
 
-						del progress
+							del progress
 
 			# finish threads
 			if not thread_thumbnails is None:
