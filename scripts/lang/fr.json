@@ -645,13 +645,7 @@
       "return_link": "Retour à Little Backup Box - NE CLIQUEZ PAS AVANT QUE LA MISE À JOUR SOIT TERMINÉE !",
       "header": "Little Backup Box Mise à jour",
       "development_header": "Little Backup Box Mise à jour - development-branch",
-      "development_warning": "NE PAS ARRÊTER ou recharger pendant la course !",
-      "libraw_header": "Mettre à jour la bibliothèque vers 0.21.2-2.1",
-      "libraw_warning": "Veuillez l'exécuter uniquement si les images d'aperçu ne peuvent pas être créées à partir d'images RAW avec la version standard.",
-      "mods": {
-        "header": "Modifications d'installation",
-        "description": "Ces modifications sont écrasées par les mises à jour et doivent éventuellement être réexécutées."
-      }
+      "development_warning": "NE PAS ARRÊTER ou recharger pendant la course !"
     },
     "no_cmd": "Aucune commande valide donnée.",
     "link_text_home": "Retour à Little Backup Box",

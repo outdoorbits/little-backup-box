@@ -1645,12 +1645,6 @@ CONFIGDATA;
 					<a href="/setup.php?check_update=true"><?php echo L::config_update_check_label; ?></a>
 				</p>
 
-				<h3><?php echo L::cmd_update_mods_header; ?></h3>
-					<p><?php echo L::cmd_update_mods_description; ?></p>
-					<h4><?php echo L::cmd_update_libraw_header; ?></h4>
-						<label><?php echo L::cmd_update_libraw_warning; ?></label>
-						<button onclick="window.location.href='/cmd.php?CMD=update_libraw';"><?php echo L::cmd_update_libraw_header ?></button>
-
 			</details>
 		</div>
 

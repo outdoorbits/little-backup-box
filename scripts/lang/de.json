@@ -645,13 +645,7 @@
       "return_link": "Zurück zu Little Backup Box - NICHT KLICKEN, BEVOR DAS UPDATE ABGESCHLOSSEN IST!",
       "header": "Little Backup Box Updater",
       "development_header": "Little Backup Box Updater - development-branch",
-      "development_warning": "Während des Vorgangs NICHT STOPPEN oder neu laden!",
-      "libraw_header": "Libraw aktualisieren auf 0.21.2-2.1",
-      "libraw_warning": "Bitte nur ausführen, falls aus RAW-Bildern mit der Standard-Version keine Vorschaubilder erzeugt werden können. ",
-      "mods": {
-        "header": "Modifikationen der Installation",
-        "description": "Diese Änderungen werden durch Updates überschrieben und müssen dann ggf. erneut ausgeführt werden werden."
-      }
+      "development_warning": "Während des Vorgangs NICHT STOPPEN oder neu laden!"
     },
     "no_cmd": "Kein gültiger Befehl angegeben.",
     "link_text_home": "Zurück zu Little Backup Box",

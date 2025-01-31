@@ -112,14 +112,6 @@ switch($CMD) {
 		$ALLOW_MAIL_RESULT	= False;
 		break;
 
-	case 'update_libraw':
-		$CMD_HEADER			= L::cmd_update_libraw_header;
-		$INFO_TEXT			= L::cmd_update_libraw_warning;
-		$CMD_DESCRIPTION	= "";
-		$PASSWORD_REQ		= True;
-		$ALLOW_MAIL_RESULT	= True;
-		break;
-
 	case 'fsck':
 		$CMD_HEADER			= L::cmd_fsck_header;
 		$INFO_TEXT			= L::cmd_fsck_warning;
@@ -302,12 +294,6 @@ function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {
 			case 'update_development':
 				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_start1 . "' ':" . L::box_cmd_update_start2 . "'";
 				$COMMAND_LINE	.= ";cd ~pi; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/development/install-little-backup-box.sh | sudo -u pi bash -s -- development";
-				break;
-
-			case 'update_libraw':
-				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_start1 . "' ':" . L::box_cmd_update_start2 . "'";
-				$COMMAND_LINE	.= ";sudo bash $WORKING_DIR/mods/update_libraw.sh";
-				$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_stop1 . "' ':" . L::box_cmd_update_stop2 . "'";
 				break;
 
 			case 'fsck':
