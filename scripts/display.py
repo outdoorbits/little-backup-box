@@ -48,7 +48,7 @@
 # time=2:	Display time in seconds (empty for standard config)
 # temp:		show previous screen again after this
 # hidden:	markertext to write into const_DISPLAY_CONTENT_OLD_FILE
-# kill:		terminate display daemen
+# kill:		terminate display daemon
 
 import os
 import RPi.GPIO

@@ -25,10 +25,10 @@ mkdir -p /tmp/apt
 
 cd /tmp/apt
 
-sudo wget http://ftp.debian.org/debian/pool/main/libr/libraw/libraw-bin_0.21.2-2.1_arm64.deb
-sudo wget http://ftp.debian.org/debian/pool/main/libr/libraw/libraw23t64_0.21.2-2.1_arm64.deb
+sudo wget http://ftp.debian.org/debian/pool/main/libr/libraw/libraw-bin_0.21.3-1+b1_arm64.deb
+sudo wget http://ftp.debian.org/debian/pool/main/libr/libraw/libraw23t64_0.21.3-1+b1_arm64.deb
 
-sudo DEBIAN_FRONTEND=noninteractive apt-get -o "Dpkg::Options::=--force-confold" -o "Dpkg::Options::=--force-confdef" install ./libraw23t64_0.21.2-2.1_arm64.deb ./libraw-bin_0.21.2-2.1_arm64.deb
+sudo DEBIAN_FRONTEND=noninteractive apt-get -o "Dpkg::Options::=--force-confold" -o "Dpkg::Options::=--force-confdef" install ./libraw23t64_0.21.3-1+b1_arm64.deb ./libraw-bin_0.21.3-1+b1_arm64.deb
 
 cd ../
 sudo rm -R ./apt
