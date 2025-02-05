@@ -53,6 +53,7 @@
 import os
 import RPi.GPIO
 import shutil
+import signal
 import subprocess
 import sys
 import threading
@@ -80,6 +81,12 @@ WORKING_DIR = os.path.dirname(__file__)
 class DISPLAY(object):
 
 	def __init__(self):
+		# Register the shutdown/reboot signals
+		signal.signal(signal.SIGTERM, self.terminate)  # Signal for shutdown
+		signal.signal(signal.SIGINT, self.terminate)   # Interrupt signal
+
+		self.loop_continue	= True
+
 		# cleanup pins
 		RPi.GPIO.cleanup()
 
@@ -441,12 +448,22 @@ class DISPLAY(object):
 						(left, top, right, bottom) = draw.textbbox((0,0),Content,font=self.FONT)
 						draw.line((x + 1, y + self.line_height + y_space, x + 1 + right - left, y + self.line_height + y_space), fill=fg_fill, width=1)
 
+	def terminate(self, signum=None, frame=None):
+		# stop menu
+		self.menu_controller.terminate()
+		time.sleep(1) # wait until menu is stopped
+
+		# exit function
+		self.loop_continue	= False
+
+		print('display.py process killed.')
+
 	def main(self):
 		display_time	= time.time()
 		Lines 			= []
 
 		# start endless loop to display content
-		while(True):
+		while(self.loop_continue):
 			import_old_file 		= True
 			temp_screen				= False
 			hidden_info				= ''
@@ -492,13 +509,8 @@ class DISPLAY(object):
 									# remove content file
 									os.remove(ContentFile)
 
-									# stop menu
-									self.menu_controller.terminate()
-									time.sleep(1) # wait until menu is stopped
-
-									# exit function
-									return('display.py process killed.')
-									sys.exit(0)
+									self.terminate()
+									return()
 
 								if SettingType == 'clear':
 									import_old_file	= False
