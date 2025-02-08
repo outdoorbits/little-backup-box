@@ -30,7 +30,10 @@ import lib_setup
 
 def get_IPs(OneLine=False):
 
-	IPs	= subprocess.check_output(['hostname','-I']).decode().strip().split(' ')
+	IPs	= subprocess.check_output(['nmcli', '-g', 'IP4.ADDRESS', 'device', 'show']).decode().strip().replace('|', '\n').replace(' ', '\n').split('\n')
+	IPs	= [IP for IP in IPs if IP.strip()]
+	IPs	= [IP.split('/')[0] for IP in IPs]
+	IPs	= [IP for IP in IPs if IP != '127.0.0.1']
 
 	if OneLine:
 		if len(IPs) < 1:
