@@ -122,7 +122,8 @@
         "usbs": "USB storages",
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs",
-        "rename": "Rename"
+        "rename": "Rename",
+        "ftp": "LBB's FTP server"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-source",
@@ -140,6 +141,9 @@
       "mounting": {
         "source": "Mount source",
         "target": "Mount target"
+      },
+      "ftp": {
+        "started": "FTP server started."
       }
     },
     "poweroff": {

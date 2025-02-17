@@ -35,6 +35,7 @@ import lib_common
 import lib_display
 import lib_language
 import lib_log
+import lib_proftpd
 import lib_setup
 
 ### debug
@@ -53,7 +54,7 @@ class storage(object):
 # exit codes:
 # 101: storage type = usb but no role defined
 
-	def __init__(self, StorageName, Role, WaitForDevice=True, DeviceIdentifierPresetThis=None, DeviceIdentifierPresetOther=None):
+	def __init__(self, StorageName, Role, WaitForDevice=True, DeviceIdentifierPresetThis=None, DeviceIdentifierPresetOther=None, FTP_DefaultRoot=''):
 		#StorageName: 					one of ['usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		#Role:							[lib_storage.role_Source, lib_storage.role_Target]
 		#DeviceIdentifierPresetThis:	['--uuid 123...', 'sda1', ...]
@@ -64,6 +65,7 @@ class storage(object):
 		self.WaitForDevice							= WaitForDevice
 		self.DeviceIdentifierPresetThis				= DeviceIdentifierPresetThis
 		self.DeviceIdentifierPresetOther			= DeviceIdentifierPresetOther
+		self.FTP_DefaultRoot						= FTP_DefaultRoot
 
 		self.__WORKING_DIR = os.path.dirname(__file__)
 
@@ -139,6 +141,8 @@ class storage(object):
 			mounted	= self.__mount_cloud(TimeOutActive=TimeOutActive!=False)
 		elif self.StorageType == 'cloud_rsync':
 			mounted	= self.__mount_cloud_rsync()
+		elif self.StorageType == 'ftp':
+			mounted	= self.__mount_ftp()
 
 		if mounted and (self.StorageType in ['usb', 'internal', 'nvme', 'cloud']):
 			self.__manage_lbb_device_ID()
@@ -376,6 +380,10 @@ class storage(object):
 		self.__display_storage_properties()
 
 		return(True)
+
+	def __mount_ftp(self):
+		lib_proftpd.proftpd().setDefaultRoot(self.FTP_DefaultRoot)
+		return()
 
 	def __get_CameraDeviceID(self, CameraModel, CameraSerial):
 		return(f"{CameraModel}_{CameraSerial}")
@@ -656,6 +664,10 @@ class storage(object):
 		if self.StorageType == 'internal':
 			return(os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR))
 
+		# ftp is always mounted
+		if self.StorageType == 'ftp':
+			return(True)
+
 		# camera: hold value of mount process
 		if self.StorageType == 'camera':
 			return(self.__camera_connected)
@@ -692,6 +704,10 @@ class storage(object):
 
 		Result = ''
 		if self.mounted():
+
+			if self.StorageType == 'ftp':
+				lib_proftpd.proftpd().setDefaultRoot()
+				return()
 
 			# define FS_Type
 			if self.mounted(self.__TechMountPoint):

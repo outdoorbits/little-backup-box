@@ -169,13 +169,13 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin vsftpd imagemagick curl libimobiledevice6 ifuse sshpass f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard openresolv hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-gpiozero python3-rpi-lgpio python3-qrcode python3-psutil smartmontools dos2unix
+		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin proftpd-basic proftpd-mod-crypto imagemagick curl libimobiledevice6 ifuse sshpass f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard openresolv hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-gpiozero python3-rpi-lgpio python3-qrcode python3-psutil smartmontools dos2unix
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "apt-get purge..."
 	sudo DEBIAN_FRONTEND=noninteractive \
-		apt-get purge minidlna -y
+		apt-get purge minidlna vsftpd -y
 fi
 
 # Remove obsolete packages
@@ -557,16 +557,13 @@ sudo a2ensite little-backup-box
 yes | sudo cp -f "${INSTALLER_DIR}/etc/samba_smb.conf" "/etc/samba/smb.conf"
 sudo chmod 0440 "/etc/samba/smb.conf"
 
-# Configure vsftpd
-yes | sudo cp -f "${INSTALLER_DIR}/etc/vsftpd.conf" "/etc/vsftpd.conf"
-sudo chmod 0440 "/etc/vsftpd.conf.conf"
+# Configure proftpd
+yes | sudo cp -f "${INSTALLER_DIR}/etc/proftpd.conf" "/etc/proftpd/proftpd.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/proftpd_path.conf" "/etc/proftpd/proftpd_path.conf"
+sudo chmod 644 "/etc/proftpd/proftpd.conf"
+sudo chmod 644 "/etc/proftpd/proftpd_path.conf"
 
-sudo useradd -s /bin/false -r ftpsecure
-
-sudo mkdir -p /var/run/vsftpd/empty
-sudo chown ftpsecure /var/run/vsftpd/empty
-
-sudo service vsftpd restart
+sudo service proftpd restart
 
 # setup graphical environment
 source "${INSTALLER_DIR}/setup-graphical-environment.sh"

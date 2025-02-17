@@ -69,6 +69,8 @@
 		$CloudServices_marked[]	= 'cloud:' . $CloudService;
 	}
 
+	$LocalNetworkServices	= array('ftp');
+
 	// rsync
 	$rsync_configurated	= ($config['conf_RSYNC_SERVER']=='' or $config['conf_RSYNC_PORT']=='' or $config['conf_RSYNC_USER']=='' or $config['conf_RSYNC_PASSWORD']=='' or $config['conf_RSYNC_SERVER_MODULE']=='') == false;
 	if ($rsync_configurated) {
@@ -79,7 +81,7 @@
 		'anyusb'	=> $LocalAutoServices,
 		'usb'		=> $LocalServices,
 		'camera'	=> $CameraServices,
-		'cloud'		=> $CloudServices_marked
+		'cloud'		=> array_merge($CloudServices_marked, $LocalNetworkServices)
 	);
 
 	$TargetServices			= array(
@@ -113,7 +115,8 @@
 				if (
 					((TargetService === ActiveSource.value) && (TargetService !== 'usb')) ||
 					((ActiveSource.value === 'anyusb') && (TargetService === 'cloud_rsync')) ||
-					((ActiveSource.value === 'camera') && (TargetService === 'cloud_rsync'))
+					((ActiveSource.value === 'camera') && (TargetService === 'cloud_rsync')) ||
+					((ActiveSource.value === 'ftp') && (TargetService === 'cloud_rsync'))
 				) {
 					document.getElementById("Target_" + TargetService).disabled = true;
 				} else {
@@ -173,6 +176,10 @@
 									elseif ($LabelName == 'cloud_rsync') {
 										$LabelName		= l::box_backup_mode_cloud_rsync;
 									}
+									elseif ($LabelName == 'ftp') {
+										$LabelName		= l::box_backup_mode_ftp;
+									}
+
 									print("<input type='radio' name='SourceDevice' value='$Storage' id='Source_$Storage' onchange='HideDisallowedButtons(this)' " . ($Storage == $OldSource ? 'checked' : '') . ">");
 									print("<label for='Source_$Storage'>$LabelName</label></br>");
 								}

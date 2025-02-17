@@ -516,7 +516,8 @@
         "usbs": "USB-Speicher",
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs",
-        "rename": "Umbenennen"
+        "rename": "Umbenennen",
+        "ftp": "LBB's FTP-Server"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-Quelle",
@@ -534,6 +535,9 @@
       "mounting": {
         "source": "Quelle einbinden",
         "target": "Ziel einbinden"
+      },
+      "ftp": {
+        "started": "FTP-Server gestartet."
       }
     },
     "cronip": {

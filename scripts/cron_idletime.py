@@ -31,9 +31,9 @@ class idletime(object):
 	def __init__(self):
 		#definitions
 		self.WORKING_DIR	= os.path.dirname(__file__)
-		self.ApacheAccessLogfile		= '/var/log/apache2/lbb-access.log'
-		self.ApacheRcloneAccessLogfile	= '/var/log/apache2/rclone-access.log'
-		self.vsftpdAccessLogfile				= '/var/log/vsftpd.log'
+		self.ApacheAccessLogfile				= '/var/log/apache2/lbb-access.log'
+		self.ApacheRcloneAccessLogfile			= '/var/log/apache2/rclone-access.log'
+		self.proftpdAccessLogfile				= '/var/log/proftpd/proftpd.log'
 
 		#objects
 		self.__setup	= lib_setup.setup()
@@ -74,7 +74,7 @@ class idletime(object):
 			return(f'idletime: logfile rclone gui idletime not reached ({ApacheRcloneLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 		# logfile vsftpd
-		vsftpdLogfileAgeSec			= CompareTime - os.stat(self.vsftpdAccessLogfile).st_mtime if os.path.isfile(self.vsftpdAccessLogfile) else IdleSecToPowerOff
+		vsftpdLogfileAgeSec			= CompareTime - os.stat(self.proftpdAccessLogfile).st_mtime if os.path.isfile(self.proftpdAccessLogfile) else IdleSecToPowerOff
 		if vsftpdLogfileAgeSec < IdleSecToPowerOff:
 			return(f'idletime: logfile vsftpd idletime not reached ({vsftpdLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
