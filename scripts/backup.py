@@ -232,7 +232,7 @@ class backup(object):
 	def get_syncCommand(self, TransferMode, SubPathAtSource, dry_run=False):
 
 		if TransferMode is None:
-			return()
+			return([])
 
 		syncCommand	= []
 
@@ -308,7 +308,7 @@ class backup(object):
 	def calculate_files_to_sync(self, singleSubPathsAtSource=None):
 
 		if self.TransferMode is None:
-			return()
+			return(0, True)
 
 		if singleSubPathsAtSource:
 			checkPathsList	= [singleSubPathsAtSource]

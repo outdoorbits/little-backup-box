@@ -73,10 +73,10 @@ class idletime(object):
 		if ApacheRcloneLogfileAgeSec < IdleSecToPowerOff:
 			return(f'idletime: logfile rclone gui idletime not reached ({ApacheRcloneLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
-		# logfile vsftpd
-		vsftpdLogfileAgeSec			= CompareTime - os.stat(self.proftpdAccessLogfile).st_mtime if os.path.isfile(self.proftpdAccessLogfile) else IdleSecToPowerOff
-		if vsftpdLogfileAgeSec < IdleSecToPowerOff:
-			return(f'idletime: logfile vsftpd idletime not reached ({vsftpdLogfileAgeSec}s < {IdleSecToPowerOff}s)')
+		# logfile proftpd
+		proftpdLogfileAgeSec			= CompareTime - os.stat(self.proftpdAccessLogfile).st_mtime if os.path.isfile(self.proftpdAccessLogfile) else IdleSecToPowerOff
+		if proftpdLogfileAgeSec < IdleSecToPowerOff:
+			return(f'idletime: logfile proftpd idletime not reached ({proftpdLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 		# check processes
 		for process in [

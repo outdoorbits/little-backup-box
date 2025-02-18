@@ -382,8 +382,7 @@ class storage(object):
 		return(True)
 
 	def __mount_ftp(self):
-		lib_proftpd.proftpd().setDefaultRoot(self.FTP_DefaultRoot)
-		return()
+		return(lib_proftpd.proftpd().setDefaultRoot(self.FTP_DefaultRoot))
 
 	def __get_CameraDeviceID(self, CameraModel, CameraSerial):
 		return(f"{CameraModel}_{CameraSerial}")

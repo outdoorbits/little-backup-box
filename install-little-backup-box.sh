@@ -558,10 +558,10 @@ yes | sudo cp -f "${INSTALLER_DIR}/etc/samba_smb.conf" "/etc/samba/smb.conf"
 sudo chmod 0440 "/etc/samba/smb.conf"
 
 # Configure proftpd
-yes | sudo cp -f "${INSTALLER_DIR}/etc/proftpd.conf" "/etc/proftpd/proftpd.conf"
-yes | sudo cp -f "${INSTALLER_DIR}/etc/proftpd_path.conf" "/etc/proftpd/proftpd_path.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/proftpd_proftpd.conf" "/etc/proftpd/proftpd.conf"
+yes | sudo cp -f "${INSTALLER_DIR}/etc/proftpd_lbb_DefaultRoot.conf" "/etc/proftpd/lbb_DefaultRoot.conf"
 sudo chmod 644 "/etc/proftpd/proftpd.conf"
-sudo chmod 644 "/etc/proftpd/proftpd_path.conf"
+sudo chmod 644 "/etc/proftpd/lbb_DefaultRoot.conf"
 
 sudo service proftpd restart
 

@@ -34,7 +34,7 @@ class proftpd(object):
 		self.__lan		= lib_language.language()
 
 		# config
-		self.configfile	= '/etc/proftpd/proftpd_lbb_DefaultRoot.conf'
+		self.configfile	= '/etc/proftpd/lbb_DefaultRoot.conf'
 
 		# values
 		self.FTP_DefaultRoot	= ''
