@@ -35,6 +35,7 @@ import lib_common
 import lib_display
 import lib_language
 import lib_log
+import lib_proftpd
 import lib_setup
 
 ### debug
@@ -53,17 +54,19 @@ class storage(object):
 # exit codes:
 # 101: storage type = usb but no role defined
 
-	def __init__(self, StorageName, Role, WaitForDevice=True, DeviceIdentifierPresetThis=None, DeviceIdentifierPresetOther=None):
+	def __init__(self, StorageName, Role, WaitForDevice=True, DeviceIdentifierPresetThis=None, DeviceIdentifierPresetOther=None, PartnerDevice=None):
 		#StorageName: 					one of ['usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		#Role:							[lib_storage.role_Source, lib_storage.role_Target]
 		#DeviceIdentifierPresetThis:	['--uuid 123...', 'sda1', ...]
 		#WaitForDevice:					True/False, retry until device is available
+		#PartnerDevice:					Instance of storage, refers to the other device in use. Optional: Needed if StorageType=='ftp' (as source).
 
 		self.StorageType, self.CloudServiceName		= extractCloudService(StorageName)
 		self.Role									= Role
 		self.WaitForDevice							= WaitForDevice
 		self.DeviceIdentifierPresetThis				= DeviceIdentifierPresetThis
 		self.DeviceIdentifierPresetOther			= DeviceIdentifierPresetOther
+		self.PartnerDevice							= PartnerDevice
 
 		self.__WORKING_DIR = os.path.dirname(__file__)
 
@@ -85,6 +88,7 @@ class storage(object):
 		self.__const_MOUNTPOINT_CLOUD_SOURCE					= self.__setup.get_val('const_MOUNTPOINT_CLOUD_SOURCE')
 
 		self.__const_INTERNAL_BACKUP_DIR						= self.__setup.get_val('const_INTERNAL_BACKUP_DIR')
+		self.__const_LBB_FTP_BACKUP_SUB_DIR						= self.__setup.get_val('const_LBB_FTP_BACKUP_SUB_DIR')
 
 		self.__conf_DISP_FRAME_TIME								= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.__conf_BACKUP_TARGET_SIZE_MIN						= self.__setup.get_val('conf_BACKUP_TARGET_SIZE_MIN')
@@ -139,6 +143,8 @@ class storage(object):
 			mounted	= self.__mount_cloud(TimeOutActive=TimeOutActive!=False)
 		elif self.StorageType == 'cloud_rsync':
 			mounted	= self.__mount_cloud_rsync()
+		elif self.StorageType == 'ftp':
+			mounted	= self.__mount_ftp()
 
 		if mounted and (self.StorageType in ['usb', 'internal', 'nvme', 'cloud']):
 			self.__manage_lbb_device_ID()
@@ -371,11 +377,19 @@ class storage(object):
 
 	def __mount_internal(self):
 
+		# create path
 		self.createPath()
 
 		self.__display_storage_properties()
 
 		return(True)
+
+	def __mount_ftp(self):
+
+		# create path
+		self.createPath()
+
+		return(lib_proftpd.proftpd().setDefaultRoot(self.MountPoint))
 
 	def __get_CameraDeviceID(self, CameraModel, CameraSerial):
 		return(f"{CameraModel}_{CameraSerial}")
@@ -557,7 +571,7 @@ class storage(object):
 		Command	= ["rm", "-R", f"{self.MountPoint}/*"]
 		subprocess.run(Command,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 
-	def createPath(self,MountPoint='',SubPathBelowMountPoint=''):
+	def createPath(self, MountPoint='', SubPathBelowMountPoint=''):
 		MountPoint = MountPoint if MountPoint else self.MountPoint
 
 		pathlib.Path(MountPoint, SubPathBelowMountPoint).mkdir(parents=True, exist_ok=True)
@@ -649,12 +663,16 @@ class storage(object):
 			else:
 				self.SubPathAtTarget		= f"{self.LbbDeviceID}"
 
-	def mounted(self,MountPoint=''):
+	def mounted(self, MountPoint=''):
 		# returns DeviceIdentifier, if device is mounted
 
 		# internal is always mounted
 		if self.StorageType == 'internal':
 			return(os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR))
+
+		# ftp is always mounted
+		if self.StorageType == 'ftp':
+			return(True)
 
 		# camera: hold value of mount process
 		if self.StorageType == 'camera':
@@ -692,6 +710,10 @@ class storage(object):
 
 		Result = ''
 		if self.mounted():
+
+			if self.StorageType == 'ftp':
+				lib_proftpd.proftpd().setDefaultRoot()
+				return()
 
 			# define FS_Type
 			if self.mounted(self.__TechMountPoint):
@@ -764,6 +786,11 @@ class storage(object):
 		elif self.StorageType == 'internal':
 			self.__TechMountPoint	= ''
 			self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR)
+		elif self.StorageType == 'ftp':
+			if not self.PartnerDevice is None:
+				self.MountPoint	= os.path.join(self.PartnerDevice.MountPoint, self.__const_LBB_FTP_BACKUP_SUB_DIR)
+			else:
+				self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR, self.__const_LBB_FTP_BACKUP_SUB_DIR)
 		else:
 			self.__TechMountPoint	= ''
 			self.MountPoint			= ''

@@ -51,7 +51,7 @@ class backup(object):
 
 	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecondaryBackupFollows=False):
 
-		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync'] or functions: ['thumbnails', 'database', 'exif', 'rename]
+		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync', 'ftp'] or functions: ['thumbnails', 'database', 'exif', 'rename]
 		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync']
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF:	one of ['setup', True, False]
 		# ForceSyncDatabase:									one of [True, False]
@@ -149,6 +149,8 @@ class backup(object):
 			except:
 				pass
 
+		self.TransferMode	= None if self.SourceStorageType == 'ftp' else self.TransferMode
+
 		# Unmount devices, clean before backup
 		lib_storage.umount(self.__setup,'all')
 
@@ -228,6 +230,10 @@ class backup(object):
 		self.finish()
 
 	def get_syncCommand(self, TransferMode, SubPathAtSource, dry_run=False):
+
+		if TransferMode is None:
+			return([])
+
 		syncCommand	= []
 
 		## excludes
@@ -300,6 +306,10 @@ class backup(object):
 		return(syncCommand)
 
 	def calculate_files_to_sync(self, singleSubPathsAtSource=None):
+
+		if self.TransferMode is None:
+			return(0, True)
+
 		if singleSubPathsAtSource:
 			checkPathsList	= [singleSubPathsAtSource]
 		else:
@@ -435,6 +445,10 @@ class backup(object):
 					SourceStorageName	= 'usb' if self.SourceName == 'anyusb' else self.SourceName
 					SourceStorageType	= SourceStorageName
 
+				if self.SourceName =='ftp':
+					SourceStorageName	= 'ftp'
+					SourceStorageType	= SourceStorageName
+
 				if todoSources:
 					Identifier	= todoSources[0]
 				elif Identifier_OLD:
@@ -448,17 +462,28 @@ class backup(object):
 			# Set the PWR LED to blink long to indicate waiting for the source device
 			lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
-			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync']:
-				self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier)
+			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync', 'ftp']:
+				self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
 
-				self.__display.message([f":{self.__lan.l('box_backup_mounting_target')}", f":{self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')} {self.TargetDevice.CloudServiceName}"])
+				self.__display.message([f":{self.__lan.l('box_backup_mounting_source')}", f":{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
 				self.SourceDevice.mount()
+
 
 			elif SourceStorageType in ['thumbnails', 'database', 'exif']:
 				pass
 			else:
 				self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
 				return()
+
+			# for ftp source, the job is done now.
+			if SourceStorageType	== 'ftp':
+				while self.TargetDevice.mounted():
+					time.sleep(5)
+
+				self.SourceDevice.umount()
+				self.__display.message([f":{self.__lan.l('box_backup_break1')}", f":{self.__lan.l('box_backup_break2')}"])
+
+				sys.exit()
 
 			# remember SourceStorageName for next run
 			if SourceStorageName=='camera':
@@ -1400,7 +1425,7 @@ if __name__ == "__main__":
 		epilog		= 'This script can ideally be configured and started via the Little Backup Box web UI.'
 	)
 
-	SourceChoices	= ['anyusb', 'usb', 'internal', 'nvme', 'camera'] + CloudServices + ['cloud_rsync', 'thumbnails', 'database', 'exif', 'rename']
+	SourceChoices	= ['anyusb', 'usb', 'internal', 'nvme', 'camera'] + CloudServices + ['cloud_rsync', 'ftp', 'thumbnails', 'database', 'exif', 'rename']
 	parser.add_argument(
 		'--SourceName',
 		'-s',
