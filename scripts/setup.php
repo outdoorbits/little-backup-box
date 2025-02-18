@@ -562,6 +562,7 @@ CONFIGDATA;
 							?>
 							<option value="internal usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal usb"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_usb_button; ?></option>
 							<option value="camera usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera usb"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_usb_button; ?></option>
+							<option value="ftp usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp usb"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_usb_button; ?></option>
 						</optgroup>
 
 <!-- to NVMe -->
@@ -574,6 +575,7 @@ CONFIGDATA;
 										<option value="usb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb nvme"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_nvme_button; ?></option>
 										<option value="internal nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal nvme"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_nvme_button; ?></option>
 										<option value="camera nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera nvme"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_nvme_button; ?></option>
+										<option value="ftp nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp nvme"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_nvme_button; ?></option>
 									</optgroup>
 								<?php
 							}
@@ -591,6 +593,7 @@ CONFIGDATA;
 								}
 							?>
 							<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_internal_button; ?></option>
+							<option value="ftp internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp internal"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_internal_button; ?></option>
 						</optgroup>
 
 <!-- to rsync server -->
@@ -626,6 +629,7 @@ CONFIGDATA;
 										?>
 										<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
 										<option value="camera cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . $CloudService; ?></option>
+										<option value="ftp cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp cloud:cloud:${CloudService}"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . $CloudService; ?></option>
 									</optgroup>
 								<?php
 							}
