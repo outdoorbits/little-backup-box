@@ -629,7 +629,7 @@ CONFIGDATA;
 										?>
 										<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
 										<option value="camera cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . $CloudService; ?></option>
-										<option value="ftp cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp cloud:cloud:${CloudService}"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . $CloudService; ?></option>
+										<option value="ftp cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp cloud:${CloudService}"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . $CloudService; ?></option>
 									</optgroup>
 								<?php
 							}
