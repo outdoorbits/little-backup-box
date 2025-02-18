@@ -311,6 +311,7 @@ class setup(object):
 					'const_MOUNT_LOCAL_TIMEOUT':					{'type': 'int'},
 					'const_MOUNT_CLOUD_TIMEOUT':					{'type': 'int'},
 					'const_INTERNAL_BACKUP_DIR':					{'type': 'str'},
+					'const_LBB_FTP_BACKUP_SUB_DIR':						{'type': 'str'},
 					'const_BACKGROUND_IMAGES_DIR':					{'type': 'str'},
 					'const_WEB_ROOT_LBB':							{'type': 'str'},
 					'const_LOGFILE':								{'type': 'str'},

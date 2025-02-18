@@ -12,6 +12,7 @@ const_MOUNTPOINT_CLOUD_SOURCE="cloud_source"
 const_MOUNT_LOCAL_TIMEOUT=30
 const_MOUNT_CLOUD_TIMEOUT=30
 const_INTERNAL_BACKUP_DIR="internal"
+const_LBB_FTP_BACKUP_SUB_DIR="LBB-FTP"
 const_BACKGROUND_IMAGES_DIR="backgroundimages"
 const_WEB_ROOT_LBB="/var/www/little-backup-box"
 const_LOGFILE="/var/www/little-backup-box/tmp/little-backup-box.log"
