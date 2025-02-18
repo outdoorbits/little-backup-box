@@ -59,7 +59,7 @@ class storage(object):
 		#Role:							[lib_storage.role_Source, lib_storage.role_Target]
 		#DeviceIdentifierPresetThis:	['--uuid 123...', 'sda1', ...]
 		#WaitForDevice:					True/False, retry until device is available
-		#PartnerDevice:					Instance of storage, refers to the other device in use
+		#PartnerDevice:					Instance of storage, refers to the other device in use. Optional: Needed if StorageType=='ftp' (as source).
 
 		self.StorageType, self.CloudServiceName		= extractCloudService(StorageName)
 		self.Role									= Role
@@ -387,9 +387,9 @@ class storage(object):
 	def __mount_ftp(self):
 
 		# create path
-		self.createPath(MountPoint=self.MountPoint, SubPathBelowMountPoint=self.__const_LBB_FTP_BACKUP_SUB_DIR)
+		self.createPath()
 
-		return(lib_proftpd.proftpd().setDefaultRoot(os.path.join(self.MountPoint, self.__const_LBB_FTP_BACKUP_SUB_DIR)))
+		return(lib_proftpd.proftpd().setDefaultRoot(self.MountPoint))
 
 	def __get_CameraDeviceID(self, CameraModel, CameraSerial):
 		return(f"{CameraModel}_{CameraSerial}")
@@ -788,9 +788,9 @@ class storage(object):
 			self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR)
 		elif self.StorageType == 'ftp':
 			if not self.PartnerDevice is None:
-				self.MountPoint	= self.PartnerDevice.MountPoint
+				self.MountPoint	= os.path.join(self.PartnerDevice.MountPoint, self.__const_LBB_FTP_BACKUP_SUB_DIR)
 			else:
-				self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR)
+				self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR, self.__const_LBB_FTP_BACKUP_SUB_DIR)
 		else:
 			self.__TechMountPoint	= ''
 			self.MountPoint			= ''
