@@ -214,7 +214,7 @@ class DISPLAY(object):
 		if self.conf_MENU_ENABLED:
 			# start displaymenu as iternal background process
 			try:
-				thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines, self.__setup, self.menu_controller))
+				thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines -1 if self.conf_DISP_SHOW_STATUSBAR else self.maxLines, self.__setup, self.menu_controller))
 				thread.start()
 			except:
 				pass
@@ -578,7 +578,6 @@ class DISPLAY(object):
 			if (
 				self.hardware_ready and
 				self.conf_DISP_SHOW_STATUSBAR and
-				len(Lines) >= self.const_DISPLAY_LINES_LIMIT and
 				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC
 				):
 				self.show(Lines, self.get_statusbar())

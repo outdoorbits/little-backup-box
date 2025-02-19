@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2025-02-18: The integrated FTP server can now be used as a backup source. This makes it possible to use the LBB as a bridge from a camera to (almost) any backup destination. Note: The user 'lbb' must be used for this.</li>
 	<li>2024-12-14: Add status bar to display</li>
 	<li>2021-11-16: To optimize automatic backups, thumbnails are now created during the secondary backup (to cloud storage) instead of between the primary (to local disk) and secondary backups. This approach maximizes computing and network efficiency, significantly reducing the overall backup time.</li>
 	<li>2021-10-19: Add option to rename media files after backup based on the files creation date and time. Example: &quot;Image.jpg&quot; from 2024/10/19 12:42:14 will be renamed to &quot;2024-10-19_12-42-14_-_Image.jpg&quot;</li>

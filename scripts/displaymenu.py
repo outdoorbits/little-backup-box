@@ -93,7 +93,6 @@ class menu(object):
 		## NVMe available?
 		if lib_storage.get_available_partitions(StorageType='nvme'):
 			local_services.append('nvme')
-			local_targets.append('nvme')
 
 		# backups
 		cloudservices	= []
@@ -106,6 +105,9 @@ class menu(object):
 		rclone_cloudservices	= subprocess.check_output('sudo rclone config show --config "{}" | grep "^\[.*\]$" | sed "s/^\[//" | sed "s/\]$//"'.format(self.RCLONE_CONFIG_FILE),shell=True).decode('UTF-8').strip().split('\n')
 		for i in range(len(rclone_cloudservices)):
 			cloudservices.append(f'cloud:{rclone_cloudservices[i]}')
+
+		## ftp
+		cloudservices.append('ftp')
 
 		# generate menues
 		BACKUP_SOURCES_MENU		= []
@@ -123,13 +125,13 @@ class menu(object):
 
 			for target in (local_services + cloudservices):
 
-				# check invalid combinations of Source and Target
+				# check for invalid combinations of Source and Target
 				if (source == target) and (source != 'usb'):
 					continue
 
-				if target in ['anyusb', 'camera']:
+				if target in ['anyusb', 'camera', 'ftp']:
 					continue
-				if target == 'cloud_rsync' and source in ['anyusb', 'camera']:
+				if target == 'cloud_rsync' and source in ['anyusb', 'camera', 'ftp']:
 					continue
 
 				# format service parameters
@@ -257,6 +259,9 @@ class menu(object):
 		self.reset(ShowMenu=False)
 
 		self.GPIO_init()
+
+		# debug commands
+		self.debug()
 
 		# iternal loop
 		while menu_controller.proceed:
@@ -512,16 +517,24 @@ class menu(object):
 		self.display()
 
 ##debug
+	def debug(self):
+		return()
+
+		self.move_right()#debug
+		self.move_right()#debug
+		self.move_up()#debug
+
 if __name__ == "__main__":
-	setup=lib_setup.setup()
-
-	menu_controller	= MENU_CONTROLLER()
-
-	menuobj	= menu(DISPLAY_LINES=10, setup=setup, menu_controller=menu_controller)
-
-	menuobj.move_right()#debug
-	menuobj.move_right()#debug
-	menuobj.move_right()#debug
+	# setup=lib_setup.setup()
+ #
+	# menu_controller	= MENU_CONTROLLER()
+ #
+	# menuobj	= menu(DISPLAY_LINES=10, setup=setup, menu_controller=menu_controller)
+ #
+	# menuobj.move_right()#debug
+	# menuobj.move_right()#debug
+	# menuobj.move_right()#debug
+	# menuobj.move_up()#debug
 	# menuobj.move_right()#debug
 	# menuobj.move_right()#debug
  #
@@ -532,10 +545,12 @@ if __name__ == "__main__":
 	# time.sleep (0.5)
 	# menuobj.move_right()#debug
  #
-	# menuobj.move_down(0)#debug
-	# menuobj.move_down(0)#debug
-	# menuobj.move_right(0)#debug
-	# menuobj.move_down(0)#debug
-	#menuobj.move_right(0)#debug
-	#menuobj.move_right(0)#debug
+	# menuobj.move_down()#debug
+	# menuobj.move_down()#debug
+	# menuobj.move_right()#debug
+	# menuobj.move_down()#debug
+	#menuobj.move_right()#debug
+	#menuobj.move_right()#debug
 	# time.sleep(20)
+
+	pass

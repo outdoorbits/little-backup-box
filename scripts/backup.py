@@ -211,21 +211,22 @@ class backup(object):
 		if self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif', 'rename']):
 			self.backup()
 
-		# rename
-		if self.DoRenameFiles:
-			self.RenameFiles()
+		if not self.TransferMode is None:
+			# rename
+			if self.DoRenameFiles:
+				self.RenameFiles()
 
-		# sync database
-		if self.ForceSyncDatabase or self.__TIMSCopied:
-			self.syncDatabase()
+			# sync database
+			if self.ForceSyncDatabase or self.__TIMSCopied:
+				self.syncDatabase()
 
-		# update exif
-		if self.TargetDevice and self.DoUpdateEXIF:
-			self.updateEXIF()
+			# update exif
+			if self.TargetDevice and self.DoUpdateEXIF:
+				self.updateEXIF()
 
-		# generate thumbnails
-		if self.TargetDevice and self.DoGenerateThumbnails_primary:
-				self.generateThumbnails(Device=self.TargetDevice)
+			# generate thumbnails
+			if self.TargetDevice and self.DoGenerateThumbnails_primary:
+					self.generateThumbnails(Device=self.TargetDevice)
 
 		self.finish()
 
@@ -483,7 +484,7 @@ class backup(object):
 				self.SourceDevice.umount()
 				self.__display.message([f":{self.__lan.l('box_backup_break1')}", f":{self.__lan.l('box_backup_break2')}"])
 
-				sys.exit()
+				return()
 
 			# remember SourceStorageName for next run
 			if SourceStorageName=='camera':

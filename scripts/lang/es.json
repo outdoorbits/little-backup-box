@@ -614,7 +614,8 @@
           "internal": "Int.",
           "nvme": "NVMe SSD",
           "usb": "USB",
-          "anyusb": "todo USB"
+          "anyusb": "todo USB",
+          "ftp": "Servidor FTP de LBB"
         },
         "stop": "DETENER copia"
       }

@@ -517,7 +517,7 @@
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs",
         "rename": "Umbenennen",
-        "ftp": "LBB's FTP-Server"
+        "ftp": "LBBs FTP-Server"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-Quelle",
@@ -614,7 +614,8 @@
           "internal": "Int.",
           "nvme": "NVMe SSD",
           "usb": "USB",
-          "anyusb": "alle USB"
+          "anyusb": "alle USB",
+          "ftp": "LBBs FTP-Server"
         },
         "stop": "STOP Backup"
       }
