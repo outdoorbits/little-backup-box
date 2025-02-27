@@ -370,7 +370,14 @@
       "virtual_keyboard_enable_label": "Virtuelle Tastatur aktivieren",
       "description": "Einstellungen, welche einen Bildschirm mit grafischer Benutzeroberfläche (Desktop) betreffen."
     },
-    "alert_password_characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&sbquo;), doppelte Anführungszeichen (&quot;), Leerzeichen oder Backslashs (&bsol;) enthalten."
+    "alert_password_characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&sbquo;), doppelte Anführungszeichen (&quot;), Leerzeichen oder Backslashs (&bsol;) enthalten.",
+    "exit": {
+      "section": "LBB beenden",
+      "desc": "Little-Backup-Box beenden und Rechner bis zum Neustart für andere Aufgaben freigeben. ",
+      "idletime": "Dadurch wird auch ein evtl. konfiguriertes Herunterfahren nach einer Leerlaufzeit pausiert.",
+      "stop_backup": "Stoppen eines möglicherweise laufenden Backups",
+      "submit": "LBB beenden"
+    }
   },
   "tools": {
     "tools": "Werkzeug",

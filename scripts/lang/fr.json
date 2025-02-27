@@ -370,7 +370,14 @@
       "virtual_keyboard_enable_label": "Activer le clavier virtuel",
       "description": "Paramètres qui affectent un écran avec une interface utilisateur graphique (bureau)."
     },
-    "alert_password_characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&sbquo;), de guillemets doubles (« &quot;), d'espaces ou de barres obliques inverses (&bsol;)."
+    "alert_password_characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&sbquo;), de guillemets doubles (« &quot;), d'espaces ou de barres obliques inverses (&bsol;).",
+    "exit": {
+      "section": "Terminer LBB",
+      "desc": "Fermez Little Backup Box et libérez l'ordinateur pour d'autres tâches jusqu'à ce qu'il redémarre.",
+      "idletime": "Cela suspendra également tout arrêt configuré après une période d'inactivité.",
+      "stop_backup": "Arrêtez une sauvegarde qui est peut-être en cours d’exécution.",
+      "submit": "LBB a été"
+    }
   },
   "tools": {
     "tools": "Outils",

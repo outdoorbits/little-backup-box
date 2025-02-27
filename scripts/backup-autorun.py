@@ -104,6 +104,13 @@ class backup_autorun(object):
 		except:
 			pass
 
+		# remove idletime lockfile
+		const_IDLETIME_LOCKFILE	= self.__setup.get_val('const_IDLETIME_LOCKFILE')
+		try:
+			os.remove(const_IDLETIME_LOCKFILE)
+		except:
+			pass
+
 		# dos2unix
 		FilesDos2Unix	= [
 			os.path.join(self.__const_WEB_ROOT_LBB, 'config.cfg'),

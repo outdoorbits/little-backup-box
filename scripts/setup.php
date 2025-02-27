@@ -50,8 +50,25 @@
 	}
 	include("sub-i18n-loader.php");
 
+	// exit lbb
+	if (isset($_POST['exit_lbb'])) {
+		// pause idletime
+		try {
+			$IDLETIME_LOCKFILE = fopen($constants['const_IDLETIME_LOCKFILE'], 'w');
+			fclose($IDLETIME_LOCKFILE);
+		} catch (Exception $e) {echo ("Can't write ".$constants['const_IDLETIME_LOCKFILE']);}
+
+
+		// stop backup
+		if (isset($_POST['exit_lbb_stop_backup'])) {
+			shell_exec("sudo $WORKING_DIR/stop_backup.sh");
+		}
+
+		// stop firefox
+		shell_exec("sudo pkill -f firefox");
+	}
 	// write new config
-	if (isset($_POST['save'])) {
+	elseif (isset($_POST['save'])) {
 		// write new config to config.cfg
 		write_config();
 
@@ -1657,6 +1674,28 @@ CONFIGDATA;
 
 			</details>
 		</div>
+
+		<?php
+			// if (file_exists('/usr/bin/startx')) {
+				if (file_exists('/usr/bin/curl')) {
+				?>
+				<div class="card" style="margin-top: 2em;">
+					<details>
+						<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_exit_section; ?></summary>
+						<p><?php echo L::config_exit_desc; ?></p>
+						<p><?php echo L::config_exit_idletime; ?></p>
+
+						<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+							<input type="checkbox" name="exit_lbb_stop_backup">
+							<label for="exit_lbb_stop_backup"><?php echo L::config_exit_stop_backup; ?></label><br>
+							<button type="submit" name="exit_lbb" value="1"><?php echo L::config_exit_submit; ?></button>
+						</form>
+
+					</details>
+				</div>
+				<?php
+			}
+		?>
 
 		<?php include "sub-footer.php"; ?>
 		<?php echo virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]); ?>

@@ -370,7 +370,14 @@
       "virtual_keyboard_enable_label": "Habilitar teclado virtual",
       "description": "Configuraciones que afectan a una pantalla con interfaz gráfica de usuario (escritorio)."
     },
-    "alert_password_characters_not_allowed": "La contraseña no puede contener comillas (&sbquo;), comillas dobles (&quot;), espacios ni barras invertidas (&bsol;)."
+    "alert_password_characters_not_allowed": "La contraseña no puede contener comillas (&sbquo;), comillas dobles (&quot;), espacios ni barras invertidas (&bsol;).",
+    "exit": {
+      "section": "Terminar LBB",
+      "desc": "Cierre Little Backup Box y libere la computadora para otras tareas hasta que se reinicie.",
+      "idletime": "Esto también pausará cualquier apagado configurado después de un período de inactividad.",
+      "stop_backup": "Detener una copia de seguridad que pueda estar ejecutándose.",
+      "submit": "LBB estado"
+    }
   },
   "tools": {
     "tools": "Herramientas",

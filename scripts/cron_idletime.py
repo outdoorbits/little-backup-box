@@ -44,6 +44,7 @@ class idletime(object):
 
 		self.const_LOGFILE				= self.__setup.get_val('const_LOGFILE')
 		self.const_CMD_RUNNER_LOCKFILE	= self.__setup.get_val('const_CMD_RUNNER_LOCKFILE')
+		self.const_IDLETIME_LOCKFILE	= self.__setup.get_val('const_IDLETIME_LOCKFILE')
 
 	def check(self):
 		if self.conf_POWER_OFF_IDLE_TIME == 0:
@@ -52,6 +53,10 @@ class idletime(object):
 		IdleSecToPowerOff	= self.conf_POWER_OFF_IDLE_TIME * 60
 
 		CompareTime	= time.time()
+
+		# lockfile idletime
+		if os.path.isfile(self.const_IDLETIME_LOCKFILE):
+			return(f'idletime: Blocked by lockfile {self.const_IDLETIME_LOCKFILE}')
 
 		# uptime
 		UpTime	= lib_system.get_uptime_sec()
