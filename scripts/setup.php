@@ -1676,8 +1676,7 @@ CONFIGDATA;
 		</div>
 
 		<?php
-			// if (file_exists('/usr/bin/startx')) {
-				if (file_exists('/usr/bin/curl')) {
+			if (file_exists('/usr/bin/startx')) {
 				?>
 				<div class="card" style="margin-top: 2em;">
 					<details>
