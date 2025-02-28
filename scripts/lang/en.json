@@ -611,7 +611,14 @@
       "virtual_keyboard_enable_label": "Enable virtual keyboard",
       "description": "Settings that affect a screen with a graphical user interface (desktop)."
     },
-    "alert_password_characters_not_allowed": "The password must not contain quotation marks (&sbquo;), double quotation marks (&quot;), spaces or backslashes (&bsol;)."
+    "alert_password_characters_not_allowed": "The password must not contain quotation marks (&sbquo;), double quotation marks (&quot;), spaces or backslashes (&bsol;).",
+    "exit": {
+      "section": "Terminate LBB",
+      "desc": "Close Little Backup Box and free up the computer for other tasks until it restarts.",
+      "idletime": "This also pauses any configured shutdown after an idle time.",
+      "stop_backup": "Stop a backup that may be running.",
+      "submit": "Stop LBB"
+    }
   },
   "tools": {
     "tools": "Tools",

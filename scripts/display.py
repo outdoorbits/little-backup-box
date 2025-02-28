@@ -580,6 +580,10 @@ class DISPLAY(object):
 				self.conf_DISP_SHOW_STATUSBAR and
 				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC
 				):
+				# fill line count to const_DISPLAY_LINES_LIMIT
+				while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
+					Lines.append("s=b:")
+
 				self.show(Lines, self.get_statusbar())
 				display_time	= time.time()
 
