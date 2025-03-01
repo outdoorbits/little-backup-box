@@ -289,6 +289,10 @@ class DISPLAY(object):
 
 	def show(self, Lines, statusbar=None):
 
+		# fill line count to const_DISPLAY_LINES_LIMIT
+		while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
+			Lines.append("s=b:")
+
 		if ":IMAGE=" in Lines[0]:
 			# PRINT IMAGE FROM FILE
 			# Only the first line can be interpreted as image. In This case no further text will be printed.
@@ -549,10 +553,6 @@ class DISPLAY(object):
 											Line = "s=b:{}".format(Line)
 											Lines.append(Line)
 
-				# fill line count to const_DISPLAY_LINES_LIMIT
-				while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
-					Lines.append("s=b:")
-
 				# remove content file
 				os.remove(ContentFile)
 
@@ -565,10 +565,11 @@ class DISPLAY(object):
 							newCF.write(f"\nset:hidden={hidden_info}")
 
 				# move lines to old lines file
-				if hidden_info:
-					Lines.append(f"set:hidden={hidden_info}")
 				with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
 					oCF.write("\n".join(Lines))
+
+					if hidden_info:
+						LoCF.write(f"\nset:hidden={hidden_info}")
 
 				if self.hardware_ready:
 					self.show(Lines, self.get_statusbar())
@@ -580,10 +581,6 @@ class DISPLAY(object):
 				self.conf_DISP_SHOW_STATUSBAR and
 				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC
 				):
-				# fill line count to const_DISPLAY_LINES_LIMIT
-				while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
-					Lines.append("s=b:")
-
 				self.show(Lines, self.get_statusbar())
 				display_time	= time.time()
 

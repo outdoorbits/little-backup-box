@@ -59,7 +59,6 @@ class proftpd(object):
 		try:
 			with open(self.configfile,'w') as f:
 				f.write(f'DefaultRoot {self.FTP_DefaultRoot} lbb\n')
-				print(f"setDefaultRoot: {self.FTP_DefaultRoot}")
 		except:
 			print("Error writing proftpd config file.")
 			return()
