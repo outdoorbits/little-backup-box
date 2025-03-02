@@ -90,7 +90,6 @@ class proftpd(object):
 			if job == 'restart':
 				# proftpd running?
 				command	= ['sudo', 'service', 'proftpd', 'status']
-
 				try:
 					proftpd_active	= 'Active: active (running)' in subprocess.check_output(command).decode()
 				except:

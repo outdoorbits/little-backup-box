@@ -30,6 +30,7 @@ import lib_cron_ip
 import lib_display
 import lib_git
 import lib_language
+import lib_proftpd
 import lib_setup
 import lib_storage
 
@@ -138,6 +139,9 @@ class backup_autorun(object):
 
 		# remove mountpoints
 		lib_storage.remove_all_mountpoints(self.__setup)
+
+		# reset proftpd
+		lib_proftpd.proftpd().setDefaultRoot()
 
 	def __display_hello(self):
 		if self.__setup.get_val('conf_DISP_COLOR_MODEL') == '1':
