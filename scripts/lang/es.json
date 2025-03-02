@@ -544,7 +544,8 @@
         "target": "Integrar objetivo"
       },
       "ftp": {
-        "started": "Servidor FTP iniciado."
+        "started": "Servidor FTP iniciado.",
+        "starting": "Iniciando servidor FTP..."
       }
     },
     "cronip": {

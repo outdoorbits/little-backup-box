@@ -544,7 +544,8 @@
         "target": "Ziel einbinden"
       },
       "ftp": {
-        "started": "FTP-Server gestartet."
+        "started": "FTP-Server gestartet.",
+        "starting": "Starte FTP-Server..."
       }
     },
     "cronip": {

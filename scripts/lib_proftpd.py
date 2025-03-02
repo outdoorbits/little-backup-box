@@ -55,23 +55,56 @@ class proftpd(object):
 		self.FTP_DefaultRoot	= self.FTP_DefaultRoot.strip()
 		self.FTP_DefaultRoot	= self.__setup.get_val('const_MEDIA_DIR') if self.FTP_DefaultRoot == '' else self.FTP_DefaultRoot
 
-		# write config file
+		config_new	= f'DefaultRoot {self.FTP_DefaultRoot} lbb\n'
+
+		# read old config file
 		try:
-			with open(self.configfile,'w') as f:
-				f.write(f'DefaultRoot {self.FTP_DefaultRoot} lbb\n')
+			with open(self.configfile, 'r') as f:
+				config_old	= f.read().strip()
 		except:
-			print("Error writing proftpd config file.")
-			return()
+			config_old	= ''
+
+		config_changed	= config_new.strip() != config_old
+
+		# write config file
+		if config_changed:
+			try:
+				with open(self.configfile,'w') as f:
+					f.write(config_new)
+			except:
+				print("Error writing proftpd config file.")
+				return()
 
 		# restart server
-		self.ftpservice('restart')
+		self.ftpservice('reload', config_changed)
 
 		return(True)
 
-	def ftpservice(self, job):
+	def ftpservice(self, job, config_changed=True):
 		if job in ['start', 'stop', 'reload', 'restart']:
+
+			if job == 'reload':
+ 				# bug in proftpd? reload is ignored
+				job	= 'restart' # workaround but slow
+
+			if job == 'restart':
+				# proftpd running?
+				command	= ['sudo', 'service', 'proftpd', 'status']
+
+				try:
+					proftpd_active	= 'Active: active (running)' in subprocess.check_output(command).decode()
+				except:
+					proftpd_active	= False
+
+				if proftpd_active and not config_changed:
+					return()
+
+				job	= job if proftpd_active else 'start'
+
+			self.__display.message([f":{self.__lan.l('box_backup_ftp_starting')}", self.FTP_DefaultRoot])
+
 			command	= ['sudo', 'service', 'proftpd', job]
-			print(' '.join(command))
+			print(f'proftpd {job}')
 			subprocess.run(command)
 
 			self.__display.message([f":{self.__lan.l('box_backup_ftp_started')}", self.FTP_DefaultRoot])
@@ -109,7 +142,7 @@ if __name__ == "__main__":
 		required	= False,
 		type		= str,
 		default		= '',
-		help=f"Job for service prftpd: One of {jobs}"
+		help=f"Job for service proftpd: One of {jobs}"
 	)
 
 	args	= vars(parser.parse_args())

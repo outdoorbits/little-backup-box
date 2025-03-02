@@ -544,7 +544,8 @@
         "target": "Monter la cible"
       },
       "ftp": {
-        "started": "Le serveur FTP a démarré."
+        "started": "Le serveur FTP a démarré.",
+        "starting": "Démarrage du serveur FTP..."
       }
     },
     "cronip": {
