@@ -569,7 +569,7 @@ class DISPLAY(object):
 					oCF.write("\n".join(Lines))
 
 					if hidden_info:
-						LoCF.write(f"\nset:hidden={hidden_info}")
+						oCF.write(f"\nset:hidden={hidden_info}")
 
 				if self.hardware_ready:
 					self.show(Lines, self.get_statusbar())
