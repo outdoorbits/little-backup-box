@@ -296,12 +296,14 @@ function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {
 		switch($CMD) {
 			case 'update':
 				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_start1 . "' ':" . L::box_cmd_update_start2 . "'";
-				$COMMAND_LINE	.= ";cd ~pi; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh | sudo -u pi bash";
+				$COMMAND_LINE	.= ";sudo -u pi curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh -o ~pi/install-little-backup-box.sh";
+				$COMMAND_LINE	.= ";sudo -u pi bash ~pi/install-little-backup-box.sh main";
 				break;
 
 			case 'update_development':
 				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_update_start1 . "' ':" . L::box_cmd_update_start2 . "'";
-				$COMMAND_LINE	.= ";cd ~pi; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/development/install-little-backup-box.sh | sudo -u pi bash -s -- development";
+				$COMMAND_LINE	.= ";sudo -u pi curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/development/install-little-backup-box.sh -o ~pi/install-little-backup-box.sh";
+				$COMMAND_LINE	.= ";sudo -u pi bash ~pi/install-little-backup-box.sh development";
 				break;
 
 			case 'update_libraw':
