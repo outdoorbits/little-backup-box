@@ -182,7 +182,7 @@ class storage(object):
 
 		while True:
 			# force to re-scan usb-devices
-			Command	= ['udevadm','trigger']
+			Command	= ['udevadm', 'trigger']
 			subprocess.run(Command)
 
 			# get USB_DeviceList
@@ -222,7 +222,7 @@ class storage(object):
 			if TimeOutActive and EndTime > time.time():
 				break
 
-			time.sleep(0.5)
+			time.sleep(1)
 
 		# Mount USB device
 		MOUNTED	= None

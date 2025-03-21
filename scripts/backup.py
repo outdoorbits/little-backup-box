@@ -933,6 +933,8 @@ class backup(object):
 
 		db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
 
+		FileCreateDateNull	='0000-00-00_00-00-00'
+
 		for FileToRename in FilesToRename:
 			EXIF_Lines	= FileToRename.strip().split('\n')
 
@@ -945,7 +947,7 @@ class backup(object):
 				continue
 
 			Rating			= ''
-			FileCreateDate	= '0000-00-00_00-00-00'
+			FileCreateDate	= FileCreateDateNull
 
 			if len(EXIF_Lines) > 1:
 				for EXIF_Line in EXIF_Lines[1:]:
@@ -959,7 +961,7 @@ class backup(object):
 						Rating	= Val
 
 					if f'-{Var}' in DateTags:
-						if Val > FileCreateDate:
+						if (Val > FileCreateDate) or (FileCreateDate == FileCreateDateNull):
 							FileCreateDate	= Val
 
 			FilePath	= os.path.dirname(FileNameOld)
