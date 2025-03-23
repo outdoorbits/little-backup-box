@@ -40,8 +40,8 @@ import lib_setup
 
 ### debug
 
-#import lib_debug
-### /debug
+# import lib_debug
+# xx	= lib_debug.debug()
 
 role_Source	= 'source'
 role_Target	= 'target'
@@ -686,7 +686,7 @@ class storage(object):
 		else:
 			return(False)
 
-		# prepare mount check
+		# prepare for mount check
 		if (self.StorageType == 'cloud') and self.CloudServiceName:
 			MountPointSearch	= f" {MountPoint} "
 			Command	= f"mount -l | grep '{MountPointSearch}' | grep '{self.CloudServiceName}'"
@@ -700,6 +700,24 @@ class storage(object):
 			subprocess.check_output(Command, shell=True) # raises an error if grep has no match
 		except:
 			MOUNTED	= False
+
+		# usb devices only: if device not mounted, clean mountpoint if still in use
+		if not MOUNTED:
+			MountPointSearchs	= [MountPoint]
+			if self.__TechMountPoint:
+				MountPointSearchs.append(self.__TechMountPoint)
+
+			for MountPointSearch in MountPointSearchs:
+				Command	= f"mount -l | grep ' on {MountPointSearch} '"
+
+				try:
+					subprocess.check_output(Command, shell=True)
+
+					# if grep had no match, an error raised
+					Command	= ['umount', MountPointSearch]
+					subprocess.run(Command)
+				except:
+					pass
 
 		self.__log.message(f"MOUNTED?: '{MountPoint}' = {MOUNTED}",2)
 		return(MOUNTED)

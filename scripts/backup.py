@@ -563,7 +563,7 @@ class backup(object):
 							if not self.SourceDevice.mount(TimeOutActive=True):
 								self.__reporter.add_error('Err.: Remounting source device failed!')
 
-					# start generate thumbnails as Thread if shiftGenerateThumbnails
+					# start generate thumbnails as Thread if shiftGenerateThumbnails (generate thumbnails during secondary backup)
 					if self.DoGenerateThumbnails_secondary and not self.SecondaryBackupFollows and self.SourceDevice and thread_thumbnails is None:
 						self.__break_generateThumbnails	= False
 						thread_thumbnails	= threading.Thread(target=self.generateThumbnails, kwargs={'Device': self.SourceDevice})

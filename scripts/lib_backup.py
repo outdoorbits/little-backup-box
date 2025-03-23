@@ -92,7 +92,7 @@ class progressmonitor(object):
 
 				elif (
 					(not ":" in SyncOutputLine) and
-					(SyncOutputLine[-1] != '/') and
+					(SyncOutputLine[-1] not in ['/', ')']) and
 					(SyncOutputLine != 'Ignoring "log file" setting.') and
 					(SyncOutputLine[0:5] != 'sent ') and
 					(SyncOutputLine[0:13] != 'total size is')
@@ -102,18 +102,12 @@ class progressmonitor(object):
 						return()
 
 					self.CountProgress		+= 1
+					self.CountJustCopied	+= 1
 
 					self.FilesList	+= [SyncOutputLine]
 
 					if not self.TIMSCopied:
 						self.TIMSCopied	= 'tims/' in SyncOutputLine
-
-				elif 'Number of regular files transferred:' in SyncOutputLine:
-					try:
-						self.CountJustCopied	= int(SyncOutputLine.split(':')[1].strip())
-					except:
-						pass
-
 
 		elif TransferMode == 'rclone':
 			if len(SyncOutputLine) > 0:
