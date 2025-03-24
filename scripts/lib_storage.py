@@ -180,10 +180,16 @@ class storage(object):
 		DeviceChosenIdentifier		= ''
 		EndTime	= time.time()+self.__setup.get_val('const_MOUNT_LOCAL_TIMEOUT')
 
+		udevadm_loop	= 0
 		while True:
 			# force to re-scan usb-devices
-			Command	= ['udevadm', 'trigger']
-			subprocess.run(Command)
+			if udevadm_loop > 1:
+				Command	= ['udevadm', 'trigger']
+				subprocess.run(Command)
+
+				udevadm_loop	= 0
+			else:
+				udevadm_loop	+= 1
 
 			# get USB_DeviceList
 			USB_DeviceList = get_available_partitions(StorageType=self.StorageType, TargetDeviceIdentifier=self.DeviceIdentifierPresetOther, DeviceIdentifierPreset=self.DeviceIdentifierPresetThis, MinSizeBytes=self.__conf_BACKUP_TARGET_SIZE_MIN if self.Role==role_Target else 0, skipMounted=True, ignore_fs=False, returnDict=True)
