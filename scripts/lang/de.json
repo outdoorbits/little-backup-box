@@ -185,6 +185,11 @@
         "header": "Dateien umbenennen",
         "label": "Aus allen Medien-Dateien auf lokalen Datenträgern wird versucht, das Erstell-Datum auszulesen. Ist dies möglich, wird die Datei nach folgendem Muster umbenannt:<br>\nAus &quot;Image0123.jpg&quot; wird z.B. &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
         "warning": "Achtung! Die Dateien sollten danach von der Quelle gelöscht werden. Ansonsten werden sie beim nächsten Backup erneut übertragen, umbenannt und ersetzen so die Version aus dem vorhergehenden Backup."
+      },
+      "checksum": {
+        "header": "Checksumme prüfen?",
+        "label": "Dateiprüfsummen während der Übertragung prüfen. (Gilt nur für Übertragungen zwischen Speichern, nicht von einer Kamera.)",
+        "warning": "Vorsicht, dadurch kann die Übertragung erheblich verlangsamt und die CPU-Last deutllich erhöht werden."
       }
     },
     "imageviewer": {
@@ -457,7 +462,8 @@
         "files_validation_failed": "Dateien konnten bei der Validierung auf dem Zieldatenträger nicht gefunden werden.",
         "empty_files": "Die folgenden Dateien wurden leer empfangen und vom Zielspeicher gelöscht. Bitte prüfen Sie, ob sie auch auf der Quelle leer sind. Falls ja, löschen Sie sie bitte dort, um zukünftige Fehlermeldungen zu vermeiden.<br>Leere Dateien:",
         "remount_device_target_failed": "Wiedereinbinden des Ziels fehlgeschlagen!",
-        "remount_device_source_failed": "Wiedereinbinden der Quelle fehlgeschlagen!"
+        "remount_device_source_failed": "Wiedereinbinden der Quelle fehlgeschlagen!",
+        "checksum_asked": "Checksummen wurden angefordert."
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",

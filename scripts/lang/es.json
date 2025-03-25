@@ -185,6 +185,11 @@
         "header": "Cambiar el nombre de los archivos",
         "label": "Se intenta leer la fecha de creación de todos los archivos multimedia en los medios de almacenamiento locales. Si esto es posible, se cambiará el nombre del archivo según el siguiente patrón:<br>\nDe &quot;Imagen0123.jpg&quot; será, por ejemplo, &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
         "warning": "¡Peligro! Luego, los archivos deben eliminarse de la fuente. De lo contrario, se transferirán nuevamente durante la siguiente copia de seguridad, se les cambiará el nombre y así reemplazarán la versión de la copia de seguridad anterior."
+      },
+      "checksum": {
+        "header": "¿Verificar suma de comprobación?",
+        "label": "Comprobar las sumas de comprobación de archivos durante la transferencia. (Solo se aplica a transferencias entre almacenamientos, no desde una cámara).",
+        "warning": "Tenga cuidado, esto puede ralentizar considerablemente la transferencia y aumentar significativamente la carga de la CPU."
       }
     },
     "imageviewer": {
@@ -454,7 +459,8 @@
         "files_validation_failed": "No se pudieron encontrar archivos en el disco de destino durante la validación.",
         "empty_files": "Los siguientes archivos se recibieron vacíos y se eliminaron del almacenamiento de destino. Compruebe si también están en blanco en la fuente. Si es así, elimínelo allí para evitar futuros mensajes de error.<br>Archivos vacíos:",
         "remount_device_target_failed": "¡Error al remontar el objetivo!",
-        "remount_device_source_failed": "¡Error al volver a montar la fuente!"
+        "remount_device_source_failed": "¡Error al volver a montar la fuente!",
+        "checksum_asked": "Se solicitaron sumas de comprobación."
       },
       "try": "Intentar",
       "checking_old_files": "comparando",

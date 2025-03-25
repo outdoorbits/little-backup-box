@@ -117,6 +117,7 @@ class backup(object):
 		self.const_BACKUP_MAX_TRIES						= self.__setup.get_val('const_BACKUP_MAX_TRIES')
 
 		self.conf_BACKUP_MOVE_FILES						= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
+		self.conf_BACKUP_CHECKSUM						= self.__setup.get_val('conf_BACKUP_CHECKSUM')
 		self.conf_MAIL_NOTIFICATIONS					= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
 		self.conf_MAIL_TIMEOUT_SEC						= self.__setup.get_val('conf_MAIL_TIMEOUT_SEC')
 		self.__conf_LOG_SYNC							= self.__setup.get_val('conf_LOG_SYNC')
@@ -270,6 +271,10 @@ class backup(object):
 			rsyncSSH	= self.TargetDevice.rsyncSSH if self.TargetDevice.StorageType == 'cloud_rsync' else self.SourceDevice.rsyncSSH
 			syncCommand		= rsyncSSH + ['rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--size-only']
 
+			# checksum if configured
+			if self.conf_BACKUP_CHECKSUM and not dry_run:
+				syncCommand.append('--checksum')
+
 			# use compression for cloud syncs only
 			if self.TargetDevice.isLocal and self.SourceDevice.isLocal:
 				syncCommand	+= ['--no-compress', '--whole-file']
@@ -290,6 +295,10 @@ class backup(object):
 
 			# basic command
 			syncCommand	= ['rclone']
+
+			# checksum if configured
+			if self.conf_BACKUP_CHECKSUM and not dry_run:
+				syncCommand.append('--checksum')
 
 			if dry_run:
 				syncCommand	+= ['check']
@@ -516,6 +525,7 @@ class backup(object):
 				TargetCloudService		= self.TargetDevice.CloudServiceName,
 				TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
 				TransferMode			= 'gphoto2' if SourceStorageName == 'camera' else self.TransferMode,
+				CheckSum				= self.conf_BACKUP_CHECKSUM,
 				move_files				= self.move_files,
 				SyncLog					= self.__conf_LOG_SYNC
 			)

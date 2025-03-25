@@ -224,7 +224,7 @@ class progressmonitor(object):
 
 class reporter(object):
 	# collects information during the backup process and provides ready to use summarys
-	def __init__(self, lan, SourceStorageType, SourceCloudService, SourceDeviceLbbDeviceID, TargetStorageType, TargetCloudService, TargetDeviceLbbDeviceID, TransferMode, move_files, SyncLog=True):
+	def __init__(self, lan, SourceStorageType, SourceCloudService, SourceDeviceLbbDeviceID, TargetStorageType, TargetCloudService, TargetDeviceLbbDeviceID, TransferMode, CheckSum, move_files, SyncLog=True):
 
 		self.__lan						= lan
 
@@ -237,6 +237,7 @@ class reporter(object):
 		self.__TargetDeviceLbbDeviceID	= TargetDeviceLbbDeviceID
 
 		self.__TransferMode				= TransferMode
+		self.__CheckSum					= CheckSum
 
 		self.__move_files				= move_files
 
@@ -336,6 +337,10 @@ class reporter(object):
 
 		if self.__move_files:
 			self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_removed_source')}</b></p></br>\n"
+
+		if self.__CheckSum and self.__TransferMode in ['rsync', 'rclone']:
+			self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_checksum_asked')}</b></p></br>\n"
+
 
 		separator	= False
 
