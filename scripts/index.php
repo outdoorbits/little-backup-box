@@ -34,6 +34,7 @@
 		$rename_files			= isset($_POST['rename_files'])?"True":"False";
 		$generate_thumbnails	= isset($_POST['generate_thumbnails'])?"True":"False";
 		$update_exif			= isset($_POST['update_exif'])?"True":"False";
+		$checksum				= isset($_POST['checksum'])?"True":"False";
 		$power_off_force		= isset($_POST['power_off'])?"True":"False";
 
 		$preset_source			= isset($_POST['preset_source'])?$_POST['preset_source']:"";
@@ -43,6 +44,7 @@
 		$rename_files			= $config['conf_BACKUP_RENAME_FILES']?"True":"False";
 		$generate_thumbnails	= $config['conf_BACKUP_GENERATE_THUMBNAILS']?"True":"False";
 		$update_exif			= $config['conf_BACKUP_UPDATE_EXIF']?"True":"False";
+		$checksum				= $config['conf_BACKUP_CHECKSUM']?"True":"False";
 		$power_off_force		= $config['conf_POWER_OFF']?"True":"False";
 
 		$preset_source			= '';
@@ -229,6 +231,7 @@
 					<div class='backupsection'>
 						<h4><?php echo L::main_backup_primary; ?></h4>
 						<table style='border: 0;'>
+
 							<tr>
 								<td style='padding-right: 10pt; vertical-align: top;'>
 									<input type="checkbox" id="move_files" name="move_files" <?php echo $move_files=="True"?"checked":""; ?>>
@@ -248,7 +251,7 @@
 							</tr>
 
 							<tr>
-								<td style='padding-right: 10pt;'>
+								<td style='padding-right: 10pt; vertical-align: top;'>
 									<input type="checkbox" id="generate_thumbnails" name="generate_thumbnails" <?php echo $generate_thumbnails=="True"?"checked":""; ?>>
 								</td>
 								<td>
@@ -257,13 +260,23 @@
 							</tr>
 
 							<tr>
-								<td style='padding-right: 10pt;'>
+								<td style='padding-right: 10pt; vertical-align: top;'>
 									<input type="checkbox" id="update_exif" name="update_exif" <?php echo $update_exif=="True"?"checked":""; ?>>
 								</td>
 								<td>
 									<label for="update_exif"><?php echo L::main_backup_update_exif_checkbox_label; ?></label>
 								</td>
 							</tr>
+
+							<tr>
+								<td style='padding-right: 10pt; vertical-align: top;'>
+									<input type="checkbox" id="checksum" name="checksum" <?php echo $checksum=="True"?"checked":""; ?>>
+								</td>
+								<td>
+									<label for="checksum"><?php echo L::main_backup_checksum_checkbox_label; ?></label>
+								</td>
+							</tr>
+
 						</table>
 
 						<?php
@@ -420,7 +433,7 @@
 			}
 
 			shell_exec("sudo $WORKING_DIR/stop_backup.sh");
-			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --move-files '$move_files' --rename-files '$rename_files' --force-sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
+			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --move-files '$move_files' --rename-files '$rename_files' --force-sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --checksum '$checksum' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 

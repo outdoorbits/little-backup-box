@@ -56,7 +56,8 @@
       "general": "Allgemein",
       "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?",
       "on": "auf",
-      "rename_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)"
+      "rename_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)",
+      "checksum_checkbox_label": "Checksummen bereits auf dem Ziel vorhandener Dateien vergleichen (anstelle der Dateigröße und dem Zeitstempel)?"
     },
     "logout_button": "Ausloggen",
     "nvme_button": "NVMe SSD",
@@ -185,6 +186,11 @@
         "header": "Dateien umbenennen",
         "label": "Aus allen Medien-Dateien auf lokalen Datenträgern wird versucht, das Erstell-Datum auszulesen. Ist dies möglich, wird die Datei nach folgendem Muster umbenannt:<br>\nAus &quot;Image0123.jpg&quot; wird z.B. &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
         "warning": "Achtung! Die Dateien sollten danach von der Quelle gelöscht werden. Ansonsten werden sie beim nächsten Backup erneut übertragen, umbenannt und ersetzen so die Version aus dem vorhergehenden Backup."
+      },
+      "checksum": {
+        "header": "Checksumme vergleichen?",
+        "label": "Dateiprüfsummen beim Abgleich von Quelle und Ziel berücksichtigen. (Betrifft nicht Übertragungen von Kameras.)",
+        "warning": "Vorsicht, dies kann die Übertragung erheblich verlangsamen und die CPU-Auslastung deutlich erhöhen. Bei der Synchronisierung mit Cloud-Speichern erzeugt dies zusätzlichen Netzwerkverkehr. Insbesondere wenn sich in Quelle und Ziel bereits viele identische Dateien befinden, kann die Synchronisierung sehr lange dauern, ohne dass Übertragungen stattfinden."
       }
     },
     "imageviewer": {
@@ -457,7 +463,8 @@
         "files_validation_failed": "Dateien konnten bei der Validierung auf dem Zieldatenträger nicht gefunden werden.",
         "empty_files": "Die folgenden Dateien wurden leer empfangen und vom Zielspeicher gelöscht. Bitte prüfen Sie, ob sie auch auf der Quelle leer sind. Falls ja, löschen Sie sie bitte dort, um zukünftige Fehlermeldungen zu vermeiden.<br>Leere Dateien:",
         "remount_device_target_failed": "Wiedereinbinden des Ziels fehlgeschlagen!",
-        "remount_device_source_failed": "Wiedereinbinden der Quelle fehlgeschlagen!"
+        "remount_device_source_failed": "Wiedereinbinden der Quelle fehlgeschlagen!",
+        "checksum_compared": "Checksummen wurden (soweit möglich) verglichen."
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",

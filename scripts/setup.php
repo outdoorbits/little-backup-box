@@ -216,6 +216,7 @@
 		$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?'true':'false';
 		$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?'true':'false';
 		$conf_BACKUP_RENAME_FILES					= isset($conf_BACKUP_RENAME_FILES)?'true':'false';
+		$conf_BACKUP_CHECKSUM						= isset($conf_BACKUP_CHECKSUM)?'true':'false';
 		$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?'true':'false';
 		$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?'true':'false';
 		$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
@@ -314,6 +315,7 @@ conf_LOGLEVEL=$conf_LOGLEVEL
 conf_LOG_SYNC=$conf_LOG_SYNC
 conf_POWER_OFF_IDLE_TIME=$conf_POWER_OFF_IDLE_TIME
 conf_BACKUP_RENAME_FILES=$conf_BACKUP_RENAME_FILES
+conf_BACKUP_CHECKSUM=$conf_BACKUP_CHECKSUM
 conf_BACKUP_GENERATE_THUMBNAILS=$conf_BACKUP_GENERATE_THUMBNAILS
 conf_BACKUP_UPDATE_EXIF=$conf_BACKUP_UPDATE_EXIF
 conf_VIEW_CONVERT_HEIC=$conf_VIEW_CONVERT_HEIC
@@ -731,6 +733,9 @@ CONFIGDATA;
 					<br>
 					<input type="checkbox" id="conf_BACKUP_RENAME_FILES" name="conf_BACKUP_RENAME_FILES" <?php echo $config['conf_BACKUP_RENAME_FILES']=="1"?"checked":""; ?>>
 					<label for="conf_BACKUP_RENAME_FILES"><?php echo L::config_backup_rename_header; ?><br><?php echo L::config_backup_rename_label.'<br>'.L::config_backup_rename_warning; ?></label><br>
+					<br>
+					<input type="checkbox" id="conf_BACKUP_CHECKSUM" name="conf_BACKUP_CHECKSUM" <?php echo $config['conf_BACKUP_CHECKSUM']=="1"?"checked":""; ?>>
+					<label for="conf_BACKUP_CHECKSUM"><?php echo L::config_backup_checksum_header; ?><br><?php echo L::config_backup_checksum_label.'<br>'.L::config_backup_checksum_warning; ?></label><br>
 					<br>
 					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br>

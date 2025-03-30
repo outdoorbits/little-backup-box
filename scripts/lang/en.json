@@ -58,7 +58,8 @@
         "files_validation_failed": "Files could not be found on the target disk during validation.",
         "empty_files": "The following files were received empty and deleted from the destination storage. Please check if they are also empty on the source. If so, please delete them there to avoid future error messages.<br>Empty files:",
         "remount_device_target_failed": "Remount of the target failed!",
-        "remount_device_source_failed": "Remount of the source failed!"
+        "remount_device_source_failed": "Remount of the source failed!",
+        "checksum_compared": "Checksums were compared (where possible)."
       },
       "storage_filesystem_short": "FS",
       "exception": "Unknown error",
@@ -287,7 +288,8 @@
       "general": "General",
       "secondary_label": "Should a cloud backup be performed after the primary backup?",
       "on": "on",
-      "rename_checkbox_label": "Rename files (only for local storage)"
+      "rename_checkbox_label": "Rename files (only for local storage)",
+      "checksum_checkbox_label": "Compare checksums of files already existing on the target (instead of file size and timestamp)?"
     },
     "logout_button": "Logout",
     "nvme_button": "NVMe SSD",
@@ -427,6 +429,11 @@
         "header": "Rename files",
         "label": "An attempt is made to read the creation date from all media files on local storage devices. If this is possible, the file is renamed according to the following pattern:<br>\nFor example, &quot;Image0123.jpg&quot; becomes &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
         "warning": "Attention! The files should then be deleted from the source. Otherwise they will be transferred again during the next backup, renamed and replacing the version from the previous backup."
+      },
+      "checksum": {
+        "header": "Compare checksum?",
+        "label": "Consider file checksums when comparing source and destination. (Does not apply to camera transfers.)",
+        "warning": "Be careful, this can significantly slow down transfers and significantly increase CPU usage. When syncing with cloud storage, this generates additional network traffic. Especially if there are already many identical files in the source and destination, synchronization can take a very long time without any transfers occurring."
       }
     },
     "imageviewer": {

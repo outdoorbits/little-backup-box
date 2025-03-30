@@ -56,7 +56,8 @@
       "general": "Général",
       "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?",
       "on": "sur",
-      "rename_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)"
+      "rename_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)",
+      "checksum_checkbox_label": "Comparer les sommes de contrôle des fichiers déjà présents sur la destination (au lieu de la taille du fichier et de l'horodatage) ?"
     },
     "logout_button": "Se déconnecter",
     "nvme_button": "NVMe SSD",
@@ -185,6 +186,11 @@
         "header": "Renommer les fichiers",
         "label": "Une tentative est effectuée pour lire la date de création de tous les fichiers multimédias sur le support de stockage local. Si cela est possible, le fichier sera renommé selon le modèle suivant :<br>\nÀ partir de &quot;Image0123.jpg&quot; sera par exemple &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
         "warning": "Danger! Les fichiers doivent ensuite être supprimés de la source. Dans le cas contraire, ils seront à nouveau transférés lors de la prochaine sauvegarde, renommés et ainsi remplacer la version de la sauvegarde précédente."
+      },
+      "checksum": {
+        "header": "Comparer la somme de contrôle ?",
+        "label": "Tenez compte des sommes de contrôle des fichiers lors de la comparaison de la source et de la destination. (Ne s'applique pas aux transmissions par caméra.)",
+        "warning": "Attention, cela peut ralentir considérablement le transfert et augmenter considérablement l'utilisation du processeur. Lors de la synchronisation avec le stockage cloud, cela crée un trafic réseau supplémentaire. Surtout s'il existe déjà de nombreux fichiers identiques dans la source et la destination, la synchronisation peut prendre beaucoup de temps sans qu'aucun transfert n'ait lieu."
       }
     },
     "imageviewer": {
@@ -454,7 +460,8 @@
         "files_validation_failed": "Les dates ne correspondent pas à la validation auf dem Zieldatenträger nicht gefunden werden.",
         "empty_files": "Les fichiers suivants ont été reçus vides et supprimés du stockage de destination. Veuillez vérifier s'ils sont également vides sur la source. Si tel est le cas, veuillez le supprimer ici pour éviter de futurs messages d'erreur.<br>Fichiers vides:",
         "remount_device_target_failed": "Le remontage de la cible a échoué !",
-        "remount_device_source_failed": "Le remontage de la source a échoué !"
+        "remount_device_source_failed": "Le remontage de la source a échoué !",
+        "checksum_compared": "Les sommes de contrôle ont été comparées (lorsque cela était possible)."
       },
       "try": "essayer",
       "checking_old_files": "comparant",
