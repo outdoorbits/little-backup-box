@@ -339,7 +339,7 @@ class reporter(object):
 			self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_removed_source')}</b></p></br>\n"
 
 		if self.__CheckSum and self.__TransferMode in ['rsync', 'rclone']:
-			self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_checksum_checked')}</b></p></br>\n"
+			self.mail_content_HTML	+= f"\n<p><b>{self.__lan.l('box_backup_mail_checksum_compared')}</b></p></br>\n"
 
 
 		separator	= False

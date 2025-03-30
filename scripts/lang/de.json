@@ -464,7 +464,7 @@
         "empty_files": "Die folgenden Dateien wurden leer empfangen und vom Zielspeicher gelöscht. Bitte prüfen Sie, ob sie auch auf der Quelle leer sind. Falls ja, löschen Sie sie bitte dort, um zukünftige Fehlermeldungen zu vermeiden.<br>Leere Dateien:",
         "remount_device_target_failed": "Wiedereinbinden des Ziels fehlgeschlagen!",
         "remount_device_source_failed": "Wiedereinbinden der Quelle fehlgeschlagen!",
-        "checksum_checked": "Checksummen wurden (soweit möglich) geprüft."
+        "checksum_compared": "Checksummen wurden (soweit möglich) verglichen."
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",

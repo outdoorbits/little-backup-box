@@ -461,7 +461,7 @@
         "empty_files": "Los siguientes archivos se recibieron vacíos y se eliminaron del almacenamiento de destino. Compruebe si también están en blanco en la fuente. Si es así, elimínelo allí para evitar futuros mensajes de error.<br>Archivos vacíos:",
         "remount_device_target_failed": "¡Error al remontar el objetivo!",
         "remount_device_source_failed": "¡Error al volver a montar la fuente!",
-        "checksum_checked": "Se comprobaron las sumas de comprobación (cuando fue posible)."
+        "checksum_compared": "Se compararon sumas de comprobación (cuando fue posible)."
       },
       "try": "Intentar",
       "checking_old_files": "comparando",

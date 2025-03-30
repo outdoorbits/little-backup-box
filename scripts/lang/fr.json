@@ -461,7 +461,7 @@
         "empty_files": "Les fichiers suivants ont été reçus vides et supprimés du stockage de destination. Veuillez vérifier s'ils sont également vides sur la source. Si tel est le cas, veuillez le supprimer ici pour éviter de futurs messages d'erreur.<br>Fichiers vides:",
         "remount_device_target_failed": "Le remontage de la cible a échoué !",
         "remount_device_source_failed": "Le remontage de la source a échoué !",
-        "checksum_checked": "Les sommes de contrôle ont été vérifiées (dans la mesure du possible)."
+        "checksum_compared": "Les sommes de contrôle ont été comparées (lorsque cela était possible)."
       },
       "try": "essayer",
       "checking_old_files": "comparant",
