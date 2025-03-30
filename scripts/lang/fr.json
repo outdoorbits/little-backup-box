@@ -56,7 +56,8 @@
       "general": "Général",
       "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?",
       "on": "sur",
-      "rename_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)"
+      "rename_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)",
+      "checksum_checkbox_label": "Comparer les sommes de contrôle des fichiers déjà présents sur la destination (au lieu de la taille du fichier et de l'horodatage) ?"
     },
     "logout_button": "Se déconnecter",
     "nvme_button": "NVMe SSD",
@@ -187,9 +188,9 @@
         "warning": "Danger! Les fichiers doivent ensuite être supprimés de la source. Dans le cas contraire, ils seront à nouveau transférés lors de la prochaine sauvegarde, renommés et ainsi remplacer la version de la sauvegarde précédente."
       },
       "checksum": {
-        "header": "Vérifier la somme de contrôle ?",
-        "label": "Vérifiez les sommes de contrôle des fichiers pendant le transfert. (S'applique uniquement aux transferts entre stockages, pas à partir d'un appareil photo.)",
-        "warning": "Attention, cela peut ralentir considérablement le transfert et augmenter considérablement la charge du processeur."
+        "header": "Comparer la somme de contrôle ?",
+        "label": "Tenez compte des sommes de contrôle des fichiers lors de la comparaison de la source et de la destination. (Ne s'applique pas aux transmissions par caméra.)",
+        "warning": "Attention, cela peut ralentir considérablement le transfert et augmenter considérablement l'utilisation du processeur. Lors de la synchronisation avec le stockage cloud, cela crée un trafic réseau supplémentaire. Surtout s'il existe déjà de nombreux fichiers identiques dans la source et la destination, la synchronisation peut prendre beaucoup de temps sans qu'aucun transfert n'ait lieu."
       }
     },
     "imageviewer": {
@@ -460,7 +461,7 @@
         "empty_files": "Les fichiers suivants ont été reçus vides et supprimés du stockage de destination. Veuillez vérifier s'ils sont également vides sur la source. Si tel est le cas, veuillez le supprimer ici pour éviter de futurs messages d'erreur.<br>Fichiers vides:",
         "remount_device_target_failed": "Le remontage de la cible a échoué !",
         "remount_device_source_failed": "Le remontage de la source a échoué !",
-        "checksum_asked": "Des sommes de contrôle ont été demandées."
+        "checksum_checked": "Les sommes de contrôle ont été vérifiées (dans la mesure du possible)."
       },
       "try": "essayer",
       "checking_old_files": "comparant",

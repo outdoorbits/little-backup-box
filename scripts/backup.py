@@ -49,11 +49,12 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecondaryBackupFollows=False):
+	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DoChecksum='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecondaryBackupFollows=False):
 
 		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync', 'ftp'] or functions: ['thumbnails', 'database', 'exif', 'rename]
 		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync']
-		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF:	one of ['setup', True, False]
+		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF,
+		# 	DoChecksum:											one of ['setup', True, False]
 		# ForceSyncDatabase:									one of [True, False]
 
 		# Objects
@@ -99,6 +100,9 @@ class backup(object):
 		self.DoUpdateEXIF									= DoUpdateEXIF if DoUpdateEXIF != 'setup' else self.__setup.get_val('conf_BACKUP_UPDATE_EXIF')
 		self.DoUpdateEXIF									= self.DoUpdateEXIF or (self.SourceStorageType == 'exif')
 
+		# checksum
+		self.DoChecksum										= DoChecksum if DoChecksum != 'setup' else self.__setup.get_val('conf_BACKUP_CHECKSUM')
+
 		# sync database
 		self.ForceSyncDatabase								= ForceSyncDatabase
 		self.ForceSyncDatabase								= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files or self.DoGenerateThumbnails or self.DoUpdateEXIF
@@ -117,7 +121,6 @@ class backup(object):
 		self.const_BACKUP_MAX_TRIES						= self.__setup.get_val('const_BACKUP_MAX_TRIES')
 
 		self.conf_BACKUP_MOVE_FILES						= self.__setup.get_val('conf_BACKUP_MOVE_FILES')
-		self.conf_BACKUP_CHECKSUM						= self.__setup.get_val('conf_BACKUP_CHECKSUM')
 		self.conf_MAIL_NOTIFICATIONS					= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
 		self.conf_MAIL_TIMEOUT_SEC						= self.__setup.get_val('conf_MAIL_TIMEOUT_SEC')
 		self.__conf_LOG_SYNC							= self.__setup.get_val('conf_LOG_SYNC')
@@ -272,7 +275,7 @@ class backup(object):
 			syncCommand		= rsyncSSH + ['rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--size-only']
 
 			# checksum if configured
-			if self.conf_BACKUP_CHECKSUM and not dry_run:
+			if self.DoChecksum and not dry_run:
 				syncCommand.append('--checksum')
 
 			# use compression for cloud syncs only
@@ -297,7 +300,7 @@ class backup(object):
 			syncCommand	= ['rclone']
 
 			# checksum if configured
-			if self.conf_BACKUP_CHECKSUM and not dry_run:
+			if self.DoChecksum and not dry_run:
 				syncCommand.append('--checksum')
 
 			if dry_run:
@@ -525,7 +528,7 @@ class backup(object):
 				TargetCloudService		= self.TargetDevice.CloudServiceName,
 				TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
 				TransferMode			= 'gphoto2' if SourceStorageName == 'camera' else self.TransferMode,
-				CheckSum				= self.conf_BACKUP_CHECKSUM,
+				CheckSum				= self.DoChecksum,
 				move_files				= self.move_files,
 				SyncLog					= self.__conf_LOG_SYNC
 			)
@@ -1497,6 +1500,14 @@ if __name__ == "__main__":
 	)
 
 	parser.add_argument(
+		'--checksum',
+		'-cs',
+		required	= False,
+		default		= 'setup',
+		help='Compare checksums in source and target to detect differences beyond file size and timestamp. [\'True\', \'False\']. If not set, use config value.'
+	)
+
+	parser.add_argument(
 		'--device-identifier-preset-source',
 		'-si',
 		required=False,
@@ -1556,6 +1567,7 @@ if __name__ == "__main__":
 	args['rename_files']		= args['rename_files'].lower() == 'true'		if args['rename_files'] != 'setup'			else 'setup'
 	args['generate_thumbnails']	= args['generate_thumbnails'].lower() == 'true'	if args['generate_thumbnails'] != 'setup'	else 'setup'
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
+	args['checksum']			= args['checksum'].lower() == 'true'			if args['checksum'] != 'setup'				else 'setup'
 	args['power_off']			= args['power_off'].lower() == 'true'			if args['power_off'] != 'setup'				else 'setup'
 
 
@@ -1587,6 +1599,7 @@ if __name__ == "__main__":
 		DoGenerateThumbnails				= False if args['move_files2'] == True else args['generate_thumbnails'],
 		shiftGenerateThumbnails				= shiftGenerateThumbnails,
 		DoUpdateEXIF						= args['update_exif'],
+		DoChecksum							= args['checksum'],
 		DeviceIdentifierPresetSource		= args['device_identifier_preset_source'],
 		DeviceIdentifierPresetTarget		= args['device_identifier_preset_target'],
 		PowerOff							= args['power_off'],
@@ -1615,6 +1628,7 @@ if __name__ == "__main__":
 			DoGenerateThumbnails			= False if args['move_files2'] == True else args['generate_thumbnails'],
 			shiftGenerateThumbnails			= shiftGenerateThumbnails,
 			DoUpdateEXIF					= False,
+			DoChecksum						= args['checksum'],
 			DeviceIdentifierPresetSource	= secSourceDeviceIdentifier,
 			DeviceIdentifierPresetTarget	= None,
 			PowerOff						= args['power_off'],

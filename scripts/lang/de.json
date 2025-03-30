@@ -56,7 +56,8 @@
       "general": "Allgemein",
       "secondary_label": "Soll nach dem primären Backup ein Cloud-Backup durchgeführt werden?",
       "on": "auf",
-      "rename_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)"
+      "rename_checkbox_label": "Dateien umbenennen (nur für lokale Speicher)",
+      "checksum_checkbox_label": "Checksummen bereits auf dem Ziel vorhandener Dateien vergleichen (anstelle der Dateigröße und dem Zeitstempel)?"
     },
     "logout_button": "Ausloggen",
     "nvme_button": "NVMe SSD",
@@ -187,9 +188,9 @@
         "warning": "Achtung! Die Dateien sollten danach von der Quelle gelöscht werden. Ansonsten werden sie beim nächsten Backup erneut übertragen, umbenannt und ersetzen so die Version aus dem vorhergehenden Backup."
       },
       "checksum": {
-        "header": "Checksumme prüfen?",
-        "label": "Dateiprüfsummen während der Übertragung prüfen. (Gilt nur für Übertragungen zwischen Speichern, nicht von einer Kamera.)",
-        "warning": "Vorsicht, dadurch kann die Übertragung erheblich verlangsamt und die CPU-Last deutllich erhöht werden."
+        "header": "Checksumme vergleichen?",
+        "label": "Dateiprüfsummen beim Abgleich von Quelle und Ziel berücksichtigen. (Betrifft nicht Übertragungen von Kameras.)",
+        "warning": "Vorsicht, dies kann die Übertragung erheblich verlangsamen und die CPU-Auslastung deutlich erhöhen. Bei der Synchronisierung mit Cloud-Speichern erzeugt dies zusätzlichen Netzwerkverkehr. Insbesondere wenn sich in Quelle und Ziel bereits viele identische Dateien befinden, kann die Synchronisierung sehr lange dauern, ohne dass Übertragungen stattfinden."
       }
     },
     "imageviewer": {
@@ -463,7 +464,7 @@
         "empty_files": "Die folgenden Dateien wurden leer empfangen und vom Zielspeicher gelöscht. Bitte prüfen Sie, ob sie auch auf der Quelle leer sind. Falls ja, löschen Sie sie bitte dort, um zukünftige Fehlermeldungen zu vermeiden.<br>Leere Dateien:",
         "remount_device_target_failed": "Wiedereinbinden des Ziels fehlgeschlagen!",
         "remount_device_source_failed": "Wiedereinbinden der Quelle fehlgeschlagen!",
-        "checksum_asked": "Checksummen wurden angefordert."
+        "checksum_checked": "Checksummen wurden (soweit möglich) geprüft."
       },
       "try": "Versuch",
       "checking_old_files": "abgleichen",
