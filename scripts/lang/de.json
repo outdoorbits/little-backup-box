@@ -324,10 +324,9 @@
       }
     },
     "menu": {
-      "section": "Display-Menü",
       "enable_header": "Display-Menu aktivieren",
       "enable_label": "Soll das Display-Menü aktiviert werden?",
-      "button_combination_label": "Bitte wählen Sie eine Variante mit Hilfe der Tabelle",
+      "button_combination_label": "Bitte wählen Sie eine Variante mit Hilfe der Tabelle (Pins gemäß GPIO.BCM). Achtung: Das Display-Menü muss zusätzlich aktiviert werden.",
       "button_combination_variant": "Variante",
       "button_up": "aufwärts",
       "button_down": "abwärts",
@@ -340,7 +339,8 @@
       "button_edge_detection_label": "Tastenkantenerkennung",
       "button_resistor_pull_label": "Pull Widerstand",
       "button_comment": "Kommentar",
-      "button_edit_custom_configfile": "Benutzerdefinierte Konfigurationsdatei bearbeiten"
+      "button_edit_custom_configfile": "Benutzerdefinierte Konfigurationsdatei bearbeiten",
+      "section": "Display-Menü"
     },
     "hardware": {
       "section": "Hardware",

@@ -1414,7 +1414,7 @@ CONFIGDATA;
 				<h3><?php echo L::config_menu_button_header; ?></h3>
 
 					<div>
-						<label for="conf_MENU_BUTTON_COMBINATION"><?php echo L::config_menu_button_combination_label; ?></label><br>
+						<label for="conf_MENU_BUTTON_COMBINATION"><?php echo L::config_menu_button_combination_label.' ('.L::config_menu_section.')'; ?></label><br>
 
 							<?php
 								$button_combinations	= array();
@@ -1508,16 +1508,18 @@ CONFIGDATA;
 
 								<?php
 									foreach($button_combinations as $variant => $button_combination) {
+
 										if ($variant < $BasicLines) {
 											$openerTAG		= '';
 											$closerTAG		= '';
 											$VariantOption	= $variant + 1;
 										} else {
-											$openerTAG		= '<b><i>';
-											$closerTAG		= '</i></b>';
+											$openerTAG		= '<i>';
+											$closerTAG		= '</i>';
 											$VariantOption	= 'c' . ($variant - $BasicLines + 1);
 										}
-										echo("<tr style=\"border: thin solid; vertical-align: top;\"><td>".$openerTAG.$VariantOption.$closerTAG."</td>");
+										echo("<tr style=\"border: thin solid; vertical-align: top;\"><td><b>".$openerTAG.$VariantOption.$closerTAG."</b></td>");
+
 										foreach($button_combination as $column => $FIELD) {
 											?>
 												<td style="border: thin solid; vertical-align: top;">
@@ -1526,6 +1528,7 @@ CONFIGDATA;
 											<?php
 										}
 										echo("</tr>");
+
 									}
 								?>
 							</table>
