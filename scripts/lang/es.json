@@ -324,10 +324,9 @@
       }
     },
     "menu": {
-      "section": "Mostrar menú",
       "enable_header": "Activar menú de visualización",
       "enable_label": "¿Se debe activar el menú de visualización?",
-      "button_combination_label": "Seleccione una variante usando la tabla",
+      "button_combination_label": "Seleccione una variante utilizando la tabla (pines según GPIO.BCM). Atención: El menú de visualización debe activarse adicionalmente.",
       "button_combination_variant": "Variante",
       "button_up": "arriba",
       "button_down": "abajo",
@@ -340,7 +339,8 @@
       "button_edge_detection_label": "Detección de borde de botón",
       "button_resistor_pull_label": "Pull resistor",
       "button_comment": "Comentario",
-      "button_edit_custom_configfile": "Editar archivo de configuración personalizado"
+      "button_edit_custom_configfile": "Editar archivo de configuración personalizado",
+      "section": "Mostrar menú"
     },
     "hardware": {
       "section": "Hardware",

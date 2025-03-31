@@ -567,10 +567,9 @@
       }
     },
     "menu": {
-      "section": "Display menu",
       "enable_header": "Activate display menu",
       "enable_label": "Should the display menu be activated?",
-      "button_combination_label": "Please select a variant using the table",
+      "button_combination_label": "Please select a variant using the table (pins according to GPIO.BCM). Note: The display menu must also be activated.",
       "button_combination_variant": "Variant",
       "button_up": "up",
       "button_down": "down",
@@ -583,7 +582,8 @@
       "button_edge_detection_label": "Button edge detection",
       "button_resistor_pull_label": "Pull resistor",
       "button_comment": "Comment",
-      "button_edit_custom_configfile": "Edit custom configuration file"
+      "button_edit_custom_configfile": "Edit custom configuration file",
+      "section": "Display menu"
     },
     "hardware": {
       "section": "Hardware",

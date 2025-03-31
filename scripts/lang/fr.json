@@ -324,10 +324,9 @@
       }
     },
     "menu": {
-      "section": "Afficher le menu",
       "enable_header": "Activer le menu d'affichage",
       "enable_label": "Le menu d'affichage doit-il être activé ?",
-      "button_combination_label": "Veuillez sélectionner une variante à l'aide du tableau",
+      "button_combination_label": "Veuillez sélectionner une variante à l'aide du tableau (broches selon GPIO.BCM). Attention : le menu d'affichage doit être activé en plus.",
       "button_combination_variant": "Variante",
       "button_up": "haut",
       "button_down": "bas",
@@ -340,7 +339,8 @@
       "button_edge_detection_label": "Détection du bord du bouton",
       "button_resistor_pull_label": "Pull résistance",
       "button_comment": "Commentaire",
-      "button_edit_custom_configfile": "Modifier le fichier de configuration personnalisé"
+      "button_edit_custom_configfile": "Modifier le fichier de configuration personnalisé",
+      "section": "Afficher le menu"
     },
     "hardware": {
       "section": "Matériel",
