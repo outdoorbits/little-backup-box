@@ -571,7 +571,7 @@ class backup(object):
 						self.__log.execute('Lost device: pre remount','lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE',3)
 
 						if not self.SourceDevice.mounted():
-							self.__log.message(f"remount source device {SourceStorageName} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
+							self.__log.message(f"remount source device {self.SourceDevice.StorageType} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
 							self.__display.message([f"s=a:{self.__lan.l('box_backup_mounting_target')}", f"s=a:{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
 							if not self.SourceDevice.mount(TimeOutActive=True):
 								self.__reporter.add_error('Err.: Remounting source device failed!')

@@ -48,6 +48,6 @@ const_VPN_FILENAME_OpenVPN='openvpn.conf'
 const_VPN_FILENAME_WireGuard='wg0.conf'
 const_SYNC_TIME_OVERHEATING_THRESHOLD_SEC=120
 const_SYNC_TIME_OVERHEATING_WAIT_SEC=60
-const_BACKUP_MAX_TRIES=5
+const_BACKUP_MAX_TRIES=3
 const_FONT_PATH='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 const_IDLETIME_LOCKFILE='/var/www/little-backup-box/tmp/idletime.lock'
