@@ -918,18 +918,28 @@ class backup(object):
 		# find all not renamed media files
 		FindCommand	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
 
-		FilesPipe	= subprocess.Popen(FindCommand, shell=True, stdout=subprocess.PIPE)
+		Files	= subprocess.check_output(FindCommand, shell=True, text=True).splitlines()
 
-		DateTags	= ['-DateTimeOriginal', '-CreateDate']
-		ExifCommand	= ['exiftool', '-dateFormat', '%Y-%m-%d_%H-%M-%S'] + DateTags + ['-Rating', '-S', '-@', '-']
-
-		try:
-			# if the FilesPipe is empty,this will fail.
-			FilesToRename	= subprocess.check_output(ExifCommand, stdin=FilesPipe.stdout).decode().strip().split('======== ')
-		except:
-			# nothing todo
+		if not Files:
+			# nothing to do
 			return()
 
+		DateTags		= ['-DateTimeOriginal', '-CreateDate']
+		ExifCommand		= ['exiftool', '-dateFormat', '%Y-%m-%d_%H-%M-%S'] + DateTags + ['-Rating', '-S', '-@', '-']
+		ExifFilesList	= '\n'.join(Files) + '\n'
+
+		EXIF_result = subprocess.run(ExifCommand, input=ExifFilesList, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+		EXIF_output	= EXIF_result.stdout
+
+		FilesToRename	= []
+
+		blocks = EXIF_output.strip().split("======== ")
+		for block in blocks:
+			if any(DateTag.replace('-', '') in block for DateTag in DateTags):
+				FilesToRename.append(block)
+
+		# remove empty elements
 		FilesToRename = list(filter(None, FilesToRename))
 
 		FilesToProcess	= len(FilesToRename)
@@ -955,19 +965,21 @@ class backup(object):
 				continue
 
 			FileNameOld	= EXIF_Lines[0].strip()
-
 			if not os.path.isfile(FileNameOld):
 				continue
 
+			# default values
 			Rating			= ''
 			FileCreateDate	= FileCreateDateNull
 
 			if len(EXIF_Lines) > 1:
 				for EXIF_Line in EXIF_Lines[1:]:
+
 					try:
 						Var, Val	= EXIF_Line.split(':', 1)
 					except:
 						continue
+
 					Val	= Val.strip()
 
 					if Var == 'Rating':
