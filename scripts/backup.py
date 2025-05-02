@@ -918,7 +918,7 @@ class backup(object):
 		# find all not renamed media files
 		FindCommand	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
 
-		Files	= subprocess.check_output(FindCommand, shell=True, text=True).splitlines()
+		Files	=	subprocess.check_output(FindCommand, shell=True, text=True).splitlines()
 
 		if not Files:
 			# nothing to do
@@ -928,8 +928,7 @@ class backup(object):
 		ExifCommand		= ['exiftool', '-dateFormat', '%Y-%m-%d_%H-%M-%S'] + DateTags + ['-Rating', '-S', '-@', '-']
 		ExifFilesList	= '\n'.join(Files) + '\n'
 
-		EXIF_result = subprocess.run(ExifCommand, input=ExifFilesList, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+		EXIF_result	= subprocess.run(ExifCommand, input=ExifFilesList, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		EXIF_output	= EXIF_result.stdout
 
 		FilesToRename	= []
@@ -965,6 +964,7 @@ class backup(object):
 				continue
 
 			FileNameOld	= EXIF_Lines[0].strip()
+
 			if not os.path.isfile(FileNameOld):
 				continue
 
