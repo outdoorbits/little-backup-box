@@ -1380,7 +1380,7 @@ CONFIGDATA;
 						<label for="conf_DISP_OFFSET_X"><?php echo L::config_display_offset_x_label; ?></label><br>
 							<select name="conf_DISP_OFFSET_X" id="conf_DISP_OFFSET_X">
 								<?php
-									for ($display_offset=-10; $display_offset<=10; $display_offset++) {
+									for ($display_offset=-20; $display_offset<=20; $display_offset++) {
 										echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_X"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
 									}
 								?>
@@ -1391,7 +1391,7 @@ CONFIGDATA;
 						<label for="conf_DISP_OFFSET_Y"><?php echo L::config_display_offset_y_label; ?></label><br>
 							<select name="conf_DISP_OFFSET_Y" id="conf_DISP_OFFSET_Y">
 								<?php
-									for ($display_offset=-10; $display_offset<=10; $display_offset++) {
+									for ($display_offset=-20; $display_offset<=20; $display_offset++) {
 										echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_Y"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
 									}
 								?>
