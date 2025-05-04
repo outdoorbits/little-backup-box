@@ -292,10 +292,6 @@
       "driver_label": "Bildschirmtreiber",
       "resolution_x_label": "Horizontale Auflösung (Pixel)",
       "resolution_y_label": "Vertikale Auflösung (Pixel)",
-      "color_model_label": "Farbe",
-      "color_model_1": "Schwarz-weiß",
-      "color_model_RGB": "RGB",
-      "color_model_RGBA": "RGBA (RGB mit Transparenz)",
       "font_size_label": "Schriftgröße",
       "frame_time_label": "Minimale Anzeigedauer pro Bild in Sekunden",
       "hardware_header": "Display",
@@ -308,11 +304,17 @@
         "red": "rot",
         "grey": "grau",
         "lightgrey": "hellgrau",
-        "orange": "orange"
+        "orange": "orange",
+        "black": "schwarz",
+        "alert_label": "Schriftfarbe für Warnungen",
+        "high_label": "Schriftfarbe für hervorgehobenen Text",
+        "model_1": "Schwarz-weiß",
+        "model_RGB": "RGB",
+        "model_RGBA": "RGBA (RGB mit Transparenz)",
+        "model_label": "Farbe",
+        "text_label": "Standard-Schriftfarbe",
+        "background_label": "Hintergrundfarbe"
       },
-      "color_text_label": "Standard-Schriftfarbe",
-      "color_alert_label": "Schriftfarbe für Warnungen",
-      "color_high_label": "Schriftfarbe für hervorgehobenen Text",
       "contrast_label": "Kontrast",
       "rotate_label": "Display-Rotation",
       "rotate_header": "Display drehen",
@@ -321,7 +323,10 @@
       "frame_time_ip_label": "Minimale Anzeigedauer der IP in Sekunden",
       "statusbar": {
         "label": "Statusleiste einblenden"
-      }
+      },
+      "backlight_header": "Display-Hintergrundbeleuchtung",
+      "backlight_enabled_label": "Display-Hintergrundbeleuchtung aktivieren (falls vorhanden)",
+      "backlight_pin_label": "Welcher GPIO-PIN (BCM-Notation) ist mit der Hintergrundbeleuchtung verbunden?"
     },
     "menu": {
       "enable_header": "Display-Menu aktivieren",

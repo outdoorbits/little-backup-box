@@ -535,10 +535,6 @@
       "driver_label": "Display driver",
       "resolution_x_label": "Horizontal resolution (pixels)",
       "resolution_y_label": "Vertical resolution (pixels)",
-      "color_model_label": "Color",
-      "color_model_1": "Black-and-white",
-      "color_model_RGB": "RGB",
-      "color_model_RGBA": "RGBA (RGB with transparency)",
       "font_size_label": "Font size",
       "frame_time_label": "Minimum display time per frame in seconds",
       "hardware_header": "Display",
@@ -551,11 +547,17 @@
         "red": "red",
         "grey": "grey",
         "lightgrey": "light grey",
-        "orange": "orange"
+        "orange": "orange",
+        "black": "black",
+        "alert_label": "Font color for warnings",
+        "high_label": "Font color for highlighted text",
+        "model_1": "Black-and-white",
+        "model_RGB": "RGB",
+        "model_RGBA": "RGBA (RGB with transparency)",
+        "model_label": "Color",
+        "text_label": "Default font color",
+        "background_label": "Background color"
       },
-      "color_text_label": "Default font color",
-      "color_alert_label": "Font color for warnings",
-      "color_high_label": "Font color for highlighted text",
       "contrast_label": "Contrast",
       "rotate_label": "Display rotation",
       "rotate_header": "Rotate screen",
@@ -564,7 +566,10 @@
       "frame_time_ip_label": "Minimum display time of the IP in seconds",
       "statusbar": {
         "label": "Show status bar"
-      }
+      },
+      "backlight_header": "Display backlight",
+      "backlight_enabled_label": "Activate display backlight (if available)",
+      "backlight_pin_label": "Which GPIO pin (BCM notation) is connected to the backlight?"
     },
     "menu": {
       "enable_header": "Activate display menu",

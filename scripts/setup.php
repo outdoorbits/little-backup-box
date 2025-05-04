@@ -290,10 +290,13 @@ conf_DISP_OFFSET_X=$conf_DISP_OFFSET_X
 conf_DISP_OFFSET_Y=$conf_DISP_OFFSET_Y
 conf_DISP_ROTATE='$conf_DISP_ROTATE'
 conf_DISP_CONTRAST=$conf_DISP_CONTRAST
+conf_DISP_BACKLIGHT_PIN=$conf_DISP_BACKLIGHT_PIN
+conf_DISP_BACKLIGHT_ENABLED=$conf_DISP_BACKLIGHT_ENABLED
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
 conf_DISP_COLOR_TEXT='$conf_DISP_COLOR_TEXT'
 conf_DISP_COLOR_HIGH='$conf_DISP_COLOR_HIGH'
 conf_DISP_COLOR_ALERT='$conf_DISP_COLOR_ALERT'
+conf_DISP_COLOR_BACKGROUND='$conf_DISP_COLOR_BACKGROUND'
 conf_DISP_FONT_SIZE=$conf_DISP_FONT_SIZE
 conf_DISP_FRAME_TIME=$conf_DISP_FRAME_TIME
 conf_DISP_FRAME_TIME_IP=$conf_DISP_FRAME_TIME_IP
@@ -868,7 +871,7 @@ CONFIGDATA;
 					<div>
 						<h4><?php echo L::config_display_colors_header; ?></h4>
 
-						<?php $display_colors_array=array('blue','green','red','white','yellow','orange','lightgrey','grey'); ?>
+						<?php $display_colors_array=array('blue','green','red','white','yellow','orange','lightgrey','grey','black'); ?>
 
 							<label for="conf_DISP_COLOR_TEXT"><?php echo L::config_display_color_text_label; ?></label><br>
 								<select name="conf_DISP_COLOR_TEXT" id="conf_DISP_COLOR_TEXT">
@@ -903,6 +906,42 @@ CONFIGDATA;
 									}
 								?>
 							</select>
+					</div>
+
+					<div>
+						<label for="conf_DISP_COLOR_BACKGROUND"><?php echo L::config_display_color_background_label; ?></label><br>
+							<select name="conf_DISP_COLOR_BACKGROUND" id="conf_DISP_COLOR_BACKGROUND">
+								<?php
+									foreach($display_colors_array as $display_color) {
+										$display_color_entity="config_display_color_" . $display_color;
+										echo "<option value='" . $display_color . "' " . ($config["conf_DISP_COLOR_BACKGROUND"] == $display_color?" selected":"") . ">" . L::{"$display_color_entity"}() . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<h4><?php echo L::config_display_backlight_header; ?></h4>
+							<div>
+								<label for="conf_DISP_BACKLIGHT_PIN"><?php echo L::config_display_backlight_pin_label; ?></label><br>
+									<select name="conf_DISP_BACKLIGHT_PIN" id="conf_DISP_BACKLIGHT_PIN">
+										<?php
+											$display_backlight_pin_array=array(
+												0	=>	'-',
+												18	=> 'GPIO 18',
+												24	=> 'GPIO 24'
+											);
+											foreach($display_backlight_pin_array as $display_backlight_pin => $display_backlight_pin_text) {
+												echo "<option value='" . $display_backlight_pin . "' " . ($config["conf_DISP_BACKLIGHT_PIN"] == $display_backlight_pin?" selected":"") . ">" . $display_backlight_pin_text . "</option>";
+											}
+										?>
+									</select>
+							</div>
+
+							<div>
+								<input type="checkbox" id="conf_DISP_BACKLIGHT_ENABLED" name="conf_DISP_BACKLIGHT_ENABLED" <?php echo $config['conf_DISP_BACKLIGHT_ENABLED']=="1"?"checked":""; ?>>
+								<label for="conf_DISP_BACKLIGHT_ENABLED"><?php echo L::config_display_backlight_enabled_label; ?></label><br>
+							<div>
 					</div>
 
 					<div>

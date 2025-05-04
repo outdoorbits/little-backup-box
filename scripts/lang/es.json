@@ -292,10 +292,6 @@
       "driver_label": "Controlador de pantalla",
       "resolution_x_label": "Resolución horizontal (píxeles)",
       "resolution_y_label": "Resolución vertical (píxeles)",
-      "color_model_label": "Color",
-      "color_model_1": "Blanco y negro",
-      "color_model_RGB": "RGB",
-      "color_model_RGBA": "RGBA (RGB con transparencia)",
       "font_size_label": "Tamaño de fuente",
       "frame_time_label": "Tiempo mínimo de visualización por cuadro en segundos",
       "hardware_header": "Pantalla",
@@ -308,11 +304,17 @@
         "red": "rojo",
         "grey": "gris",
         "lightgrey": "gris claro",
-        "orange": "naranja"
+        "orange": "naranja",
+        "black": "negro",
+        "alert_label": "Color de fuente para advertencias",
+        "high_label": "Color de fuente para el texto resaltado",
+        "model_1": "Blanco y negro",
+        "model_RGB": "RGB",
+        "model_RGBA": "RGBA (RGB con transparencia)",
+        "model_label": "Color",
+        "text_label": "Color de fuente predeterminado",
+        "background_label": "Color de fondo"
       },
-      "color_text_label": "Color de fuente predeterminado",
-      "color_alert_label": "Color de fuente para advertencias",
-      "color_high_label": "Color de fuente para el texto resaltado",
       "contrast_label": "Contraste",
       "rotate_label": "Rotación de pantalla",
       "rotate_header": "Girar pantalla",
@@ -321,7 +323,10 @@
       "frame_time_ip_label": "Tiempo mínimo de visualización de la IP en segundos",
       "statusbar": {
         "label": "Mostrar barra de estado"
-      }
+      },
+      "backlight_header": "Retroiluminación de la pantalla",
+      "backlight_enabled_label": "Activar la retroiluminación de la pantalla (si está disponible)",
+      "backlight_pin_label": "¿Qué pin GPIO (notación BCM) está conectado a la luz de fondo?"
     },
     "menu": {
       "enable_header": "Activar menú de visualización",

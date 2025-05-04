@@ -51,7 +51,7 @@
 # kill:		terminate display daemon
 
 import os
-import RPi.GPIO
+import RPi.GPIO as GPIO
 import shutil
 import signal
 import subprocess
@@ -88,7 +88,7 @@ class DISPLAY(object):
 		self.loop_continue	= True
 
 		# cleanup pins
-		RPi.GPIO.cleanup()
+		GPIO.cleanup()
 
 		# objects
 		self.__setup					= lib_setup.setup()
@@ -109,9 +109,12 @@ class DISPLAY(object):
 		self.conf_DISP_COLOR_TEXT				= self.__setup.get_val('conf_DISP_COLOR_TEXT')
 		self.conf_DISP_COLOR_HIGH				= self.__setup.get_val('conf_DISP_COLOR_HIGH')
 		self.conf_DISP_COLOR_ALERT				= self.__setup.get_val('conf_DISP_COLOR_ALERT')
+		self.conf_DISP_COLOR_BACKGROUND			= self.__setup.get_val('conf_DISP_COLOR_BACKGROUND')
 		self.conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
 		self.conf_DISP_FRAME_TIME				= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.conf_DISP_SHOW_STATUSBAR			= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
+		self.conf_DISP_BACKLIGHT_PIN			= self.__setup.get_val('conf_DISP_BACKLIGHT_PIN')
+		self.conf_DISP_BACKLIGHT_ENABLED		= self.__setup.get_val('conf_DISP_BACKLIGHT_ENABLED')
 		self.conf_MENU_ENABLED					= self.__setup.get_val('conf_MENU_ENABLED')
 
 		self.const_DISPLAY_CONTENT_OLD_FILE		= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
@@ -119,17 +122,23 @@ class DISPLAY(object):
 		self.const_DISPLAY_STATUSBAR_MAX_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_MAX_SEC')
 		self.const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
 
+		#switch backlight
+		if self.conf_DISP_BACKLIGHT_PIN > 0:
+			GPIO.setmode(GPIO.BCM)
+			GPIO.setup(self.conf_DISP_BACKLIGHT_PIN, GPIO.OUT)
+			GPIO.output(self.conf_DISP_BACKLIGHT_PIN, self.conf_DISP_BACKLIGHT_ENABLED)
+
 		#define colors
 		color = {}
-		color['blue'] = (0, 0, 255)
-		color['green'] = (0, 255, 0)
-		color['red'] = (255, 0, 0)
-		color['yellow'] = (255, 255, 0)
-		color['orange'] = (255, 94, 14)
-		color['white'] = (255, 255, 255)
-		color['black'] = (0, 0, 0)
-		color['lightgrey'] = (127, 127, 127)
-		color['grey'] = (70, 70, 70)
+		color['blue']		= (0,	0,		255)
+		color['green']		= (0,	255,	0)
+		color['red']		= (255,	0,		0)
+		color['yellow']		= (255,	255,	0)
+		color['orange']		= (255,	94,		14)
+		color['white']		= (255,	255,	255)
+		color['black']		= (0,	0,		0)
+		color['lightgrey']	= (127,	127,	127)
+		color['grey']		= (70,	70,		70)
 
 		if self.conf_DISP_COLOR_MODEL == '1':
 			self.color_text = 255
@@ -140,7 +149,7 @@ class DISPLAY(object):
 			self.color_text 	= color[self.conf_DISP_COLOR_TEXT]
 			self.color_high 	= color[self.conf_DISP_COLOR_HIGH]
 			self.color_alert 	= color[self.conf_DISP_COLOR_ALERT]
-			self.color_bg 		= color['black']
+			self.color_bg 		= color[self.conf_DISP_COLOR_BACKGROUND]
 
 			if self.conf_DISP_COLOR_MODEL == 'RGBA':
 				# add alpha-channel
@@ -326,6 +335,9 @@ class DISPLAY(object):
 				if self.maxLines > 1:
 					Spare_Y = self.device.height - self.maxLines * self.line_height
 					y_space = int (Spare_Y / (self.maxLines - 1))
+
+				# draw background
+				draw.rectangle(self.device.bounding_box, outline=self.color_bg, fill=self.color_bg)
 
 				for n in range(0, self.maxLines):
 
