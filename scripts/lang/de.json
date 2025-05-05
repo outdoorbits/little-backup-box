@@ -313,7 +313,8 @@
         "model_RGBA": "RGBA (RGB mit Transparenz)",
         "model_label": "Farbe",
         "text_label": "Standard-Schriftfarbe",
-        "background_label": "Hintergrundfarbe"
+        "background_label": "Hintergrundfarbe",
+        "inverted_label": "Verwende invertierte Farben (BGR statt RGB)"
       },
       "contrast_label": "Kontrast",
       "rotate_label": "Display-Rotation",
@@ -326,7 +327,8 @@
       },
       "backlight_header": "Display-Hintergrundbeleuchtung",
       "backlight_enabled_label": "Display-Hintergrundbeleuchtung aktivieren (falls vorhanden)",
-      "backlight_pin_label": "Welcher GPIO-PIN (BCM-Notation) ist mit der Hintergrundbeleuchtung verbunden?"
+      "backlight_pin_label": "Welcher GPIO-PIN (BCM-Notation) ist mit der Hintergrundbeleuchtung verbunden?",
+      "additional_settings_header": "Weitere Display-Einstellungen "
     },
     "menu": {
       "enable_header": "Display-Menu aktivieren",

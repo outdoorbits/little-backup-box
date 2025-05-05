@@ -209,6 +209,8 @@
 		$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?'true':'false';
 		$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?'true':'false';
 		$conf_DISP									= isset($conf_DISP)?'true':'false';
+		$conf_DISP_COLOR_INVERTED					= isset($conf_DISP_COLOR_INVERTED)?'true':'false';
+		$conf_DISP_BACKLIGHT_ENABLED				= isset($conf_DISP_BACKLIGHT_ENABLED)?'true':'false';
 		$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?'true':'false';
 		$conf_DISP_SHOW_STATUSBAR					= isset($conf_DISP_SHOW_STATUSBAR)?'true':'false';
 		$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?'true':'false';
@@ -290,6 +292,7 @@ conf_DISP_OFFSET_X=$conf_DISP_OFFSET_X
 conf_DISP_OFFSET_Y=$conf_DISP_OFFSET_Y
 conf_DISP_ROTATE='$conf_DISP_ROTATE'
 conf_DISP_CONTRAST=$conf_DISP_CONTRAST
+conf_DISP_COLOR_INVERTED=$conf_DISP_COLOR_INVERTED
 conf_DISP_BACKLIGHT_PIN=$conf_DISP_BACKLIGHT_PIN
 conf_DISP_BACKLIGHT_ENABLED=$conf_DISP_BACKLIGHT_ENABLED
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
@@ -922,21 +925,6 @@ CONFIGDATA;
 
 					<div>
 						<h4><?php echo L::config_display_backlight_header; ?></h4>
-							<div>
-								<label for="conf_DISP_BACKLIGHT_PIN"><?php echo L::config_display_backlight_pin_label; ?></label><br>
-									<select name="conf_DISP_BACKLIGHT_PIN" id="conf_DISP_BACKLIGHT_PIN">
-										<?php
-											$display_backlight_pin_array=array(
-												0	=>	'-',
-												18	=> 'GPIO 18',
-												24	=> 'GPIO 24'
-											);
-											foreach($display_backlight_pin_array as $display_backlight_pin => $display_backlight_pin_text) {
-												echo "<option value='" . $display_backlight_pin . "' " . ($config["conf_DISP_BACKLIGHT_PIN"] == $display_backlight_pin?" selected":"") . ">" . $display_backlight_pin_text . "</option>";
-											}
-										?>
-									</select>
-							</div>
 
 							<div>
 								<input type="checkbox" id="conf_DISP_BACKLIGHT_ENABLED" name="conf_DISP_BACKLIGHT_ENABLED" <?php echo $config['conf_DISP_BACKLIGHT_ENABLED']=="1"?"checked":""; ?>>
@@ -1358,6 +1346,7 @@ CONFIGDATA;
 
 					<div>
 						<h4><?php echo L::config_display_i2c_header; ?></h4>
+
 							<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_display_i2c_address_label; ?></label><br>
 
 							<?php
@@ -1392,62 +1381,87 @@ CONFIGDATA;
 					</div>
 
 					<div>
-						<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br>
-							<select name="conf_DISP_RESOLUTION_X" id="conf_DISP_RESOLUTION_X">
-								<?php
-									$display_resolutions_array=array(96, 128, 160, 250);
-									foreach($display_resolutions_array as $display_resolution) {
-										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_X"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
-									}
-								?>
-							</select>
-					</div>
+						<h4><?php echo L::config_display_additional_settings_header; ?></h4>
 
-					<div>
-						<label for="conf_DISP_RESOLUTION_Y"><?php echo L::config_display_resolution_y_label; ?></label><br>
-							<select name="conf_DISP_RESOLUTION_Y" id="conf_DISP_RESOLUTION_Y">
-								<?php
-									$display_resolutions_array=array(32, 64, 80, 122, 128);
-									foreach($display_resolutions_array as $display_resolution) {
-										echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
-									}
-								?>
-							</select>
-					</div>
+						<div>
+							<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br>
+								<select name="conf_DISP_RESOLUTION_X" id="conf_DISP_RESOLUTION_X">
+									<?php
+										$display_resolutions_array=array(96, 128, 160, 250);
+										foreach($display_resolutions_array as $display_resolution) {
+											echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_X"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+										}
+									?>
+								</select>
+						</div>
 
-					<div>
-						<label for="conf_DISP_OFFSET_X"><?php echo L::config_display_offset_x_label; ?></label><br>
-							<select name="conf_DISP_OFFSET_X" id="conf_DISP_OFFSET_X">
-								<?php
-									for ($display_offset=-30; $display_offset<=30; $display_offset++) {
-										echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_X"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
-									}
-								?>
-							</select>
-					</div>
+						<div>
+							<label for="conf_DISP_RESOLUTION_Y"><?php echo L::config_display_resolution_y_label; ?></label><br>
+								<select name="conf_DISP_RESOLUTION_Y" id="conf_DISP_RESOLUTION_Y">
+									<?php
+										$display_resolutions_array=array(32, 64, 80, 122, 128);
+										foreach($display_resolutions_array as $display_resolution) {
+											echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+										}
+									?>
+								</select>
+						</div>
 
-					<div>
-						<label for="conf_DISP_OFFSET_Y"><?php echo L::config_display_offset_y_label; ?></label><br>
-							<select name="conf_DISP_OFFSET_Y" id="conf_DISP_OFFSET_Y">
-								<?php
-									for ($display_offset=-30; $display_offset<=30; $display_offset++) {
-										echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_Y"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
-									}
-								?>
-							</select>
-					</div>
+						<div>
+							<label for="conf_DISP_OFFSET_X"><?php echo L::config_display_offset_x_label; ?></label><br>
+								<select name="conf_DISP_OFFSET_X" id="conf_DISP_OFFSET_X">
+									<?php
+										for ($display_offset=-30; $display_offset<=30; $display_offset++) {
+											echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_X"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
+										}
+									?>
+								</select>
+						</div>
 
-					<div>
-						<label for="conf_DISP_COLOR_MODEL"><?php echo L::config_display_color_model_label; ?></label><br>
-							<select name="conf_DISP_COLOR_MODEL" id="conf_DISP_COLOR_MODEL">
-								<?php
-									$display_color_models_array=array("1","RGB","RGBA");
-									foreach($display_color_models_array as $display_color_model) {
-										$display_color_model_entity="config_display_color_model_" . $display_color_model;
-										echo "<option value='" . $display_color_model . "' " . ($config["conf_DISP_COLOR_MODEL"] == $display_color_model?" selected":"") . ">" . L::{"$display_color_model_entity"}() . "</option>";
-									}
-								?>
-							</select>
+						<div>
+							<label for="conf_DISP_OFFSET_Y"><?php echo L::config_display_offset_y_label; ?></label><br>
+								<select name="conf_DISP_OFFSET_Y" id="conf_DISP_OFFSET_Y">
+									<?php
+										for ($display_offset=-30; $display_offset<=30; $display_offset++) {
+											echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_Y"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
+										}
+									?>
+								</select>
+						</div>
+
+						<div>
+							<label for="conf_DISP_COLOR_MODEL"><?php echo L::config_display_color_model_label; ?></label><br>
+								<select name="conf_DISP_COLOR_MODEL" id="conf_DISP_COLOR_MODEL">
+									<?php
+										$display_color_models_array=array("1","RGB","RGBA");
+										foreach($display_color_models_array as $display_color_model) {
+											$display_color_model_entity="config_display_color_model_" . $display_color_model;
+											echo "<option value='" . $display_color_model . "' " . ($config["conf_DISP_COLOR_MODEL"] == $display_color_model?" selected":"") . ">" . L::{"$display_color_model_entity"}() . "</option>";
+										}
+									?>
+								</select>
+						</div>
+
+						<div>
+							<input type="checkbox" id="conf_DISP_COLOR_INVERTED" name="conf_DISP_COLOR_INVERTED" <?php echo $config['conf_DISP_COLOR_INVERTED']=="1"?"checked":""; ?>>
+							<label for="conf_DISP_COLOR_INVERTED"><?php echo L::config_display_color_inverted_label; ?></label><br>
+						<div>
+
+						<div>
+							<label for="conf_DISP_BACKLIGHT_PIN"><?php echo L::config_display_backlight_pin_label; ?></label><br>
+								<select name="conf_DISP_BACKLIGHT_PIN" id="conf_DISP_BACKLIGHT_PIN">
+									<?php
+										$display_backlight_pin_array=array(
+											0	=>	'-',
+											18	=> 'GPIO 18',
+											24	=> 'GPIO 24'
+										);
+										foreach($display_backlight_pin_array as $display_backlight_pin => $display_backlight_pin_text) {
+											echo "<option value='" . $display_backlight_pin . "' " . ($config["conf_DISP_BACKLIGHT_PIN"] == $display_backlight_pin?" selected":"") . ">" . $display_backlight_pin_text . "</option>";
+										}
+									?>
+								</select>
+						</div>
 					</div>
 
 				<h3><?php echo L::config_menu_button_header; ?></h3>

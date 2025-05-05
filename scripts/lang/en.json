@@ -556,7 +556,8 @@
         "model_RGBA": "RGBA (RGB with transparency)",
         "model_label": "Color",
         "text_label": "Default font color",
-        "background_label": "Background color"
+        "background_label": "Background color",
+        "inverted_label": "Use inverted colors (BGR instead of RGB)"
       },
       "contrast_label": "Contrast",
       "rotate_label": "Display rotation",
@@ -569,7 +570,8 @@
       },
       "backlight_header": "Display backlight",
       "backlight_enabled_label": "Activate display backlight (if available)",
-      "backlight_pin_label": "Which GPIO pin (BCM notation) is connected to the backlight?"
+      "backlight_pin_label": "Which GPIO pin (BCM notation) is connected to the backlight?",
+      "additional_settings_header": "Additional display settings"
     },
     "menu": {
       "enable_header": "Activate display menu",
