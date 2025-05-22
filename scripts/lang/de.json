@@ -314,7 +314,8 @@
         "model_label": "Farbe",
         "text_label": "Standard-Schriftfarbe",
         "background_label": "Hintergrundfarbe",
-        "inverted_label": "Verwende invertierte Farben (BGR statt RGB)"
+        "bgr_label": "BGR-Farbnotation (Blau-Grün-Rot) statt RGB (Rot-Grün-Blau)",
+        "inverse_label": "Invertierte Farben"
       },
       "contrast_label": "Kontrast",
       "rotate_label": "Display-Rotation",

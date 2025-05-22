@@ -210,6 +210,7 @@
 		$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?'true':'false';
 		$conf_DISP									= isset($conf_DISP)?'true':'false';
 		$conf_DISP_COLOR_BGR						= isset($conf_DISP_COLOR_BGR)?'true':'false';
+		$conf_DISP_COLOR_INVERSE					= isset($conf_DISP_COLOR_INVERSE)?'true':'false';
 		$conf_DISP_BACKLIGHT_ENABLED				= isset($conf_DISP_BACKLIGHT_ENABLED)?'true':'false';
 		$conf_DISP_IP_REPEAT						= isset($conf_DISP_IP_REPEAT)?'true':'false';
 		$conf_DISP_SHOW_STATUSBAR					= isset($conf_DISP_SHOW_STATUSBAR)?'true':'false';
@@ -293,6 +294,7 @@ conf_DISP_OFFSET_Y=$conf_DISP_OFFSET_Y
 conf_DISP_ROTATE='$conf_DISP_ROTATE'
 conf_DISP_CONTRAST=$conf_DISP_CONTRAST
 conf_DISP_COLOR_BGR=$conf_DISP_COLOR_BGR
+conf_DISP_COLOR_INVERSE=$conf_DISP_COLOR_INVERSE
 conf_DISP_BACKLIGHT_PIN=$conf_DISP_BACKLIGHT_PIN
 conf_DISP_BACKLIGHT_ENABLED=$conf_DISP_BACKLIGHT_ENABLED
 conf_DISP_COLOR_MODEL='$conf_DISP_COLOR_MODEL'
@@ -1444,7 +1446,12 @@ CONFIGDATA;
 
 						<div>
 							<input type="checkbox" id="conf_DISP_COLOR_BGR" name="conf_DISP_COLOR_BGR" <?php echo $config['conf_DISP_COLOR_BGR']=="1"?"checked":""; ?>>
-							<label for="conf_DISP_COLOR_BGR"><?php echo L::config_display_color_inverted_label; ?></label><br>
+							<label for="conf_DISP_COLOR_BGR"><?php echo L::config_display_color_bgr_label; ?></label><br>
+						<div>
+
+						<div>
+							<input type="checkbox" id="conf_DISP_COLOR_INVERSE" name="conf_DISP_COLOR_INVERSE" <?php echo $config['conf_DISP_COLOR_INVERSE']=="1"?"checked":""; ?>>
+							<label for="conf_DISP_COLOR_INVERSE"><?php echo L::config_display_color_inverse_label; ?></label><br>
 						<div>
 
 						<div>

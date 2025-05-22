@@ -233,6 +233,7 @@ class setup(object):
 					'conf_DISP_ROTATE':									{'value': 0, 'type': 'int'},
 					'conf_DISP_CONTRAST':								{'value': 255, 'type': 'int'},
 					'conf_DISP_COLOR_BGR':								{'value': False, 'type': 'bool'},
+					'conf_DISP_COLOR_INVERSE':							{'value': False, 'type': 'bool'},
 					'conf_DISP_COLOR_MODEL':							{'value': '1', 'type': 'str'},
 					'conf_DISP_COLOR_TEXT':								{'value': 'grey', 'type': 'str'},
 					'conf_DISP_COLOR_HIGH':								{'value': 'white', 'type': 'str'},

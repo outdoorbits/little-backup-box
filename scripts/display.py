@@ -106,6 +106,7 @@ class DISPLAY(object):
 		self.conf_DISP_ROTATE					= self.__setup.get_val('conf_DISP_ROTATE')
 		self.conf_DISP_CONTRAST					= self.__setup.get_val('conf_DISP_CONTRAST')
 		self.conf_DISP_COLOR_BGR				= self.__setup.get_val('conf_DISP_COLOR_BGR')
+		self.conf_DISP_COLOR_INVERSE			= self.__setup.get_val('conf_DISP_COLOR_INVERSE')
 		self.conf_DISP_COLOR_MODEL				= self.__setup.get_val('conf_DISP_COLOR_MODEL')
 		self.conf_DISP_COLOR_TEXT				= self.__setup.get_val('conf_DISP_COLOR_TEXT')
 		self.conf_DISP_COLOR_HIGH				= self.__setup.get_val('conf_DISP_COLOR_HIGH')
@@ -134,10 +135,6 @@ class DISPLAY(object):
 		color['black']		= (0,	0,		0)
 		color['lightgrey']	= (127,	127,	127)
 		color['grey']		= (70,	70,		70)
-
-		if self.conf_DISP_COLOR_BGR:
-			for key in color.keys():
-				color[key]	= self.rgb_to_bgr(color[key])
 
 		if self.conf_DISP_COLOR_MODEL == '1':
 			self.color_text = 255
@@ -188,10 +185,10 @@ class DISPLAY(object):
 			elif self.conf_DISP_DRIVER == 'SH1106':
 				self.device = sh1106(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'ST7735':
-				self.device = st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR) # pin: GPIO Backlight
+				self.device = st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR, inverse=self.conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
 				self.device.backlight(self.conf_DISP_BACKLIGHT_ENABLED)
 			elif self.conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
-				self.device = st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR) # pin: GPIO Backlight
+				self.device = st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR, inverse=self.conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
 				self.device.backlight(self.conf_DISP_BACKLIGHT_ENABLED)
 			else:
 				print('Error: No valid display driver', file=sys.stderr)
@@ -228,9 +225,6 @@ class DISPLAY(object):
 				thread.start()
 			except:
 				pass
-
-	def rgb_to_bgr(self, rgb):
-		return (rgb[2], rgb[1], rgb[0])
 
 	def calculate_LineSize(self):
 		if self.hardware_ready:

@@ -314,7 +314,8 @@
         "model_label": "Couleur",
         "text_label": "Couleur de police par défaut",
         "background_label": "Couleur d'arrière-plan",
-        "inverted_label": "Utiliser des couleurs inversées (BGR au lieu de RVB)"
+        "bgr_label": "Notation des couleurs BGR (bleu-vert-rouge) au lieu de RVB (rouge-vert-bleu)",
+        "inverse_label": "Couleurs inversées"
       },
       "contrast_label": "Contraste",
       "rotate_label": "Rotation de l'affichage",

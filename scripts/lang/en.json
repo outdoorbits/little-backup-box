@@ -557,7 +557,8 @@
         "model_label": "Color",
         "text_label": "Default font color",
         "background_label": "Background color",
-        "inverted_label": "Use inverted colors (BGR instead of RGB)"
+        "bgr_label": "BGR color notation (blue-green-red) instead of RGB (red-green-blue)",
+        "inverse_label": "Inverted colors"
       },
       "contrast_label": "Contrast",
       "rotate_label": "Display rotation",
