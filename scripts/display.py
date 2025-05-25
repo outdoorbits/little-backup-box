@@ -169,27 +169,31 @@ class DISPLAY(object):
 					serial = spi(port=self.conf_DISP_SPI_PORT, device=0)
 			else:
 				print('Error: No valid connection type for display',file=sys.stderr)
-				raise Exception('Error: No valid connection type for display')
+				if self.conf_DISP_DRIVER != 'none':
+					raise Exception('Error: No valid connection type for display')
 		except:
 			self.hardware_ready	= False
 			print(f'Display connection to {self.conf_DISP_CONNECTION} could not be enabled.', file=sys.stderr)
 
 		try:
-			if self.conf_DISP_DRIVER == 'SSD1306':
-				self.device = ssd1306(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
+			if self.conf_DISP_DRIVER == 'none':
+				self.device	= self.__display_dummy()
+				self.hardware_ready	= False
+			elif self.conf_DISP_DRIVER == 'SSD1306':
+				self.device	= ssd1306(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'SSD1309':
-				self.device = ssd1309(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
+				self.device	= ssd1309(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'SSD1322':
-				self.device = ssd1322(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
+				self.device	= ssd1322(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'SSD1331':
-				self.device = ssd1331(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
+				self.device	= ssd1331(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'SH1106':
-				self.device = sh1106(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
+				self.device	= sh1106(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
 			elif self.conf_DISP_DRIVER == 'ST7735':
-				self.device = st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR, inverse=self.conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
+				self.device	= st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR, inverse=self.conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
 				self.device.backlight(self.conf_DISP_BACKLIGHT_ENABLED)
 			elif self.conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
-				self.device = st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR, inverse=self.conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
+				self.device	= st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR, inverse=self.conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
 				self.device.backlight(self.conf_DISP_BACKLIGHT_ENABLED)
 			else:
 				print('Error: No valid display driver', file=sys.stderr)
@@ -202,7 +206,7 @@ class DISPLAY(object):
 
 			self.device.contrast(self.conf_DISP_CONTRAST)
 
-			self.device.persist = False
+			self.device.persist	= False
 
 		# define font
 		self.FONT = ImageFont.truetype(self.const_FONT_PATH, self.conf_DISP_FONT_SIZE)
@@ -228,17 +232,20 @@ class DISPLAY(object):
 				pass
 
 	def calculate_LineSize(self):
-		if self.hardware_ready:
-			# calculate size of text
-			with canvas(self.device) as draw:
-				(left, top, right, bottom) = draw.textbbox((0,0),"gG",font=self.FONT)
+		# calculate size of text
 
-			self.line_height = bottom - top
+		# create image and draw onject
+		image	= Image.new(self.device.mode, (self.device.width, self.device.height), self.color_bg)
+		draw	= ImageDraw.Draw(image)
 
-			self.maxLines = int(self.device.height / self.line_height)
+		(left, top, right, bottom) = draw.textbbox((0,0),"gG",font=self.FONT)
 
-			if self.maxLines > self.const_DISPLAY_LINES_LIMIT:
-				self.maxLines = self.const_DISPLAY_LINES_LIMIT
+		self.line_height = bottom - top
+
+		self.maxLines = int(self.device.height / self.line_height)
+
+		if self.maxLines > self.const_DISPLAY_LINES_LIMIT:
+			self.maxLines = self.const_DISPLAY_LINES_LIMIT
 		else:
 			self.maxLines = self.const_DISPLAY_LINES_LIMIT
 
@@ -318,7 +325,7 @@ class DISPLAY(object):
 				return()
 
 			# display image
-			self.device.display(image)
+			self.__display_image(image)
 
 			# save image to file
 			self.__save_image(image)
@@ -472,10 +479,14 @@ class DISPLAY(object):
 						fill=fg_fill, width=1)
 
 			# display image
-			self.device.display(image)
+			self.__display_image(image)
 
 			# save image to file
 			self.__save_image(image)
+
+	def __display_image(self, image):
+		if self.hardware_ready:
+			self.device.display(image)
 
 	def __save_image(self, image):
 		try:
@@ -615,7 +626,6 @@ class DISPLAY(object):
 
 			# statusbar
 			if (
-				self.hardware_ready and
 				self.conf_DISP_SHOW_STATUSBAR and
 				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC
 				):
@@ -623,6 +633,23 @@ class DISPLAY(object):
 				display_time	= time.time()
 
 			time.sleep(FrameTime)
+
+	class __display_dummy(object):
+
+		def __init__(self):
+			self.persist = False
+			self.width	= 128
+			self.height	= 64
+			self.mode	= 'RGB'
+
+		def capabilities(self, *args, **kwargs):
+			return()
+
+		def contrast(self, *args, **kwargs):
+			return()
+
+		def display(self, *args, **kwargs):
+			return()
 
 if __name__ == "__main__":
 	display	= DISPLAY()

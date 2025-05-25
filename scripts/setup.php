@@ -1320,6 +1320,7 @@ CONFIGDATA;
 							<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
 								<?php
 									$display_drivers_array=array(
+										'none',
 										'SSD1306',
 										'SSD1309',
 										'SSD1322',
