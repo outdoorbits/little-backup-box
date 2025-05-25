@@ -238,6 +238,7 @@ class DISPLAY(object):
 		image	= Image.new(self.device.mode, (self.device.width, self.device.height), self.color_bg)
 		draw	= ImageDraw.Draw(image)
 
+		# write test text "gG"
 		(left, top, right, bottom) = draw.textbbox((0,0),"gG",font=self.FONT)
 
 		self.line_height = bottom - top
@@ -245,8 +246,6 @@ class DISPLAY(object):
 		self.maxLines = int(self.device.height / self.line_height)
 
 		if self.maxLines > self.const_DISPLAY_LINES_LIMIT:
-			self.maxLines = self.const_DISPLAY_LINES_LIMIT
-		else:
 			self.maxLines = self.const_DISPLAY_LINES_LIMIT
 
 	def get_statusbar(self):
