@@ -522,7 +522,10 @@ CONFIGDATA;
 <body <?php echo $background; ?> onload="refreshDisplay();">
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-	<?php include "${WORKING_DIR}/sub-display.php"; ?>
+	<?php
+		include "${WORKING_DIR}/sub-display.php";
+		display();
+	?>
 
 	<?php echo($SetupMessages); ?>
 

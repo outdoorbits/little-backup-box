@@ -545,10 +545,13 @@
 	<script type="text/javascript" src="js/display.js"></script>
 </head>
 
-<body <?php echo $background; ?> onload="slideshow_init();refreshDisplay();">
+<body <?php echo $background; ?> onload="refreshDisplay(); slideshow_init();">
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-	<?php include "${WORKING_DIR}/sub-display.php"; ?>
+	<?php
+		include "${WORKING_DIR}/sub-display.php";
+		display();
+	?>
 
 <!-- FILTER -->
 	<div class="card" style="margin-top: 2em">

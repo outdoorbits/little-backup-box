@@ -136,6 +136,7 @@
 <body onload="refreshLogMonitor();refreshDisplay();HideDisallowedButtons(document.getElementById('Source_<?php echo $OldSource; ?>'))" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	<?php include "${WORKING_DIR}/sub-display.php"; ?>
 
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
@@ -144,12 +145,9 @@
 		}
 	</script>
 
-	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;">
-		<nobr>
-			LITTLE BACKUP BOX
-			<?php include "${WORKING_DIR}/sub-display.php"; ?>
-		</nobr>
-	</h1>
+	<?php display(false); ?>
+	<h1 style="margin-bottom: 1em; letter-spacing: 3px;">LITTLE BACKUP BOX</h1>
+	<div style="clear: both;"></div>
 
 	<form class="text-center" style="margin-top: 1em;" method="POST">
 

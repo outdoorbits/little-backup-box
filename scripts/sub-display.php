@@ -24,14 +24,20 @@
 // 2. in the html head integrate the css:
 // 		<?php virtual_keyboard_css();
 //
-//$WORKING_DIR, $constants and $config must be defined in main script.-->
+//$constants and $config must be defined in main script.-->
 
-if ($config['conf_DISP']=="1" and $config['conf_DISP_RESOLUTION_X'] > 0 and $config['conf_DISP_RESOLUTION_Y'] > 0) {
-?>
-	<div style="display: flex; justify-content: flex-end;">
-		<div style="width: <?php echo $config['conf_DISP_RESOLUTION_X']; ?>px; height: <?php echo $config['conf_DISP_RESOLUTION_Y']; ?>px; background-color: black;">
-			<iframe id="display" src="<?php echo str_replace('/var/www/little-backup-box', '' ,$constants['const_DISPLAY_EXPORT_PATH']); ?>" width="<?php echo $config['conf_DISP_RESOLUTION_X']; ?>" height="<?php echo $config['conf_DISP_RESOLUTION_Y']; ?>" style="background: #000000;"></iframe>
-		</div>
-	</div>
-<?php
+function display($clear=true) {
+	global $config;
+	global $constants;
+
+	if ($config['conf_DISP']=="1" and $config['conf_DISP_RESOLUTION_X'] > 0 and $config['conf_DISP_RESOLUTION_Y'] > 0) {
+		?>
+
+		<img id="display" src="<?php echo str_replace('/var/www/little-backup-box', '' ,$constants['const_DISPLAY_EXPORT_PATH']); ?>" style="width: <?php echo $constants['const_DISPLAY_SIZE_UI_X']; ?>px; height: <?php echo $constants['const_DISPLAY_SIZE_UI_Y']; ?>px; background: #000000; float: right;"></img>
+
+		<?php
+		if ($clear) {
+			print('<div style="clear: both;"></div>');
+		}
+	}
 }

@@ -103,7 +103,10 @@
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-	<?php include "${WORKING_DIR}/sub-display.php"; ?>
+	<?php
+		include "${WORKING_DIR}/sub-display.php";
+		display();
+	?>
 
 	<div class="card">
 		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::tools_mount_header; ?></h3>

@@ -53,7 +53,10 @@
 	</script>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-	<?php include "${WORKING_DIR}/sub-display.php"; ?>
+	<?php
+		include "${WORKING_DIR}/sub-display.php";
+		display();
+	?>
 
 	<div class="card">
 		<h3><?php echo L::sysinfo_system; ?></h3>
