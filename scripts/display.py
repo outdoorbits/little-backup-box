@@ -68,7 +68,7 @@ from luma.core.render import canvas
 from luma.oled.device import ssd1306, ssd1309, ssd1322, ssd1331, sh1106
 from luma.lcd.device import st7735
 
-from PIL import Image, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 import displaymenu
 from lib_display import display_content_files
@@ -123,6 +123,7 @@ class DISPLAY(object):
 		self.const_DISPLAY_LINES_LIMIT			= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
 		self.const_DISPLAY_STATUSBAR_MAX_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_MAX_SEC')
 		self.const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
+		self.const_DISPLAY_EXPORT_PATH				= self.__setup.get_val('const_DISPLAY_EXPORT_PATH')
 
 		#define colors
 		color = {}
@@ -294,8 +295,9 @@ class DISPLAY(object):
 
 		return(statusbar)
 
-	def show(self, Lines, statusbar=None):
 
+
+	def show(self, Lines, statusbar=None):
 		# fill line count to const_DISPLAY_LINES_LIMIT
 		while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
 			Lines.append("s=b:")
@@ -315,152 +317,172 @@ class DISPLAY(object):
 			except:
 				return()
 
+			# display image
 			self.device.display(image)
+
+			# save image to file
+			self.__save_image(image)
 
 		else:
 			# Write lines
 
-			if not statusbar is None:
-				Lines[self.maxLines-1]	= f's=s:STATUSBAR'
+			if statusbar is not None:
+				Lines[self.maxLines-1] = f's=s:STATUSBAR'
 
-			with canvas(self.device) as draw:
+			# create image and draw onject
+			image	= Image.new(self.device.mode, (self.device.width, self.device.height), self.color_bg)
+			draw	= ImageDraw.Draw(image)
 
-				# define constants
-				x = 0
-				y_shift = 0
+			x = 0
+			y_shift = 0
 
-				y_space = 0
-				if self.maxLines > 1:
-					Spare_Y = self.device.height - self.maxLines * self.line_height
-					y_space = int (Spare_Y / (self.maxLines - 1))
+			y_space = 0
+			if self.maxLines > 1:
+				Spare_Y = self.device.height - self.maxLines * self.line_height
+				y_space = int(Spare_Y / (self.maxLines - 1))
 
-				# draw background
-				draw.rectangle(self.device.bounding_box, outline=self.color_bg, fill=self.color_bg)
+			# draw background
+			draw.rectangle((0, 0, self.device.width, self.device.height), outline=self.color_bg, fill=self.color_bg)
 
-				for n in range(0, self.maxLines):
+			for n in range(0, self.maxLines):
+				Line = Lines[n]
 
-					Line = Lines[n]
+				# basic color settings
+				fg_fill = self.color_text
+				bg_fill = self.color_bg
 
-					# basic color settings
-					fg_fill	= self.color_text
-					bg_fill	= self.color_bg
+				# basic text decoration settings
+				underline = False
 
-					# basic text decoration settings
-					underline = False
+				Formatstring, Content = Line.split(':',1)
+				Formats = Formatstring.split(',')
 
-					Formatstring, Content = Line.split(':',1)
-					Formats = Formatstring.split(',')
-
-					for Format in Formats:
-
-						if '=' in Format:
-							FormatType, FormatValue = Format.split('=',1)
-						else:
-							FormatType = Format
-
-						if FormatType == 's':
-							if self.device.mode == '1':
-								# black and white
-								if FormatValue == 'h': # highlight
-									fg_fill = self.color_bg
-									bg_fill = self.color_text
-								elif FormatValue == 'a': # alert
-									underline = True
-								elif FormatValue == 's': # statusbar
-									fg_fill = self.color_bg
-									bg_fill = self.color_text
-							else:
-								# RGB(A)
-								if FormatValue == 'h' or FormatValue == 'hc': # highlight or highlight color
-									fg_fill = self.color_high
-								elif FormatValue == 'a': # alert
-									if self.color_alert not in [self.color_text, self.color_high]:
-										fg_fill = self.color_alert
-									elif self.color_alert != self.color_high:
-										fg_fill = self.color_alert
-										bg_fill = self.color_high
-									else:
-										underline = True
-								elif FormatValue == 's': # statusbar
-									fg_fill = self.color_bg
-									bg_fill = self.color_text
-
-						if FormatType == 'u':
-							underline = True
-
-					y	= (n)*self.line_height + y_shift - 1 + y_space
-
-					# Draw a filled box in case of inverted output
-					if bg_fill != self.color_bg:
-						draw.rectangle((x, y + 2, self.device.width, y + self.line_height + 1 if y + self.line_height + 1 <= self.device.height else self.device.height ), outline=bg_fill, fill=bg_fill)
-
-					if Content[0:6] == "IMAGE=":
-						Content = ''
-
-					if Content[0:6] == "PGBAR=":
-						try:
-							progress	= float(Content[6:])
-						except ValueError:
-							progress	= 0
-
-						progress	= int(progress * 10 + 0.5) / 10
-
-						if progress >= 100:
-							# no decimals on 100%
-							progress	= int(progress + 0.5)
-
-						# define text to print
-						Content	= "{}%".format(str(progress))
-
-						(left, top, right, bottom) = draw.textbbox((0,0),"100%::",font=self.FONT)
-						pgbar_text_length = right - left
-
-						# draw progressbar
-						pg_space	= 2
-						pgbar_x_l	= x + pgbar_text_length
-						pgbar_x_r	= self.device.width - pg_space
-						pgbar_y_u	= y + pg_space
-						pgbar_y_d	= y + self.line_height - pg_space
-
-						## draw outer frame
-						draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=fg_fill, fill=bg_fill)
-
-						## draw inner frame
-						pgbar_x_l	= pgbar_x_l + 1
-						pgbar_x_r	= pgbar_x_r - 1
-						pgbar_y_u	= pgbar_y_u + 1
-						pgbar_y_d	= pgbar_y_d - 1
-
-						pgbar_x_r	= pgbar_x_l + (pgbar_x_r - pgbar_x_l) * progress / 100
-
-						draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
-
-					# Write text
-					## status bar
-					if FormatType == 's' and FormatValue == 's':
-
-						i	= 0
-						for item in statusbar:
-
-							if i < len(statusbar) - 1:
-								# align left
-								x	= int(i * self.device.width / len(statusbar))
-							else:
-								# align right
-								(left, top, right, bottom) = draw.textbbox((0,0), item,font=self.FONT)
-								pgbar_text_length = right - left
-								x	= self.device.width - pgbar_text_length - 1
-
-							draw.text((x + 1, y), item, font=self.FONT, fill=fg_fill)
-
-							i	+= 1
+				for Format in Formats:
+					if '=' in Format:
+						FormatType, FormatValue = Format.split('=',1)
 					else:
-						## regular text
-						draw.text((x + 1, y), Content, font=self.FONT, fill=fg_fill)
+						FormatType	= Format
+						FormatValue	= ''
 
-					if underline:
-						(left, top, right, bottom) = draw.textbbox((0,0),Content,font=self.FONT)
-						draw.line((x + 1, y + self.line_height + y_space, x + 1 + right - left, y + self.line_height + y_space), fill=fg_fill, width=1)
+					if FormatType == 's':
+						if self.device.mode == '1':
+							# monochrome
+							if FormatValue == 'h': # highlight
+								fg_fill = self.color_bg
+								bg_fill = self.color_text
+							elif FormatValue == 'a': # alert
+								underline = True
+							elif FormatValue == 's': # statusbar
+								fg_fill = self.color_bg
+								bg_fill = self.color_text
+						else:
+							# RGB(A)
+							if FormatValue in ['h', 'hc']: # highlight or highlight color
+								fg_fill = self.color_high
+							elif FormatValue == 'a': # alert
+								if self.color_alert not in [self.color_text, self.color_high]:
+									fg_fill = self.color_alert
+								elif self.color_alert != self.color_high:
+									fg_fill = self.color_alert
+									bg_fill = self.color_high
+								else:
+									underline = True
+							elif FormatValue == 's': # statusbar
+								fg_fill = self.color_bg
+								bg_fill = self.color_text
+
+					if FormatType == 'u':
+						underline = True
+
+				y	= (n) * self.line_height + y_shift - 1 + y_space
+
+				# Draw a filled box in case of inverted output
+				if bg_fill != self.color_bg:
+					draw.rectangle(
+						(x, y + 2, self.device.width, min(y + self.line_height + 1, self.device.height)),
+						outline=bg_fill, fill=bg_fill)
+
+				if Content.startswith("IMAGE="):
+					Content	= ''
+
+				if Content.startswith("PGBAR="):
+					try:
+						progress	= float(Content[6:])
+					except ValueError:
+						progress	= 0
+
+					progress = int(progress * 10 + 0.5) / 10
+					if progress >= 100:
+						# no decimals on 100%
+						progress = int(progress + 0.5)
+
+					# define text to print
+					Content = "{}%".format(str(progress))
+
+					(left, top, right, bottom) = draw.textbbox((0,0), "100%::", font=self.FONT)
+					pgbar_text_length = right - left
+
+					# draw progressbar
+					pg_space = 2
+					pgbar_x_l = x + pgbar_text_length
+					pgbar_x_r = self.device.width - pg_space
+					pgbar_y_u = y + pg_space
+					pgbar_y_d = y + self.line_height - pg_space
+
+					## draw outer frame
+					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=fg_fill, fill=bg_fill)
+
+					## draw inner frame
+					pgbar_x_l	+= 1
+					pgbar_x_r	-= 1
+					pgbar_y_u	+= 1
+					pgbar_y_d	-= 1
+
+					pgbar_x_r = pgbar_x_l + (pgbar_x_r - pgbar_x_l) * progress / 100
+
+					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
+
+				# Write text
+				## status bar
+				if FormatType == 's' and FormatValue == 's':
+
+					i	= 0
+					for item in statusbar:
+
+						if i < len(statusbar) - 1:
+							# align left
+							x	= int(i * self.device.width / len(statusbar))
+						else:
+							# align right
+							(left, top, right, bottom) = draw.textbbox((0,0), item, font=self.FONT)
+							pgbar_text_length = right - left
+							x	= self.device.width - pgbar_text_length - 1
+
+						draw.text((x + 1, y), item, font=self.FONT, fill=fg_fill)
+
+						i += 1
+				else:
+					## regular text
+					draw.text((x + 1, y), Content, font=self.FONT, fill=fg_fill)
+
+				if underline:
+					(left, top, right, bottom) = draw.textbbox((0, 0), Content, font=self.FONT)
+					draw.line(
+						(x + 1, y + self.line_height + y_space, x + 1 + right - left, y + self.line_height + y_space),
+						fill=fg_fill, width=1)
+
+			# display image
+			self.device.display(image)
+
+			# save image to file
+			self.__save_image(image)
+
+	def __save_image(self, image):
+		try:
+			image.save(self.const_DISPLAY_EXPORT_PATH)
+		except:
+			pass
+
 
 	def terminate(self, signum=None, frame=None):
 		# stop menu
@@ -498,55 +520,61 @@ class DISPLAY(object):
 
 				Lines = []
 				FrameTime = self.conf_DISP_FRAME_TIME
-				# read new lines
 
-				with open(ContentFile, 'r') as CF:
-					for Line in CF:
+				# read content file
+				try:
+					CF	= open(ContentFile, 'r')
+				except:
+					continue
 
-						Line = Line.strip()
+				for Line in CF:
 
-						if Line[0:4] == 'set:': # global settings line
+					Line = Line.strip()
 
-							settingStr = Line[4:]
-							settings = settingStr.split(',')
+					if Line[0:4] == 'set:': # global settings line
 
-							for setting in settings:
+						settingStr = Line[4:]
+						settings = settingStr.split(',')
 
-								if '=' in setting:
-									SettingType, SettingValue = setting.split('=',1)
-									SettingValue	= SettingValue.strip()
-								else:
-									SettingType	= setting
-									SettingValue	= ''
+						for setting in settings:
 
-								if SettingType == 'kill':
-									# remove content file
-									os.remove(ContentFile)
+							if '=' in setting:
+								SettingType, SettingValue = setting.split('=',1)
+								SettingValue	= SettingValue.strip()
+							else:
+								SettingType	= setting
+								SettingValue	= ''
 
-									self.terminate()
-									return()
+							if SettingType == 'kill':
+								# remove content file
+								os.remove(ContentFile)
 
-								if SettingType == 'clear':
-									import_old_file	= False
+								self.terminate()
+								return()
 
-								if SettingType == 'temp':
-									temp_screen		= True
+							if SettingType == 'clear':
+								import_old_file	= False
 
-								if SettingType == 'hidden':
-									hidden_info		= SettingValue
+							if SettingType == 'temp':
+								temp_screen		= True
 
-								if SettingType == 'time' and float(SettingValue) >= 0:
-									FrameTime		= float(SettingValue)
+							if SettingType == 'hidden':
+								hidden_info		= SettingValue
 
-						elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
+							if SettingType == 'time' and float(SettingValue) >= 0:
+								FrameTime		= float(SettingValue)
 
-							if Line:
-								if (Line[0:1] == ':'):
-										Line = "s=h{}".format(Line)
-								elif ":" not in Line:
-									Line = "s=h:{}".format(Line)
+					elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
 
-								Lines.append(Line)
+						if Line:
+							if (Line[0:1] == ':'):
+									Line = "s=h{}".format(Line)
+							elif ":" not in Line:
+								Line = "s=h:{}".format(Line)
+
+							Lines.append(Line)
+
+				CF.close()
 
 				# read old lines
 				if import_old_file:

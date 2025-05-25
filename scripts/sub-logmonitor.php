@@ -28,10 +28,10 @@ function logmonitor($sourcefile, $title='', $allow_logfile_operations=false) {
 			?>
 			<iframe id="logmonitor" src="<?php echo str_replace('/var/www/little-backup-box', '' ,$sourcefile); ?>" width="100%" height="300" style="background: #FFFFFF;" onfocus="clearIntervalLogMonitor()"></iframe>
 			<div class="text-center" style="margin-top: 0.5em;">
+				<button name="refresh" onclick="refreshLogMonitor()"><?php echo L::log_refresh_button; ?></button>
 				<?php
 					if ($allow_logfile_operations) {
 						?>
-							<button name="refresh" onclick="refreshLogMonitor()"><?php echo L::log_refresh_button; ?></button>
 							<a role="button" href="<?php echo str_replace('/var/www/little-backup-box', '' ,$sourcefile); ?>" download="<?php echo basename($sourcefile); ?>"><button>Download</button></a>
 							<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 								<button style="margin-top: 2em;" type="delete" name="delete_logfile" class="danger"><?php echo (L::log_delete_button); ?></button>

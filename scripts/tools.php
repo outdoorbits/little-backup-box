@@ -95,13 +95,15 @@
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
-	<script src="js/logmonitor.js"></script>
+	<script type="text/javascript" src="js/logmonitor.js"></script>
+	<script type="text/javascript" src="js/display.js"></script>
 </head>
 
-<body onload="refreshLogMonitor()" <?php echo $background; ?>>
+<body onload="refreshLogMonitor();refreshDisplay();" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	<?php include "${WORKING_DIR}/sub-display.php"; ?>
 
 	<div class="card">
 		<h3 class="text-center" style="margin-top: 0em;"><?php echo l::tools_mount_header; ?></h3>

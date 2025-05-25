@@ -542,11 +542,13 @@
 	<link rel="stylesheet" href="css/mglass.css">
 	<script type="text/javascript" src="js/mglass.js"></script>
 	<script type="text/javascript" src="js/slideshow.js"></script>
+	<script type="text/javascript" src="js/display.js"></script>
 </head>
 
-<body <?php echo $background; ?> onload="slideshow_init();">
+<body <?php echo $background; ?> onload="slideshow_init();refreshDisplay();">
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	<?php include "${WORKING_DIR}/sub-display.php"; ?>
 
 <!-- FILTER -->
 	<div class="card" style="margin-top: 2em">

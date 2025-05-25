@@ -97,6 +97,7 @@
 <head>
 	<?php include "sub-standards-header-loader.php"; ?>
 	<script type="text/javascript" src="js/logmonitor.js"></script>
+	<script type="text/javascript" src="js/display.js"></script>
 	<script type="text/javascript" src="js/partition_presets.js"></script>
 
 	<script>
@@ -132,9 +133,9 @@
 <?php
 	$OldSource = isset($_POST['SourceDevice']) ? $_POST['SourceDevice'] : 'anyusb';
 ?>
-<body onload="refreshLogMonitor();HideDisallowedButtons(document.getElementById('Source_<?php echo $OldSource; ?>'))" <?php echo $background; ?>>
-	<?php include "sub-standards-body-loader.php"; ?>
-	<?php include "sub-menu.php"; ?>
+<body onload="refreshLogMonitor();refreshDisplay();HideDisallowedButtons(document.getElementById('Source_<?php echo $OldSource; ?>'))" <?php echo $background; ?>>
+	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
+	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
@@ -143,7 +144,12 @@
 		}
 	</script>
 
-	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;">LITTLE BACKUP BOX</h1>
+	<h1 class="text-center" style="margin-bottom: 1em; letter-spacing: 3px;">
+		<nobr>
+			LITTLE BACKUP BOX
+			<?php include "${WORKING_DIR}/sub-display.php"; ?>
+		</nobr>
+	</h1>
 
 	<form class="text-center" style="margin-top: 1em;" method="POST">
 

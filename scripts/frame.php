@@ -56,11 +56,13 @@
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
+	<script type="text/javascript" src="js/display.js"></script>
 </head>
 
-<body <?php echo $background; ?>>
+<body <?php echo $background; ?> onload="refreshDisplay();>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	<?php include "${WORKING_DIR}/sub-display.php"; ?>
 
 	<div style="position: absolute; left: 0; width: 100%; height: 90%; border: none; background: #FF0000;">
 		<iframe id="pageframe" src="<?php echo $framed_pages[$frame_index]; ?>" style="width: 100%; height: 100%; border: none; background: #FFFFFF;"></iframe>

@@ -516,11 +516,13 @@ CONFIGDATA;
 		include "${WORKING_DIR}/sub-standards-header-loader.php";
 		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 	?>
+	<script type="text/javascript" src="js/display.js"></script>
 </head>
 
-<body <?php echo $background; ?>>
+<body <?php echo $background; ?> onload="refreshDisplay();">
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	<?php include "${WORKING_DIR}/sub-display.php"; ?>
 
 	<?php echo($SetupMessages); ?>
 

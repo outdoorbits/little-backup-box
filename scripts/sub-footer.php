@@ -24,7 +24,7 @@
 // 2. in the html head integrate the css:
 // 		<?php virtual_keyboard_css();
 //
-//$WORKING_DIR and $constants mustbe defined in main script.-->
+//$WORKING_DIR and $constants must be defined in main script.-->
 ?>
 
 <div class="footer">

@@ -37,12 +37,13 @@
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
-	<script src="js/logmonitor.js"></script>
-	<script src="js/refresh_site.js"></script>
-	<script src="js/copy2clipboard.js"></script>
+	<script type="text/javascript" src="js/logmonitor.js"></script>
+	<script type="text/javascript" src="js/display.js"></script>
+	<script type="text/javascript" src="js/refresh_site.js"></script>
+	<script type="text/javascript" src="js/copy2clipboard.js"></script>
 </head>
 
-<body onload="refreshLogMonitor(); refresh_site()" <?php echo $background; ?>>
+<body onload="refreshLogMonitor();refreshDisplay();refresh_site();" <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
@@ -52,6 +53,7 @@
 	</script>
 
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
+	<?php include "${WORKING_DIR}/sub-display.php"; ?>
 
 	<div class="card">
 		<h3><?php echo L::sysinfo_system; ?></h3>

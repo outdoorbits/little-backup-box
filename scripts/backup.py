@@ -1302,14 +1302,14 @@ class backup(object):
 				Command	= ["mogrify", "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				subprocess.run(Command)
 
-				Command	=["composite", "-gravity", "center", "/var/www/little-backup-box/img/play.png", os.path.join(Device.MountPoint, TIMS_SubpathFilename), os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	=["composite", "-gravity", "center", f"{self.__WORKING_DIR}/img/play.png", os.path.join(Device.MountPoint, TIMS_SubpathFilename), os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_AUDIO.split(';'):
-				Command	= ["cp", "/var/www/little-backup-box/img/audio.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["cp", f"{self.__WORKING_DIR}/img/audio.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
@@ -1324,7 +1324,7 @@ class backup(object):
 			if not os.path.isfile(os.path.join(Device.MountPoint, TIMS_SubpathFilename)):
 				self.__log.message(f"ERROR: TIMS of '{os.path.join(Device.MountPoint, SourceFilePathName)}' ('{os.path.join(Device.MountPoint, TIMS_SubpathFilename)}') not regular created.")
 
-				Command	= ["cp", "/var/www/little-backup-box/img/unknown.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["cp", f"{self.__WORKING_DIR}/img/unknown.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
