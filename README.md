@@ -9,10 +9,10 @@ Little Backup Box in its <a href="https://github.com/outdoorbits/case-for-little
 <img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/youtube-lbb-desktop-variant.png"  align="left" title="Little Backup Box in a touchscreen housing"><BR CLEAR="all">
 Little Backup Box in a touchscreen housing - watch Dave's video on YouTube</a><br /><br />
 <a href="https://github.com/outdoorbits/case-for-little-backup-box/tree/main/Raspberry_Pi_zero_2W">
-<img src="https://github.com/outdoorbits/case-for-little-backup-box/blob/main/Raspberry_Pi_zero_2W/Tiny_case/images/lbb_tiny_icon.jpg"  align="left" title="Housing for Raspberry Pi zero 2W"><BR CLEAR="all">
+<img src="https://raw.githubusercontent.com/outdoorbits/case-for-little-backup-box/main/Raspberry_Pi_zero_2W/Tiny_case/images/lbb_tiny_icon.jpg"  align="left" title="Housing for Raspberry Pi zero 2W"><BR CLEAR="all">
 Little Backup Box in a tiny protected housing for Raspberry Pi zero 2W</a><br /><br />
 <a href="https://github.com/outdoorbits/case-for-little-backup-box/tree/main/Raspberry_Pi_5_SSD">
-<img src="https://github.com/outdoorbits/case-for-little-backup-box/blob/main/Raspberry_Pi_5_SSD/images/little_backup_box_raspberry_finished.jpg"  align="left" title="Housing for Raspberry Pi 5, SSD included"><BR CLEAR="all">
+<img src="https://raw.githubusercontent.com/outdoorbits/case-for-little-backup-box/main/Raspberry_Pi_5_SSD/images/little_backup_box_raspberry_finished.jpg"  align="left" title="Housing for Raspberry Pi 5, SSD included"><BR CLEAR="all">
 Little Backup Box with integrated SSD and improved power supply.</a><br /><br />
 
 This software turns a single-board computer into a versatile, pocket-sized backup solution.<br />
