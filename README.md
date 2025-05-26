@@ -1,3 +1,7 @@
+---
+layout: default
+title: Title
+---
 <h1>Little Backup Box</h1>
 <a href="#installation"><b>Jump to installation instructions</b></a>
 <h2>About</h2>
