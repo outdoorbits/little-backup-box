@@ -1,4 +1,5 @@
-<h1>Little Backup Box</h1>
+<img src="https://github.com/outdoorbits/little-backup-box/raw/main/scripts/img/little-backup-box-color.png" alt="Little Backup Box" style="float: right; height: 2em; margin-left: 10px;">
+<h1><img src="https://github.com/outdoorbits/little-backup-box/raw/main/scripts/favicon.ico" alt="favicon" style="height: 1em; vertical-align: middle;"></img>Little Backup Box</h1>
 <a href="#installation"><b>Jump to installation instructions</b></a>
 <h2>About</h2>
 Depending on your needs and options, little-backup-box can be operated in a simple housing, with a display (possibly with buttons for the display menu) or even with a touchscreen. <br />
