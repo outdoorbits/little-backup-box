@@ -1,4 +1,4 @@
-<h1 style="display: inline-block;"><img src="https://github.com/outdoorbits/little-backup-box/raw/main/scripts/favicon.ico" alt="favicon" style="height: 1em; vertical-align: middle;"> Little Backup Box <img src="https://github.com/outdoorbits/little-backup-box/raw/main/scripts/img/little-backup-box-color.png" alt="Little Backup Box" style="height: 4em; vertical-align: middle; margin-left: 10px;"></h1>
+<h1 style="display: inline-block;"><img src="https://github.com/outdoorbits/little-backup-box/raw/main/scripts/favicon.ico" alt="favicon" style="height: 1em; vertical-align: middle;"> Little Backup Box <img src="https://github.com/outdoorbits/little-backup-box/raw/main/scripts/img/little-backup-box-color.png" alt="Little Backup Box" style="height: 4em; vertical-align: top; margin-left: 10px;"></h1>
 
 <a href="#installation"><b>Jump to installation instructions</b></a>
 <h2>About</h2>
