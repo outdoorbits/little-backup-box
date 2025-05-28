@@ -20,9 +20,12 @@
 
 <title>Little Backup Box</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="shortcut icon" href="favicon.ico" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/lbb.css">
 
+<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+<link rel="apple-touch-icon" href="/img/icons/favicon-180.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/img/icons/favicon-192.png"/>
+<link rel="icon" type="image/png" sizes="512x512" href="/img/icons/favicon-512.png"/>
