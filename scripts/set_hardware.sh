@@ -22,11 +22,7 @@ source "${WORKING_DIR}/constants.sh"
 CONFIG="${WORKING_DIR}/config.cfg"
 source "$CONFIG"
 
-# Definitions
-raspi_config="/boot/config.txt"
-
 # fan control
-dtoverlay=gpio-fan,gpiopin=18,temp=60000
 if [ ! "${conf_FAN_PWM_GPIO}" = "-" ] && [ ! "${conf_FAN_PWM_TEMP_C}" = "0" ]; then
 	# activate fan control
 	raspi-config nonint do_fan 0 ${conf_FAN_PWM_GPIO} ${conf_FAN_PWM_TEMP_C}
