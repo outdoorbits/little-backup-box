@@ -34,6 +34,9 @@ import lib_proftpd
 import lib_setup
 import lib_storage
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class backup_autorun(object):
 	def __init__(self):
 		self.WORKING_DIR	= os.path.dirname(__file__)
@@ -61,7 +64,10 @@ class backup_autorun(object):
 
 		# ip info
 		ip_info	= lib_cron_ip.ip_info()
+
 		ip_info.display_ip()
+
+		# ip_info.mail_ip() starts as thread
 		self.__mail_threads_started.append(ip_info.mail_ip())
 
 		self.__default_backup()
@@ -73,7 +79,7 @@ class backup_autorun(object):
 		git_thread.join(timeout=15)
 
 		# Wait for running threads (mails to send)
-		lib_common.join_mail_threads(self.__display, self.__lan,self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+		lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
 
 	def __cleanup_at_boot(self):
 		# remove IP_SENT_MARKERFILE
@@ -84,9 +90,16 @@ class backup_autorun(object):
 			pass
 
 		# remove display content files
-		const_DISPLAY_CONTENT_FOLDER	= self.__setup.get_val('const_DISPLAY_CONTENT_FOLDER')
+		const_DISPLAY_CONTENT_PATH	= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
 		try:
-			subprocess.run(f'rm {const_DISPLAY_CONTENT_FOLDER}/*',shell=True)
+			subprocess.run(f'rm {const_DISPLAY_CONTENT_PATH}/*', shell=True)
+		except:
+			pass
+
+		# remove display image files
+		const_DISPLAY_IMAGE_EXPORT_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
+		try:
+			subprocess.run(f'rm {const_DISPLAY_IMAGE_EXPORT_PATH}/*', shell=True)
 		except:
 			pass
 

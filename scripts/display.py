@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-# Display messages are read from const_DISPLAY_CONTENT_FOLDER
+# Display messages are read from const_DISPLAY_CONTENT_PATH
 #
 # format:
 # FORMAT-OPTIONS:TEXT
@@ -123,7 +123,8 @@ class DISPLAY(object):
 		self.const_DISPLAY_LINES_LIMIT			= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
 		self.const_DISPLAY_STATUSBAR_MAX_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_MAX_SEC')
 		self.const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
-		self.const_DISPLAY_EXPORT_PATH				= self.__setup.get_val('const_DISPLAY_EXPORT_PATH')
+		self.const_DISPLAY_IMAGE_EXPORT_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
+		self.const_DISPLAY_IMAGE_EXPORT_FILE	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
 
 		#define colors
 		color = {}
@@ -417,13 +418,10 @@ class DISPLAY(object):
 					except ValueError:
 						progress	= 0
 
-					progress = int(progress * 10 + 0.5) / 10
-					if progress >= 100:
-						# no decimals on 100%
-						progress = int(progress + 0.5)
+					progress	= int(progress * 10 + 0.5) / 10 if progress < 100 else int(progress + 0.5)
 
 					# define text to print
-					Content = "{}%".format(str(progress))
+					Content = "{}%".format(str(progress if progress <= 100 else '100+'))
 
 					(left, top, right, bottom) = draw.textbbox((0,0), "100%::", font=self.FONT)
 					pgbar_text_length = right - left
@@ -444,7 +442,7 @@ class DISPLAY(object):
 					pgbar_y_u	+= 1
 					pgbar_y_d	-= 1
 
-					pgbar_x_r = pgbar_x_l + (pgbar_x_r - pgbar_x_l) * progress / 100
+					pgbar_x_r = pgbar_x_l + (pgbar_x_r - pgbar_x_l) * (100 if progress >= 100 else progress) / 100
 
 					draw.rectangle((pgbar_x_l, pgbar_y_u, pgbar_x_r, pgbar_y_d), outline=bg_fill, fill=fg_fill)
 
@@ -488,8 +486,24 @@ class DISPLAY(object):
 			self.device.display(image)
 
 	def __save_image(self, image):
+
+		FilePathName	= os.path.join(self.const_DISPLAY_IMAGE_EXPORT_PATH, self.const_DISPLAY_IMAGE_EXPORT_FILE)
+		FileNameTimed	= self.const_DISPLAY_IMAGE_EXPORT_FILE
+
+		### <<< KEEP IMAGES FOR DOCUMENTATION
+
+		# if os.path.exists(FilePathName):
+		# 	with open('/proc/uptime', 'r') as f:
+		# 		uptime_seconds	= float(f.readline().split()[0])
+		# 		uptime_seconds	= f'{uptime_seconds:0>12.2f}'
+		#
+		# 	FileNameTimed	= f'{uptime_seconds}-{self.const_DISPLAY_IMAGE_EXPORT_FILE}'
+		# 	os.rename(FilePathName, os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_INTERNAL_BACKUP_DIR'), FileNameTimed))
+
+		### >>> KEEP IMAGES FOR DOCUMENTATION
+
 		try:
-			image.save(self.const_DISPLAY_EXPORT_PATH)
+			image.save(FilePathName)
 		except:
 			pass
 

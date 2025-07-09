@@ -529,7 +529,7 @@ sudo chmod 640 /etc/ssl/private/little-backup-box.pem
 sudo chmod 644 /etc/ssl/certs/little-backup-box.crt
 
 # Apache-config-files
-## cleanup comitup (will be integrated in little-backup-box.conf)
+## remove comitup apache integration from previous installation (will be integrated in little-backup-box.conf now)
 sudo a2dissite comitup
 sudo rm /etc/apache2/sites-available/comitup.conf
 

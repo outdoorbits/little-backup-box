@@ -48,7 +48,7 @@ class poweroff(object):
 		self.conf_POWER_OFF 				= self.__setup.get_val('conf_POWER_OFF')
 		self.conf_DISP_FRAME_TIME			= self.__setup.get_val('conf_DISP_FRAME_TIME')
 		self.const_LOGFILE					= self.__setup.get_val('const_LOGFILE')
-		self.const_DISPLAY_CONTENT_FOLDER	= self.__setup.get_val('const_DISPLAY_CONTENT_FOLDER')
+		self.const_DISPLAY_CONTENT_PATH	= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
 
 	def poweroff(self):
 		# Set the PWR LED ON to indicate that the no backup is active

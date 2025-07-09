@@ -311,7 +311,16 @@ class backup(object):
 				else:
 					syncCommand	+= ['copy']
 
-			syncCommand		+= [SourcePath, TargetPath, '--config', self.__RCLONE_CONFIG_FILE, '-vv', '--min-size=1B', '--ignore-case', '--no-update-modtime', '--no-update-dir-modtime'] + ExcludeOptions
+			syncCommand		+= [
+				SourcePath,
+				TargetPath, '--config',
+				self.__RCLONE_CONFIG_FILE,
+				'-vv',
+				'--min-size=1B',
+				'--ignore-case',
+				'--no-update-modtime',
+				'--no-update-dir-modtime'
+			] + ExcludeOptions
 
 			if dry_run:
 				syncCommand	+= ['--one-way']

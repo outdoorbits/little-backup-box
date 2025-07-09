@@ -146,7 +146,7 @@ class storage(object):
 		elif self.StorageType == 'ftp':
 			mounted	= self.__mount_ftp()
 
-		if mounted and (self.StorageType in ['usb', 'internal', 'nvme', 'cloud']):
+		if mounted and not self.LbbDeviceID and self.mountable:
 			self.__manage_lbb_device_ID()
 
 		return(mounted)
@@ -875,10 +875,18 @@ class storage(object):
 		else:
 			PercentInUse	= '?'
 
-		storsize	= f"{self.__lan.l('box_backup_storage_size')}: {self.__HumanReadableNumber(storsize,1000)}"
-		storused	= f"{self.__lan.l('box_backup_storage_used')}: {self.__HumanReadableNumber(storused,1000)}"
-		storfree	= f"{self.__lan.l('box_backup_storage_free')}: {self.__HumanReadableNumber(storfree,1000)}"
-		storfstype	= f"{self.__lan.l('box_backup_storage_filesystem_short')}: {storfstype}"
+		if not self.LbbDeviceID:
+			self.__manage_lbb_device_ID()
+
+		try:
+			LbbDeviceName	= self.LbbDeviceID.split('_', 1)[1]
+		except:
+			LbbDeviceName	= self.LbbDeviceID
+		LbbDeviceName	= [f"s=a:{LbbDeviceName}"] if LbbDeviceName else []
+
+		storused		= f"{self.__lan.l('box_backup_storage_used')}: {self.__HumanReadableNumber(storused,1000)}/{self.__HumanReadableNumber(storsize,1000)}"
+		storfree		= f"{self.__lan.l('box_backup_storage_free')}: {self.__HumanReadableNumber(storfree,1000)}"
+		storfstype		= f"{self.__lan.l('box_backup_storage_filesystem_short')}: {storfstype}"
 
 		if self.StorageType in ['usb', 'nvme']:
 			l_drive_ok	= self.__lan.l(f"box_backup_{self.StorageType}_{self.Role}_ok")
@@ -887,7 +895,7 @@ class storage(object):
 			if self.CloudServiceName:
 				l_drive_ok	+= f': {self.CloudServiceName}'
 
-		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 1.5}", f":{l_drive_ok}", f":{storsize}", f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
+		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 2}", f":{l_drive_ok}"] + LbbDeviceName +[f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
 
 	def __split_CameraIdentifier(self,Identifier):
 		try:

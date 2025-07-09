@@ -42,19 +42,24 @@ class display(object):
 		self.display_content_files	= display_content_files(self.setup)
 
 		# setup
-		self.conf_DISP						= self.setup.get_val('conf_DISP')
-		self.const_DISPLAY_CONTENT_FOLDER	= self.setup.get_val('const_DISPLAY_CONTENT_FOLDER')
-		self.const_DISPLAY_CONTENT_OLD_FILE	= self.setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-		self.conf_DISP_FRAME_TIME			= self.setup.get_val('conf_DISP_FRAME_TIME')
+		self.conf_DISP							= self.setup.get_val('conf_DISP')
+		self.const_DISPLAY_CONTENT_PATH			= self.setup.get_val('const_DISPLAY_CONTENT_PATH')
+		self.const_DISPLAY_CONTENT_OLD_FILE		= self.setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		self.const_DISPLAY_IMAGE_EXPORT_PATH	= self.setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
+		self.conf_DISP_FRAME_TIME				= self.setup.get_val('conf_DISP_FRAME_TIME')
 
 		self.python = shutil.which('python3')
 
 		self.pgbar_len = 20
 
 		if self.conf_DISP:
-			# ensure const_DISPLAY_CONTENT_FOLDER exists
-			if not os.path.isdir(self.const_DISPLAY_CONTENT_FOLDER):
-				pathlib.Path(self.const_DISPLAY_CONTENT_FOLDER).mkdir(parents=True, exist_ok=True)
+			# ensure const_DISPLAY_CONTENT_PATH exists
+			if not os.path.isdir(self.const_DISPLAY_CONTENT_PATH):
+				pathlib.Path(self.const_DISPLAY_CONTENT_PATH).mkdir(parents=True, exist_ok=True)
+
+			# ensure const_DISPLAY_IMAGE_EXPORT_PATH exists
+			if not os.path.isdir(self.const_DISPLAY_IMAGE_EXPORT_PATH):
+				pathlib.Path(self.const_DISPLAY_IMAGE_EXPORT_PATH).mkdir(parents=True, exist_ok=True)
 
 		self.__start_display()
 
@@ -78,7 +83,7 @@ class display(object):
 
 		if Lines:
 			# if display is disabled, write message into const_DISPLAY_CONTENT_OLD_FILE to prevent repeating IP message
-			DisplayFilePath	= os.path.join(self.const_DISPLAY_CONTENT_FOLDER,"{:014d}.txt".format(int(lib_system.get_uptime_sec()*100))) if self.conf_DISP else self.const_DISPLAY_CONTENT_OLD_FILE
+			DisplayFilePath	= os.path.join(self.const_DISPLAY_CONTENT_PATH,"{:014d}.txt".format(int(lib_system.get_uptime_sec()*100))) if self.conf_DISP else self.const_DISPLAY_CONTENT_OLD_FILE
 
 			# write DisplayFile in any case to prevent repeting IP message
 			with open(DisplayFilePath,'w') as DisplayFile:
@@ -127,18 +132,18 @@ class display(object):
 class display_content_files(object):
 
 	def __init__(self, setup):
-		self.const_DISPLAY_CONTENT_FOLDER	= setup.get_val('const_DISPLAY_CONTENT_FOLDER')
+		self.const_DISPLAY_CONTENT_PATH	= setup.get_val('const_DISPLAY_CONTENT_PATH')
 
 	def get_ContentFilesList(self):
 
 		# read ContentFilesList from folder
 		try:
-			ContentFilesList	= os.listdir(self.const_DISPLAY_CONTENT_FOLDER)
+			ContentFilesList	= os.listdir(self.const_DISPLAY_CONTENT_PATH)
 		except:
 			ContentFilesList	= []
 
 		# keep files only in ContentFilesList
-		ContentFilesList	= [f"{self.const_DISPLAY_CONTENT_FOLDER}/{filename}" for filename in ContentFilesList if os.path.isfile(f"{self.const_DISPLAY_CONTENT_FOLDER}/{filename}")]
+		ContentFilesList	= [f"{self.const_DISPLAY_CONTENT_PATH}/{filename}" for filename in ContentFilesList if os.path.isfile(f"{self.const_DISPLAY_CONTENT_PATH}/{filename}")]
 
 		ContentFilesList.sort()
 
