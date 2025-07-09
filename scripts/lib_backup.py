@@ -205,7 +205,7 @@ class progressmonitor(object):
 
 	def __display_progress(self):
 		if (
-				(lib_system.get_uptime_sec() - self.LastMessageTime >= self.__conf_DISP_FRAME_TIME) or
+				(lib_system.get_uptime_sec() - self.LastMessageTime > (self.__conf_DISP_FRAME_TIME * 2)) or # factor for __conf_DISP_FRAME_TIME to compensate time usage of other messages
 				(self.CountProgress == 0) or
 				(self.FilesToProcess == self.CountProgress)
 		): # print changed progress
@@ -251,7 +251,7 @@ class progressmonitor(object):
 			# Display
 			self.__display.message([f"set:clear,time={FrameTime}", f"s=hc:{self.DisplayLine1}", f"s=hc:{self.DisplayLine2}", f"s=hc:{DisplayLine3}", f"s=hc:{DisplayLine4}", f"s=hc:{DisplayLine5}"] + DisplayLinesExtra)
 
-			self.LastMessageTime=lib_system.get_uptime_sec()
+			self.LastMessageTime	= lib_system.get_uptime_sec()
 
 class reporter(object):
 	# collects information during the backup process and provides ready to use summarys

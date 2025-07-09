@@ -895,7 +895,7 @@ class storage(object):
 			if self.CloudServiceName:
 				l_drive_ok	+= f': {self.CloudServiceName}'
 
-		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 2}", f":{l_drive_ok}"] + LbbDeviceName +[f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
+		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 3}", f":{l_drive_ok}"] + LbbDeviceName +[f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
 
 	def __split_CameraIdentifier(self,Identifier):
 		try:

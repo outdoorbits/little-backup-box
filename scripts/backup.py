@@ -630,8 +630,9 @@ class backup(object):
 					DisplayLine2	= ' > ' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") + f" {self.TargetDevice.CloudServiceName}"	# header2
 
 					#define progress object
-					SourceType_LANG	= self.__lan.l(f"box_backup_mode_{self.SourceDevice.StorageType}")
-					TargetType_LANG	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}")
+					SourceType_LANG	= self.__lan.l(f"box_backup_mode_{self.SourceDevice.StorageType}") if self.SourceDevice.StorageType != 'cloud' else self.SourceDevice.CloudServiceName
+					TargetType_LANG	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") if self.TargetDevice.StorageType != 'cloud' else self.TargetDevice.CloudServiceName
+
 					progress	= lib_backup.progressmonitor(
 						setup							= self.__setup,
 						display							= self.__display,
@@ -828,7 +829,7 @@ class backup(object):
 							FilesToProcess	= len(FilesList),
 							DisplayLine1	= DisplayLine1,
 							DisplayLine2	= DisplayLine2,
-							TaskNote		= 'validate'
+							TaskNote		= self.__lan.l('box_backup_mode_validate')
 						)
 
 						FilesValidationFailed	= 0
@@ -856,7 +857,7 @@ class backup(object):
 								FilesToProcess	= len(FilesList),
 								DisplayLine1	= self.__lan.l('box_backup_camera_removing_files_1'),
 								DisplayLine2	= self.__lan.l('box_backup_camera_removing_files_2'),
-								TaskNote		= 'remove'
+								TaskNote		= self.__lan.l('box_backup_mode_delete')
 							)
 
 							for FileRemove in FilesList:
@@ -965,7 +966,7 @@ class backup(object):
 			FilesToProcess	= FilesToProcess,
 			DisplayLine1	= DisplayLine1,
 			DisplayLine2	= DisplayLine2,
-			TaskNote		= 'rename'
+			TaskNote		= self.__lan.l('box_backup_mode_rename')
 		)
 
 		db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
@@ -1065,7 +1066,7 @@ class backup(object):
 			FilesToProcess	= FilesToProcess,
 			DisplayLine1	= DisplayLine1,
 			DisplayLine2	= DisplayLine2,
-			TaskNote		= 'clean'
+			TaskNote		= self.__lan.l('box_backup_mode_clean')
 		)
 
 		for KnownFile in KnownFilesList:
@@ -1118,7 +1119,7 @@ class backup(object):
 			FilesToProcess	= FilesToProcess,
 			DisplayLine1	= DisplayLine1,
 			DisplayLine2	= DisplayLine2,
-			TaskNote		= 'database'
+			TaskNote		= self.__lan.l('box_backup_mode_database')
 		)
 
 		for Image in Images:
@@ -1227,7 +1228,7 @@ class backup(object):
 			FilesToProcess	= FilesToProcess,
 			DisplayLine1	= DisplayLine1,
 			DisplayLine2	= DisplayLine2,
-			TaskNote		= 'thumbnails'
+			TaskNote		= self.__lan.l('box_backup_mode_thumbnails')
 		)
 
 		for SourceFilePathName in MissingTIMSList:
@@ -1386,7 +1387,7 @@ class backup(object):
 					FilesToProcess	= FilesToProcess,
 					DisplayLine1	= DisplayLine1,
 					DisplayLine2	= DisplayLine2,
-					TaskNote		= 'exif'
+					TaskNote		= self.__lan.l('box_backup_mode_exif')
 				)
 
 				for FileTuple in FilesTupleList:

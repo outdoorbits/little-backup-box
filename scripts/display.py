@@ -256,29 +256,12 @@ class DISPLAY(object):
 
 		statusbar	= []
 
-		#comitup
-		try:
-			comitup_status	= subprocess.check_output(['comitup-cli', 'i']).decode().split('\n')
-		except:
-			comitup_status	= []
-
-		for status in comitup_status:
-			if status.endswith(' state'):
-
-				if status.startswith('HOTSPOT'):
-					statusbar	+= ['HOT']
-				elif status.startswith('CONNECTING'):
-					statusbar	+= ['..?']
-				elif status.startswith('CONNECTED'):
-					statusbar	+= ['WiFi']
-
-				break
-
 		# select item to dispay?
 		if time.time() - self.statusbar_toggle_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC * 2:
 			self.statusbar_toggle_time	= time.time()
 			self.statusbar_toggle	= self.statusbar_toggle + 1 if self.statusbar_toggle < 2 else 0
 
+		# print active tasks (without comitup information)
 		if self.statusbar_toggle == 0:
 			# look for task files
 			try:
@@ -302,6 +285,24 @@ class DISPLAY(object):
 				return(statusbar)
 			else:
 				self.statusbar_toggle	= 1
+
+		#comitup
+		try:
+			comitup_status	= subprocess.check_output(['comitup-cli', 'i']).decode().split('\n')
+		except:
+			comitup_status	= []
+
+		for status in comitup_status:
+			if status.endswith(' state'):
+
+				if status.startswith('HOTSPOT'):
+					statusbar	+= ['HOT']
+				elif status.startswith('CONNECTING'):
+					statusbar	+= ['..?']
+				elif status.startswith('CONNECTED'):
+					statusbar	+= ['WiFi']
+
+				break
 
 		if self.statusbar_toggle == 1:
 			#network traffic
@@ -478,7 +479,7 @@ class DISPLAY(object):
 					i	= 0
 					for item in statusbar:
 
-						if i < len(statusbar) - 1:
+						if (i < len(statusbar) - 1) or (i == 0):
 							# align left
 							x	= int(i * self.device.width / len(statusbar))
 						else:
@@ -553,7 +554,7 @@ class DISPLAY(object):
 			temp_screen				= False
 			hidden_info				= ''
 
-			# check for new files earlier than conf_DISP_FRAME_TIME
+			# re-check for new files earlier than conf_DISP_FRAME_TIME, if no message was found
 			FrameTime = self.conf_DISP_FRAME_TIME / 4
 
 			ContentFile	= self.__display_content_files.get_next_file_name()
