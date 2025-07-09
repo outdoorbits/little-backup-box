@@ -103,6 +103,13 @@ class backup_autorun(object):
 		except:
 			pass
 
+		# remove task files
+		const_TASKS_PATH	= self.__setup.get_val('const_TASKS_PATH')
+		try:
+			subprocess.run(f'rm {const_TASKS_PATH}/*', shell=True)
+		except:
+			pass
+
 		const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		try:
 			os.remove(const_DISPLAY_CONTENT_OLD_FILE)

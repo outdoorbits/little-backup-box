@@ -18,6 +18,9 @@
 #######################################################################
 
 from datetime import datetime, timedelta
+import os
+import pathlib
+import random
 
 import lib_mail
 import lib_system
@@ -37,12 +40,14 @@ class progressmonitor(object):
 			DisplayLine2='',
 			SourceDevice=None,
 			TargetDevice=None,
-			vpn=False
+			vpn=False,
+			TaskNote=''
 		):
 		self.__setup	= setup
 		self.const_IMAGE_DATABASE_FILENAME			= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')
 		self.conf_MAIL_NOTIFICATIONS				= self.__setup.get_val('conf_MAIL_NOTIFICATIONS')
 		self.__conf_DISP_FRAME_TIME					= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__const_TASKS_PATH						= self.__setup.get_val('const_TASKS_PATH')
 
 		self.__display						= display	# display object
 		self.__log							= log		# log object
@@ -52,6 +57,7 @@ class progressmonitor(object):
 		self.SourceDevice					= SourceDevice
 		self.TargetDevice					= TargetDevice
 		self.vpn							= vpn
+		self.TaskNote						= TaskNote
 
 		self.StartTime						= lib_system.get_uptime_sec()
 		self.StopTime						= 0
@@ -71,9 +77,34 @@ class progressmonitor(object):
 
 		self.FilesList		= []
 
+		self.__TaskFilePath	= os.path.join(self.__const_TASKS_PATH, f'{random.randint(1000000, 9999999)}.txt')
+
+		# create task file
+		self.create_task_file()
+
 		# start screen
 		self.progress(TransferMode='init', CountProgress=0)
 
+	def __del__(self):
+		self.remove_task_file()
+
+	def create_task_file(self):
+		try:
+			pathlib.Path(self.__const_TASKS_PATH).mkdir(parents=True, exist_ok=True)
+		except:
+			pass
+
+		try:
+			with open(self.__TaskFilePath,'w') as TaskFile:
+				TaskFile.write(self.TaskNote)
+		except:
+			pass
+
+	def remove_task_file(self):
+		try:
+			os.remove(self.__TaskFilePath)
+		except:
+			pass
 
 	def progress(self, TransferMode=None, SyncOutputLine='', CountProgress=None):
 		SyncOutputLine	= SyncOutputLine.strip('\n')

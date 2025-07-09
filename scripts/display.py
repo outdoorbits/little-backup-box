@@ -125,6 +125,7 @@ class DISPLAY(object):
 		self.const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
 		self.const_DISPLAY_IMAGE_EXPORT_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
 		self.const_DISPLAY_IMAGE_EXPORT_FILE	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
+		self.__const_TASKS_PATH					= self.__setup.get_val('const_TASKS_PATH')
 
 		#define colors
 		color = {}
@@ -218,7 +219,7 @@ class DISPLAY(object):
 		# prepare statusbar
 		if self.conf_DISP_SHOW_STATUSBAR:
 			self.traffic_monitor		= lib_network.traffic_monitor()
-			self.statusbar_toggle		= False
+			self.statusbar_toggle		= 0
 			self.statusbar_toggle_time	= 0
 
 		## start display menu
@@ -270,39 +271,63 @@ class DISPLAY(object):
 					statusbar	+= ['..?']
 				elif status.startswith('CONNECTED'):
 					statusbar	+= ['WiFi']
+
 				break
 
-		# dispay network traffic or CPU?
+		# select item to dispay?
 		if time.time() - self.statusbar_toggle_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC * 2:
 			self.statusbar_toggle_time	= time.time()
-			self.statusbar_toggle	= not self.statusbar_toggle
+			self.statusbar_toggle	= self.statusbar_toggle + 1 if self.statusbar_toggle < 2 else 0
 
-		if self.statusbar_toggle:
+		if self.statusbar_toggle == 0:
+			# look for task files
+			try:
+				TaskFilesList	= [TaskFile for TaskFile in os.listdir(self.__const_TASKS_PATH) if TaskFile.endswith('.txt')]
+			except:
+				TaskFilesList	= []
+
+			Tasks	= []
+			if TaskFilesList:
+				for TaskFile in TaskFilesList:
+					try:
+						with open(os.path.join(self.__const_TASKS_PATH, TaskFile)) as f:
+							Tasks.append(f.readline().strip())
+					except:
+						continue
+
+			if Tasks:
+				statusbar.append(Tasks[0])
+				for Task in Tasks[1:]:
+					statusbar[0]	+= f'|{Task}'
+				return(statusbar)
+			else:
+				self.statusbar_toggle	= 1
+
+		if self.statusbar_toggle == 1:
 			#network traffic
 			statusbar	+=[self.traffic_monitor.get_traffic()]
-		else:
-			# CPU usage
-			try:
-				vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
-			except:
-				vmstat	= []
+			return(statusbar)
 
-			if vmstat:
-				vmstat_fields	= vmstat[-1].split()
+		# if sill not retuned: CPU usage
+		try:
+			vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
+		except:
+			vmstat	= []
 
-				if len(vmstat_fields) >= 14:
-					statusbar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+		if vmstat:
+			vmstat_fields	= vmstat[-1].split()
 
-			# temperature
-			try:
-				temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
-				statusbar	+= [f'{temp_c:.0f}°C']
-			except:
-				pass
+			if len(vmstat_fields) >= 14:
+				statusbar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+
+		# temperature
+		try:
+			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
+			statusbar	+= [f'{temp_c:.0f}°C']
+		except:
+			pass
 
 		return(statusbar)
-
-
 
 	def show(self, Lines, statusbar=None):
 		# fill line count to const_DISPLAY_LINES_LIMIT
