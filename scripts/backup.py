@@ -29,6 +29,7 @@ import threading
 import time
 
 import lib_backup
+import lib_clean
 import lib_common
 import lib_cron_ip
 import lib_display
@@ -56,6 +57,9 @@ class backup(object):
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF,
 		# 	DoChecksum:											one of ['setup', True, False]
 		# ForceSyncDatabase:									one of [True, False]
+
+		# cleanup tasks files
+		lib_clean.clean().cleanup(['tasks'])
 
 		# Objects
 		self.__setup	= lib_setup.setup()

@@ -25,6 +25,7 @@ import shutil
 import threading
 
 import backup
+import lib_clean
 import lib_common
 import lib_cron_ip
 import lib_display
@@ -82,55 +83,7 @@ class backup_autorun(object):
 		lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
 
 	def __cleanup_at_boot(self):
-		# remove IP_SENT_MARKERFILE
-		const_IP_SENT_MARKERFILE	= self.__setup.get_val('const_IP_SENT_MARKERFILE')
-		try:
-			os.remove(const_IP_SENT_MARKERFILE)
-		except:
-			pass
-
-		# remove display content files
-		const_DISPLAY_CONTENT_PATH	= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
-		try:
-			subprocess.run(f'rm {const_DISPLAY_CONTENT_PATH}/*', shell=True)
-		except:
-			pass
-
-		# remove display image files
-		const_DISPLAY_IMAGE_EXPORT_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
-		try:
-			subprocess.run(f'rm {const_DISPLAY_IMAGE_EXPORT_PATH}/*', shell=True)
-		except:
-			pass
-
-		# remove task files
-		const_TASKS_PATH	= self.__setup.get_val('const_TASKS_PATH')
-		try:
-			subprocess.run(f'rm {const_TASKS_PATH}/*', shell=True)
-		except:
-			pass
-
-		const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-		try:
-			os.remove(const_DISPLAY_CONTENT_OLD_FILE)
-		except:
-			pass
-
-		# init new logfile
-		const_LOGFILE	= self.__setup.get_val('const_LOGFILE')
-		try:
-			with open(const_LOGFILE,'w') as f:
-				f.write('Little Backup Box\n')
-			shutil.chown(const_LOGFILE, user='www-data', group='www-data')
-		except:
-			pass
-
-		# remove idletime lockfile
-		const_IDLETIME_LOCKFILE	= self.__setup.get_val('const_IDLETIME_LOCKFILE')
-		try:
-			os.remove(const_IDLETIME_LOCKFILE)
-		except:
-			pass
+		lib_clean.clean().cleanup(['full'])
 
 		# dos2unix
 		FilesDos2Unix	= [
@@ -147,15 +100,6 @@ class backup_autorun(object):
 					subprocess.run(['dos2unix', FileDos2Unix])
 				except:
 					pass
-
-		# init new cmd logfile
-		const_CMD_LOGFILE				= self.__setup.get_val('const_CMD_LOGFILE')
-		try:
-			with open(const_CMD_LOGFILE,'w') as f:
-				f.write('Little Backup Box\n')
-			shutil.chown(const_CMD_LOGFILE, user='www-data', group='www-data')
-		except:
-			pass
 
 		# remove mountpoints
 		lib_storage.remove_all_mountpoints(self.__setup)
