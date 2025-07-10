@@ -933,16 +933,16 @@ def get_mountPoints(setup, parts, path_list_only):
 	if (set(parts) & set(['all', 'usb'])):
 		mountPoints.update(
 			{
-				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_USB_TARGET):	'target_usb',
-				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_USB_SOURCE):	'source_usb'
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_USB_TARGET):			'target_usb',
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_USB_SOURCE):			'source_usb'
 			}
 		)
 
 	if (set(parts) & set(['all', 'nvme'])):
 		mountPoints.update(
 			{
-				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_NVME_TARGET):	'target_nvme',
-				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_NVME_SOURCE):	'source_nvme'
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_NVME_TARGET):		'target_nvme',
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_NVME_SOURCE):		'source_nvme'
 			}
 		)
 
@@ -959,8 +959,8 @@ def get_mountPoints(setup, parts, path_list_only):
 	if (set(parts) & set(['all', 'cloud'])):
 		mountPoints.update(
 			{
-				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_CLOUD_TARGET):	'target_cloud',
-				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_CLOUD_SOURCE): 'source_cloud'
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_CLOUD_TARGET):		'target_cloud',
+				os.path.join(const_MEDIA_DIR, const_MOUNTPOINT_CLOUD_SOURCE):		'source_cloud'
 			}
 		)
 

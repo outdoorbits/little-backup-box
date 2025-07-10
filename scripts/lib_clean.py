@@ -25,6 +25,8 @@ import lib_setup
 
 __cleaning_options	= ['full', 'ipmail', 'display_content', 'display_images', 'tasks', 'log', 'idlelock', 'cmdlock']
 
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class clean(object):
 	def __init__(self):
@@ -44,6 +46,8 @@ class clean(object):
 		self.__const_DISPLAY_CONTENT_PATH		= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
 		self.__const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		self.__const_DISPLAY_IMAGE_EXPORT_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
+		self.__const_DISPLAY_IMAGE_KEEP_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
+		self.__const_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('const_DIPLAY_IMAGES_KEEP')
 		self.__const_TASKS_PATH					= self.__setup.get_val('const_TASKS_PATH')
 		self.__const_IP_SENT_MARKERFILE			= self.__setup.get_val('const_IP_SENT_MARKERFILE')
 		self.__const_LOGFILE					= self.__setup.get_val('const_LOGFILE')
@@ -82,9 +86,15 @@ class clean(object):
 
 	def display_images(self):
 		try:
-			subprocess.run(f'rm {self.__const_DISPLAY_IMAGE_EXPORT_PATH}/*', shell=True)
+			subprocess.run(f'rm -R {self.__const_DISPLAY_IMAGE_EXPORT_PATH}/*', shell=True)
 		except:
 			pass
+
+		if not self.__const_DIPLAY_IMAGES_KEEP:
+			try:
+				subprocess.run(f'rm -R {self.__const_DISPLAY_IMAGE_KEEP_PATH}', shell=True)
+			except:
+				pass
 
 	def tasks(self):
 		try:

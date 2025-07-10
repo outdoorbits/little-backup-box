@@ -45,21 +45,11 @@ class display(object):
 		self.conf_DISP							= self.setup.get_val('conf_DISP')
 		self.const_DISPLAY_CONTENT_PATH			= self.setup.get_val('const_DISPLAY_CONTENT_PATH')
 		self.const_DISPLAY_CONTENT_OLD_FILE		= self.setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-		self.const_DISPLAY_IMAGE_EXPORT_PATH	= self.setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
 		self.conf_DISP_FRAME_TIME				= self.setup.get_val('conf_DISP_FRAME_TIME')
 
 		self.python = shutil.which('python3')
 
 		self.pgbar_len = 20
-
-		if self.conf_DISP:
-			# ensure const_DISPLAY_CONTENT_PATH exists
-			if not os.path.isdir(self.const_DISPLAY_CONTENT_PATH):
-				pathlib.Path(self.const_DISPLAY_CONTENT_PATH).mkdir(parents=True, exist_ok=True)
-
-			# ensure const_DISPLAY_IMAGE_EXPORT_PATH exists
-			if not os.path.isdir(self.const_DISPLAY_IMAGE_EXPORT_PATH):
-				pathlib.Path(self.const_DISPLAY_IMAGE_EXPORT_PATH).mkdir(parents=True, exist_ok=True)
 
 		self.__start_display()
 
