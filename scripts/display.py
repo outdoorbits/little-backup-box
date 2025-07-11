@@ -510,10 +510,10 @@ class DISPLAY(object):
 					for item in statusbar:
 
 						if (i < len(statusbar) - 1) or (i == 0):
-							# align left
+							# left bound
 							x	= int(i * self.device.width / len(statusbar))
 						else:
-							# align right
+							# right bound
 							(left, top, right, bottom) = draw.textbbox((0,0), item, font=self.FONT)
 							pgbar_text_length = right - left
 							x	= self.device.width - pgbar_text_length - 1
