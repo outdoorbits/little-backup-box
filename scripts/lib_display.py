@@ -75,8 +75,11 @@ class display(object):
 			DisplayFilePath	= os.path.join(self.const_DISPLAY_CONTENT_PATH,"{:014d}.txt".format(int(lib_system.get_uptime_sec()*100))) if self.conf_DISP else self.const_DISPLAY_CONTENT_OLD_FILE
 
 			# write DisplayFile in any case to prevent repeting IP message
-			with open(DisplayFilePath,'w') as DisplayFile:
-				DisplayFile.write('\n'.join(str(Line) for Line in Lines))
+			try:
+				with open(DisplayFilePath,'w') as DisplayFile:
+					DisplayFile.write('\n'.join(str(Line) for Line in Lines))
+			except:
+				return()
 
 			# format Lines for LogLines
 			LogLines = []
