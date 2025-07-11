@@ -29,6 +29,7 @@ import threading
 import time
 
 import lib_backup
+import lib_clean
 import lib_common
 import lib_cron_ip
 import lib_display
@@ -56,6 +57,9 @@ class backup(object):
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF,
 		# 	DoChecksum:											one of ['setup', True, False]
 		# ForceSyncDatabase:									one of [True, False]
+
+		# cleanup tasks files
+		lib_clean.clean().cleanup(['tasks'])
 
 		# Objects
 		self.__setup	= lib_setup.setup()
@@ -630,6 +634,9 @@ class backup(object):
 					DisplayLine2	= ' > ' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") + f" {self.TargetDevice.CloudServiceName}"	# header2
 
 					#define progress object
+					SourceType_LANG	= self.__lan.l(f"box_backup_mode_{self.SourceDevice.StorageType}") if self.SourceDevice.StorageType != 'cloud' else self.SourceDevice.CloudServiceName
+					TargetType_LANG	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") if self.TargetDevice.StorageType != 'cloud' else self.TargetDevice.CloudServiceName
+
 					progress	= lib_backup.progressmonitor(
 						setup							= self.__setup,
 						display							= self.__display,
@@ -641,7 +648,8 @@ class backup(object):
 						DisplayLine2					= DisplayLine2,
 						SourceDevice					= self.SourceDevice,
 						TargetDevice					= self.TargetDevice,
-						vpn								= self.vpn
+						vpn								= self.vpn,
+						TaskNote						= f'{SourceType_LANG}->{TargetType_LANG}'
 					)
 
 					SyncStartTime	= lib_system.get_uptime_sec()
@@ -824,7 +832,8 @@ class backup(object):
 							lan				= self.__lan,
 							FilesToProcess	= len(FilesList),
 							DisplayLine1	= DisplayLine1,
-							DisplayLine2	= DisplayLine2
+							DisplayLine2	= DisplayLine2,
+							TaskNote		= self.__lan.l('box_backup_mode_validate')
 						)
 
 						FilesValidationFailed	= 0
@@ -851,7 +860,8 @@ class backup(object):
 								lan				= self.__lan,
 								FilesToProcess	= len(FilesList),
 								DisplayLine1	= self.__lan.l('box_backup_camera_removing_files_1'),
-								DisplayLine2	= self.__lan.l('box_backup_camera_removing_files_2')
+								DisplayLine2	= self.__lan.l('box_backup_camera_removing_files_2'),
+								TaskNote		= self.__lan.l('box_backup_mode_delete')
 							)
 
 							for FileRemove in FilesList:
@@ -959,7 +969,8 @@ class backup(object):
 			lan				= self.__lan,
 			FilesToProcess	= FilesToProcess,
 			DisplayLine1	= DisplayLine1,
-			DisplayLine2	= DisplayLine2
+			DisplayLine2	= DisplayLine2,
+			TaskNote		= self.__lan.l('box_backup_mode_rename')
 		)
 
 		db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
@@ -1058,7 +1069,8 @@ class backup(object):
 			lan				= self.__lan,
 			FilesToProcess	= FilesToProcess,
 			DisplayLine1	= DisplayLine1,
-			DisplayLine2	= DisplayLine2
+			DisplayLine2	= DisplayLine2,
+			TaskNote		= self.__lan.l('box_backup_mode_clean')
 		)
 
 		for KnownFile in KnownFilesList:
@@ -1110,7 +1122,8 @@ class backup(object):
 			lan				= self.__lan,
 			FilesToProcess	= FilesToProcess,
 			DisplayLine1	= DisplayLine1,
-			DisplayLine2	= DisplayLine2
+			DisplayLine2	= DisplayLine2,
+			TaskNote		= self.__lan.l('box_backup_mode_database')
 		)
 
 		for Image in Images:
@@ -1218,7 +1231,8 @@ class backup(object):
 			lan				= self.__lan,
 			FilesToProcess	= FilesToProcess,
 			DisplayLine1	= DisplayLine1,
-			DisplayLine2	= DisplayLine2
+			DisplayLine2	= DisplayLine2,
+			TaskNote		= self.__lan.l('box_backup_mode_thumbnails')
 		)
 
 		for SourceFilePathName in MissingTIMSList:
@@ -1376,7 +1390,8 @@ class backup(object):
 					lan				= self.__lan,
 					FilesToProcess	= FilesToProcess,
 					DisplayLine1	= DisplayLine1,
-					DisplayLine2	= DisplayLine2
+					DisplayLine2	= DisplayLine2,
+					TaskNote		= self.__lan.l('box_backup_mode_exif')
 				)
 
 				for FileTuple in FilesTupleList:

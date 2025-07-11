@@ -124,7 +124,10 @@
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs",
         "rename": "Rename",
-        "ftp": "LBBs FTP server"
+        "ftp": "LBBs FTP server",
+        "validate": "check",
+        "delete": "delete",
+        "clean": "clean"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-source",

@@ -52,6 +52,7 @@
 
 import os
 import RPi.GPIO as GPIO
+import pathlib
 import shutil
 import signal
 import subprocess
@@ -91,8 +92,8 @@ class DISPLAY(object):
 		GPIO.cleanup()
 
 		# objects
-		self.__setup					= lib_setup.setup()
-		self.__display_content_files	= display_content_files(self.__setup)
+		self.__setup							= lib_setup.setup()
+		self.__display_content_files			= display_content_files(self.__setup)
 
 		# setup
 		self.conf_DISP_CONNECTION				= self.__setup.get_val('conf_DISP_CONNECTION')
@@ -121,10 +122,14 @@ class DISPLAY(object):
 
 		self.const_DISPLAY_CONTENT_OLD_FILE		= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		self.const_DISPLAY_LINES_LIMIT			= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
-		self.const_DISPLAY_STATUSBAR_MAX_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_MAX_SEC')
+		self.const_DISPLAY_STATUSBAR_TOGGLE_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_TOGGLE_SEC')
 		self.const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
+		self.const_DISPLAY_CONTENT_PATH			= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
 		self.const_DISPLAY_IMAGE_EXPORT_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
 		self.const_DISPLAY_IMAGE_EXPORT_FILE	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
+		self.const_DISPLAY_IMAGE_KEEP_PATH		= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
+		self.const_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('const_DIPLAY_IMAGES_KEEP')
+		self.__const_TASKS_PATH					= self.__setup.get_val('const_TASKS_PATH')
 
 		#define colors
 		color = {}
@@ -218,8 +223,34 @@ class DISPLAY(object):
 		# prepare statusbar
 		if self.conf_DISP_SHOW_STATUSBAR:
 			self.traffic_monitor		= lib_network.traffic_monitor()
-			self.statusbar_toggle		= False
+			self.statusbar_toggle		= 0
 			self.statusbar_toggle_time	= 0
+
+		# create folders
+		## ensure const_DISPLAY_CONTENT_PATH exists
+		if not os.path.isdir(self.const_DISPLAY_CONTENT_PATH):
+			pathlib.Path(self.const_DISPLAY_CONTENT_PATH).mkdir(parents=True, exist_ok=True)
+
+		## ensure const_DISPLAY_IMAGE_EXPORT_PATH exists
+		if not os.path.isdir(self.const_DISPLAY_IMAGE_EXPORT_PATH):
+			pathlib.Path(self.const_DISPLAY_IMAGE_EXPORT_PATH).mkdir(parents=True, exist_ok=True)
+
+		if self.const_DIPLAY_IMAGES_KEEP:
+			## ensure const_DISPLAY_IMAGE_KEEP_PATH exists
+			if not os.path.isdir(self.const_DISPLAY_IMAGE_KEEP_PATH):
+				pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH).mkdir(parents=True, exist_ok=True)
+
+			## create SessionID by subfolders of const_DISPLAY_IMAGE_EXPORT_PATH
+			self.SessionID = sum(
+				os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, Finding))
+				for Finding in os.listdir(self.const_DISPLAY_IMAGE_KEEP_PATH)
+			) + 1
+
+			## ensure const_DISPLAY_IMAGE_KEEP_PATH/SessionID exists
+			if not os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID))):
+				pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID)).mkdir(parents=True, exist_ok=True)
+		else:
+			self.SessionID	= 0
 
 		## start display menu
 		self.menu_controller	= displaymenu.MENU_CONTROLLER()
@@ -255,6 +286,36 @@ class DISPLAY(object):
 
 		statusbar	= []
 
+		# select item to dispay?
+		if time.time() - self.statusbar_toggle_time >= self.const_DISPLAY_STATUSBAR_TOGGLE_SEC:
+			self.statusbar_toggle_time	= time.time()
+			self.statusbar_toggle	= self.statusbar_toggle + 1 if self.statusbar_toggle < 2 else 0
+
+		# print active tasks (without comitup information)
+		if self.statusbar_toggle == 0:
+			# look for task files
+			try:
+				TaskFilesList	= [TaskFile for TaskFile in os.listdir(self.__const_TASKS_PATH) if TaskFile.endswith('.txt')]
+			except:
+				TaskFilesList	= []
+
+			Tasks	= []
+			if TaskFilesList:
+				for TaskFile in TaskFilesList:
+					try:
+						with open(os.path.join(self.__const_TASKS_PATH, TaskFile)) as f:
+							Tasks.append(f.readline().strip())
+					except:
+						continue
+
+			if Tasks:
+				statusbar.append(Tasks[0])
+				for Task in Tasks[1:]:
+					statusbar[0]	+= f'|{Task}'
+				return(statusbar)
+			else:
+				self.statusbar_toggle	= 1
+
 		#comitup
 		try:
 			comitup_status	= subprocess.check_output(['comitup-cli', 'i']).decode().split('\n')
@@ -270,39 +331,34 @@ class DISPLAY(object):
 					statusbar	+= ['..?']
 				elif status.startswith('CONNECTED'):
 					statusbar	+= ['WiFi']
+
 				break
 
-		# dispay network traffic or CPU?
-		if time.time() - self.statusbar_toggle_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC * 2:
-			self.statusbar_toggle_time	= time.time()
-			self.statusbar_toggle	= not self.statusbar_toggle
-
-		if self.statusbar_toggle:
+		if self.statusbar_toggle == 1:
 			#network traffic
 			statusbar	+=[self.traffic_monitor.get_traffic()]
-		else:
-			# CPU usage
-			try:
-				vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
-			except:
-				vmstat	= []
+			return(statusbar)
 
-			if vmstat:
-				vmstat_fields	= vmstat[-1].split()
+		# if sill not retuned: CPU usage
+		try:
+			vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
+		except:
+			vmstat	= []
 
-				if len(vmstat_fields) >= 14:
-					statusbar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+		if vmstat:
+			vmstat_fields	= vmstat[-1].split()
 
-			# temperature
-			try:
-				temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
-				statusbar	+= [f'{temp_c:.0f}°C']
-			except:
-				pass
+			if len(vmstat_fields) >= 14:
+				statusbar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+
+		# temperature
+		try:
+			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
+			statusbar	+= [f'{temp_c:.0f}°C']
+		except:
+			pass
 
 		return(statusbar)
-
-
 
 	def show(self, Lines, statusbar=None):
 		# fill line count to const_DISPLAY_LINES_LIMIT
@@ -453,11 +509,11 @@ class DISPLAY(object):
 					i	= 0
 					for item in statusbar:
 
-						if i < len(statusbar) - 1:
-							# align left
+						if (i < len(statusbar) - 1) or (i == 0):
+							# left bound
 							x	= int(i * self.device.width / len(statusbar))
 						else:
-							# align right
+							# right bound
 							(left, top, right, bottom) = draw.textbbox((0,0), item, font=self.FONT)
 							pgbar_text_length = right - left
 							x	= self.device.width - pgbar_text_length - 1
@@ -488,18 +544,16 @@ class DISPLAY(object):
 	def __save_image(self, image):
 
 		FilePathName	= os.path.join(self.const_DISPLAY_IMAGE_EXPORT_PATH, self.const_DISPLAY_IMAGE_EXPORT_FILE)
-		FileNameTimed	= self.const_DISPLAY_IMAGE_EXPORT_FILE
 
 		### <<< KEEP IMAGES FOR DOCUMENTATION
+		if self.const_DIPLAY_IMAGES_KEEP:
+			if os.path.exists(FilePathName):
+				with open('/proc/uptime', 'r') as f:
+					uptime_seconds	= float(f.readline().split()[0])
+					uptime_seconds	= f'{uptime_seconds:0>12.2f}'
 
-		# if os.path.exists(FilePathName):
-		# 	with open('/proc/uptime', 'r') as f:
-		# 		uptime_seconds	= float(f.readline().split()[0])
-		# 		uptime_seconds	= f'{uptime_seconds:0>12.2f}'
-		#
-		# 	FileNameTimed	= f'{uptime_seconds}-{self.const_DISPLAY_IMAGE_EXPORT_FILE}'
-		# 	os.rename(FilePathName, os.path.join(self.__setup.get_val('const_MEDIA_DIR'), self.__setup.get_val('const_INTERNAL_BACKUP_DIR'), FileNameTimed))
-
+				FileNameTimed	= f'{uptime_seconds}-{self.const_DISPLAY_IMAGE_EXPORT_FILE}'
+				os.rename(FilePathName, os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID), FileNameTimed))
 		### >>> KEEP IMAGES FOR DOCUMENTATION
 
 		try:
@@ -528,7 +582,7 @@ class DISPLAY(object):
 			temp_screen				= False
 			hidden_info				= ''
 
-			# check for new files earlier than conf_DISP_FRAME_TIME
+			# re-check for new files earlier than conf_DISP_FRAME_TIME, if no message was found
 			FrameTime = self.conf_DISP_FRAME_TIME / 4
 
 			ContentFile	= self.__display_content_files.get_next_file_name()
@@ -640,7 +694,7 @@ class DISPLAY(object):
 			# statusbar
 			if (
 				self.conf_DISP_SHOW_STATUSBAR and
-				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_MAX_SEC
+				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_TOGGLE_SEC
 				):
 				self.show(Lines, self.get_statusbar())
 				display_time	= time.time()
