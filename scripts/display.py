@@ -235,19 +235,22 @@ class DISPLAY(object):
 		if not os.path.isdir(self.const_DISPLAY_IMAGE_EXPORT_PATH):
 			pathlib.Path(self.const_DISPLAY_IMAGE_EXPORT_PATH).mkdir(parents=True, exist_ok=True)
 
-		## ensure const_DISPLAY_IMAGE_KEEP_PATH exists
-		if self.const_DIPLAY_IMAGES_KEEP and not os.path.isdir(self.const_DISPLAY_IMAGE_KEEP_PATH):
-			pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH).mkdir(parents=True, exist_ok=True)
+		if self.const_DIPLAY_IMAGES_KEEP:
+			## ensure const_DISPLAY_IMAGE_KEEP_PATH exists
+			if not os.path.isdir(self.const_DISPLAY_IMAGE_KEEP_PATH):
+				pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH).mkdir(parents=True, exist_ok=True)
 
-		## create SessionID by subfolders of const_DISPLAY_IMAGE_EXPORT_PATH
-		self.SessionID = sum(
-			os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, Finding))
-			for Finding in os.listdir(self.const_DISPLAY_IMAGE_KEEP_PATH)
-		) + 1
+			## create SessionID by subfolders of const_DISPLAY_IMAGE_EXPORT_PATH
+			self.SessionID = sum(
+				os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, Finding))
+				for Finding in os.listdir(self.const_DISPLAY_IMAGE_KEEP_PATH)
+			) + 1
 
-		## ensure const_DISPLAY_IMAGE_KEEP_PATH/SessionID exists
-		if self.const_DIPLAY_IMAGES_KEEP and not os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID))):
-			pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID)).mkdir(parents=True, exist_ok=True)
+			## ensure const_DISPLAY_IMAGE_KEEP_PATH/SessionID exists
+			if not os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID))):
+				pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID)).mkdir(parents=True, exist_ok=True)
+		else:
+			self.SessionID	= 0
 
 		## start display menu
 		self.menu_controller	= displaymenu.MENU_CONTROLLER()

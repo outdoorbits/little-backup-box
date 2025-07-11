@@ -23,7 +23,6 @@ import lib_system
 
 import datetime
 import os
-import pathlib
 import re
 import sys
 import shutil

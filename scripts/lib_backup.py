@@ -20,7 +20,6 @@
 from datetime import datetime, timedelta
 import os
 import pathlib
-import random
 
 import lib_mail
 import lib_system
@@ -77,7 +76,7 @@ class progressmonitor(object):
 
 		self.FilesList		= []
 
-		self.__TaskFilePath	= os.path.join(self.__const_TASKS_PATH, f'{random.randint(1000000, 9999999)}.txt')
+		self.__TaskFilePath	= os.path.join(self.__const_TASKS_PATH, f'task_{id(self)}.txt')
 
 		# create task file
 		self.create_task_file()
