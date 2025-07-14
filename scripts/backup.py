@@ -59,7 +59,7 @@ class backup(object):
 		# ForceSyncDatabase:									one of [True, False]
 
 		# cleanup tasks files
-		lib_clean.clean().cleanup(['tasks'])
+		lib_clean.clean().cleanup(jobs=['tasks'])
 
 		# Objects
 		self.__setup	= lib_setup.setup()

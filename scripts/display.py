@@ -62,6 +62,7 @@ import time
 
 import lib_network
 import lib_setup
+import lib_system
 
 from luma.core.interface.serial import i2c, spi, pcf8574
 from luma.core.interface.parallel import bitbang_6800
@@ -125,10 +126,9 @@ class DISPLAY(object):
 		self.const_DISPLAY_STATUSBAR_TOGGLE_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_TOGGLE_SEC')
 		self.const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
 		self.const_DISPLAY_CONTENT_PATH			= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
-		self.const_DISPLAY_IMAGE_EXPORT_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
 		self.const_DISPLAY_IMAGE_EXPORT_FILE	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
 		self.const_DISPLAY_IMAGE_KEEP_PATH		= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
-		self.const_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('const_DIPLAY_IMAGES_KEEP')
+		self.conf_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('conf_DIPLAY_IMAGES_KEEP')
 		self.__const_TASKS_PATH					= self.__setup.get_val('const_TASKS_PATH')
 
 		#define colors
@@ -231,16 +231,12 @@ class DISPLAY(object):
 		if not os.path.isdir(self.const_DISPLAY_CONTENT_PATH):
 			pathlib.Path(self.const_DISPLAY_CONTENT_PATH).mkdir(parents=True, exist_ok=True)
 
-		## ensure const_DISPLAY_IMAGE_EXPORT_PATH exists
-		if not os.path.isdir(self.const_DISPLAY_IMAGE_EXPORT_PATH):
-			pathlib.Path(self.const_DISPLAY_IMAGE_EXPORT_PATH).mkdir(parents=True, exist_ok=True)
-
-		if self.const_DIPLAY_IMAGES_KEEP:
+		if self.conf_DIPLAY_IMAGES_KEEP:
 			## ensure const_DISPLAY_IMAGE_KEEP_PATH exists
 			if not os.path.isdir(self.const_DISPLAY_IMAGE_KEEP_PATH):
 				pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH).mkdir(parents=True, exist_ok=True)
 
-			## create SessionID by subfolders of const_DISPLAY_IMAGE_EXPORT_PATH
+			## create SessionID by subfolders of const_DISPLAY_IMAGE_KEEP_PATH
 			self.SessionID = sum(
 				os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, Finding))
 				for Finding in os.listdir(self.const_DISPLAY_IMAGE_KEEP_PATH)
@@ -360,7 +356,7 @@ class DISPLAY(object):
 
 		return(statusbar)
 
-	def show(self, Lines, statusbar=None):
+	def show(self, Lines, statusbar=None, new_content=True):
 		# fill line count to const_DISPLAY_LINES_LIMIT
 		while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
 			Lines.append("s=b:")
@@ -384,7 +380,7 @@ class DISPLAY(object):
 			self.__display_image(image)
 
 			# save image to file
-			self.__save_image(image)
+			self.__save_image(image=image, new_content=new_content)
 
 		else:
 			# Write lines
@@ -535,29 +531,28 @@ class DISPLAY(object):
 			self.__display_image(image)
 
 			# save image to file
-			self.__save_image(image)
+			self.__save_image(image=image, new_content=new_content)
 
 	def __display_image(self, image):
 		if self.hardware_ready:
 			self.device.display(image)
 
-	def __save_image(self, image):
-
-		FilePathName	= os.path.join(self.const_DISPLAY_IMAGE_EXPORT_PATH, self.const_DISPLAY_IMAGE_EXPORT_FILE)
+	def __save_image(self, image, new_content=True):
 
 		### <<< KEEP IMAGES FOR DOCUMENTATION
-		if self.const_DIPLAY_IMAGES_KEEP:
-			if os.path.exists(FilePathName):
-				with open('/proc/uptime', 'r') as f:
-					uptime_seconds	= float(f.readline().split()[0])
-					uptime_seconds	= f'{uptime_seconds:0>12.2f}'
+		if self.conf_DIPLAY_IMAGES_KEEP and new_content:
+			if os.path.exists(self.const_DISPLAY_IMAGE_EXPORT_FILE):
+				uptime_seconds	= f'{lib_system.get_uptime_sec():0>12.2f}'
 
-				FileNameTimed	= f'{uptime_seconds}-{self.const_DISPLAY_IMAGE_EXPORT_FILE}'
-				os.rename(FilePathName, os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID), FileNameTimed))
+				FileNameTimed	= f'{uptime_seconds}-{os.path.basename(self.const_DISPLAY_IMAGE_EXPORT_FILE)}'
+				try:
+					os.rename(self.const_DISPLAY_IMAGE_EXPORT_FILE, os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID), FileNameTimed))
+				except:
+					pass
 		### >>> KEEP IMAGES FOR DOCUMENTATION
 
 		try:
-			image.save(FilePathName)
+			image.save(self.const_DISPLAY_IMAGE_EXPORT_FILE)
 		except:
 			pass
 
@@ -688,7 +683,7 @@ class DISPLAY(object):
 						oCF.write(f"\nset:hidden={hidden_info}")
 
 				if self.hardware_ready:
-					self.show(Lines, self.get_statusbar())
+					self.show(Lines=Lines, statusbar=self.get_statusbar(), new_content=True)
 					display_time	= time.time()
 
 			# statusbar
@@ -696,7 +691,7 @@ class DISPLAY(object):
 				self.conf_DISP_SHOW_STATUSBAR and
 				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_TOGGLE_SEC
 				):
-				self.show(Lines, self.get_statusbar())
+				self.show(Lines=Lines, statusbar=self.get_statusbar(), new_content=False)
 				display_time	= time.time()
 
 			time.sleep(FrameTime)

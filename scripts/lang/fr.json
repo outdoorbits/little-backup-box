@@ -391,6 +391,11 @@
       "idletime": "Cela suspendra également tout arrêt configuré après une période d'inactivité.",
       "stop_backup": "Arrêtez une sauvegarde qui est peut-être en cours d’exécution.",
       "submit": "LBB a été"
+    },
+    "debug": {
+      "display_images_keep_header": "Afficher les captures d'écran",
+      "display_images_keep_label": "Conserver les images affichées ?",
+      "section": "Déboguer"
     }
   },
   "tools": {

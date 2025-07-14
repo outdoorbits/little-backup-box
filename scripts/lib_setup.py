@@ -282,10 +282,10 @@ class setup(object):
 					'conf_VPN_TYPE_CLOUD':								{'value': 'none', 'type': 'str'},
 					'conf_VPN_TIMEOUT':									{'value': 20, 'type': 'int'},
 					'conf_PASSWORD':									{'value': '', 'type': 'str'},
-					'conf_PASSWORD_ENCRYPTION':							{'value': 'plain', 'type': 'str'}
+					'conf_PASSWORD_ENCRYPTION':							{'value': 'plain', 'type': 'str'},
+					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'}
 				}
 		)
-
 
 	def __get_constants(self,constants):
 		if os.path.isfile(self.constants_file_path):
@@ -325,10 +325,8 @@ class setup(object):
 					'const_DISPLAY_CONTENT_PATH':					{'type': 'str'},
 					'const_DISPLAY_CONTENT_OLD_FILE':				{'type': 'str'},
 					'const_DISPLAY_STATUSBAR_TOGGLE_SEC':			{'type': 'float'},
-					'const_DISPLAY_IMAGE_EXPORT_PATH':				{'type': 'str'},
 					'const_DISPLAY_IMAGE_EXPORT_FILE':				{'type': 'str'},
 					'const_DISPLAY_IMAGE_KEEP_PATH':				{'type': 'str'},
-					'const_DIPLAY_IMAGES_KEEP':						{'type': 'bool'},
 					'const_IP_SENT_MARKERFILE':						{'type': 'str'},
 					'const_MENU_TIMEOUT_SEC':						{'type': 'int'},
 					'const_RCLONE_CONFIG_FILE':						{'type': 'str'},

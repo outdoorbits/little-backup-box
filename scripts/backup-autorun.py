@@ -58,9 +58,22 @@ class backup_autorun(object):
 		self.conf_MAIL_TIMEOUT_SEC					= self.__setup.get_val('conf_MAIL_TIMEOUT_SEC')
 
 		self.__mail_threads_started					= []
+		self.__git_thread							= None
+		self.__proftpd_thread						= None
+
+	def __del__(self):
+		# Wait for running threads (mails to send)
+		lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+
+		# finish __git_thread
+		self.__git_thread.join(timeout=15)
+
+		# finish __proftpd_thread
+		self.__proftpd_thread.join(timeout=2)
 
 	def run(self):
 		self.__cleanup_at_boot()
+
 		self.__display_hello()
 
 		# ip info
@@ -75,15 +88,11 @@ class backup_autorun(object):
 
 		# check for updates
 		gitObj	= lib_git.git()
-		git_thread	= threading.Thread(target=gitObj.UpdateSetup, args=())
-		git_thread.start()
-		git_thread.join(timeout=15)
-
-		# Wait for running threads (mails to send)
-		lib_common.join_mail_threads(self.__display, self.__lan, self.__mail_threads_started, self.conf_MAIL_TIMEOUT_SEC)
+		self.__git_thread	= threading.Thread(target=gitObj.UpdateSetup, args=())
+		self.__git_thread.start()
 
 	def __cleanup_at_boot(self):
-		lib_clean.clean().cleanup(['full'])
+		lib_clean.clean().cleanup(jobs=['full'])
 
 		# dos2unix
 		FilesDos2Unix	= [
@@ -105,7 +114,9 @@ class backup_autorun(object):
 		lib_storage.remove_all_mountpoints(self.__setup)
 
 		# reset proftpd
-		lib_proftpd.proftpd().setDefaultRoot()
+		proftpdObj	= lib_proftpd.proftpd()
+		self.__proftpd_thread	= threading.Thread(target=proftpdObj.setDefaultRoot, args=())
+		self.__proftpd_thread.start()
 
 	def __display_hello(self):
 		if self.__setup.get_val('conf_DISP_COLOR_MODEL') == '1':

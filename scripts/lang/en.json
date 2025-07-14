@@ -637,6 +637,11 @@
       "idletime": "This also pauses any configured shutdown after an idle time.",
       "stop_backup": "Stop a backup that may be running.",
       "submit": "Stop LBB"
+    },
+    "debug": {
+      "display_images_keep_header": "Display screenshots",
+      "display_images_keep_label": "Keep display images?",
+      "section": "Debug"
     }
   },
   "tools": {

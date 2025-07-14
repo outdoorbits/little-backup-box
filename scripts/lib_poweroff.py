@@ -24,6 +24,7 @@ import subprocess
 import sys
 import time
 
+import lib_clean
 import lib_display
 import lib_language
 import lib_setup
@@ -91,6 +92,7 @@ class poweroff(object):
 
 			# cleanup
 			open(self.const_LOGFILE,'w').close()
+			lib_clean.clean().cleanup(jobs=['full'])
 
 			# Power off
 			if self.Action == 'poweroff':
@@ -110,6 +112,10 @@ class poweroff(object):
 				subprocess.run(['sudo', 'reboot'])
 
 		else:
+			# cleanup
+			open(self.const_LOGFILE,'w').close()
+			lib_clean.clean().cleanup(jobs=['full'], skips=['ipmail', 'display_content', 'log'])
+
 			self.__display.message(
 				self.DisplayMessage +
 				[
@@ -119,7 +125,6 @@ class poweroff(object):
 					f"s=a:{self.__lan.l('box_poweroff_power_down_via_gui_2')}"
 				]
 			)
-
 
 if __name__ == "__main__":
 	if len(sys.argv) >= 2:

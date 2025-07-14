@@ -391,6 +391,11 @@
       "idletime": "Esto también pausará cualquier apagado configurado después de un período de inactividad.",
       "stop_backup": "Detener una copia de seguridad que pueda estar ejecutándose.",
       "submit": "LBB estado"
+    },
+    "debug": {
+      "display_images_keep_header": "Mostrar capturas de pantalla",
+      "display_images_keep_label": "¿Mantener imágenes para mostrar?",
+      "section": "Depurar"
     }
   },
   "tools": {

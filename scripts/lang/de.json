@@ -391,6 +391,11 @@
       "idletime": "Dadurch wird auch ein evtl. konfiguriertes Herunterfahren nach einer Leerlaufzeit pausiert.",
       "stop_backup": "Stoppen eines möglicherweise laufenden Backups",
       "submit": "LBB beenden"
+    },
+    "debug": {
+      "display_images_keep_header": "Display-Screenshots",
+      "display_images_keep_label": "Display-Bilder behalten?",
+      "section": "Debug"
     }
   },
   "tools": {

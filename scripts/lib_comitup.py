@@ -41,6 +41,8 @@ class comitup(object):
 		self.__lan		= lib_language.language()
 		self.__display	= lib_display.display()
 
+		self.__conf_DISP_FRAME_TIME	= self.__setup.get_val('conf_DISP_FRAME_TIME')
+
 	def config(self, Password=None): # use general password if None is given
 
 		if Password is None:
@@ -66,7 +68,7 @@ class comitup(object):
 			status_translated	= self.__lan.l(f'box_comitup_status_{status}')
 			status_translated	= status_translated if status_translated!=f'box_comitup_status_{status}' else status
 
-			self.__display.message([':Comitup:', f':{status_translated}'], logging=False)
+			self.__display.message([f'set:temp,time={self.__conf_DISP_FRAME_TIME * 4}', ':Comitup:', f':{status_translated}'], logging=False)
 
 		# setup apache ports
 		ApachePortsConf	= '/etc/apache2/ports.conf'

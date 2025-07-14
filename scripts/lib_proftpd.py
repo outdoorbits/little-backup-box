@@ -33,6 +33,8 @@ class proftpd(object):
 		self.__display	= lib_display.display()
 		self.__lan		= lib_language.language()
 
+		self.__conf_DISP_FRAME_TIME	= self.__setup.get_val('conf_DISP_FRAME_TIME')
+
 		# config
 		self.configfile	= '/etc/proftpd/lbb_DefaultRoot.conf'
 
@@ -100,13 +102,13 @@ class proftpd(object):
 
 				job	= job if proftpd_active else 'start'
 
-			self.__display.message([f":{self.__lan.l('box_backup_ftp_starting')}", self.FTP_DefaultRoot])
+			self.__display.message([f'set:temp,time={self.__conf_DISP_FRAME_TIME * 4}', f":{self.__lan.l('box_backup_ftp_starting')}", self.FTP_DefaultRoot])
 
 			command	= ['sudo', 'service', 'proftpd', job]
 			print(f'proftpd {job}')
 			subprocess.run(command)
 
-			self.__display.message([f":{self.__lan.l('box_backup_ftp_started')}", self.FTP_DefaultRoot])
+			self.__display.message([f'set:temp,time={self.__conf_DISP_FRAME_TIME * 4}', f":{self.__lan.l('box_backup_ftp_started')}", self.FTP_DefaultRoot])
 
 if __name__ == "__main__":
 

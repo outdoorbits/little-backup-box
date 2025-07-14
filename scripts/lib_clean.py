@@ -23,7 +23,7 @@ import subprocess
 
 import lib_setup
 
-__cleaning_options	= ['full', 'ipmail', 'display_content', 'display_images', 'tasks', 'log', 'idlelock', 'cmdlock']
+__cleaning_options	= ['full', 'ipmail', 'display_content', 'display_image', 'tasks', 'log', 'idlelock', 'cmdlock']
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -32,11 +32,11 @@ class clean(object):
 	def __init__(self):
 		self.__setup	= lib_setup.setup()
 
-		self.__workers	={
+		self.__workers	= {
 			'full':				self.full,
 			'ipmail':			self.ipmail,
 			'display_content':	self.display_content,
-			'display_images':	self.display_images,
+			'display_image':	self.display_image,
 			'tasks':			self.tasks,
 			'log':				self.log,
 			'idlelock':			self.idlelock,
@@ -45,26 +45,29 @@ class clean(object):
 
 		self.__const_DISPLAY_CONTENT_PATH		= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
 		self.__const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-		self.__const_DISPLAY_IMAGE_EXPORT_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_PATH')
 		self.__const_DISPLAY_IMAGE_KEEP_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
-		self.__const_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('const_DIPLAY_IMAGES_KEEP')
+		self.__conf_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('conf_DIPLAY_IMAGES_KEEP')
 		self.__const_TASKS_PATH					= self.__setup.get_val('const_TASKS_PATH')
 		self.__const_IP_SENT_MARKERFILE			= self.__setup.get_val('const_IP_SENT_MARKERFILE')
 		self.__const_LOGFILE					= self.__setup.get_val('const_LOGFILE')
 		self.__const_IDLETIME_LOCKFILE			= self.__setup.get_val('const_IDLETIME_LOCKFILE')
 		self.__const_CMD_LOGFILE				= self.__setup.get_val('const_CMD_LOGFILE')
 
+		self.jobs	= []
+		self.skips	= []
 
-	def cleanup(self, jobs):
+	def cleanup(self, jobs=['full'], skips=[]):
+		self.jobs	= jobs
+		self.skips	= skips
+
 		for job in jobs:
 			self.__workers[job]()
-
 			if job == 'full':
 				break
 
 	def full(self):
 		for worker in self.__workers:
-			if worker != 'full':
+			if worker not in (['full'] + self.skips):
 				self.__workers[worker]()
 
 	def ipmail(self):
@@ -84,13 +87,13 @@ class clean(object):
 		except:
 			pass
 
-	def display_images(self):
+	def display_image(self):
 		try:
-			subprocess.run(f'rm -R {self.__const_DISPLAY_IMAGE_EXPORT_PATH}/*', shell=True)
+			subprocess.run(f'rm -R {self.__const_DISPLAY_IMAGE_EXPORT_FILE}', shell=True)
 		except:
 			pass
 
-		if not self.__const_DIPLAY_IMAGES_KEEP:
+		if not self.__conf_DIPLAY_IMAGES_KEEP:
 			try:
 				subprocess.run(f'rm -R {self.__const_DISPLAY_IMAGE_KEEP_PATH}', shell=True)
 			except:

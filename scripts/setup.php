@@ -224,6 +224,7 @@
 		$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?'true':'false';
 		$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
 		$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?'true':'false';
+		$conf_DIPLAY_IMAGES_KEEP					= isset($conf_DIPLAY_IMAGES_KEEP)?'true':'false';
 
 		if ($conf_MAIL_PASSWORD != '') {
 			if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
@@ -350,6 +351,7 @@ conf_VPN_TYPE_CLOUD='$conf_VPN_TYPE_CLOUD'
 conf_VPN_TIMEOUT=$conf_VPN_TIMEOUT
 conf_PASSWORD='$conf_PASSWORD'
 conf_PASSWORD_ENCRYPTION='$conf_PASSWORD_ENCRYPTION'
+conf_DIPLAY_IMAGES_KEEP=$conf_DIPLAY_IMAGES_KEEP
 
 CONFIGDATA;
 
@@ -759,19 +761,6 @@ CONFIGDATA;
 		<div class="card" style="margin-top: 2em;">
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_behavior_section; ?></summary>
-
-				<h3><?php echo L::config_behavior_loglevel_header; ?></h3>
-					<p><?php echo L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
-					<label for="conf_LOGLEVEL"><?php echo L::config_behavior_loglevel_label; ?></label><br>
-					<select name="conf_LOGLEVEL" id="conf_LOGLEVEL">
-						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, <?php echo L::config_behavior_loglevel_minimum; ?></option>
-						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, <?php echo L::config_behavior_loglevel_medium; ?></option>
-						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, <?php echo L::config_behavior_loglevel_maximum; ?></option>
-					</select>
-
-				<h3><?php echo L::config_behavior_log_sync_protokoll_header; ?></h3>
-					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
-					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
 
 				<h3><?php echo L::config_behavior_power_off_idle_time_header; ?></h3>
 					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_behavior_power_off_idle_time_label; ?></label><br>
@@ -1684,6 +1673,32 @@ CONFIGDATA;
 			</details>
 		</div>
 
+<!-- 		debug -->
+		<div class="card" style="margin-top: 2em;">
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_debug_section; ?></summary>
+
+				<h3><?php echo L::config_behavior_loglevel_header; ?></h3>
+					<p><?php echo L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
+					<label for="conf_LOGLEVEL"><?php echo L::config_behavior_loglevel_label; ?></label><br>
+					<select name="conf_LOGLEVEL" id="conf_LOGLEVEL">
+						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, <?php echo L::config_behavior_loglevel_minimum; ?></option>
+						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, <?php echo L::config_behavior_loglevel_medium; ?></option>
+						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, <?php echo L::config_behavior_loglevel_maximum; ?></option>
+					</select>
+
+				<h3><?php echo L::config_behavior_log_sync_protokoll_header; ?></h3>
+					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
+					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
+
+				<h3><?php echo L::config_debug_display_images_keep_header; ?></h3>
+					<input type="checkbox" id="conf_DIPLAY_IMAGES_KEEP" name="conf_DIPLAY_IMAGES_KEEP"<?php echo $config['conf_DIPLAY_IMAGES_KEEP']=="1"?"checked":""; ?>>
+					<label for="conf_DIPLAY_IMAGES_KEEP"><?php echo L::config_debug_display_images_keep_label; ?> (<?php echo $constants['const_DISPLAY_IMAGE_KEEP_PATH']; ?>)</label><br>
+
+			</details>
+		</div>
+
+<!-- 		save -->
 		<div class="card" style="margin-top: 2em; position: sticky; bottom: 0; z-index: 10; background-color: var(--cbg)">
             <?php echo '<button style="margin-top: 2em" type="submit" name="save">' . L::config_save_button . '</button>'; ?>
 		</div>
