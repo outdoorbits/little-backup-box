@@ -20,6 +20,8 @@
 # expected from calling script
 ## const_WEB_ROOT_LBB
 ## USER_WWW_DATA
+## SCRIPT_MODE
+## BACKTITLE
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
@@ -102,3 +104,63 @@ Exec=firefox -setDefaultBrowser -private --kiosk=http://localhost:8080
 Terminal=false
 """ | sudo -u $USER tee $AUTOSTART_USER_DIR/little-backup-box.desktop
 
+# install display driver
+## Prompt to install driver
+if [ "${SCRIPT_MODE}" = "install" ]; then
+
+	read -r -d '' DISPLAY_DRIVER_INSTALL_QUESTION << EOM
+\Zb\ZuInstall display driver?\Zn
+
+Do you want to install a display driver for a graphical user interface?
+
+If so, you should think about which driver is the right one: https://github.com/goodtft/LCD-show
+EOM
+
+	dialog --clear \
+		--colors \
+		--title "Display driver" \
+		--backtitle "$BACKTITLE" \
+		--yesno "${DISPLAY_DRIVER_INSTALL_QUESTION}" \
+		14 80
+
+	if [ $? -eq 0 ]; then
+		clear
+
+		# clone goodtft/LCD-show
+		cd
+		sudo rm -rf LCD-show
+		git clone https://github.com/goodtft/LCD-show.git
+		chmod -R 755 LCD-show
+		cd LCD-show/
+
+		read -r -d '' DISPLAY_DRIVER_SELECT_QUESTION << EOM
+\Zb\ZuPlease select a driver to install:\Zn
+EOM
+
+		OPTIONS=()
+		OPTIONS+=("None" "")
+		while IFS= read -r file; do
+			label="${file#./}"            # Remove leading ./
+			label="${label%-show}"        # Remove trailing -show
+			OPTIONS+=("$label" "")
+		done < <(find ./ -type f -name "*-show")
+
+		CHOICE_DISPLAY_DRIVER=$(dialog --clear \
+			--colors \
+			--title "Display driver" \
+			--backtitle "$BACKTITLE" \
+			--menu "Select one of these:" \
+			25 50 15 \
+			"${OPTIONS[@]}" \
+			2>&1 >/dev/tty)
+
+		if [[ "${CHOICE_DISPLAY_DRIVER}" = "None" || "${CHOICE_DISPLAY_DRIVER}" = "" ]]; then
+			echo "No driver selected"
+		else
+			echo "Installing driver ${CHOICE_DISPLAY_DRIVER}"
+			eval "sudo ./${CHOICE_DISPLAY_DRIVER}-show"
+		fi
+	fi
+
+	clear
+fi
