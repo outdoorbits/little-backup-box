@@ -680,6 +680,10 @@ fi
 # remove raspberry pi imagers wifi settings (as late as possible)
 sudo rm /etc/NetworkManager/system-connections/preconfigured.nmconnection
 
+# install display driver
+## needs to be just before reboot and after finishing, in case the driver setup does a reboot
+source "${INSTALLER_DIR}/install-display-driver.sh"
+
 # reboot
 echo "All done! Rebooting..."
 sleep 3
