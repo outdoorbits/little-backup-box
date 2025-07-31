@@ -82,6 +82,8 @@ EOM
 			"${OPTIONS[@]}" \
 			2>&1 >/dev/tty)
 
+		clear
+
 		if [[ "${CHOICE_DISPLAY_DRIVER}" = "None" || "${CHOICE_DISPLAY_DRIVER}" = "" ]]; then
 			echo "No driver selected"
 		else
