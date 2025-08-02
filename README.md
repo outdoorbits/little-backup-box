@@ -107,20 +107,67 @@ In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens
 	<li>Make sure that your Raspberry Pi is connected to the internet.</li>
 	<li>Login to your Raspberry Pi. If you are using ssh, there is a report about problems using WINSCP. While WINSCP itself uses putty, it's reported to work with native putty.</li>
 	<li>
-	Run the following command on the Raspberry Pi:<br />
-	<code>branch='main'; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/${branch}/install-little-backup-box.sh | bash -s -- ${branch} 2> install-error.log</code><br /><br />
-	Errors are reported into ./install-error.log.
+		Run the following command on the Raspberry Pi:<br />
+		<code>branch='main'; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/${branch}/install-little-backup-box.sh | bash -s -- ${branch} 2> install-error.log</code><br /><br />
+		Errors are reported into ./install-error.log.<br />
+		<br />
+		<b><u>Optional Display Driver Setup</u></u><br />
+		If you have opted for the desktop version of Raspbian, please note the following:<br />
+		<br />
+		To support graphical displays for desktop environment, the installer can optionally download and run a third-party script collection from https://github.com/goodtft/LCD-show.<br />
+		<br />
+		<ul>
+			<li>These scripts are maintained by a third party and <b>are not part of this project</b>.</li>
+			<li>They are <b>not redistributed</b> but downloaded directly from the GitHub source repository during installation.</li>
+			<li>Because no license is attached to the script collection, it must be treated as <b>proprietary</b>. Use at your own discretion.</li>
+		</ul>
+		<br />
+		After downloading, the installer will prompt you to select your display model.<br />
+		A temporary modification is applied to prevent automatic reboot, but the original scripts remain unchanged.
 	</li>
 	<li>
-	You will be asked for the default backup mode.<br />
-	This is the action started automatically after boot.
+		You will be asked for the default backup mode.<br />
+		This is the action started automatically after boot.
 	</li>
 	<li>
-	You will be asked if you want to install <a href="https://davesteele.github.io/comitup/">comitup</a>.<br />
-	The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
+		You will be asked if you want to install <a href="https://davesteele.github.io/comitup/">comitup</a>.<br />
+		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
 	</li>
 	<li>
-	<b>Don't worry:</b> Please note this in case you installed via wifi/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's coming up, it changes your wifi-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is a short information, how to access Little Backup Box. In your setting, this would be the information you need:<br /><br />******************************************************************************************<br />*** How to proceed:<br />***<br />*** Your raspberrys wifi-configuration has been removed by comitup now. Because comitup has no<br />*** access-data for your wifi yet, it can't connect to it and will start as a wifi-hotspot:<br />*** ssid=little-backup-box-nnnn (nnnn is a random number).<br />***<br />*** Please connect your mobile or notebook to this wifi.<br />***<br />*** There are two options now:<br />***<br />*** 1. If you want to configure comitup now, navigate to <b>http</b>://10.41.0.1 (http, not https!)<br />*** and connect your lbb to your wifi.<br />*** Connect your mobile or notbook to the same wifi. If you use a display on your lbb, it will<br />*** tell you its new IP. Connect to lbb:<br />*** <b>https</b>://IP.IN.YOUR.WIFI (secure, certificate can't be verified automatically, please confirm it)<br />*** <b>http</b>://IP.IN.YOUR.WIFI:8080 (insecure)<br />***<br />*** 2. Alternatively can reach the web UI of Little Backup Box when you are connected to its<br />*** hotspot as follows:<br />***<br />*** <b>https</b>://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)<br />*** <b>http</b>://10.41.0.1:8080 (insecure)<br />***<br />*** Please use the settings of the web UI to optimally adapt the Little Backup Box for you.<br />***<br />*** If you have further questions, please check the wiki first:<br />*** https://github.com/outdoorbits/little-backup-box/wiki <br />***<br />*** We are always happy to receive your feedback!<br />******************************************************************************************<br /><br />
+		<b>Don't worry:</b> Please note this in case you installed via wifi/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's coming up, it changes your wifi-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is a short information, how to access Little Backup Box. In your setting, this would be the information you need:<br />
+		<br />
+		******************************************************************************************<br />
+		*** How to proceed:<br />
+		***<br />
+		*** Your raspberrys wifi-configuration has been removed by comitup now. Because comitup has no<br />
+		*** access-data for your wifi yet, it can't connect to it and will start as a wifi-hotspot:<br />
+		*** ssid=little-backup-box-nnnn (nnnn is a random number).<br />
+		***<br />
+		*** Please connect your mobile or notebook to this wifi.<br />
+		***<br />
+		*** There are two options now:<br />
+		***<br />
+		*** 1. If you want to configure comitup now, navigate to <b>http</b>://10.41.0.1 (http, not https!)<br />
+		*** and connect your lbb to your wifi.<br />
+		*** Connect your mobile or notbook to the same wifi. If you use a display on your lbb, it will<br />
+		*** tell you its new IP. Connect to lbb:<br />
+		*** <b>https</b>://IP.IN.YOUR.WIFI (secure, certificate can't be verified automatically, please confirm it)<br />
+		*** <b>http</b>://IP.IN.YOUR.WIFI:8080 (insecure)<br />
+		***<br />
+		*** 2. Alternatively can reach the web UI of Little Backup Box when you are connected to its<br />
+		*** hotspot as follows:<br />
+		***<br />
+		*** <b>https</b>://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)<br />
+		*** <b>http</b>://10.41.0.1:8080 (insecure)<br />
+		***<br />
+		*** Please use the settings of the web UI to optimally adapt the Little Backup Box for you.<br />
+		***<br />
+		*** If you have further questions, please check the wiki first:<br />
+		*** https://github.com/outdoorbits/little-backup-box/wiki <br />
+		***<br />
+		*** We are always happy to receive your feedback!<br />
+		******************************************************************************************<br />
+		<br />
 	</li>
 </ol>
 

@@ -37,17 +37,28 @@ fi
 if [ "${SCRIPT_MODE}" = "install" ]; then
 
 	read -r -d '' DISPLAY_DRIVER_INSTALL_QUESTION << EOM
-\Zb\ZuInstall display driver?\Zn
+\Zb\ZuOptional Display Driver Setup\Zn
 
-Do you want to install a display driver for a graphical user interface?
+This installer can optionally download and run a third-party script collection
+designed to help configure specific display models - specifically, mid-sized displays
+that are capable of showing a full graphical desktop window.
 
-If so, you should think about which driver is the right one: https://github.com/goodtft/LCD-show
+Important: These scripts are not part of this project and are maintained by a third party.
+They are downloaded directly from their original GitHub repository https://github.com/goodtft/LCD-show.
+Because no license is attached to the script collection, it must be assumed that these scripts are proprietary.
+
+After downloading you will be asked to select your display.
+The selected script will be temporarily modified to prevent automatic reboot after execution.
+No changes will be made to the original script, and no modified code will be distributed.
+
+Please consult https://github.com/goodtft/LCD-show to determine which setup script matches your display.
 EOM
 
 	dialog --clear \
 		--colors \
 		--title "Display driver" \
 		--backtitle "$BACKTITLE" \
+		--defaultno \
 		--yesno "${DISPLAY_DRIVER_INSTALL_QUESTION}" \
 		14 80
 
@@ -87,8 +98,15 @@ EOM
 		if [[ "${CHOICE_DISPLAY_DRIVER}" = "None" || "${CHOICE_DISPLAY_DRIVER}" = "" ]]; then
 			echo "No driver selected"
 		else
-			echo "Installing driver ${CHOICE_DISPLAY_DRIVER}"
-			eval "sudo ./${CHOICE_DISPLAY_DRIVER}-show"
+			echo "Selected driver: ${CHOICE_DISPLAY_DRIVER}"
+
+			tmp=$(mktemp)
+			cp "./${CHOICE_DISPLAY_DRIVER}-show" "$tmp"
+
+			sed -E -i '/^[[:space:]]*(sudo[[:space:]]+)?(\/sbin\/)?reboot([[:space:]]|$)/ s/^([[:space:]]*)/\1# BLOCKED: /' "$tmp"
+
+ 			sudo bash "$tmp"
+			rm -f "$tmp"
 		fi
 	fi
 	clear
