@@ -112,7 +112,7 @@ In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens
 		Errors are reported into ./install-error.log.<br />
 		<br />
 		<b><u>Optional Display Driver Setup</u></b><br />
-		If you have opted for the desktop version of Raspbian, please note the following:<br />
+		If you have opted for the desktop version of Raspberry Pi OS, please note the following:<br />
 		<br />
 		To support graphical displays for desktop environment, the installer can optionally download and run a third-party script collection from https://github.com/goodtft/LCD-show.<br />
 		<br />
