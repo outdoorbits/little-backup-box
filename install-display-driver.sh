@@ -57,7 +57,7 @@ EOM
 		--title "Display driver" \
 		--backtitle "$BACKTITLE" \
 		--yesno "${DISPLAY_DRIVER_INSTALL_QUESTION}" \
-		25 100
+		25 120
 
 	if [ $? -eq 0 ]; then
 		clear
