@@ -101,4 +101,3 @@ Name=little-backup-box
 Exec=firefox -setDefaultBrowser -private --kiosk=http://localhost:8080
 Terminal=false
 """ | sudo -u $USER tee $AUTOSTART_USER_DIR/little-backup-box.desktop
-

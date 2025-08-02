@@ -565,6 +565,9 @@ sudo chmod 644 "/etc/proftpd/lbb_DefaultRoot.conf"
 
 sudo service proftpd restart
 
+# install display driver
+source "${INSTALLER_DIR}/install-display-driver.sh"
+
 # setup graphical environment
 source "${INSTALLER_DIR}/setup-graphical-environment.sh"
 
@@ -579,7 +582,7 @@ if [ "${SCRIPT_MODE}" = "install" ] || [ "${CHOICE_COMITUP}" = "0" ]; then
 
 \ZbPlease read this carefully, if your raspberry pi is connected by wifi.\Zn
 
-\Zb\Z1Next (and last) step of the installation is to install comitup. When comitup starts, it takes over control about the raspberry pi's wifi-connections.
+\Zb\Z1Next step of the installation is to install comitup. When comitup starts, it takes over control about the raspberry pi's wifi-connections.
 That's why your pi's wifi-connection may break during this last step of the installation.
 BUT DON'T WORRY!\Zn
 

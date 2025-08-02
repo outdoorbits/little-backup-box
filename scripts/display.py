@@ -97,38 +97,38 @@ class DISPLAY(object):
 		self.__display_content_files			= display_content_files(self.__setup)
 
 		# setup
-		self.conf_DISP_CONNECTION				= self.__setup.get_val('conf_DISP_CONNECTION')
-		self.conf_DISP_DRIVER					= self.__setup.get_val('conf_DISP_DRIVER')
-		self.conf_DISP_I2C_ADDRESS				= self.__setup.get_val('conf_DISP_I2C_ADDRESS')
-		self.conf_DISP_SPI_PORT					= self.__setup.get_val('conf_DISP_SPI_PORT')
-		self.conf_DISP_RESOLUTION_X				= self.__setup.get_val('conf_DISP_RESOLUTION_X')
-		self.conf_DISP_RESOLUTION_Y				= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
-		self.conf_DISP_OFFSET_X					= self.__setup.get_val('conf_DISP_OFFSET_X')
-		self.conf_DISP_OFFSET_Y					= self.__setup.get_val('conf_DISP_OFFSET_Y')
-		self.conf_DISP_ROTATE					= self.__setup.get_val('conf_DISP_ROTATE')
-		self.conf_DISP_CONTRAST					= self.__setup.get_val('conf_DISP_CONTRAST')
-		self.conf_DISP_COLOR_BGR				= self.__setup.get_val('conf_DISP_COLOR_BGR')
-		self.conf_DISP_COLOR_INVERSE			= self.__setup.get_val('conf_DISP_COLOR_INVERSE')
-		self.conf_DISP_COLOR_MODEL				= self.__setup.get_val('conf_DISP_COLOR_MODEL')
-		self.conf_DISP_COLOR_TEXT				= self.__setup.get_val('conf_DISP_COLOR_TEXT')
-		self.conf_DISP_COLOR_HIGH				= self.__setup.get_val('conf_DISP_COLOR_HIGH')
-		self.conf_DISP_COLOR_ALERT				= self.__setup.get_val('conf_DISP_COLOR_ALERT')
-		self.conf_DISP_COLOR_BACKGROUND			= self.__setup.get_val('conf_DISP_COLOR_BACKGROUND')
-		self.conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
-		self.conf_DISP_FRAME_TIME				= self.__setup.get_val('conf_DISP_FRAME_TIME')
-		self.conf_DISP_SHOW_STATUSBAR			= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
-		self.conf_DISP_BACKLIGHT_PIN			= self.__setup.get_val('conf_DISP_BACKLIGHT_PIN')
-		self.conf_DISP_BACKLIGHT_ENABLED		= self.__setup.get_val('conf_DISP_BACKLIGHT_ENABLED')
-		self.conf_MENU_ENABLED					= self.__setup.get_val('conf_MENU_ENABLED')
+		self.__conf_DISP_CONNECTION				= self.__setup.get_val('conf_DISP_CONNECTION')
+		self.__conf_DISP_DRIVER					= self.__setup.get_val('conf_DISP_DRIVER')
+		self.__conf_DISP_I2C_ADDRESS				= self.__setup.get_val('conf_DISP_I2C_ADDRESS')
+		self.__conf_DISP_SPI_PORT					= self.__setup.get_val('conf_DISP_SPI_PORT')
+		self.__conf_DISP_RESOLUTION_X				= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		self.__conf_DISP_RESOLUTION_Y				= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		self.__conf_DISP_OFFSET_X					= self.__setup.get_val('conf_DISP_OFFSET_X')
+		self.__conf_DISP_OFFSET_Y					= self.__setup.get_val('conf_DISP_OFFSET_Y')
+		self.__conf_DISP_ROTATE					= self.__setup.get_val('conf_DISP_ROTATE')
+		self.__conf_DISP_CONTRAST					= self.__setup.get_val('conf_DISP_CONTRAST')
+		self.__conf_DISP_COLOR_BGR				= self.__setup.get_val('conf_DISP_COLOR_BGR')
+		self.__conf_DISP_COLOR_INVERSE			= self.__setup.get_val('conf_DISP_COLOR_INVERSE')
+		self.__conf_DISP_COLOR_MODEL				= self.__setup.get_val('conf_DISP_COLOR_MODEL')
+		self.__conf_DISP_COLOR_TEXT				= self.__setup.get_val('conf_DISP_COLOR_TEXT')
+		self.__conf_DISP_COLOR_HIGH				= self.__setup.get_val('conf_DISP_COLOR_HIGH')
+		self.__conf_DISP_COLOR_ALERT				= self.__setup.get_val('conf_DISP_COLOR_ALERT')
+		self.__conf_DISP_COLOR_BACKGROUND			= self.__setup.get_val('conf_DISP_COLOR_BACKGROUND')
+		self.__conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
+		self.__conf_DISP_FRAME_TIME				= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__conf_DISP_SHOW_STATUSBAR			= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
+		self.__conf_DISP_BACKLIGHT_PIN			= self.__setup.get_val('conf_DISP_BACKLIGHT_PIN')
+		self.__conf_DISP_BACKLIGHT_ENABLED		= self.__setup.get_val('conf_DISP_BACKLIGHT_ENABLED')
+		self.__conf_MENU_ENABLED					= self.__setup.get_val('conf_MENU_ENABLED')
+		self.__conf_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('conf_DIPLAY_IMAGES_KEEP')
 
-		self.const_DISPLAY_CONTENT_OLD_FILE		= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-		self.const_DISPLAY_LINES_LIMIT			= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
-		self.const_DISPLAY_STATUSBAR_TOGGLE_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_TOGGLE_SEC')
-		self.const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
-		self.const_DISPLAY_CONTENT_PATH			= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
-		self.const_DISPLAY_IMAGE_EXPORT_FILE	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
-		self.const_DISPLAY_IMAGE_KEEP_PATH		= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
-		self.conf_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('conf_DIPLAY_IMAGES_KEEP')
+		self.__const_DISPLAY_CONTENT_OLD_FILE		= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		self.__const_DISPLAY_LINES_LIMIT			= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
+		self.__const_DISPLAY_STATUSBAR_TOGGLE_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_TOGGLE_SEC')
+		self.__const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
+		self.__const_DISPLAY_CONTENT_PATH			= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
+		self.__const_DISPLAY_IMAGE_EXPORT_FILE	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
+		self.__const_DISPLAY_IMAGE_KEEP_PATH		= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
 		self.__const_TASKS_PATH					= self.__setup.get_val('const_TASKS_PATH')
 
 		#define colors
@@ -143,18 +143,18 @@ class DISPLAY(object):
 		color['lightgrey']	= (127,	127,	127)
 		color['grey']		= (70,	70,		70)
 
-		if self.conf_DISP_COLOR_MODEL == '1':
+		if self.__conf_DISP_COLOR_MODEL == '1':
 			self.color_text = 255
 			self.color_high = 255
 			self.color_alert = 255
 			self.color_bg = 0
 		else:
-			self.color_text 	= color[self.conf_DISP_COLOR_TEXT]
-			self.color_high 	= color[self.conf_DISP_COLOR_HIGH]
-			self.color_alert 	= color[self.conf_DISP_COLOR_ALERT]
-			self.color_bg 		= color[self.conf_DISP_COLOR_BACKGROUND]
+			self.color_text 	= color[self.__conf_DISP_COLOR_TEXT]
+			self.color_high 	= color[self.__conf_DISP_COLOR_HIGH]
+			self.color_alert 	= color[self.__conf_DISP_COLOR_ALERT]
+			self.color_bg 		= color[self.__conf_DISP_COLOR_BACKGROUND]
 
-			if self.conf_DISP_COLOR_MODEL == 'RGBA':
+			if self.__conf_DISP_COLOR_MODEL == 'RGBA':
 				# add alpha-channel
 				self.color_text		= (*self.color_text, 255)
 				self.color_high		= (*self.color_high, 255)
@@ -164,97 +164,97 @@ class DISPLAY(object):
 		self.hardware_ready	= True
 
 		try:
-			if self.conf_DISP_CONNECTION == 'I2C':
-				serial = i2c(port=1, address=self.conf_DISP_I2C_ADDRESS)
-			elif self.conf_DISP_CONNECTION == 'SPI':
-				if self.conf_DISP_DRIVER == 'ST7735':
-					serial = spi(port=self.conf_DISP_SPI_PORT, device=0, bus_speed_hz=40000000)
-				elif self.conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
-					serial = spi(port=self.conf_DISP_SPI_PORT, device=0, bus_speed_hz=40000000, gpio_DC=25, gpio_RST=27)
+			if self.__conf_DISP_CONNECTION == 'I2C':
+				serial = i2c(port=1, address=self.__conf_DISP_I2C_ADDRESS)
+			elif self.__conf_DISP_CONNECTION == 'SPI':
+				if self.__conf_DISP_DRIVER == 'ST7735':
+					serial = spi(port=self.__conf_DISP_SPI_PORT, device=0, bus_speed_hz=40000000)
+				elif self.__conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
+					serial = spi(port=self.__conf_DISP_SPI_PORT, device=0, bus_speed_hz=40000000, gpio_DC=25, gpio_RST=27)
 				else:
-					serial = spi(port=self.conf_DISP_SPI_PORT, device=0)
+					serial = spi(port=self.__conf_DISP_SPI_PORT, device=0)
 			else:
 				print('Error: No valid connection type for display',file=sys.stderr)
-				if self.conf_DISP_DRIVER != 'none':
+				if self.__conf_DISP_DRIVER != 'none':
 					raise Exception('Error: No valid connection type for display')
 		except:
 			self.hardware_ready	= False
-			print(f'Display connection to {self.conf_DISP_CONNECTION} could not be enabled.', file=sys.stderr)
+			print(f'Display connection to {self.__conf_DISP_CONNECTION} could not be enabled.', file=sys.stderr)
 
 		try:
-			if self.conf_DISP_DRIVER == 'none':
+			if self.__conf_DISP_DRIVER == 'none':
 				self.device	= self.__display_dummy()
 				self.hardware_ready	= False
-			elif self.conf_DISP_DRIVER == 'SSD1306':
-				self.device	= ssd1306(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
-			elif self.conf_DISP_DRIVER == 'SSD1309':
-				self.device	= ssd1309(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
-			elif self.conf_DISP_DRIVER == 'SSD1322':
-				self.device	= ssd1322(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
-			elif self.conf_DISP_DRIVER == 'SSD1331':
-				self.device	= ssd1331(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
-			elif self.conf_DISP_DRIVER == 'SH1106':
-				self.device	= sh1106(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y)
-			elif self.conf_DISP_DRIVER == 'ST7735':
-				self.device	= st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR, inverse=self.conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
-				self.device.backlight(self.conf_DISP_BACKLIGHT_ENABLED)
-			elif self.conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
-				self.device	= st7735(serial_interface=serial, h_offset=self.conf_DISP_OFFSET_X, v_offset=self.conf_DISP_OFFSET_Y, gpio_LIGHT=(self.conf_DISP_BACKLIGHT_PIN if self.conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.conf_DISP_COLOR_BGR, inverse=self.conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
-				self.device.backlight(self.conf_DISP_BACKLIGHT_ENABLED)
+			elif self.__conf_DISP_DRIVER == 'SSD1306':
+				self.device	= ssd1306(serial_interface=serial, h_offset=self.__conf_DISP_OFFSET_X, v_offset=self.__conf_DISP_OFFSET_Y)
+			elif self.__conf_DISP_DRIVER == 'SSD1309':
+				self.device	= ssd1309(serial_interface=serial, h_offset=self.__conf_DISP_OFFSET_X, v_offset=self.__conf_DISP_OFFSET_Y)
+			elif self.__conf_DISP_DRIVER == 'SSD1322':
+				self.device	= ssd1322(serial_interface=serial, h_offset=self.__conf_DISP_OFFSET_X, v_offset=self.__conf_DISP_OFFSET_Y)
+			elif self.__conf_DISP_DRIVER == 'SSD1331':
+				self.device	= ssd1331(serial_interface=serial, h_offset=self.__conf_DISP_OFFSET_X, v_offset=self.__conf_DISP_OFFSET_Y)
+			elif self.__conf_DISP_DRIVER == 'SH1106':
+				self.device	= sh1106(serial_interface=serial, h_offset=self.__conf_DISP_OFFSET_X, v_offset=self.__conf_DISP_OFFSET_Y)
+			elif self.__conf_DISP_DRIVER == 'ST7735':
+				self.device	= st7735(serial_interface=serial, h_offset=self.__conf_DISP_OFFSET_X, v_offset=self.__conf_DISP_OFFSET_Y, gpio_LIGHT=(self.__conf_DISP_BACKLIGHT_PIN if self.__conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.__conf_DISP_COLOR_BGR, inverse=self.__conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
+				self.device.backlight(self.__conf_DISP_BACKLIGHT_ENABLED)
+			elif self.__conf_DISP_DRIVER == 'ST7735 WAVESHARE LCD display HAT':
+				self.device	= st7735(serial_interface=serial, h_offset=self.__conf_DISP_OFFSET_X, v_offset=self.__conf_DISP_OFFSET_Y, gpio_LIGHT=(self.__conf_DISP_BACKLIGHT_PIN if self.__conf_DISP_BACKLIGHT_PIN > 0 else 18), bgr=self.__conf_DISP_COLOR_BGR, inverse=self.__conf_DISP_COLOR_INVERSE) # pin: GPIO Backlight
+				self.device.backlight(self.__conf_DISP_BACKLIGHT_ENABLED)
 			else:
 				print('Error: No valid display driver', file=sys.stderr)
 		except:
 			self.hardware_ready	= False
-			print(f'Display driver {self.conf_DISP_DRIVER} could not be enabled.', file=sys.stderr)
+			print(f'Display driver {self.__conf_DISP_DRIVER} could not be enabled.', file=sys.stderr)
 
 		if self.hardware_ready:
-			self.device.capabilities(width=self.conf_DISP_RESOLUTION_X, height=self.conf_DISP_RESOLUTION_Y, rotate=self.conf_DISP_ROTATE, mode=self.conf_DISP_COLOR_MODEL)
+			self.device.capabilities(width=self.__conf_DISP_RESOLUTION_X, height=self.__conf_DISP_RESOLUTION_Y, rotate=self.__conf_DISP_ROTATE, mode=self.__conf_DISP_COLOR_MODEL)
 
-			self.device.contrast(self.conf_DISP_CONTRAST)
+			self.device.contrast(self.__conf_DISP_CONTRAST)
 
 			self.device.persist	= False
 
 		# define font
-		self.FONT = ImageFont.truetype(self.const_FONT_PATH, self.conf_DISP_FONT_SIZE)
+		self.FONT = ImageFont.truetype(self.__const_FONT_PATH, self.__conf_DISP_FONT_SIZE)
 
 		# calculate line dimensions
 		self.calculate_LineSize()
 
 		# prepare statusbar
-		if self.conf_DISP_SHOW_STATUSBAR:
+		if self.__conf_DISP_SHOW_STATUSBAR:
 			self.traffic_monitor		= lib_network.traffic_monitor()
 			self.statusbar_toggle		= 0
 			self.statusbar_toggle_time	= 0
 
 		# create folders
 		## ensure const_DISPLAY_CONTENT_PATH exists
-		if not os.path.isdir(self.const_DISPLAY_CONTENT_PATH):
-			pathlib.Path(self.const_DISPLAY_CONTENT_PATH).mkdir(parents=True, exist_ok=True)
+		if not os.path.isdir(self.__const_DISPLAY_CONTENT_PATH):
+			pathlib.Path(self.__const_DISPLAY_CONTENT_PATH).mkdir(parents=True, exist_ok=True)
 
-		if self.conf_DIPLAY_IMAGES_KEEP:
+		if self.__conf_DIPLAY_IMAGES_KEEP:
 			## ensure const_DISPLAY_IMAGE_KEEP_PATH exists
-			if not os.path.isdir(self.const_DISPLAY_IMAGE_KEEP_PATH):
-				pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH).mkdir(parents=True, exist_ok=True)
+			if not os.path.isdir(self.__const_DISPLAY_IMAGE_KEEP_PATH):
+				pathlib.Path(self.__const_DISPLAY_IMAGE_KEEP_PATH).mkdir(parents=True, exist_ok=True)
 
 			## create SessionID by subfolders of const_DISPLAY_IMAGE_KEEP_PATH
 			self.SessionID = sum(
-				os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, Finding))
-				for Finding in os.listdir(self.const_DISPLAY_IMAGE_KEEP_PATH)
+				os.path.isdir(os.path.join(self.__const_DISPLAY_IMAGE_KEEP_PATH, Finding))
+				for Finding in os.listdir(self.__const_DISPLAY_IMAGE_KEEP_PATH)
 			) + 1
 
 			## ensure const_DISPLAY_IMAGE_KEEP_PATH/SessionID exists
-			if not os.path.isdir(os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID))):
-				pathlib.Path(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID)).mkdir(parents=True, exist_ok=True)
+			if not os.path.isdir(os.path.join(self.__const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID))):
+				pathlib.Path(self.__const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID)).mkdir(parents=True, exist_ok=True)
 		else:
 			self.SessionID	= 0
 
 		## start display menu
 		self.menu_controller	= displaymenu.MENU_CONTROLLER()
 
-		if self.conf_MENU_ENABLED:
+		if self.__conf_MENU_ENABLED:
 			# start displaymenu as iternal background process
 			try:
-				thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines -1 if self.conf_DISP_SHOW_STATUSBAR else self.maxLines, self.__setup, self.menu_controller))
+				thread	= threading.Thread(target=displaymenu.menu, args=(self.maxLines -1 if self.__conf_DISP_SHOW_STATUSBAR else self.maxLines, self.__setup, self.menu_controller))
 				thread.start()
 			except:
 				pass
@@ -273,17 +273,17 @@ class DISPLAY(object):
 
 		self.maxLines = int(self.device.height / self.line_height)
 
-		if self.maxLines > self.const_DISPLAY_LINES_LIMIT:
-			self.maxLines = self.const_DISPLAY_LINES_LIMIT
+		if self.maxLines > self.__const_DISPLAY_LINES_LIMIT:
+			self.maxLines = self.__const_DISPLAY_LINES_LIMIT
 
 	def get_statusbar(self):
-		if not self.conf_DISP_SHOW_STATUSBAR:
+		if not self.__conf_DISP_SHOW_STATUSBAR:
 			return(None)
 
 		statusbar	= []
 
 		# select item to dispay?
-		if time.time() - self.statusbar_toggle_time >= self.const_DISPLAY_STATUSBAR_TOGGLE_SEC:
+		if time.time() - self.statusbar_toggle_time >= self.__const_DISPLAY_STATUSBAR_TOGGLE_SEC:
 			self.statusbar_toggle_time	= time.time()
 			self.statusbar_toggle	= self.statusbar_toggle + 1 if self.statusbar_toggle < 2 else 0
 
@@ -358,7 +358,7 @@ class DISPLAY(object):
 
 	def show(self, Lines, statusbar=None, new_content=True):
 		# fill line count to const_DISPLAY_LINES_LIMIT
-		while len(Lines) < self.const_DISPLAY_LINES_LIMIT:
+		while len(Lines) < self.__const_DISPLAY_LINES_LIMIT:
 			Lines.append("s=b:")
 
 		if ":IMAGE=" in Lines[0]:
@@ -540,19 +540,19 @@ class DISPLAY(object):
 	def __save_image(self, image, new_content=True):
 
 		### <<< KEEP IMAGES FOR DOCUMENTATION
-		if self.conf_DIPLAY_IMAGES_KEEP and new_content:
-			if os.path.exists(self.const_DISPLAY_IMAGE_EXPORT_FILE):
+		if self.__conf_DIPLAY_IMAGES_KEEP and new_content:
+			if os.path.exists(self.__const_DISPLAY_IMAGE_EXPORT_FILE):
 				uptime_seconds	= f'{lib_system.get_uptime_sec():0>12.2f}'
 
-				FileNameTimed	= f'{uptime_seconds}-{os.path.basename(self.const_DISPLAY_IMAGE_EXPORT_FILE)}'
+				FileNameTimed	= f'{uptime_seconds}-{os.path.basename(self.__const_DISPLAY_IMAGE_EXPORT_FILE)}'
 				try:
-					os.rename(self.const_DISPLAY_IMAGE_EXPORT_FILE, os.path.join(self.const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID), FileNameTimed))
+					os.rename(self.__const_DISPLAY_IMAGE_EXPORT_FILE, os.path.join(self.__const_DISPLAY_IMAGE_KEEP_PATH, str(self.SessionID), FileNameTimed))
 				except:
 					pass
 		### >>> KEEP IMAGES FOR DOCUMENTATION
 
 		try:
-			image.save(self.const_DISPLAY_IMAGE_EXPORT_FILE)
+			image.save(self.__const_DISPLAY_IMAGE_EXPORT_FILE)
 		except:
 			pass
 
@@ -578,7 +578,7 @@ class DISPLAY(object):
 			hidden_info				= ''
 
 			# re-check for new files earlier than conf_DISP_FRAME_TIME, if no message was found
-			FrameTime = self.conf_DISP_FRAME_TIME / 4
+			FrameTime = self.__conf_DISP_FRAME_TIME / 4
 
 			ContentFile	= self.__display_content_files.get_next_file_name()
 
@@ -592,7 +592,7 @@ class DISPLAY(object):
 					time.sleep(0.2)
 
 				Lines = []
-				FrameTime = self.conf_DISP_FRAME_TIME
+				FrameTime = self.__conf_DISP_FRAME_TIME
 
 				# read content file
 				try:
@@ -637,7 +637,7 @@ class DISPLAY(object):
 							if SettingType == 'time' and float(SettingValue) >= 0:
 								FrameTime		= float(SettingValue)
 
-					elif len (Lines) < self.const_DISPLAY_LINES_LIMIT: # content line
+					elif len (Lines) < self.__const_DISPLAY_LINES_LIMIT: # content line
 
 						if Line:
 							if (Line[0:1] == ':'):
@@ -651,13 +651,13 @@ class DISPLAY(object):
 
 				# read old lines
 				if import_old_file:
-					if len(Lines) < self.const_DISPLAY_LINES_LIMIT and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
-						with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
+					if len(Lines) < self.__const_DISPLAY_LINES_LIMIT and os.path.isfile(self.__const_DISPLAY_CONTENT_OLD_FILE):
+						with open(self.__const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
 							for Line in oCF:
 
 								Line = Line.strip()
 
-								if len(Lines) < self.const_DISPLAY_LINES_LIMIT:
+								if len(Lines) < self.__const_DISPLAY_LINES_LIMIT:
 									Line = Line.split(':',1)[-1]
 									if Line:
 										if not Line.startswith('set:'):
@@ -668,15 +668,15 @@ class DISPLAY(object):
 				os.remove(ContentFile)
 
 				# display temp only:
-				if temp_screen and os.path.isfile(self.const_DISPLAY_CONTENT_OLD_FILE):
-					shutil.copyfile(self.const_DISPLAY_CONTENT_OLD_FILE, f'{ContentFile}')
+				if temp_screen and os.path.isfile(self.__const_DISPLAY_CONTENT_OLD_FILE):
+					shutil.copyfile(self.__const_DISPLAY_CONTENT_OLD_FILE, f'{ContentFile}')
 
 					if hidden_info:
 						with open(ContentFile, 'a') as newCF:
 							newCF.write(f"\nset:hidden={hidden_info}")
 
 				# move lines to old lines file
-				with open(self.const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
+				with open(self.__const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
 					oCF.write("\n".join(Lines))
 
 					if hidden_info:
@@ -688,8 +688,8 @@ class DISPLAY(object):
 
 			# statusbar
 			if (
-				self.conf_DISP_SHOW_STATUSBAR and
-				time.time() - display_time >= self.const_DISPLAY_STATUSBAR_TOGGLE_SEC
+				self.__conf_DISP_SHOW_STATUSBAR and
+				time.time() - display_time >= self.__const_DISPLAY_STATUSBAR_TOGGLE_SEC
 				):
 				self.show(Lines=Lines, statusbar=self.get_statusbar(), new_content=False)
 				display_time	= time.time()
