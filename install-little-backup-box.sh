@@ -565,11 +565,11 @@ sudo chmod 644 "/etc/proftpd/lbb_DefaultRoot.conf"
 
 sudo service proftpd restart
 
-# setup graphical environment
-source "${INSTALLER_DIR}/setup-graphical-environment.sh"
-
 # install display driver
 source "${INSTALLER_DIR}/install-display-driver.sh"
+
+# setup graphical environment
+source "${INSTALLER_DIR}/setup-graphical-environment.sh"
 
 # install comitup
 if [ "${SCRIPT_MODE}" = "install" ] || [ "${CHOICE_COMITUP}" = "0" ]; then

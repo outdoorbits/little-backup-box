@@ -76,11 +76,11 @@ EOM
 
 		OPTIONS=()
 		OPTIONS+=("None" "")
-		while IFS= read -r file; do
+		while IFS= read -r -d '' file; do
 			label="${file#./}"            # Remove leading ./
 			label="${label%-show}"        # Remove trailing -show
 			OPTIONS+=("$label" "")
-		done < <(find ./ -type f -name "*-show")
+		done < <(find . -type f -name "*-show" -print0 | sort -z)
 
 		CHOICE_DISPLAY_DRIVER=$(dialog --clear \
 			--colors \
