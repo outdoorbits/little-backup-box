@@ -111,7 +111,7 @@ In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens
 		<code>branch='main'; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/${branch}/install-little-backup-box.sh | bash -s -- ${branch} 2> install-error.log</code><br /><br />
 		Errors are reported into ./install-error.log.<br />
 		<br />
-		<b><u>Optional Display Driver Setup</u></u><br />
+		<b><u>Optional Display Driver Setup</u></b><br />
 		If you have opted for the desktop version of Raspbian, please note the following:<br />
 		<br />
 		To support graphical displays for desktop environment, the installer can optionally download and run a third-party script collection from https://github.com/goodtft/LCD-show.<br />
