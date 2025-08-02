@@ -56,7 +56,6 @@ EOM
 		--colors \
 		--title "Display driver" \
 		--backtitle "$BACKTITLE" \
-		--defaultno \
 		--yesno "${DISPLAY_DRIVER_INSTALL_QUESTION}" \
 		25 100
 
