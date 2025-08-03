@@ -224,7 +224,9 @@
       "timeout_label": "Au bout de quel délai faut-il arrêter l'envoi des rapports de sauvegarde ?",
       "notify_header": "Envoyer des e-mails",
       "notify_backup_label": "Si possible, envoyer des rapports de sauvegarde par e-mail ?",
-      "notify_ip_label": "Si possible, envoyer les liens actuels de cette Little Backup Box par email ?"
+      "notify_ip_label": "Si possible, envoyer les liens actuels de cette Little Backup Box par email ?",
+      "html_header": "Envoyer des e-mails au format HTML",
+      "html_label": "Si les mails sont activés, doivent-ils être formatés en HTML ?"
     },
     "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
     "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
@@ -232,22 +234,6 @@
     "cloud_restart_header": "Mettre à jour et redémarrer l'interface rclone",
     "cloud_restart_label": "Une connexion internet est obligatoire.",
     "rclone_gui_restarted": "L'interface utilisateur rclone a été redémarrée.",
-    "behavior": {
-      "log_sync_protokoll_header": "Protocole de synchronisation des journaux",
-      "log_sync_protokoll_label": "Détails de la synchronisation du journal ?",
-      "loglevel_header": "Log-Niveau",
-      "loglevel_label": "Sélectionnez le niveau de journalisation :",
-      "loglevel_maximum": "maximum",
-      "loglevel_medium": "moyen",
-      "loglevel_minimum": "minimal",
-      "loglevel_text": "Consigner les événements système (dans Log Monitor) ?<br>(Fichier journal :",
-      "mail_html_header": "Envoyer des e-mails au format HTML",
-      "mail_html_label": "Si les mails sont activés, doivent-ils être formatés en HTML ?",
-      "power_off_idle_time_header": "Mise hors tension après une période d'inactivité",
-      "power_off_idle_time_label": "Sélectionnez le temps d'inactivité après lequel le système doit être arrêté.",
-      "power_off_idle_time_none": "Certainement pas",
-      "section": "Comportement"
-    },
     "view": {
       "bg_image_header": "Image de fond"
     },
@@ -395,7 +381,21 @@
     "debug": {
       "display_images_keep_header": "Afficher les captures d'écran",
       "display_images_keep_label": "Conserver les images affichées ?",
-      "section": "Déboguer"
+      "section": "Déboguer",
+      "log_sync_protokoll_header": "Protocole de synchronisation des journaux",
+      "log_sync_protokoll_label": "Détails de la synchronisation du journal ?",
+      "loglevel_header": "Log-Niveau",
+      "loglevel_label": "Sélectionnez le niveau de journalisation :",
+      "loglevel_maximum": "maximum",
+      "loglevel_medium": "moyen",
+      "loglevel_minimum": "minimal",
+      "loglevel_text": "Consigner les événements système (dans Log Monitor) ?<br>(Fichier journal :"
+    },
+    "energy": {
+      "section": "Options d'économie d'énergie",
+      "power_off_idle_time_header": "Mise hors tension après une période d'inactivité",
+      "power_off_idle_time_label": "Sélectionnez le temps d'inactivité après lequel le système doit être arrêté.",
+      "power_off_idle_time_none": "Certainement pas"
     }
   },
   "tools": {

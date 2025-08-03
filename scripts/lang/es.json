@@ -224,7 +224,9 @@
       "timeout_label": "¿Después de qué límite de tiempo se debe detener el envío de informes de respaldo?",
       "notify_header": "Enviar correos",
       "notify_backup_label": "Si es posible, ¿enviar informes de respaldo por correo electrónico?",
-      "notify_ip_label": "Si es posible, ¿enviar enlaces actuales a esta Little Backup Box por correo electrónico?"
+      "notify_ip_label": "Si es posible, ¿enviar enlaces actuales a esta Little Backup Box por correo electrónico?",
+      "html_header": "Enviar correos en formato HTML",
+      "html_label": "Si los correos están activados, ¿deberían estar formateados en HTML?"
     },
     "alert_password_change_after_reboot_set": "Conjunto de contraseñas globales\nLos cambios serán aplicados después del reinicio",
     "alert_password_change_after_reboot_remove": "Se eliminó la contraseña global\nLos cambios serán aplicados después del reinicio",
@@ -232,22 +234,6 @@
     "cloud_restart_header": "Actualice y reinicie la interfaz rclone",
     "cloud_restart_label": "Una conexión a Internet es obligatoria.",
     "rclone_gui_restarted": "La interfaz de usuario de rclone se ha reiniciado.",
-    "behavior": {
-      "log_sync_protokoll_header": "Protocolo de sincronización de registros",
-      "log_sync_protokoll_label": "¿Registrar detalles de sincronización?",
-      "loglevel_header": "Nivel de registro",
-      "loglevel_label": "Seleccione el nivel de registro:",
-      "loglevel_maximum": "máximo",
-      "loglevel_medium": "medio",
-      "loglevel_minimum": "mínimo",
-      "loglevel_text": "¿Registrar eventos del sistema (en el Monitor de registro)? <br> (Archivo de registro:",
-      "mail_html_header": "Enviar correos en formato HTML",
-      "mail_html_label": "Si los correos están activados, ¿deberían estar formateados en HTML?",
-      "power_off_idle_time_header": "Apagar después de un tiempo de inactividad",
-      "power_off_idle_time_label": "Seleccione el tiempo de inactividad después del cual se debe detener el sistema.",
-      "power_off_idle_time_none": "Nunca",
-      "section": "Comportamiento"
-    },
     "view": {
       "bg_image_header": "Imagen de fondo"
     },
@@ -395,7 +381,21 @@
     "debug": {
       "display_images_keep_header": "Mostrar capturas de pantalla",
       "display_images_keep_label": "¿Mantener imágenes para mostrar?",
-      "section": "Depurar"
+      "section": "Depurar",
+      "log_sync_protokoll_header": "Protocolo de sincronización de registros",
+      "log_sync_protokoll_label": "¿Registrar detalles de sincronización?",
+      "loglevel_header": "Nivel de registro",
+      "loglevel_label": "Seleccione el nivel de registro:",
+      "loglevel_maximum": "máximo",
+      "loglevel_medium": "medio",
+      "loglevel_minimum": "mínimo",
+      "loglevel_text": "¿Registrar eventos del sistema (en el Monitor de registro)? <br> (Archivo de registro:"
+    },
+    "energy": {
+      "section": "Opciones de ahorro de energía",
+      "power_off_idle_time_header": "Apagar después de un tiempo de inactividad",
+      "power_off_idle_time_label": "Seleccione el tiempo de inactividad después del cual se debe detener el sistema.",
+      "power_off_idle_time_none": "Nunca"
     }
   },
   "tools": {

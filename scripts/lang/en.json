@@ -470,7 +470,9 @@
       "timeout_label": "After what time limit should the sending of backup reports be canceled?",
       "notify_header": "Send mails",
       "notify_backup_label": "If possible, send backup reports via email?",
-      "notify_ip_label": "If possible, send the current links of this Little Backup Box via email?"
+      "notify_ip_label": "If possible, send the current links of this Little Backup Box via email?",
+      "html_header": "Send mails in HTML-format",
+      "html_label": "If mails are activated, should they be Formatted in HTML?"
     },
     "alert_password_change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
     "alert_password_change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",
@@ -478,22 +480,6 @@
     "cloud_restart_header": "Update and restart rclone GUI",
     "cloud_restart_label": "An internet connection is mandatory.",
     "rclone_gui_restarted": "The rclone UI has been restarted.",
-    "behavior": {
-      "log_sync_protokoll_header": "Log sync-protocol",
-      "log_sync_protokoll_label": "Log sync-details?",
-      "loglevel_header": "Log-Level",
-      "loglevel_label": "Select the Log-Level:",
-      "loglevel_maximum": "maximum",
-      "loglevel_medium": "medium",
-      "loglevel_minimum": "minimal",
-      "loglevel_text": "Log system-events (to Log Monitor)?<br>(Logfile:",
-      "mail_html_header": "Send mails in HTML-format",
-      "mail_html_label": "If mails are activated, should they be Formatted in HTML?",
-      "power_off_idle_time_header": "Power down after idle-time",
-      "power_off_idle_time_label": "Select the idle time after which the system should be stopped.",
-      "power_off_idle_time_none": "never",
-      "section": "Behavior"
-    },
     "view": {
       "bg_image_header": "Background-image"
     },
@@ -641,7 +627,21 @@
     "debug": {
       "display_images_keep_header": "Display screenshots",
       "display_images_keep_label": "Keep display images?",
-      "section": "Debug"
+      "section": "Debug",
+      "log_sync_protokoll_header": "Log sync-protocol",
+      "log_sync_protokoll_label": "Log sync-details?",
+      "loglevel_header": "Log-Level",
+      "loglevel_label": "Select the Log-Level:",
+      "loglevel_maximum": "maximum",
+      "loglevel_medium": "medium",
+      "loglevel_minimum": "minimal",
+      "loglevel_text": "Log system-events (to Log Monitor)?<br>(Logfile:"
+    },
+    "energy": {
+      "section": "Energy saving options",
+      "power_off_idle_time_header": "Power down after idle-time",
+      "power_off_idle_time_label": "Select the idle time after which the system should be stopped.",
+      "power_off_idle_time_none": "never"
     }
   },
   "tools": {

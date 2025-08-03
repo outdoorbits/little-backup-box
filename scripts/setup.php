@@ -760,15 +760,15 @@ CONFIGDATA;
 
 		<div class="card" style="margin-top: 2em;">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_behavior_section; ?></summary>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_energy_section; ?></summary>
 
-				<h3><?php echo L::config_behavior_power_off_idle_time_header; ?></h3>
-					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_behavior_power_off_idle_time_label; ?></label><br>
+				<h3><?php echo L::config_energy_power_off_idle_time_header; ?></h3>
+					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_energy_power_off_idle_time_label; ?></label><br>
 					<select name="conf_POWER_OFF_IDLE_TIME" id="conf_POWER_OFF_IDLE_TIME">
 						<?php
 							$IDLE_TIME_OPTIONS=array(0,2,5,10,15,20,30);
 							foreach($IDLE_TIME_OPTIONS as $IDLE_TIME_OPTION) {
-								echo "<option value=\"" . $IDLE_TIME_OPTION ."\"". ($config["conf_POWER_OFF_IDLE_TIME"]==$IDLE_TIME_OPTION?" selected":"") . ">" . ($IDLE_TIME_OPTION=="0"?L::config_behavior_power_off_idle_time_none:$IDLE_TIME_OPTION . " " . L::units_minutes_long) ."</option>";
+								echo "<option value=\"" . $IDLE_TIME_OPTION ."\"". ($config["conf_POWER_OFF_IDLE_TIME"]==$IDLE_TIME_OPTION?" selected":"") . ">" . ($IDLE_TIME_OPTION=="0"?L::config_energy_power_off_idle_time_none:$IDLE_TIME_OPTION . " " . L::units_minutes_long) ."</option>";
 							}
 						?>
 
@@ -1026,9 +1026,9 @@ CONFIGDATA;
 					<input type="checkbox" id="conf_MAIL_IP" name="conf_MAIL_IP"<?php echo $config['conf_MAIL_IP']=="1"?"checked":""; ?>>
 					<label for="conf_MAIL_IP"><?php echo L::config_mail_notify_ip_label; ?></label><br>
 
-				<h3><?php echo L::config_behavior_mail_html_header; ?></h3>
+				<h3><?php echo L::config_mail_html_header; ?></h3>
 					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
-					<label for="conf_MAIL_HTML"><?php echo L::config_behavior_mail_html_label; ?></label><br>
+					<label for="conf_MAIL_HTML"><?php echo L::config_mail_html_label; ?></label><br>
 
 				<h3><?php echo L::config_mail_smtp_header; ?></h3>
 					<label for="conf_SMTP_SERVER"><?php echo L::config_mail_smtp_label; ?></label><br>
@@ -1678,18 +1678,18 @@ CONFIGDATA;
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_debug_section; ?></summary>
 
-				<h3><?php echo L::config_behavior_loglevel_header; ?></h3>
-					<p><?php echo L::config_behavior_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
-					<label for="conf_LOGLEVEL"><?php echo L::config_behavior_loglevel_label; ?></label><br>
+				<h3><?php echo L::config_debug_loglevel_header; ?></h3>
+					<p><?php echo L::config_debug_loglevel_text . " " . $constants["const_LOGFILE"]; ?>)</p>
+					<label for="conf_LOGLEVEL"><?php echo L::config_debug_loglevel_label; ?></label><br>
 					<select name="conf_LOGLEVEL" id="conf_LOGLEVEL">
-						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, <?php echo L::config_behavior_loglevel_minimum; ?></option>
-						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, <?php echo L::config_behavior_loglevel_medium; ?></option>
-						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, <?php echo L::config_behavior_loglevel_maximum; ?></option>
+						<option value="1" <?php echo $config["conf_LOGLEVEL"]=="1"?" selected":""; ?>>1, <?php echo L::config_debug_loglevel_minimum; ?></option>
+						<option value="2" <?php echo $config["conf_LOGLEVEL"]=="2"?" selected":""; ?>>2, <?php echo L::config_debug_loglevel_medium; ?></option>
+						<option value="3" <?php echo $config["conf_LOGLEVEL"]=="3"?" selected":""; ?>>3, <?php echo L::config_debug_loglevel_maximum; ?></option>
 					</select>
 
-				<h3><?php echo L::config_behavior_log_sync_protokoll_header; ?></h3>
+				<h3><?php echo L::config_debug_log_sync_protokoll_header; ?></h3>
 					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
-					<label for="conf_LOG_SYNC"><?php echo L::config_behavior_log_sync_protokoll_label; ?></label><br>
+					<label for="conf_LOG_SYNC"><?php echo L::config_debug_log_sync_protokoll_label; ?></label><br>
 
 				<h3><?php echo L::config_debug_display_images_keep_header; ?></h3>
 					<input type="checkbox" id="conf_DIPLAY_IMAGES_KEEP" name="conf_DIPLAY_IMAGES_KEEP"<?php echo $config['conf_DIPLAY_IMAGES_KEEP']=="1"?"checked":""; ?>>

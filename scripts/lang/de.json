@@ -224,7 +224,9 @@
       "timeout_label": "Nach welchem Zeitlimit soll der Versand der Backup-Berichte abgebrochen werden?",
       "notify_header": "E-Mails senden",
       "notify_backup_label": "Wenn möglich, Backup-Berichte per E-Mail senden?",
-      "notify_ip_label": "Wenn möglich, die aktuellen Links dieser Little Backup Box per E-Mail senden?"
+      "notify_ip_label": "Wenn möglich, die aktuellen Links dieser Little Backup Box per E-Mail senden?",
+      "html_header": "Mails im HTML-Format versenden",
+      "html_label": "Wenn Mails aktiviert sind, sollen diese in HTML formatiert werden?"
     },
     "alert_password_change_after_reboot_set": "Globales Passwort festgelegt\nÄnderungen werden nach dem Neustart wirksam",
     "alert_password_change_after_reboot_remove": "Globales Passwort entfernt\nÄnderungen werden nach dem Neustart wirksam",
@@ -232,22 +234,6 @@
     "cloud_restart_header": "rclone-Oberfläche aktualisieren und neu starten",
     "cloud_restart_label": "Eine Internet-Verbindung ist zwingend erforderlich.",
     "rclone_gui_restarted": "Die rclone-Benutzeroberfläche wurde neu gestartet.",
-    "behavior": {
-      "log_sync_protokoll_header": "Log-Sync-Protokoll",
-      "log_sync_protokoll_label": "Sync-Details protokollieren?",
-      "loglevel_header": "Log-Level",
-      "loglevel_label": "Wählen Sie das Log-Level:",
-      "loglevel_maximum": "maximal",
-      "loglevel_medium": "mittel",
-      "loglevel_minimum": "minimal",
-      "loglevel_text": "Systemereignisse im Log Monitor protokollieren?<br>(Logfile:",
-      "mail_html_header": "Mails im HTML-Format versenden",
-      "mail_html_label": "Wenn Mails aktiviert sind, sollen diese in HTML formatiert werden?",
-      "power_off_idle_time_header": "Herunterfahren bei Inaktivität?",
-      "power_off_idle_time_label": "Wählen Sie die Leerlaufzeit aus, nach der das System gestoppt werden soll.",
-      "power_off_idle_time_none": "niemals",
-      "section": "Verhalten"
-    },
     "view": {
       "bg_image_header": "Hintergrundbild"
     },
@@ -395,7 +381,21 @@
     "debug": {
       "display_images_keep_header": "Display-Screenshots",
       "display_images_keep_label": "Display-Bilder behalten?",
-      "section": "Debug"
+      "section": "Debug",
+      "log_sync_protokoll_header": "Log-Sync-Protokoll",
+      "log_sync_protokoll_label": "Sync-Details protokollieren?",
+      "loglevel_header": "Log-Level",
+      "loglevel_label": "Wählen Sie das Log-Level:",
+      "loglevel_maximum": "maximal",
+      "loglevel_medium": "mittel",
+      "loglevel_minimum": "minimal",
+      "loglevel_text": "Systemereignisse im Log Monitor protokollieren?<br>(Logfile:"
+    },
+    "energy": {
+      "section": "Energiesparoptionen",
+      "power_off_idle_time_header": "Herunterfahren bei Inaktivität?",
+      "power_off_idle_time_label": "Wählen Sie die Leerlaufzeit aus, nach der das System gestoppt werden soll.",
+      "power_off_idle_time_none": "niemals"
     }
   },
   "tools": {
