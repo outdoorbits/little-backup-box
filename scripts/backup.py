@@ -36,6 +36,7 @@ import lib_display
 import lib_language
 import lib_log
 import lib_mail
+import lib_metadata
 import lib_network
 import lib_poweroff
 import lib_setup
@@ -1369,6 +1370,9 @@ class backup(object):
 		if self.TargetDevice:
 			if self.TargetDevice.isLocal:
 
+				metadata = MetadataTool(dry_run = False)
+
+
 				lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
 
 				# prepare database
@@ -1399,7 +1403,7 @@ class backup(object):
 					MediaPathFile	= os.path.join(self.TargetDevice.MountPoint, FileTuple[1].strip('/'))
 					MediaLbbRating	= FileTuple[2]
 
-					subprocess.run(['exiftool', '-overwrite_original', f'-Rating={MediaLbbRating}',MediaPathFile])
+					metadata.process_one(MediaPathFile.expanduser().resolve(), rating=MediaLbbRating)
 					db.dbExecute(f"update EXIF_DATA set Rating={MediaLbbRating} where ID={MediaID};")
 
 					progress.progress()

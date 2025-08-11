@@ -320,23 +320,6 @@
 		return $db->changes();
 	}
 
-	function write_sidecar($db, $ID_IMAGE, $STORAGE_PATH) {
-		$SQL	= "SELECT Directory, File_Name, Comment FROM EXIF_DATA WHERE ID=$ID_IMAGE;";
-		$statement		= $db->prepare($SQL);
-		$IMAGES			= $statement->execute();
-		$IMAGE			= $IMAGES->fetchArray(SQLITE3_ASSOC);
-
-		$Sidecar_File	= implode(DIRECTORY_SEPARATOR, [$STORAGE_PATH, $IMAGE['Directory'], $IMAGE['File_Name'].'.txt']);
-
-		if ($IMAGE['Comment'] == "") {
-			if (file_exists($Sidecar_File)) {
-				unlink($Sidecar_File);
-			}
-		} else {
-			file_put_contents($Sidecar_File, $IMAGE['Comment']);
-		}
-	}
-
 // MAIN PART
 	# setup
 	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5,$constants['const_VIEW_GRID_COLUMNS']*10,$constants['const_VIEW_GRID_COLUMNS']*20,$constants['const_VIEW_GRID_COLUMNS']*50);
@@ -508,13 +491,13 @@
 				$SQL_RATING	= "";
 				if ($config['conf_VIEW_WRITE_RATING_EXIF'] == true) {
 					# get database-values before update
-					$statement			= $db->prepare("SELECT Directory, File_Name, Rating FROM EXIF_DATA where ID=" . $ID_IMAGE . ";");
-					$RATING_IMAGES		= $statement->execute();
-					$RATING_IMAGE		= $RATING_IMAGES->fetchArray(SQLITE3_ASSOC);
+					$statement	= $db->prepare("SELECT Directory, File_Name, Rating FROM EXIF_DATA where ID=" . $ID_IMAGE . ";");
+					$IMAGES		= $statement->execute();
+					$IMAGE		= $IMAGES->fetchArray(SQLITE3_ASSOC);
 
-					if ((int)$RATING_IMAGE['Rating'] !== $Rating) {
+					if ((int)$IMAGE['Rating'] !== $Rating) {
 						#update exif-data of original file
-						shell_exec ("sudo exiftool -overwrite_original -Rating=" . $Rating . " '".$STORAGE_PATH . '/' . $RATING_IMAGE['Directory']. '/' .$RATING_IMAGE['File_Name'] . "'");
+						shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --rating $Rating");
 					}
 
 					# define update-command
@@ -526,7 +509,6 @@
 				}
 
 				# Comment
-				$SQL_COMMENT	= "";
 				if (isset($EDIT_ARRAY[$ID_IMAGE]["Comment"])) {
 					$Comment	= $EDIT_ARRAY[$ID_IMAGE]["Comment"];
 					$UPDATE_ARRAY[$ID_IMAGE]['Comment']	= $Comment;
@@ -537,7 +519,7 @@
 				update_row($db, "EXIF_DATA", $ID_IMAGE, $UPDATE);
 
 				if (isset($UPDATE['Comment'])) {
-					write_sidecar($db, $ID_IMAGE, $STORAGE_PATH);
+					shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --comment '" . $UPDATE['Comment'] . "'");
 				}
 			}
 
