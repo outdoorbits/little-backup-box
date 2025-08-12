@@ -19,6 +19,7 @@
 #######################################################################
 
 import argparse
+import shlex
 import shutil
 import subprocess
 from pathlib import Path
@@ -44,6 +45,71 @@ class MetadataTool:
 		self.const_FILE_EXTENSIONS_LIST_TIF				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TIF')
 		self.const_FILE_EXTENSIONS_LIST_VIDEO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO')
 		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
+
+		# -------------------------
+		# Central metadata source lists
+		# -------------------------
+
+		self.CREATE_SOURCES = [
+			"XMP:CreateDate",
+			"XMP:DateCreated",
+			"XMP-photoshop:DateCreated",
+			"XMP-exif:DateTimeOriginal",
+			"Composite:SubSecCreateDate",
+			"Composite:SubSecDateTimeOriginal",
+			"EXIF:CreateDate",
+			"EXIF:DateTimeOriginal",
+			"EXIF:DateTimeDigitized",
+			"Composite:DateTimeCreated",
+			"QuickTime:CreateDate",
+			"QuickTime:MediaCreateDate",
+			"QuickTime:TrackCreateDate",
+			"QuickTime:ContentCreateDate",
+			"RIFF:DateTimeOriginal",
+			"RIFF:DateTimeDigitized",
+			"PNG:CreationTime",
+			"File:FileCreateDate",
+			"File:FileModifyDate",
+		]
+
+		self.MODIFY_SOURCES = [
+			"XMP:ModifyDate",
+			"Composite:SubSecModifyDate",
+			"EXIF:ModifyDate",
+			"QuickTime:ModifyDate",
+			"QuickTime:TrackModifyDate",
+			"File:FileModifyDate",
+		]
+
+		self.METADATA_SOURCES = [
+			"XMP:MetadataDate",
+			"XMP:ModifyDate",
+			"Composite:SubSecModifyDate",
+			"EXIF:ModifyDate",
+			"QuickTime:ModifyDate",
+			"File:FileModifyDate",
+		]
+
+		self.PS_DATECREATED_SOURCES = [
+			"XMP-photoshop:DateCreated",
+			"XMP:DateCreated",
+			"XMP:CreateDate",
+			"XMP-exif:DateTimeOriginal",
+			"Composite:SubSecDateTimeOriginal",
+			"Composite:SubSecCreateDate",
+			"EXIF:DateTimeOriginal",
+			"EXIF:CreateDate",
+			"Composite:DateTimeCreated",
+			"QuickTime:CreateDate",
+			"QuickTime:MediaCreateDate",
+			"QuickTime:ContentCreateDate",
+			"RIFF:DateTimeOriginal",
+			"PNG:CreationTime",
+			"File:FileCreateDate",
+			"File:FileModifyDate",
+		]
+
+
 
 	def process_one(self, path: Path, rating: Optional[int] = None, description: Optional[str] = None) -> None:
 
@@ -74,36 +140,53 @@ class MetadataTool:
 
 		xmp_path = raw_path.with_suffix(".xmp")
 
-		# Step 1: Copy time-related tags from RAW into the sidecar (create or overwrite the XMP file).
-		# We copy widely-supported XMP time fields; if the RAW lacks any of them, exiftool just skips them.
+		def fallback_grouped(src_file: str, dest: str, sources: list[str]) -> list[str]:
+			"""
+			One grouped fallback:
+			[-tagsFromFile src_file, -Dest<Src1>, -Dest<Src2>, ...]
+			With -wm cg, the first existing source sets Dest; later ones are ignored.
+			"""
+			args: list[str] = ["-tagsFromFile", src_file]
+			for s in sources:
+				args.append(f"-{dest}<{s}")
+			return args
+
+		# Common options
+		common = ["-P", "-use", "MWG", "-api", "QuickTimeUTC=1", "-wm", "cg"]
+
 		if xmp_path.exists():
-			# Update existing sidecar IN PLACE (kein -o)
-			self._run_exiftool([
+			# Update existing sidecar in place
+			args = [
 				"-overwrite_original",
-				"-tagsFromFile", str(raw_path),
-				"-XMP-xmp:CreateDate",
-				"-XMP-xmp:ModifyDate",
-				"-XMP-xmp:MetadataDate",
-				"-XMP-photoshop:DateCreated",
+				*common,
+				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.CREATE_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.MODIFY_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:MetadataDate", self.METADATA_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP-photoshop:DateCreated", self.PS_DATECREATED_SOURCES),
 				str(xmp_path),
-			], context=f"update sidecar {xmp_path.name}")
+			]
+			self._run_exiftool(args, context=f"update sidecar {xmp_path.name}")
 		else:
-			# Create new sidecar FROM RAW (mit -o)
-			self._run_exiftool([
+			# Create a new sidecar from RAW (-o …)
+			args = [
 				"-o", str(xmp_path),
-				"-tagsFromFile", str(raw_path),
-				"-XMP-xmp:CreateDate",
-				"-XMP-xmp:ModifyDate",
-				"-XMP-xmp:MetadataDate",
-				"-XMP-photoshop:DateCreated",
-				str(raw_path),  # Quelle angeben
-			], context=f"create sidecar {xmp_path.name}")
+				*common,
+				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.CREATE_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.MODIFY_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:MetadataDate", self.METADATA_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP-photoshop:DateCreated", self.PS_DATECREATED_SOURCES),
+				str(raw_path),
+			]
+			self._run_exiftool(args, context=f"create sidecar {xmp_path.name}")
+
 
 		# Step 2: Apply optional fields.
 		set_cmd = ["-overwrite_original"]  # operate on the sidecar we just created
+
 		if rating is not None:
 			self._normalize_rating(rating)
 			set_cmd.append(f"-XMP-xmp:Rating={rating}")
+
 		if description is not None:
 			# XMP supports UTF-8 and multi-line content natively.
 			set_cmd.append(f"-XMP-dc:Description={description}")
@@ -111,60 +194,62 @@ class MetadataTool:
 		if len(set_cmd) > 1:
 			set_cmd.append(str(xmp_path))
 			self._run_exiftool(set_cmd, context=f"set fields in {xmp_path.name}")
-		else:
-			self._log(f"[OK] Sidecar up-to-date: {xmp_path.name}")
 
 	# ---------- Non-RAW → embed ----------
 
 	def _embed_into_image(self, image_path: Path, rating: Optional[int], description: Optional[str]) -> None:
 		# Embed metadata into a non-RAW image.
 
-		cmd = ["-overwrite_original"]
+		def fb_grouped(dest: str, sources: list[str]) -> list[str]:
+			# One -tagsFromFile @ followed by multiple -Dest<Source> attempts
+			args = ["-tagsFromFile", "@"]
+			for s in sources:
+				args.append(f"-{dest}<{s}")
+			return args
 
-		# Map times into XMP if present; safe if source tags are missing.
-		cmd += [
-			"-XMP-xmp:CreateDate<DateTimeOriginal",
-			"-XMP-xmp:ModifyDate<FileModifyDate",
-			"-XMP-xmp:MetadataDate<FileModifyDate",
-		]
+		cmd = ["-overwrite_original","-P","-use","MWG","-api","QuickTimeUTC=1","-wm","cg",
+			*fb_grouped("XMP:CreateDate", self.CREATE_SOURCES),
+			*fb_grouped("XMP:ModifyDate", self.MODIFY_SOURCES),
+			*fb_grouped("XMP:MetadataDate", self.METADATA_SOURCES),
+			*fb_grouped("XMP-photoshop:DateCreated", self.PS_DATECREATED_SOURCES)]
+
 		if rating is not None:
-			rating	= self._normalize_rating(rating)
+			rating = self._normalize_rating(rating)
 			cmd.append(f"-XMP-xmp:Rating={rating}")
 		if description is not None:
 			cmd.extend([
 				f"-XMP-dc:Description={description}",
-				# Compatibility for older consumers:
 				f"-EXIF:ImageDescription={description}",
 				"-charset", "iptc=utf8",
 				f"-IPTC:Caption-Abstract={description}",
 			])
 
 		cmd.append(str(image_path))
+
 		self._run_exiftool(cmd, context=f"embed metadata into {image_path.name}")
+
 
 	# ---------- Helpers ----------
 
 	def _run_exiftool(self, args: list[str], context: str = "") -> None:
 		if self.dry:
-			print(f"[DRY] exiftool {' '.join(args)}")
+			# Print a copy-pasteable command line (properly quoted for Bash/Zsh)
+			print(f"[DRY] {shlex.join(['exiftool'] + args)}")
 			return
 		try:
 			res = subprocess.run(["exiftool"] + args, text=True, capture_output=True)
 		except FileNotFoundError:
-			return()
+			return
 		if res.returncode != 0:
-			return()
+			return
 
 	def _ensure_exiftool(self) -> None:
 		if shutil.which("exiftool") is None:
 			raise ExiftoolError("exiftool not found. Please install exiftool and ensure it is on PATH.")
 
 	@staticmethod
-	def _normalize_rating(rating: int) -> None:
-		if (1 <= rating <= 5):
-			return(rating)
-		else:
-			return(2)
+	def _normalize_rating(rating: int) -> int:
+		return rating if 1 <= rating <= 5 else 2
 
 # ---------- CLI ----------
 
