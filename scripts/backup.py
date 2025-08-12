@@ -1372,7 +1372,6 @@ class backup(object):
 
 				metadata = lib_metadata.MetadataTool(dry_run = False)
 
-
 				lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
 
 				# prepare database

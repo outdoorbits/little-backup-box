@@ -48,7 +48,8 @@ class MetadataTool:
 	def process_one(self, path: Path, rating: Optional[int] = None, description: Optional[str] = None) -> None:
 
 		if not path.exists() or not path.is_file():
-			raise FileNotFoundError(f"Not a file: {path}")
+			return()
+
 		Extension = path.suffix.lower().removeprefix('.')
 
 		EMBED_EXTS	= ';'.join(
@@ -150,9 +151,9 @@ class MetadataTool:
 		try:
 			res = subprocess.run(["exiftool"] + args, text=True, capture_output=True)
 		except FileNotFoundError:
-			raise ExiftoolError("exiftool not found on PATH")
+			return()
 		if res.returncode != 0:
-			raise ExiftoolError(f"{context}: {res.stderr.strip() or res.stdout.strip()}")
+			return()
 
 	def _ensure_exiftool(self) -> None:
 		if shutil.which("exiftool") is None:
@@ -164,7 +165,6 @@ class MetadataTool:
 			return(rating)
 		else:
 			return(2)
-
 
 # ---------- CLI ----------
 

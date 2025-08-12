@@ -488,7 +488,6 @@
 
 				# Rating
 				$Rating		= (int)$Values["Rating"];
-				$SQL_RATING	= "";
 				if ($config['conf_VIEW_WRITE_RATING_EXIF'] == true) {
 					# get database-values before update
 					$statement	= $db->prepare("SELECT Directory, File_Name, Rating FROM EXIF_DATA where ID=" . $ID_IMAGE . ";");
@@ -500,11 +499,11 @@
 						shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --rating $Rating");
 					}
 
-					# define update-command
+					# define update fields
 					$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
 					$UPDATE_ARRAY[$ID_IMAGE]['Rating']		= $Rating;
 				} else {
-					# define update-command
+					# define update fields
 					$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
 				}
 
@@ -533,8 +532,10 @@
 					if ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
 						$DELETE_FILE	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'];
 						$DELETE_TIMS	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/tims/' . $IMAGE['File_Name'] . '.JPG';
+						$DELETE_XMP		= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . pathinfo($IMAGE['File_Name'], PATHINFO_FILENAME) . '.xmp';
 						shell_exec ("sudo rm '" . $DELETE_FILE . "'");
 						shell_exec ("sudo rm '" . $DELETE_TIMS . "'");
+						shell_exec ("sudo rm '" . $DELETE_XMP . "'");
 						$db->exec("delete from EXIF_DATA where ID=" . $key . " and LbbRating=1;");
 					}
 
