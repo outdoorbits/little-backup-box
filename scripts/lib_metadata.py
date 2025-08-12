@@ -27,7 +27,7 @@ from typing import Optional
 import lib_setup
 
 class ExiftoolError(RuntimeError):
-	print(RuntimeError)
+	pass
 
 class MetadataTool:
 	# Handles writing XMP sidecars for RAWs and embedded metadata for non-RAWs.
