@@ -1370,7 +1370,7 @@ class backup(object):
 		if self.TargetDevice:
 			if self.TargetDevice.isLocal:
 
-				metadata = MetadataTool(dry_run = False)
+				metadata = lib_metadata.MetadataTool(dry_run = False)
 
 
 				lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
@@ -1403,7 +1403,7 @@ class backup(object):
 					MediaPathFile	= os.path.join(self.TargetDevice.MountPoint, FileTuple[1].strip('/'))
 					MediaLbbRating	= FileTuple[2]
 
-					metadata.process_one(MediaPathFile.expanduser().resolve(), rating=MediaLbbRating)
+					metadata.process_one(pathlib.Path(MediaPathFile).expanduser().resolve(), rating=MediaLbbRating)
 					db.dbExecute(f"update EXIF_DATA set Rating={MediaLbbRating} where ID={MediaID};")
 
 					progress.progress()

@@ -46,7 +46,7 @@ class MetadataTool:
 		self.const_FILE_EXTENSIONS_LIST_VIDEO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO')
 		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
 
-	def process_one(self, path: Path, rating: Optional[int], description: Optional[str]) -> None:
+	def process_one(self, path: Path, rating: Optional[int] = None, description: Optional[str] = None) -> None:
 
 		if not path.exists() or not path.is_file():
 			raise FileNotFoundError(f"Not a file: {path}")
@@ -61,12 +61,10 @@ class MetadataTool:
 					self.const_FILE_EXTENSIONS_LIST_AUDIO
 				]
 			).split(';')
-		print(f"if {Extension} in {self.const_FILE_EXTENSIONS_LIST_RAW.split(';')}:")
+
 		if Extension in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
-			print('raw')
 			self._sidecar_for_raw(path, rating=rating, description=description)
 		elif Extension in EMBED_EXTS:
-			print('embedded')
 			self._embed_into_image(path, rating=rating, description=description)
 
 	# ---------- RAW → XMP sidecar ----------
