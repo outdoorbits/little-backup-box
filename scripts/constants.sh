@@ -26,6 +26,7 @@ const_DISPLAY_SIZE_UI_X=200
 const_DISPLAY_SIZE_UI_Y=100
 const_IP_QR_FILE_PATTERN="/var/www/little-backup-box/tmp/ip-qr-link-__.png"
 const_IP_SENT_MARKERFILE="/var/www/little-backup-box/tmp/ip-sent.txt"
+const_MENU_FRAME_TIME=0.5
 const_MENU_TIMEOUT_SEC=15
 const_RCLONE_CONFIG_FILE="rclone.conf"
 const_BUTTONS_CONFIG_FILE="buttons.cfg"

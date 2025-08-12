@@ -27,6 +27,7 @@ import os
 import subprocess
 
 import lib_cron_ip
+import lib_display
 import lib_language
 import lib_network
 import lib_setup
@@ -48,6 +49,8 @@ class menu(object):
 	def __init__(self, DISPLAY_LINES, setup, menu_controller):
 
 		self.DISPLAY_LINES	= DISPLAY_LINES;
+
+		self.__display			= lib_display.display()
 		self.__setup			= setup
 		self.__lan				= lib_language.language()
 
@@ -70,6 +73,7 @@ class menu(object):
 		self.conf_MENU_BUTTON_BOUNCETIME 				= self.__setup.get_val('conf_MENU_BUTTON_BOUNCETIME')
 		self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING 	= self.__setup.get_val('conf_MENU_BUTTON_EDGE_DETECTION') == 'RISING'
 		self.GPIO_MENU_BUTTON_RESISTOR_PULL_UP 			= self.__setup.get_val('conf_MENU_BUTTON_RESISTOR_PULL') == 'UP'
+		self.const_MENU_FRAME_TIME						= self.__setup.get_val('const_MENU_FRAME_TIME')
 
 		self.RCLONE_CONFIG_FILE							= f"{self.const_MEDIA_DIR}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 		self.const_MENU_TIMEOUT_SEC						= self.__setup.get_val('const_MENU_TIMEOUT_SEC')
@@ -395,15 +399,16 @@ class menu(object):
 		if action == 'ip':
 			FrameTime	= self.conf_DISP_FRAME_TIME_IP * 2
 			lib_cron_ip.ip_info().display_ip(FrameTime=FrameTime, force=True)
-
 			return([], FrameTime)
+
+		return([], self.conf_DISP_FRAME_TIME)
 
 	def display(self):
 		self.check_timeout()
 
 		self.set_shift()
 
-		FrameTime			= 0
+		FrameTime			= self.const_MENU_FRAME_TIME
 		LINES 				= []
 		n					= 0
 
@@ -476,9 +481,7 @@ class menu(object):
 			n += 1
 
 		if LINES:
-			LINES_Str	= "' '".join(LINES)
-			LINES_Str	= f"'{LINES_Str}'"
-			os.system(f"python3 {self.WORKING_DIR}/lib_display.py 'set:clear,time={FrameTime}' {LINES_Str}")
+			self.__display.message([f'set:clear,time={FrameTime}'] + LINES)
 
 	def move_down(self):
 		if len(self.MENU[self.MENU_LEVEL]) > (self.MENU_POS[self.MENU_LEVEL] + 1):
