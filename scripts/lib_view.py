@@ -68,6 +68,7 @@ class viewdb(object):
 
 		dbCreateArray.append("alter table EXIF_DATA add column File_Type text;")
 		dbCreateArray.append("alter table EXIF_DATA add column File_Type_Extension text;")
+		dbCreateArray.append("alter table EXIF_DATA add column Comment text;")
 
 		# try to get version of existing db
 		dbVersion	= -1

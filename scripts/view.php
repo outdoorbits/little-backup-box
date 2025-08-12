@@ -188,20 +188,80 @@
 	}
 
 	function rating_radio($IMAGE_ID, $IMAGE_RATING) {
-		?>
+		$checked_1	= $IMAGE_RATING == 1?"checked":"";
+		$checked_2	= $IMAGE_RATING == 2?"checked":"";
+		$checked_3	= $IMAGE_RATING == 3?"checked":"";
+		$checked_4	= $IMAGE_RATING == 4?"checked":"";
+		$checked_5	= $IMAGE_RATING == 5?"checked":"";
+
+		$RATING	= <<<EOL
 			<div style="float:left;padding: 2px;" class="rating">
-				<input id="rating_1_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="1" <?php echo $IMAGE_RATING>=1?"checked":""; ?>>
-				<label for="rating_1_<?php echo $IMAGE_ID; ?>"></label>
-				<input id="rating_2_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="2" <?php echo $IMAGE_RATING>=2?"checked":""; ?>>
-				<label for="rating_2_<?php echo $IMAGE_ID; ?>"></label>
-				<input id="rating_3_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="3" <?php echo $IMAGE_RATING>=3?"checked":""; ?>>
-				<label for="rating_3_<?php echo $IMAGE_ID; ?>"></label>
-				<input id="rating_4_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="4" <?php echo $IMAGE_RATING>=4?"checked":""; ?>>
-				<label for="rating_4_<?php echo $IMAGE_ID; ?>"></label>
-				<input id="rating_5_<?php echo $IMAGE_ID; ?>" type="radio" name="rating_<?php echo $IMAGE_ID; ?>" value="5" <?php echo $IMAGE_RATING>=5?"checked":""; ?>>
-				<label for="rating_5_<?php echo $IMAGE_ID; ?>"></label>
+				<input id="rating_1_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="1" $checked_1>
+				<label for="rating_1_$IMAGE_ID"></label>
+				<input id="rating_2_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="2" $checked_2>
+				<label for="rating_2_$IMAGE_ID"></label>
+				<input id="rating_3_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="3" $checked_3>
+				<label for="rating_3_$IMAGE_ID"></label>
+				<input id="rating_4_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="4" $checked_4>
+				<label for="rating_4_$IMAGE_ID"></label>
+				<input id="rating_5_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="5" $checked_5>
+				<label for="rating_5_$IMAGE_ID"></label>
 			</div>
-		<?php
+		EOL;
+		return($RATING);
+	}
+
+	function media_functions($mediatype, $IMAGE, $IMAGE_FILENAME) {
+		# mediatype one of image, video, audio
+
+		$IMAGE_ID						= $IMAGE['ID'];
+		$Image_Lbb_Rating				= $IMAGE['LbbRating'];
+		$IMAGE_Comment					= $IMAGE['Comment'];
+
+		$RATING_RADIO					= rating_radio($IMAGE_ID, $Image_Lbb_Rating);
+		$URL							= urlencode_keep_slashes($IMAGE_FILENAME);
+
+		$view_images_download			= L::view_images_download;
+		$view_images_magnifying_glass	= L::view_images_magnifying_glass;
+		$view_images_comment			= L::view_images_comment;
+
+		echo <<<EOL
+			<div style="width=100%;padding: 30px;font-size:0.8em;">
+
+				<!--Rating-->
+				<div style="float:left;width: 33%;text-align: left;padding: 0;padding-top: 0.5em;">
+					$RATING_RADIO
+				</div>
+
+				<!--Download-Link-->
+				<div style="float:left;width: 30%;text-align: center;padding: 0;">
+					<a href="$URL" target="_blank">
+						$view_images_download
+					</a>
+				</div>
+		EOL;
+
+		if ($mediatype == 'image') {
+			echo <<<EOL
+				<!--magnifying_glass-->
+				<div style="float:left;width: 30%;text-align: center;padding: 0;">
+					$view_images_magnifying_glass
+				</div>
+			EOL;
+		}
+
+		echo <<<EOL
+				<!--slideshow-->
+				<div style="float:right;text-align: right;padding: 0;">
+					<span class="slideshow-button" onclick="slideshow_display();">&#10541;</span>
+				</div>
+		EOL;
+
+		echo <<<EOL
+				<!--Comment-->
+				<textarea name="comment_$IMAGE_ID" title="$view_images_comment" rows="2" style="clear: both; width: 100%; resize: vertical;">$IMAGE_Comment</textarea>
+			</div>
+		EOL;
 	}
 
 	function add_to_where($new_where,$target_array) {
@@ -218,6 +278,49 @@
 		}
 	}
 
+	function update_row(SQLite3 $db, string $table, int $id, array $data): int {
+		// 1) allow collums from whitelist only
+		$allowed	=['LbbRating', 'Rating', 'Comment'];
+		$data		= array_intersect_key($data, array_flip($allowed));
+
+		if (empty($data)) {
+			return 0; // nichts zu ändern
+		}
+
+		// 2) create set clause
+		$setParts = [];
+		foreach ($data as $col => $_) {
+			$setParts[] = "\"$col\" = :set_$col";
+		}
+		$setSql = implode(', ', $setParts);
+
+		// 3) prepare statement
+		$sql = "UPDATE \"$table\" SET $setSql WHERE \"id\" = :where_id";
+		$stmt = $db->prepare($sql);
+		if (!$stmt) {
+			throw new RuntimeException('Prepare failed: ' . $db->lastErrorMsg());
+		}
+
+		// 4) bind values (type, incl. NULL)
+		foreach ($data as $col => $val) {
+			$type = SQLITE3_TEXT;
+			if ($val === null)      $type = SQLITE3_NULL;
+			elseif (is_int($val))   $type = SQLITE3_INTEGER;
+
+			$stmt->bindValue(":set_$col", $val, $type);
+		}
+		$stmt->bindValue(':where_id', $id, SQLITE3_INTEGER);
+
+		// 5) execute
+		$res = $stmt->execute();
+		if ($res === false) {
+			throw new RuntimeException('Execute failed: ' . $db->lastErrorMsg());
+		}
+		// return effected lines
+		return $db->changes();
+	}
+
+// MAIN PART
 	# setup
 	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5,$constants['const_VIEW_GRID_COLUMNS']*10,$constants['const_VIEW_GRID_COLUMNS']*20,$constants['const_VIEW_GRID_COLUMNS']*50);
 
@@ -269,11 +372,15 @@
 	}
 
 	# ratings-preparation
-	$RATINGS_ARRAY=array();
+	$EDIT_ARRAY=array();
+
 	foreach ($_POST as $key=>$val) {
 		if (substr($key, 0, 6 )=="rating") {
-			$ID_RATING	= explode("_",$key)[1];
- 			$RATINGS_ARRAY[$ID_RATING]=$val;
+			$ID_IMAGE	= explode("_",$key)[1];
+ 			$EDIT_ARRAY[$ID_IMAGE]["Rating"]	= (int)$val;
+		} elseif (substr($key, 0, 7 )=="comment") {
+			$ID_IMAGE	= explode("_",$key)[1];
+ 			$EDIT_ARRAY[$ID_IMAGE]["Comment"]	= trim((string)$val);
 		}
 	}
 
@@ -369,35 +476,55 @@
 		}
 
 		if ($DATABASE_CONNECTED) {
-			# save ratings
-			foreach($RATINGS_ARRAY as $key=>$Rating) {
-				$key	= (int)$key;
-				$Rating	= (int)$Rating;
+			$UPDATE_ARRAY	= array();
 
-				if ($config['conf_VIEW_WRITE_RATING_EXIF'] == true) {
-					# get database-values before update
-					$statement			= $db->prepare("SELECT Directory, File_Name, Rating FROM EXIF_DATA where ID=" . $key . ";");
-					$RATING_IMAGES		= $statement->execute();
-					$RATING_IMAGE		= $RATING_IMAGES->fetchArray(SQLITE3_ASSOC);
-
-					if ((int)$RATING_IMAGE['Rating'] !== $Rating) {
-						#update exif-data of original file
-						shell_exec ("sudo exiftool -overwrite_original -Rating=" . $Rating . " '".$STORAGE_PATH . '/' . $RATING_IMAGE['Directory']. '/' .$RATING_IMAGE['File_Name'] . "'");
-					}
-
-					# define update-command
-					$SQL_UPDATE	= "update EXIF_DATA set LbbRating=". $Rating . ", Rating=". $Rating . " where ID=" . $key . ";";
-				} else {
-					# define update-command
-					$SQL_UPDATE	= "update EXIF_DATA set LbbRating=". $Rating . " where ID=" . $key . ";";
+			# save changes to EXIF and define $UPDATE_ARRAY
+			$UPDATE_ARRAY	= array();
+			foreach($EDIT_ARRAY as $ID_IMAGE=>$Values) {
+				$ID_IMAGE		= (int)$ID_IMAGE;
+				if (!array_key_exists($ID_IMAGE, $UPDATE_ARRAY)) {
+					$UPDATE_ARRAY[$ID_IMAGE]	= array();
 				}
 
-				$db->exec($SQL_UPDATE);
+				# Rating
+				$Rating		= (int)$Values["Rating"];
+				if ($config['conf_VIEW_WRITE_RATING_EXIF'] == true) {
+					# get database-values before update
+					$statement	= $db->prepare("SELECT Directory, File_Name, Rating FROM EXIF_DATA where ID=" . $ID_IMAGE . ";");
+					$IMAGES		= $statement->execute();
+					$IMAGE		= $IMAGES->fetchArray(SQLITE3_ASSOC);
+
+					if ((int)$IMAGE['Rating'] !== $Rating) {
+						#update exif-data of original file
+						shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --rating $Rating");
+					}
+
+					# define update fields
+					$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
+					$UPDATE_ARRAY[$ID_IMAGE]['Rating']		= $Rating;
+				} else {
+					# define update fields
+					$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
+				}
+
+				# Comment
+				if (isset($EDIT_ARRAY[$ID_IMAGE]["Comment"])) {
+					$Comment	= $EDIT_ARRAY[$ID_IMAGE]["Comment"];
+					$UPDATE_ARRAY[$ID_IMAGE]['Comment']	= $Comment;
+				}
+			}
+
+			foreach($UPDATE_ARRAY as $ID_IMAGE=>$UPDATE) {
+				update_row($db, "EXIF_DATA", $ID_IMAGE, $UPDATE);
+
+				if (isset($UPDATE['Comment'])) {
+					shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --comment '" . $UPDATE['Comment'] . "'");
+				}
 			}
 
 			# delete media-files
 			if (isset($delete_ratings_1)) {
-				foreach($RATINGS_ARRAY as $key=>$val) {
+				foreach($EDIT_ARRAY as $key=>$val) {
 					$key	= intval($key);
 
 					$statement		= $db->prepare("SELECT File_Name, Directory FROM EXIF_DATA WHERE ID=" . $key . ";");
@@ -405,8 +532,10 @@
 					if ($IMAGE = $IMAGES->fetchArray(SQLITE3_ASSOC)) {
 						$DELETE_FILE	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'];
 						$DELETE_TIMS	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/tims/' . $IMAGE['File_Name'] . '.JPG';
+						$DELETE_XMP		= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . pathinfo($IMAGE['File_Name'], PATHINFO_FILENAME) . '.xmp';
 						shell_exec ("sudo rm '" . $DELETE_FILE . "'");
 						shell_exec ("sudo rm '" . $DELETE_TIMS . "'");
+						shell_exec ("sudo rm '" . $DELETE_XMP . "'");
 						$db->exec("delete from EXIF_DATA where ID=" . $key . " and LbbRating=1;");
 					}
 
@@ -461,7 +590,7 @@
 				$VAR_VALUES	= $statement->execute();
 			}
 
-						$IMAGES_ARRAY_ALL	= array();
+			$IMAGES_ARRAY_ALL	= array();
 			while ($FETCH_IMAGE = $IMAGES_PAGE->fetchArray(SQLITE3_ASSOC)) {
 				$IMAGES_ARRAY_ALL[]	= $FETCH_IMAGE;
 			}
@@ -543,6 +672,16 @@
 	<script type="text/javascript" src="js/mglass.js"></script>
 	<script type="text/javascript" src="js/slideshow.js"></script>
 	<script type="text/javascript" src="js/display.js"></script>
+
+	<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+		<symbol id="icon-comment" viewBox="0 0 24 24" fill="none"
+				stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M21 15a4 4 0 0 1-4 4H9l-4 4v-4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"/>
+			<circle cx="10" cy="11" r="1.25"/>
+			<circle cx="14" cy="11" r="1.25"/>
+			<circle cx="18" cy="11" r="1.25"/>
+		</symbol>
+	</svg>
 </head>
 
 <body <?php echo $background; ?> onload="refreshDisplay(); slideshow_init();">
@@ -772,13 +911,25 @@
 											}
 										?>
 										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . ($IMAGE['ID']); ?>">
-											<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_TIMS); ?>" onerror="this.src='/img/unknown.JPG';">
+											<img style="max-width: 100%; border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" <?php echo empty($IMAGE['Comment'])?"title='" . $IMAGE['File_Name'] . "'":"title='" . $IMAGE['File_Name'] . PHP_EOL . $IMAGE['Comment'] . "'"; ?> src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_TIMS); ?>" onerror="this.src='/img/unknown.JPG';">
 										</a>
 									</div>
 
 									<div style="width: 100%; display: inline-block; padding-left: 2px;padding-right: 2px; padding-top: 2px; padding-bottom: 6px;">
 
 										<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
+
+										<?php
+											if (!empty($IMAGE['Comment'])) {
+												?>
+												<div style="float:right;text-align: center;padding: 0;">
+													<svg width="1em" height="1em">
+														<use href="#icon-comment"></use>
+													</svg>
+												</div>
+												<?php
+											}
+										?>
 
 										<div style="float:right;padding: 2px;font-size:0.8em;" class="hidden-mobile">
 											<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
@@ -835,25 +986,7 @@
 										}
 									?>
 
-									<div style="width=100%;padding: 30px;font-size:0.8em;">
-										<div style="float:left;width: 33%;text-align: left;padding: 0;padding-top: 0.5em;">
-											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
-										</div>
-
-										<div style="float:left;width: 30%;text-align: center;padding: 0;">
-											<a href="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" target="_blank">
-												<?php echo L::view_images_download; ?>
-											</a>
-										</div>
-
-										<div style="float:left;width: 30%;text-align: center;padding: 0;">
-											<?php echo L::view_images_magnifying_glass; ?>
-										</div>
-
-										<div style="float:right;text-align: right;padding: 0;">
-											<span class="slideshow-button" onclick="slideshow_display();">&#10541;</span>
-										</div>
-									</div>
+								<?php media_functions('image', $IMAGE, $IMAGE_FILENAME); ?>
 
 							<?php
 								} elseif (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_VIDEO'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
@@ -889,16 +1022,8 @@
 											}
 											?>
 										</div>
-
-										<div padding: 5px;font-size:0.8em;">
-											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
-										</div>
-
-										<div style="float:left;width: 34%;text-align: center;padding: 0;">
-											<a href="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" target="_blank">
-												<?php echo L::view_images_download; ?>
-											</a>
-										</div>
+<!-- Video common -->
+										<?php media_functions('video', $IMAGE, $IMAGE_FILENAME); ?>
 
 									<?php
 								} elseif (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_AUDIO'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
@@ -920,13 +1045,7 @@
 											</audio>
 										</div>
 
-										<div padding: 5px;font-size:0.8em;">
-											<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
-
-											<a href="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" target="_blank">
-												<?php echo L::view_images_download; ?>
-											</a>
-										</div>
+										<?php media_functions('audio', $IMAGE, $IMAGE_FILENAME); ?>
 									<?php
 								}
 							?>
