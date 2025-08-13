@@ -360,6 +360,7 @@ class setup(object):
 					'const_IDLETIME_LOCKFILE':						{'type': 'str'},
 					'const_TASKS_PATH':								{'type': 'str'},
 					'const_METADATA_CREATE_SOURCES':				{'type': 'str'},
+					'const_METADATA_CREATE_SOURCES_HR':				{'type': 'str'},
 					'const_METADATA_MODIFY_SOURCES':				{'type': 'str'}
 				}
 		)
