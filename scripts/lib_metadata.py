@@ -39,77 +39,14 @@ class MetadataTool:
 
 		self.__setup	= lib_setup.setup()
 
-		self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_WEB_IMAGES')
-		self.const_FILE_EXTENSIONS_LIST_HEIC			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_HEIC')
-		self.const_FILE_EXTENSIONS_LIST_RAW				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW')
-		self.const_FILE_EXTENSIONS_LIST_TIF				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TIF')
-		self.const_FILE_EXTENSIONS_LIST_VIDEO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO')
-		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
-
-		# -------------------------
-		# Central metadata source lists
-		# -------------------------
-
-		self.CREATE_SOURCES = [
-			"XMP:CreateDate",
-			"XMP:DateCreated",
-			"XMP-photoshop:DateCreated",
-			"XMP-exif:DateTimeOriginal",
-			"Composite:SubSecCreateDate",
-			"Composite:SubSecDateTimeOriginal",
-			"EXIF:CreateDate",
-			"EXIF:DateTimeOriginal",
-			"EXIF:DateTimeDigitized",
-			"Composite:DateTimeCreated",
-			"QuickTime:CreateDate",
-			"QuickTime:MediaCreateDate",
-			"QuickTime:TrackCreateDate",
-			"QuickTime:ContentCreateDate",
-			"RIFF:DateTimeOriginal",
-			"RIFF:DateTimeDigitized",
-			"PNG:CreationTime",
-			"File:FileCreateDate",
-			"File:FileModifyDate",
-		]
-
-		self.MODIFY_SOURCES = [
-			"XMP:ModifyDate",
-			"Composite:SubSecModifyDate",
-			"EXIF:ModifyDate",
-			"QuickTime:ModifyDate",
-			"QuickTime:TrackModifyDate",
-			"File:FileModifyDate",
-		]
-
-		self.METADATA_SOURCES = [
-			"XMP:MetadataDate",
-			"XMP:ModifyDate",
-			"Composite:SubSecModifyDate",
-			"EXIF:ModifyDate",
-			"QuickTime:ModifyDate",
-			"File:FileModifyDate",
-		]
-
-		self.PS_DATECREATED_SOURCES = [
-			"XMP-photoshop:DateCreated",
-			"XMP:DateCreated",
-			"XMP:CreateDate",
-			"XMP-exif:DateTimeOriginal",
-			"Composite:SubSecDateTimeOriginal",
-			"Composite:SubSecCreateDate",
-			"EXIF:DateTimeOriginal",
-			"EXIF:CreateDate",
-			"Composite:DateTimeCreated",
-			"QuickTime:CreateDate",
-			"QuickTime:MediaCreateDate",
-			"QuickTime:ContentCreateDate",
-			"RIFF:DateTimeOriginal",
-			"PNG:CreationTime",
-			"File:FileCreateDate",
-			"File:FileModifyDate",
-		]
-
-
+		self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_WEB_IMAGES').split(';')
+		self.const_FILE_EXTENSIONS_LIST_HEIC			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_HEIC').split(';')
+		self.const_FILE_EXTENSIONS_LIST_TIF				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TIF').split(';')
+		self.const_FILE_EXTENSIONS_LIST_VIDEO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO').split(';')
+		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO').split(';')
+		self.const_FILE_EXTENSIONS_LIST_RAW				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW').split(';')
+		self.const_METADATA_CREATE_SOURCES				= self.__setup.get_val('const_METADATA_CREATE_SOURCES').split(';')
+		self.const_METADATA_MODIFY_SOURCES				= self.__setup.get_val('const_METADATA_MODIFY_SOURCES').split(';')
 
 	def process_one(self, path: Path, rating: Optional[int] = None, description: Optional[str] = None) -> None:
 
@@ -118,17 +55,13 @@ class MetadataTool:
 
 		Extension = path.suffix.lower().removeprefix('.')
 
-		EMBED_EXTS	= ';'.join(
-				[
-					self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES,
-					self.const_FILE_EXTENSIONS_LIST_HEIC,
-					self.const_FILE_EXTENSIONS_LIST_TIF,
-					self.const_FILE_EXTENSIONS_LIST_VIDEO,
-					self.const_FILE_EXTENSIONS_LIST_AUDIO
-				]
-			).split(';')
+		EMBED_EXTS	= 	self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES + \
+						self.const_FILE_EXTENSIONS_LIST_HEIC + \
+						self.const_FILE_EXTENSIONS_LIST_TIF + \
+						self.const_FILE_EXTENSIONS_LIST_VIDEO + \
+						self.const_FILE_EXTENSIONS_LIST_AUDIO
 
-		if Extension in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
+		if Extension in self.const_FILE_EXTENSIONS_LIST_RAW:
 			self._sidecar_for_raw(path, rating=rating, description=description)
 		elif Extension in EMBED_EXTS:
 			self._embed_into_image(path, rating=rating, description=description)
@@ -141,14 +74,12 @@ class MetadataTool:
 		xmp_path = raw_path.with_suffix(".xmp")
 
 		def fallback_grouped(src_file: str, dest: str, sources: list[str]) -> list[str]:
-			"""
-			One grouped fallback:
-			[-tagsFromFile src_file, -Dest<Src1>, -Dest<Src2>, ...]
-			With -wm cg, the first existing source sets Dest; later ones are ignored.
-			"""
+			# One grouped fallback:
+			# [-tagsFromFile src_file, -Dest<Src1>, -Dest<Src2>, ...]
+			# With -wm cg, the first existing source sets Dest; later ones are ignored.
 			args: list[str] = ["-tagsFromFile", src_file]
-			for s in sources:
-				args.append(f"-{dest}<{s}")
+			for source in sources:
+				args.append(f"-{dest}<{source}")
 			return args
 
 		# Common options
@@ -159,10 +90,8 @@ class MetadataTool:
 			args = [
 				"-overwrite_original",
 				*common,
-				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.CREATE_SOURCES),
-				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.MODIFY_SOURCES),
-				*fallback_grouped(str(raw_path), "XMP:MetadataDate", self.METADATA_SOURCES),
-				*fallback_grouped(str(raw_path), "XMP-photoshop:DateCreated", self.PS_DATECREATED_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.const_METADATA_CREATE_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.const_METADATA_MODIFY_SOURCES),
 				str(xmp_path),
 			]
 			self._run_exiftool(args, context=f"update sidecar {xmp_path.name}")
@@ -171,10 +100,8 @@ class MetadataTool:
 			args = [
 				"-o", str(xmp_path),
 				*common,
-				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.CREATE_SOURCES),
-				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.MODIFY_SOURCES),
-				*fallback_grouped(str(raw_path), "XMP:MetadataDate", self.METADATA_SOURCES),
-				*fallback_grouped(str(raw_path), "XMP-photoshop:DateCreated", self.PS_DATECREATED_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.const_METADATA_CREATE_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.const_METADATA_MODIFY_SOURCES),
 				str(raw_path),
 			]
 			self._run_exiftool(args, context=f"create sidecar {xmp_path.name}")
@@ -200,33 +127,26 @@ class MetadataTool:
 	def _embed_into_image(self, image_path: Path, rating: Optional[int], description: Optional[str]) -> None:
 		# Embed metadata into a non-RAW image.
 
-		def fb_grouped(dest: str, sources: list[str]) -> list[str]:
-			# One -tagsFromFile @ followed by multiple -Dest<Source> attempts
-			args = ["-tagsFromFile", "@"]
-			for s in sources:
-				args.append(f"-{dest}<{s}")
-			return args
+		cmd_basic	= ["-overwrite_original","-P","-use","MWG","-api","QuickTimeUTC=1","-wm","cg"]
 
-		cmd = ["-overwrite_original","-P","-use","MWG","-api","QuickTimeUTC=1","-wm","cg",
-			*fb_grouped("XMP:CreateDate", self.CREATE_SOURCES),
-			*fb_grouped("XMP:ModifyDate", self.MODIFY_SOURCES),
-			*fb_grouped("XMP:MetadataDate", self.METADATA_SOURCES),
-			*fb_grouped("XMP-photoshop:DateCreated", self.PS_DATECREATED_SOURCES)]
-
+		cmd_ext		= []
 		if rating is not None:
 			rating = self._normalize_rating(rating)
-			cmd.append(f"-XMP-xmp:Rating={rating}")
+			cmd_ext.append(f"-XMP-xmp:Rating={rating}")
+
 		if description is not None:
-			cmd.extend([
+			cmd_ext.extend([
 				f"-XMP-dc:Description={description}",
 				f"-EXIF:ImageDescription={description}",
 				"-charset", "iptc=utf8",
 				f"-IPTC:Caption-Abstract={description}",
 			])
 
-		cmd.append(str(image_path))
+		if len(cmd_ext) > 0:
+			cmd	= cmd_basic + cmd_ext
+			cmd.append(str(image_path))
 
-		self._run_exiftool(cmd, context=f"embed metadata into {image_path.name}")
+			self._run_exiftool(cmd, context=f"embed metadata into {image_path.name}")
 
 
 	# ---------- Helpers ----------

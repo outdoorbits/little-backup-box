@@ -356,7 +356,12 @@ class setup(object):
 					'const_SYNC_TIME_OVERHEATING_WAIT_SEC':			{'type': 'int'},
 					'const_BACKUP_MAX_TRIES':						{'type': 'int'},
 					'const_SOFTWARE_BRANCH':						{'type': 'str'},
-					'const_FONT_PATH':								{'type': 'str'}
+					'const_FONT_PATH':								{'type': 'str'},
+					'const_IDLETIME_LOCKFILE':						{'type': 'str'},
+					'const_TASKS_PATH':								{'type': 'str'},
+					'const_METADATA_CREATE_SOURCES':				{'type': 'str'},
+					'const_METADATA_CREATE_SOURCES_HR':				{'type': 'str'},
+					'const_METADATA_MODIFY_SOURCES':				{'type': 'str'}
 				}
 		)
 

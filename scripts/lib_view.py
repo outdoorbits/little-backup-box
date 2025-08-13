@@ -35,8 +35,9 @@ class viewdb(object):
 
 		self.MountPoint	= MountPoint
 
-		self.dbFile	= f"{self.MountPoint}/{self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')}"
+		self.dbFile								= f"{self.MountPoint}/{self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')}"
 		self.const_VIEW_RATING_STANDARD_VALUE	= self.__setup.get_val('const_VIEW_RATING_STANDARD_VALUE')
+		self.const_METADATA_CREATE_SOURCES_HR		= self.__setup.get_val('const_METADATA_CREATE_SOURCES_HR').split(';')
 
 		self.__con	= sqlite3.connect(self.dbFile)
 		self.__cur	= self.__con.cursor()
@@ -124,7 +125,7 @@ class viewdb(object):
 			ImageFileExtension	= ''
 
 		try:
-			EXIF_List	= subprocess.check_output(f"sudo exiftool '{os.path.join(self.MountPoint, ImageFilePath, ImageFileName)}' | grep ':'",shell=True).decode().strip().split('\n')
+			EXIF_List	= subprocess.check_output(f"sudo exiftool '{os.path.join(self.MountPoint, ImageFilePath, ImageFileName)}' | grep ':'", shell=True).decode().strip().split('\n')
 		except:
 			EXIF_List	= []
 
@@ -179,13 +180,14 @@ class viewdb(object):
 
 		## date
 		if 'Create_Date' not in ImageRecord:
-			if 'Date_Time_Original' in ImageRecord:
-				ImageRecord['Create_Date']	= ImageRecord['Date_Time_Original']
-			elif 'File_Modification_Date_Time' in ImageRecord:
-				ImageRecord['Create_Date']	= ImageRecord['File_Modification_Date_Time']
-			elif 'File_Access_Date_Time' in ImageRecord:
-				ImageRecord['Create_Date']	= ImageRecord['File_Access_Date_Time']
-			else:
+
+			for CREATE_SOURCE_HR in self.const_METADATA_CREATE_SOURCES_HR:
+
+				if CREATE_SOURCE_HR in ImageRecord:
+					ImageRecord['Create_Date']	= ImageRecord[CREATE_SOURCE_HR]
+					break
+
+			if 'Create_Date' not in ImageRecord: # still not -> use actual date/time
 				ImageRecord['Create_Date']	= datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
 		## rating
