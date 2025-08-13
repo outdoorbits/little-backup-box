@@ -57,3 +57,5 @@ const_BACKUP_MAX_TRIES=3
 const_FONT_PATH='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 const_IDLETIME_LOCKFILE='/var/www/little-backup-box/tmp/idletime.lock'
 const_TASKS_PATH='/var/www/little-backup-box/tmp/tasks'
+const_METADATA_CREATE_SOURCES="XMP:CreateDate;XMP:DateCreated;XMP-photoshop:DateCreated;XMP-exif:DateTimeOriginal;Composite:SubSecCreateDate;Composite:SubSecDateTimeOriginal;EXIF:CreateDate;EXIF:DateTimeOriginal;EXIF:DateTimeDigitized;Composite:DateTimeCreated;QuickTime:CreateDate;QuickTime:MediaCreateDate;QuickTime:TrackCreateDate;QuickTime:ContentCreateDate;RIFF:DateTimeOriginal;RIFF:DateTimeDigitized;PNG:CreationTime;File:FileCreateDate;File:FileModifyDate"
+const_METADATA_MODIFY_SOURCES="XMP:ModifyDate;Composite:SubSecModifyDate;EXIF:ModifyDate;QuickTime:ModifyDate;QuickTime:TrackModifyDate;File:FileModifyDate"
