@@ -399,7 +399,7 @@
     },
     "telegram": {
       "header": "Configurer Telegram&reg;",
-      "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c._Telegram\">Wiki : Telegram</a>",
+      "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki : Telegram</a>",
       "token_label": "Jeton",
       "chat_id_label": "ID de discussion",
       "section": "Telegram&reg;",
