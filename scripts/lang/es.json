@@ -406,7 +406,21 @@
       "error_unreachable": "Telegram inaccesible",
       "error_invalid_token": "Token inválido",
       "error_bad_api_response": "Conflicto de API",
-      "button_get_chat_id": "Consultar ID de chat"
+      "button_get_chat_id": "Consultar ID de chat",
+      "unknown": "desconocido",
+      "without_name": "sin nombre",
+      "selected": "Seleccionado",
+      "select_chat_first": "Por favor seleccione un chat primero.",
+      "test_message": "Mensaje de prueba de Little-Backup-Box a través del bot",
+      "test_message_sent_to": "Mensaje de prueba enviado a",
+      "test_message_error": "Error al enviar",
+      "test_message_network_error": "Error de red",
+      "select_chat": "Seleccionar chat",
+      "table_headers": "Mostrar: Nombre (Tipo) — <code>chat_id",
+      "close": "Cerca",
+      "accept": "Aceptar",
+      "test_message_send": "Enviar mensaje de prueba",
+      "no_chats_found": "No se encontraron chats. Envía un mensaje al público/canal objetivo o añade al bot como administrador."
     }
   },
   "tools": {

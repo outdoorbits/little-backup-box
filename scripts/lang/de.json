@@ -406,7 +406,21 @@
       "error_unreachable": "Telegramm nicht erreichbar",
       "error_invalid_token": "Ungültiges Token",
       "error_bad_api_response": "API-Konflikt",
-      "button_get_chat_id": "Chat-ID abfragen"
+      "button_get_chat_id": "Chat-ID abfragen",
+      "unknown": "unbekannt",
+      "without_name": "ohne Namen",
+      "selected": "Ausgewählt",
+      "select_chat_first": "Bitte zuerst einen Chat auswählen.",
+      "test_message": "Testnachricht von Little-Backup-Box per Bot",
+      "test_message_sent_to": "Testnachricht gesendet an",
+      "test_message_error": "Fehler beim Senden",
+      "test_message_network_error": "Netzwerkfehler",
+      "select_chat": "Chat auswählen",
+      "table_headers": "Anzeige: Name (Typ) — <code>chat_id",
+      "close": "Schließen",
+      "accept": "Übernehmen",
+      "test_message_send": "Testnachricht senden",
+      "no_chats_found": "Keine Chats gefunden. Sende eine Nachricht in der Zielgruppe/dem Kanal oder füge den Bot als Admin hinzu."
     }
   },
   "tools": {

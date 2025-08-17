@@ -406,7 +406,21 @@
       "error_unreachable": "Télégramme inaccessible",
       "error_invalid_token": "Jeton invalide",
       "error_bad_api_response": "Conflit d'API",
-      "button_get_chat_id": "Demander l'ID de chat"
+      "button_get_chat_id": "Demander l'ID de chat",
+      "unknown": "inconnu",
+      "without_name": "sans nom",
+      "selected": "Choisi",
+      "select_chat_first": "Veuillez d'abord sélectionner un chat.",
+      "test_message": "Message de test de Little-Backup-Box via un bot",
+      "test_message_sent_to": "Message de test envoyé à",
+      "test_message_error": "Erreur d'envoi",
+      "test_message_network_error": "Erreur réseau",
+      "select_chat": "Sélectionnez le chat",
+      "table_headers": "Affichage : Nom (Type) — <code>chat_id",
+      "close": "Fermer",
+      "accept": "Accepter",
+      "test_message_send": "Envoyer un message de test",
+      "no_chats_found": "Aucune discussion trouvée. Envoyez un message au public/au canal cible ou ajoutez le bot comme administrateur."
     }
   },
   "tools": {
