@@ -42,6 +42,7 @@ import lib_poweroff
 import lib_setup
 import lib_storage
 import lib_system
+import lib_telegram
 import lib_view
 import lib_vpn
 
@@ -54,7 +55,7 @@ class backup(object):
 	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DoChecksum='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecondaryBackupFollows=False):
 
 		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync', 'ftp'] or functions: ['thumbnails', 'database', 'exif', 'rename]
-		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync']
+		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync', 'telegram']
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF,
 		# 	DoChecksum:											one of ['setup', True, False]
 		# ForceSyncDatabase:									one of [True, False]
@@ -159,6 +160,7 @@ class backup(object):
 				pass
 
 		self.TransferMode	= None if self.SourceStorageType == 'ftp' else self.TransferMode
+		self.TransferMode	= 'telegram' if TargetStorageType == 'telegram' else self.TransferMode
 
 		# Unmount devices, clean before backup
 		lib_storage.umount(self.__setup,'all')
@@ -174,7 +176,7 @@ class backup(object):
 
 		# VPN start
 		VPN_Mode	= None
-		if 'cloud' in [self.SourceStorageType, TargetStorageType]:
+		if not set(['cloud', 'telegram']).isdisjoint([self.SourceStorageType, TargetStorageType]):
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_CLOUD')
 		elif 'cloud_rsync' in [self.SourceStorageType, TargetStorageType]:
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_RSYNC')
@@ -202,7 +204,7 @@ class backup(object):
 		# Set the PWR LED to blink short to indicate waiting for the target device
 		lib_system.rpi_leds(trigger='timer',delay_on=250,delay_off=750)
 
-		if TargetStorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync']:
+		if TargetStorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync', 'telegram']:
 			self.TargetDevice	= lib_storage.storage(StorageName=TargetName, Role=lib_storage.role_Target, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetTarget, DeviceIdentifierPresetOther=self.DeviceIdentifierPresetSource)
 			self.TargetDevice.mount()
 		else:
@@ -217,10 +219,10 @@ class backup(object):
 		lib_system.rpi_leds(trigger='none',brightness=1)
 
 		# backup
-		if self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif', 'rename']):
+		if (self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif', 'rename'])):
 			self.backup()
 
-		if not self.TransferMode is None:
+		if not self.TransferMode is None and not self.TransferMode in ['telegram']:
 			# rename
 			if self.DoRenameFiles:
 				self.RenameFiles()
@@ -337,6 +339,7 @@ class backup(object):
 		if self.TransferMode is None:
 			return(0, True)
 
+		# format checkPathsList
 		if singleSubPathsAtSource:
 			checkPathsList	= [singleSubPathsAtSource]
 		else:
@@ -347,7 +350,15 @@ class backup(object):
 
 		FilesToProcessPart			= 0
 
-		if  self.SourceDevice.StorageType != 'camera':
+		if (self.TransferMode == 'telegram'):
+			# prepare database
+			db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
+			FilesToProcess	= db.dbSelect("SELECT COUNT(ID) AS telegram_count FROM EXIF_DATA WHERE telegram_publish;")[0][0]
+			del db
+
+			return(FilesToProcess, False)
+
+		elif  self.SourceDevice.StorageType != 'camera':
 			## Source is mounted (mountable) device or treated like that (cloud_rsync)
 
 			for SubPathAtSource in checkPathsList:
@@ -421,11 +432,19 @@ class backup(object):
 		if not self.TargetDevice:
 			return()
 
+		# block impossible combinations early
+		if (self.TargetDevice.StorageType == "telegram") and (self.SourceStorageType not in ['usb', 'internal', 'nvme']):				# telegram can upload from local storage only
+			self.__display.message([f":{self.SourceStorageType}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
+			return()
+
+# prepare to manage sources
 		# loop to backup multiple sources
-		SourceStorageName			= self.SourceName
 		SourceStorageType			= self.SourceStorageType
+		SourceCloudService			= self.SourceCloudService
+
 		completedSources_usb		= []
 		completedSources_camera		= []
+
 		Identifier					= self.DeviceIdentifierPresetSource
 		Identifier_OLD				= ''
 		thread_thumbnails			= None
@@ -434,47 +453,47 @@ class backup(object):
 
 		# message to connect sources
 		if dynamicSources:
-			if SourceStorageName == 'anyusb':
+			if SourceStorageType == 'anyusb':
 				l_box_backup_connect_1	= self.__lan.l('box_backup_connect_source_any_1')
 				l_box_backup_connect_2	= self.__lan.l('box_backup_connect_source_any_2')
-			elif SourceStorageName == 'camera':
+			elif SourceStorageType == 'camera':
 				l_box_backup_connect_1	= self.__lan.l('box_backup_connect_camera_1')
 				l_box_backup_connect_2	= self.__lan.l('box_backup_connect_camera_2')
-			else: # if SourceStorageName == 'usb':
+			else: # if SourceStorageType == 'usb':
 				l_box_backup_connect_1	= self.__lan.l('box_backup_connect_source_1')
 				l_box_backup_connect_2	= self.__lan.l('box_backup_connect_source_2')
 
 			self.__display.message([f":{l_box_backup_connect_1}", f":{l_box_backup_connect_2}"])
 
+# iterate through sources
 		while True: # backup loops until break
 			# define next source
 			if dynamicSources:
 				# add last run to completedSources
 				if Identifier_OLD:
-					if SourceStorageName == 'camera':
+					if SourceStorageType == 'camera':
 						completedSources_camera.append(Identifier_OLD)
 					else:
 						completedSources_usb.append(Identifier_OLD)
 
 				# get available sources
 				todoSources	= []
-				if self.SourceName in ['anyusb', 'camera']:
+				if self.SourceStorageType in ['anyusb', 'camera']:
 					availableSources_camera	= lib_storage.get_available_cameras()
 
 					# remove disconnected cameras from completedSources_camera
 					completedSources_camera	= list(set(completedSources_camera) & set(availableSources_camera))
 					todoSources				= list(set(availableSources_camera) - set(completedSources_camera))
-					SourceStorageName		= 'camera'
-					SourceStorageType		= SourceStorageName
+					SourceStorageType		= 'camera'
+					SourceStorageType		= SourceStorageType
 
-				if self.SourceName in ['anyusb', 'usb', 'nvme'] and not todoSources:
-					todoSources			= lib_storage.get_available_partitions(StorageType=self.SourceName, TargetDeviceIdentifier=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
-					SourceStorageName	= 'usb' if self.SourceName == 'anyusb' else self.SourceName
-					SourceStorageType	= SourceStorageName
+				if self.SourceStorageType in ['anyusb', 'usb', 'nvme'] and not todoSources:
+					todoSources			= lib_storage.get_available_partitions(StorageType=self.SourceStorageType, TargetDeviceIdentifier=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
+					SourceStorageType	= 'usb' if self.SourceStorageType == 'anyusb' else self.SourceStorageType
 
-				if self.SourceName =='ftp':
-					SourceStorageName	= 'ftp'
-					SourceStorageType	= SourceStorageName
+				if self.SourceStorageType =='ftp':
+					todoSources			= [ftp]
+					SourceStorageType	= 'ftp'
 
 				if todoSources:
 					Identifier	= todoSources[0]
@@ -482,15 +501,30 @@ class backup(object):
 					# break if there is no futher source device and at least one source is processed
 					break
 				else:
+					# wait for source device to be connected
 					time.sleep(1)
 					continue
+
+			# check invalid combinations of Source and Target
+			if (
+				(SourceStorageType == self.TargetDevice.StorageType and not (SourceStorageType in ['usb', 'cloud'])) or				# usb to usb and cloud to cloud are the only methods where type of Source and Target can be equal
+				(																													# exclude cloud to cloud for equal cloud services
+					SourceStorageType == 'cloud' and
+					self.TargetDevice.StorageType == 'cloud' and
+					SourceCloudService == self.TargetDevice.CloudServiceName
+				) or
+				(self.TargetDevice.StorageType == 'camera') or																		# camera never can be target
+				(SourceStorageType	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')									# camera can't rsync to rsyncserver as this is not supported by gphoto2
+			):
+				self.__display.message([f":{SourceStorageType}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
+				return()
 
 			# MANAGE SOURCE DEVICE
 			# Set the PWR LED to blink long to indicate waiting for the source device
 			lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
 			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync', 'ftp']:
-				self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
+				self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageType, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
 
 				self.__display.message([f":{self.__lan.l('box_backup_mounting_source')}", f":{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
 				self.SourceDevice.mount()
@@ -502,7 +536,7 @@ class backup(object):
 				self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
 				return()
 
-			# for ftp source, the job is done now.
+			# for ftp source, the job is done now. This service just connects the ftp server root path to the target device
 			if SourceStorageType	== 'ftp':
 				while self.TargetDevice.mounted():
 					time.sleep(5)
@@ -512,25 +546,11 @@ class backup(object):
 
 				return()
 
-			# remember SourceStorageName for next run
-			if SourceStorageName=='camera':
+			# remember SourceStorageType for next run
+			if SourceStorageType=='camera':
 				Identifier_OLD	= lib_storage.format_CameraIdentifier(self.SourceDevice.DeviceIdentifier, self.SourceDevice.CameraPort)
-			elif SourceStorageName in ['usb', 'nvme']:
+			elif SourceStorageType in ['usb', 'nvme']:
 				Identifier_OLD	= self.SourceDevice.DeviceIdentifier
-
-			# check invalid combinations of Source and Target
-			if (
-				(SourceStorageName == self.TargetDevice.StorageType and not (SourceStorageName in ['usb', 'cloud'])) or				# usb to usb and cloud to cloud are the only methods where type of Source and Target can be equal
-				(																													# exclude cloud to cloud for equal cloud services
-					SourceStorageName == 'cloud' and
-					self.TargetDevice.StorageType == 'cloud' and
-					self.SourceDevice.CloudServiceName == self.TargetDevice.CloudServiceName
-				) or
-				(self.TargetDevice.StorageType == 'camera') or																		# camera never can be target
-				(SourceStorageName	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')									# camera can't rsync to rsyncserver as this is not supported by gphoto2
-			):
-				self.__display.message([f":{SourceStorageName}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
-				return()
 
 			# create new reporter
 			self.__reporter	= lib_backup.reporter(
@@ -541,7 +561,7 @@ class backup(object):
 				TargetStorageType		= self.TargetDevice.StorageType,
 				TargetCloudService		= self.TargetDevice.CloudServiceName,
 				TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
-				TransferMode			= 'gphoto2' if SourceStorageName == 'camera' else self.TransferMode,
+				TransferMode			= 'gphoto2' if SourceStorageType == 'camera' else self.TransferMode,
 				CheckSum				= self.DoChecksum,
 				move_files				= self.move_files,
 				SyncLog					= self.__conf_LOG_SYNC
@@ -558,7 +578,7 @@ class backup(object):
 			for SubPathAtSource in self.SourceDevice.SubPathsAtSource:
 				self.__reporter.new_folder(SubPathAtSource)
 
-				self.__log.message(f"Backup from {SourceStorageName}: {SubPathAtSource}",3)
+				self.__log.message(f"Backup from {SourceStorageType}: {SubPathAtSource}",3)
 
 				#define SubPathAtSource specific values
 				SourceFolderNumber	+= 1
@@ -621,9 +641,10 @@ class backup(object):
 					self.__reporter.set_values(FilesToProcess=FilesToProcess, FilesToProcess_possible_more=FilesToProcess_possible_more)
 					self.__log.message(f"Files to sync before backup: {FilesToProcess}{'+' if FilesToProcess_possible_more else ''}",3)
 
-					if SourceStorageName == 'camera' and self.SourceDevice.LbbDeviceID:
+					# define SourceLabel
+					if SourceStorageType == 'camera' and self.SourceDevice.LbbDeviceID:
 						SourceLabel	= self.SourceDevice.LbbDeviceID
-					elif SourceStorageName == 'camera' and self.SourceDevice.DeviceIdentifier:
+					elif SourceStorageType == 'camera' and self.SourceDevice.DeviceIdentifier:
 						SourceLabel	= self.SourceDevice.DeviceIdentifier
 					else:
 						if SourceStorageType in ['usb', 'nvme', 'camera']:
@@ -670,8 +691,8 @@ class backup(object):
 
 					SyncReturnCode	= 0
 
-#						# gphoto2 backup
-					if SourceStorageName == 'camera' and self.TargetDevice.mountable:
+### gphoto2 backup
+					if SourceStorageType == 'camera' and self.TargetDevice.mountable:
 						# not mountable targets are excluded.
 
 						# change into target dir
@@ -701,7 +722,54 @@ class backup(object):
 
 						os.chdir(os.path.expanduser('~'))
 
-#						# rsync or rclone backup
+### telegram upload
+					elif self.TargetDevice.StorageType == 'telegram':
+						telegram_token		= self.__setup.get_val('conf_TELEGRAM_TOKEN')
+						telegram_chat_id	= self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
+						telegram	= lib_telegram.telegram(
+							TOKEN=telegram_token,
+							CHAT_ID=telegram_chat_id,
+							EXTENSIONS_LIST_VIDEO=self.const_FILE_EXTENSIONS_LIST_VIDEO,
+							EXTENSIONS_LIST_AUDIO=self.const_FILE_EXTENSIONS_LIST_AUDIO
+						)
+
+						if not telegram.configured():
+							self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
+							return()
+
+						db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
+						telegram_list	= db.dbSelect("SELECT ID, Directory, File_Name, Create_Date, Comment FROM EXIF_DATA WHERE telegram_publish ORDER BY Create_Date ASC;")
+
+						types_upload_original	= f'{self.const_FILE_EXTENSIONS_LIST_VIDEO};{self.const_FILE_EXTENSIONS_LIST_AUDIO}'.split(';')
+						for image in telegram_list:
+							IMAGE_ID		= image[0]
+							IMAGE_DIR		= image[1]
+							IMAGE_FILE		= image[2]
+							IMAGE_DATE		= image[3]
+							IMAGE_COMMENT	= '' if image[4] is None else image[4]
+
+							Extension	= None
+							try:
+								Extension	= os.path.splitext(IMAGE_FILE)[1].replace('.', '')
+							except:
+								pass
+
+							if Extension in types_upload_original:
+								telegram_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, f"{IMAGE_FILE}")
+							else:
+								telegram_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, 'tims', f"{IMAGE_FILE}.JPG")
+
+							success	= telegram.publish(Comment=IMAGE_COMMENT, FilePath=telegram_image_path, FileDate=IMAGE_DATE)
+
+							progress.progress(Success=success['ok'])
+							if success['ok']:
+								db.dbExecute(f'UPDATE EXIF_DATA SET telegram_publish=0, telegram_published=1 WHERE ID={IMAGE_ID};')
+
+						missing, more	= self.calculate_files_to_sync(SubPathAtSource)
+						self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
+						self.__reporter.set_values(SyncReturnCode=(missing == 0))
+
+### rsync or rclone backup
 					else:
 						if not self.TransferMode in ['rsync', 'rclone']:
 							self.__log.message(f'Error: "{self.TransferMode}" is no valid transfer mode.', 1)
@@ -823,7 +891,7 @@ class backup(object):
 					del progress
 
 					# validate files after backup
-					if SourceStorageName == 'camera':
+					if SourceStorageType == 'camera':
 						DisplayLine1	= self.__lan.l('box_backup_validate_files_from')		# header1
 						DisplayLine2	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"	# header2
 						progress	= lib_backup.progressmonitor(
@@ -1050,14 +1118,14 @@ class backup(object):
 		lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
 
 		# prepare database
-		db	= lib_view.viewdb(self.__setup,self.__log,self.TargetDevice.MountPoint)
+		db	= lib_view.viewdb(self.__setup, self.__log, self.TargetDevice.MountPoint)
 
 ## clean database
 		# remove duplicates
-		db.dbExecute("delete from EXIF_DATA where ID not in (select min(ID) from EXIF_DATA group by File_Name, Directory);")
+		db.dbExecute("DELETE FROM EXIF_DATA WHERE ID NOT IN (SELECT MIN(ID) FROM EXIF_DATA GROUP BY File_Name, Directory);")
 
 		# verfify if files exists or clean from db
-		KnownFilesList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile from EXIF_DATA")
+		KnownFilesList	= db.dbSelect("SELECT ID, Directory || '/' || File_Name AS DirFile FROM EXIF_DATA;")
 
 		FilesToProcess	=	len(KnownFilesList)
 		DisplayLine1	= self.__lan.l('box_backup_cleaning_database')						# header1
@@ -1403,7 +1471,7 @@ class backup(object):
 					MediaLbbRating	= FileTuple[2]
 
 					metadata.process_one(pathlib.Path(MediaPathFile).expanduser().resolve(), rating=MediaLbbRating)
-					db.dbExecute(f"update EXIF_DATA set Rating={MediaLbbRating} where ID={MediaID};")
+					db.dbExecute(f"update EXIF_DATA SET Rating={MediaLbbRating} where ID={MediaID};")
 
 					progress.progress()
 
@@ -1473,6 +1541,8 @@ if __name__ == "__main__":
 	for line in rclone_config:
 		if len(line) > 0 and line[0] == '[':
 			CloudServices.append(f"cloud:{line.strip('[]')}")
+
+	CloudServices.append('telegram')
 
 	parser = argparse.ArgumentParser(
 		description	= 'Controls the entire backup process of Little Backup Box. Some parameters are taken from the configuration if they are not explicitly set as arguments. Please configure the standards in the web UI.',

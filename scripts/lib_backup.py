@@ -105,7 +105,9 @@ class progressmonitor(object):
 		except:
 			pass
 
-	def progress(self, TransferMode=None, SyncOutputLine='', CountProgress=None):
+	def progress(self, TransferMode=None, SyncOutputLine='', Success=True, CountProgress=None):
+		# if Success is checked by SyncOutputLine, Success parameter will not be mentioned
+
 		SyncOutputLine	= SyncOutputLine.strip('\n')
 
 		if not CountProgress is None:
@@ -175,6 +177,8 @@ class progressmonitor(object):
 
 		elif TransferMode is None:
 			self.CountProgress	+= 1
+			if Success:
+				self.CountJustCopied	+= 1
 
 		if self.CountProgress > self.CountProgress_OLD:
 			self.CountProgress_OLD	= self.CountProgress
@@ -359,10 +363,13 @@ class reporter(object):
 		BackupComplete	= True
 
 		# mail content
+		SourceDeviceDetails	= f"'{self.__SourceCloudService}{' ' if self.__SourceCloudService else ''}{self.__SourceDeviceLbbDeviceID}'" if self.__SourceCloudService or self.__SourceDeviceLbbDeviceID else ''
+		TargetDeviceDetails	= f"'{self.__TargetCloudService}{' ' if self.__TargetCloudService else ''}{self.__TargetDeviceLbbDeviceID}'" if self.__TargetCloudService or self.__TargetDeviceLbbDeviceID else ''
+
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 
 		self.mail_content_HTML	+= f"\n  <b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
-		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} '{self.__SourceCloudService}{' ' if self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}'</b> {self.__lan.l('box_backup_mail_to')} <b>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} '{self.__TargetCloudService}{' ' if self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}'</b> ({self.__TransferMode})</br> \
+		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} {SourceDeviceDetails}</b> {self.__lan.l('box_backup_mail_to')} <b>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} {TargetDeviceDetails}</b> ({self.__TransferMode})</br> \
 		{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
 
 		if self.__move_files:

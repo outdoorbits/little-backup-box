@@ -48,6 +48,12 @@ button.cloud {
 	width: 80%;
 }
 
+button.social {
+	color: var(--csocial);
+	border-color: var(--csocial);
+	width: 80%;
+}
+
 button.danger {
 	color: var(--cdanger);
 	border-color: var(--cdanger);

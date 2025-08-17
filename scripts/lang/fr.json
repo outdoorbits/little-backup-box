@@ -396,6 +396,17 @@
       "power_off_idle_time_header": "Mise hors tension après une période d'inactivité",
       "power_off_idle_time_label": "Sélectionnez le temps d'inactivité après lequel le système doit être arrêté.",
       "power_off_idle_time_none": "Certainement pas"
+    },
+    "telegram": {
+      "header": "Configurer Telegram&reg;",
+      "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c._Telegram\">Wiki : Telegram</a>",
+      "token_label": "Jeton",
+      "chat_id_label": "ID de discussion",
+      "section": "Telegram&reg;",
+      "error_unreachable": "Télégramme inaccessible",
+      "error_invalid_token": "Jeton invalide",
+      "error_bad_api_response": "Conflit d'API",
+      "button_get_chat_id": "Demander l'ID de chat"
     }
   },
   "tools": {
@@ -547,7 +558,9 @@
         "ftp": "Serveur FTP de LBB",
         "validate": "vérifier",
         "delete": "supprimer",
-        "clean": "nettoyer"
+        "clean": "nettoyer",
+        "cloud_telegram": "Telegram",
+        "telegram": "Telegram&reg;"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Source USB",
@@ -569,6 +582,10 @@
       "ftp": {
         "started": "Le serveur FTP a démarré.",
         "starting": "Démarrage du serveur FTP..."
+      },
+      "telegram": {
+        "not_configured_1": "Télégramme&reg;",
+        "not_configured_2": "non configuré"
       }
     },
     "cronip": {
@@ -760,7 +777,11 @@
       "stop": "arrêt"
     },
     "ratings_save_button_next": "suivante",
-    "ratings_save_button_back": "dos"
+    "ratings_save_button_back": "dos",
+    "telegram": {
+      "published": "Publié sur Telegram",
+      "publish": "Marquer pour publication sur Telegram"
+    }
   },
   "units": {
     "minutes_long": "minutes",

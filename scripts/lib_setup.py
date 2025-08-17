@@ -86,7 +86,7 @@ class setup(object):
 				(value == True) or
 				(value == 1) or
 				(value == '1') or
-				(value.lower() == 'true')
+				str(value).lower() == 'true'
 			)
 
 		else:
@@ -283,7 +283,9 @@ class setup(object):
 					'conf_VPN_TIMEOUT':									{'value': 20, 'type': 'int'},
 					'conf_PASSWORD':									{'value': '', 'type': 'str'},
 					'conf_PASSWORD_ENCRYPTION':							{'value': 'plain', 'type': 'str'},
-					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'}
+					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'},
+					'conf_TELEGRAM_TOKEN':								{'value': '', 'type': 'str'},
+					'conf_TELEGRAM_CHAT_ID':							{'value': 0, 'type': 'int'}
 				}
 		)
 

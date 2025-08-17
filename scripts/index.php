@@ -79,6 +79,14 @@
 		$CloudServices_marked	= array_merge(['cloud_rsync'], $CloudServices_marked);
 	}
 
+	// social networks
+	$SocialServices	= array();
+	$telegram_configurated	= ($config['conf_TELEGRAM_TOKEN']=='' or intval($config['conf_TELEGRAM_CHAT_ID'])==0) == false;
+
+	if ($telegram_configurated) {
+		$SocialServices[]	= 'telegram';
+	}
+
 	$SourceServices	= array(
 		'anyusb'	=> $LocalAutoServices,
 		'usb'		=> $LocalServices,
@@ -88,7 +96,8 @@
 
 	$TargetServices			= array(
 		'usb'		=> $LocalServices,
-		'cloud'		=> $CloudServices_marked
+		'cloud'		=> $CloudServices_marked,
+		'social'	=> $SocialServices
 	);
 ?>
 
@@ -119,7 +128,11 @@
 					((TargetService === ActiveSource.value) && (TargetService !== 'usb')) ||
 					((ActiveSource.value === 'anyusb') && (TargetService === 'cloud_rsync')) ||
 					((ActiveSource.value === 'camera') && (TargetService === 'cloud_rsync')) ||
-					((ActiveSource.value === 'ftp') && (TargetService === 'cloud_rsync'))
+					((ActiveSource.value === 'ftp') && (TargetService === 'cloud_rsync')) ||
+					((ActiveSource.value === 'anyusb') && (TargetService === 'telegram')) ||
+					((ActiveSource.value === 'camera') && (TargetService === 'telegram')) ||
+					(ActiveSource.value.startsWith('cloud') && (TargetService === 'telegram')) ||
+					((ActiveSource.value === 'ftp') && (TargetService === 'telegram'))
 				) {
 					document.getElementById("Target_" + TargetService).disabled = true;
 				} else {
@@ -213,6 +226,9 @@
 								}
 								elseif ($LabelName == 'cloud_rsync') {
 									$LabelName		= l::box_backup_mode_cloud_rsync;
+								}
+								elseif ($LabelName == 'telegram') {
+									$LabelName		= l::box_backup_mode_cloud_telegram;
 								}
 
 								print("<button class='$ButtonClass' name='TargetDevice' value='$Storage' id='Target_$Storage'>$LabelName</button></br>");
