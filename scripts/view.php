@@ -195,7 +195,7 @@
 		$checked_5	= $IMAGE_RATING == 5?"checked":"";
 
 		$RATING	= <<<EOL
-			<div style="float:left;padding: 2px;" class="rating">
+			<div class="rating d-flex align-items-center">
 				<input id="rating_1_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="1" $checked_1>
 				<label for="rating_1_$IMAGE_ID"></label>
 				<input id="rating_2_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="2" $checked_2>
@@ -210,6 +210,33 @@
 		EOL;
 		return($RATING);
 	}
+
+	function telegram_pannel($IMAGE_ID, $PUBLISH, $PUBLISHED) {
+		if ($PUBLISHED) {
+?>
+			<svg width="16" height="16" class="flex-shrink-0" aria-labelledby="tt-published">
+				<title id="tt-published"><?php echo L::view_telegram_published; ?></title>
+				<use href="#icon-telegram-published"></use>
+			</svg>
+<?php
+		}
+
+?>
+		<div class="d-flex align-items-center gap-2">
+			<label for="telegram_publish_<?php echo $IMAGE_ID; ?>" class="d-inline-flex align-items-center gap-1 m-0">
+				<input id="telegram_publish_<?php echo $IMAGE_ID; ?>" name="telegram_publish_<?php echo $IMAGE_ID; ?>" type="hidden" value=0>
+				<input id="telegram_publish_<?php echo $IMAGE_ID; ?>" name="telegram_publish_<?php echo $IMAGE_ID; ?>" type="checkbox" value=1 class="form-check-input m-0" <?php echo $PUBLISH?"checked":""; ?>>
+
+				<svg width="16" height="16" aria-labelledby="tt-publish">
+					<title id="tt-publish"><?php echo L::view_telegram_publish; ?></title>
+					<use href="#icon-telegram-publish"></use>
+				</svg>
+			</label>
+
+  		</div>
+<?php
+	}
+
 
 	function media_functions($mediatype, $IMAGE, $IMAGE_FILENAME) {
 		# mediatype one of image, video, audio
@@ -261,7 +288,10 @@
 				<!--Comment-->
 				<textarea name="comment_$IMAGE_ID" title="$view_images_comment" rows="2" style="clear: both; width: 100%; resize: vertical;">$IMAGE_Comment</textarea>
 			</div>
+			<div class="d-flex align-items-center gap-2 w-100 justify-content-end mt-1">
 		EOL;
+		echo telegram_pannel($IMAGE['ID'], $IMAGE['telegram_publish'], $IMAGE['telegram_published']);
+		echo "</div>";
 	}
 
 	function add_to_where($new_where,$target_array) {
@@ -280,7 +310,7 @@
 
 	function update_row(SQLite3 $db, string $table, int $id, array $data): int {
 		// 1) allow collums from whitelist only
-		$allowed	=['LbbRating', 'Rating', 'Comment'];
+		$allowed	=['LbbRating', 'Rating', 'Comment', 'telegram_publish'];
 		$data		= array_intersect_key($data, array_flip($allowed));
 
 		if (empty($data)) {
@@ -296,6 +326,7 @@
 
 		// 3) prepare statement
 		$sql = "UPDATE \"$table\" SET $setSql WHERE \"id\" = :where_id";
+
 		$stmt = $db->prepare($sql);
 		if (!$stmt) {
 			throw new RuntimeException('Prepare failed: ' . $db->lastErrorMsg());
@@ -303,9 +334,16 @@
 
 		// 4) bind values (type, incl. NULL)
 		foreach ($data as $col => $val) {
+
 			$type = SQLITE3_TEXT;
-			if ($val === null)      $type = SQLITE3_NULL;
-			elseif (is_int($val))   $type = SQLITE3_INTEGER;
+			if ($val === null) {
+				$type = SQLITE3_NULL;
+			} elseif (is_int($val)) {
+				$type = SQLITE3_INTEGER;
+			} elseif (is_bool($val)) {
+				$val  = $val ? 1 : 0;
+				$type = SQLITE3_INTEGER;
+			}
 
 			$stmt->bindValue(":set_$col", $val, $type);
 		}
@@ -381,6 +419,9 @@
 		} elseif (substr($key, 0, 7 )=="comment") {
 			$ID_IMAGE	= explode("_",$key)[1];
  			$EDIT_ARRAY[$ID_IMAGE]["Comment"]	= trim((string)$val);
+		} elseif (substr($key, 0, 16 )=="telegram_publish") {
+			$ID_IMAGE	= explode("_",$key)[2];
+ 			$EDIT_ARRAY[$ID_IMAGE]["telegram_publish"]	= trim((string)$val);
 		}
 	}
 
@@ -509,8 +550,12 @@
 
 				# Comment
 				if (isset($EDIT_ARRAY[$ID_IMAGE]["Comment"])) {
-					$Comment	= $EDIT_ARRAY[$ID_IMAGE]["Comment"];
-					$UPDATE_ARRAY[$ID_IMAGE]['Comment']	= $Comment;
+					$UPDATE_ARRAY[$ID_IMAGE]['Comment']	= $EDIT_ARRAY[$ID_IMAGE]["Comment"];
+				}
+
+				# telegram_publish
+				if (isset($EDIT_ARRAY[$ID_IMAGE]["telegram_publish"])) {
+					$UPDATE_ARRAY[$ID_IMAGE]['telegram_publish']	= $EDIT_ARRAY[$ID_IMAGE]["telegram_publish"];
 				}
 			}
 
@@ -673,15 +718,6 @@
 	<script type="text/javascript" src="js/slideshow.js"></script>
 	<script type="text/javascript" src="js/display.js"></script>
 
-	<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-		<symbol id="icon-comment" viewBox="0 0 24 24" fill="none"
-				stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M21 15a4 4 0 0 1-4 4H9l-4 4v-4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"/>
-			<circle cx="10" cy="11" r="1.25"/>
-			<circle cx="14" cy="11" r="1.25"/>
-			<circle cx="18" cy="11" r="1.25"/>
-		</symbol>
-	</svg>
 </head>
 
 <body <?php echo $background; ?> onload="refreshDisplay(); slideshow_init();">
@@ -691,6 +727,26 @@
 		include "${WORKING_DIR}/sub-display.php";
 		display();
 	?>
+
+<!-- 	icons -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+	<symbol id="icon-comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<path d="M21 15a4 4 0 0 1-4 4H9l-4 4v-4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"/>
+		<circle cx="10" cy="11" r="1.25"/><circle cx="14" cy="11" r="1.25"/><circle cx="18" cy="11" r="1.25"/>
+	</symbol>
+
+	<symbol id="icon-telegram-publish" viewBox="0 0 24 24">
+		<path d="M2 12L22 3l-6.5 17L12 13 7 18 6 11z" fill="#0d6efd"/>
+		<circle cx="18" cy="18" r="5" fill="#6c757d"/>
+		<path d="M18 21v-5M16.5 16.5L18 15l1.5 1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	</symbol>
+
+	<symbol id="icon-telegram-published" viewBox="0 0 24 24">
+		<path d="M2 12L22 3l-6.5 17L12 13 7 18 6 11z" fill="#0d6efd"/>
+		<circle cx="18" cy="18" r="5" fill="#198754"/>
+		<path d="M16.5 18l1.5 1.5L20 17" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	</symbol>
+</svg>
 
 <!-- FILTER -->
 	<div class="card" style="margin-top: 2em">
@@ -903,6 +959,7 @@
 
 
 								<div style="width: <?php echo 100/$constants['const_VIEW_GRID_COLUMNS']-1; ?>%;" class="floating">
+
 									<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
 										<?php
 											if (($order_by == 'Create_Date') and ($LAST_DATE !== $IMAGE_DATE)) {
@@ -915,27 +972,30 @@
 										</a>
 									</div>
 
-									<div style="width: 100%; display: inline-block; padding-left: 2px;padding-right: 2px; padding-top: 2px; padding-bottom: 6px;">
+									<div class="d-flex justify-content-between align-items-center mt-1">
 
 										<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
 
 										<?php
 											if (!empty($IMAGE['Comment'])) {
 												?>
-												<div style="float:right;text-align: center;padding: 0;">
-													<svg width="1em" height="1em">
+													<svg width="16" height="16" class="flex-shrink-0">
 														<use href="#icon-comment"></use>
 													</svg>
-												</div>
 												<?php
 											}
+
+											echo telegram_pannel($IMAGE['ID'], $IMAGE['telegram_publish'], $IMAGE['telegram_published']);
 										?>
 
-										<div style="float:right;padding: 2px;font-size:0.8em;" class="hidden-mobile">
-											<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>">
-												<?php echo $IMAGE['File_Name']; ?>
-											</a>
-										</div>
+									</div>
+
+									<div style="float:right;padding: 2px;font-size:0.8em;" class="hidden-mobile">
+										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>" style="white-space: normal; overflow-wrap: anywhere; word-break: break-word; word-wrap: break-word;">
+											<?php
+											echo $IMAGE['File_Name'];
+											?>
+										</a>
 									</div>
 
 								</div>

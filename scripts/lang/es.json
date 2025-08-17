@@ -396,6 +396,17 @@
       "power_off_idle_time_header": "Apagar después de un tiempo de inactividad",
       "power_off_idle_time_label": "Seleccione el tiempo de inactividad después del cual se debe detener el sistema.",
       "power_off_idle_time_none": "Nunca"
+    },
+    "telegram": {
+      "header": "Configurar Telegram&reg;",
+      "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c._Telegram\">Wiki: Telegram</a>",
+      "token_label": "Token",
+      "chat_id_label": "ID de chat",
+      "section": "Telegram&reg;",
+      "error_unreachable": "Telegram inaccesible",
+      "error_invalid_token": "Token inválido",
+      "error_bad_api_response": "Conflicto de API",
+      "button_get_chat_id": "Consultar ID de chat"
     }
   },
   "tools": {
@@ -547,7 +558,9 @@
         "ftp": "Servidor FTP de LBB",
         "validate": "controlar",
         "delete": "borrar",
-        "clean": "limpiar"
+        "clean": "limpiar",
+        "cloud_telegram": "Telegram",
+        "telegram": "Telegram&reg;"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Fuente USB",
@@ -569,6 +582,10 @@
       "ftp": {
         "started": "Servidor FTP iniciado.",
         "starting": "Iniciando servidor FTP..."
+      },
+      "telegram": {
+        "not_configured_1": "Telegram&reg;",
+        "not_configured_2": "no configurado"
       }
     },
     "cronip": {
@@ -760,7 +777,11 @@
       "stop": "detener"
     },
     "ratings_save_button_next": "próximo",
-    "ratings_save_button_back": "atrás"
+    "ratings_save_button_back": "atrás",
+    "telegram": {
+      "published": "Publicado en Telegram",
+      "publish": "Marcar para publicación en Telegram"
+    }
   },
   "units": {
     "minutes_long": "minutos",

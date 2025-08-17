@@ -18,11 +18,12 @@
 #######################################################################
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "${WORKING_DIR}/constants.sh"
 
 ps -ef | grep "${WORKING_DIR}/backup" | grep -v grep | awk '{print $2}' | sudo xargs -r kill -9
 sudo python3 ${WORKING_DIR}/lib_display.py "$(python3 ${WORKING_DIR}/lib_language.py box_backup_break1)" "$(python3 ${WORKING_DIR}/lib_language.py box_backup_break2)"
 
 sudo python3 /var/www/little-backup-box/lib_clean.py --clean display_content tasks
 
-sudo python3 /var/www/little-backup-box/lib_proftpd.py --Action 'setDefaultRoot' --DefaultRoot ''
+sudo python3 /var/www/little-backup-box/lib_proftpd.py --Action setDefaultRoot --DefaultRoot "${const_MEDIA_DIR}"
 

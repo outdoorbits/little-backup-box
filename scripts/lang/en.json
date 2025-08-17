@@ -127,7 +127,9 @@
         "ftp": "LBBs FTP server",
         "validate": "check",
         "delete": "delete",
-        "clean": "clean"
+        "clean": "clean",
+        "cloud_telegram": "Telegram",
+        "telegram": "Telegram&reg;"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-source",
@@ -149,6 +151,10 @@
       "ftp": {
         "started": "FTP server started.",
         "starting": "Starting FTP server..."
+      },
+      "telegram": {
+        "not_configured_1": "Telegram&reg; not",
+        "not_configured_2": "configured"
       }
     },
     "poweroff": {
@@ -642,6 +648,17 @@
       "power_off_idle_time_header": "Power down after idle-time",
       "power_off_idle_time_label": "Select the idle time after which the system should be stopped.",
       "power_off_idle_time_none": "never"
+    },
+    "telegram": {
+      "header": "Configure Telegram&reg;",
+      "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c._Telegram\">Wiki: Telegram</a>",
+      "token_label": "Token",
+      "chat_id_label": "Chat ID",
+      "section": "Telegram&reg;",
+      "error_unreachable": "Telegram unreachable",
+      "error_invalid_token": "Invalid token",
+      "error_bad_api_response": "Bad api response",
+      "button_get_chat_id": "Query chat ID"
     }
   },
   "tools": {
@@ -760,7 +777,11 @@
       "stop": "stop"
     },
     "ratings_save_button_next": "next",
-    "ratings_save_button_back": "back"
+    "ratings_save_button_back": "back",
+    "telegram": {
+      "published": "Published on Telegram",
+      "publish": "Mark for publication on Telegram"
+    }
   },
   "units": {
     "minutes_long": "minutes",

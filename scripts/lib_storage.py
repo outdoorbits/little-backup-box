@@ -35,6 +35,7 @@ import lib_common
 import lib_display
 import lib_language
 import lib_log
+import lib_network
 import lib_proftpd
 import lib_setup
 
@@ -55,7 +56,7 @@ class storage(object):
 # 101: storage type = usb but no role defined
 
 	def __init__(self, StorageName, Role, WaitForDevice=True, DeviceIdentifierPresetThis=None, DeviceIdentifierPresetOther=None, PartnerDevice=None):
-		#StorageName: 					one of ['usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync']
+		#StorageName: 					one of ['usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync', 'telegram']
 		#Role:							[lib_storage.role_Source, lib_storage.role_Target]
 		#DeviceIdentifierPresetThis:	['--uuid 123...', 'sda1', ...]
 		#WaitForDevice:					True/False, retry until device is available
@@ -145,6 +146,8 @@ class storage(object):
 			mounted	= self.__mount_cloud_rsync()
 		elif self.StorageType == 'ftp':
 			mounted	= self.__mount_ftp()
+		elif self.StorageType == 'telegram':
+			mounted	= self.__mount_telegram()
 
 		if mounted and not self.LbbDeviceID and self.mountable:
 			self.__manage_lbb_device_ID()
@@ -390,12 +393,16 @@ class storage(object):
 
 		return(True)
 
+	def __mount_telegram(self):
+		self.FilesStayInPlace	= False
+		return(self.mounted())
+
 	def __mount_ftp(self):
 
 		# create path
 		self.createPath()
 
-		return(lib_proftpd.proftpd().setDefaultRoot(self.MountPoint))
+		return(lib_proftpd.proftpd().setDefaultRoot(FTP_DefaultRoot=self.MountPoint))
 
 	def __get_CameraDeviceID(self, CameraModel, CameraSerial):
 		return(f"{CameraModel}_{CameraSerial}")
@@ -684,6 +691,9 @@ class storage(object):
 		if self.StorageType == 'camera':
 			return(self.__camera_connected)
 
+		if self.StorageType == 'telegram':
+			return(lib_network.get_internet_status())
+
 		# define relevant MountPoint
 		if MountPoint:
 			pass
@@ -814,7 +824,7 @@ class storage(object):
 			if not self.PartnerDevice is None:
 				self.MountPoint	= os.path.join(self.PartnerDevice.MountPoint, self.__const_LBB_FTP_BACKUP_SUB_DIR)
 			else:
-				self.MountPoint			= os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR, self.__const_LBB_FTP_BACKUP_SUB_DIR)
+				self.MountPoint	= os.path.join(self.__const_MEDIA_DIR, self.__const_INTERNAL_BACKUP_DIR, self.__const_LBB_FTP_BACKUP_SUB_DIR)
 		else:
 			self.__TechMountPoint	= ''
 			self.MountPoint			= ''

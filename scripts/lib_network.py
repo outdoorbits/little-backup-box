@@ -119,9 +119,7 @@ def get_internet_status():
 		request.urlopen('https://google.com', timeout=5)
 		return(True)
 	except:
-		pass
-
-	return(False)
+		return(False)
 
 def get_qr_links(protocol='https'):
 	qr_links	= ''

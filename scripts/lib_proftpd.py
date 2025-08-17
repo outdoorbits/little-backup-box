@@ -41,13 +41,11 @@ class proftpd(object):
 		# values
 		self.FTP_DefaultRoot	= ''
 
-	def setDefaultRoot(self, FTP_DefaultRoot=''):
+	def setDefaultRoot(self, FTP_DefaultRoot=None):
 
 		self.FTP_DefaultRoot	= FTP_DefaultRoot
 
 		# block hacking
-		if ' ' in self.FTP_DefaultRoot:
-			return(False)
 		if ';' in self.FTP_DefaultRoot:
 			return(False)
 		if '\\' in self.FTP_DefaultRoot:
@@ -55,7 +53,7 @@ class proftpd(object):
 
 		# format self.FTP_DefaultRoot
 		self.FTP_DefaultRoot	= self.FTP_DefaultRoot.strip()
-		self.FTP_DefaultRoot	= self.__setup.get_val('const_MEDIA_DIR') if self.FTP_DefaultRoot == '' else self.FTP_DefaultRoot
+		self.FTP_DefaultRoot	= self.__setup.get_val('const_MEDIA_DIR') if self.FTP_DefaultRoot is None else self.FTP_DefaultRoot
 
 		config_new	= f'DefaultRoot {self.FTP_DefaultRoot} lbb\n'
 
@@ -77,8 +75,8 @@ class proftpd(object):
 				print("Error writing proftpd config file.")
 				return()
 
-		# restart server
-		self.ftpservice('reload', config_changed)
+			# restart server
+			self.ftpservice('reload', config_changed)
 
 		return(True)
 
