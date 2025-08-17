@@ -109,8 +109,17 @@ In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens
 	<li>
 		Run the following command on the Raspberry Pi:<br />
 		<code>branch='main'; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/${branch}/install-little-backup-box.sh | bash -s -- ${branch} 2> install-error.log</code><br /><br />
-		Errors are reported into ./install-error.log.<br />
-		<br />
+		Errors are reported into ./install-error.log.
+	</li>
+	<li>
+		You will be asked for the default backup mode.<br />
+		This is the action started automatically after boot.
+	</li>
+	<li>
+		You will be asked if you want to install <a href="https://davesteele.github.io/comitup/">comitup</a>.<br />
+		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
+	</li>
+	<li>
 		<b><u>Optional Display Driver Setup</u></b><br />
 		If you have opted for the desktop version of Raspberry Pi OS, please note the following:<br />
 		<br />
@@ -124,14 +133,6 @@ In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens
 		<br />
 		After downloading, the installer will prompt you to select your display model.<br />
 		A temporary modification is applied to prevent automatic reboot, but the original scripts remain unchanged.
-	</li>
-	<li>
-		You will be asked for the default backup mode.<br />
-		This is the action started automatically after boot.
-	</li>
-	<li>
-		You will be asked if you want to install <a href="https://davesteele.github.io/comitup/">comitup</a>.<br />
-		The comitup service establishes wifi connectivity for a headless Linux system, using wifi as the only access mechanism to the system. Access the box by its own wifi hotspot or connect it to a local wifi access point.
 	</li>
 	<li>
 		<b>Don't worry:</b> Please note this in case you installed via wifi/ssh and decided to install comitup. If your installation-screen scrolls down and seems to freeze at something like <i>Setting up python3-networkmanager (2.2-1) ...</i>, this doesn't mean anything went wrong. Comitup is installed at the end of the process and when it's coming up, it changes your wifi-network. Your ssh-session is broken and you will not get any more information. In the background the installation finishes and a few seconds later the pi reboots. What you can't see anymore is a short information, how to access Little Backup Box. In your setting, this would be the information you need:<br />
