@@ -50,7 +50,7 @@
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<div class="collapse navbar-collapse w-50" id="navbarSupportedContentMain">
+		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="index.php"?" active":""; ?>" href="/index.php"><?php echo L::mainmenue_main; ?></a></li>
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="sysinfo.php"?" active":""; ?>" href="/sysinfo.php"><?php echo L::mainmenue_sysinfo; ?></a></li>
@@ -59,7 +59,7 @@
 			</ul>
 		</div>
 
-		<div class="collapse navbar-collapse w-50" id="navbarSupportedContentComitup">
+		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
 				<li class="nav-item"><a class="nav-link" href="/frame.php?page=files"><?php echo L::mainmenue_filebrowser; ?></a></li>
 				<?php
@@ -72,7 +72,7 @@
 			</ul>
 		</div>
 
-		<div class="navbar-collapse collapse" id="navbarSupportedContentUpdate">
+		<div class="navbar-collapse collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<?php
 					if (trim(shell_exec("python3 $WORKING_DIR/lib_git.py --update-available")) == 'True') {
