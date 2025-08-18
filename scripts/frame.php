@@ -26,6 +26,7 @@
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] .'/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-i18n-loader.php");
+	include("sub-popup.php");
 
 	$HTTP_HOST	= $_SERVER['SERVER_PORT']==80?$_SERVER['HTTP_HOST'] . ":80":$_SERVER['HTTP_HOST'];
 
@@ -67,11 +68,11 @@
 		display();
 	?>
 
-		<div style="position: absolute; left: 0; width: 100%; height: 90%; border: none; background: #FF0000;">
-		<iframe id="pageframe" src="<?php echo $framed_pages[$frame_index]; ?>" style="width: 100%; height: 100%; border: none; background: #FFFFFF;"></iframe>
-	<div>
+ 		<div style="width: 100vw; height: 60vh; margin-left: calc(-50vw + 50%); border: none; background: #FF0000;">
+			<iframe id="pageframe" src="<?php echo $framed_pages[$frame_index]; ?>" style="width: 100%; height: 100%; border: none; background: #FFFFFF;"></iframe>
+		</div>
 
-	<?php include "sub-footer.php"; ?>
+		<?php include "sub-footer.php"; ?>
 </body>
 
 </html>

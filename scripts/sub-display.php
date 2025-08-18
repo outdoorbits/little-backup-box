@@ -33,7 +33,7 @@ function display($clear=true) {
 	if ($config['conf_DISP']=="1" and $config['conf_DISP_RESOLUTION_X'] > 0 and $config['conf_DISP_RESOLUTION_Y'] > 0) {
 		?>
 
-		<img id="display" src="<?php echo str_replace('/var/www/little-backup-box', '' , $constants['const_DISPLAY_IMAGE_EXPORT_FILE']); ?>" style="width: <?php echo $constants['const_DISPLAY_SIZE_UI_X']; ?>px; height: <?php echo $constants['const_DISPLAY_SIZE_UI_Y']; ?>px; background: #000000; float: right;"></img>
+		<img id="display" src="<?php echo str_replace('/var/www/little-backup-box', '' , $constants['const_DISPLAY_IMAGE_EXPORT_FILE']); ?>" style="width: <?php echo $constants['const_DISPLAY_SIZE_UI_X']; ?>px; height: <?php echo $constants['const_DISPLAY_SIZE_UI_Y']; ?>px; background: #000000; float: right;">
 
 		<?php
 		if ($clear) {
