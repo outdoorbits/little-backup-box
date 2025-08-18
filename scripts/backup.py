@@ -43,6 +43,7 @@ import lib_setup
 import lib_storage
 import lib_system
 import lib_telegram
+import lib_time
 import lib_view
 import lib_vpn
 
@@ -52,7 +53,7 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DoChecksum='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, PowerOff='setup', SecondaryBackupFollows=False):
+	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DoChecksum='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, TelegramChatID=None, PowerOff='setup', SecondaryBackupFollows=False):
 
 		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync', 'ftp'] or functions: ['thumbnails', 'database', 'exif', 'rename]
 		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync', 'telegram']
@@ -112,6 +113,10 @@ class backup(object):
 		# sync database
 		self.ForceSyncDatabase								= ForceSyncDatabase
 		self.ForceSyncDatabase								= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files or self.DoGenerateThumbnails or self.DoUpdateEXIF
+
+		# Telegram
+		self.telegram_token									= self.__setup.get_val('conf_TELEGRAM_TOKEN')
+		self.telegram_chat_id								= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
 
 		# power off
 		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
@@ -724,13 +729,11 @@ class backup(object):
 
 ### telegram upload
 					elif self.TargetDevice.StorageType == 'telegram':
-						telegram_token		= self.__setup.get_val('conf_TELEGRAM_TOKEN')
-						telegram_chat_id	= self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
-						telegram	= lib_telegram.telegram(
-							TOKEN=telegram_token,
-							CHAT_ID=telegram_chat_id,
-							EXTENSIONS_LIST_VIDEO=self.const_FILE_EXTENSIONS_LIST_VIDEO,
-							EXTENSIONS_LIST_AUDIO=self.const_FILE_EXTENSIONS_LIST_AUDIO
+						telegram					= lib_telegram.telegram(
+							TOKEN					= self.telegram_token,
+							CHAT_ID 				= self.telegram_chat_id,
+							EXTENSIONS_LIST_VIDEO	= self.const_FILE_EXTENSIONS_LIST_VIDEO,
+							EXTENSIONS_LIST_AUDIO	= self.const_FILE_EXTENSIONS_LIST_AUDIO
 						)
 
 						if not telegram.configured():
@@ -745,8 +748,9 @@ class backup(object):
 							IMAGE_ID		= image[0]
 							IMAGE_DIR		= image[1]
 							IMAGE_FILE		= image[2]
-							IMAGE_DATE		= image[3]
+							IMAGE_DATE		= lib_time.parse_datetime_local(image[3])
 							IMAGE_COMMENT	= '' if image[4] is None else image[4]
+							IMAGE_COMMENT	= f'{IMAGE_DATE or ""}{(IMAGE_COMMENT or "").strip()}' if not IMAGE_DATE or not IMAGE_COMMENT else f'{IMAGE_DATE}: {IMAGE_COMMENT}'
 
 							Extension	= None
 							try:
@@ -1633,6 +1637,14 @@ if __name__ == "__main__":
 	)
 
 	parser.add_argument(
+		'--telegram-chat-id',
+		'-tcid',
+		required	= False,
+		default='',
+		help='Telegram Chat ID'
+	)
+
+	parser.add_argument(
 		'--power-off',
 		'-p',
 		required	= False,
@@ -1711,6 +1723,7 @@ if __name__ == "__main__":
 		DoChecksum							= args['checksum'],
 		DeviceIdentifierPresetSource		= args['device_identifier_preset_source'],
 		DeviceIdentifierPresetTarget		= args['device_identifier_preset_target'],
+		TelegramChatID						= args['telegram_chat_id'],
 		PowerOff							= args['power_off'],
 		SecondaryBackupFollows				= SecondaryBackupFollows
 	)

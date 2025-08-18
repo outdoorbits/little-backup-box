@@ -360,6 +360,12 @@
 					</div>
 
 					<div class='backupsection'>
+						<h4><?php echo L::config_telegram_header; ?></h4>
+							<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
+							<input type="hidden" id="conf_TELEGRAM_TOKEN" name="conf_TELEGRAM_TOKEN" value="<?php echo $config['conf_TELEGRAM_TOKEN']; ?>">
+					</div>
+
+					<div class='backupsection'>
 						<h4><?php echo L::main_backup_general; ?></h4>
 						<table style='border: 0;'>
 							<tr>
@@ -453,7 +459,8 @@
 			}
 
 			shell_exec("sudo $WORKING_DIR/stop_backup.sh");
-			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --move-files '$move_files' --rename-files '$rename_files' --force-sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --checksum '$checksum' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
+			echo("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --move-files '$move_files' --rename-files '$rename_files' --force-sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --checksum '$checksum' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --telegram-chat-id " . escapeshellarg($_POST['conf_TELEGRAM_CHAT_ID']) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
+			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --move-files '$move_files' --rename-files '$rename_files' --force-sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --checksum '$checksum' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --telegram-chat-id " . escapeshellarg($_POST['conf_TELEGRAM_CHAT_ID']) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 

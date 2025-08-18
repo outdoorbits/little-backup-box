@@ -406,7 +406,6 @@
       "error_unreachable": "Telegramm nicht erreichbar",
       "error_invalid_token": "Ungültiges Token",
       "error_bad_api_response": "API-Konflikt",
-      "button_get_chat_id": "Chat-ID abfragen",
       "unknown": "unbekannt",
       "without_name": "ohne Namen",
       "selected": "Ausgewählt",
@@ -420,7 +419,8 @@
       "close": "Schließen",
       "accept": "Übernehmen",
       "test_message_send": "Testnachricht senden",
-      "no_chats_found": "Keine Chats gefunden. Sende eine Nachricht in der Zielgruppe/dem Kanal oder füge den Bot als Admin hinzu."
+      "no_chats_found": "Keine Chats gefunden. Sende eine Nachricht in der Zielgruppe/dem Kanal oder füge den Bot als Admin hinzu.",
+      "button_select_chat": "Chat wählen"
     }
   },
   "tools": {

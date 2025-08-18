@@ -406,7 +406,6 @@
       "error_unreachable": "Télégramme inaccessible",
       "error_invalid_token": "Jeton invalide",
       "error_bad_api_response": "Conflit d'API",
-      "button_get_chat_id": "Demander l'ID de chat",
       "unknown": "inconnu",
       "without_name": "sans nom",
       "selected": "Choisi",
@@ -420,7 +419,8 @@
       "close": "Fermer",
       "accept": "Accepter",
       "test_message_send": "Envoyer un message de test",
-      "no_chats_found": "Aucune discussion trouvée. Envoyez un message au public/au canal cible ou ajoutez le bot comme administrateur."
+      "no_chats_found": "Aucune discussion trouvée. Envoyez un message au public/au canal cible ou ajoutez le bot comme administrateur.",
+      "button_select_chat": "Sélectionnez le chat"
     }
   },
   "tools": {

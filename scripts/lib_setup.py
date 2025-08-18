@@ -285,7 +285,8 @@ class setup(object):
 					'conf_PASSWORD_ENCRYPTION':							{'value': 'plain', 'type': 'str'},
 					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'},
 					'conf_TELEGRAM_TOKEN':								{'value': '', 'type': 'str'},
-					'conf_TELEGRAM_CHAT_ID':							{'value': 0, 'type': 'int'}
+					'conf_TELEGRAM_CHAT_ID':							{'value': 0, 'type': 'int'},
+					'conf_TELEGRAM_CHAT_IDENTIFIER':					{'value': '', 'type': 'str'}
 				}
 		)
 

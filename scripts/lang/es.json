@@ -406,7 +406,6 @@
       "error_unreachable": "Telegram inaccesible",
       "error_invalid_token": "Token inválido",
       "error_bad_api_response": "Conflicto de API",
-      "button_get_chat_id": "Consultar ID de chat",
       "unknown": "desconocido",
       "without_name": "sin nombre",
       "selected": "Seleccionado",
@@ -420,7 +419,8 @@
       "close": "Cerca",
       "accept": "Aceptar",
       "test_message_send": "Enviar mensaje de prueba",
-      "no_chats_found": "No se encontraron chats. Envía un mensaje al público/canal objetivo o añade al bot como administrador."
+      "no_chats_found": "No se encontraron chats. Envía un mensaje al público/canal objetivo o añade al bot como administrador.",
+      "button_select_chat": "Seleccionar chat"
     }
   },
   "tools": {

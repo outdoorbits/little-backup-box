@@ -35,16 +35,3 @@ class debug(object):
 		with open('/media/debug.log','a') as f:
 			f.write(f"{Message}\n")
 
-def checkPathlibPath(*parts):
-	conc	= ''
-	i		= 0
-	for part in parts:
-		if i > 0 and len(str(part))>0:
-			if str(part)[0]=='/':
-				print('ERROR: subpath starts with slash')
-		conc = part if i == 0 else f"{conc}|{str(part)}"
-		i	+= 1
-
-	print('---',file=sys.stderr)
-	print(f"checkPathlibPath pl: {pathlib.Path(*parts)}",file=sys.stderr)
-	print(f"checkPathlibPath cl: {conc}",file=sys.stderr)
