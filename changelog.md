@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2025-08-18: Uploading selected media to Telegram is now possible. In addition, images can now be not only rated but also commented on in View. These comments are also published in Telegram. This allows images to be shared quickly and conveniently in Telegram groups and channels.</li>
 	<li>2025-02-18: The integrated FTP server can now be used as a backup source. This makes it possible to use the LBB as a bridge from a camera to (almost) any backup destination. Note: The user 'lbb' must be used for this.</li>
 	<li>2024-12-14: Add status bar to display</li>
 	<li>2021-11-16: To optimize automatic backups, thumbnails are now created during the secondary backup (to cloud storage) instead of between the primary (to local disk) and secondary backups. This approach maximizes computing and network efficiency, significantly reducing the overall backup time.</li>
