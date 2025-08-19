@@ -76,7 +76,7 @@ class backup(object):
 		# devices
 		self.SourceName										= SourceName
 		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
-		TargetStorageType, TargetCloudService				= lib_storage.extractCloudService(TargetName)
+		self.TargetStorageType, self.TargetCloudService		= lib_storage.extractCloudService(TargetName)
 
 		self.DeviceIdentifierPresetSource					= DeviceIdentifierPresetSource
 		if self.DeviceIdentifierPresetSource:
@@ -153,40 +153,47 @@ class backup(object):
 		self.__break_generateThumbnails	= False
 
 		# define TransferMode for _non_ camera transfers
-		self.TransferMode	= 'rsync' if (self.SourceStorageType in ['anyusb', 'usb', 'internal', 'nvme'] and TargetStorageType in ['anyusb', 'usb', 'internal', 'nvme']) or self.SourceStorageType == 'cloud_rsync' or TargetStorageType == 'cloud_rsync' else 'rclone'
+		self.TransferMode	= 'rsync' if (self.SourceStorageType in ['anyusb', 'usb', 'internal', 'nvme'] and self.TargetStorageType in ['anyusb', 'usb', 'internal', 'nvme']) or self.SourceStorageType == 'cloud_rsync' or self.TargetStorageType == 'cloud_rsync' else 'rclone'
 
 		CloudSyncMethods	= self.conf_BACKUP_SYNC_METHOD_CLOUDS.split('|;|')
 		for CloudSyncMethod in CloudSyncMethods:
 			try:
 				CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
-				if (CloudSyncMethodCandidate == 'rsync') and (CloudServiceCandidate in [self.SourceCloudService, TargetCloudService]):
+				if (CloudSyncMethodCandidate == 'rsync') and (CloudServiceCandidate in [self.SourceCloudService, self.TargetCloudService]):
 					self.TransferMode	= 'rsync'
 			except:
 				pass
 
 		self.TransferMode	= None if self.SourceStorageType == 'ftp' else self.TransferMode
-		self.TransferMode	= 'telegram' if TargetStorageType == 'telegram' else self.TransferMode
+		self.TransferMode	= 'telegram' if self.TargetStorageType == 'telegram' else self.TransferMode
+
+		# set vpn dummy before possible abort by next step: check mode combination
+		self.vpn	= False
+
+		# check mode combination
+		if not self.backup_combination_possible():
+			self.__display.message([f":{self.SourceStorageType}>{self.TargetStorageType}", f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
+			return(None)
 
 		# Unmount devices, clean before backup
 		lib_storage.umount(self.__setup,'all')
 
 		# message mode info
 		l_box_backup_mode_SOURCE_MODE	= f"box_backup_mode_{self.SourceStorageType}"
-		l_box_backup_mode_TARGET_MODE	= f"box_backup_mode_{TargetStorageType}"
+		l_box_backup_mode_TARGET_MODE	= f"box_backup_mode_{self.TargetStorageType}"
 
-		self.__display.message([f":{self.__lan.l(l_box_backup_mode_SOURCE_MODE)} {self.SourceCloudService}", f": > {self.__lan.l(l_box_backup_mode_TARGET_MODE)} {TargetCloudService}"])
+		self.__display.message([f":{self.__lan.l(l_box_backup_mode_SOURCE_MODE)} {self.SourceCloudService}", f": > {self.__lan.l(l_box_backup_mode_TARGET_MODE)} {self.TargetCloudService}"])
 
 		self.__log.message(f"Source: {self.SourceStorageType} {self.SourceCloudService}")
-		self.__log.message(f"Target: {TargetStorageType} {TargetCloudService}")
+		self.__log.message(f"Target: {self.TargetStorageType} {self.TargetCloudService}")
 
 		# VPN start
 		VPN_Mode	= None
-		if not set(['cloud', 'telegram']).isdisjoint([self.SourceStorageType, TargetStorageType]):
+		if not set(['cloud', 'telegram']).isdisjoint([self.SourceStorageType, self.TargetStorageType]):
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_CLOUD')
-		elif 'cloud_rsync' in [self.SourceStorageType, TargetStorageType]:
+		elif 'cloud_rsync' in [self.SourceStorageType, self.TargetStorageType]:
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_RSYNC')
 
-		self.vpn	= False
 		if VPN_Mode in ['OpenVPN','WireGuard']:
 			self.vpn	= lib_vpn.vpn(VPN_Mode)
 			if self.vpn.start():
@@ -209,7 +216,7 @@ class backup(object):
 		# Set the PWR LED to blink short to indicate waiting for the target device
 		lib_system.rpi_leds(trigger='timer',delay_on=250,delay_off=750)
 
-		if TargetStorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync', 'telegram']:
+		if self.TargetStorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync', 'telegram']:
 			self.TargetDevice	= lib_storage.storage(StorageName=TargetName, Role=lib_storage.role_Target, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetTarget, DeviceIdentifierPresetOther=self.DeviceIdentifierPresetSource)
 			self.TargetDevice.mount()
 		else:
@@ -220,6 +227,10 @@ class backup(object):
 		self.__cleanup()
 
 	def run(self):
+		if not self.backup_combination_possible():
+			self.finish()
+			return()
+
 		# Set the PWR LED ON to indicate that the backup has not yet started
 		lib_system.rpi_leds(trigger='none',brightness=1)
 
@@ -350,10 +361,10 @@ class backup(object):
 		else:
 			checkPathsList	= self.SourceDevice.SubPathsAtSource
 
-		FilesToProcess				= 0
+		FilesToProcess					= 0
 		FilesToProcess_possible_more	= False
 
-		FilesToProcessPart			= 0
+		FilesToProcessPart				= 0
 
 		if (self.TransferMode == 'telegram'):
 			# prepare database
@@ -433,13 +444,33 @@ class backup(object):
 
 		return(FilesToProcess, FilesToProcess_possible_more)
 
+	def backup_combination_possible(self):
+		# check invalid combinations of Source and Target
+
+		# usb to usb and cloud to cloud are the only methods where type of Source and Target can be equal
+		if (self.SourceStorageType == self.TargetStorageType and not (self.SourceStorageType in ['usb', 'cloud'])):
+			return(False)
+
+		# exclude cloud to cloud for equal cloud services
+		if	self.SourceStorageType == 'cloud' and self.TargetStorageType == 'cloud' and self.SourceCloudService == self.TargetCloudService:
+			return(False)
+
+		# camera never can be target
+		if self.TargetStorageType == 'camera':
+			return(False)
+
+		# camera can't rsync to rsyncserver as this is not supported by gphoto2
+		if self.SourceStorageType	== 'camera' and self.TargetStorageType == 'cloud_rsync':
+			return(False)
+
+		# telegram can upload from local storage only
+		if self.TargetStorageType == "telegram" and self.SourceStorageType not in ['usb', 'internal', 'nvme']:
+			return(False)
+
+		return (True)
+
 	def backup(self):
 		if not self.TargetDevice:
-			return()
-
-		# block impossible combinations early
-		if (self.TargetDevice.StorageType == "telegram") and (self.SourceStorageType not in ['usb', 'internal', 'nvme']):				# telegram can upload from local storage only
-			self.__display.message([f":{self.SourceStorageType}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
 			return()
 
 # prepare to manage sources
@@ -510,31 +541,15 @@ class backup(object):
 					time.sleep(1)
 					continue
 
-			# check invalid combinations of Source and Target
-			if (
-				(SourceStorageType == self.TargetDevice.StorageType and not (SourceStorageType in ['usb', 'cloud'])) or				# usb to usb and cloud to cloud are the only methods where type of Source and Target can be equal
-				(																													# exclude cloud to cloud for equal cloud services
-					SourceStorageType == 'cloud' and
-					self.TargetDevice.StorageType == 'cloud' and
-					SourceCloudService == self.TargetDevice.CloudServiceName
-				) or
-				(self.TargetDevice.StorageType == 'camera') or																		# camera never can be target
-				(SourceStorageType	== 'camera' and self.TargetDevice.StorageType == 'cloud_rsync')									# camera can't rsync to rsyncserver as this is not supported by gphoto2
-			):
-				self.__display.message([f":{SourceStorageType}>{self.TargetDevice.StorageType}{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
-				return()
-
 			# MANAGE SOURCE DEVICE
 			# Set the PWR LED to blink long to indicate waiting for the source device
 			lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
 			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync', 'ftp']:
-				self.SourceDevice	= lib_storage.storage(StorageName=SourceStorageType, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
+				self.SourceDevice	= lib_storage.storage(StorageName=self.SourceName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
 
 				self.__display.message([f":{self.__lan.l('box_backup_mounting_source')}", f":{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
 				self.SourceDevice.mount()
-
-
 			elif SourceStorageType in ['thumbnails', 'database', 'exif']:
 				pass
 			else:
@@ -612,6 +627,7 @@ class backup(object):
 						if not self.SourceDevice.mounted():
 							self.__log.message(f"remount source device {self.SourceDevice.StorageType} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
 							self.__display.message([f"s=a:{self.__lan.l('box_backup_mounting_target')}", f"s=a:{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
+
 							if not self.SourceDevice.mount(TimeOutActive=True):
 								self.__reporter.add_error('Err.: Remounting source device failed!')
 
@@ -683,7 +699,7 @@ class backup(object):
 
 					# RUN BACKUP
 					## create target path if not exists
-					if self.TargetDevice.FilesStayInPlace:
+					if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
 						try:
 							pathlib.Path(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget).mkdir(parents=True, exist_ok=True)
 						except:

@@ -150,7 +150,8 @@
       },
       "ftp": {
         "started": "FTP server started.",
-        "starting": "Starting FTP server..."
+        "starting": "Starting FTP server...",
+        "ok": "FTP o.k."
       },
       "telegram": {
         "not_configured_1": "Telegram&reg; not",
@@ -764,8 +765,8 @@
       "file_type_extension": "File type extension",
       "camera_model_name": "Camera",
       "file_type": "File type",
-      "medium_source_usb": "Local source",
-      "medium_target_usb": "Local target",
+      "medium_source_usb": "USB source",
+      "medium_target_usb": "USB target",
       "medium_source_nvme": "Local NVMe source",
       "medium_target_nvme": "Local NVMe target"
     },

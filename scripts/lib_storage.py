@@ -122,7 +122,7 @@ class storage(object):
 		self.LbbDeviceID			= ''
 		self.LbbSourceDescriptor	= ''
 		self.__set_mountpoint()
-		self.SubPathsAtSource		= []
+		self.SubPathsAtSource		= ['']
 		self.SubPathAtTarget		= '' # subpath below targets MountPoint ('internal/xyz')
 
 		self.mountable	= self.StorageType in ['usb', 'internal', 'nvme' ,'cloud']
@@ -308,15 +308,13 @@ class storage(object):
 		self.umount()
 
 		MOUNTED	= self.mounted()
-		if not MOUNTED:
-			# device not mounted
 
+		if not MOUNTED:
 			# clean mountpoint
 			self.__clean_mountpoint()
 			self.createPath()
 
 			if self.CloudServiceName:
-
 				CloudBaseDir	= ''
 				CloudBaseDirConfigs	= self.__conf_BACKUP_CLOUDS_TARGET_BASEDIR.split('|;|')
 				for CloudBaseDirConfig in CloudBaseDirConfigs:
@@ -339,7 +337,6 @@ class storage(object):
 						pass
 
 				if self.MountPoint:
-
 					Command	= f"rclone mount '{self.CloudServiceName}':'' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --allow-non-empty --config {self.__RCLONE_CONFIG_FILE}"
 					Command	= f"sh -c '{Command} &'"
 					subprocess.run(Command,shell=True)
@@ -380,8 +377,6 @@ class storage(object):
 			self.MountPoint			= f"rsync://{conf_RSYNC_USER}@{conf_RSYNC_SERVER}:{conf_RSYNC_PORT}/{conf_RSYNC_SERVER_MODULE}"
 			self.LbbDeviceID		= conf_RSYNC_SERVER_MODULE
 
-			self.SubPathsAtSource	= ['']
-
 		return(configured)
 
 	def __mount_internal(self):
@@ -395,12 +390,15 @@ class storage(object):
 
 	def __mount_telegram(self):
 		self.FilesStayInPlace	= False
+
 		return(self.mounted())
 
 	def __mount_ftp(self):
 
 		# create path
 		self.createPath()
+
+		self.__display_storage_properties()
 
 		return(lib_proftpd.proftpd().setDefaultRoot(FTP_DefaultRoot=self.MountPoint))
 
@@ -411,6 +409,8 @@ class storage(object):
 		self.__display.message([f":{self.__lan.l('box_backup_connect_camera_1')}", f":{self.__lan.l('box_backup_connect_camera_2')}"])
 
 		EndTime	= time.time()+self.__setup.get_val('const_MOUNT_LOCAL_TIMEOUT')
+
+		self.SubPathsAtSource = []
 
 		while not (self.DeviceIdentifier and self.CameraPort):
 			Cameras	= get_available_cameras()
@@ -562,7 +562,7 @@ class storage(object):
 		self.LbbDeviceID			= self.__get_CameraDeviceID(CameraModel, CameraSerial)
 		self.LbbSourceDescriptor	= f"{self.__lan.l('box_backup_mode_camera')}: {CameraModel}, {self.__lan.l('box_backup_serial')}: {CameraSerial}"
 		if len(self.SubPathsAtSource) == 0:
-			self.SubPathsAtSource=['/']
+			self.SubPathsAtSource = ['/']
 		self.SubPathAtTarget		= f"{self.LbbDeviceID}"
 
 		# remove duplicates from SubPathsAtSource
