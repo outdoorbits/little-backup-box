@@ -46,13 +46,15 @@ class proftpd(object):
 		self.FTP_DefaultRoot	= FTP_DefaultRoot
 
 		# block hacking
-		if ';' in self.FTP_DefaultRoot:
-			return(False)
-		if '\\' in self.FTP_DefaultRoot:
-			return(False)
+		if self.FTP_DefaultRoot is not None:
+			if ';' in self.FTP_DefaultRoot:
+				return(False)
+			if '\\' in self.FTP_DefaultRoot:
+				return(False)
 
-		# format self.FTP_DefaultRoot
-		self.FTP_DefaultRoot	= self.FTP_DefaultRoot.strip()
+			# format self.FTP_DefaultRoot
+			self.FTP_DefaultRoot	= self.FTP_DefaultRoot.strip()
+
 		self.FTP_DefaultRoot	= self.__setup.get_val('const_MEDIA_DIR') if self.FTP_DefaultRoot is None else self.FTP_DefaultRoot
 
 		config_new	= f'DefaultRoot {self.FTP_DefaultRoot} lbb\n'

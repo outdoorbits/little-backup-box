@@ -35,8 +35,8 @@ import lib_proftpd
 import lib_setup
 import lib_storage
 
-# import lib_debug
-# xx	= lib_debug.debug()
+import lib_debug
+xxx	= lib_debug.debug()
 
 class backup_autorun(object):
 	def __init__(self):
@@ -164,6 +164,7 @@ class backup_autorun(object):
 
 		if PrimaryBackupConfig:
 			Command	= ['python3', f'{self.WORKING_DIR}/backup.py'] + PrimaryBackupConfig + SecondaryBackupConfig
+			xxx.d(' '.join(Command))
 			subprocess.run(Command)
 
 if __name__ == '__main__':

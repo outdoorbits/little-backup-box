@@ -485,7 +485,7 @@ class backup(object):
 		Identifier_OLD				= ''
 		thread_thumbnails			= None
 
-		dynamicSources	= self.SourceStorageType in ['anyusb', 'usb', 'nvme', 'camera'] and not self.DeviceIdentifierPresetSource
+		dynamicSources	= self.SourceStorageType in ['anyusb', 'usb', 'camera'] and not self.DeviceIdentifierPresetSource
 
 		# message to connect sources
 		if dynamicSources:
@@ -546,8 +546,7 @@ class backup(object):
 			lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
 			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync', 'ftp']:
-				self.SourceDevice	= lib_storage.storage(StorageName=self.SourceName, Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
-
+				self.SourceDevice	= lib_storage.storage(StorageName=(SourceStorageType if not SourceCloudService else f'{SourceStorageType}:{SourceCloudService}'), Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
 				self.__display.message([f":{self.__lan.l('box_backup_mounting_source')}", f":{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
 				self.SourceDevice.mount()
 			elif SourceStorageType in ['thumbnails', 'database', 'exif']:
@@ -722,7 +721,6 @@ class backup(object):
 						# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
 						syncCommand	= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=False)
 						self.__log.message(' '.join(syncCommand),3)
-
 						with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
 
 							while True:

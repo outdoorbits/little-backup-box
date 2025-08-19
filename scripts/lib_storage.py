@@ -579,7 +579,6 @@ class storage(object):
 
 		return(True)
 
-
 	def __clean_mountpoint(self):
 		Command	= ["rm", "-R", f"{self.MountPoint}/*"]
 		subprocess.run(Command,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
@@ -669,7 +668,6 @@ class storage(object):
 					self.LbbDeviceID	= self.__read_device_id(DatePart, RandomPart)
 
 			self.LbbSourceDescriptor	= f"{self.__lan.l('box_backup_source_id')}: {self.LbbDeviceID}"
-			self.SubPathsAtSource	= ['']
 
 			if self.StorageType == 'internal':
 				self.SubPathAtTarget		= os.path.join('internal', self.LbbDeviceID)
