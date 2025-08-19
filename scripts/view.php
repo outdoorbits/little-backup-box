@@ -947,10 +947,18 @@
 								$Create_Date	= str_replace(' ','_',$Create_Date);
 
 								$DateExplode		= explode('_', $Create_Date);
-
-								$interpretedDate	= date_create($DateExplode[0] . '-' . $DateExplode[1] . '-' . $DateExplode[2] . ' ' . $DateExplode[3] . ':' .  $DateExplode[4] . ':' . $DateExplode[5]);
+								if (count($DateExplode) >= 6) {
+									$interpretedDate	= date_create($DateExplode[0] . '-' . $DateExplode[1] . '-' . $DateExplode[2] . ' ' . $DateExplode[3] . ':' .  $DateExplode[4] . ':' . $DateExplode[5]);
+								} else {
+									$interpretedDate	= Null;
+								}
 							}
-							$IMAGE_DATE	= date_format($interpretedDate,L::view_date_format);
+
+							if (! is_null($interpretedDate)) {
+								$IMAGE_DATE		= date_format($interpretedDate,L::view_date_format);
+							} else {
+								$IMAGE_DATE	= $IMAGE['Create_Date'];
+							}
 
 							$Directory				= $STORAGE_PATH . '/' . $IMAGE['Directory'];
 							$IMAGE_ID				= $IMAGE['ID'];

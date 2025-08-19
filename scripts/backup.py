@@ -762,9 +762,8 @@ class backup(object):
 							IMAGE_ID		= image[0]
 							IMAGE_DIR		= image[1]
 							IMAGE_FILE		= image[2]
-							IMAGE_DATE		= lib_time.parse_datetime_local(image[3])
-							IMAGE_COMMENT	= '' if image[4] is None else image[4]
-							IMAGE_COMMENT	= f'{IMAGE_DATE or ""}{(IMAGE_COMMENT or "").strip()}' if not IMAGE_DATE or not IMAGE_COMMENT else f'{IMAGE_DATE}: {IMAGE_COMMENT}'
+							IMAGE_DATE		= lib_time.timeinterpreter().parse_datetime_local(image[3])
+							IMAGE_COMMENT	= image[4] or ''
 
 							Extension	= None
 							try:

@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 
 import asyncio
+from datetime import datetime
 import os
 from telegram import Bot
+
+import lib_language
 
 # import lib_debug
 # xx	= lib_debug.debug()
 
 class telegram(object):
 	def __init__(self, TOKEN, CHAT_ID, EXTENSIONS_LIST_VIDEO, EXTENSIONS_LIST_AUDIO):
+		self.__lan		= lib_language.language()
+
 		self.date_old	= None
 
 		self.TOKEN		= TOKEN
@@ -20,6 +25,21 @@ class telegram(object):
 
 	def configured(self):
 		return(self.TOKEN.strip() and self.CHAT_ID != 0)
+
+	def __reformat_Comment(self, Comment, FileDate):
+		FileDate	= FileDate if FileDate and FileDate != '0000-00-00 00:00:00' else ''
+		if FileDate:
+			if not isinstance(FileDate, datetime):
+				try:
+					FileDate = datetime.strptime(FileDate, "%Y-%m-%d %H:%M:%S")
+				except:
+					pass
+			try:
+				FileDate	=	FileDate.strftime(self.__lan.l('view_date_format_python').replace('X', '%'))
+			except:
+				pass
+
+		return(f'{FileDate or ""}{(Comment or "").strip()}' if not FileDate or not Comment else f'{FileDate}: {Comment}')
 
 	async def publish_async(self, Comment='', FilePath=None, FileDate=None):
 		if self.configured():
@@ -34,6 +54,7 @@ class telegram(object):
 			pass
 
 		if Comment and FilePath is None:
+			Comment	= self.__reformat_Comment(Comment, FileDate)
 			try:
 				await self.bot.send_message(chat_id=self.CHAT_ID, text=Comment)
 				return({'ok': True, 'msg': msg})
@@ -41,6 +62,7 @@ class telegram(object):
 				return({'ok': False, 'msg': Comment})
 
 		elif FilePath:
+			Comment	= self.__reformat_Comment(Comment, FileDate)
 			try:
 				with open(FilePath, "rb") as media_file:
 					if Extension in self.EXTENSIONS_LIST_VIDEO:

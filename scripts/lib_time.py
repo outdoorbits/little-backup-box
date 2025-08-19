@@ -1,96 +1,125 @@
+import argparse
 import re
 from datetime import datetime
 
-# Regex for Unix timestamps (10 or 13 digits)
-_EPOCH_RE = re.compile(r"^\s*-?\d{10}(?:\d{3})?\s*$")
-# Regex for EXIF-style date: YYYY:MM:DD ...
-_EXIF_DATE_RE = re.compile(r"^(\d{4}):(\d{2}):(\d{2})([ T])")
+# import lib_debug
+# xx	= lib_debug.debug()
 
-def _normalize_timezone_tail(s: str) -> str:
-	"""
-	Normalize time zone suffixes to ISO-8601 style.
-	Example: Z -> +00:00, +0200 -> +02:00, +02 -> +02:00
-	"""
-	s = s.strip()
-	if s.endswith("Z"):
-		return s[:-1] + "+00:00"
-	if s.endswith(" UTC"):
-		return s[:-4] + "+00:00"
-	s = re.sub(r"([+-]\d{2})(\d{2})$", r"\1:\2", s)  # +HHMM -> +HH:MM
-	s = re.sub(r"([+-]\d{2})$", r"\1:00", s)         # +HH   -> +HH:00
-	return s
+class timeinterpreter(object):
 
-def _normalize_datetime_str(s: str) -> str:
-	"""
-	Clean up a date/time string into something close to ISO 8601.
-	- Fix EXIF date (YYYY:MM:DD -> YYYY-MM-DD)
-	- Replace comma milliseconds with dot
-	- Add missing seconds if only HH:MM
-	- Normalize time zones
-	"""
-	s = s.strip()
-	s = re.sub(r"\s+", " ", s.replace("\u00A0", " "))
 
-	# EXIF style date
-	s = _EXIF_DATE_RE.sub(lambda m: f"{m.group(1)}-{m.group(2)}-{m.group(3)}{m.group(4)}", s)
+	def __init__(self):
+		# Regex for Unix timestamps (10 or 13 digits)
+		self._EPOCH_RE = re.compile(r"^\s*-?\d{10}(?:\d{3})?\s*$")
+		# Regex for EXIF-style date: YYYY:MM:DD ...
+		self._EXIF_DATE_RE = re.compile(r"^(\d{4}):(\d{2}):(\d{2})([ T])")
 
-	# Replace "T" with space
-	s = s.replace("T", " ")
 
-	# Milliseconds with comma -> dot
-	s = re.sub(r"(\d{2}:\d{2}:\d{2}),(\d+)", r"\1.\2", s)
+	def _normalize_timezone_tail(self, s: str) -> str:
+		"""
+		Normalize time zone suffixes to ISO-8601 style.
+		Example: Z -> +00:00, +0200 -> +02:00, +02 -> +02:00
+		"""
+		s = s.strip()
+		if s.endswith("Z"):
+			return s[:-1] + "+00:00"
+		if s.endswith(" UTC"):
+			return s[:-4] + "+00:00"
+		s = re.sub(r"([+-]\d{2})(\d{2})$", r"\1:\2", s)  # +HHMM -> +HH:MM
+		s = re.sub(r"([+-]\d{2})$", r"\1:00", s)         # +HH   -> +HH:00
+		return s
 
-	# Add :00 seconds if only HH:MM
-	s = re.sub(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2})(?!:)", r"\1:00", s)
+	def _normalize_datetime_str(self, s: str) -> str:
+		"""
+		Clean up a date/time string into something close to ISO 8601.
+		- Fix EXIF date (YYYY:MM:DD -> YYYY-MM-DD)
+		- Replace comma milliseconds with dot
+		- Add missing seconds if only HH:MM
+		- Normalize time zones
+		"""
+		s = s.strip()
+		s = re.sub(r"\s+", " ", s.replace("\u00A0", " "))
 
-	# Normalize time zone suffix
-	s = _normalize_timezone_tail(s)
-	return s
+		# EXIF style date
+		s = self._EXIF_DATE_RE.sub(lambda m: f"{m.group(1)}-{m.group(2)}-{m.group(3)}{m.group(4)}", s)
 
-def parse_datetime_local(text: str) -> datetime:
-	"""
-	Parse various date/time string formats into a naive datetime in local time.
-	Supported:
-	- EXIF style: 'YYYY:MM:DD HH:MM:SS±HH:MM' or without TZ
-	- ISO 8601:   'YYYY-MM-DD HH:MM:SS(.fff)(Z|±HH[:MM])'
-	- Unix epoch: 10/13 digit integer (sec/ms)
-	Returns a naive datetime (local time).
-	"""
-	if not text or not isinstance(text, str):
-		return (None)
+		# Replace "T" with space
+		s = s.replace("T", " ")
 
-	s = text.strip()
+		# Milliseconds with comma -> dot
+		s = re.sub(r"(\d{2}:\d{2}:\d{2}),(\d+)", r"\1.\2", s)
 
-	# 1) Epoch timestamps
-	if _EPOCH_RE.match(s):
-		val = int(s)
-		if len(s) >= 13:
-			return datetime.fromtimestamp(val / 1000)  # local time
-		return datetime.fromtimestamp(val)            # local time
+		# Add :00 seconds if only HH:MM
+		s = re.sub(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2})(?!:)", r"\1:00", s)
 
-	# 2) Normalize to ISO-like string
-	s_norm = _normalize_datetime_str(s)
+		# Normalize time zone suffix
+		s = self._normalize_timezone_tail(s)
+		return s
 
-	# 3) Try fromisoformat
-	try:
-		dt = datetime.fromisoformat(s_norm)
-	except Exception:
-		dt = None
+	def parse_datetime_local(self, text: str) -> datetime:
+		"""
+		Parse various date/time string formats into a naive datetime in local time.
+		Supported:
+		- EXIF style: 'YYYY:MM:DD HH:MM:SS±HH:MM' or without TZ
+		- ISO 8601:   'YYYY-MM-DD HH:MM:SS(.fff)(Z|±HH[:MM])'
+		- Unix epoch: 10/13 digit integer (sec/ms)
+		Returns a naive datetime (local time).
+		"""
+		if not text or not isinstance(text, str):
+			return (None)
 
-	# 4) Try strptime fallbacks
-	if dt is None:
-		for pat in ("%Y-%m-%d %H:%M:%S%z",
-					"%Y-%m-%d %H:%M:%S",
-					"%Y-%m-%d %H:%M%z",
-					"%Y-%m-%d %H:%M"):
-			try:
-				dt = datetime.strptime(s_norm, pat)
-				break
-			except Exception:
-				pass
+		s = text.strip()
 
-	# 5) Drop tzinfo -> convert to local time
-	if dt.tzinfo is not None:
-		dt = dt.astimezone().replace(tzinfo=None)
+		# 1) Epoch timestamps
+		if self._EPOCH_RE.match(s):
+			val = int(s)
+			if len(s) >= 13:
+				return datetime.fromtimestamp(val / 1000)  # local time
+			return datetime.fromtimestamp(val)            # local time
 
-	return (dt)
+		# 2) Normalize to ISO-like string
+		s_norm = self._normalize_datetime_str(s)
+
+		# 3) Try fromisoformat
+		try:
+			dt = datetime.fromisoformat(s_norm)
+		except Exception:
+			dt = None
+
+		# 4) Try strptime fallbacks
+		if dt is None:
+			for pat in ("%Y-%m-%d %H:%M:%S%z",
+						"%Y-%m-%d %H:%M:%S",
+						"%Y-%m-%d %H:%M%z",
+						"%Y-%m-%d %H:%M"):
+				try:
+					dt = datetime.strptime(s_norm, pat)
+					break
+				except Exception:
+					pass
+
+		# 5) Drop tzinfo -> convert to local time
+		if dt:
+			if dt.tzinfo is not None:
+				dt = dt.astimezone().replace(tzinfo=None)
+
+		return (dt or '0000-00-00 00:00:00')
+
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser(
+		description	= 'Tool to convert string type time to datetime',
+		add_help	= True,
+		epilog		= "Returns '0000-00-00 00:00:00' string if interpretation fails"
+	)
+
+	parser.add_argument(
+		'--datetimestring',
+		'-dt',
+		required =	True,
+		help=f'Give a string of the date and time'
+	)
+
+	args	= vars(parser.parse_args())
+
+	print(timeinterpreter().parse_datetime_local(args['datetimestring']))
+

@@ -574,7 +574,7 @@
         "delete": "löschen",
         "clean": "bereinige",
         "cloud_telegram": "Telegram",
-        "telegram": "Telegram&reg;"
+        "telegram": "Telegram"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-Quelle",
@@ -796,7 +796,8 @@
     "telegram": {
       "published": "Auf Telegram veröffentlicht",
       "publish": "Zur Veröffentlichung auf Telegram markieren"
-    }
+    },
+    "date_format_python": "Xd.Xm.XY XH:XM:XS"
   },
   "units": {
     "minutes_long": "Minuten",
