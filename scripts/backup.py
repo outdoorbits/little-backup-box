@@ -783,7 +783,7 @@ class backup(object):
 
 							progress.progress(Success=success['ok'])
 							if success['ok']:
-								db.dbExecute(f'UPDATE EXIF_DATA SET telegram_publish=0, telegram_published=1 WHERE ID={IMAGE_ID};')
+								db.dbExecute(f'UPDATE EXIF_DATA SET {self.TargetService}_publish=0, {self.TargetService}_published=1 WHERE ID={IMAGE_ID};')
 
 						missing, more	= self.calculate_files_to_sync(SubPathAtSource)
 						self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
