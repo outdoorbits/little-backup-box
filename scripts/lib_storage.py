@@ -62,7 +62,7 @@ class storage(object):
 		#WaitForDevice:					True/False, retry until device is available
 		#PartnerDevice:					Instance of storage, refers to the other device in use. Optional: Needed if StorageType=='ftp' (as source).
 
-		self.StorageType, self.CloudServiceName		= extractCloudService(StorageName)
+		self.StorageType, self.CloudServiceName		= extractService(StorageName)
 		self.Role									= Role
 		self.WaitForDevice							= WaitForDevice
 		self.DeviceIdentifierPresetThis				= DeviceIdentifierPresetThis
@@ -1291,7 +1291,7 @@ def getFS_Type(MountPoint):
 
 	return(FS_Type)
 
-def extractCloudService(DeviceName):
+def extractService(DeviceName):
 	DeviceSplit	= DeviceName.split(':',1)
 	DevicePart	= DeviceSplit[0]
 	if len(DeviceSplit) > 1:
