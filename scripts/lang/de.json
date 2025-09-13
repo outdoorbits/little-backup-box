@@ -280,7 +280,6 @@
       "resolution_y_label": "Vertikale Auflösung (Pixel)",
       "font_size_label": "Schriftgröße",
       "frame_time_label": "Minimale Anzeigedauer pro Bild in Sekunden",
-      "hardware_header": "Display",
       "colors_header": "Farbauswahl beim Einsatz eines Farb-Displays",
       "color": {
         "white": "weiß",
@@ -328,7 +327,6 @@
       "button_left": "links",
       "button_bouncetime_label": "Die Prellzeit (in Millisekunden) gibt an, wie schnell ein Taster einen stabilen Einschaltzustand erreicht. Nach einer Aktion wird ein Taster für diese Zeit blockiert.",
       "button_rotate_label": "Button-Rotation",
-      "button_header": "Steuer-Taster",
       "rotate_header": "Button-Zuordnung drehen",
       "button_edge_detection_label": "Tastenkantenerkennung",
       "button_resistor_pull_label": "Pull Widerstand",
@@ -337,13 +335,13 @@
       "section": "Display-Menü"
     },
     "hardware": {
-      "section": "Hardware",
       "fan": {
         "always_on": "dauerhaft ein",
         "gpio_label": "GPIO für die PWM-Lüftersteuerung",
         "header": "Lüftersteuerung",
         "temp_label": "Temperaturschwelle"
-      }
+      },
+      "section": "Hardware"
     },
     "lang_time_section": "Sprache / Language und Zeitzone",
     "time_zone_label": "Zeitzone",

@@ -280,7 +280,6 @@
       "resolution_y_label": "Resolución vertical (píxeles)",
       "font_size_label": "Tamaño de fuente",
       "frame_time_label": "Tiempo mínimo de visualización por cuadro en segundos",
-      "hardware_header": "Pantalla",
       "colors_header": "Selección de color cuando se utiliza una pantalla a color",
       "color": {
         "white": "blanco",
@@ -328,7 +327,6 @@
       "button_left": "izquierda",
       "button_bouncetime_label": "El tiempo de rebote (en milisegundos) indica qué tan rápido un botón alcanza un estado estable. Después de una acción, un botón se bloquea por este tiempo.",
       "button_rotate_label": "Rotación del botón",
-      "button_header": "Botones de control",
       "rotate_header": "Rotar mapeo de botones",
       "button_edge_detection_label": "Detección de borde de botón",
       "button_resistor_pull_label": "Pull resistor",
@@ -337,13 +335,13 @@
       "section": "Mostrar menú"
     },
     "hardware": {
-      "section": "Hardware",
       "fan": {
         "always_on": "permanentemente encendido",
         "gpio_label": "GPIO para control de ventilador PWM",
         "header": "Control del ventilador",
         "temp_label": "Umbral de temperatura"
-      }
+      },
+      "section": "Hardware"
     },
     "lang_time_section": "Idioma / Language y zona horaria",
     "time_zone_label": "Zona de tiempo",

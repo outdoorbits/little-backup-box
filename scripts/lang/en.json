@@ -533,7 +533,6 @@
       "resolution_y_label": "Vertical resolution (pixels)",
       "font_size_label": "Font size",
       "frame_time_label": "Minimum display time per frame in seconds",
-      "hardware_header": "Display",
       "colors_header": "Color selection when using a color display",
       "color": {
         "white": "white",
@@ -581,7 +580,6 @@
       "button_left": "left",
       "button_bouncetime_label": "The bounce time (in milliseconds) indicates how quickly a button reaches a stable on state. After an action, a button is blocked for this time.",
       "button_rotate_label": "Button rotation",
-      "button_header": "Control buttons",
       "rotate_header": "Rotate button mapping",
       "button_edge_detection_label": "Button edge detection",
       "button_resistor_pull_label": "Pull resistor",
@@ -590,13 +588,13 @@
       "section": "Display menu"
     },
     "hardware": {
-      "section": "Hardware",
       "fan": {
         "always_on": "permanently on",
         "gpio_label": "GPIO for PWM fan control",
         "header": "Fan control",
         "temp_label": "Temperature threshold"
-      }
+      },
+      "section": "Hardware"
     },
     "lang_time_section": "Language and time zone",
     "time_zone_label": "Time zone",

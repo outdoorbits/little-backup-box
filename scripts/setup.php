@@ -948,6 +948,166 @@ CONFIGDATA;
 							</select>
 					</div>
 
+				<h3><?php echo L::config_hardware_section; ?></h3>
+
+					<div>
+						<label for="conf_DISP_DRIVER"><?php echo L::config_display_driver_label; ?></label><br />
+							<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
+								<?php
+									$display_drivers_array=array(
+										'none',
+										'SSD1306',
+										'SSD1309',
+										'SSD1322',
+										'SSD1331',
+										'SH1106',
+										'ST7735',
+										'ST7735 WAVESHARE LCD display HAT'
+									);
+									foreach($display_drivers_array as $display_driver) {
+										echo "<option value='" . $display_driver . "' " . ($config["conf_DISP_DRIVER"] == $display_driver?" selected":"") . ">" . $display_driver . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+					<div>
+						<h4><?php echo L::config_display_connection_header; ?></h4>
+							<label for="conf_DISP_CONNECTION"><?php echo L::config_display_connection_label; ?></label><br />
+								<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
+									<?php
+										$display_connections_array=array("I2C","SPI");
+										foreach($display_connections_array as $display_connection) {
+											echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
+										}
+									?>
+								</select>
+					</div>
+
+					<div>
+						<h4><?php echo L::config_display_i2c_header; ?></h4>
+
+							<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_display_i2c_address_label; ?></label><br />
+
+							<?php
+								$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
+
+								$I2C_LIST=array("0x3c","0x3d");
+								foreach($I2C_LIST as $I2C) {
+									if (! in_array($config['conf_DISP_I2C_ADDRESS'], $I2C_LIST)) {
+										$config['conf_DISP_I2C_ADDRESS']	= $I2C;
+									}
+							?>
+									<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
+									<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br />
+							<?php
+								}
+							?>
+					</div>
+
+					<div>
+						<h4><?php echo L::config_display_spi_header; ?></h4>
+							<label for="conf_DISP_SPI_PORT"><?php echo L::config_display_spi_port_label; ?></label><br />
+
+									<?php
+										$spi_ports_array=array("0","1");
+										foreach($spi_ports_array as $spi_port) {
+							?>
+									<input type="radio" id="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>" name="conf_DISP_SPI_PORT" value="<?php echo $spi_port; ?>" <?php echo strcasecmp($config['conf_DISP_SPI_PORT'],$spi_port)==0?"checked":""; ?>>
+									<label for="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>"><?php echo $spi_port; ?></label><br />
+							<?php
+								}
+							?>
+					</div>
+
+					<div>
+						<h4><?php echo L::config_display_additional_settings_header; ?></h4>
+
+						<div>
+							<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br />
+								<select name="conf_DISP_RESOLUTION_X" id="conf_DISP_RESOLUTION_X">
+									<?php
+										$display_resolutions_array=array(96, 128, 160, 250);
+										foreach($display_resolutions_array as $display_resolution) {
+											echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_X"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+										}
+									?>
+								</select>
+						</div>
+
+						<div>
+							<label for="conf_DISP_RESOLUTION_Y"><?php echo L::config_display_resolution_y_label; ?></label><br />
+								<select name="conf_DISP_RESOLUTION_Y" id="conf_DISP_RESOLUTION_Y">
+									<?php
+										$display_resolutions_array=array(32, 64, 80, 122, 128);
+										foreach($display_resolutions_array as $display_resolution) {
+											echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
+										}
+									?>
+								</select>
+						</div>
+
+						<div>
+							<label for="conf_DISP_OFFSET_X"><?php echo L::config_display_offset_x_label; ?></label><br />
+								<select name="conf_DISP_OFFSET_X" id="conf_DISP_OFFSET_X">
+									<?php
+										for ($display_offset=-30; $display_offset<=30; $display_offset++) {
+											echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_X"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
+										}
+									?>
+								</select>
+						</div>
+
+						<div>
+							<label for="conf_DISP_OFFSET_Y"><?php echo L::config_display_offset_y_label; ?></label><br />
+								<select name="conf_DISP_OFFSET_Y" id="conf_DISP_OFFSET_Y">
+									<?php
+										for ($display_offset=-30; $display_offset<=30; $display_offset++) {
+											echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_Y"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
+										}
+									?>
+								</select>
+						</div>
+
+						<div>
+							<label for="conf_DISP_COLOR_MODEL"><?php echo L::config_display_color_model_label; ?></label><br />
+								<select name="conf_DISP_COLOR_MODEL" id="conf_DISP_COLOR_MODEL">
+									<?php
+										$display_color_models_array=array("1","RGB","RGBA");
+										foreach($display_color_models_array as $display_color_model) {
+											$display_color_model_entity="config_display_color_model_" . $display_color_model;
+											echo "<option value='" . $display_color_model . "' " . ($config["conf_DISP_COLOR_MODEL"] == $display_color_model?" selected":"") . ">" . L::{"$display_color_model_entity"}() . "</option>";
+										}
+									?>
+								</select>
+						</div>
+
+						<div>
+							<input type="checkbox" id="conf_DISP_COLOR_BGR" name="conf_DISP_COLOR_BGR" <?php echo $config['conf_DISP_COLOR_BGR']=="1"?"checked":""; ?>>
+							<label for="conf_DISP_COLOR_BGR"><?php echo L::config_display_color_bgr_label; ?></label><br />
+						<div>
+
+						<div>
+							<input type="checkbox" id="conf_DISP_COLOR_INVERSE" name="conf_DISP_COLOR_INVERSE" <?php echo $config['conf_DISP_COLOR_INVERSE']=="1"?"checked":""; ?>>
+							<label for="conf_DISP_COLOR_INVERSE"><?php echo L::config_display_color_inverse_label; ?></label><br />
+						<div>
+
+						<div>
+							<label for="conf_DISP_BACKLIGHT_PIN"><?php echo L::config_display_backlight_pin_label; ?></label><br />
+								<select name="conf_DISP_BACKLIGHT_PIN" id="conf_DISP_BACKLIGHT_PIN">
+									<?php
+										$display_backlight_pin_array=array(
+											0	=>	'-',
+											18	=> 'GPIO 18',
+											24	=> 'GPIO 24'
+										);
+										foreach($display_backlight_pin_array as $display_backlight_pin => $display_backlight_pin_text) {
+											echo "<option value='" . $display_backlight_pin . "' " . ($config["conf_DISP_BACKLIGHT_PIN"] == $display_backlight_pin?" selected":"") . ">" . $display_backlight_pin_text . "</option>";
+										}
+									?>
+								</select>
+						</div>
+					</div>
 			</details>
 		</div>
 
@@ -972,6 +1132,162 @@ CONFIGDATA;
 									);
 									foreach($button_rotate_array as $button_rotate_code => $button_rotate_text) {
 										echo "<option value='" . $button_rotate_code . "' " . ($config["conf_MENU_BUTTON_ROTATE"] == $button_rotate_code?" selected":"") . ">" . $button_rotate_text . "</option>";
+									}
+								?>
+							</select>
+					</div>
+
+				<h3><?php echo L::config_hardware_section; ?></h3>
+
+					<div>
+						<label for="conf_MENU_BUTTON_COMBINATION"><?php echo L::config_menu_button_combination_label.' ('.L::config_menu_section.')'; ?></label><br />
+
+							<?php
+								$button_combinations	= array();
+
+								$button_config_files	= array(
+									$WORKING_DIR.'/'.$constants['const_BUTTONS_CONFIG_FILE'],
+									$constants['const_MEDIA_DIR'].'/'.$constants['const_BUTTONS_PRIVATE_CONFIG_FILE']
+								);
+								$BasicLines	= 0;
+								foreach ($button_config_files as $button_config_file) {
+
+									if ($f = fopen($button_config_file, "r")) {
+										while(!feof($f)) {
+											$Line = trim(fgets($f));
+											if (! empty($Line)) {
+												if (substr($Line,0,1) != '#') {
+													$CombinationArray	= array(
+														'up' 		=> '',
+														'down'		=> '',
+														'left' 		=> '',
+														'right'		=> '',
+														'comment'	=> ''
+													);
+
+													$explodeLine	= explode(':',$Line,2);
+
+													if (count($explodeLine) > 1) {
+														$CombinationArray['comment']	= $explodeLine[1];
+													}
+
+													$PIN_Defs		= explode(',',$explodeLine[0]);
+
+													foreach($PIN_Defs as $PIN_Def) {
+														$explodePinDef	= explode('=', $PIN_Def);
+														if (count($explodePinDef) == 2) {
+															if (in_array($explodePinDef[1],array('up','down','left','right','comment'))) {
+																if (! empty($CombinationArray[$explodePinDef[1]])) {
+																	$CombinationArray[$explodePinDef[1]]	.= ', ';
+																}
+																$CombinationArray[$explodePinDef[1]]	.= $explodePinDef[0];
+															}
+														}
+													}
+
+													array_push($button_combinations,$CombinationArray);
+													if ($button_config_file == $button_config_files[0]) {
+														$BasicLines	+= 1;
+													}
+												}
+											}
+										}
+										fclose($f);
+									}
+								}
+
+							?>
+							<select name="conf_MENU_BUTTON_COMBINATION" id="conf_MENU_BUTTON_COMBINATION">
+								<?php
+									foreach($button_combinations as $variant => $button_combination) {
+										if ($variant < $BasicLines) {
+											$VariantOption	= $variant + 1;
+										} else {
+											$VariantOption	= 'c' . ($variant - $BasicLines + 1);
+										}
+										echo ("<option value='" . $VariantOption . "' " . ($config["conf_MENU_BUTTON_COMBINATION"] == $VariantOption?" selected":"") . ">" . $VariantOption . "</option>");
+									}
+								?>
+							</select>
+
+							<table style="width: 100%;">
+								<tr style="border: thin solid;">
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_combination_variant; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_up; ?>
+									</th>
+									<th>
+										<?php echo L::config_menu_button_down; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_left; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_right; ?>
+									</th>
+									<th style="width: 20%;">
+										<?php echo L::config_menu_button_comment; ?>
+									</th>
+								</tr>
+
+								<?php
+									foreach($button_combinations as $variant => $button_combination) {
+
+										if ($variant < $BasicLines) {
+											$openerTAG		= '';
+											$closerTAG		= '';
+											$VariantOption	= $variant + 1;
+										} else {
+											$openerTAG		= '<i>';
+											$closerTAG		= '</i>';
+											$VariantOption	= 'c' . ($variant - $BasicLines + 1);
+										}
+										echo("<tr style=\"border: thin solid; vertical-align: top;\"><td><b>".$openerTAG.$VariantOption.$closerTAG."</b></td>");
+
+										foreach($button_combination as $column => $FIELD) {
+											?>
+												<td style="border: thin solid; vertical-align: top;">
+													<?php echo ($openerTAG.$FIELD.$closerTAG); ?>
+												</td>
+											<?php
+										}
+										echo("</tr>");
+
+									}
+								?>
+							</table>
+							<a href="/files/index.php?p=&edit=buttons.private.cfg"><?php echo L::config_menu_button_edit_custom_configfile; ?></a>
+					</div>
+
+					<div>
+						<label for="conf_MENU_BUTTON_BOUNCETIME"><?php echo L::config_menu_button_bouncetime_label; ?></label><br />
+							<select name="conf_MENU_BUTTON_BOUNCETIME" id="conf_MENU_BUTTON_BOUNCETIME">
+								<?php
+									$button_bouncetimes_array=array(5, 10, 15, 20, 25, 50, 100, 200, 300, 400, 500);
+									foreach($button_bouncetimes_array as $button_bouncetime) {
+										echo "<option value='" . $button_bouncetime . "' " . ($config["conf_MENU_BUTTON_BOUNCETIME"] == $button_bouncetime?" selected":"") . ">" . $button_bouncetime . "</option>";
+									}
+								?>
+							</select><br />
+
+						<label for="conf_MENU_BUTTON_EDGE_DETECTION"><?php echo L::config_menu_button_edge_detection_label; ?></label><br />
+							<select name="conf_MENU_BUTTON_EDGE_DETECTION" id="conf_MENU_BUTTON_EDGE_DETECTION">
+								<?php
+									$button_edge_detections_array=array('RISING','FALLING');
+									foreach($button_edge_detections_array as $button_edge_detection) {
+										echo "<option value='" . $button_edge_detection . "' " . ($config["conf_MENU_BUTTON_EDGE_DETECTION"] == $button_edge_detection?" selected":"") . ">" . $button_edge_detection . "</option>";
+									}
+								?>
+							</select><br />
+
+						<label for="conf_MENU_BUTTON_RESISTOR_PULL"><?php echo L::config_menu_button_resistor_pull_label; ?></label><br />
+							<select name="conf_MENU_BUTTON_RESISTOR_PULL" id="conf_MENU_BUTTON_RESISTOR_PULL">
+								<?php
+									$button_resistor_pulls_array=array('DOWN','UP');
+									foreach($button_resistor_pulls_array as $button_resistor_pull) {
+										echo "<option value='" . $button_resistor_pull . "' " . ($config["conf_MENU_BUTTON_RESISTOR_PULL"] == $button_resistor_pull?" selected":"") . ">" . $button_resistor_pull . "</option>";
 									}
 								?>
 							</select>
@@ -1320,323 +1636,6 @@ CONFIGDATA;
 		<div class="card" style="margin-top: 2em;">
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_hardware_section; ?></summary>
-
-				<h3><?php echo L::config_display_hardware_header; ?></h3>
-
-					<div>
-						<label for="conf_DISP_DRIVER"><?php echo L::config_display_driver_label; ?></label><br />
-							<select name="conf_DISP_DRIVER" id="conf_DISP_DRIVER">
-								<?php
-									$display_drivers_array=array(
-										'none',
-										'SSD1306',
-										'SSD1309',
-										'SSD1322',
-										'SSD1331',
-										'SH1106',
-										'ST7735',
-										'ST7735 WAVESHARE LCD display HAT'
-									);
-									foreach($display_drivers_array as $display_driver) {
-										echo "<option value='" . $display_driver . "' " . ($config["conf_DISP_DRIVER"] == $display_driver?" selected":"") . ">" . $display_driver . "</option>";
-									}
-								?>
-							</select>
-					</div>
-
-<div>
-						<h4><?php echo L::config_display_connection_header; ?></h4>
-							<label for="conf_DISP_CONNECTION"><?php echo L::config_display_connection_label; ?></label><br />
-								<select name="conf_DISP_CONNECTION" id="conf_DISP_CONNECTION">
-									<?php
-										$display_connections_array=array("I2C","SPI");
-										foreach($display_connections_array as $display_connection) {
-											echo "<option value='" . $display_connection . "' " . ($config["conf_DISP_CONNECTION"] == $display_connection?" selected":"") . ">" . $display_connection . "</option>";
-										}
-									?>
-								</select>
-					</div>
-
-					<div>
-						<h4><?php echo L::config_display_i2c_header; ?></h4>
-
-							<label for="conf_DISP_I2C_ADDRESS"><?php echo L::config_display_i2c_address_label; ?></label><br />
-
-							<?php
-								$I2C_DETECT=shell_exec("sudo i2cdetect -y 1");
-
-								$I2C_LIST=array("0x3c","0x3d");
-								foreach($I2C_LIST as $I2C) {
-									if (! in_array($config['conf_DISP_I2C_ADDRESS'], $I2C_LIST)) {
-										$config['conf_DISP_I2C_ADDRESS']	= $I2C;
-									}
-							?>
-									<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
-									<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br />
-							<?php
-								}
-							?>
-					</div>
-
-					<div>
-						<h4><?php echo L::config_display_spi_header; ?></h4>
-							<label for="conf_DISP_SPI_PORT"><?php echo L::config_display_spi_port_label; ?></label><br />
-
-									<?php
-										$spi_ports_array=array("0","1");
-										foreach($spi_ports_array as $spi_port) {
-							?>
-									<input type="radio" id="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>" name="conf_DISP_SPI_PORT" value="<?php echo $spi_port; ?>" <?php echo strcasecmp($config['conf_DISP_SPI_PORT'],$spi_port)==0?"checked":""; ?>>
-									<label for="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>"><?php echo $spi_port; ?></label><br />
-							<?php
-								}
-							?>
-					</div>
-
-					<div>
-						<h4><?php echo L::config_display_additional_settings_header; ?></h4>
-
-						<div>
-							<label for="conf_DISP_RESOLUTION_X"><?php echo L::config_display_resolution_x_label; ?></label><br />
-								<select name="conf_DISP_RESOLUTION_X" id="conf_DISP_RESOLUTION_X">
-									<?php
-										$display_resolutions_array=array(96, 128, 160, 250);
-										foreach($display_resolutions_array as $display_resolution) {
-											echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_X"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
-										}
-									?>
-								</select>
-						</div>
-
-						<div>
-							<label for="conf_DISP_RESOLUTION_Y"><?php echo L::config_display_resolution_y_label; ?></label><br />
-								<select name="conf_DISP_RESOLUTION_Y" id="conf_DISP_RESOLUTION_Y">
-									<?php
-										$display_resolutions_array=array(32, 64, 80, 122, 128);
-										foreach($display_resolutions_array as $display_resolution) {
-											echo "<option value='" . $display_resolution . "' " . ($config["conf_DISP_RESOLUTION_Y"] == $display_resolution?" selected":"") . ">" . $display_resolution . "</option>";
-										}
-									?>
-								</select>
-						</div>
-
-						<div>
-							<label for="conf_DISP_OFFSET_X"><?php echo L::config_display_offset_x_label; ?></label><br />
-								<select name="conf_DISP_OFFSET_X" id="conf_DISP_OFFSET_X">
-									<?php
-										for ($display_offset=-30; $display_offset<=30; $display_offset++) {
-											echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_X"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
-										}
-									?>
-								</select>
-						</div>
-
-						<div>
-							<label for="conf_DISP_OFFSET_Y"><?php echo L::config_display_offset_y_label; ?></label><br />
-								<select name="conf_DISP_OFFSET_Y" id="conf_DISP_OFFSET_Y">
-									<?php
-										for ($display_offset=-30; $display_offset<=30; $display_offset++) {
-											echo "<option value='" . $display_offset . "' " . ($config["conf_DISP_OFFSET_Y"] == $display_offset?" selected":"") . ">" . $display_offset . "</option>";
-										}
-									?>
-								</select>
-						</div>
-
-						<div>
-							<label for="conf_DISP_COLOR_MODEL"><?php echo L::config_display_color_model_label; ?></label><br />
-								<select name="conf_DISP_COLOR_MODEL" id="conf_DISP_COLOR_MODEL">
-									<?php
-										$display_color_models_array=array("1","RGB","RGBA");
-										foreach($display_color_models_array as $display_color_model) {
-											$display_color_model_entity="config_display_color_model_" . $display_color_model;
-											echo "<option value='" . $display_color_model . "' " . ($config["conf_DISP_COLOR_MODEL"] == $display_color_model?" selected":"") . ">" . L::{"$display_color_model_entity"}() . "</option>";
-										}
-									?>
-								</select>
-						</div>
-
-						<div>
-							<input type="checkbox" id="conf_DISP_COLOR_BGR" name="conf_DISP_COLOR_BGR" <?php echo $config['conf_DISP_COLOR_BGR']=="1"?"checked":""; ?>>
-							<label for="conf_DISP_COLOR_BGR"><?php echo L::config_display_color_bgr_label; ?></label><br />
-						<div>
-
-						<div>
-							<input type="checkbox" id="conf_DISP_COLOR_INVERSE" name="conf_DISP_COLOR_INVERSE" <?php echo $config['conf_DISP_COLOR_INVERSE']=="1"?"checked":""; ?>>
-							<label for="conf_DISP_COLOR_INVERSE"><?php echo L::config_display_color_inverse_label; ?></label><br />
-						<div>
-
-						<div>
-							<label for="conf_DISP_BACKLIGHT_PIN"><?php echo L::config_display_backlight_pin_label; ?></label><br />
-								<select name="conf_DISP_BACKLIGHT_PIN" id="conf_DISP_BACKLIGHT_PIN">
-									<?php
-										$display_backlight_pin_array=array(
-											0	=>	'-',
-											18	=> 'GPIO 18',
-											24	=> 'GPIO 24'
-										);
-										foreach($display_backlight_pin_array as $display_backlight_pin => $display_backlight_pin_text) {
-											echo "<option value='" . $display_backlight_pin . "' " . ($config["conf_DISP_BACKLIGHT_PIN"] == $display_backlight_pin?" selected":"") . ">" . $display_backlight_pin_text . "</option>";
-										}
-									?>
-								</select>
-						</div>
-					</div>
-
-				<h3><?php echo L::config_menu_button_header; ?></h3>
-
-					<div>
-						<label for="conf_MENU_BUTTON_COMBINATION"><?php echo L::config_menu_button_combination_label.' ('.L::config_menu_section.')'; ?></label><br />
-
-							<?php
-								$button_combinations	= array();
-
-								$button_config_files	= array(
-									$WORKING_DIR.'/'.$constants['const_BUTTONS_CONFIG_FILE'],
-									$constants['const_MEDIA_DIR'].'/'.$constants['const_BUTTONS_PRIVATE_CONFIG_FILE']
-								);
-								$BasicLines	= 0;
-								foreach ($button_config_files as $button_config_file) {
-
-									if ($f = fopen($button_config_file, "r")) {
-										while(!feof($f)) {
-											$Line = trim(fgets($f));
-											if (! empty($Line)) {
-												if (substr($Line,0,1) != '#') {
-													$CombinationArray	= array(
-														'up' 		=> '',
-														'down'		=> '',
-														'left' 		=> '',
-														'right'		=> '',
-														'comment'	=> ''
-													);
-
-													$explodeLine	= explode(':',$Line,2);
-
-													if (count($explodeLine) > 1) {
-														$CombinationArray['comment']	= $explodeLine[1];
-													}
-
-													$PIN_Defs		= explode(',',$explodeLine[0]);
-
-													foreach($PIN_Defs as $PIN_Def) {
-														$explodePinDef	= explode('=', $PIN_Def);
-														if (count($explodePinDef) == 2) {
-															if (in_array($explodePinDef[1],array('up','down','left','right','comment'))) {
-																if (! empty($CombinationArray[$explodePinDef[1]])) {
-																	$CombinationArray[$explodePinDef[1]]	.= ', ';
-																}
-																$CombinationArray[$explodePinDef[1]]	.= $explodePinDef[0];
-															}
-														}
-													}
-
-													array_push($button_combinations,$CombinationArray);
-													if ($button_config_file == $button_config_files[0]) {
-														$BasicLines	+= 1;
-													}
-												}
-											}
-										}
-										fclose($f);
-									}
-								}
-
-							?>
-							<select name="conf_MENU_BUTTON_COMBINATION" id="conf_MENU_BUTTON_COMBINATION">
-								<?php
-									foreach($button_combinations as $variant => $button_combination) {
-										if ($variant < $BasicLines) {
-											$VariantOption	= $variant + 1;
-										} else {
-											$VariantOption	= 'c' . ($variant - $BasicLines + 1);
-										}
-										echo ("<option value='" . $VariantOption . "' " . ($config["conf_MENU_BUTTON_COMBINATION"] == $VariantOption?" selected":"") . ">" . $VariantOption . "</option>");
-									}
-								?>
-							</select>
-
-							<table style="width: 100%;">
-								<tr style="border: thin solid;">
-									<th style="width: 20%;">
-										<?php echo L::config_menu_button_combination_variant; ?>
-									</th>
-									<th style="width: 20%;">
-										<?php echo L::config_menu_button_up; ?>
-									</th>
-									<th>
-										<?php echo L::config_menu_button_down; ?>
-									</th>
-									<th style="width: 20%;">
-										<?php echo L::config_menu_button_left; ?>
-									</th>
-									<th style="width: 20%;">
-										<?php echo L::config_menu_button_right; ?>
-									</th>
-									<th style="width: 20%;">
-										<?php echo L::config_menu_button_comment; ?>
-									</th>
-								</tr>
-
-								<?php
-									foreach($button_combinations as $variant => $button_combination) {
-
-										if ($variant < $BasicLines) {
-											$openerTAG		= '';
-											$closerTAG		= '';
-											$VariantOption	= $variant + 1;
-										} else {
-											$openerTAG		= '<i>';
-											$closerTAG		= '</i>';
-											$VariantOption	= 'c' . ($variant - $BasicLines + 1);
-										}
-										echo("<tr style=\"border: thin solid; vertical-align: top;\"><td><b>".$openerTAG.$VariantOption.$closerTAG."</b></td>");
-
-										foreach($button_combination as $column => $FIELD) {
-											?>
-												<td style="border: thin solid; vertical-align: top;">
-													<?php echo ($openerTAG.$FIELD.$closerTAG); ?>
-												</td>
-											<?php
-										}
-										echo("</tr>");
-
-									}
-								?>
-							</table>
-							<a href="/files/index.php?p=&edit=buttons.private.cfg"><?php echo L::config_menu_button_edit_custom_configfile; ?></a>
-					</div>
-
-					<div>
-						<label for="conf_MENU_BUTTON_BOUNCETIME"><?php echo L::config_menu_button_bouncetime_label; ?></label><br />
-							<select name="conf_MENU_BUTTON_BOUNCETIME" id="conf_MENU_BUTTON_BOUNCETIME">
-								<?php
-									$button_bouncetimes_array=array(5, 10, 15, 20, 25, 50, 100, 200, 300, 400, 500);
-									foreach($button_bouncetimes_array as $button_bouncetime) {
-										echo "<option value='" . $button_bouncetime . "' " . ($config["conf_MENU_BUTTON_BOUNCETIME"] == $button_bouncetime?" selected":"") . ">" . $button_bouncetime . "</option>";
-									}
-								?>
-							</select><br />
-
-						<label for="conf_MENU_BUTTON_EDGE_DETECTION"><?php echo L::config_menu_button_edge_detection_label; ?></label><br />
-							<select name="conf_MENU_BUTTON_EDGE_DETECTION" id="conf_MENU_BUTTON_EDGE_DETECTION">
-								<?php
-									$button_edge_detections_array=array('RISING','FALLING');
-									foreach($button_edge_detections_array as $button_edge_detection) {
-										echo "<option value='" . $button_edge_detection . "' " . ($config["conf_MENU_BUTTON_EDGE_DETECTION"] == $button_edge_detection?" selected":"") . ">" . $button_edge_detection . "</option>";
-									}
-								?>
-							</select><br />
-
-						<label for="conf_MENU_BUTTON_RESISTOR_PULL"><?php echo L::config_menu_button_resistor_pull_label; ?></label><br />
-							<select name="conf_MENU_BUTTON_RESISTOR_PULL" id="conf_MENU_BUTTON_RESISTOR_PULL">
-								<?php
-									$button_resistor_pulls_array=array('DOWN','UP');
-									foreach($button_resistor_pulls_array as $button_resistor_pull) {
-										echo "<option value='" . $button_resistor_pull . "' " . ($config["conf_MENU_BUTTON_RESISTOR_PULL"] == $button_resistor_pull?" selected":"") . ">" . $button_resistor_pull . "</option>";
-									}
-								?>
-							</select>
-					</div>
 
 				<h3><?php echo L::config_hardware_fan_header; ?></h3>
 					<div>
