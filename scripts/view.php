@@ -25,6 +25,9 @@
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
+	$social_services	= trim(shell_exec('sudo python3 ' . $WORKING_DIR . '/lib_socialmedia.py --action get_social_services'));
+	$social_services	= explode("\n", $social_services);
+
 	include("sub-i18n-loader.php");
 
 	# read parameters
@@ -50,7 +53,26 @@
 		);
 	}
 
-	function navigator($view_mode, $imagecount, $filter_images_per_page, $select_offset, $filter_rating, $IMAGE_ID_PRE, $IMAGE_ID, $IMAGE_ID_POST, $IMAGE_ID_FIRST, $IMAGE_ID_LAST, $GET_PARAMETER, $order_by, $order_dir, $label_filename, $label_creationdate, $label_id, $slideshow_timer) {
+	function navigator(
+		$view_mode,
+		$imagecount,
+		$gridcolumns,
+		$filter_images_per_page,
+		$select_offset,
+		$filter_rating,
+		$IMAGE_ID_PRE,
+		$IMAGE_ID,
+		$IMAGE_ID_POST,
+		$IMAGE_ID_FIRST,
+		$IMAGE_ID_LAST,
+		$GET_PARAMETER,
+		$order_by,
+		$order_dir,
+		$label_filename,
+		$label_creationdate,
+		$label_id,
+		$slideshow_timer
+	) {
 		if ($view_mode == "grid") {
 			?>
 			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
@@ -117,6 +139,12 @@
 						<?php
 							if ($filter_rating == 1) {
 								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"delete_ratings_1\" class=\"danger\">" . L::view_ratings_1_delete_button . "</button>";
+							}
+
+							if ($gridcolumns > 1) {
+								echo ("<a href=\"{$GET_PARAMETER}&gridcolumns=1\" title=\"" . L::view_grid_single . "\"><svg width=\"2em\" height=\"2em\" class=\"flex-shrink-0\"><use href=\"#icon-columns-one\"></use></svg></a>");
+							} else {
+								echo ("<a href=\"{$GET_PARAMETER}&gridcolumns=0\" title=\"" . L::view_grid_multi . "\"><svg width=\"2em\" height=\"2em\" class=\"flex-shrink-0\"><use href=\"#icon-columns-multi\"></use></svg></a>");
 							}
 						?>
 					</div>
@@ -211,30 +239,38 @@
 		return($RATING);
 	}
 
-	function telegram_pannel($IMAGE_ID, $PUBLISH, $PUBLISHED) {
-		if ($PUBLISHED) {
-?>
-			<svg width="16" height="16" class="flex-shrink-0" aria-labelledby="tt-published">
-				<title id="tt-published"><?php echo L::view_telegram_published; ?></title>
-				<use href="#icon-telegram-published"></use>
+	function social_pannel($IMAGE_ID, $PUBLISH, $PUBLISHED) {
+		global $social_services;
+
+		$PUBLISH	= intval($PUBLISH);
+		$PUBLISHED	= intval($PUBLISHED);
+
+		foreach($social_services as $bit => $ServiceName) {
+
+		if ($PUBLISHED & (1 << $bit)) {
+			?>
+			<svg width="16" height="16" class="flex-shrink-0" aria-labelledby="published-<?php echo $bit; ?>">
+				<title id="published-<?php echo $bit; ?>"><?php echo L::view_social_published_on . ' ' . $ServiceName; ?></title>
+				<use href="#icon-social-published-<?php echo $bit; ?>"></use>
 			</svg>
-<?php
+			<?php
 		}
 
 ?>
 		<div class="d-flex align-items-center gap-2">
-			<label for="telegram_publish_<?php echo $IMAGE_ID; ?>" class="d-inline-flex align-items-center gap-1 m-0">
-				<input id="telegram_publish_<?php echo $IMAGE_ID; ?>" name="telegram_publish_<?php echo $IMAGE_ID; ?>" type="hidden" value=0>
-				<input id="telegram_publish_<?php echo $IMAGE_ID; ?>" name="telegram_publish_<?php echo $IMAGE_ID; ?>" type="checkbox" value=1 class="form-check-input m-0" <?php echo $PUBLISH?"checked":""; ?>>
+			<label for="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" class="d-inline-flex align-items-center gap-1 m-0">
+				<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="hidden" value=0>
+				<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="checkbox" value=1 class="form-check-input m-0" <?php echo ($PUBLISH & (1 << $bit))?"checked":""; ?> title="<?php echo L::view_social_publish_on . ' ' . $ServiceName; ?>">
 
-				<svg width="16" height="16" aria-labelledby="tt-publish">
-					<title id="tt-publish"><?php echo L::view_telegram_publish; ?></title>
-					<use href="#icon-telegram-publish"></use>
+				<svg width="16" height="16" aria-labelledby="publish-<?php echo $bit; ?>">
+					<title id="publish-on-<?php echo $bit; ?>"><?php echo L::view_social_publish_on . ' ' . $ServiceName; ?></title>
+					<use href="#icon-social-publish-<?php echo $bit; ?>"></use>
 				</svg>
 			</label>
 
   		</div>
 <?php
+		}
 	}
 
 
@@ -290,27 +326,29 @@
 			</div>
 			<div class="d-flex align-items-center gap-2 w-100 justify-content-end mt-1">
 		EOL;
-		echo telegram_pannel($IMAGE['ID'], $IMAGE['telegram_publish'], $IMAGE['telegram_published']);
+		echo social_pannel($IMAGE['ID'], $IMAGE['social_publish'], $IMAGE['social_published']);
 		echo "</div>";
 	}
 
-	function add_to_where($new_where,$target_array) {
+	function add_to_where($new_where, $not_where_restricted, $WHERE_VARIANTS) {
 		global $WHERE;
 
-		foreach ($target_array as $target) {
-			if ($WHERE[$target] != "") {
-				$WHERE[$target]	.= " and ";
-			} else {
-				$WHERE[$target]	= "where ";
-			}
+		foreach ($WHERE_VARIANTS as $WHERE_VARIANT) {
+			if ($WHERE_VARIANT != $not_where_restricted) {
+				if ($WHERE[$WHERE_VARIANT] != "") {
+					$WHERE[$WHERE_VARIANT]	.= " and ";
+				} else {
+					$WHERE[$WHERE_VARIANT]	= "where ";
+				}
 
-			$WHERE[$target]	.= "($new_where)";
+				$WHERE[$WHERE_VARIANT]	.= "($new_where)";
+			}
 		}
 	}
 
 	function update_row(SQLite3 $db, string $table, int $id, array $data): int {
 		// 1) allow collums from whitelist only
-		$allowed	=['LbbRating', 'Rating', 'Comment', 'telegram_publish'];
+		$allowed	=['LbbRating', 'Rating', 'Comment', 'social_publish'];
 		$data		= array_intersect_key($data, array_flip($allowed));
 
 		if (empty($data)) {
@@ -360,9 +398,11 @@
 
 // MAIN PART
 	# setup
-	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5,$constants['const_VIEW_GRID_COLUMNS']*10,$constants['const_VIEW_GRID_COLUMNS']*20,$constants['const_VIEW_GRID_COLUMNS']*50);
+	$IMAGES_PER_PAGE_OPTIONS	= array ($constants['const_VIEW_GRID_COLUMNS']*5, $constants['const_VIEW_GRID_COLUMNS']*10, $constants['const_VIEW_GRID_COLUMNS']*20, $constants['const_VIEW_GRID_COLUMNS']*50, $constants['const_VIEW_GRID_COLUMNS']*100);
 
 	# standard values
+	$gridcolumns					= isset($gridcolumns) ? (int)$gridcolumns : (int)$constants['const_VIEW_GRID_COLUMNS'];
+	$gridcolumns					= $gridcolumns > 0 ? $gridcolumns : (int)$constants['const_VIEW_GRID_COLUMNS'];
 	$filter_medium					= isset($filter_medium) ? $filter_medium : "-";
 	$view_mode						= isset($view_mode) ? $view_mode :  "grid";
 	$filter_images_per_page			= isset($filter_images_per_page) ? $filter_images_per_page :  $IMAGES_PER_PAGE_OPTIONS[1];
@@ -372,8 +412,10 @@
 	$filter_file_type				= isset($filter_file_type) ? $filter_file_type :  "all";
 	$filter_file_type_extension		= isset($filter_file_type_extension) ? $filter_file_type_extension :  "all";
 	$filter_camera_model_name		= isset($filter_camera_model_name) ? $filter_camera_model_name :  "all";
+	$filter_social_publish			= isset($filter_social_publish) ? $filter_social_publish : 'all';
 	$filter_variable_field			= isset($filter_variable_field) ? $filter_variable_field :  "";
 	$filter_variable_value			= isset($filter_variable_value) ? $filter_variable_value :  "";
+
 	$ID								= isset($ID) ? $ID :  0;
 	$IMAGE_ID						= isset($IMAGE_ID) ? $IMAGE_ID :  0;
 	$IMAGE_ID_PRE					= isset($IMAGE_ID_PRE) ? $IMAGE_ID_PRE :  0;
@@ -419,9 +461,13 @@
 		} elseif (substr($key, 0, 7 )=="comment") {
 			$ID_IMAGE	= explode("_",$key)[1];
  			$EDIT_ARRAY[$ID_IMAGE]["Comment"]	= trim((string)$val);
-		} elseif (substr($key, 0, 16 )=="telegram_publish") {
-			$ID_IMAGE	= explode("_",$key)[2];
- 			$EDIT_ARRAY[$ID_IMAGE]["telegram_publish"]	= trim((string)$val);
+		} elseif (substr($key, 0, 14 )=="social_publish") {
+				list($social, $publish, $ID_IMAGE, $BIT)	= explode("_", $key);
+				if (! isset($EDIT_ARRAY[$ID_IMAGE]["social_publish"])) {$EDIT_ARRAY[$ID_IMAGE]["social_publish"] = 0;}
+
+				if ((int)$val == 1) {
+					$EDIT_ARRAY[$ID_IMAGE]["social_publish"]	+= 2 ** (int)$BIT;
+				}
 		}
 	}
 
@@ -438,40 +484,47 @@
 		else {$filter_medium="internal";}
 	}
 
-	#generate WHERE
-	$WHERE['images']				= "";
-	$WHERE['directories']			= "";
-	$WHERE['dates']					= "";
-	$WHERE['ratings']				= "";
-	$WHERE['file_types']			= "";
-	$WHERE['file_type_extensions']	= "";
-	$WHERE['camera_model_name']		= "";
-	$WHERE['variable']				= "";
+	#generate WHEREs for filter options
+	$WHERE_VARIANTS	= array(
+		'images',
+		'directories',
+		'dates',
+		'ratings',
+		'file_types',
+		'file_type_extensions',
+		'camera_model_name',
+		'social_publish',
+		'variable'
+	);
+	foreach ($WHERE_VARIANTS as $WHERE_VARIANT) {
+		$WHERE[$WHERE_VARIANT]	= "";
+	}
 
 	if ($filter_directory != "") {
 		$filter_directory	= str_replace("+","=",$filter_directory);
 		$filter_directory	= base64_decode($filter_directory);
-
-		add_to_where("Directory='" . $filter_directory . "'",array('images','dates','ratings','file_types','file_type_extensions','camera_model_name','variable'));
+		if ($filter_directory != "all") {add_to_where("Directory='" . $filter_directory . "'", 'directories', $WHERE_VARIANTS);}
 	}
 
-	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'",array('images','directories','ratings','file_types','file_type_extensions','camera_model_name','variable'));}
+	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'", 'dates', $WHERE_VARIANTS);}
 
 	if (isset($delete_ratings_1)) {$filter_rating="all";} # after delete remove rating-filter
 
-	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating,array('images','dates','file_types','file_type_extensions','camera_model_name','directories'));}
+	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating, 'ratings', $WHERE_VARIANTS);}
 
-	if ($filter_file_type != "all") {add_to_where("File_Type = '" . $filter_file_type . "'",array('images','dates','ratings','file_type_extensions','camera_model_name','directories'));}
+	if ($filter_file_type != "all") {add_to_where("File_Type = '" . $filter_file_type . "'", 'file_types', $WHERE_VARIANTS);}
 
-	if ($filter_file_type_extension != "all") {add_to_where("File_Type_Extension = '" . $filter_file_type_extension . "'",array('images','dates','ratings','file_types','camera_model_name','directories'));}
+	if ($filter_file_type_extension != "all") {add_to_where("File_Type_Extension = '" . $filter_file_type_extension . "'", 'file_type_extensions', $WHERE_VARIANTS);}
 
-	if ($filter_camera_model_name != "all") {add_to_where("Camera_Model_Name = '" . $filter_camera_model_name . "'",array('images','dates','ratings','file_types','file_type_extensions','directories'));}
+	if ($filter_camera_model_name != "all") {add_to_where("Camera_Model_Name = '" . $filter_camera_model_name . "'" . ($filter_camera_model_name == '' ? ' OR Camera_Model_Name IS NULL' : ''), 'camera_model_name', $WHERE_VARIANTS);}
+
+	if ($filter_social_publish != "all") {add_to_where("(social_publish & (1 << $filter_social_publish)) != 0", 'social_publish', $WHERE_VARIANTS);}
 
 	if ($filter_variable_value != "") {
 		$filter_variable_value	= str_replace("+","=",$filter_variable_value);
 		$filter_variable_value	= base64_decode($filter_variable_value);
 
-		if (($filter_variable_field != "") and ($filter_variable_value != "")) {add_to_where($filter_variable_field . "='" . $filter_variable_value . "'",array('images','directories','dates','ratings','file_type_extensions','camera_model_name'));}
+		if (($filter_variable_field != "") and ($filter_variable_value != "")) {add_to_where($filter_variable_field . "='" . $filter_variable_value . "'", 'variable', $WHERE_VARIANTS);}
 	}
 
 	# generate select_limit
@@ -503,7 +556,7 @@
 
 		if (file_exists($DATABASE_FILE)) {
 			# check database
-			exec('sudo python3 ' . $WORKING_DIR . '/lib_view.py ' . $STORAGE_PATH);
+			exec('sudo python3 ' . $WORKING_DIR . '/lib_view.py --action init --mountpoint ' . $STORAGE_PATH);
 
 			try {
 
@@ -553,9 +606,9 @@
 					$UPDATE_ARRAY[$ID_IMAGE]['Comment']	= $EDIT_ARRAY[$ID_IMAGE]["Comment"];
 				}
 
-				# telegram_publish
-				if (isset($EDIT_ARRAY[$ID_IMAGE]["telegram_publish"])) {
-					$UPDATE_ARRAY[$ID_IMAGE]['telegram_publish']	= $EDIT_ARRAY[$ID_IMAGE]["telegram_publish"];
+				# social_upload
+				if (isset($EDIT_ARRAY[$ID_IMAGE]["social_publish"])) {
+					$UPDATE_ARRAY[$ID_IMAGE]['social_publish']	= $EDIT_ARRAY[$ID_IMAGE]["social_publish"];
 				}
 			}
 
@@ -588,7 +641,7 @@
 			}
 
 			# database-queries
-			$statement				= $db->prepare("SELECT ID FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . ";");
+			$statement			= $db->prepare("SELECT ID FROM EXIF_DATA " . $WHERE['images'] . " order by " . $order_by . " " . $order_dir . ";");
 			$IMAGES_ALL			= $statement->execute();
 
 			#get first and last ID, define offset
@@ -626,6 +679,26 @@
 
 			$statement				= $db->prepare("SELECT Camera_Model_Name, count (ID) as FILECOUNT FROM EXIF_DATA " . $WHERE['camera_model_name'] . " group by Camera_Model_Name order by Camera_Model_Name;");
 			$CAMERA_MODEL_NAMES		= $statement->execute();
+
+			$statement				= $db->prepare("WITH RECURSIVE bits(n, mask) AS (
+														SELECT 0, 1
+														UNION ALL
+														SELECT n + 1, mask << 1 FROM bits WHERE n < " . (count($social_services) - 1) . "
+													)
+													SELECT
+														n AS bit,
+														SUM( (social_publish & mask) != 0 ) AS set_count
+													FROM (
+														SELECT social_publish
+														FROM EXIF_DATA
+														" . ($WHERE['social_publish'] != '' ? $WHERE['social_publish'] . ' AND' : 'WHERE') . "
+														(social_publish > 0)
+														) AS rows
+													CROSS JOIN bits
+													GROUP BY n
+													HAVING SUM( (social_publish & mask) != 0 ) > 0
+													ORDER BY n;");
+			$SOCIAL_PUBLISHS		= $statement->execute();
 
 			$statement				= $db->prepare("PRAGMA table_info(EXIF_DATA);");
 			$VAR_FIELDS				= $statement->execute();
@@ -683,11 +756,13 @@
 	$GET_PARAMETER	.= "&order_by=$order_by";
 	$GET_PARAMETER	.= "&order_dir=$order_dir";
 	$GET_PARAMETER	.= "&filter_images_per_page=$filter_images_per_page";
-	if ($filter_directory != "") {$GET_PARAMETER	.= "&filter_directory=" . str_replace("=","+",base64_encode($filter_directory));}
-	if ($filter_date != "") {$GET_PARAMETER	.= "&filter_date=" . $filter_date;}
-	if ($filter_rating != "") {$GET_PARAMETER	.= "&filter_rating=$filter_rating";}
-	if ($filter_file_type_extension != "") {$GET_PARAMETER	.= "&filter_file_type_extension=$filter_file_type_extension";}
-	if ($filter_camera_model_name != "") {$GET_PARAMETER	.= "&filter_camera_model_name=$filter_camera_model_name";}
+	$GET_PARAMETER	.= "&gridcolumns=$gridcolumns";
+	if ($filter_directory != "all") {$GET_PARAMETER	.= "&filter_directory=" . str_replace("=","+",base64_encode($filter_directory));}
+	if ($filter_date != "all") {$GET_PARAMETER	.= "&filter_date=" . $filter_date;}
+	if ($filter_rating != "all") {$GET_PARAMETER	.= "&filter_rating=$filter_rating";}
+	if ($filter_file_type_extension != "all") {$GET_PARAMETER	.= "&filter_file_type_extension=$filter_file_type_extension";}
+	if ($filter_camera_model_name != "all") {$GET_PARAMETER	.= "&filter_camera_model_name=$filter_camera_model_name";}
+	if ($filter_social_publish != "all") {$GET_PARAMETER	.= "&filter_social_publish=$filter_social_publish";}
 	if ($filter_variable_field != "") {$GET_PARAMETER	.= "&filter_variable_field=$filter_variable_field";}
 	if ($filter_variable_value != "") {$GET_PARAMETER	.= "&filter_variable_value=" . str_replace("=","+",base64_encode($filter_variable_value));}
 
@@ -697,11 +772,14 @@
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_by\" value=\"" . $order_by . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"order_dir\" value=\"" . $order_dir . "\">";
 	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_images_per_page\" value=\"" . $filter_images_per_page . "\">";
-	if ($filter_directory != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_directory\" value=\"" . str_replace("=","+",base64_encode($filter_directory)) . "\">";}
-	if ($filter_date != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_date\" value=\"" . $filter_date . "\">";}
-	if ($filter_rating != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_rating\" value=\"" . $filter_rating . "\">";}
-	if ($filter_file_type_extension != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_file_type_extension\" value=\"" . $filter_file_type_extension . "\">";}
-	if ($filter_camera_model_name != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_camera_model_name\" value=\"" . $filter_camera_model_name . "\">";}
+	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"gridcolumns\" value=\"" . $gridcolumns . "\">";
+	$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"ID\" value=\"" . $ID . "\">";
+	if ($filter_directory != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_directory\" value=\"" . str_replace("=","+",base64_encode($filter_directory)) . "\">";}
+	if ($filter_date != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_date\" value=\"" . $filter_date . "\">";}
+	if ($filter_rating != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_rating\" value=\"" . $filter_rating . "\">";}
+	if ($filter_file_type_extension != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_file_type_extension\" value=\"" . $filter_file_type_extension . "\">";}
+	if ($filter_camera_model_name != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_camera_model_name\" value=\"" . $filter_camera_model_name . "\">";}
+	if ($filter_social_publish != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_social_publish\" value=\"" . $filter_social_publish . "\">";}
 	if ($filter_variable_field != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_variable_field\" value=\"" . $filter_variable_field . "\">";}
 	if ($filter_variable_value != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_variable_value\" value=\"" . str_replace("=","+",base64_encode($filter_variable_value)) . "\">";}
 ?>
@@ -730,22 +808,78 @@
 
 <!-- 	icons -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+
+	<symbol id="icon-columns-one" viewBox="0 0 24 24">
+		<rect x="3" y="3" width="18" height="5" rx="1" fill="#8BD3FF"/>
+		<rect x="3" y="6.4" width="18" height="1.2" fill="#2AA1FF" opacity=".85"/>
+		<circle cx="6.2" cy="4.6" r="0.8" fill="#FFD34D"/>
+		<path d="M3 8 L8.2 4.2 L12 8 Z" fill="#2E7D32"/>
+
+		<rect x="3" y="9.5" width="18" height="5" rx="1" fill="#A3E1FF"/>
+		<circle cx="12" cy="10.3" r="0.8" fill="#FFC94A"/>
+		<path d="M3 14.5 L7.2 10.6 L10 12.7 L13.2 10.2 L21 14.5 Z" fill="#3FA34D"/>
+
+		<rect x="3" y="16" width="18" height="5" rx="1" fill="#7BC6FF"/>
+		<circle cx="19" cy="17" r="0.7" fill="#FFB84C"/>
+		<path d="M3 21 L10 16.5 L13.8 18.8 L21 21 Z" fill="#4C8B3F"/>
+	</symbol>
+
+	<symbol id="icon-columns-multi" viewBox="0 0 24 24">
+		<rect x="3" y="3" width="5" height="5" rx="0.8" fill="#8BD3FF"/>
+		<circle cx="7.4" cy="3.8" r="0.5" fill="#FFD34D"/>
+		<path d="M3 8 L5.2 3.8 L8 8 Z" fill="#3D8B3D"/>
+
+		<rect x="9.5" y="3" width="5" height="5" rx="0.8" fill="#A3E1FF"/>
+		<path d="M9.5 8 L11.2 6.2 L12.6 6.8 L14 5.6 L14.5 5.9 L14.5 8 Z" fill="#409E4D"/>
+		<circle cx="13.8" cy="3.7" r="0.45" fill="#FFC94A"/>
+
+		<rect x="16" y="3" width="5" height="5" rx="0.8" fill="#7BC6FF"/>
+		<rect x="16" y="6.1" width="5" height="1.1" fill="#2AA1FF" opacity=".9"/>
+		<path d="M16 8 L18.6 4.6 L21 8 Z" fill="#2F7A33"/>
+		<circle cx="20.2" cy="3.7" r="0.45" fill="#FFD34D"/>
+
+		<rect x="3" y="9.5" width="5" height="5" rx="0.8" fill="#A8E6FF"/>
+		<path d="M3 14.5 L5 10.6 L6.3 12.3 L8 10.2 L8 14.5 Z" fill="#3FA34D"/>
+		<circle cx="6.8" cy="10.2" r="0.45" fill="#FFB84C"/>
+
+		<rect x="9.5" y="9.5" width="5" height="5" rx="0.8" fill="#8BD3FF"/>
+		<circle cx="10.1" cy="10.1" r="0.45" fill="#FFD34D"/>
+		<path d="M9.5 14.5 L12.2 11.1 L14.5 12.9 L14.5 14.5 Z" fill="#4B9650"/>
+
+		<rect x="16" y="9.5" width="5" height="5" rx="0.8" fill="#9EDCFF"/>
+		<rect x="16" y="12.5" width="5" height="0.9" fill="#2AA1FF" opacity=".85"/>
+		<path d="M16 14.5 L17.6 12.4 L19 12.9 L20.4 11.8 L21 12.1 L21 14.5 Z" fill="#3E8E45"/>
+
+		<rect x="3" y="16" width="5" height="5" rx="0.8" fill="#7FCFFF"/>
+		<circle cx="7.6" cy="16.6" r="0.45" fill="#FFC94A"/>
+		<path d="M3 21 L5.9 17.5 L8 19.2 L8 21 Z" fill="#3D8741"/>
+
+		<rect x="9.5" y="16" width="5" height="5" rx="0.8" fill="#A3E1FF"/>
+		<circle cx="12" cy="16.7" r="0.45" fill="#FFD34D"/>
+		<path d="M9.5 21 L11.1 18.3 L12.3 19.1 L13.7 17.6 L14.5 18.1 L14.5 21 Z" fill="#449C4E"/>
+
+		<rect x="16" y="16" width="5" height="5" rx="0.8" fill="#71C0FF"/>
+		<path d="M16 21 L18.8 18.2 L19.9 19.1 L21 18.4 L21 21 Z" fill="#2F7A33"/>
+		<circle cx="20.5" cy="16.7" r="0.42" fill="#FFB84C"/>
+	</symbol>
+
 	<symbol id="icon-comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 		<path d="M21 15a4 4 0 0 1-4 4H9l-4 4v-4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"/>
 		<circle cx="10" cy="11" r="1.25"/><circle cx="14" cy="11" r="1.25"/><circle cx="18" cy="11" r="1.25"/>
 	</symbol>
 
-	<symbol id="icon-telegram-publish" viewBox="0 0 24 24">
+	<symbol id="icon-social-publish-0" viewBox="0 0 24 24">
 		<path d="M2 12L22 3l-6.5 17L12 13 7 18 6 11z" fill="#0d6efd"/>
 		<circle cx="18" cy="18" r="5" fill="#6c757d"/>
 		<path d="M18 21v-5M16.5 16.5L18 15l1.5 1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 	</symbol>
 
-	<symbol id="icon-telegram-published" viewBox="0 0 24 24">
+	<symbol id="icon-social-published-0" viewBox="0 0 24 24">
 		<path d="M2 12L22 3l-6.5 17L12 13 7 18 6 11z" fill="#0d6efd"/>
 		<circle cx="18" cy="18" r="5" fill="#198754"/>
 		<path d="M16.5 18l1.5 1.5L20 17" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 	</symbol>
+
 </svg>
 
 <!-- FILTER -->
@@ -755,6 +889,7 @@
 			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 				<input type="hidden" name="order_by" value="<?php echo $order_by; ?>">
 				<input type="hidden" name="order_dir" value="<?php echo $order_dir; ?>">
+				<input type="hidden" name="gridcolumns" value="<?php echo $gridcolumns; ?>">
 
 				<div style="display: flow-root">
 					<div style="float:left;padding: 5px;">
@@ -787,12 +922,13 @@
 					</div>
 				</div>
 
-				<div style="display: flow-root">
-					<?php if ($DATABASE_CONNECTED) { ?>
+				<?php if ($DATABASE_CONNECTED) { ?>
+					<div style="display: flow-root">
+
 						<div style="float:left;padding: 5px;">
 							<label for="filter_date"><?php echo L::view_filter_date; ?></label><br>
 								<select name="filter_date" id="filter_date" onchange="this.form.submit()">
-									<option value="all" <?php echo ($filter_date == ""?" selected":""); ?>>-</option>
+									<option value="all" <?php echo ($filter_date == "all"?" selected":""); ?>>-</option>
 									<?php
 										while ($DATE = $DATES->fetchArray(SQLITE3_ASSOC)) {
 											echo "<option value=\"" . $DATE['Create_Day'] . "\" " . ($filter_date == $DATE['Create_Day']?" selected":"") . ">" . $DATE['Create_Day'] . " (" . $DATE['FILECOUNT'] . ")</option>";
@@ -800,86 +936,90 @@
 									?>
 								</select>
 						</div>
-					<?php } ?>
 
-					<?php if ($DATABASE_CONNECTED) { ?>
 						<div style="float:right;padding: 5px;">
 							<label for="filter_rating"><?php echo L::view_filter_rating; ?></label><br>
 								<select name="filter_rating" id="filter_rating" onchange="this.form.submit()">
+									<option value="all" <?php echo ($filter_rating == "all"?" selected":""); ?>><?php echo L::view_filter_rating_all; ?></option>
 									<?php
-										echo "<option value=\"all\">" . L::view_filter_rating_all . "</option>";
 										while ($RATING = $RATINGS->fetchArray(SQLITE3_ASSOC)) {
 											echo "<option value=\"" . $RATING['LbbRating'] . "\" " . ($filter_rating == $RATING['LbbRating']?" selected":"") . ">" . $RATING['LbbRating'] . " " . L::view_filter_rating_stars . " (" . $RATING['FILECOUNT'] . ")</option>";
 										}
 									?>
 								</select>
 						</div>
-					<?php } ?>
-				</div>
+					</div>
 
-				<div style="display: flow-root">
-					<?php if ($DATABASE_CONNECTED) { ?>
-						<div style="float:left;padding: 5px;">
-							<label for="filter_file_type"><?php echo L::view_filter_file_type; ?></label><br>
-								<select name="filter_file_type" id="filter_file_type" onchange="this.form.submit()">
-									<option value="all" <?php echo ($filter_file_type == ""?" selected":""); ?>>-</option>
-									<?php
-										while ($FILE_TYPE = $FILE_TYPES->fetchArray(SQLITE3_ASSOC)) {
-											echo "<option value=\"" . $FILE_TYPE['File_Type'] . "\" " . ($filter_file_type == $FILE_TYPE['File_Type']?" selected":"") . ">" . $FILE_TYPE['File_Type'] . " (" . $FILE_TYPE['FILECOUNT'] . ")</option>";
-										}
-									?>
-								</select>
-						</div>
-					<?php } ?>
+					<div style="display: flow-root">
+							<div style="float:left;padding: 5px;">
+								<label for="filter_file_type"><?php echo L::view_filter_file_type; ?></label><br>
+									<select name="filter_file_type" id="filter_file_type" onchange="this.form.submit()">
+										<option value="all" <?php echo ($filter_file_type == "all"?" selected":""); ?>>-</option>
+										<?php
+											while ($FILE_TYPE = $FILE_TYPES->fetchArray(SQLITE3_ASSOC)) {
+												echo "<option value=\"" . $FILE_TYPE['File_Type'] . "\" " . ($filter_file_type == $FILE_TYPE['File_Type']?" selected":"") . ">" . $FILE_TYPE['File_Type'] . " (" . $FILE_TYPE['FILECOUNT'] . ")</option>";
+											}
+										?>
+									</select>
+							</div>
 
-					<?php if ($DATABASE_CONNECTED) { ?>
-						<div style="float:left;padding: 5px;">
-							<label for="filter_file_type_extension"><?php echo L::view_filter_file_type_extension; ?></label><br>
-								<select name="filter_file_type_extension" id="filter_file_type_extension" onchange="this.form.submit()">
-									<option value="all" <?php echo ($filter_file_type_extension == ""?" selected":""); ?>>-</option>
-									<?php
-										while ($FILE_TYPE_EXTENSION = $FILE_TYPE_EXTENSIONS->fetchArray(SQLITE3_ASSOC)) {
-											echo "<option value=\"" . $FILE_TYPE_EXTENSION['File_Type_Extension'] . "\" " . ($filter_file_type_extension == $FILE_TYPE_EXTENSION['File_Type_Extension']?" selected":"") . ">" . $FILE_TYPE_EXTENSION['File_Type_Extension'] . " (" . $FILE_TYPE_EXTENSION['FILECOUNT'] . ")</option>";
-										}
-									?>
-								</select>
-						</div>
-					<?php } ?>
+							<div style="float:left;padding: 5px;">
+								<label for="filter_file_type_extension"><?php echo L::view_filter_file_type_extension; ?></label><br>
+									<select name="filter_file_type_extension" id="filter_file_type_extension" onchange="this.form.submit()">
+										<option value="all" <?php echo ($filter_file_type_extension == "all"?" selected":""); ?>>-</option>
+										<?php
+											while ($FILE_TYPE_EXTENSION = $FILE_TYPE_EXTENSIONS->fetchArray(SQLITE3_ASSOC)) {
+												echo "<option value=\"" . $FILE_TYPE_EXTENSION['File_Type_Extension'] . "\" " . ($filter_file_type_extension == $FILE_TYPE_EXTENSION['File_Type_Extension']?" selected":"") . ">" . $FILE_TYPE_EXTENSION['File_Type_Extension'] . " (" . $FILE_TYPE_EXTENSION['FILECOUNT'] . ")</option>";
+											}
+										?>
+									</select>
+							</div>
 
-					<?php if ($DATABASE_CONNECTED) { ?>
-						<div style="float:right;padding: 5px;">
-							<label for="filter_rating"><?php echo L::view_filter_camera_model_name; ?></label><br>
-								<select name="filter_camera_model_name" id="filter_camera_model_name" onchange="this.form.submit()">
-									<?php
-										echo "<option value=\"all\">-</option>";
-										while ($CAMERA_MODEL_NAME = $CAMERA_MODEL_NAMES->fetchArray(SQLITE3_ASSOC)) {
-											echo "<option value=\"" . $CAMERA_MODEL_NAME['Camera_Model_Name'] . "\" " . ($filter_camera_model_name == $CAMERA_MODEL_NAME['Camera_Model_Name']?" selected":"") . ">" . $CAMERA_MODEL_NAME['Camera_Model_Name'] . " (" . $CAMERA_MODEL_NAME['FILECOUNT'] . ")</option>";
-										}
-									?>
-								</select>
-						</div>
-					<?php } ?>
+							<div style="float:right;padding: 5px;">
+								<label for="filter_rating"><?php echo L::view_filter_camera_model_name; ?></label><br>
+									<select name="filter_camera_model_name" id="filter_camera_model_name" onchange="this.form.submit()">
+										<option value="all" <?php echo ($filter_camera_model_name == "all"?" selected":""); ?>>-</option>
+										<?php
+											while ($CAMERA_MODEL_NAME = $CAMERA_MODEL_NAMES->fetchArray(SQLITE3_ASSOC)) {
+												$camera = $CAMERA_MODEL_NAME['Camera_Model_Name'] == '' ? '-' : $CAMERA_MODEL_NAME['Camera_Model_Name'];
+												echo "<option value=\"" . $CAMERA_MODEL_NAME['Camera_Model_Name'] . "\" " . ($filter_camera_model_name == $CAMERA_MODEL_NAME['Camera_Model_Name']?" selected":"") . ">" . $camera . " (" . $CAMERA_MODEL_NAME['FILECOUNT'] . ")</option>";
+											}
+										?>
+									</select>
+							</div>
 
-				</div>
+					</div>
 
-				<div style="display: flow-root">
-					<?php if ($DATABASE_CONNECTED) { ?>
-						<div style="float:left;padding: 5px;">
-							<label for="filter_directory"><?php echo L::view_filter_directory; ?></label><br>
-								<select name="filter_directory" id="filter_directory" onchange="this.form.submit()">
-									<option value="" <?php echo ($filter_directory == ""?" selected":""); ?>>/</option>
-									<?php
-										while ($DIRECTORY = $DIRECTORIES->fetchArray(SQLITE3_ASSOC)) {
-											echo "<option value=\"" . str_replace("=","+",base64_encode($DIRECTORY['Directory'])) . "\" " . ($filter_directory == $DIRECTORY['Directory']?" selected":"") . ">" . str_replace($STORAGE_PATH,"",$DIRECTORY['Directory']) . " (" . $DIRECTORY['FILECOUNT'] . ")</option>";
-										}
-									?>
-								</select>
-						</div>
-					<?php } ?>
-				</div>
+					<div style="display: flow-root">
+							<div style="float:left;padding: 5px;">
+								<label for="filter_directory"><?php echo L::view_filter_directory; ?></label><br>
+									<select name="filter_directory" id="filter_directory" onchange="this.form.submit()">
+										<option value="<?php echo str_replace("=","+",base64_encode('all')); ?>" <?php echo ($filter_directory == "all"?" selected":""); ?>>/</option>
+										<?php
+											while ($DIRECTORY = $DIRECTORIES->fetchArray(SQLITE3_ASSOC)) {
+												echo "<option value=\"" . str_replace("=","+",base64_encode($DIRECTORY['Directory'])) . "\" " . ($filter_directory == $DIRECTORY['Directory']?" selected":"") . ">" . str_replace($STORAGE_PATH,"",$DIRECTORY['Directory']) . " (" . $DIRECTORY['FILECOUNT'] . ")</option>";
+											}
+										?>
+									</select>
+							</div>
+					</div>
 
-				<div style="display: flow-root">
-					<?php if ($DATABASE_CONNECTED) { ?>
+					<div style="display: flow-root">
+							<div style="float:left;padding: 5px;">
+								<label for="filter_social_publish"><?php echo L::view_filter_social_publish; ?></label><br>
+									<select name="filter_social_publish" id="filter_social_publish" onchange="this.form.submit()">
+										<option value="all" <?php echo ($filter_social_publish == "all"?" selected":""); ?>>-</option>
+										<?php
+											while ($SOCIAL_PUBLISH = $SOCIAL_PUBLISHS->fetchArray(SQLITE3_ASSOC)) {
+												$SocialServiceName	= isset($social_services[$SOCIAL_PUBLISH['bit']]) ? $social_services[$SOCIAL_PUBLISH['bit']] : '?';
+												echo "<option value=\"" . $SOCIAL_PUBLISH['bit'] . "\" " . ($filter_social_publish == $SOCIAL_PUBLISH['bit']?" selected":"") . ">" . $SocialServiceName . " (" . $SOCIAL_PUBLISH['set_count'] . ")</option>";
+											}
+										?>
+									</select>
+							</div>
+					</div>
+
+					<div style="display: flow-root">
 						<div style="float:left;padding: 5px;">
 							<label for="filter_variable_field"><?php echo L::view_filter_variable; ?></label><br>
 								<select name="filter_variable_field" id="filter_variable_field" onchange="this.form.submit()">
@@ -910,8 +1050,9 @@
 									}
 								?>
 						</div>
-					<?php } ?>
-				</div>
+					</div>
+
+				<?php } ?>
 
 			</form>
 		</details>
@@ -923,7 +1064,26 @@
 
 		<?php
 			echo $HIDDEN_INPUTS;
-			navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id, $slideshow_timer);
+			navigator(
+				$view_mode,
+				$imagecount,
+				$gridcolumns,
+				$filter_images_per_page,
+				$select_offset,
+				$filter_rating,
+				$IMAGE_ID_PRE,
+				$IMAGE_ID,
+				$IMAGE_ID_POST,
+				$IMAGE_ID_FIRST,
+				$IMAGE_ID_LAST,
+				$GET_PARAMETER,
+				$order_by,
+				$order_dir,
+				L::view_filter_order_by_filename,
+				L::view_filter_order_by_creationdate,
+				L::view_filter_order_by_id,
+				$slideshow_timer
+			);
 		?>
 
 		<div class="card" style="margin-top: 2em;display: inline-block">
@@ -966,12 +1126,12 @@
 							?>
 
 
-								<div style="width: <?php echo 100/$constants['const_VIEW_GRID_COLUMNS']-1; ?>%;" class="floating">
+								<div style="width: <?php echo 100/$gridcolumns-1; ?>%;margin-bottom: 3em;" class="floating">
 
 									<div style="width: 100%" title="<?php echo $IMAGE['File_Name']; ?>">
 										<?php
 											if (($order_by == 'Create_Date') and ($LAST_DATE !== $IMAGE_DATE)) {
-												echo '<b>' . $IMAGE_DATE . '</b>';
+												echo '<b>' . $IMAGE_DATE . '</b><br>';
 												$LAST_DATE	= $IMAGE_DATE;
 											}
 										?>
@@ -993,7 +1153,7 @@
 												<?php
 											}
 
-											echo telegram_pannel($IMAGE['ID'], $IMAGE['telegram_publish'], $IMAGE['telegram_published']);
+											echo social_pannel($IMAGE['ID'], $IMAGE['social_publish'], $IMAGE['social_published']);
 										?>
 
 									</div>
@@ -1146,7 +1306,26 @@
 
 		</div>
 
-		<?php navigator($view_mode,$imagecount,$filter_images_per_page,$select_offset,$filter_rating,$IMAGE_ID_PRE,$IMAGE_ID,$IMAGE_ID_POST,$IMAGE_ID_FIRST,$IMAGE_ID_LAST,$GET_PARAMETER,$order_by,$order_dir,L::view_filter_order_by_filename,L::view_filter_order_by_creationdate,L::view_filter_order_by_id, $slideshow_timer); ?>
+		<?php navigator(
+			$view_mode,
+			$imagecount,
+			$gridcolumns,
+			$filter_images_per_page,
+			$select_offset,
+			$filter_rating,
+			$IMAGE_ID_PRE,
+			$IMAGE_ID,
+			$IMAGE_ID_POST,
+			$IMAGE_ID_FIRST,
+			$IMAGE_ID_LAST,
+			$GET_PARAMETER,
+			$order_by,
+			$order_dir,
+			L::view_filter_order_by_filename,
+			L::view_filter_order_by_creationdate,
+			L::view_filter_order_by_id,
+			$slideshow_timer
+		); ?>
 
 	</form>
 

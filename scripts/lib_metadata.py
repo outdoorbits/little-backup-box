@@ -27,6 +27,9 @@ from typing import Optional
 
 import lib_setup
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class ExiftoolError(RuntimeError):
 	pass
 
@@ -71,7 +74,7 @@ class MetadataTool:
 	def _sidecar_for_raw(self, raw_path: Path, rating: Optional[int], description: Optional[str]) -> None:
 		# Create/update <basename>.xmp next to RAW.
 
-		xmp_path = raw_path.with_suffix(".xmp")
+		xmp_path = raw_path.with_suffix('.xmp')
 
 		def fallback_grouped(src_file: str, dest: str, sources: list[str]) -> list[str]:
 			# One grouped fallback:
@@ -82,8 +85,15 @@ class MetadataTool:
 				args.append(f"-{dest}<{source}")
 			return args
 
-		# Common options
-		common = ["-P", "-use", "MWG", "-api", "QuickTimeUTC=1", "-wm", "cg"]
+		# step 1:
+		common = [
+			"-P",
+			"-use", "MWG",
+			"-api",
+			"QuickTimeUTC=1",
+			"-wm",
+			"cg"
+		]
 
 		if xmp_path.exists():
 			# Update existing sidecar in place
@@ -107,27 +117,34 @@ class MetadataTool:
 			self._run_exiftool(args, context=f"create sidecar {xmp_path.name}")
 
 
-		# Step 2: Apply optional fields.
-		set_cmd = ["-overwrite_original"]  # operate on the sidecar we just created
+		# step 2: Add fields
+		update_command = ["-overwrite_original"]  # operate on the sidecar we just created
 
 		if rating is not None:
 			self._normalize_rating(rating)
-			set_cmd.append(f"-XMP-xmp:Rating={rating}")
+			update_command.append(f"-XMP-xmp:Rating={rating}")
 
 		if description is not None:
 			# XMP supports UTF-8 and multi-line content natively.
-			set_cmd.append(f"-XMP-dc:Description={description}")
+			update_command.append(f"-XMP-dc:Description={description}")
 
-		if len(set_cmd) > 1:
-			set_cmd.append(str(xmp_path))
-			self._run_exiftool(set_cmd, context=f"set fields in {xmp_path.name}")
+		if len(update_command) > 1:
+			update_command.append(str(xmp_path))
+			self._run_exiftool(update_command, context=f"set fields in {xmp_path.name}")
 
-	# ---------- Non-RAW → embed ----------
-
+	# ---------- Non-RAW -> embed ----------
 	def _embed_into_image(self, image_path: Path, rating: Optional[int], description: Optional[str]) -> None:
 		# Embed metadata into a non-RAW image.
 
-		cmd_basic	= ["-overwrite_original","-P","-use","MWG","-api","QuickTimeUTC=1","-wm","cg"]
+		cmd_basic	= [
+			"-overwrite_original",
+			"-P",
+			"-use","MWG",
+			"-api",
+			"QuickTimeUTC=1",
+			"-wm",
+			"cg"
+		]
 
 		cmd_ext		= []
 		if rating is not None:
@@ -147,9 +164,6 @@ class MetadataTool:
 			cmd.append(str(image_path))
 
 			self._run_exiftool(cmd, context=f"embed metadata into {image_path.name}")
-
-
-	# ---------- Helpers ----------
 
 	def _run_exiftool(self, args: list[str], context: str = "") -> None:
 		if self.dry:

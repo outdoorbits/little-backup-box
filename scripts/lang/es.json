@@ -67,7 +67,10 @@
       "exif": "Actualizar datos EXIF",
       "sync": "Sincronizar base de datos"
     },
-    "file_operations": "Operaciones de archivos"
+    "file_operations": "Operaciones de archivos",
+    "telegram": {
+      "telegram": "Telegram&reg;"
+    }
   },
   "sysinfo": {
     "temp": "Temperatura",
@@ -573,8 +576,8 @@
         "validate": "controlar",
         "delete": "borrar",
         "clean": "limpiar",
-        "cloud_telegram": "Telegram",
-        "telegram": "Telegram"
+        "social": "sociales",
+        "social_telegram": "telegram&reg;"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Fuente USB",
@@ -768,7 +771,8 @@
       "medium_source_usb": "USB local",
       "medium_target_usb": "USB local",
       "medium_source_nvme": "Origen NVMe local",
-      "medium_target_nvme": "Destino NVMe local"
+      "medium_target_nvme": "Destino NVMe local",
+      "social_publish": "Marcado para subir"
     },
     "images": {
       "download": "Descargar originales",
@@ -793,11 +797,15 @@
     },
     "ratings_save_button_next": "próximo",
     "ratings_save_button_back": "atrás",
-    "telegram": {
-      "published": "Publicado en Telegram",
-      "publish": "Marcar para publicación en Telegram"
+    "date_format_python": "Xd/Xm/XY XH:XM:XS",
+    "social": {
+      "publish_on": "Marcar para publicación en",
+      "published_on": "Publicado en"
     },
-    "date_format_python": "Xd/Xm/XY XH:XM:XS"
+    "grid": {
+      "multi": "multicolumna",
+      "single": "una sola columna"
+    }
   },
   "units": {
     "minutes_long": "minutos",

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import argparse
+import asyncio
 from datetime import datetime
 import os
 from telegram import Bot
@@ -11,6 +13,12 @@ import lib_time
 
 # import lib_debug
 # xx	= lib_debug.debug()
+
+def get_social_services():
+	social_services	= [
+		'telegram'
+	]
+	return(social_services)
 
 class socialmedia(object):
 
@@ -28,7 +36,7 @@ class socialmedia(object):
 		self.EXTENSIONS_LIST_PHOTO	= EXTENSIONS_LIST_PHOTO.split(';')
 
 	def configured(self):
-		return(self.SERVICE_Obj.configured())
+		return(False if self.SERVICE_Obj is None else self.SERVICE_Obj.configured())
 
 	def __format_DateTime(self, Create_Date):
 		if isinstance(Create_Date, datetime):
@@ -77,8 +85,9 @@ class socialmedia(object):
 
 		if msgtype and self.SERVICE_Obj:
 			self.SERVICE_Obj.publish(msgtype=msgtype, Comment=Comment, FilePath=FilePath)
+			return({'ok': self.SERVICE_Obj.ok, 'msg': self.SERVICE_Obj.returnmessage})
 		else:
-			return(False)
+			return({'ok': False, 'msg': f'msgtype={msgtype}, self.SERVICE_Obj={self.SERVICE_Obj}'})
 
 ###############################################################################################
 # social media service objects must have
@@ -88,7 +97,6 @@ class socialmedia(object):
 ###############################################################################################
 
 class telegram(object):
-	import asyncio
 
 	def __init__(self, TOKEN, CHAT_ID):
 
@@ -99,6 +107,9 @@ class telegram(object):
 		self.TOKEN		= TOKEN
 		self.CHAT_ID	= CHAT_ID
 
+		self.ok				= False
+		self.returnmessage	= ''
+
 	def configured(self):
 		return(self.TOKEN.strip() and self.CHAT_ID != 0)
 
@@ -107,9 +118,14 @@ class telegram(object):
 		if msgtype == 'text':
 			try:
 				await self.bot.send_message(chat_id=self.CHAT_ID, text=Comment)
-				return({'ok': True, 'msg': msg})
+
+				self.ok				= True
+				self.returnmessage	= msgtype
+				return
 			except:
-				return({'ok': False, 'msg': Comment})
+				self.ok				= False
+				self.returnmessage	= msgtype
+				return
 
 		elif msgtype == 'video':
 			try:
@@ -120,9 +136,14 @@ class telegram(object):
 						caption=Comment,
 						supports_streaming=True
 					)
-				return({'ok': True, 'msg': os.path.basename(FilePath)})
+
+				self.ok				= True
+				self.returnmessage	= os.path.basename(FilePath)
+				return
 			except:
-				return({'ok': False, 'msg': os.path.basename(FilePath)})
+				self.ok				= False
+				self.returnmessage	= os.path.basename(FilePath)
+				return
 
 		elif msgtype == 'audio':
 			try:
@@ -132,9 +153,14 @@ class telegram(object):
 						voice=media_file,
 						caption=Comment
 					)
-				return({'ok': True, 'msg': os.path.basename(FilePath)})
+
+				self.ok				= True
+				self.returnmessage	= os.path.basename(FilePath)
+				return
 			except:
-				return({'ok': False, 'msg': os.path.basename(FilePath)})
+				self.ok				= False
+				self.returnmessage	= os.path.basename(FilePath)
+				return
 
 		elif msgtype == 'photo':
 			try:
@@ -144,9 +170,14 @@ class telegram(object):
 						photo=media_file,
 						caption=Comment
 					)
-				return({'ok': True, 'msg': os.path.basename(FilePath)})
+
+				self.ok				= True
+				self.returnmessage	= os.path.basename(FilePath)
+				return
 			except:
-				return({'ok': False, 'msg': os.path.basename(FilePath)})
+				self.ok				= False
+				self.returnmessage	= os.path.basename(FilePath)
+				return
 
 		elif msgtype == 'document':
 			try:
@@ -156,20 +187,54 @@ class telegram(object):
 						document=media_file,
 						caption=Comment
 					)
-				return({'ok': True, 'msg': os.path.basename(FilePath)})
+
+				self.ok				= True
+				self.returnmessage	= os.path.basename(FilePath)
+				return
 			except:
-				return({'ok': False, 'msg': os.path.basename(FilePath)})
+				self.ok				= False
+				self.returnmessage	= os.path.basename(FilePath)
+				return
 
 	def publish(self, msgtype, Comment='', FilePath=None):
 
 		if self.configured():
-			self.bot = Bot(token=self.TOKEN)
+			self.bot	= Bot(token=self.TOKEN)
 		else:
-			return(False)
+			self.ok				= False
+			self.returnmessage	= 'not configured'
+			return
 
 		try:
 			asyncio.get_running_loop()
 		except RuntimeError:
-			return asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
+			asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
 		else:
 			raise RuntimeError("publish() called from async-context – please use 'await publish_async(...)'.")
+
+def parse_args() -> argparse.Namespace:
+	parser = argparse.ArgumentParser(
+		description="view database related tools",
+		formatter_class=argparse.RawTextHelpFormatter,
+	)
+
+	actions	= ['get_social_services']
+	parser.add_argument(
+		'--action',
+		'-a',
+		choices		= actions,
+		required =	True,
+		help=f'One of {actions}'
+	)
+
+	args = parser.parse_args()
+
+	return args
+
+if __name__ == "__main__":
+	args = parse_args()
+
+	if args.action == 'get_social_services':
+		social_services	= get_social_services()
+
+		print("\n".join(social_services))

@@ -78,6 +78,9 @@ class menu(object):
 		self.RCLONE_CONFIG_FILE							= f"{self.const_MEDIA_DIR}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 		self.const_MENU_TIMEOUT_SEC						= self.__setup.get_val('const_MENU_TIMEOUT_SEC')
 
+		self.conf_TELEGRAM_TOKEN						= self.__setup.get_val('conf_TELEGRAM_TOKEN')
+		self.conf_TELEGRAM_CHAT_ID						= self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
+
 		self.buttons	= {}
 
 		## menu-types:
@@ -113,6 +116,13 @@ class menu(object):
 		## ftp
 		cloudservices.append('ftp')
 
+		## social media
+		socialservices	= []
+
+		### telegram
+		if self.conf_TELEGRAM_TOKEN and int(self.conf_TELEGRAM_CHAT_ID) != 0:
+			socialservices.append('social:telegram')
+
 		# generate menues
 		BACKUP_SOURCES_MENU		= []
 
@@ -120,29 +130,32 @@ class menu(object):
 			BACKUP_SOURCE_MENU	= []
 
 			# format service parameters
-			sourceType, sourceCloudServiceName		= lib_storage.extractCloudService(source)
+			SourceType, SourceServiceName		= lib_storage.extractService(source)
 
-			if sourceType == 'cloud':
-				sourceName	= sourceCloudServiceName
+			if SourceType == 'cloud':
+				sourceName	= SourceServiceName
 			else:
-				sourceName	= self.__lan.l(f'box_menu_backup_mode_{sourceType}')
+				sourceName	= self.__lan.l(f'box_menu_backup_mode_{SourceType}')
 
-			for target in (local_services + cloudservices):
+			for target in (local_services + cloudservices + socialservices):
 
 				# check for invalid combinations of Source and Target
 				if (source == target) and (source != 'usb'):
 					continue
 
+				# exclude combinations
 				if target in ['anyusb', 'camera', 'ftp']:
 					continue
 				if target == 'cloud_rsync' and source in ['anyusb', 'camera', 'ftp']:
 					continue
+				if target.startswith('social:') and (source in ['anyusb', 'camera', 'cloud_rsync', 'ftp'] or source.startswith('cloud:')):
+					continue
 
 				# format service parameters
-				targetType, targetCloudServiceName		= lib_storage.extractCloudService(target)
+				targetType, targetServiceName		= lib_storage.extractService(target)
 
-				if targetType == 'cloud':
-					targetName	= targetCloudServiceName
+				if targetType in ['cloud', 'social']:
+					targetName	= targetServiceName
 				else:
 					targetName	= self.__lan.l(f'box_menu_backup_mode_{targetType}')
 
@@ -159,7 +172,7 @@ class menu(object):
 				)
 
 			# combine BACKUP_SOURCE_MENU to BACKUP_SOURCES_MENU
-			menutitle	= self.__lan.l(f'box_menu_backup_mode_{sourceType}') if sourceType != 'cloud' else sourceName
+			menutitle	= self.__lan.l(f'box_menu_backup_mode_{SourceType}') if SourceType != 'cloud' else sourceName
 			BACKUP_SOURCES_MENU.append(
 				{
 					'type':		'menu',

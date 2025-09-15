@@ -54,20 +54,16 @@ class vpn(object):
 
 		self.IP_pre_VPN				= lib_network.get_IPs()
 
-		self.connected				= False
-		self.__status_check_time	= 0
-
-
 	def __del__(self):
 		print(f"DESTRUCTED: VPN {self.VPNMode}")
 
-	def __status(self):
+	def check_status(self):
 		Status	= False
 
-		if self.VPNMode in ['OpenVPN','WireGuard']:
+		if self.VPNMode in ['OpenVPN', 'WireGuard']:
 
 			if self.VPNMode == 'OpenVPN':
-				Command	= ['sudo','ip','tuntap','show']
+				Command	= ['sudo', 'ip', 'tuntap', 'show']
 				try:
 					Status	= (
 						(subprocess.check_output(Command) != '') and
@@ -88,20 +84,22 @@ class vpn(object):
 				except:
 					Status	= False
 
-			self.__status_check_time	= lib_system.get_uptime_sec()
-
-		return(Status)
-
-	def check_status(self,min_interval_sec=10):
-		if lib_system.get_uptime_sec() >= self.__status_check_time + min_interval_sec:
-			Status	= self.VPNMode if self.__status() else '-'
+		if Status:
+			connected	= True
+			message		= self.VPNMode
 		else:
-			Status	= self.VPNMode if self.connected else '-'
+			connected	= False
+			message		= '-'
 
-		return(Status)
+		return(
+			{
+				'connected':	connected,
+				'message':		message
+			}
+		)
 
 	def start(self):
-		self.connected	= False
+		connected	= False
 		if (self.VPNMode in ['OpenVPN','WireGuard']) and (os.path.isfile(f"{self.__VPN_Dir}/{self.__VPN_FileName}")):
 
 			self.__display.message([f":{self.__lan.l('box_backup_vpn_connecting')}"])
@@ -117,17 +115,17 @@ class vpn(object):
 
 			VPN_TimeoutTime	= lib_system.get_uptime_sec() + self.__conf_VPN_TIMEOUT
 
-			while (not self.connected) and (lib_system.get_uptime_sec() < VPN_TimeoutTime):
-				self.connected	= self.__status()
+			while (not connected) and (lib_system.get_uptime_sec() < VPN_TimeoutTime):
+				connected	= self.check_status()['connected']
 				time.sleep(1)
 
-			if self.connected:
+			if connected:
 				self.__display.message([f":{self.__lan.l('box_backup_vpn_connecting_success')}"])
 			else:
 				self.stop()
 				self.__display.message([f":{self.__lan.l('box_backup_vpn_connecting_failed')}"])
 
-		return(self.connected)
+		return(connected)
 
 	def stop(self):
 		self.__display.message([f":{self.__lan.l('box_backup_vpn_disconnecting')}",self.VPNMode])
@@ -145,7 +143,7 @@ if __name__ == "__main__":
 	except:
 		Action	= ''
 
-	if Action in ['OpenVPN','WireGuard']:
+	if Action in ['OpenVPN', 'WireGuard']:
 		vpn(Action).start()
 	elif Action == 'stop':
 		vpn('OpenVPN').stop()

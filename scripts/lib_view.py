@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import argparse
 from datetime import datetime
 import os
 import re
@@ -70,8 +71,10 @@ class viewdb(object):
 		dbCreateArray.append("alter table EXIF_DATA add column File_Type text;")
 		dbCreateArray.append("alter table EXIF_DATA add column File_Type_Extension text;")
 		dbCreateArray.append("alter table EXIF_DATA add column Comment text;")
-		dbCreateArray.append("alter table EXIF_DATA add column telegram_publish BOOLEAN NOT NULL DEFAULT 0;")
-		dbCreateArray.append("alter table EXIF_DATA add column telegram_published BOOLEAN NOT NULL DEFAULT 0;")
+		dbCreateArray.append("DEPRECATED") # keep array-keys for correct update-status, keyword "DEPRECATED" will be ignored to execute
+		dbCreateArray.append("DEPRECATED") # keep array-keys for correct update-status, keyword "DEPRECATED" will be ignored to execute
+		dbCreateArray.append("alter table EXIF_DATA add column social_publish integer default 0;") # for use as bitmask
+		dbCreateArray.append("alter table EXIF_DATA add column social_published integer default 0;") # for use as bitmask
 
 		# try to get version of existing db
 		dbVersion	= -1
@@ -98,7 +101,7 @@ class viewdb(object):
 
 			self.dbExecute(f"update CONFIG set VERSION = {i};")
 
-	def dbExecute(self,Command):
+	def dbExecute(self, Command):
 		try:
 			self.__cur.execute(Command)
 			self.__con.commit()
@@ -106,7 +109,7 @@ class viewdb(object):
 		except:
 			return(False)
 
-	def dbSelect(self,Command):
+	def dbSelect(self, Command):
 		try:
 			return(self.__cur.execute(Command).fetchall())
 		except:
@@ -127,7 +130,7 @@ class viewdb(object):
 			ImageFileExtension	= ''
 
 		try:
-			EXIF_List	= subprocess.check_output(f"sudo exiftool '{os.path.join(self.MountPoint, ImageFilePath, ImageFileName)}' | grep ':'", shell=True).decode().strip().split('\n')
+			EXIF_List	= subprocess.check_output(f"sudo exiftool -use MWG '{os.path.join(self.MountPoint, ImageFilePath, ImageFileName)}' | grep ':'", shell=True).decode().strip().split('\n')
 		except:
 			EXIF_List	= []
 
@@ -166,7 +169,9 @@ class viewdb(object):
 				EXIF_Value	= EXIF_Value.replace('\n', '<br>')
 				EXIF_Value	= EXIF_Value.replace('"', '&#34;')
 				EXIF_Value	= EXIF_Value.replace("'", '&#39;')
-				EXIF_Value	= re.sub('[^a-zA-Z0-9_\-+\.,:;\ &#/()\[\]]<>', '_', EXIF_Value)
+				pattern		= re.compile(r'[^a-zA-Z0-9_\-+\.,:; &#/()\[\]<>]')
+				EXIF_Value	= '' if EXIF_Value is None else str(EXIF_Value)
+				EXIF_Value	= pattern.sub('_', EXIF_Value)
 
 			ImageRecord[EXIF_Field]	= EXIF_Value
 			ImageRecord_lower.append(EXIF_Field.lower())
@@ -226,16 +231,45 @@ class viewdb(object):
 			Command	= f"insert into EXIF_DATA ({dbFields}) values ({dbValues});"
 			self.dbExecute(Command)
 
+def parse_args() -> argparse.Namespace:
+	parser = argparse.ArgumentParser(
+		description="view database related tools",
+		formatter_class=argparse.RawTextHelpFormatter,
+	)
+
+	actions	= ['init']
+	parser.add_argument(
+		'--action',
+		'-a',
+		choices		= actions,
+		required =	True,
+		help=f'One of {actions}'
+	)
+
+	parser.add_argument(
+		'--mountpoint',
+		'-m',
+		required =	False,
+		help=f'One of {actions}'
+	)
+
+	args = parser.parse_args()
+
+	if args.action == "init" and not args.mountpoint:
+		parser.error("--mountpoint is required when --action=init")
+
+	return args
+
 if __name__ == "__main__":
-	import sys
+	import lib_setup
+	import lib_log
 
-	if len(sys.argv) > 1:
-		import lib_setup
-		import lib_log
+	args = parse_args()
 
+	if args.action == 'init':
 		setup	= lib_setup.setup()
 		log		= lib_log.log()
 
-		MountPoint	= sys.argv[1]
+		MountPoint	= args.mountpoint
 
-		viewdb(setup,log,MountPoint)
+		viewdb(setup, log, MountPoint)
