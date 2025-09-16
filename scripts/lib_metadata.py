@@ -79,7 +79,7 @@ class MetadataTool:
 		def fallback_grouped(src_file: str, dest: str, sources: list[str]) -> list[str]:
 			# One grouped fallback:
 			# [-tagsFromFile src_file, -Dest<Src1>, -Dest<Src2>, ...]
-			# With -wm cg, the first existing source sets Dest; later ones are ignored.
+
 			args: list[str] = ["-tagsFromFile", src_file]
 			for source in sources:
 				args.append(f"-{dest}<{source}")
@@ -92,7 +92,7 @@ class MetadataTool:
 			"-api",
 			"QuickTimeUTC=1",
 			"-wm",
-			"cg"
+			"w"
 		]
 
 		if xmp_path.exists():
@@ -143,7 +143,7 @@ class MetadataTool:
 			"-api",
 			"QuickTimeUTC=1",
 			"-wm",
-			"cg"
+			"w"
 		]
 
 		cmd_ext		= []
@@ -211,7 +211,14 @@ def main() -> None:
 		description = args.comment.encode("utf-8").decode("unicode_escape")
 
 	tool = MetadataTool(dry_run=args.dry_run)
-	tool.process_one(Path(args.input).expanduser().resolve(), rating=args.rating, description=description)
+
+	# write rating and/or comment into file
+	if (not args.rating is None) and (not args.comment is None):
+		tool.process_one(Path(args.input).expanduser().resolve(), rating=args.rating, description=description)
+	elif not args.rating is None:
+		tool.process_one(Path(args.input).expanduser().resolve(), rating=args.rating)
+	elif not args.comment is None:
+		tool.process_one(Path(args.input).expanduser().resolve(), description=description)
 
 if __name__ == "__main__":
 	main()

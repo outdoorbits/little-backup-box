@@ -245,7 +245,8 @@
         "HOTSPOT": "hotspot",
         "CONNECTING": "connecting ...",
         "CONNECTED": "connected"
-      }
+      },
+      "reset_done": "Comitup reset"
     }
   },
   "mainmenue": {
@@ -805,7 +806,8 @@
     "grid": {
       "multi": "multi-column",
       "single": "single-column"
-    }
+    },
+    "saved": "Changes saved"
   },
   "units": {
     "minutes_long": "minutes",

@@ -19,4 +19,8 @@
 
 # resets the comitup wifi settings and reconfigures apache
 
+WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
 sudo python3 /var/www/little-backup-box/lib_comitup.py --reset
+
+sudo python3 ${WORKING_DIR}/lib_display.py "$(python3 ${WORKING_DIR}/lib_language.py box_comitup_reset_done)"

@@ -693,7 +693,8 @@
         "HOTSPOT": "punto de acceso",
         "CONNECTING": "conectando ...",
         "CONNECTED": "conectado"
-      }
+      },
+      "reset_done": "Comitup restablecer"
     }
   },
   "seconds_short": "s",
@@ -805,7 +806,8 @@
     "grid": {
       "multi": "multicolumna",
       "single": "una sola columna"
-    }
+    },
+    "saved": "Cambios guardados"
   },
   "units": {
     "minutes_long": "minutos",

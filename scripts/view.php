@@ -31,8 +31,8 @@
 	include("sub-i18n-loader.php");
 
 	# read parameters
-	extract ($_POST,EXTR_SKIP);
-	extract ($_GET,EXTR_SKIP);
+	extract ($_POST, EXTR_SKIP);
+	extract ($_GET, EXTR_SKIP);
 
 	include("sub-popup.php");
 	include("sub-common.php");
@@ -588,11 +588,6 @@
 					$IMAGES		= $statement->execute();
 					$IMAGE		= $IMAGES->fetchArray(SQLITE3_ASSOC);
 
-					if ((int)$IMAGE['Rating'] !== $Rating) {
-						#update exif-data of original file
-						shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --rating $Rating");
-					}
-
 					# define update fields
 					$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
 					$UPDATE_ARRAY[$ID_IMAGE]['Rating']		= $Rating;
@@ -613,12 +608,20 @@
 			}
 
 			foreach($UPDATE_ARRAY as $ID_IMAGE=>$UPDATE) {
+
 				update_row($db, "EXIF_DATA", $ID_IMAGE, $UPDATE);
 
-				if (isset($UPDATE['Comment'])) {
+				# write comment into the file's metadata
+				if (isset($UPDATE['Comment']) and isset($UPDATE['Rating'])) {
+					shell_exec("sudo python3 {$WORKING_DIR}/lib_metadata.py '{$STORAGE_PATH}/{$IMAGE['Directory']}/{$IMAGE['File_Name']}' --comment '{$UPDATE['Comment']}' --rating '{$UPDATE['Rating']}'");
+				} elseif (isset($UPDATE['Rating'])) {
+					shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --rating '" . $UPDATE['Rating'] . "'");
+				} elseif (isset($UPDATE['Comment'])) {
 					shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --comment '" . $UPDATE['Comment'] . "'");
 				}
 			}
+
+			if (count($UPDATE_ARRAY) > 0) {$saved_message	=  L::view_saved;}
 
 			# delete media-files
 			if (isset($delete_ratings_1)) {
@@ -804,6 +807,7 @@
 	<?php
 		include "${WORKING_DIR}/sub-display.php";
 		display();
+		if (isset($saved_message)) {print ($saved_message);}
 	?>
 
 <!-- 	icons -->

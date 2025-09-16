@@ -693,7 +693,8 @@
         "HOTSPOT": "Hotspot",
         "CONNECTING": "verbinden ...",
         "CONNECTED": "verbunden"
-      }
+      },
+      "reset_done": "Comitup zurückgesetzt"
     }
   },
   "seconds_short": "s",
@@ -805,7 +806,8 @@
     "grid": {
       "multi": "mehrspaltige Anzeige",
       "single": "einspaltig"
-    }
+    },
+    "saved": "Änderungen gespeichert"
   },
   "units": {
     "minutes_long": "Minuten",

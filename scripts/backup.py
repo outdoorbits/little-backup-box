@@ -373,10 +373,16 @@ class backup(object):
 		FilesToProcessPart				= 0
 
 		if (self.TransferMode == 'social'):
+			# get bit position
+			SocialServices	= lib_socialmedia.get_social_services()
+			if self.TargetService in SocialServices:
+				bit	= SocialServices.index(self.TargetService)
+			else:
+				return(0, True)
 
 			if self.TargetService == 'telegram':
 				db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
-				FilesToProcess	= db.dbSelect("SELECT COUNT(ID) AS telegram_count FROM EXIF_DATA WHERE telegram_publish;")[0][0]
+				FilesToProcess	= db.dbSelect(f"SELECT COUNT(ID) AS social_count FROM EXIF_DATA WHERE (social_publish & (1 << {bit}));")[0][0]
 				del db
 
 				return(FilesToProcess, False)
