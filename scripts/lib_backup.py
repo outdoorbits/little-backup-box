@@ -176,8 +176,8 @@ class progressmonitor(object):
 					self.CountSkip		+= 1
 
 		elif TransferMode is None:
-			self.CountProgress	+= 1
 			if Success:
+				self.CountProgress	+= 1
 				self.CountJustCopied	+= 1
 
 		if self.CountProgress > self.CountProgress_OLD:

@@ -4,7 +4,11 @@ import argparse
 import asyncio
 from datetime import datetime
 import os
+from pathlib import Path
+
 from telegram import Bot
+from telegram.request import HTTPXRequest
+from telegram import InputFile
 
 import lib_language
 import lib_setup
@@ -69,16 +73,13 @@ class socialmedia(object):
 		elif FilePath:
 			Comment	= self.__reformat_Comment(Comment=Comment, FileDate=FileDate)
 
-			try:
-				Extension	= os.path.splitext(FilePath)[1].replace('.', '')
-			except:
-				Extension	= None
+			Extension	= Path(FilePath).suffix.lower().replace('.', '', 1)
 
 			if Extension in self.EXTENSIONS_LIST_VIDEO:
 				msgtype	= 'video'
-			if Extension in self.EXTENSIONS_LIST_AUDIO:
+			elif Extension in self.EXTENSIONS_LIST_AUDIO:
 				msgtype	= 'audio'
-			if Extension in self.EXTENSIONS_LIST_PHOTO:
+			elif Extension in self.EXTENSIONS_LIST_PHOTO:
 				msgtype	= 'photo'
 			else:
 				msgtype = 'document'
@@ -115,9 +116,15 @@ class telegram(object):
 
 	async def __publish_async(self, msgtype, Comment='', FilePath=None):
 
+		if not FilePath is None:
+			FilePath	= Path(FilePath)
+
 		if msgtype == 'text':
 			try:
-				await self.bot.send_message(chat_id=self.CHAT_ID, text=Comment)
+				await self.bot.send_message(
+					chat_id=self.CHAT_ID,
+					text=Comment
+				)
 
 				self.ok				= True
 				self.returnmessage	= msgtype
@@ -127,12 +134,12 @@ class telegram(object):
 				self.returnmessage	= msgtype
 				return
 
-		elif msgtype == 'video':
+		elif msgtype == 'video' and FilePath:
 			try:
-				with open(FilePath, "rb") as media_file:
+				with open(FilePath, "rb") as f:
 					msg	= await self.bot.send_video(
 						chat_id=self.CHAT_ID,
-						video=media_file,
+						video=InputFile(f, filename=FilePath.name),
 						caption=Comment,
 						supports_streaming=True
 					)
@@ -147,10 +154,10 @@ class telegram(object):
 
 		elif msgtype == 'audio':
 			try:
-				with open(FilePath, "rb") as media_file:
+				with open(FilePath, "rb") as f:
 					msg	= await self.bot.send_voice(
 						chat_id=self.CHAT_ID,
-						voice=media_file,
+						voice=FilePath,
 						caption=Comment
 					)
 
@@ -164,10 +171,10 @@ class telegram(object):
 
 		elif msgtype == 'photo':
 			try:
-				with open(FilePath, "rb") as media_file:
+				with open(FilePath, "rb") as f:
 					msg	= await self.bot.send_photo(
 						chat_id=self.CHAT_ID,
-						photo=media_file,
+						photo=FilePath,
 						caption=Comment
 					)
 
@@ -181,10 +188,10 @@ class telegram(object):
 
 		elif msgtype == 'document':
 			try:
-				with open(FilePath, "rb") as media_file:
+				with open(FilePath, "rb") as f:
 					msg	= await self.bot.send_document(
 						chat_id=self.CHAT_ID,
-						document=media_file,
+						document=FilePath,
 						caption=Comment
 					)
 
@@ -199,7 +206,14 @@ class telegram(object):
 	def publish(self, msgtype, Comment='', FilePath=None):
 
 		if self.configured():
-			self.bot	= Bot(token=self.TOKEN)
+			request	= HTTPXRequest(
+				connect_timeout			= 30.0,			# Max seconds to establish the TCP/TLS connection
+				read_timeout			= 120.0,		# Max seconds waiting for Telegram's response (headers/body)
+				write_timeout			= 120.0,		# Max seconds to send non-media request data
+				pool_timeout			= 30.0,			# Max seconds to wait for a free connection from the pool
+				media_write_timeout		= 300.0			# Max seconds to upload media chunks (photos/videos/documents)
+			)
+			self.bot	= Bot(token=self.TOKEN, request=request)
 		else:
 			self.ok				= False
 			self.returnmessage	= 'not configured'

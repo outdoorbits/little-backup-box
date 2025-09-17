@@ -212,9 +212,6 @@ class backup(object):
 			self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
 			return(None)
 
-	def __del__(self):
-		self.__cleanup()
-
 	def run(self):
 		if not self.backup_combination_possible():
 			self.finish()
@@ -1598,7 +1595,7 @@ class backup(object):
 		if self.vpn:
 			#stop VPN
 			self.vpn.stop()
-			del self.vpn
+
 			ip_info	= lib_cron_ip.ip_info()
 			ip_info.display_ip()
 			self.__mail_threads_started.append(ip_info.mail_ip())
