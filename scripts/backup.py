@@ -1119,8 +1119,6 @@ class backup(object):
 			if not FileNameOld:
 				continue
 
-			FileNameOldXMP	= pathlib.Path(FileNameOld).with_suffix('.xmp')
-
 			if not os.path.isfile(FileNameOld):
 				continue
 
@@ -1159,11 +1157,14 @@ class backup(object):
 				pass
 
 			# rename sidecar file if exists
-			if os.path.isfile(FileNameOldXMP):
-				try:
-					os.replace(FileNameOldXMP, FilePathNameNewXMP)
-				except:
-					pass
+			Extension = pathlib.Path(FileNameOld).suffix.lower().removeprefix('.')
+			if Extension in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
+				FileNameOldXMP	= pathlib.Path(FileNameOld).with_suffix('.xmp')
+				if os.path.isfile(FileNameOldXMP):
+					try:
+						os.replace(FileNameOldXMP, FilePathNameNewXMP)
+					except:
+						pass
 
 			if os.path.isfile(FilePathNameNew):
 				# overwrite database entry (Rating to enable exif update)
@@ -1523,7 +1524,7 @@ class backup(object):
 				db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
 
 				# select directory and filename as DirFile
-				FilesTupleList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile, LbbRating from EXIF_DATA where LbbRating != Rating or Rating is null")
+				FilesTupleList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile, LbbRating from EXIF_DATA where LbbRating != Rating or Rating is null;")
 
 				#prepare loop to update EXIF
 				FilesToProcess	= len(FilesTupleList)

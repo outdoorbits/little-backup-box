@@ -19,6 +19,7 @@
 #######################################################################
 
 import argparse
+import re
 import shlex
 import shutil
 import subprocess
@@ -184,6 +185,52 @@ class MetadataTool:
 	@staticmethod
 	def _normalize_rating(rating: int) -> int:
 		return rating if 1 <= rating <= 5 else 2
+
+# functions
+def normalize_exif_array(EXIF_Array):
+	# get image record out of exif data
+	ImageRecord			= {}
+	ImageRecord_lower	= [] # for case insensitive check for known fields
+
+	for EXIF in EXIF_Array:
+
+		try:
+			EXIF_Field, EXIF_Value	= EXIF.split(':',1)
+		except:
+			EXIF_Field	= EXIF
+			EXIF_Value	= ''
+
+		EXIF_Field	= EXIF_Field.strip()
+		EXIF_Value	= EXIF_Value.strip()
+
+		EXIF_Field	= re.sub('[^a-zA-Z0-9]', '_', EXIF_Field)
+
+		# prepare and care database-structure
+		## do not allow to use ID as EXIF-field
+		if EXIF_Field == "ID":
+			EXIF_Field="ID_CAMERA"
+
+		## do not accept field names shorter then 2 characters
+		if len(EXIF_Field) < 2:
+			continue
+
+		## prevent doubles
+		if EXIF_Field.lower() in ImageRecord_lower:
+			continue
+
+		if not EXIF_Field in ['File_Name', 'Directory']:
+			EXIF_Value	= EXIF_Value.replace('\r', '')
+			EXIF_Value	= EXIF_Value.replace('\n', '<br>')
+			EXIF_Value	= EXIF_Value.replace('"', '&#34;')
+			EXIF_Value	= EXIF_Value.replace("'", '&#39;')
+			pattern		= re.compile(r'[^a-zA-Z0-9_\-+\.,:; &#/()\[\]<>]')
+			EXIF_Value	= '' if EXIF_Value is None else str(EXIF_Value)
+			EXIF_Value	= pattern.sub('_', EXIF_Value)
+
+		ImageRecord[EXIF_Field]	= EXIF_Value
+		ImageRecord_lower.append(EXIF_Field.lower())
+
+	return(ImageRecord)
 
 # ---------- CLI ----------
 
