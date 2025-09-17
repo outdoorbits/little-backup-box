@@ -17,12 +17,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import argparse
 from datetime import datetime
 import os
-import re
+import pathlib
 import sqlite3
 import subprocess
 import sys
+
+import lib_metadata
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -35,9 +38,10 @@ class viewdb(object):
 
 		self.MountPoint	= MountPoint
 
-		self.dbFile								= f"{self.MountPoint}/{self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')}"
-		self.const_VIEW_RATING_STANDARD_VALUE	= self.__setup.get_val('const_VIEW_RATING_STANDARD_VALUE')
+		self.dbFile									= f"{self.MountPoint}/{self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')}"
+		self.const_VIEW_RATING_STANDARD_VALUE		= self.__setup.get_val('const_VIEW_RATING_STANDARD_VALUE')
 		self.const_METADATA_CREATE_SOURCES_HR		= self.__setup.get_val('const_METADATA_CREATE_SOURCES_HR').split(';')
+		self.const_FILE_EXTENSIONS_LIST_RAW			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW')
 
 		self.__con	= sqlite3.connect(self.dbFile)
 		self.__cur	= self.__con.cursor()
@@ -70,8 +74,10 @@ class viewdb(object):
 		dbCreateArray.append("alter table EXIF_DATA add column File_Type text;")
 		dbCreateArray.append("alter table EXIF_DATA add column File_Type_Extension text;")
 		dbCreateArray.append("alter table EXIF_DATA add column Comment text;")
-		dbCreateArray.append("alter table EXIF_DATA add column telegram_publish BOOLEAN NOT NULL DEFAULT 0;")
-		dbCreateArray.append("alter table EXIF_DATA add column telegram_published BOOLEAN NOT NULL DEFAULT 0;")
+		dbCreateArray.append("DEPRECATED") # keep array-keys for correct update-status, keyword "DEPRECATED" will be ignored to execute
+		dbCreateArray.append("DEPRECATED") # keep array-keys for correct update-status, keyword "DEPRECATED" will be ignored to execute
+		dbCreateArray.append("alter table EXIF_DATA add column social_publish integer default 0;") # for use as bitmask
+		dbCreateArray.append("alter table EXIF_DATA add column social_published integer default 0;") # for use as bitmask
 
 		# try to get version of existing db
 		dbVersion	= -1
@@ -98,7 +104,7 @@ class viewdb(object):
 
 			self.dbExecute(f"update CONFIG set VERSION = {i};")
 
-	def dbExecute(self,Command):
+	def dbExecute(self, Command):
 		try:
 			self.__cur.execute(Command)
 			self.__con.commit()
@@ -106,12 +112,11 @@ class viewdb(object):
 		except:
 			return(False)
 
-	def dbSelect(self,Command):
+	def dbSelect(self, Command):
 		try:
 			return(self.__cur.execute(Command).fetchall())
 		except:
 			return(False)
-
 
 	def dbInsertImage(self, ImageFileSubpathFilename):
 		#read exif-data from file
@@ -126,50 +131,28 @@ class viewdb(object):
 		except:
 			ImageFileExtension	= ''
 
+		ImageFile	= os.path.join(self.MountPoint, ImageFileSubpathFilename)
 		try:
-			EXIF_List	= subprocess.check_output(f"sudo exiftool '{os.path.join(self.MountPoint, ImageFilePath, ImageFileName)}' | grep ':'", shell=True).decode().strip().split('\n')
+			EXIF_List	= subprocess.check_output(f"sudo exiftool -use MWG '{ImageFile}' | grep ':'", shell=True).decode().strip().split('\n')
 		except:
 			EXIF_List	= []
 
-		# get image record out of exif data
-		ImageRecord			= {}
-		ImageRecord_lower	= [] # for case insensitive check for known fields
+		ImageRecord	= lib_metadata.normalize_exif_array(EXIF_List)
 
-		for EXIF in EXIF_List:
+		# overwrite by xmp if available
+		Extension = pathlib.Path(ImageFile).suffix.lower().removeprefix('.')
+		if Extension in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
+			XMPFile	= pathlib.Path(ImageFile).with_suffix('.xmp')
+			if os.path.isfile(XMPFile):
+				try:
+					EXIF_List	= subprocess.check_output(f"sudo exiftool -use MWG '{XMPFile}' | grep ':'", shell=True).decode().strip().split('\n')
+				except:
+					EXIF_List	= []
 
-			try:
-				EXIF_Field, EXIF_Value	= EXIF.split(':',1)
-			except:
-				EXIF_Field	= EXIF
-				EXIF_Value	= ''
+				XMPRecord	= lib_metadata.normalize_exif_array(EXIF_List)
 
-			EXIF_Field	= EXIF_Field.strip()
-			EXIF_Value	= EXIF_Value.strip()
-
-			EXIF_Field	= re.sub('[^a-zA-Z0-9]', '_', EXIF_Field)
-
-			# prepare and care database-structure
-			## do not allow to use ID as EXIF-field
-			if EXIF_Field == "ID":
-				EXIF_Field="ID_CAMERA"
-
-			## do not accept field names shorter then 2 characters
-			if len(EXIF_Field) < 2:
-				continue
-
-			## prevent doubles
-			if EXIF_Field.lower() in ImageRecord_lower:
-				continue
-
-			if not EXIF_Field in ['File_Name','Directory']:
-				EXIF_Value	= EXIF_Value.replace('\r', '')
-				EXIF_Value	= EXIF_Value.replace('\n', '<br>')
-				EXIF_Value	= EXIF_Value.replace('"', '&#34;')
-				EXIF_Value	= EXIF_Value.replace("'", '&#39;')
-				EXIF_Value	= re.sub('[^a-zA-Z0-9_\-+\.,:;\ &#/()\[\]]<>', '_', EXIF_Value)
-
-			ImageRecord[EXIF_Field]	= EXIF_Value
-			ImageRecord_lower.append(EXIF_Field.lower())
+				for var	in XMPRecord.keys():
+					ImageRecord[var]	= XMPRecord[var]
 
 		# define/overwrite elements of ImageRecord
 		## file: name and directory
@@ -226,16 +209,45 @@ class viewdb(object):
 			Command	= f"insert into EXIF_DATA ({dbFields}) values ({dbValues});"
 			self.dbExecute(Command)
 
+def parse_args() -> argparse.Namespace:
+	parser = argparse.ArgumentParser(
+		description="view database related tools",
+		formatter_class=argparse.RawTextHelpFormatter,
+	)
+
+	actions	= ['init']
+	parser.add_argument(
+		'--action',
+		'-a',
+		choices		= actions,
+		required =	True,
+		help=f'One of {actions}'
+	)
+
+	parser.add_argument(
+		'--mountpoint',
+		'-m',
+		required =	False,
+		help=f'One of {actions}'
+	)
+
+	args = parser.parse_args()
+
+	if args.action == "init" and not args.mountpoint:
+		parser.error("--mountpoint is required when --action=init")
+
+	return args
+
 if __name__ == "__main__":
-	import sys
+	import lib_setup
+	import lib_log
 
-	if len(sys.argv) > 1:
-		import lib_setup
-		import lib_log
+	args = parse_args()
 
+	if args.action == 'init':
 		setup	= lib_setup.setup()
 		log		= lib_log.log()
 
-		MountPoint	= sys.argv[1]
+		MountPoint	= args.mountpoint
 
-		viewdb(setup,log,MountPoint)
+		viewdb(setup, log, MountPoint)

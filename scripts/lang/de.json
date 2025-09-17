@@ -67,7 +67,10 @@
       "exif": "Aktualisiere EXIF-Daten",
       "sync": "Synchronisiere Datenbank"
     },
-    "file_operations": "Dateioperationen"
+    "file_operations": "Dateioperationen",
+    "telegram": {
+      "telegram": "Telegram&reg;"
+    }
   },
   "sysinfo": {
     "temp": "Temperatur",
@@ -571,8 +574,8 @@
         "validate": "prüfe",
         "delete": "löschen",
         "clean": "bereinige",
-        "cloud_telegram": "Telegram",
-        "telegram": "Telegram"
+        "social": "social",
+        "social_telegram": "telegram&reg;"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-Quelle",
@@ -688,7 +691,8 @@
         "HOTSPOT": "Hotspot",
         "CONNECTING": "verbinden ...",
         "CONNECTED": "verbunden"
-      }
+      },
+      "reset_done": "Comitup zurückgesetzt"
     }
   },
   "seconds_short": "s",
@@ -766,7 +770,8 @@
       "medium_source_usb": "USB Quelle",
       "medium_target_usb": "USB Ziel",
       "medium_source_nvme": "Lokale NVMe Quelle",
-      "medium_target_nvme": "Lokales NVMe Ziel"
+      "medium_target_nvme": "Lokales NVMe Ziel",
+      "social_publish": "Markiert für Upload"
     },
     "images": {
       "download": "Download Original",
@@ -791,11 +796,16 @@
     },
     "ratings_save_button_next": "weiter",
     "ratings_save_button_back": "zurück",
-    "telegram": {
-      "published": "Auf Telegram veröffentlicht",
-      "publish": "Zur Veröffentlichung auf Telegram markieren"
+    "date_format_python": "Xd.Xm.XY XH:XM:XS",
+    "social": {
+      "publish_on": "Markieren zur Veröffentlichung auf",
+      "published_on": "Veröffentlicht auf"
     },
-    "date_format_python": "Xd.Xm.XY XH:XM:XS"
+    "grid": {
+      "multi": "mehrspaltige Anzeige",
+      "single": "einspaltig"
+    },
+    "saved": "Änderungen gespeichert"
   },
   "units": {
     "minutes_long": "Minuten",

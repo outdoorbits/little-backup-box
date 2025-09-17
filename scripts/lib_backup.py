@@ -244,7 +244,7 @@ class progressmonitor(object):
 			# DisplayLinesExtra
 			DisplayLinesExtra	= []
 			if self.vpn:
-				DisplayLinesExtra.append(f"s=hc:VPN: {self.vpn.check_status(10)}")
+				DisplayLinesExtra.append(f"s=hc:VPN: {self.vpn.check_status()['message']}")
 
 			# FrameTime
 			FrameTime	= self.__conf_DISP_FRAME_TIME
@@ -258,16 +258,16 @@ class progressmonitor(object):
 
 class reporter(object):
 	# collects information during the backup process and provides ready to use summarys
-	def __init__(self, lan, SourceStorageType, SourceCloudService, SourceDeviceLbbDeviceID, TargetStorageType, TargetCloudService, TargetDeviceLbbDeviceID, TransferMode, CheckSum, move_files, SyncLog=True):
+	def __init__(self, lan, SourceStorageType, SourceService, SourceDeviceLbbDeviceID, TargetStorageType, TargetService, TargetDeviceLbbDeviceID, TransferMode, CheckSum, move_files, SyncLog=True):
 
 		self.__lan						= lan
 
 		self.__SourceStorageType		= SourceStorageType
-		self.__SourceCloudService		= SourceCloudService
+		self.__SourceService		= SourceService
 		self.__SourceDeviceLbbDeviceID	= SourceDeviceLbbDeviceID
 
 		self.__TargetStorageType		= TargetStorageType
-		self.__TargetCloudService		= TargetCloudService
+		self.__TargetService		= TargetService
 		self.__TargetDeviceLbbDeviceID	= TargetDeviceLbbDeviceID
 
 		self.__TransferMode				= TransferMode
@@ -363,8 +363,8 @@ class reporter(object):
 		BackupComplete	= True
 
 		# mail content
-		SourceDeviceDetails	= f"'{self.__SourceCloudService}{' ' if self.__SourceCloudService else ''}{self.__SourceDeviceLbbDeviceID}'" if self.__SourceCloudService or self.__SourceDeviceLbbDeviceID else ''
-		TargetDeviceDetails	= f"'{self.__TargetCloudService}{' ' if self.__TargetCloudService else ''}{self.__TargetDeviceLbbDeviceID}'" if self.__TargetCloudService or self.__TargetDeviceLbbDeviceID else ''
+		SourceDeviceDetails	= f"'{self.__SourceService}{' ' if self.__SourceService else ''}{self.__SourceDeviceLbbDeviceID}'" if self.__SourceService or self.__SourceDeviceLbbDeviceID else ''
+		TargetDeviceDetails	= f"'{self.__TargetService}{' ' if self.__TargetService else ''}{self.__TargetDeviceLbbDeviceID}'" if self.__TargetService or self.__TargetDeviceLbbDeviceID else ''
 
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 

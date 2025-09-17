@@ -42,8 +42,7 @@ import lib_poweroff
 import lib_setup
 import lib_storage
 import lib_system
-import lib_telegram
-import lib_time
+import lib_socialmedia
 import lib_view
 import lib_vpn
 
@@ -56,7 +55,7 @@ class backup(object):
 	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DoChecksum='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, TelegramChatID=None, PowerOff='setup', SecondaryBackupFollows=False):
 
 		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync', 'ftp'] or functions: ['thumbnails', 'database', 'exif', 'rename]
-		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync', 'telegram']
+		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync', 'social:telegram']
 		# DoRenameFiles, DoGenerateThumbnails, DoUpdateEXIF,
 		# 	DoChecksum:											one of ['setup', True, False]
 		# ForceSyncDatabase:									one of [True, False]
@@ -75,8 +74,8 @@ class backup(object):
 
 		# devices
 		self.SourceName										= SourceName
-		self.SourceStorageType, self.SourceCloudService		= lib_storage.extractCloudService(SourceName)
-		self.TargetStorageType, self.TargetCloudService		= lib_storage.extractCloudService(TargetName)
+		self.SourceStorageType, self.SourceService		= lib_storage.extractService(SourceName)
+		self.TargetStorageType, self.TargetService		= lib_storage.extractService(TargetName)
 
 		self.DeviceIdentifierPresetSource					= DeviceIdentifierPresetSource
 		if self.DeviceIdentifierPresetSource:
@@ -145,6 +144,8 @@ class backup(object):
 		self.const_FILE_EXTENSIONS_LIST_VIDEO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO')
 		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
 
+		self.combination_FILE_EXTENSIONS_LIST_PHOTO		= ';'.join([self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES, self.const_FILE_EXTENSIONS_LIST_HEIC, self.const_FILE_EXTENSIONS_LIST_TIF])
+
 		# Common variables
 		self.SourceDevice				= None
 		self.TargetDevice				= None
@@ -159,13 +160,13 @@ class backup(object):
 		for CloudSyncMethod in CloudSyncMethods:
 			try:
 				CloudServiceCandidate, CloudSyncMethodCandidate	= CloudSyncMethod.split('|=|')
-				if (CloudSyncMethodCandidate == 'rsync') and (CloudServiceCandidate in [self.SourceCloudService, self.TargetCloudService]):
+				if (CloudSyncMethodCandidate == 'rsync') and (CloudServiceCandidate in [self.SourceService, self.TargetService]):
 					self.TransferMode	= 'rsync'
 			except:
 				pass
 
 		self.TransferMode	= None if self.SourceStorageType == 'ftp' else self.TransferMode
-		self.TransferMode	= 'telegram' if self.TargetStorageType == 'telegram' else self.TransferMode
+		self.TransferMode	= 'social' if self.TargetStorageType == 'social' else self.TransferMode
 
 		# set vpn dummy before possible abort by next step: check mode combination
 		self.vpn	= False
@@ -182,41 +183,29 @@ class backup(object):
 		l_box_backup_mode_SOURCE_MODE	= f"box_backup_mode_{self.SourceStorageType}"
 		l_box_backup_mode_TARGET_MODE	= f"box_backup_mode_{self.TargetStorageType}"
 
-		self.__display.message([f":{self.__lan.l(l_box_backup_mode_SOURCE_MODE)} {self.SourceCloudService}", f": > {self.__lan.l(l_box_backup_mode_TARGET_MODE)} {self.TargetCloudService}"])
+		self.__display.message([f":{self.__lan.l(l_box_backup_mode_SOURCE_MODE)} {self.SourceService}", f": > {self.__lan.l(l_box_backup_mode_TARGET_MODE)} {self.TargetService}"])
 
-		self.__log.message(f"Source: {self.SourceStorageType} {self.SourceCloudService}")
-		self.__log.message(f"Target: {self.TargetStorageType} {self.TargetCloudService}")
+		self.__log.message(f"Source: {self.SourceStorageType} {self.SourceService}")
+		self.__log.message(f"Target: {self.TargetStorageType} {self.TargetService}")
 
 		# VPN start
 		VPN_Mode	= None
-		if not set(['cloud', 'telegram']).isdisjoint([self.SourceStorageType, self.TargetStorageType]):
+		if not set(['cloud', 'social']).isdisjoint([self.SourceStorageType, self.TargetStorageType]):
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_CLOUD')
 		elif 'cloud_rsync' in [self.SourceStorageType, self.TargetStorageType]:
 			VPN_Mode	= self.__setup.get_val('conf_VPN_TYPE_RSYNC')
 
 		if VPN_Mode in ['OpenVPN','WireGuard']:
 			self.vpn	= lib_vpn.vpn(VPN_Mode)
-			if self.vpn.start():
-				ip_info	= lib_cron_ip.ip_info()
-				ip_info.display_ip()
-				self.__mail_threads_started.append( ip_info.mail_ip() )
-			else:
-				self.__display.message([self.__lan.l('box_backup_break1'), self.__lan.l('box_backup_break2'), self.__lan.l('box_backup_vpn_connecting_failed')])
 
-				# Mail result
-				if self.conf_MAIL_NOTIFICATIONS:
-					mail	= lib_mail.mail()
-					self.__mail_threads_started.append(
-						mail.sendmail(f"Little Backup Box: {self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}",f"{self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
-					)
-
+			if not self.__start_vpn():
 				return(None)
 
 		# MANAGE TARGET DEVICE
 		# Set the PWR LED to blink short to indicate waiting for the target device
 		lib_system.rpi_leds(trigger='timer',delay_on=250,delay_off=750)
 
-		if self.TargetStorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync', 'telegram']:
+		if self.TargetStorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync', 'social']:
 			self.TargetDevice	= lib_storage.storage(StorageName=TargetName, Role=lib_storage.role_Target, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetTarget, DeviceIdentifierPresetOther=self.DeviceIdentifierPresetSource)
 			self.TargetDevice.mount()
 		else:
@@ -238,7 +227,7 @@ class backup(object):
 		if (self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif', 'rename'])):
 			self.backup()
 
-		if not self.TransferMode is None and not self.TransferMode in ['telegram']:
+		if not self.TransferMode is None and not self.TransferMode in ['social']:
 			# rename
 			if self.DoRenameFiles:
 				self.RenameFiles()
@@ -256,6 +245,23 @@ class backup(object):
 					self.generateThumbnails(Device=self.TargetDevice)
 
 		self.finish()
+
+	def __start_vpn(self):
+		if self.vpn.start():
+			ip_info	= lib_cron_ip.ip_info()
+			ip_info.display_ip()
+			self.__mail_threads_started.append( ip_info.mail_ip() )
+			return(True)
+		else:
+			self.__display.message([self.__lan.l('box_backup_break1'), self.__lan.l('box_backup_break2'), self.__lan.l('box_backup_vpn_connecting_failed')])
+
+			# Mail result
+			if self.conf_MAIL_NOTIFICATIONS:
+				mail	= lib_mail.mail()
+				self.__mail_threads_started.append(
+					mail.sendmail(f"Little Backup Box: {self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}",f"{self.__lan.l('box_backup_break1')} {self.__lan.l('box_backup_break2')}: {self.__lan.l('box_backup_vpn_connecting_failed')}")
+				)
+			return(False)
 
 	def get_syncCommand(self, TransferMode, SubPathAtSource, dry_run=False):
 
@@ -316,8 +322,8 @@ class backup(object):
 				syncCommand	+= ['--dry-run']
 
 		elif TransferMode == 'rclone':
-			SourcePath	= f'{self.SourceDevice.CloudServiceName}:{self.SourceDevice.CloudBaseDir}' if self.SourceDevice.CloudServiceName else f'{os.path.join(self.SourceDevice.MountPoint, SubPathAtSource)}'
-			TargetPath	= f'{self.TargetDevice.CloudServiceName}:{os.path.join(self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.CloudBaseDir}' if self.TargetDevice.CloudServiceName else f'{os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)}'
+			SourcePath	= f'{self.SourceDevice.ServiceName}:{self.SourceDevice.CloudBaseDir}' if self.SourceDevice.ServiceName else f'{os.path.join(self.SourceDevice.MountPoint, SubPathAtSource)}'
+			TargetPath	= f'{self.TargetDevice.ServiceName}:{os.path.join(self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.CloudBaseDir}' if self.TargetDevice.ServiceName else f'{os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)}'
 
 			# basic command
 			syncCommand	= ['rclone']
@@ -366,13 +372,20 @@ class backup(object):
 
 		FilesToProcessPart				= 0
 
-		if (self.TransferMode == 'telegram'):
-			# prepare database
-			db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
-			FilesToProcess	= db.dbSelect("SELECT COUNT(ID) AS telegram_count FROM EXIF_DATA WHERE telegram_publish;")[0][0]
-			del db
+		if (self.TransferMode == 'social'):
+			# get bit position
+			SocialServices	= lib_socialmedia.get_social_services()
+			if self.TargetService in SocialServices:
+				bit	= SocialServices.index(self.TargetService)
+			else:
+				return(0, True)
 
-			return(FilesToProcess, False)
+			if self.TargetService == 'telegram':
+				db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
+				FilesToProcess	= db.dbSelect(f"SELECT COUNT(ID) AS social_count FROM EXIF_DATA WHERE (social_publish & (1 << {bit}));")[0][0]
+				del db
+
+				return(FilesToProcess, False)
 
 		elif  self.SourceDevice.StorageType != 'camera':
 			## Source is mounted (mountable) device or treated like that (cloud_rsync)
@@ -452,7 +465,7 @@ class backup(object):
 			return(False)
 
 		# exclude cloud to cloud for equal cloud services
-		if	self.SourceStorageType == 'cloud' and self.TargetStorageType == 'cloud' and self.SourceCloudService == self.TargetCloudService:
+		if	self.SourceStorageType == 'cloud' and self.TargetStorageType == 'cloud' and self.SourceService == self.TargetService:
 			return(False)
 
 		# camera never can be target
@@ -463,8 +476,8 @@ class backup(object):
 		if self.SourceStorageType	== 'camera' and self.TargetStorageType == 'cloud_rsync':
 			return(False)
 
-		# telegram can upload from local storage only
-		if self.TargetStorageType == "telegram" and self.SourceStorageType not in ['usb', 'internal', 'nvme']:
+		# social can upload from local storage only
+		if self.TargetStorageType == "social" and self.SourceStorageType not in ['usb', 'internal', 'nvme']:
 			return(False)
 
 		return (True)
@@ -476,7 +489,7 @@ class backup(object):
 # prepare to manage sources
 		# loop to backup multiple sources
 		SourceStorageType			= self.SourceStorageType
-		SourceCloudService			= self.SourceCloudService
+		SourceService			= self.SourceService
 
 		completedSources_usb		= []
 		completedSources_camera		= []
@@ -521,14 +534,13 @@ class backup(object):
 					completedSources_camera	= list(set(completedSources_camera) & set(availableSources_camera))
 					todoSources				= list(set(availableSources_camera) - set(completedSources_camera))
 					SourceStorageType		= 'camera'
-					SourceStorageType		= SourceStorageType
 
 				if self.SourceStorageType in ['anyusb', 'usb', 'nvme'] and not todoSources:
 					todoSources			= lib_storage.get_available_partitions(StorageType=self.SourceStorageType, TargetDeviceIdentifier=self.TargetDevice.DeviceIdentifier, excludePartitions=completedSources_usb)
 					SourceStorageType	= 'usb' if self.SourceStorageType == 'anyusb' else self.SourceStorageType
 
 				if self.SourceStorageType =='ftp':
-					todoSources			= [ftp]
+					todoSources			= ['ftp']
 					SourceStorageType	= 'ftp'
 
 				if todoSources:
@@ -546,8 +558,8 @@ class backup(object):
 			lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
 
 			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync', 'ftp']:
-				self.SourceDevice	= lib_storage.storage(StorageName=(SourceStorageType if not SourceCloudService else f'{SourceStorageType}:{SourceCloudService}'), Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
-				self.__display.message([f":{self.__lan.l('box_backup_mounting_source')}", f":{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
+				self.SourceDevice	= lib_storage.storage(StorageName=(SourceStorageType if not SourceService else f'{SourceStorageType}:{SourceService}'), Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
+				self.__display.message([f":{self.__lan.l('box_backup_mounting_source')}", f":{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.ServiceName}"])
 				self.SourceDevice.mount()
 			elif SourceStorageType in ['thumbnails', 'database', 'exif']:
 				pass
@@ -575,10 +587,10 @@ class backup(object):
 			self.__reporter	= lib_backup.reporter(
 				lan						= self.__lan,
 				SourceStorageType		= self.SourceDevice.StorageType,
-				SourceCloudService		= self.SourceDevice.CloudServiceName,
+				SourceService			= self.SourceDevice.ServiceName,
 				SourceDeviceLbbDeviceID	= self.SourceDevice.LbbDeviceID,
 				TargetStorageType		= self.TargetDevice.StorageType,
-				TargetCloudService		= self.TargetDevice.CloudServiceName,
+				TargetService			= self.TargetDevice.ServiceName,
 				TargetDeviceLbbDeviceID = self.TargetDevice.LbbDeviceID,
 				TransferMode			= 'gphoto2' if SourceStorageType == 'camera' else self.TransferMode,
 				CheckSum				= self.DoChecksum,
@@ -610,7 +622,7 @@ class backup(object):
 					self.__reporter.new_try()
 
 					if self.vpn:
-						self.__reporter.add_synclog(f"** VPN: {self.vpn.check_status(0)} **\n\n")
+						self.__reporter.add_synclog(f"** VPN: {self.vpn.check_status()['message']} **\n\n")
 
 					if TriesCount > 1:
 						self.__display.message([f"s=a:{self.__lan.l('box_backup_try_backup')} {TriesCount} {self.__lan.l('box_backup_of')} {self.const_BACKUP_MAX_TRIES}"])
@@ -621,11 +633,17 @@ class backup(object):
 
 					# Remount source devices if "Err.Lost device"
 					if "Err.: Lost device!" in ErrorsOld:
+						# check VPN
+						if self.vpn:
+							if not self.vpn.check_status()['connected']:
+								if not self.__start_vpn():
+									return(None)
+
 						self.__log.execute('Lost device: pre remount','lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE',3)
 
 						if not self.SourceDevice.mounted():
-							self.__log.message(f"remount source device {self.SourceDevice.StorageType} {self.SourceDevice.CloudServiceName} {self.SourceDevice.DeviceIdentifier}",3)
-							self.__display.message([f"s=a:{self.__lan.l('box_backup_mounting_target')}", f"s=a:{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.CloudServiceName}"])
+							self.__log.message(f"remount source device {self.SourceDevice.StorageType} {self.SourceDevice.ServiceName} {self.SourceDevice.DeviceIdentifier}",3)
+							self.__display.message([f"s=a:{self.__lan.l('box_backup_mounting_target')}", f"s=a:{self.__lan.l(f'box_backup_mode_{self.SourceDevice.StorageType}')} {self.SourceDevice.ServiceName}"])
 
 							if not self.SourceDevice.mount(TimeOutActive=True):
 								self.__reporter.add_error('Err.: Remounting source device failed!')
@@ -639,8 +657,8 @@ class backup(object):
 					# Remount target devices if "Err.Lost device"
 					if "Err.: Lost device!" in ErrorsOld:
 						if not self.TargetDevice.mounted():
-							self.__log.message(f"remount target device {self.TargetDevice.StorageType} {self.TargetDevice.CloudServiceName} {self.TargetDevice.DeviceIdentifier}",3)
-							self.__display.message([f"s=a:{self.__lan.l('box_backup_mounting_target')}", f"s=a:{self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')} {self.TargetDevice.CloudServiceName}"])
+							self.__log.message(f"remount target device {self.TargetDevice.StorageType} {self.TargetDevice.ServiceName} {self.TargetDevice.DeviceIdentifier}",3)
+							self.__display.message([f"s=a:{self.__lan.l('box_backup_mounting_target')}", f"s=a:{self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}')} {self.TargetDevice.ServiceName}"])
 							if not self.TargetDevice.mount(TimeOutActive=True):
 								self.__reporter.add_error('Err.: Remounting target device failed!')
 
@@ -672,12 +690,12 @@ class backup(object):
 						else:
 							SourceLabel	= self.__lan.l(f"box_backup_mode_{SourceStorageType}")
 
-					DisplayLine1	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"		# header1
-					DisplayLine2	= ' > ' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") + f" {self.TargetDevice.CloudServiceName}"	# header2
+					DisplayLine1	= SourceLabel + f" {self.SourceDevice.ServiceName}{SourceFolderFracture}"		# header1
+					DisplayLine2	= ' > ' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") + f" {self.TargetDevice.ServiceName}"	# header2
 
 					#define progress object
-					SourceType_LANG	= self.__lan.l(f"box_backup_mode_{self.SourceDevice.StorageType}") if self.SourceDevice.StorageType != 'cloud' else self.SourceDevice.CloudServiceName
-					TargetType_LANG	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") if self.TargetDevice.StorageType != 'cloud' else self.TargetDevice.CloudServiceName
+					SourceType_LANG	= self.__lan.l(f"box_backup_mode_{self.SourceDevice.StorageType}") if self.SourceDevice.StorageType != 'cloud' else self.SourceDevice.ServiceName
+					TargetType_LANG	= self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}") if self.TargetDevice.StorageType != 'cloud' else self.TargetDevice.ServiceName
 
 					progress	= lib_backup.progressmonitor(
 						setup							= self.__setup,
@@ -741,28 +759,37 @@ class backup(object):
 
 						os.chdir(os.path.expanduser('~'))
 
-### telegram upload
-					elif self.TargetDevice.StorageType == 'telegram':
-						telegram					= lib_telegram.telegram(
-							TOKEN					= self.telegram_token,
-							CHAT_ID 				= self.telegram_chat_id,
+### social upload
+					elif self.TargetDevice.StorageType == 'social':
+						SOCIAL					= lib_socialmedia.socialmedia(
+							service					= self.TargetService,
 							EXTENSIONS_LIST_VIDEO	= self.const_FILE_EXTENSIONS_LIST_VIDEO,
-							EXTENSIONS_LIST_AUDIO	= self.const_FILE_EXTENSIONS_LIST_AUDIO
+							EXTENSIONS_LIST_AUDIO	= self.const_FILE_EXTENSIONS_LIST_AUDIO,
+							EXTENSIONS_LIST_PHOTO	= self.combination_FILE_EXTENSIONS_LIST_PHOTO,
+							telegram_token			= self.telegram_token,
+							telegram_chat_id		= self.telegram_chat_id,
 						)
 
-						if not telegram.configured():
+						if not SOCIAL.configured():
 							self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
-							return()
+							return
+
+						# get bit position
+						SocialServices	= lib_socialmedia.get_social_services()
+						if self.TargetService in SocialServices:
+							bit	= SocialServices.index(self.TargetService)
+						else:
+							return
 
 						db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
-						telegram_list	= db.dbSelect("SELECT ID, Directory, File_Name, Create_Date, Comment FROM EXIF_DATA WHERE telegram_publish ORDER BY Create_Date ASC;")
+						social_list	= db.dbSelect(f"SELECT ID, Directory, File_Name, Create_Date, Comment FROM EXIF_DATA WHERE (social_publish & (1 << {bit})) ORDER BY Create_Date ASC;")
 
-						types_upload_original	= f'{self.const_FILE_EXTENSIONS_LIST_VIDEO};{self.const_FILE_EXTENSIONS_LIST_AUDIO}'.split(';')
-						for image in telegram_list:
+						types_upload_original	= ';'.join([self.const_FILE_EXTENSIONS_LIST_VIDEO, self.const_FILE_EXTENSIONS_LIST_AUDIO]).split(';')
+						for image in social_list:
 							IMAGE_ID		= image[0]
 							IMAGE_DIR		= image[1]
 							IMAGE_FILE		= image[2]
-							IMAGE_DATE		= lib_time.timeinterpreter().parse_datetime_local(image[3])
+							IMAGE_DATE		= image[3]
 							IMAGE_COMMENT	= image[4] or ''
 
 							Extension	= None
@@ -772,15 +799,17 @@ class backup(object):
 								pass
 
 							if Extension in types_upload_original:
-								telegram_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, f"{IMAGE_FILE}")
+								social_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, f"{IMAGE_FILE}")
 							else:
-								telegram_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, 'tims', f"{IMAGE_FILE}.JPG")
+								social_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, 'tims', f"{IMAGE_FILE}.JPG")
 
-							success	= telegram.publish(Comment=IMAGE_COMMENT, FilePath=telegram_image_path, FileDate=IMAGE_DATE)
+							success	= SOCIAL.publish(Comment=IMAGE_COMMENT, FilePath=social_image_path, Create_Date=IMAGE_DATE)
 
 							progress.progress(Success=success['ok'])
 							if success['ok']:
-								db.dbExecute(f'UPDATE EXIF_DATA SET telegram_publish=0, telegram_published=1 WHERE ID={IMAGE_ID};')
+								db.dbExecute(f'UPDATE EXIF_DATA SET social_publish = social_publish & ~{2 ** bit}, social_published = social_published | {2 ** bit} WHERE ID={IMAGE_ID};')
+							else:
+								self.__reporter.add_error(success['msg'])
 
 						missing, more	= self.calculate_files_to_sync(SubPathAtSource)
 						self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
@@ -827,7 +856,7 @@ class backup(object):
 
 					# VPN check
 					if self.vpn:
-						self.__reporter.add_synclog(f"\n** VPN: {self.vpn.check_status(0)} **\n\n")
+						self.__reporter.add_synclog(f"\n** VPN: {self.vpn.check_status()['message']} **\n\n")
 
 					# Remove empty files (maybe can result from disconnection of a source-device)
 					if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
@@ -910,7 +939,7 @@ class backup(object):
 					# validate files after backup
 					if SourceStorageType == 'camera':
 						DisplayLine1	= self.__lan.l('box_backup_validate_files_from')		# header1
-						DisplayLine2	= SourceLabel + f" {self.SourceDevice.CloudServiceName}{SourceFolderFracture}"	# header2
+						DisplayLine2	= SourceLabel + f" {self.SourceDevice.ServiceName}{SourceFolderFracture}"	# header2
 						progress	= lib_backup.progressmonitor(
 							setup			= self.__setup,
 							display			= self.__display,
@@ -1026,14 +1055,30 @@ class backup(object):
 		Files	=	subprocess.check_output(FindCommand, shell=True, text=True).splitlines()
 
 		if not Files:
-			# nothing to do
 			return()
 
-		DateTags		= ['-DateTimeOriginal', '-CreateDate']
-		ExifCommand		= ['exiftool', '-dateFormat', '%Y-%m-%d_%H-%M-%S'] + DateTags + ['-Rating', '-S', '-@', '-']
 		ExifFilesList	= '\n'.join(Files) + '\n'
 
-		EXIF_result	= subprocess.run(ExifCommand, input=ExifFilesList, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		DateTags		= ['-DateTimeOriginal', '-CreateDate']
+		ExifCommand		= [
+			'exiftool',
+			'-use', 'MWG',
+			'-dateFormat', '%Y-%m-%d_%H-%M-%S',
+			'-FilePath',
+			*DateTags,
+			'-Rating',
+			'-S',
+			'-@', '-'
+		]
+
+		EXIF_result	= subprocess.run(
+			ExifCommand,
+			input=ExifFilesList,
+			text=True,
+			stdout=subprocess.PIPE,
+			stderr=subprocess.PIPE
+		)
+
 		EXIF_output	= EXIF_result.stdout
 
 		FilesToRename	= []
@@ -1069,7 +1114,10 @@ class backup(object):
 			if len(EXIF_Lines) == 0:
 				continue
 
-			FileNameOld	= EXIF_Lines[0].strip()
+			FileNameOld		= EXIF_Lines[0].replace('FilePath:', '').strip()
+
+			if not FileNameOld:
+				continue
 
 			if not os.path.isfile(FileNameOld):
 				continue
@@ -1095,28 +1143,41 @@ class backup(object):
 						if (Val > FileCreateDate) or (FileCreateDate == FileCreateDateNull):
 							FileCreateDate	= Val
 
-			FilePath	= os.path.dirname(FileNameOld)
-			FileName	= os.path.basename(FileNameOld)
-			FileNameNew	= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
+			FilePath			= os.path.dirname(FileNameOld)
+			FileName			= os.path.basename(FileNameOld)
+
+			FilePathNameNew		= os.path.join(FilePath, f'{FileCreateDate}_-_{FileName}')
+			FilePathNameNewXMP	= pathlib.Path(FilePathNameNew).with_suffix('.xmp')
+
 
 			# rename new file (overwrite in destination if already exists)
 			try:
-				os.replace(FileNameOld, FileNameNew)
+				os.replace(FileNameOld, FilePathNameNew)
 			except:
 				pass
 
-			if os.path.isfile(FileNameNew):
+			# rename sidecar file if exists
+			Extension = pathlib.Path(FileNameOld).suffix.lower().removeprefix('.')
+			if Extension in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
+				FileNameOldXMP	= pathlib.Path(FileNameOld).with_suffix('.xmp')
+				if os.path.isfile(FileNameOldXMP):
+					try:
+						os.replace(FileNameOldXMP, FilePathNameNewXMP)
+					except:
+						pass
+
+			if os.path.isfile(FilePathNameNew):
 				# overwrite database entry (Rating to enable exif update)
 				ImageFileSubpathFilenameOld	= FileNameOld.replace(self.TargetDevice.MountPoint, '', 1).strip('/')
 				ImageFilePathOld			= os.path.dirname(ImageFileSubpathFilenameOld).strip('/')
 				ImageFileNameOld			= os.path.basename(ImageFileSubpathFilenameOld)
 
-				ImageFileSubpathFilenameNew	= FileNameNew.replace(self.TargetDevice.MountPoint, '', 1).strip('/')
+				ImageFileSubpathFilenameNew	= FilePathNameNew.replace(self.TargetDevice.MountPoint, '', 1).strip('/')
 				ImageFilePathNew			= os.path.dirname(ImageFileSubpathFilenameNew).strip('/')
-				ImageFileNameNew			= os.path.basename(ImageFileSubpathFilenameNew)
+				ImageFilePathNameNew			= os.path.basename(ImageFileSubpathFilenameNew)
 
 				if ImageFilePathOld == ImageFilePathNew:
-					Command	= f"update EXIF_DATA set File_Name='{ImageFileNameNew}', Rating='{Rating}' where Directory='{ImageFilePathOld}' and (File_Name='{ImageFileNameOld}' or File_Name='{ImageFileNameNew}')"
+					Command	= f"update EXIF_DATA set File_Name='{ImageFilePathNameNew}', Rating='{Rating}' where Directory='{ImageFilePathOld}' and (File_Name='{ImageFileNameOld}' or File_Name='{ImageFilePathNameNew}')"
 					db.dbExecute(Command)
 
 			progress.progress()
@@ -1463,7 +1524,7 @@ class backup(object):
 				db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
 
 				# select directory and filename as DirFile
-				FilesTupleList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile, LbbRating from EXIF_DATA where LbbRating != Rating or Rating is null")
+				FilesTupleList	= db.dbSelect("select ID, Directory || '/' || File_Name as DirFile, LbbRating from EXIF_DATA where LbbRating != Rating or Rating is null;")
 
 				#prepare loop to update EXIF
 				FilesToProcess	= len(FilesTupleList)
@@ -1576,7 +1637,10 @@ if __name__ == "__main__":
 		help=f'Source name, one of {SourceChoices}'
 	)
 
-	TargetChoices	= ['usb', 'internal', 'nvme'] + CloudServices + ['cloud_rsync']
+	SocialServices	= lib_socialmedia.get_social_services()
+	SocialServices	= [f'social:{SocialService}' for SocialService in SocialServices]
+
+	TargetChoices	= ['usb', 'internal', 'nvme'] + CloudServices + ['cloud_rsync'] + SocialServices
 	parser.add_argument(
 		'--TargetName',
 		'-t',
@@ -1717,7 +1781,7 @@ if __name__ == "__main__":
 								SecondaryBackupFollows and \
 								(args['TargetName'] == args['SecSourceName']) and \
 								(args['TargetName'] in ['internal', 'usb', 'nvme']) and \
-								(lib_storage.extractCloudService(args['SecTargetName'])[0] in ['cloud', 'cloud_rsync'])
+								(lib_storage.extractService(args['SecTargetName'])[0] in ['cloud', 'cloud_rsync'])
 	)
 
 	# primary backup

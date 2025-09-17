@@ -1,0 +1,8 @@
+tests:
+	are sidecars generated?
+	are sidecars renamed? (backup from storage and rename)
+	sync database: are sidecars mentioned (-use MWG)
+
+changes:
+	view: feedback after saving
+	reset comitup: feedback

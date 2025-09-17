@@ -62,7 +62,7 @@ class storage(object):
 		#WaitForDevice:					True/False, retry until device is available
 		#PartnerDevice:					Instance of storage, refers to the other device in use. Optional: Needed if StorageType=='ftp' (as source).
 
-		self.StorageType, self.CloudServiceName		= extractCloudService(StorageName)
+		self.StorageType, self.ServiceName		= extractService(StorageName)
 		self.Role									= Role
 		self.WaitForDevice							= WaitForDevice
 		self.DeviceIdentifierPresetThis				= DeviceIdentifierPresetThis
@@ -146,12 +146,14 @@ class storage(object):
 			mounted	= self.__mount_cloud_rsync()
 		elif self.StorageType == 'ftp':
 			mounted	= self.__mount_ftp()
-		elif self.StorageType == 'telegram':
-			mounted	= self.__mount_telegram()
+		elif self.StorageType == 'social':
+			mounted	= self.__mount_social()
 
 		if mounted and not self.LbbDeviceID and self.mountable:
 			self.__manage_lbb_device_ID()
 
+		if not self.LbbDeviceID:
+			self.LbbDeviceID	= self.ServiceName if self.ServiceName else self.StorageType
 		return(mounted)
 
 	def __mount_local_storage(self, TimeOutActive=False):
@@ -314,13 +316,13 @@ class storage(object):
 			self.__clean_mountpoint()
 			self.createPath()
 
-			if self.CloudServiceName:
+			if self.ServiceName:
 				CloudBaseDir	= ''
 				CloudBaseDirConfigs	= self.__conf_BACKUP_CLOUDS_TARGET_BASEDIR.split('|;|')
 				for CloudBaseDirConfig in CloudBaseDirConfigs:
 					try:
 						CloudServiceCandidate, CloudBaseDirCandidate	= CloudBaseDirConfig.split('|=|')
-						if CloudServiceCandidate == self.CloudServiceName:
+						if CloudServiceCandidate == self.ServiceName:
 							CloudBaseDir	= CloudBaseDirCandidate
 					except:
 						pass
@@ -331,13 +333,13 @@ class storage(object):
 				for CloudFilesStayInPlaceConfig in CloudFilesStayInPlaceConfigs:
 					try:
 						CloudServiceCandidate, CloudFilesStayInPlaceCandidate	= CloudFilesStayInPlaceConfig.split('|=|')
-						if CloudServiceCandidate == self.CloudServiceName:
+						if CloudServiceCandidate == self.ServiceName:
 							self.FilesStayInPlace	= CloudFilesStayInPlaceCandidate == 'true'
 					except:
 						pass
 
 				if self.MountPoint:
-					Command	= f"rclone mount '{self.CloudServiceName}':'' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --allow-non-empty --config {self.__RCLONE_CONFIG_FILE}"
+					Command	= f"rclone mount '{self.ServiceName}':'' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --allow-non-empty --config {self.__RCLONE_CONFIG_FILE}"
 					Command	= f"sh -c '{Command} &'"
 					subprocess.run(Command,shell=True)
 
@@ -351,7 +353,7 @@ class storage(object):
 		else:
 			self.umount(silent=True)
 
-		self.__log.message(f"mount cloud {self.CloudServiceName}: {MOUNTED}", 3)
+		self.__log.message(f"mount cloud {self.ServiceName}: {MOUNTED}", 3)
 
 		return(MOUNTED)
 
@@ -388,7 +390,7 @@ class storage(object):
 
 		return(True)
 
-	def __mount_telegram(self):
+	def __mount_social(self):
 		self.FilesStayInPlace	= False
 
 		return(self.mounted())
@@ -595,7 +597,7 @@ class storage(object):
 		Command	= ["chown", f"{self.__mount_user}:{self.__mount_group}", MountPoint, "-R"]
 		subprocess.run(Command)
 
-	def __read_device_id(self,DatePart, RandomPart):
+	def __calculate_device_id(self, DatePart, RandomPart):
 		LbbDeviceID	= ''
 
 		Columns	= ['VENDOR','MODEL','SERIAL','FSSIZE','FSTYPE','FSVER','LABEL','UUID','PATH']
@@ -665,7 +667,7 @@ class storage(object):
 				try:
 					open(os.path.join(self.MountPoint, f"{self.LbbDeviceID}.lbbid"),'w').close()
 				except:
-					self.LbbDeviceID	= self.__read_device_id(DatePart, RandomPart)
+					self.LbbDeviceID	= self.__calculate_device_id(DatePart, RandomPart)
 
 			self.LbbSourceDescriptor	= f"{self.__lan.l('box_backup_source_id')}: {self.LbbDeviceID}"
 
@@ -701,9 +703,9 @@ class storage(object):
 			return(False)
 
 		# prepare for mount check
-		if (self.StorageType == 'cloud') and self.CloudServiceName:
+		if (self.StorageType == 'cloud') and self.ServiceName:
 			MountPointSearch	= f" {MountPoint} "
-			Command	= f"mount -l | grep '{MountPointSearch}' | grep '{self.CloudServiceName}'"
+			Command	= f"mount -l | grep '{MountPointSearch}' | grep '{self.ServiceName}'"
 		else:
 			MountPointSearch	= f'MOUNTPOINT="{MountPoint}"\|MOUNTPOINT="{self.__TechMountPoint}"' if self.__TechMountPoint else f'MOUNTPOINT="{MountPoint}"'
 			Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{MountPointSearch}'"
@@ -890,6 +892,7 @@ class storage(object):
 			LbbDeviceName	= self.LbbDeviceID.split('_', 1)[1]
 		except:
 			LbbDeviceName	= self.LbbDeviceID
+
 		LbbDeviceName	= [f"s=a:{LbbDeviceName}"] if LbbDeviceName else []
 
 		storused		= f"{self.__lan.l('box_backup_storage_used')}: {self.__HumanReadableNumber(storused,1000)}/{self.__HumanReadableNumber(storsize,1000)}"
@@ -900,8 +903,8 @@ class storage(object):
 			l_drive_ok	= self.__lan.l(f"box_backup_{self.StorageType}_{self.Role}_ok")
 		else:
 			l_drive_ok	= self.__lan.l(f"box_backup_{self.StorageType}_ok")
-			if self.CloudServiceName:
-				l_drive_ok	+= f': {self.CloudServiceName}'
+			if self.ServiceName:
+				l_drive_ok	+= f': {self.ServiceName}'
 
 		self.__display.message([f"set:clear,time={self.__conf_DISP_FRAME_TIME * 3}", f":{l_drive_ok}"] + LbbDeviceName +[f":{storused}", f":{storfree}", f":{storfstype}", f"PGBAR={PercentInUse}"])
 
@@ -1040,8 +1043,8 @@ def get_mounts_list():
 			if f' {MountPoint} ' in Mount:
 				MountType	= MountPointsDict[MountPoint]
 				if MountType in ['target_cloud', 'source_cloud']:
-					CloudServiceName	= Mount.split(':',1)[0]
-					mountsList.append(f"{MountType}:{CloudServiceName}")
+					ServiceName	= Mount.split(':',1)[0]
+					mountsList.append(f"{MountType}:{ServiceName}")
 				else:
 					mountsList.append(MountType)
 
@@ -1291,7 +1294,7 @@ def getFS_Type(MountPoint):
 
 	return(FS_Type)
 
-def extractCloudService(DeviceName):
+def extractService(DeviceName):
 	DeviceSplit	= DeviceName.split(':',1)
 	DevicePart	= DeviceSplit[0]
 	if len(DeviceSplit) > 1:
