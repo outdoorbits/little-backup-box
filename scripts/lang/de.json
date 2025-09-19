@@ -771,7 +771,8 @@
       "medium_target_usb": "USB Ziel",
       "medium_source_nvme": "Lokale NVMe Quelle",
       "medium_target_nvme": "Lokales NVMe Ziel",
-      "social_publish": "Markiert für Upload"
+      "social_publish": "zur Publikation markiert",
+      "social_published": "publiziert"
     },
     "images": {
       "download": "Download Original",

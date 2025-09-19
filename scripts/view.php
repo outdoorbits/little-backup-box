@@ -413,6 +413,7 @@
 	$filter_file_type_extension		= isset($filter_file_type_extension) ? $filter_file_type_extension :  "all";
 	$filter_camera_model_name		= isset($filter_camera_model_name) ? $filter_camera_model_name :  "all";
 	$filter_social_publish			= isset($filter_social_publish) ? $filter_social_publish : 'all';
+	$filter_social_published		= isset($filter_social_published) ? $filter_social_published : 'all';
 	$filter_variable_field			= isset($filter_variable_field) ? $filter_variable_field :  "";
 	$filter_variable_value			= isset($filter_variable_value) ? $filter_variable_value :  "";
 
@@ -494,6 +495,7 @@
 		'file_type_extensions',
 		'camera_model_name',
 		'social_publish',
+		'social_published',
 		'variable'
 	);
 	foreach ($WHERE_VARIANTS as $WHERE_VARIANT) {
@@ -519,6 +521,7 @@
 	if ($filter_camera_model_name != "all") {add_to_where("Camera_Model_Name = '" . $filter_camera_model_name . "'" . ($filter_camera_model_name == '' ? ' OR Camera_Model_Name IS NULL' : ''), 'camera_model_name', $WHERE_VARIANTS);}
 
 	if ($filter_social_publish != "all") {add_to_where("(social_publish & (1 << $filter_social_publish)) != 0", 'social_publish', $WHERE_VARIANTS);}
+	if ($filter_social_published != "all") {add_to_where("(social_published & (1 << $filter_social_published)) != 0", 'social_published', $WHERE_VARIANTS);}
 
 	if ($filter_variable_value != "") {
 		$filter_variable_value	= str_replace("+","=",$filter_variable_value);
@@ -575,35 +578,39 @@
 			# save changes to EXIF and define $UPDATE_ARRAY
 			$UPDATE_ARRAY	= array();
 			foreach($EDIT_ARRAY as $ID_IMAGE=>$Values) {
-				$ID_IMAGE		= (int)$ID_IMAGE;
-				if (!array_key_exists($ID_IMAGE, $UPDATE_ARRAY)) {
-					$UPDATE_ARRAY[$ID_IMAGE]	= array();
-				}
+
+				# get database-values before update
+				$statement	= $db->prepare("SELECT Directory, File_Name, Rating, LbbRating, Comment, social_publish FROM EXIF_DATA where ID=" . $ID_IMAGE . ";");
+				$IMAGES		= $statement->execute();
+				$IMAGE		= $IMAGES->fetchArray(SQLITE3_ASSOC);
 
 				# Rating
-				$Rating		= (int)$Values["Rating"];
+				$Rating		= (int)$EDIT_ARRAY[$ID_IMAGE]["Rating"];
 				if ($config['conf_VIEW_WRITE_RATING_EXIF'] == true) {
-					# get database-values before update
-					$statement	= $db->prepare("SELECT Directory, File_Name, Rating FROM EXIF_DATA where ID=" . $ID_IMAGE . ";");
-					$IMAGES		= $statement->execute();
-					$IMAGE		= $IMAGES->fetchArray(SQLITE3_ASSOC);
-
 					# define update fields
-					$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
-					$UPDATE_ARRAY[$ID_IMAGE]['Rating']		= $Rating;
+					if ($IMAGE['LbbRating'] != $Rating or $IMAGE['Rating'] != $Rating) {
+						$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
+						$UPDATE_ARRAY[$ID_IMAGE]['Rating']		= $Rating;
+					}
 				} else {
 					# define update fields
-					$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
+					if ($IMAGE['LbbRating'] != $Rating) {
+						$UPDATE_ARRAY[$ID_IMAGE]['LbbRating']	= $Rating;
+					}
 				}
 
 				# Comment
-				if (isset($EDIT_ARRAY[$ID_IMAGE]["Comment"])) {
-					$UPDATE_ARRAY[$ID_IMAGE]['Comment']	= $EDIT_ARRAY[$ID_IMAGE]["Comment"];
+				if (isset($EDIT_ARRAY[$ID_IMAGE]['Comment'])) {
+					if ($EDIT_ARRAY[$ID_IMAGE]['Comment'] != $IMAGE['Comment']) {
+						$UPDATE_ARRAY[$ID_IMAGE]['Comment']	= $EDIT_ARRAY[$ID_IMAGE]['Comment'];
+					}
 				}
 
 				# social_upload
-				if (isset($EDIT_ARRAY[$ID_IMAGE]["social_publish"])) {
-					$UPDATE_ARRAY[$ID_IMAGE]['social_publish']	= $EDIT_ARRAY[$ID_IMAGE]["social_publish"];
+				if (isset($EDIT_ARRAY[$ID_IMAGE]['social_publish'])) {
+					if ($EDIT_ARRAY[$ID_IMAGE]['social_publish'] != $IMAGE['social_publish']) {
+						$UPDATE_ARRAY[$ID_IMAGE]['social_publish']	= $EDIT_ARRAY[$ID_IMAGE]['social_publish'];
+					}
 				}
 			}
 
@@ -703,6 +710,26 @@
 													ORDER BY n;");
 			$SOCIAL_PUBLISHS		= $statement->execute();
 
+			$statement				= $db->prepare("WITH RECURSIVE bits(n, mask) AS (
+														SELECT 0, 1
+														UNION ALL
+														SELECT n + 1, mask << 1 FROM bits WHERE n < " . (count($social_services) - 1) . "
+													)
+													SELECT
+														n AS bit,
+														SUM( (social_published & mask) != 0 ) AS set_count
+													FROM (
+														SELECT social_published
+														FROM EXIF_DATA
+														" . ($WHERE['social_published'] != '' ? $WHERE['social_published'] . ' AND' : 'WHERE') . "
+														(social_published > 0)
+														) AS rows
+													CROSS JOIN bits
+													GROUP BY n
+													HAVING SUM( (social_published & mask) != 0 ) > 0
+													ORDER BY n;");
+			$SOCIAL_PUBLISHEDS		= $statement->execute();
+
 			$statement				= $db->prepare("PRAGMA table_info(EXIF_DATA);");
 			$VAR_FIELDS				= $statement->execute();
 
@@ -766,6 +793,7 @@
 	if ($filter_file_type_extension != "all") {$GET_PARAMETER	.= "&filter_file_type_extension=$filter_file_type_extension";}
 	if ($filter_camera_model_name != "all") {$GET_PARAMETER	.= "&filter_camera_model_name=$filter_camera_model_name";}
 	if ($filter_social_publish != "all") {$GET_PARAMETER	.= "&filter_social_publish=$filter_social_publish";}
+	if ($filter_social_published != "all") {$GET_PARAMETER	.= "&filter_social_published=$filter_social_published";}
 	if ($filter_variable_field != "") {$GET_PARAMETER	.= "&filter_variable_field=$filter_variable_field";}
 	if ($filter_variable_value != "") {$GET_PARAMETER	.= "&filter_variable_value=" . str_replace("=","+",base64_encode($filter_variable_value));}
 
@@ -783,6 +811,7 @@
 	if ($filter_file_type_extension != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_file_type_extension\" value=\"" . $filter_file_type_extension . "\">";}
 	if ($filter_camera_model_name != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_camera_model_name\" value=\"" . $filter_camera_model_name . "\">";}
 	if ($filter_social_publish != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_social_publish\" value=\"" . $filter_social_publish . "\">";}
+	if ($filter_social_published != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_social_published\" value=\"" . $filter_social_published . "\">";}
 	if ($filter_variable_field != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_variable_field\" value=\"" . $filter_variable_field . "\">";}
 	if ($filter_variable_value != "") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_variable_value\" value=\"" . str_replace("=","+",base64_encode($filter_variable_value)) . "\">";}
 ?>
@@ -1017,6 +1046,19 @@
 											while ($SOCIAL_PUBLISH = $SOCIAL_PUBLISHS->fetchArray(SQLITE3_ASSOC)) {
 												$SocialServiceName	= isset($social_services[$SOCIAL_PUBLISH['bit']]) ? $social_services[$SOCIAL_PUBLISH['bit']] : '?';
 												echo "<option value=\"" . $SOCIAL_PUBLISH['bit'] . "\" " . ($filter_social_publish == $SOCIAL_PUBLISH['bit']?" selected":"") . ">" . $SocialServiceName . " (" . $SOCIAL_PUBLISH['set_count'] . ")</option>";
+											}
+										?>
+									</select>
+							</div>
+
+							<div style="float:right;padding: 5px;">
+								<label for="filter_social_published"><?php echo L::view_filter_social_published; ?></label><br>
+									<select name="filter_social_published" id="filter_social_published" onchange="this.form.submit()">
+										<option value="all" <?php echo ($filter_social_published == "all"?" selected":""); ?>>-</option>
+										<?php
+											while ($SOCIAL_PUBLISHED = $SOCIAL_PUBLISHEDS->fetchArray(SQLITE3_ASSOC)) {
+												$SocialServiceName	= isset($social_services[$SOCIAL_PUBLISHED['bit']]) ? $social_services[$SOCIAL_PUBLISHED['bit']] : '?';
+												echo "<option value=\"" . $SOCIAL_PUBLISHED['bit'] . "\" " . ($filter_social_published == $SOCIAL_PUBLISHED['bit']?" selected":"") . ">" . $SocialServiceName . " (" . $SOCIAL_PUBLISHED['set_count'] . ")</option>";
 											}
 										?>
 									</select>

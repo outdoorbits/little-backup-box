@@ -771,7 +771,8 @@
       "medium_target_usb": "USB locale",
       "medium_source_nvme": "Origine NVMe locale",
       "medium_target_nvme": "Cible NVMe locale",
-      "social_publish": "Marqué pour téléchargement"
+      "social_publish": "marqué pour publication",
+      "social_published": "publié"
     },
     "images": {
       "download": "Télécharger l'original",

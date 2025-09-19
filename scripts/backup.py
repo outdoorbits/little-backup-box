@@ -1271,7 +1271,7 @@ class backup(object):
 		)
 
 		for Image in Images:
-			FileName	= Image.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
+			FileName		= Image.replace(self.TargetDevice.MountPoint,'',1)	# remove mountpoint
 			ImageFilePath	= os.path.dirname(FileName).strip('/')
 			ImageFileName	= os.path.basename(FileName)
 
