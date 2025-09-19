@@ -111,6 +111,18 @@ class telegram(object):
 		self.ok				= False
 		self.returnmessage	= ''
 
+		if self.configured():
+			request	= HTTPXRequest(
+				connect_timeout			= 30.0,			# Max seconds to establish the TCP/TLS connection
+				read_timeout			= 120.0,		# Max seconds waiting for Telegram's response (headers/body)
+				write_timeout			= 120.0,		# Max seconds to send non-media request data
+				pool_timeout			= 30.0,			# Max seconds to wait for a free connection from the pool
+				media_write_timeout		= 300.0			# Max seconds to upload media chunks (photos/videos/documents)
+			)
+			self.bot	= Bot(token=self.TOKEN, request=request)
+		else:
+			self.bot	= None
+
 	def configured(self):
 		return(self.TOKEN.strip() and self.CHAT_ID != 0)
 
@@ -204,27 +216,13 @@ class telegram(object):
 				return
 
 	def publish(self, msgtype, Comment='', FilePath=None):
-
-		if self.configured():
-			request	= HTTPXRequest(
-				connect_timeout			= 30.0,			# Max seconds to establish the TCP/TLS connection
-				read_timeout			= 120.0,		# Max seconds waiting for Telegram's response (headers/body)
-				write_timeout			= 120.0,		# Max seconds to send non-media request data
-				pool_timeout			= 30.0,			# Max seconds to wait for a free connection from the pool
-				media_write_timeout		= 300.0			# Max seconds to upload media chunks (photos/videos/documents)
-			)
-			self.bot	= Bot(token=self.TOKEN, request=request)
-		else:
-			self.ok				= False
-			self.returnmessage	= 'not configured'
-			return
-
-		try:
-			asyncio.get_running_loop()
-		except RuntimeError:
-			asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
-		else:
-			raise RuntimeError("publish() called from async-context – please use 'await publish_async(...)'.")
+		if self.bot:
+			try:
+				asyncio.get_running_loop()
+			except RuntimeError:
+				asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
+			else:
+				raise RuntimeError("publish() called from async-context – please use 'await publish_async(...)'.")
 
 def parse_args() -> argparse.Namespace:
 	parser = argparse.ArgumentParser(

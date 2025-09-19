@@ -1545,7 +1545,7 @@ class backup(object):
 					MediaPathFile	= os.path.join(self.TargetDevice.MountPoint, FileTuple[1].strip('/'))
 					MediaLbbRating	= FileTuple[2]
 
-					metadata.process_one(pathlib.Path(MediaPathFile).expanduser().resolve(), rating=MediaLbbRating)
+					metadata.write_metadata(pathlib.Path(MediaPathFile).expanduser().resolve(), rating=MediaLbbRating)
 					db.dbExecute(f"update EXIF_DATA SET Rating={MediaLbbRating} where ID={MediaID};")
 
 					progress.progress()

@@ -32,13 +32,13 @@ import lib_metadata
 
 class viewdb(object):
 
-	def __init__(self,setup,log,MountPoint):
+	def __init__(self, setup, log, MountPoint):
 		self.__setup	= setup
 		self.__log		= log
 
 		self.MountPoint	= MountPoint
 
-		self.dbFile									= f"{self.MountPoint}/{self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')}"
+		self.dbFile									= os.path.join(self.MountPoint, self.__setup.get_val('const_IMAGE_DATABASE_FILENAME'))
 		self.const_VIEW_RATING_STANDARD_VALUE		= self.__setup.get_val('const_VIEW_RATING_STANDARD_VALUE')
 		self.const_METADATA_CREATE_SOURCES_HR		= self.__setup.get_val('const_METADATA_CREATE_SOURCES_HR').split(';')
 		self.const_FILE_EXTENSIONS_LIST_RAW			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW')

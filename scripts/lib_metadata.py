@@ -26,7 +26,9 @@ import subprocess
 from pathlib import Path
 from typing import Optional
 
+import lib_log
 import lib_setup
+import lib_view
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -42,6 +44,7 @@ class MetadataTool:
 		self._ensure_exiftool()
 
 		self.__setup	= lib_setup.setup()
+		self.__log		= lib_log.log()
 
 		self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES		= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_WEB_IMAGES').split(';')
 		self.const_FILE_EXTENSIONS_LIST_HEIC			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_HEIC').split(';')
@@ -52,12 +55,26 @@ class MetadataTool:
 		self.const_METADATA_CREATE_SOURCES				= self.__setup.get_val('const_METADATA_CREATE_SOURCES').split(';')
 		self.const_METADATA_MODIFY_SOURCES				= self.__setup.get_val('const_METADATA_MODIFY_SOURCES').split(';')
 
-	def process_one(self, path: Path, rating: Optional[int] = None, description: Optional[str] = None) -> None:
+	def write_metadata(self, path: Path, rating: Optional[int] = None, description: Optional[str] = None) -> None:
 
 		if not path.exists() or not path.is_file():
 			return()
 
-		Extension = path.suffix.lower().removeprefix('.')
+		MountPoint					= str(Path(*path.parts[:3]))
+		ImageFilePath				= str(Path(*path.parts[3:]).parent).strip('/')
+		ImageFileName				= path.name
+		Extension					= path.suffix.lower().removeprefix('.')
+
+		db	= lib_view.viewdb(setup=self.__setup, log=self.__log, MountPoint=MountPoint)
+		FileDB_Data	= db.dbSelect(f"select Rating, Comment from EXIF_DATA where Directory='{ImageFilePath}' and File_Name='{ImageFileName}';")
+		if len(FileDB_Data) > 0:
+			dbRating	= int(FileDB_Data[0][0])
+			dbComment	= FileDB_Data[0][1]
+		else:
+			return(False)
+
+		if (rating is None or dbRating == rating) and (description is None or dbComment == description):
+			return(True)
 
 		EMBED_EXTS	= 	self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES + \
 						self.const_FILE_EXTENSIONS_LIST_HEIC + \
@@ -187,6 +204,17 @@ class MetadataTool:
 		return rating if 1 <= rating <= 5 else 2
 
 # functions
+def formatValue(value):
+	value	= value.replace('\r', '')
+	value	= value.replace('\n', '<br>')
+	value	= value.replace('"', '&#34;')
+	value	= value.replace("'", '&#39;')
+	pattern		= re.compile(r'[^a-zA-Z0-9_\-+\.,:; &#/()\[\]<>]')
+	value	= '' if value is None else str(value)
+	value	= pattern.sub('_', value)
+
+	return(value)
+
 def normalize_exif_array(EXIF_Array):
 	# get image record out of exif data
 	ImageRecord			= {}
@@ -219,13 +247,7 @@ def normalize_exif_array(EXIF_Array):
 			continue
 
 		if not EXIF_Field in ['File_Name', 'Directory']:
-			EXIF_Value	= EXIF_Value.replace('\r', '')
-			EXIF_Value	= EXIF_Value.replace('\n', '<br>')
-			EXIF_Value	= EXIF_Value.replace('"', '&#34;')
-			EXIF_Value	= EXIF_Value.replace("'", '&#39;')
-			pattern		= re.compile(r'[^a-zA-Z0-9_\-+\.,:; &#/()\[\]<>]')
-			EXIF_Value	= '' if EXIF_Value is None else str(EXIF_Value)
-			EXIF_Value	= pattern.sub('_', EXIF_Value)
+			EXIF_Value	= formatValue(EXIF_Value)
 
 		ImageRecord[EXIF_Field]	= EXIF_Value
 		ImageRecord_lower.append(EXIF_Field.lower())
@@ -261,11 +283,11 @@ def main() -> None:
 
 	# write rating and/or comment into file
 	if (not args.rating is None) and (not args.comment is None):
-		tool.process_one(Path(args.input).expanduser().resolve(), rating=args.rating, description=description)
+		tool.write_metadata(Path(args.input), rating=args.rating, description=description)
 	elif not args.rating is None:
-		tool.process_one(Path(args.input).expanduser().resolve(), rating=args.rating)
+		tool.write_metadata(Path(args.input), rating=args.rating)
 	elif not args.comment is None:
-		tool.process_one(Path(args.input).expanduser().resolve(), description=description)
+		tool.write_metadata(Path(args.input), description=description)
 
 if __name__ == "__main__":
 	main()
