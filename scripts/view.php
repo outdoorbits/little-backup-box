@@ -142,9 +142,9 @@
 							}
 
 							if ($gridcolumns > 1) {
-								echo ("<a href=\"{$GET_PARAMETER}&gridcolumns=1\" title=\"" . L::view_grid_single . "\"><svg width=\"2em\" height=\"2em\" class=\"flex-shrink-0\"><use href=\"#icon-columns-one\"></use></svg></a>");
+								echo ("<a href=\"{$GET_PARAMETER}&ID={$IMAGE_ID}&gridcolumns=1\" title=\"" . L::view_grid_single . "\"><svg width=\"2em\" height=\"2em\" class=\"flex-shrink-0\"><use href=\"#icon-columns-one\"></use></svg></a>");
 							} else {
-								echo ("<a href=\"{$GET_PARAMETER}&gridcolumns=0\" title=\"" . L::view_grid_multi . "\"><svg width=\"2em\" height=\"2em\" class=\"flex-shrink-0\"><use href=\"#icon-columns-multi\"></use></svg></a>");
+								echo ("<a href=\"{$GET_PARAMETER}&ID={$IMAGE_ID}&gridcolumns=0\" title=\"" . L::view_grid_multi . "\"><svg width=\"2em\" height=\"2em\" class=\"flex-shrink-0\"><use href=\"#icon-columns-multi\"></use></svg></a>");
 							}
 						?>
 					</div>
