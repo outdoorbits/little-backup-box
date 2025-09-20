@@ -141,78 +141,87 @@ class telegram(object):
 				self.ok				= True
 				self.returnmessage	= msgtype
 				return
-			except:
+			except asyncio.CancelledError:
+				raise
+			except Exception as e:
 				self.ok				= False
-				self.returnmessage	= msgtype
+				self.returnmessage	= f'{msgtype}: {type(e).__name__}, {e}'
 				return
 
 		elif msgtype == 'video' and FilePath:
 			try:
-				with open(FilePath, "rb") as f:
+				with open(FilePath, 'rb') as f:
 					msg	= await self.bot.send_video(
 						chat_id=self.CHAT_ID,
 						video=InputFile(f, filename=FilePath.name),
 						caption=Comment,
 						supports_streaming=True
 					)
-
 				self.ok				= True
-				self.returnmessage	= os.path.basename(FilePath)
+				self.returnmessage	= f'{msgtype} {FilePath.name}'
 				return
-			except:
+			except asyncio.CancelledError:
+				raise
+			except Exception as e:
 				self.ok				= False
-				self.returnmessage	= os.path.basename(FilePath)
+				self.returnmessage	= f'{msgtype} {FilePath.name}: {type(e).__name__}, {e}'
 				return
 
 		elif msgtype == 'audio':
 			try:
-				with open(FilePath, "rb") as f:
+				with open(FilePath, 'rb') as f:
 					msg	= await self.bot.send_voice(
 						chat_id=self.CHAT_ID,
-						voice=FilePath,
+						voice=InputFile(f, filename=FilePath.name),
 						caption=Comment
 					)
 
 				self.ok				= True
-				self.returnmessage	= os.path.basename(FilePath)
+				self.returnmessage	= f'{msgtype} {FilePath.name}'
 				return
-			except:
+			except asyncio.CancelledError:
+				raise
+			except Exception as e:
 				self.ok				= False
-				self.returnmessage	= os.path.basename(FilePath)
+				self.returnmessage	= f'{msgtype} {FilePath.name}: {type(e).__name__}, {e}'
 				return
 
 		elif msgtype == 'photo':
 			try:
-				with open(FilePath, "rb") as f:
+				with open(FilePath, 'rb') as f:
 					msg	= await self.bot.send_photo(
 						chat_id=self.CHAT_ID,
-						photo=FilePath,
+						photo=InputFile(f, filename=FilePath.name),
 						caption=Comment
 					)
 
 				self.ok				= True
-				self.returnmessage	= os.path.basename(FilePath)
+				self.returnmessage	= f'{msgtype} {FilePath.name}'
 				return
-			except:
+			except asyncio.CancelledError:
+				raise
+			except Exception as e:
 				self.ok				= False
-				self.returnmessage	= os.path.basename(FilePath)
+				self.returnmessage	= f'{msgtype} {FilePath.name}: {type(e).__name__}, {e}'
 				return
 
 		elif msgtype == 'document':
 			try:
-				with open(FilePath, "rb") as f:
+				with open(FilePath, 'rb') as f:
 					msg	= await self.bot.send_document(
 						chat_id=self.CHAT_ID,
-						document=FilePath,
+						document=InputFile(f, filename=FilePath.name),
 						caption=Comment
 					)
 
 				self.ok				= True
-				self.returnmessage	= os.path.basename(FilePath)
+				self.returnmessage	= f'{msgtype} {FilePath.name}'
 				return
-			except:
+			except asyncio.CancelledError:
+				raise
+			except Exception as e:
 				self.ok				= False
-				self.returnmessage	= os.path.basename(FilePath)
+				self.returnmessage	= f'{msgtype} {FilePath.name}: {type(e).__name__}, {e}'
 				return
 
 	def publish(self, msgtype, Comment='', FilePath=None):

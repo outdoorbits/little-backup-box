@@ -802,6 +802,8 @@ class backup(object):
 
 							success	= SOCIAL.publish(Comment=IMAGE_COMMENT, FilePath=social_image_path, Create_Date=IMAGE_DATE)
 
+							self.__reporter.add_synclog(success['msg'])
+
 							progress.progress(Success=success['ok'])
 							if success['ok']:
 								db.dbExecute(f'UPDATE EXIF_DATA SET social_publish = social_publish & ~{2 ** bit}, social_published = social_published | {2 ** bit} WHERE ID={IMAGE_ID};')
