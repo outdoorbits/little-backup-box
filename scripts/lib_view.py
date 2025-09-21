@@ -21,11 +21,10 @@ import argparse
 from datetime import datetime
 import os
 import pathlib
+import re
 import sqlite3
 import subprocess
 import sys
-
-import lib_metadata
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -137,7 +136,7 @@ class viewdb(object):
 		except:
 			EXIF_List	= []
 
-		ImageRecord	= lib_metadata.normalize_exif_array(EXIF_List)
+		ImageRecord	= self._normalize_exif_array(EXIF_List)
 
 		# overwrite by xmp if available
 		Extension = pathlib.Path(ImageFile).suffix.lower().removeprefix('.')
@@ -149,7 +148,7 @@ class viewdb(object):
 				except:
 					EXIF_List	= []
 
-				XMPRecord	= lib_metadata.normalize_exif_array(EXIF_List)
+				XMPRecord	= self._normalize_exif_array(EXIF_List)
 
 				for var	in XMPRecord.keys():
 					ImageRecord[var]	= XMPRecord[var]
@@ -208,6 +207,56 @@ class viewdb(object):
 			# insert new image
 			Command	= f"insert into EXIF_DATA ({dbFields}) values ({dbValues});"
 			self.dbExecute(Command)
+
+	def _format_EXIF_Value(self, value):
+		value	= value.replace('\r', '')
+		value	= value.replace('\n', '<br>')
+		value	= value.replace('"', '&#34;')
+		value	= value.replace("'", '&#39;')
+		pattern		= re.compile(r'[^a-zA-Z0-9_\-+\.,:; &#/()\[\]<>]')
+		value	= '' if value is None else str(value)
+		value	= pattern.sub('_', value)
+
+		return(value)
+
+	def _normalize_exif_array(self, EXIF_Array):
+		# get image record out of exif data
+		ImageRecord			= {}
+		ImageRecord_lower	= [] # for case insensitive check for known fields
+
+		for EXIF in EXIF_Array:
+
+			try:
+				EXIF_Field, EXIF_Value	= EXIF.split(':',1)
+			except:
+				EXIF_Field	= EXIF
+				EXIF_Value	= ''
+
+			EXIF_Field	= EXIF_Field.strip()
+			EXIF_Value	= EXIF_Value.strip()
+
+			EXIF_Field	= re.sub('[^a-zA-Z0-9]', '_', EXIF_Field)
+
+			# prepare and care database-structure
+			## do not allow to use ID as EXIF-field
+			if EXIF_Field == "ID":
+				EXIF_Field="ID_CAMERA"
+
+			## do not accept field names shorter then 2 characters
+			if len(EXIF_Field) < 2:
+				continue
+
+			## prevent doubles
+			if EXIF_Field.lower() in ImageRecord_lower:
+				continue
+
+			if not EXIF_Field in ['File_Name', 'Directory']:
+				EXIF_Value	= self._format_EXIF_Value(EXIF_Value)
+
+			ImageRecord[EXIF_Field]	= EXIF_Value
+			ImageRecord_lower.append(EXIF_Field.lower())
+
+		return(ImageRecord)
 
 def parse_args() -> argparse.Namespace:
 	parser = argparse.ArgumentParser(

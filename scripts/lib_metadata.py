@@ -19,7 +19,6 @@
 #######################################################################
 
 import argparse
-import re
 import shlex
 import shutil
 import subprocess
@@ -28,7 +27,6 @@ from typing import Optional
 
 import lib_log
 import lib_setup
-import lib_view
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -60,21 +58,7 @@ class MetadataTool:
 		if not path.exists() or not path.is_file():
 			return()
 
-		MountPoint					= str(Path(*path.parts[:3]))
-		ImageFilePath				= str(Path(*path.parts[3:]).parent).strip('/')
-		ImageFileName				= path.name
 		Extension					= path.suffix.lower().removeprefix('.')
-
-		db	= lib_view.viewdb(setup=self.__setup, log=self.__log, MountPoint=MountPoint)
-		FileDB_Data	= db.dbSelect(f"select Rating, Comment from EXIF_DATA where Directory='{ImageFilePath}' and File_Name='{ImageFileName}';")
-		if len(FileDB_Data) > 0:
-			dbRating	= int(FileDB_Data[0][0])
-			dbComment	= FileDB_Data[0][1]
-		else:
-			return(False)
-
-		if (rating is None or dbRating == rating) and (description is None or dbComment == description):
-			return(True)
 
 		EMBED_EXTS	= 	self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES + \
 						self.const_FILE_EXTENSIONS_LIST_HEIC + \
@@ -202,57 +186,6 @@ class MetadataTool:
 	@staticmethod
 	def _normalize_rating(rating: int) -> int:
 		return rating if 1 <= rating <= 5 else 2
-
-# functions
-def formatValue(value):
-	value	= value.replace('\r', '')
-	value	= value.replace('\n', '<br>')
-	value	= value.replace('"', '&#34;')
-	value	= value.replace("'", '&#39;')
-	pattern		= re.compile(r'[^a-zA-Z0-9_\-+\.,:; &#/()\[\]<>]')
-	value	= '' if value is None else str(value)
-	value	= pattern.sub('_', value)
-
-	return(value)
-
-def normalize_exif_array(EXIF_Array):
-	# get image record out of exif data
-	ImageRecord			= {}
-	ImageRecord_lower	= [] # for case insensitive check for known fields
-
-	for EXIF in EXIF_Array:
-
-		try:
-			EXIF_Field, EXIF_Value	= EXIF.split(':',1)
-		except:
-			EXIF_Field	= EXIF
-			EXIF_Value	= ''
-
-		EXIF_Field	= EXIF_Field.strip()
-		EXIF_Value	= EXIF_Value.strip()
-
-		EXIF_Field	= re.sub('[^a-zA-Z0-9]', '_', EXIF_Field)
-
-		# prepare and care database-structure
-		## do not allow to use ID as EXIF-field
-		if EXIF_Field == "ID":
-			EXIF_Field="ID_CAMERA"
-
-		## do not accept field names shorter then 2 characters
-		if len(EXIF_Field) < 2:
-			continue
-
-		## prevent doubles
-		if EXIF_Field.lower() in ImageRecord_lower:
-			continue
-
-		if not EXIF_Field in ['File_Name', 'Directory']:
-			EXIF_Value	= formatValue(EXIF_Value)
-
-		ImageRecord[EXIF_Field]	= EXIF_Value
-		ImageRecord_lower.append(EXIF_Field.lower())
-
-	return(ImageRecord)
 
 # ---------- CLI ----------
 
