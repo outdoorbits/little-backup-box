@@ -143,7 +143,7 @@ class telegram(object):
 		self.TOKEN		= TG_TOKEN
 		self.CHAT_ID	= TG_CHAT_ID
 
-		self.ok				= False
+		self.ok				= None
 		self.returnmessage	= ''
 
 		self.bot_configured	= self.configured()
@@ -203,6 +203,9 @@ class telegram(object):
 							document=InputFile(f, filename=FilePath.name),
 							caption=Comment
 						)
+				else:
+					self.ok = False
+					self.returnmessage = f"unsupported msgtype {msgtype}"
 
 				if FilePath:
 					FileName	= FilePath.name
@@ -211,16 +214,17 @@ class telegram(object):
 
 				sep	= '' if not FileName else ': '
 
-				self.ok				= True
-				name	= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-				self.returnmessage	= f'{msgtype}{name}: o.k.'
-
 			except asyncio.CancelledError:
 				raise
 			except Exception as e:
 				self.ok				= False
 				name	= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
 				self.returnmessage	= f'{msgtype}{name}: {type(e).__name__}, {e}'
+
+		if self.ok is None:
+			self.ok				= True
+			name				= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
+			self.returnmessage	= f'{msgtype}{name}: o.k.'
 
 	def publish(self, msgtype, Comment='', FilePath=None):
 		if self.bot_configured:
@@ -244,7 +248,7 @@ class mastodon(object):
 		self.API_BASE_URL   = MA_API_BASE_URL
 		self.ACCESS_TOKEN   = MA_ACCESS_TOKEN
 
-		self.ok             = False
+		self.ok             = None
 		self.returnmessage  = ''
 
 		if self.configured():
@@ -263,17 +267,13 @@ class mastodon(object):
 		if not FilePath is None:
 			FilePath	= Path(FilePath)
 
-		if msgtype == 'text':
-			try:
-				self.mastodon.status_post(Comment)
-				self.ok = True
-				self.returnmessage = msgtype
-			except Exception as e:
-				self.ok = False
-				self.returnmessage = f"{msgtype}: {type(e).__name__}, {e}"
+		try:
+			if msgtype == 'text':
+				self.mastodon.status_post(
+					Comment
+				)
 
-		elif msgtype in ['photo','video','audio']:
-			try:
+			elif msgtype in ['photo','video','audio']:
 				media = self.mastodon.media_post(
 					FilePath
 					# description='Alt text'  # optional alt-text
@@ -282,19 +282,20 @@ class mastodon(object):
 					Comment,
 					media_ids=[media['id']]
 				)
-				self.ok = True
-				self.returnmessage = f"{msgtype} {FilePath.name}"
-			except Exception as e:
+
+			else:
 				self.ok = False
-				self.returnmessage = f"{msgtype} {FilePath.name}: {type(e).__name__}, {e}"
+				self.returnmessage = f"unsupported msgtype {msgtype}"
 
-		elif msgtype == 'document':
-			self.ok = False
-			self.returnmessage = "Mastodon does not support generic documents"
+		except Exception as e:
+			self.ok				= False
+			name	= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
+			self.returnmessage	= f'{msgtype}{name}: {type(e).__name__}, {e}'
 
-		else:
-			self.ok = False
-			self.returnmessage = f"unsupported msgtype {msgtype}"
+		if self.ok is None:
+			self.ok				= True
+			name				= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
+			self.returnmessage	= f'{msgtype}{name}: o.k.'
 
 	def publish(self, msgtype, Comment='', FilePath=None):
 		if self.mastodon:
