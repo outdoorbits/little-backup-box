@@ -1337,7 +1337,25 @@
 
 										<?php media_functions('audio', $IMAGE, $IMAGE_FILENAME); ?>
 									<?php
+								} elseif (strpos(";" . $constants['const_FILE_EXTENSIONS_LIST_TEXT'] . ";",";" . strtolower($IMAGE_FILENAME_PARTS['extension']) . ";") !== false ) {
+// 		text-file
+									?>
+										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
+
+											<div id="slideshowContent" class="slideshow">
+												<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+												<img class="slideshow-content" src="<?php echo urlencode_keep_slashes($FILENAME_DISPLAY); ?>">
+											</div>
+
+											<img style="max-width: 100%;border-radius: 5px;" class="rating<?php echo $IMAGE['LbbRating']; ?>" src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_TIMS); ?>">
+
+										</div>
+
+										<?php media_functions('text', $IMAGE, $IMAGE_FILENAME); ?>
+
+									<?php
 								}
+
 							?>
 						</div>
 
