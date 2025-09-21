@@ -246,30 +246,28 @@
 		$PUBLISHED	= intval($PUBLISHED);
 
 		foreach($social_services as $bit => $ServiceName) {
-
-		if ($PUBLISHED & (1 << $bit)) {
-			?>
-			<svg width="16" height="16" class="flex-shrink-0" aria-labelledby="published-<?php echo $bit; ?>">
-				<title id="published-<?php echo $bit; ?>"><?php echo L::view_social_published_on . ' ' . $ServiceName; ?></title>
-				<use href="#icon-social-published-<?php echo $bit; ?>"></use>
-			</svg>
-			<?php
-		}
-
 ?>
-		<div class="d-flex align-items-center gap-2">
-			<label for="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" class="d-inline-flex align-items-center gap-1 m-0">
-				<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="hidden" value=0>
-				<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="checkbox" value=1 class="form-check-input m-0" <?php echo ($PUBLISH & (1 << $bit))?"checked":""; ?> title="<?php echo L::view_social_publish_on . ' ' . $ServiceName; ?>">
+			<div class="d-flex align-items-center gap-2">
+				<label for="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" class="d-inline-flex align-items-center gap-1 m-0">
+					<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="hidden" value=0>
+					<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="checkbox" value=1 class="form-check-input m-0" <?php echo ($PUBLISH & (1 << $bit))?"checked":""; ?> title="<?php echo L::view_social_publish_on . ' ' . $ServiceName; ?>">
 
-				<svg width="16" height="16" aria-labelledby="publish-<?php echo $bit; ?>">
-					<title id="publish-on-<?php echo $bit; ?>"><?php echo L::view_social_publish_on . ' ' . $ServiceName; ?></title>
-					<use href="#icon-social-publish-<?php echo $bit; ?>"></use>
-				</svg>
-			</label>
+					<svg width="16" height="16" aria-labelledby="publish-<?php echo $bit; ?>">
+						<title id="publish-on-<?php echo $bit; ?>"><?php echo L::view_social_publish_on . ' ' . $ServiceName; ?></title>
+						<use href="#icon-social-publish-<?php echo $bit; ?>"></use>
+					</svg>
+				</label>
 
-  		</div>
+			</div>
 <?php
+			if ($PUBLISHED & (1 << $bit)) {
+				?>
+				<svg width="16" height="16" class="flex-shrink-0" aria-labelledby="published-<?php echo $bit; ?>">
+					<title id="published-<?php echo $bit; ?>"><?php echo L::view_social_published_on . ' ' . $ServiceName; ?></title>
+					<use href="#icon-social-published-<?php echo $bit; ?>"></use>
+				</svg>
+				<?php
+			}
 		}
 	}
 
@@ -901,6 +899,7 @@
 		<circle cx="10" cy="11" r="1.25"/><circle cx="14" cy="11" r="1.25"/><circle cx="18" cy="11" r="1.25"/>
 	</symbol>
 
+<!-- 	telegram -->
 	<symbol id="icon-social-publish-0" viewBox="0 0 24 24">
 		<path d="M2 12L22 3l-6.5 17L12 13 7 18 6 11z" fill="#0d6efd"/>
 		<circle cx="18" cy="18" r="5" fill="#6c757d"/>
@@ -912,6 +911,23 @@
 		<circle cx="18" cy="18" r="5" fill="#198754"/>
 		<path d="M16.5 18l1.5 1.5L20 17" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 	</symbol>
+
+<!-- 	mastodon -->
+	<symbol id="icon-social-publish-1" viewBox="0 0 24 24">
+		<path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2z" fill="#0d6efd"/>
+		<circle cx="18" cy="18" r="5" fill="#6c757d"/>
+		<path d="M18 21v-5M16.5 16.5L18 15l1.5 1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	</symbol>
+
+	<symbol id="icon-social-published-1" viewBox="0 0 24 24">
+		<path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2z" fill="#0d6efd"/>
+		<circle cx="18" cy="18" r="5" fill="#198754"/>
+		<path d="M16.5 18l1.5 1.5L20 17" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	</symbol>
+
+</svg>
+
+
 
 </svg>
 

@@ -286,7 +286,9 @@ class setup(object):
 					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'},
 					'conf_TELEGRAM_TOKEN':								{'value': '', 'type': 'str'},
 					'conf_TELEGRAM_CHAT_ID':							{'value': 0, 'type': 'int'},
-					'conf_TELEGRAM_CHAT_IDENTIFIER':					{'value': '', 'type': 'str'}
+					'conf_TELEGRAM_CHAT_IDENTIFIER':					{'value': '', 'type': 'str'},
+					'conf_MASTODON_BASE_URL':							{'value': '', 'type': 'str'},
+					'conf_MASTODON_TOKEN':								{'value': '', 'type': 'str'}
 				}
 		)
 

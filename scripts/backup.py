@@ -52,7 +52,23 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DoChecksum='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, TelegramChatID=None, PowerOff='setup', SecondaryBackupFollows=False):
+	def __init__(
+		self,
+		SourceName,
+		TargetName,
+		move_files='setup',
+		DoRenameFiles='setup',
+		ForceSyncDatabase=False,
+		DoGenerateThumbnails='setup',
+		shiftGenerateThumbnails=False,
+		DoUpdateEXIF='setup',
+		DoChecksum='setup',
+		DeviceIdentifierPresetSource=None,
+		DeviceIdentifierPresetTarget=None,
+		TelegramChatID=None,
+		PowerOff='setup',
+		SecondaryBackupFollows=False
+	):
 
 		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync', 'ftp'] or functions: ['thumbnails', 'database', 'exif', 'rename]
 		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync', 'social:telegram']
@@ -116,6 +132,10 @@ class backup(object):
 		# Telegram
 		self.telegram_token									= self.__setup.get_val('conf_TELEGRAM_TOKEN')
 		self.telegram_chat_id								= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
+
+		# mastodon
+		self.mastodon_token									= self.__setup.get_val('conf_MASTODON_TOKEN')
+		self.mastodon_base_url								= self.__setup.get_val('conf_MASTODON_BASE_URL')
 
 		# power off
 		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
@@ -377,12 +397,11 @@ class backup(object):
 			else:
 				return(0, True)
 
-			if self.TargetService == 'telegram':
-				db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
-				FilesToProcess	= db.dbSelect(f"SELECT COUNT(ID) AS social_count FROM EXIF_DATA WHERE (social_publish & (1 << {bit}));")[0][0]
-				del db
+			db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
+			FilesToProcess	= db.dbSelect(f"SELECT COUNT(ID) AS social_count FROM EXIF_DATA WHERE (social_publish & (1 << {bit}));")[0][0]
+			del db
 
-				return(FilesToProcess, False)
+			return(FilesToProcess, False)
 
 		elif  self.SourceDevice.StorageType != 'camera':
 			## Source is mounted (mountable) device or treated like that (cloud_rsync)
@@ -765,10 +784,17 @@ class backup(object):
 							EXTENSIONS_LIST_PHOTO	= self.combination_FILE_EXTENSIONS_LIST_PHOTO,
 							telegram_token			= self.telegram_token,
 							telegram_chat_id		= self.telegram_chat_id,
+							mastodon_token			= self.mastodon_token,
+							mastodon_base_url		= self.mastodon_base_url
 						)
 
 						if not SOCIAL.configured():
-							self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
+
+							if self.TargetService == 'telegram':
+								self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
+							elif seöf.TargetService == 'mastodon':
+								self.__display.message([f's=a:{self.__lan.l("box_backup_mastodon_not_configured_1")}', f's=a:{self.__lan.l("box_backup_mastodon_not_configured_2")}'])
+
 							return
 
 						# get bit position

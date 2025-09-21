@@ -10,6 +10,8 @@ from telegram import Bot
 from telegram.request import HTTPXRequest
 from telegram import InputFile
 
+from mastodon import Mastodon
+
 import lib_language
 import lib_setup
 import lib_time
@@ -20,20 +22,33 @@ import lib_time
 
 def get_social_services():
 	social_services	= [
-		'telegram'
+		'telegram',
+		'mastodon'
 	]
 	return(social_services)
 
 class socialmedia(object):
 
-	def __init__(self, service=None, EXTENSIONS_LIST_VIDEO=None, EXTENSIONS_LIST_AUDIO=None, EXTENSIONS_LIST_PHOTO=None, telegram_token=None, telegram_chat_id=None):
+	def __init__(
+			self,
+			service=None,
+			EXTENSIONS_LIST_VIDEO=None,
+			EXTENSIONS_LIST_AUDIO=None,
+			EXTENSIONS_LIST_PHOTO=None,
+			telegram_token=None,
+			telegram_chat_id=None,
+			mastodon_token=None,
+			mastodon_base_url=None
+		):
 		self.__lan		= lib_language.language()
 
 		self.service	= service
 
 		self.SERVICE_Obj	= None
 		if service == 'telegram':
-			self.SERVICE_Obj	= telegram(TOKEN=telegram_token, CHAT_ID=telegram_chat_id)
+			self.SERVICE_Obj	= telegram(TG_TOKEN=telegram_token, TG_CHAT_ID=telegram_chat_id)
+		elif service == 'mastodon':
+			self.SERVICE_Obj	= mastodon(MA_ACCESS_TOKEN=mastodon_token, MA_API_BASE_URL=mastodon_base_url)
 
 		self.EXTENSIONS_LIST_VIDEO	= EXTENSIONS_LIST_VIDEO.split(';')
 		self.EXTENSIONS_LIST_AUDIO	= EXTENSIONS_LIST_AUDIO.split(';')
@@ -99,14 +114,10 @@ class socialmedia(object):
 
 class telegram(object):
 
-	def __init__(self, TOKEN, CHAT_ID):
+	def __init__(self, TG_TOKEN, TG_CHAT_ID):
 
-		self.__setup	= lib_setup.setup()
-
-		self.date_old	= None
-
-		self.TOKEN		= TOKEN
-		self.CHAT_ID	= CHAT_ID
+		self.TOKEN		= TG_TOKEN
+		self.CHAT_ID	= TG_CHAT_ID
 
 		self.ok				= False
 		self.returnmessage	= ''
@@ -232,6 +243,77 @@ class telegram(object):
 				asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
 			else:
 				raise RuntimeError("publish() called from async-context – please use 'await publish_async(...)'.")
+		else:
+			self.ok = False
+			self.returnmessage = "not configured"
+
+from mastodon import Mastodon
+
+class mastodon(object):
+	def __init__(self, MA_ACCESS_TOKEN, MA_API_BASE_URL):
+
+		self.ACCESS_TOKEN   = MA_ACCESS_TOKEN
+		self.API_BASE_URL   = MA_API_BASE_URL
+
+		self.ok             = False
+		self.returnmessage  = ''
+
+		if self.configured():
+			self.mastodon = Mastodon(
+				access_token=self.ACCESS_TOKEN,
+				api_base_url=self.API_BASE_URL
+			)
+		else:
+			self.mastodon = None
+
+	def configured(self):
+		return(self.ACCESS_TOKEN.strip() and self.API_BASE_URL.strip())
+
+	def __publish(self, msgtype, Comment='', FilePath=None):
+
+		if not FilePath is None:
+			FilePath	= Path(FilePath)
+
+		if msgtype == 'text':
+			try:
+				self.mastodon.status_post(Comment)
+				self.ok = True
+				self.returnmessage = msgtype
+			except Exception as e:
+				self.ok = False
+				self.returnmessage = f"{msgtype}: {type(e).__name__}, {e}"
+
+		elif msgtype in ['photo','video','audio']:
+			try:
+				media = self.mastodon.media_post(
+					FilePath
+					# description='Alt text'  # optional alt-text
+				)
+				self.mastodon.status_post(
+					Comment,
+					media_ids=[media['id']]
+				)
+				self.ok = True
+				self.returnmessage = f"{msgtype} {FilePath.name}"
+			except Exception as e:
+				self.ok = False
+				self.returnmessage = f"{msgtype} {FilePath.name}: {type(e).__name__}, {e}"
+
+		elif msgtype == 'document':
+			self.ok = False
+			self.returnmessage = "Mastodon does not support generic documents"
+
+		else:
+			self.ok = False
+			self.returnmessage = f"unsupported msgtype {msgtype}"
+
+	def publish(self, msgtype, Comment='', FilePath=None):
+		if self.mastodon:
+			self.__publish(msgtype, Comment=Comment, FilePath=FilePath)
+		else:
+			self.ok = False
+			self.returnmessage = "not configured"
+
 
 def parse_args() -> argparse.Namespace:
 	parser = argparse.ArgumentParser(
