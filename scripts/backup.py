@@ -52,7 +52,23 @@ import lib_vpn
 
 class backup(object):
 
-	def __init__(self, SourceName, TargetName, move_files='setup', DoRenameFiles='setup', ForceSyncDatabase=False, DoGenerateThumbnails='setup', shiftGenerateThumbnails=False, DoUpdateEXIF='setup', DoChecksum='setup', DeviceIdentifierPresetSource=None, DeviceIdentifierPresetTarget=None, TelegramChatID=None, PowerOff='setup', SecondaryBackupFollows=False):
+	def __init__(
+		self,
+		SourceName,
+		TargetName,
+		move_files='setup',
+		DoRenameFiles='setup',
+		ForceSyncDatabase=False,
+		DoGenerateThumbnails='setup',
+		shiftGenerateThumbnails=False,
+		DoUpdateEXIF='setup',
+		DoChecksum='setup',
+		DeviceIdentifierPresetSource=None,
+		DeviceIdentifierPresetTarget=None,
+		TelegramChatID=None,
+		PowerOff='setup',
+		SecondaryBackupFollows=False
+	):
 
 		# SourceName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'camera', 'cloud:SERVICE_NAME', 'cloud_rsync', 'ftp'] or functions: ['thumbnails', 'database', 'exif', 'rename]
 		# TargetName:											one of ['anyusb', 'usb', 'internal', 'nvme', 'cloud:SERVICE_NAME', 'cloud_rsync', 'social:telegram']
@@ -117,6 +133,10 @@ class backup(object):
 		self.telegram_token									= self.__setup.get_val('conf_TELEGRAM_TOKEN')
 		self.telegram_chat_id								= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
 
+		# mastodon
+		self.mastodon_base_url								= self.__setup.get_val('conf_MASTODON_BASE_URL')
+		self.mastodon_token									= self.__setup.get_val('conf_MASTODON_TOKEN')
+
 		# power off
 		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
 
@@ -143,6 +163,7 @@ class backup(object):
 		self.const_FILE_EXTENSIONS_LIST_TIF				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TIF')
 		self.const_FILE_EXTENSIONS_LIST_VIDEO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO')
 		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
+		self.const_FILE_EXTENSIONS_LIST_TEXT			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TEXT')
 
 		self.combination_FILE_EXTENSIONS_LIST_PHOTO		= ';'.join([self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES, self.const_FILE_EXTENSIONS_LIST_HEIC, self.const_FILE_EXTENSIONS_LIST_TIF])
 
@@ -377,12 +398,11 @@ class backup(object):
 			else:
 				return(0, True)
 
-			if self.TargetService == 'telegram':
-				db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
-				FilesToProcess	= db.dbSelect(f"SELECT COUNT(ID) AS social_count FROM EXIF_DATA WHERE (social_publish & (1 << {bit}));")[0][0]
-				del db
+			db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
+			FilesToProcess	= db.dbSelect(f"SELECT COUNT(ID) AS social_count FROM EXIF_DATA WHERE (social_publish & (1 << {bit}));")[0][0]
+			del db
 
-				return(FilesToProcess, False)
+			return(FilesToProcess, False)
 
 		elif  self.SourceDevice.StorageType != 'camera':
 			## Source is mounted (mountable) device or treated like that (cloud_rsync)
@@ -763,12 +783,20 @@ class backup(object):
 							EXTENSIONS_LIST_VIDEO	= self.const_FILE_EXTENSIONS_LIST_VIDEO,
 							EXTENSIONS_LIST_AUDIO	= self.const_FILE_EXTENSIONS_LIST_AUDIO,
 							EXTENSIONS_LIST_PHOTO	= self.combination_FILE_EXTENSIONS_LIST_PHOTO,
+							EXTENSIONS_LIST_TEXT	= self.const_FILE_EXTENSIONS_LIST_TEXT,
 							telegram_token			= self.telegram_token,
 							telegram_chat_id		= self.telegram_chat_id,
+							mastodon_base_url		= self.mastodon_base_url,
+							mastodon_token			= self.mastodon_token
 						)
 
 						if not SOCIAL.configured():
-							self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
+
+							if self.TargetService == 'telegram':
+								self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
+							elif seöf.TargetService == 'mastodon':
+								self.__display.message([f's=a:{self.__lan.l("box_backup_mastodon_not_configured_1")}', f's=a:{self.__lan.l("box_backup_mastodon_not_configured_2")}'])
+
 							return
 
 						# get bit position
@@ -781,7 +809,8 @@ class backup(object):
 						db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
 						social_list	= db.dbSelect(f"SELECT ID, Directory, File_Name, Create_Date, Comment FROM EXIF_DATA WHERE (social_publish & (1 << {bit})) ORDER BY Create_Date ASC;")
 
-						types_upload_original	= ';'.join([self.const_FILE_EXTENSIONS_LIST_VIDEO, self.const_FILE_EXTENSIONS_LIST_AUDIO]).split(';')
+						types_upload_original	= ';'.join([self.const_FILE_EXTENSIONS_LIST_VIDEO, self.const_FILE_EXTENSIONS_LIST_AUDIO, self.const_FILE_EXTENSIONS_LIST_TEXT]).split(';')
+
 						for image in social_list:
 							IMAGE_ID		= image[0]
 							IMAGE_DIR		= image[1]
@@ -1250,7 +1279,7 @@ class backup(object):
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
-		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		Images	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		Images[:]	= [element for element in Images if element]
@@ -1285,7 +1314,7 @@ class backup(object):
 		del progress
 		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
-	def get_AllowedExtensionsFindOptions(self):
+	def get_AllowedExtensionsFindOptions(self, textfiles=False):
 
 		AllowedExtensionsList	= (
 			self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES + ';' +
@@ -1295,6 +1324,10 @@ class backup(object):
 			self.const_FILE_EXTENSIONS_LIST_VIDEO + ';' +
 			self.const_FILE_EXTENSIONS_LIST_AUDIO
 		)
+
+		if textfiles:
+			AllowedExtensionsList	+= f';{self.const_FILE_EXTENSIONS_LIST_TEXT}'
+
 		AllowedExtensionsList	= AllowedExtensionsList.split(';')
 
 		# create find options of valid extensions
@@ -1308,6 +1341,7 @@ class backup(object):
 		return(AllowedExtensionsFindOptions)
 
 	def generateThumbnails(self, Device=None):
+
 		if Device is None:
 			return()
 
@@ -1343,7 +1377,7 @@ class backup(object):
 			])
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
-		Command	= f"find '{Device.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= f"find '{Device.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		ImagesList	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		ImagesList[:]	= [element for element in ImagesList if element]
@@ -1479,6 +1513,19 @@ class backup(object):
 
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_AUDIO.split(';'):
 				Command	= ["cp", f"{self.__WORKING_DIR}/img/audio.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
+
+				Command	= ["convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				try:
+					subprocess.run(Command)
+				except:
+					print(f"Error: {' '.join(Command)}",file=sys.stderr)
+
+			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_TEXT.split(';'):
+				Command	= ["cp", f"{self.__WORKING_DIR}/img/text.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:

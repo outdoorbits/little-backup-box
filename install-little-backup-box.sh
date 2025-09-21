@@ -172,7 +172,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		acl git screen rsync exfat-fuse exfatprogs ntfs-3g acl bindfs gphoto2 libimage-exiftool-perl php php-cli samba samba-common-bin proftpd-basic proftpd-mod-crypto imagemagick curl libimobiledevice6 ifuse sshpass f3 sqlite3 php-sqlite3 ffmpeg libheif-examples libraw-bin openvpn wireguard openresolv hfsprogs fuse3 python3 python3-pip python3-pil python3-configobj python3-gpiozero python3-rpi-lgpio python3-qrcode python3-psutil python3-dateutil smartmontools dos2unix
 
 # Install python3 packages not available for apt
-sudo pip install --break-system-packages --upgrade urllib3 python-telegram-bot
+sudo pip install --break-system-packages --upgrade urllib3 python-telegram-bot Mastodon.py
 
 # Remove packages not needed anymore
 if [ "${SCRIPT_MODE}" = "update" ]; then

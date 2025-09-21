@@ -286,7 +286,9 @@ class setup(object):
 					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'},
 					'conf_TELEGRAM_TOKEN':								{'value': '', 'type': 'str'},
 					'conf_TELEGRAM_CHAT_ID':							{'value': 0, 'type': 'int'},
-					'conf_TELEGRAM_CHAT_IDENTIFIER':					{'value': '', 'type': 'str'}
+					'conf_TELEGRAM_CHAT_IDENTIFIER':					{'value': '', 'type': 'str'},
+					'conf_MASTODON_BASE_URL':							{'value': '', 'type': 'str'},
+					'conf_MASTODON_TOKEN':								{'value': '', 'type': 'str'}
 				}
 		)
 
@@ -346,6 +348,7 @@ class setup(object):
 					'const_FILE_EXTENSIONS_LIST_TIF':				{'type': 'str'},
 					'const_FILE_EXTENSIONS_LIST_VIDEO':				{'type': 'str'},
 					'const_FILE_EXTENSIONS_LIST_AUDIO':				{'type': 'str'},
+					'const_FILE_EXTENSIONS_LIST_TEXT':				{'type': 'str'},
 					'const_VIEW_GRID_COLUMNS':						{'type': 'int'},
 					'const_VIEW_MAGNIFYING_GLASS_ZOOM':				{'type': 'int'},
 					'const_VIEW_BANNED_PATHS':						{'type': 'str'},

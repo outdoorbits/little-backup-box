@@ -355,6 +355,8 @@ conf_DIPLAY_IMAGES_KEEP=$conf_DIPLAY_IMAGES_KEEP
 conf_TELEGRAM_TOKEN="$conf_TELEGRAM_TOKEN"
 conf_TELEGRAM_CHAT_ID=$conf_TELEGRAM_CHAT_ID
 conf_TELEGRAM_CHAT_IDENTIFIER="$conf_TELEGRAM_CHAT_IDENTIFIER"
+conf_MASTODON_BASE_URL="$conf_MASTODON_BASE_URL"
+conf_MASTODON_TOKEN="$conf_MASTODON_TOKEN"
 
 CONFIGDATA;
 
@@ -1534,7 +1536,8 @@ CONFIGDATA;
 
 		<div class="card" style="margin-top: 2em;">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_telegram_section; ?></summary>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_social_media_section; ?></summary>
+
 				<h3><?php echo L::config_telegram_header; ?></h3>
 					<?php echo L::config_telegram_install_desc; ?><br />
 					<br />
@@ -1542,6 +1545,16 @@ CONFIGDATA;
 					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_TELEGRAM_TOKEN" name="conf_TELEGRAM_TOKEN" size="50" value="<?php echo $config['conf_TELEGRAM_TOKEN']; ?>"><br />
 
 					<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
+
+				<h3><?php echo L::config_mastodon_header; ?></h3>
+					<?php echo L::config_mastodon_install_desc; ?><br />
+					<br />
+					<label for="conf_MASTODON_BASE_URL"><?php echo L::config_mastodon_base_url_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MASTODON_BASE_URL" name="conf_MASTODON_BASE_URL" size="50" value="<?php echo $config['conf_MASTODON_BASE_URL']; ?>"><br />
+
+					<label for="conf_MASTODON_TOKEN"><?php echo L::config_mastodon_token_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MASTODON_TOKEN" name="conf_MASTODON_TOKEN" size="50" value="<?php echo $config['conf_MASTODON_TOKEN']; ?>"><br />
+
 			</details>
 		</div>
 

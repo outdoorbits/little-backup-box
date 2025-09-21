@@ -81,10 +81,15 @@
 
 	// social networks
 	$SocialServices	= array();
-	$telegram_configurated	= ($config['conf_TELEGRAM_TOKEN']=='' or intval($config['conf_TELEGRAM_CHAT_ID'])==0) == false;
 
+	$telegram_configurated	= ($config['conf_TELEGRAM_TOKEN']=='' or intval($config['conf_TELEGRAM_CHAT_ID'])==0) == false;
 	if ($telegram_configurated) {
 		$SocialServices[]	= 'social:telegram';
+	}
+
+	$mastodon_configurated	= ($config['conf_MASTODON_TOKEN']=='' or $config['conf_MASTODON_BASE_URL']=='') == false;
+	if ($mastodon_configurated) {
+		$SocialServices[]	= 'social:mastodon';
 	}
 
 	$SourceServices	= array(
@@ -129,10 +134,10 @@
 					((ActiveSource.value === 'anyusb') && (TargetService === 'cloud_rsync')) ||
 					((ActiveSource.value === 'camera') && (TargetService === 'cloud_rsync')) ||
 					((ActiveSource.value === 'ftp') && (TargetService === 'cloud_rsync')) ||
-					((ActiveSource.value === 'anyusb') && (TargetService === 'social:telegram')) ||
-					((ActiveSource.value === 'camera') && (TargetService === 'social:telegram')) ||
-					(ActiveSource.value.startsWith('cloud') && (TargetService === 'social:telegram')) ||
-					((ActiveSource.value === 'ftp') && (TargetService === 'social:telegram'))
+					((ActiveSource.value === 'anyusb') && (TargetService === 'social:telegram' || TargetService === 'social:mastodon')) ||
+					((ActiveSource.value === 'camera') && (TargetService === 'social:telegram' || TargetService === 'social:mastodon')) ||
+					(ActiveSource.value.startsWith('cloud') && (TargetService === 'social:telegram' || TargetService === 'social:mastodon')) ||
+					((ActiveSource.value === 'ftp') && (TargetService === 'social:telegram' || TargetService === 'social:mastodon'))
 				) {
 					document.getElementById("Target_" + TargetService).disabled = true;
 				} else {
@@ -229,6 +234,9 @@
 								}
 								elseif ($LabelName == 'telegram') {
 									$LabelName		= l::box_backup_mode_social_telegram;
+								}
+								elseif ($LabelName == 'mastodon') {
+									$LabelName		= l::box_backup_mode_social_mastodon;
 								}
 
 								print("<button class='$ButtonClass' name='TargetDevice' value='$Storage' id='Target_$Storage'>$LabelName</button></br>");
@@ -331,7 +339,7 @@
 									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
 									<?php
 										foreach ($Partitions as $Partition) {
-											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
+											list($Lum, $DeviceIdentifier)	= explode(': ', $Partition, 2);
 											$Lum	= str_replace('/dev/', '', $Lum);
 											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
 										}

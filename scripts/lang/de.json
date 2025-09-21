@@ -403,7 +403,6 @@
       "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki: Telegram</a>",
       "token_label": "Token",
       "chat_id_label": "Chat ID",
-      "section": "Telegram&reg;",
       "error_unreachable": "Telegramm nicht erreichbar",
       "error_invalid_token": "Ungültiges Token",
       "error_bad_api_response": "API-Konflikt",
@@ -422,6 +421,13 @@
       "test_message_send": "Testnachricht senden",
       "no_chats_found": "Keine Chats gefunden. Sende eine Nachricht in der Zielgruppe/dem Kanal oder füge den Bot als Admin hinzu.",
       "button_select_chat": "Chat wählen"
+    },
+    "social_media_section": "Soziale Medien",
+    "mastodon": {
+      "header": "Mastodon&reg; konfigurieren",
+      "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
+      "token_label": "Zugriffstoken",
+      "base_url_label": "Mastodon-Basis-URL"
     }
   },
   "tools": {
@@ -575,7 +581,8 @@
         "delete": "löschen",
         "clean": "bereinige",
         "social": "social",
-        "social_telegram": "telegram&reg;"
+        "social_telegram": "telegram&reg;",
+        "social_mastodon": "Mastodon&reg;"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-Quelle",
@@ -601,6 +608,10 @@
       },
       "telegram": {
         "not_configured_1": "Telegram&reg; nicht",
+        "not_configured_2": "konfiguriert"
+      },
+      "mastodon": {
+        "not_configured_1": "Mastodon&reg; nicht",
         "not_configured_2": "konfiguriert"
       }
     },
