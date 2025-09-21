@@ -134,8 +134,8 @@ class backup(object):
 		self.telegram_chat_id								= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
 
 		# mastodon
-		self.mastodon_token									= self.__setup.get_val('conf_MASTODON_TOKEN')
 		self.mastodon_base_url								= self.__setup.get_val('conf_MASTODON_BASE_URL')
+		self.mastodon_token									= self.__setup.get_val('conf_MASTODON_TOKEN')
 
 		# power off
 		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
@@ -784,8 +784,8 @@ class backup(object):
 							EXTENSIONS_LIST_PHOTO	= self.combination_FILE_EXTENSIONS_LIST_PHOTO,
 							telegram_token			= self.telegram_token,
 							telegram_chat_id		= self.telegram_chat_id,
-							mastodon_token			= self.mastodon_token,
-							mastodon_base_url		= self.mastodon_base_url
+							mastodon_base_url		= self.mastodon_base_url,
+							mastodon_token			= self.mastodon_token
 						)
 
 						if not SOCIAL.configured():

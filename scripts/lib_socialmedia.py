@@ -37,8 +37,8 @@ class socialmedia(object):
 			EXTENSIONS_LIST_PHOTO=None,
 			telegram_token=None,
 			telegram_chat_id=None,
-			mastodon_token=None,
-			mastodon_base_url=None
+			mastodon_base_url=None,
+			mastodon_token=None
 		):
 		self.__lan		= lib_language.language()
 
@@ -48,7 +48,7 @@ class socialmedia(object):
 		if service == 'telegram':
 			self.SERVICE_Obj	= telegram(TG_TOKEN=telegram_token, TG_CHAT_ID=telegram_chat_id)
 		elif service == 'mastodon':
-			self.SERVICE_Obj	= mastodon(MA_ACCESS_TOKEN=mastodon_token, MA_API_BASE_URL=mastodon_base_url)
+			self.SERVICE_Obj	= mastodon(MA_API_BASE_URL=mastodon_base_url, MA_ACCESS_TOKEN=mastodon_token)
 
 		self.EXTENSIONS_LIST_VIDEO	= EXTENSIONS_LIST_VIDEO.split(';')
 		self.EXTENSIONS_LIST_AUDIO	= EXTENSIONS_LIST_AUDIO.split(';')
@@ -250,10 +250,14 @@ class telegram(object):
 from mastodon import Mastodon
 
 class mastodon(object):
-	def __init__(self, MA_ACCESS_TOKEN, MA_API_BASE_URL):
+	def __init__(
+		self,
+		MA_API_BASE_URL,
+		MA_ACCESS_TOKEN
+	):
 
-		self.ACCESS_TOKEN   = MA_ACCESS_TOKEN
 		self.API_BASE_URL   = MA_API_BASE_URL
+		self.ACCESS_TOKEN   = MA_ACCESS_TOKEN
 
 		self.ok             = False
 		self.returnmessage  = ''
