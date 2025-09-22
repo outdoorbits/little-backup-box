@@ -81,6 +81,9 @@ class menu(object):
 		self.conf_TELEGRAM_TOKEN						= self.__setup.get_val('conf_TELEGRAM_TOKEN')
 		self.conf_TELEGRAM_CHAT_ID						= self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
 
+		self.conf_MASTODON_BASE_URL						= self.__setup.get_val('conf_MASTODON_BASE_URL')
+		self.conf_MASTODON_TOKEN						= self.__setup.get_val('conf_MASTODON_TOKEN')
+
 		self.buttons	= {}
 
 		## menu-types:
@@ -122,6 +125,10 @@ class menu(object):
 		### telegram
 		if self.conf_TELEGRAM_TOKEN and int(self.conf_TELEGRAM_CHAT_ID) != 0:
 			socialservices.append('social:telegram')
+
+		### mastodon
+		if self.conf_MASTODON_BASE_URL and self.conf_MASTODON_TOKEN:
+			socialservices.append('social:mastodon')
 
 		# generate menues
 		BACKUP_SOURCES_MENU		= []
