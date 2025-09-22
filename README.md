@@ -65,8 +65,8 @@ Some of the features of the web user interface are
 			<li>
 				<b>social media:</b>
 				<ul>
-					<li>mastodon</li>
-					<li>Telegram</li>
+					<li>mastodon&reg;</li>
+					<li>Telegram&reg;</li>
 				</ul>
 			</li>
 		</ul>
