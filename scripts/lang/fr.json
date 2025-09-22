@@ -810,8 +810,9 @@
     "ratings_save_button_back": "dos",
     "date_format_python": "Xd/Xm/XY %H:XM:XS",
     "social": {
-      "publish_on": "Marquer pour publication sur",
-      "published_on": "Publié sur"
+      "publish_on": "publier sur",
+      "published_on": "publié sur",
+      "mark_for_publish_on": "marquer pour publication sur"
     },
     "grid": {
       "multi": "multi-colonnes",

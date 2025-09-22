@@ -810,8 +810,9 @@
     "ratings_save_button_back": "back",
     "date_format_python": "Xd/Xm/XY XH:XM:XS",
     "social": {
-      "publish_on": "Mark for publication on",
-      "published_on": "Published on"
+      "publish_on": "publish on",
+      "published_on": "published on",
+      "mark_for_publish_on": "mark for publication on"
     },
     "grid": {
       "multi": "multi-column",

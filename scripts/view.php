@@ -246,31 +246,39 @@
 		$PUBLISHED	= intval($PUBLISHED);
 
 		foreach($social_services as $bit => $ServiceName) {
-?>
+			?>
 			<div class="d-flex align-items-center gap-2">
 				<label for="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" class="d-inline-flex align-items-center gap-1 m-0">
 					<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="hidden" value=0>
 					<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="checkbox" value=1 class="form-check-input m-0" <?php echo ($PUBLISH & (1 << $bit))?"checked":""; ?> title="<?php echo L::view_social_publish_on . ' ' . $ServiceName; ?>">
 
-					<svg width="16" height="16" aria-labelledby="publish-<?php echo $bit; ?>">
-						<title id="publish-on-<?php echo $bit; ?>"><?php echo L::view_social_publish_on . ' ' . $ServiceName; ?></title>
-						<use href="#icon-social-publish-<?php echo $bit; ?>"></use>
-					</svg>
-				</label>
+					<?php
+					$iconVARIANT	= 'nothing';
+					$iconTITLE		= L::view_social_mark_for_publish_on . ' ' . $ServiceName;
+					if ($PUBLISH & (1 << $bit) and $PUBLISHED & (1 << $bit)) {
+						$iconVARIANT	= 'combined';
+						$iconTITLE		= L::view_social_publish_on  . ' &amp; ' . L::view_social_published_on . ' ' . $ServiceName;
+					} elseif ($PUBLISH & (1 << $bit)) {
+						$iconVARIANT	= 'publish';
+						$iconTITLE		= L::view_social_publish_on . ' ' . $ServiceName;
+					} elseif ($PUBLISHED & (1 << $bit)) {
+						$iconVARIANT	= 'published';
+						$iconTITLE		= L::view_social_published_on . ' ' . $ServiceName;
+					}
 
+					?>
+					<svg width="20" height="20" class="flex-shrink-0" aria-labelledby="published-<?php echo $bit; ?>">
+						<title id="<?php echo $ServiceName; ?>-<?php echo $iconVARIANT; ?>"><?php echo $iconTITLE; ?></title>
+						<use href="#icon-<?php echo $ServiceName; ?>-<?php echo $iconVARIANT; ?>"></use>
+					</svg>
+					<?php
+
+					?>
+				</label>
 			</div>
-<?php
-			if ($PUBLISHED & (1 << $bit)) {
-				?>
-				<svg width="16" height="16" class="flex-shrink-0" aria-labelledby="published-<?php echo $bit; ?>">
-					<title id="published-<?php echo $bit; ?>"><?php echo L::view_social_published_on . ' ' . $ServiceName; ?></title>
-					<use href="#icon-social-published-<?php echo $bit; ?>"></use>
-				</svg>
-				<?php
-			}
+			<?php
 		}
 	}
-
 
 	function media_functions($mediatype, $IMAGE, $IMAGE_FILENAME) {
 		# mediatype one of image, video, audio
@@ -835,102 +843,10 @@
 		include "${WORKING_DIR}/sub-display.php";
 		display();
 		if (isset($saved_message)) {print ($saved_message);}
+
+	include("${WORKING_DIR}/sub-view-icons.php")
+
 	?>
-
-<!-- 	icons -->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
-
-	<symbol id="icon-columns-one" viewBox="0 0 24 24">
-		<rect x="3" y="3" width="18" height="5" rx="1" fill="#8BD3FF"/>
-		<rect x="3" y="6.4" width="18" height="1.2" fill="#2AA1FF" opacity=".85"/>
-		<circle cx="6.2" cy="4.6" r="0.8" fill="#FFD34D"/>
-		<path d="M3 8 L8.2 4.2 L12 8 Z" fill="#2E7D32"/>
-
-		<rect x="3" y="9.5" width="18" height="5" rx="1" fill="#A3E1FF"/>
-		<circle cx="12" cy="10.3" r="0.8" fill="#FFC94A"/>
-		<path d="M3 14.5 L7.2 10.6 L10 12.7 L13.2 10.2 L21 14.5 Z" fill="#3FA34D"/>
-
-		<rect x="3" y="16" width="18" height="5" rx="1" fill="#7BC6FF"/>
-		<circle cx="19" cy="17" r="0.7" fill="#FFB84C"/>
-		<path d="M3 21 L10 16.5 L13.8 18.8 L21 21 Z" fill="#4C8B3F"/>
-	</symbol>
-
-	<symbol id="icon-columns-multi" viewBox="0 0 24 24">
-		<rect x="3" y="3" width="5" height="5" rx="0.8" fill="#8BD3FF"/>
-		<circle cx="7.4" cy="3.8" r="0.5" fill="#FFD34D"/>
-		<path d="M3 8 L5.2 3.8 L8 8 Z" fill="#3D8B3D"/>
-
-		<rect x="9.5" y="3" width="5" height="5" rx="0.8" fill="#A3E1FF"/>
-		<path d="M9.5 8 L11.2 6.2 L12.6 6.8 L14 5.6 L14.5 5.9 L14.5 8 Z" fill="#409E4D"/>
-		<circle cx="13.8" cy="3.7" r="0.45" fill="#FFC94A"/>
-
-		<rect x="16" y="3" width="5" height="5" rx="0.8" fill="#7BC6FF"/>
-		<rect x="16" y="6.1" width="5" height="1.1" fill="#2AA1FF" opacity=".9"/>
-		<path d="M16 8 L18.6 4.6 L21 8 Z" fill="#2F7A33"/>
-		<circle cx="20.2" cy="3.7" r="0.45" fill="#FFD34D"/>
-
-		<rect x="3" y="9.5" width="5" height="5" rx="0.8" fill="#A8E6FF"/>
-		<path d="M3 14.5 L5 10.6 L6.3 12.3 L8 10.2 L8 14.5 Z" fill="#3FA34D"/>
-		<circle cx="6.8" cy="10.2" r="0.45" fill="#FFB84C"/>
-
-		<rect x="9.5" y="9.5" width="5" height="5" rx="0.8" fill="#8BD3FF"/>
-		<circle cx="10.1" cy="10.1" r="0.45" fill="#FFD34D"/>
-		<path d="M9.5 14.5 L12.2 11.1 L14.5 12.9 L14.5 14.5 Z" fill="#4B9650"/>
-
-		<rect x="16" y="9.5" width="5" height="5" rx="0.8" fill="#9EDCFF"/>
-		<rect x="16" y="12.5" width="5" height="0.9" fill="#2AA1FF" opacity=".85"/>
-		<path d="M16 14.5 L17.6 12.4 L19 12.9 L20.4 11.8 L21 12.1 L21 14.5 Z" fill="#3E8E45"/>
-
-		<rect x="3" y="16" width="5" height="5" rx="0.8" fill="#7FCFFF"/>
-		<circle cx="7.6" cy="16.6" r="0.45" fill="#FFC94A"/>
-		<path d="M3 21 L5.9 17.5 L8 19.2 L8 21 Z" fill="#3D8741"/>
-
-		<rect x="9.5" y="16" width="5" height="5" rx="0.8" fill="#A3E1FF"/>
-		<circle cx="12" cy="16.7" r="0.45" fill="#FFD34D"/>
-		<path d="M9.5 21 L11.1 18.3 L12.3 19.1 L13.7 17.6 L14.5 18.1 L14.5 21 Z" fill="#449C4E"/>
-
-		<rect x="16" y="16" width="5" height="5" rx="0.8" fill="#71C0FF"/>
-		<path d="M16 21 L18.8 18.2 L19.9 19.1 L21 18.4 L21 21 Z" fill="#2F7A33"/>
-		<circle cx="20.5" cy="16.7" r="0.42" fill="#FFB84C"/>
-	</symbol>
-
-	<symbol id="icon-comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-		<path d="M21 15a4 4 0 0 1-4 4H9l-4 4v-4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"/>
-		<circle cx="10" cy="11" r="1.25"/><circle cx="14" cy="11" r="1.25"/><circle cx="18" cy="11" r="1.25"/>
-	</symbol>
-
-<!-- 	telegram -->
-	<symbol id="icon-social-publish-0" viewBox="0 0 24 24">
-		<path d="M2 12L22 3l-6.5 17L12 13 7 18 6 11z" fill="#0d6efd"/>
-		<circle cx="18" cy="18" r="5" fill="#6c757d"/>
-		<path d="M18 21v-5M16.5 16.5L18 15l1.5 1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-	</symbol>
-
-	<symbol id="icon-social-published-0" viewBox="0 0 24 24">
-		<path d="M2 12L22 3l-6.5 17L12 13 7 18 6 11z" fill="#0d6efd"/>
-		<circle cx="18" cy="18" r="5" fill="#198754"/>
-		<path d="M16.5 18l1.5 1.5L20 17" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-	</symbol>
-
-<!-- 	mastodon -->
-	<symbol id="icon-social-publish-1" viewBox="0 0 24 24">
-		<path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2z" fill="#0d6efd"/>
-		<circle cx="18" cy="18" r="5" fill="#6c757d"/>
-		<path d="M18 21v-5M16.5 16.5L18 15l1.5 1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-	</symbol>
-
-	<symbol id="icon-social-published-1" viewBox="0 0 24 24">
-		<path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 3V6a2 2 0 0 1 2-2z" fill="#0d6efd"/>
-		<circle cx="18" cy="18" r="5" fill="#198754"/>
-		<path d="M16.5 18l1.5 1.5L20 17" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-	</symbol>
-
-</svg>
-
-
-
-</svg>
-
 <!-- FILTER -->
 	<div class="card" style="margin-top: 2em">
 		<details>
