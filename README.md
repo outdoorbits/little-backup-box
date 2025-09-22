@@ -62,16 +62,22 @@ Some of the features of the web user interface are
 			<li>NVMe SSD storage</li>
 			<li>rsync server</li>
 			<li>cloud storage</li>
+			<li>
+				**social media:**
+				<ul>
+					<li>mastodon</li>
+					<li>Telegram</li>
+				</ul>
+			</li>
 		</ul>
 	</li>
 	<li>
 		<b>Tools for memory management</b>
 		<ul>
-			<li>manual mount local and cloud stoarges</li>
+			<li>manual mount local and cloud storages</li>
 			<li>check disk integrity</li>
 			<li>format disks</li>
 			<li>check USB device for authenticity</li>
-			<li>cloud storage</li>
 		</ul>
 	</li>
 	<li><b>Email information about the backup success</b></li>
