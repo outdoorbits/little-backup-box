@@ -63,7 +63,7 @@ Some of the features of the web user interface are
 			<li>rsync server</li>
 			<li>cloud storage</li>
 			<li>
-				**social media:**
+				<b>social media:</b>
 				<ul>
 					<li>mastodon</li>
 					<li>Telegram</li>
