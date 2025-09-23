@@ -581,7 +581,7 @@
         "delete": "supprimer",
         "clean": "nettoyer",
         "social": "sociaux",
-        "social_telegram": "telegram&reg;",
+        "social_telegram": "Telegram&reg;",
         "social_mastodon": "Mastodon&reg;"
       },
       "nvme": "NVMe SSD",
@@ -690,7 +690,9 @@
           "nvme": "NVMe SSD",
           "usb": "USB ",
           "anyusb": "tout USB",
-          "ftp": "Serveur FTP de LBB"
+          "ftp": "Serveur FTP de LBB",
+          "telegram": "Telegram",
+          "mastodon": "mastodon"
         },
         "stop": "ARRÊTER sauvegarde"
       }
@@ -818,7 +820,8 @@
       "multi": "multi-colonnes",
       "single": "colonne unique"
     },
-    "saved": "Modifications enregistrées"
+    "saved": "Modifications enregistrées",
+    "characters": "caractères"
   },
   "units": {
     "minutes_long": "minutes",

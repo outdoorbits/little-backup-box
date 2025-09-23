@@ -161,8 +161,10 @@ class menu(object):
 				# format service parameters
 				targetType, targetServiceName		= lib_storage.extractService(target)
 
-				if targetType in ['cloud', 'social']:
+				if targetType == 'cloud':
 					targetName	= targetServiceName
+				elif targetType == 'social':
+					targetName	= self.__lan.l(f'box_menu_backup_mode_{targetServiceName}')
 				else:
 					targetName	= self.__lan.l(f'box_menu_backup_mode_{targetType}')
 

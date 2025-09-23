@@ -129,7 +129,7 @@
         "delete": "delete",
         "clean": "clean",
         "social": "social",
-        "social_telegram": "telegram&reg;",
+        "social_telegram": "Telegram&reg;",
         "social_mastodon": "Mastodon&reg;"
       },
       "nvme": "NVMe SSD",
@@ -238,7 +238,9 @@
           "nvme": "NVMe SSD",
           "usb": "USB",
           "anyusb": "any USB",
-          "ftp": "LBBs FTP server"
+          "ftp": "LBBs FTP server",
+          "telegram": "Telegram",
+          "mastodon": "mastodon"
         },
         "stop": "STOP backup"
       }
@@ -818,7 +820,8 @@
       "multi": "multi-column",
       "single": "single-column"
     },
-    "saved": "Changes saved"
+    "saved": "Changes saved",
+    "characters": "characters"
   },
   "units": {
     "minutes_long": "minutes",

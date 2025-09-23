@@ -295,10 +295,10 @@
 		$view_images_comment			= L::view_images_comment;
 
 		echo <<<EOL
-			<div style="width=100%;padding: 30px;font-size:0.8em;">
+			<div style="width: 100%; font-size: 0.8em;">
 
 				<!--Rating-->
-				<div style="float:left;width: 33%;text-align: left;padding: 0;padding-top: 0.5em;">
+				<div style="float: left; width: 33%; text-align: left; padding: 0; padding-top: 0.5em;">
 					$RATING_RADIO
 				</div>
 
@@ -328,10 +328,29 @@
 
 		echo <<<EOL
 				<!--Comment-->
-				<textarea name="comment_$IMAGE_ID" title="$view_images_comment" rows="2" style="clear: both; width: 100%; resize: vertical;">$IMAGE_Comment</textarea>
+				<textarea id="comment" name="comment_$IMAGE_ID" title="$view_images_comment" rows="2" style="clear: both; width: 100%; resize: vertical;">$IMAGE_Comment</textarea>
 			</div>
-			<div class="d-flex align-items-center gap-2 w-100 justify-content-end mt-1">
+
+			<div class="d-flex align-items-center gap-2 w-100 mt-1">
 		EOL;
+
+		?>
+		<div style="text-align: left;padding: 0;" class="me-auto"><span id="charCount">0</span> <?php echo L::view_characters; ?></div>
+
+					<script>
+						const textarea = document.getElementById("comment");
+						const counter  = document.getElementById("charCount");
+
+						function updateCount() {
+						counter.textContent = textarea.value.length;
+						}
+
+						updateCount();
+
+						textarea.addEventListener("input", updateCount);
+					</script>
+		<?php
+
 		echo social_pannel($IMAGE['ID'], $IMAGE['social_publish'], $IMAGE['social_published']);
 		echo "</div>";
 	}
