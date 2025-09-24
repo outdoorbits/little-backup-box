@@ -399,7 +399,7 @@
       "power_off_idle_time_none": "Nunca"
     },
     "telegram": {
-      "header": "Configurar Telegram&reg;",
+      "header": "Configurar Telegram",
       "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki: Telegram</a>",
       "token_label": "Token",
       "chat_id_label": "ID de chat",
@@ -428,6 +428,13 @@
       "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
       "token_label": "Token de acceso",
       "base_url_label": "URL base de Mastodon"
+    },
+    "bluesky": {
+      "header": "Configurar Bluesky",
+      "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
+      "base_url_label": "URL base de la API",
+      "identifier_label": "Identificador (correo o usuario)",
+      "app_password_label": "Contraseña de la aplicación"
     }
   },
   "tools": {
@@ -581,8 +588,9 @@
         "delete": "borrar",
         "clean": "limpiar",
         "social": "sociales",
-        "social_telegram": "Telegram&reg;",
-        "social_mastodon": "Mastodon&reg;"
+        "social_telegram": "Telegram",
+        "social_mastodon": "Mastodon",
+        "social_bluesky": "Bluesky"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Fuente USB",

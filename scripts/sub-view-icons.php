@@ -39,6 +39,16 @@ HTML;
 </symbol>
 HTML;
 
+		$bluesky = <<<HTML
+<symbol id="ICONID" viewBox="0 0 24 24" fill="none">
+	BACKGROUND
+	<g transform="translate(4,4)">
+		<path d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" fill="#fff" stroke="none"/>
+	</g>
+</symbol>
+HTML;
+
+
 		// backgrounds
 		$nothing	= '<rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="#707070"/>';
 		$publish	= '<rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="#e74c3c"/>';
@@ -58,7 +68,8 @@ HTML;
 
 		$core_icons		= array(
 			'mastodon'	=> $mastodon,
-			'telegram'	=> $telegram
+			'telegram'	=> $telegram,
+			'bluesky'	=> $bluesky
 		);
 
 		$backgrounds	= array(

@@ -288,7 +288,10 @@ class setup(object):
 					'conf_TELEGRAM_CHAT_ID':							{'value': 0, 'type': 'int'},
 					'conf_TELEGRAM_CHAT_IDENTIFIER':					{'value': '', 'type': 'str'},
 					'conf_MASTODON_BASE_URL':							{'value': '', 'type': 'str'},
-					'conf_MASTODON_TOKEN':								{'value': '', 'type': 'str'}
+					'conf_MASTODON_TOKEN':								{'value': '', 'type': 'str'},
+					'conf_BLUESKY_API_BASE_URL':						{'value': 'https://bsky.social', 'type': 'str'},
+					'conf_BLUESKY_IDENTIFIER':							{'value': '', 'type': 'str'},
+					'conf_BLUESKY_APP_PASSWORD':						{'value': '', 'type': 'str'}
 				}
 		)
 
