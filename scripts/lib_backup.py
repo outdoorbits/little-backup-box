@@ -263,7 +263,7 @@ class reporter(object):
 		self.__lan						= lan
 
 		self.__SourceStorageType		= SourceStorageType
-		self.__SourceService		= SourceService
+		self.__SourceService			= SourceService
 		self.__SourceDeviceLbbDeviceID	= SourceDeviceLbbDeviceID
 
 		self.__TargetStorageType		= TargetStorageType
@@ -362,14 +362,19 @@ class reporter(object):
 
 		BackupComplete	= True
 
-		# mail content
-		SourceDeviceDetails	= f"'{self.__SourceService}{' ' if self.__SourceService else ''}{self.__SourceDeviceLbbDeviceID}'" if self.__SourceService or self.__SourceDeviceLbbDeviceID else ''
-		TargetDeviceDetails	= f"'{self.__TargetService}{' ' if self.__TargetService else ''}{self.__TargetDeviceLbbDeviceID}'" if self.__TargetService or self.__TargetDeviceLbbDeviceID else ''
+		# mail content {self.__SourceService}
+		SourceDeviceDetails	= self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')
+		SourceDeviceDetails	= f"{SourceDeviceDetails}{' ' if SourceDeviceDetails and self.__SourceService else ''}{self.__SourceService}"
+		SourceDeviceDetails	= f"{SourceDeviceDetails}{' ' if SourceDeviceDetails and self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}"
+
+		TargetDeviceDetails	= self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')
+		TargetDeviceDetails	= f"{TargetDeviceDetails}{' ' if TargetDeviceDetails and self.__TargetService else ''}{self.__TargetService}"
+		TargetDeviceDetails	= f"{TargetDeviceDetails}{' ' if TargetDeviceDetails and self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}"
 
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 
 		self.mail_content_HTML	+= f"\n  <b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
-		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')} {SourceDeviceDetails}</b> {self.__lan.l('box_backup_mail_to')} <b>{self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')} {TargetDeviceDetails}</b> ({self.__TransferMode})</br> \
+		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{SourceDeviceDetails}</b> {self.__lan.l('box_backup_mail_to')} <b>{TargetDeviceDetails}</b> ({self.__TransferMode})</br> \
 		{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
 
 		if self.__move_files:
@@ -478,7 +483,7 @@ class reporter(object):
 		# mail subject
 		self.mail_subject	= 'Little Backup Box: '
 		self.mail_subject	+= self.__lan.l('box_backup_mail_backup_complete') if BackupComplete else self.__lan.l('box_backup_mail_error')
-		self.mail_subject	+= f" {self.__SourceDeviceLbbDeviceID} -> {self.__TargetDeviceLbbDeviceID}"
+		self.mail_subject	+= f" {SourceDeviceDetails} -> {TargetDeviceDetails}"
 
 	def prepare_display_summary(self):
 		# provides self.display_summary

@@ -152,8 +152,6 @@ class storage(object):
 		if mounted and not self.LbbDeviceID and self.mountable:
 			self.__manage_lbb_device_ID()
 
-		if not self.LbbDeviceID:
-			self.LbbDeviceID	= self.ServiceName if self.ServiceName else self.StorageType
 		return(mounted)
 
 	def __mount_local_storage(self, TimeOutActive=False):
