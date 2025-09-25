@@ -84,6 +84,10 @@ class menu(object):
 		self.conf_MASTODON_BASE_URL						= self.__setup.get_val('conf_MASTODON_BASE_URL')
 		self.conf_MASTODON_TOKEN						= self.__setup.get_val('conf_MASTODON_TOKEN')
 
+		self.conf_BLUESKY_API_BASE_URL					= self.__setup.get_val('conf_BLUESKY_API_BASE_URL')
+		self.conf_BLUESKY_IDENTIFIER					= self.__setup.get_val('conf_BLUESKY_IDENTIFIER')
+		self.conf_BLUESKY_APP_PASSWORD					= self.__setup.get_val('conf_BLUESKY_APP_PASSWORD')
+
 		self.buttons	= {}
 
 		## menu-types:
@@ -129,6 +133,10 @@ class menu(object):
 		### mastodon
 		if self.conf_MASTODON_BASE_URL and self.conf_MASTODON_TOKEN:
 			socialservices.append('social:mastodon')
+
+		### bluesky
+		if self.conf_BLUESKY_API_BASE_URL and self.conf_BLUESKY_IDENTIFIER and self.conf_BLUESKY_APP_PASSWORD:
+			socialservices.append('social:bluesky')
 
 		# generate menues
 		BACKUP_SOURCES_MENU		= []

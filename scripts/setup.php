@@ -357,6 +357,9 @@ conf_TELEGRAM_CHAT_ID=$conf_TELEGRAM_CHAT_ID
 conf_TELEGRAM_CHAT_IDENTIFIER="$conf_TELEGRAM_CHAT_IDENTIFIER"
 conf_MASTODON_BASE_URL="$conf_MASTODON_BASE_URL"
 conf_MASTODON_TOKEN="$conf_MASTODON_TOKEN"
+conf_BLUESKY_API_BASE_URL="$conf_BLUESKY_API_BASE_URL"
+conf_BLUESKY_IDENTIFIER="$conf_BLUESKY_IDENTIFIER"
+conf_BLUESKY_APP_PASSWORD="$conf_BLUESKY_APP_PASSWORD"
 
 CONFIGDATA;
 
@@ -1554,6 +1557,18 @@ CONFIGDATA;
 
 					<label for="conf_MASTODON_TOKEN"><?php echo L::config_mastodon_token_label; ?></label><br />
 					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MASTODON_TOKEN" name="conf_MASTODON_TOKEN" size="50" value="<?php echo $config['conf_MASTODON_TOKEN']; ?>"><br />
+
+				<h3><?php echo L::config_bluesky_header; ?></h3>
+					<?php echo L::config_bluesky_install_desc; ?><br />
+					<br />
+					<label for="conf_BLUESKY_API_BASE_URL"><?php echo L::config_bluesky_base_url_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BLUESKY_API_BASE_URL" name="conf_BLUESKY_API_BASE_URL" size="50" value="<?php echo $config['conf_BLUESKY_API_BASE_URL']; ?>"><br />
+
+					<label for="conf_BLUESKY_IDENTIFIER"><?php echo L::config_bluesky_identifier_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BLUESKY_IDENTIFIER" name="conf_BLUESKY_IDENTIFIER" size="50" value="<?php echo $config['conf_BLUESKY_IDENTIFIER']; ?>"><br />
+
+					<label for="conf_BLUESKY_APP_PASSWORD"><?php echo L::config_bluesky_app_password_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BLUESKY_APP_PASSWORD" name="conf_BLUESKY_APP_PASSWORD" size="50" value="<?php echo $config['conf_BLUESKY_APP_PASSWORD']; ?>"><br />
 
 			</details>
 		</div>

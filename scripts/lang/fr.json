@@ -399,7 +399,7 @@
       "power_off_idle_time_none": "Certainement pas"
     },
     "telegram": {
-      "header": "Configurer Telegram&reg;",
+      "header": "Configurer Telegram",
       "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki : Telegram</a>",
       "token_label": "Jeton",
       "chat_id_label": "ID de discussion",
@@ -428,6 +428,13 @@
       "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
       "token_label": "Jeton d'accès",
       "base_url_label": "URL de base de Mastodon"
+    },
+    "bluesky": {
+      "header": "Configurer Bluesky",
+      "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
+      "base_url_label": "URL de base de l’API",
+      "identifier_label": "Identifiant (e-mail ou handle)",
+      "app_password_label": "Mot de passe de l’application"
     }
   },
   "tools": {
@@ -581,8 +588,9 @@
         "delete": "supprimer",
         "clean": "nettoyer",
         "social": "sociaux",
-        "social_telegram": "Telegram&reg;",
-        "social_mastodon": "Mastodon&reg;"
+        "social_telegram": "Telegram",
+        "social_mastodon": "Mastodon",
+        "social_bluesky": "Bluesky"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Source USB",

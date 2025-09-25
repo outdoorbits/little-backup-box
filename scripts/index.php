@@ -92,6 +92,11 @@
 		$SocialServices[]	= 'social:mastodon';
 	}
 
+	$bluesky_configurated	= ($config['conf_BLUESKY_API_BASE_URL']=='' or $config['conf_BLUESKY_IDENTIFIER']=='' or $config['conf_BLUESKY_APP_PASSWORD']=='') == false;
+	if ($bluesky_configurated) {
+		$SocialServices[]	= 'social:bluesky';
+	}
+
 	$SourceServices	= array(
 		'anyusb'	=> $LocalAutoServices,
 		'usb'		=> $LocalServices,
@@ -134,10 +139,10 @@
 					((ActiveSource.value === 'anyusb') && (TargetService === 'cloud_rsync')) ||
 					((ActiveSource.value === 'camera') && (TargetService === 'cloud_rsync')) ||
 					((ActiveSource.value === 'ftp') && (TargetService === 'cloud_rsync')) ||
-					((ActiveSource.value === 'anyusb') && (TargetService === 'social:telegram' || TargetService === 'social:mastodon')) ||
-					((ActiveSource.value === 'camera') && (TargetService === 'social:telegram' || TargetService === 'social:mastodon')) ||
-					(ActiveSource.value.startsWith('cloud') && (TargetService === 'social:telegram' || TargetService === 'social:mastodon')) ||
-					((ActiveSource.value === 'ftp') && (TargetService === 'social:telegram' || TargetService === 'social:mastodon'))
+					((ActiveSource.value === 'anyusb') && TargetService.startsWith('social')) ||
+					((ActiveSource.value === 'camera') && TargetService.startsWith('social')) ||
+					(ActiveSource.value.startsWith('cloud') && TargetService.startsWith('social')) ||
+					((ActiveSource.value === 'ftp') && TargetService.startsWith('social'))
 				) {
 					document.getElementById("Target_" + TargetService).disabled = true;
 				} else {
@@ -237,6 +242,9 @@
 								}
 								elseif ($LabelName == 'mastodon') {
 									$LabelName		= l::box_backup_mode_social_mastodon;
+								}
+								elseif ($LabelName == 'bluesky') {
+									$LabelName		= l::box_backup_mode_social_bluesky;
 								}
 
 								print("<button class='$ButtonClass' name='TargetDevice' value='$Storage' id='Target_$Storage'>$LabelName</button></br>");
