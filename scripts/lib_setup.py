@@ -284,14 +284,16 @@ class setup(object):
 					'conf_PASSWORD':									{'value': '', 'type': 'str'},
 					'conf_PASSWORD_ENCRYPTION':							{'value': 'plain', 'type': 'str'},
 					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'},
-					'conf_TELEGRAM_TOKEN':								{'value': '', 'type': 'str'},
-					'conf_TELEGRAM_CHAT_ID':							{'value': 0, 'type': 'int'},
-					'conf_TELEGRAM_CHAT_IDENTIFIER':					{'value': '', 'type': 'str'},
-					'conf_MASTODON_BASE_URL':							{'value': '', 'type': 'str'},
-					'conf_MASTODON_TOKEN':								{'value': '', 'type': 'str'},
-					'conf_BLUESKY_API_BASE_URL':						{'value': 'https://bsky.social', 'type': 'str'},
-					'conf_BLUESKY_IDENTIFIER':							{'value': '', 'type': 'str'},
-					'conf_BLUESKY_APP_PASSWORD':						{'value': '', 'type': 'str'}
+					'conf_SOCIAL_PUBLISH_DATE':							{'value': True, 'type': 'bool'},
+					'conf_SOCIAL_PUBLISH_FILENAME':						{'value': True, 'type': 'bool'},
+					'conf_SOCIAL_TELEGRAM_TOKEN':						{'value': '', 'type': 'str'},
+					'conf_SOCIAL_TELEGRAM_CHAT_ID':						{'value': 0, 'type': 'int'},
+					'conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER':				{'value': '', 'type': 'str'},
+					'conf_SOCIAL_MASTODON_BASE_URL':					{'value': '', 'type': 'str'},
+					'conf_SOCIAL_MASTODON_TOKEN':						{'value': '', 'type': 'str'},
+					'conf_SOCIAL_BLUESKY_API_BASE_URL':					{'value': 'https://bsky.social', 'type': 'str'},
+					'conf_SOCIAL_BLUESKY_IDENTIFIER':					{'value': '', 'type': 'str'},
+					'conf_SOCIAL_BLUESKY_APP_PASSWORD':					{'value': '', 'type': 'str'}
 				}
 		)
 

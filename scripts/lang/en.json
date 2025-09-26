@@ -661,43 +661,50 @@
       "power_off_idle_time_label": "Select the idle time after which the system should be stopped.",
       "power_off_idle_time_none": "never"
     },
-    "telegram": {
-      "header": "Configure Telegram",
-      "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki: Telegram</a>",
-      "token_label": "Token",
-      "chat_id_label": "Chat ID",
-      "error_unreachable": "Telegram unreachable",
-      "error_invalid_token": "Invalid token",
-      "error_bad_api_response": "Bad api response",
-      "unknown": "unknown",
-      "without_name": "without name",
-      "selected": "Selected",
-      "select_chat_first": "Please select a chat first.",
-      "test_message": "Test message from Little-Backup-Box via bot",
-      "test_message_sent_to": "Test message sent to",
-      "test_message_error": "Error sending",
-      "test_message_network_error": "Network error",
-      "select_chat": "Select chat",
-      "table_headers": "Display: Name (Type) — <code>chat_id",
-      "close": "Close",
-      "accept": "Accept",
-      "test_message_send": "Send test message",
-      "no_chats_found": "No chats found. Send a message to the target audience/channel or add the bot as an admin.",
-      "button_select_chat": "Select chat"
-    },
-    "social_media_section": "Social media",
-    "mastodon": {
-      "header": "Configure Mastodon&reg;",
-      "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
-      "token_label": "Access token",
-      "base_url_label": "Mastodon base URL"
-    },
-    "bluesky": {
-      "header": "Configure Bluesky",
-      "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
-      "base_url_label": "API Base URL",
-      "identifier_label": "Identifier (Email or Handle)",
-      "app_password_label": "App Password"
+    "social": {
+      "section": "Social media",
+      "bluesky": {
+        "header": "Configure Bluesky",
+        "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
+        "base_url_label": "API Base URL",
+        "identifier_label": "Identifier (Email or Handle)",
+        "app_password_label": "App Password"
+      },
+      "telegram": {
+        "header": "Configure Telegram",
+        "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki: Telegram</a>",
+        "token_label": "Token",
+        "chat_id_label": "Chat ID",
+        "error_unreachable": "Telegram unreachable",
+        "error_invalid_token": "Invalid token",
+        "error_bad_api_response": "Bad api response",
+        "unknown": "unknown",
+        "without_name": "without name",
+        "selected": "Selected",
+        "select_chat_first": "Please select a chat first.",
+        "test_message": "Test message from Little-Backup-Box via bot",
+        "test_message_sent_to": "Test message sent to",
+        "test_message_error": "Error sending",
+        "test_message_network_error": "Network error",
+        "select_chat": "Select chat",
+        "table_headers": "Display: Name (Type) — <code>chat_id",
+        "close": "Close",
+        "accept": "Accept",
+        "test_message_send": "Send test message",
+        "no_chats_found": "No chats found. Send a message to the target audience/channel or add the bot as an admin.",
+        "button_select_chat": "Select chat"
+      },
+      "mastodon": {
+        "header": "Configure Mastodon&reg;",
+        "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
+        "token_label": "Access token",
+        "base_url_label": "Mastodon base URL"
+      },
+      "general": {
+        "header": "Generally",
+        "date_label": "Publish recording date",
+        "filename_label": "Publish file name"
+      }
     }
   },
   "tools": {

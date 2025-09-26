@@ -130,17 +130,17 @@ class backup(object):
 		self.ForceSyncDatabase								= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files or self.DoGenerateThumbnails or self.DoUpdateEXIF
 
 		# Telegram
-		self.telegram_token									= self.__setup.get_val('conf_TELEGRAM_TOKEN')
-		self.telegram_chat_id								= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
+		self.telegram_token									= self.__setup.get_val('conf_SOCIAL_TELEGRAM_TOKEN')
+		self.telegram_chat_id								= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
 
 		# mastodon
-		self.conf_MASTODON_BASE_URL							= self.__setup.get_val('conf_MASTODON_BASE_URL')
-		self.conf_MASTODON_TOKEN							= self.__setup.get_val('conf_MASTODON_TOKEN')
+		self.conf_SOCIAL_MASTODON_BASE_URL							= self.__setup.get_val('conf_SOCIAL_MASTODON_BASE_URL')
+		self.conf_SOCIAL_MASTODON_TOKEN							= self.__setup.get_val('conf_SOCIAL_MASTODON_TOKEN')
 
 		# bluesky
-		self.conf_BLUESKY_API_BASE_URL						= self.__setup.get_val('conf_BLUESKY_API_BASE_URL')
-		self.conf_BLUESKY_IDENTIFIER						= self.__setup.get_val('conf_BLUESKY_IDENTIFIER')
-		self.conf_BLUESKY_APP_PASSWORD						= self.__setup.get_val('conf_BLUESKY_APP_PASSWORD')
+		self.conf_SOCIAL_BLUESKY_API_BASE_URL						= self.__setup.get_val('conf_SOCIAL_BLUESKY_API_BASE_URL')
+		self.conf_SOCIAL_BLUESKY_IDENTIFIER						= self.__setup.get_val('conf_SOCIAL_BLUESKY_IDENTIFIER')
+		self.conf_SOCIAL_BLUESKY_APP_PASSWORD						= self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')
 
 		# power off
 		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
@@ -791,11 +791,11 @@ class backup(object):
 							EXTENSIONS_LIST_TEXT	= self.const_FILE_EXTENSIONS_LIST_TEXT,
 							telegram_token			= self.telegram_token,
 							telegram_chat_id		= self.telegram_chat_id,
-							mastodon_base_url		= self.conf_MASTODON_BASE_URL,
-							mastodon_token			= self.conf_MASTODON_TOKEN,
-							bluesky_api_base_url	= self.conf_BLUESKY_API_BASE_URL,
-							bluesky_identifier		= self.conf_BLUESKY_IDENTIFIER,
-							bluesky_app_password	= self.conf_BLUESKY_APP_PASSWORD
+							mastodon_base_url		= self.conf_SOCIAL_MASTODON_BASE_URL,
+							mastodon_token			= self.conf_SOCIAL_MASTODON_TOKEN,
+							bluesky_api_base_url	= self.conf_SOCIAL_BLUESKY_API_BASE_URL,
+							bluesky_identifier		= self.conf_SOCIAL_BLUESKY_IDENTIFIER,
+							bluesky_app_password	= self.conf_SOCIAL_BLUESKY_APP_PASSWORD
 						)
 
 						if not SOCIAL.configured():

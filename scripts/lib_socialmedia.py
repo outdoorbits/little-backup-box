@@ -25,6 +25,7 @@ from pathlib import Path
 
 import lib_language
 import lib_time
+import lib_setup
 
 ###############################################################################################
 # social media service objects must have
@@ -65,7 +66,12 @@ class socialmedia(object):
 			bluesky_identifier=None,
 			bluesky_app_password=None
 		):
+
 		self.__lan		= lib_language.language()
+		self.__setup	= lib_setup.setup()
+
+		self.conf_SOCIAL_PUBLISH_DATE		= self.__setup.get_val('conf_SOCIAL_PUBLISH_DATE')
+		self.conf_SOCIAL_PUBLISH_FILENAME	= self.__setup.get_val('conf_SOCIAL_PUBLISH_FILENAME')
 
 		self.service	= service
 
@@ -111,6 +117,9 @@ class socialmedia(object):
 			return(Create_Date)
 
 	def __reformat_Comment(self, Comment, FileDate, msgtype=None, FilePath=None):
+
+		FileDate	= FileDate if self.conf_SOCIAL_PUBLISH_DATE else ''
+		FilePath	= FilePath if self.conf_SOCIAL_PUBLISH_FILENAME else ''
 
 		# Content
 		Content	= ''

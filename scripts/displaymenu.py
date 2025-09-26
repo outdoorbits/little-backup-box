@@ -78,15 +78,15 @@ class menu(object):
 		self.RCLONE_CONFIG_FILE							= f"{self.const_MEDIA_DIR}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 		self.const_MENU_TIMEOUT_SEC						= self.__setup.get_val('const_MENU_TIMEOUT_SEC')
 
-		self.conf_TELEGRAM_TOKEN						= self.__setup.get_val('conf_TELEGRAM_TOKEN')
-		self.conf_TELEGRAM_CHAT_ID						= self.__setup.get_val('conf_TELEGRAM_CHAT_ID')
+		self.conf_SOCIAL_TELEGRAM_TOKEN						= self.__setup.get_val('conf_SOCIAL_TELEGRAM_TOKEN')
+		self.conf_SOCIAL_TELEGRAM_CHAT_ID						= self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
 
-		self.conf_MASTODON_BASE_URL						= self.__setup.get_val('conf_MASTODON_BASE_URL')
-		self.conf_MASTODON_TOKEN						= self.__setup.get_val('conf_MASTODON_TOKEN')
+		self.conf_SOCIAL_MASTODON_BASE_URL						= self.__setup.get_val('conf_SOCIAL_MASTODON_BASE_URL')
+		self.conf_SOCIAL_MASTODON_TOKEN						= self.__setup.get_val('conf_SOCIAL_MASTODON_TOKEN')
 
-		self.conf_BLUESKY_API_BASE_URL					= self.__setup.get_val('conf_BLUESKY_API_BASE_URL')
-		self.conf_BLUESKY_IDENTIFIER					= self.__setup.get_val('conf_BLUESKY_IDENTIFIER')
-		self.conf_BLUESKY_APP_PASSWORD					= self.__setup.get_val('conf_BLUESKY_APP_PASSWORD')
+		self.conf_SOCIAL_BLUESKY_API_BASE_URL					= self.__setup.get_val('conf_SOCIAL_BLUESKY_API_BASE_URL')
+		self.conf_SOCIAL_BLUESKY_IDENTIFIER					= self.__setup.get_val('conf_SOCIAL_BLUESKY_IDENTIFIER')
+		self.conf_SOCIAL_BLUESKY_APP_PASSWORD					= self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')
 
 		self.buttons	= {}
 
@@ -127,15 +127,15 @@ class menu(object):
 		socialservices	= []
 
 		### telegram
-		if self.conf_TELEGRAM_TOKEN and int(self.conf_TELEGRAM_CHAT_ID) != 0:
+		if self.conf_SOCIAL_TELEGRAM_TOKEN and int(self.conf_SOCIAL_TELEGRAM_CHAT_ID) != 0:
 			socialservices.append('social:telegram')
 
 		### mastodon
-		if self.conf_MASTODON_BASE_URL and self.conf_MASTODON_TOKEN:
+		if self.conf_SOCIAL_MASTODON_BASE_URL and self.conf_SOCIAL_MASTODON_TOKEN:
 			socialservices.append('social:mastodon')
 
 		### bluesky
-		if self.conf_BLUESKY_API_BASE_URL and self.conf_BLUESKY_IDENTIFIER and self.conf_BLUESKY_APP_PASSWORD:
+		if self.conf_SOCIAL_BLUESKY_API_BASE_URL and self.conf_SOCIAL_BLUESKY_IDENTIFIER and self.conf_SOCIAL_BLUESKY_APP_PASSWORD:
 			socialservices.append('social:bluesky')
 
 		# generate menues

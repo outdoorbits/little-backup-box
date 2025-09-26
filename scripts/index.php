@@ -82,17 +82,17 @@
 	// social networks
 	$SocialServices	= array();
 
-	$telegram_configurated	= ($config['conf_TELEGRAM_TOKEN']=='' or intval($config['conf_TELEGRAM_CHAT_ID'])==0) == false;
+	$telegram_configurated	= ($config['conf_SOCIAL_TELEGRAM_TOKEN']=='' or intval($config['conf_SOCIAL_TELEGRAM_CHAT_ID'])==0) == false;
 	if ($telegram_configurated) {
 		$SocialServices[]	= 'social:telegram';
 	}
 
-	$mastodon_configurated	= ($config['conf_MASTODON_TOKEN']=='' or $config['conf_MASTODON_BASE_URL']=='') == false;
+	$mastodon_configurated	= ($config['conf_SOCIAL_MASTODON_TOKEN']=='' or $config['conf_SOCIAL_MASTODON_BASE_URL']=='') == false;
 	if ($mastodon_configurated) {
 		$SocialServices[]	= 'social:mastodon';
 	}
 
-	$bluesky_configurated	= ($config['conf_BLUESKY_API_BASE_URL']=='' or $config['conf_BLUESKY_IDENTIFIER']=='' or $config['conf_BLUESKY_APP_PASSWORD']=='') == false;
+	$bluesky_configurated	= ($config['conf_SOCIAL_BLUESKY_API_BASE_URL']=='' or $config['conf_SOCIAL_BLUESKY_IDENTIFIER']=='' or $config['conf_SOCIAL_BLUESKY_APP_PASSWORD']=='') == false;
 	if ($bluesky_configurated) {
 		$SocialServices[]	= 'social:bluesky';
 	}
@@ -433,9 +433,9 @@
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_telegram_telegram; ?></summary>
 
 					<div class='backupsection'>
-						<h4><?php echo L::config_telegram_header; ?></h4>
+						<h4><?php echo L::config_social_telegram_header; ?></h4>
 							<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
-							<input type="hidden" id="conf_TELEGRAM_TOKEN" name="conf_TELEGRAM_TOKEN" value="<?php echo $config['conf_TELEGRAM_TOKEN']; ?>">
+							<input type="hidden" id="conf_SOCIAL_TELEGRAM_TOKEN" name="conf_SOCIAL_TELEGRAM_TOKEN" value="<?php echo $config['conf_SOCIAL_TELEGRAM_TOKEN']; ?>">
 					</div>
 			</details>
 		</div>
@@ -476,7 +476,7 @@
 			}
 
 			shell_exec("sudo $WORKING_DIR/stop_backup.sh");
-			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --move-files '$move_files' --rename-files '$rename_files' --force-sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --checksum '$checksum' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --telegram-chat-id " . escapeshellarg($_POST['conf_TELEGRAM_CHAT_ID']) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
+			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($_POST['SourceDevice']) . " --TargetName " . escapeshellarg($_POST['TargetDevice']) . " --move-files '$move_files' --rename-files '$rename_files' --force-sync-database False --generate-thumbnails '$generate_thumbnails' --update-exif '$update_exif' --checksum '$checksum' --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --telegram-chat-id " . escapeshellarg($_POST['conf_SOCIAL_TELEGRAM_CHAT_ID']) . " --power-off $power_off_force $SecBackupArgs> /dev/null 2>&1 &");
 			popup(L::main_backup_backup . " " . $_POST['SourceDevice'] . " " . L::main_backup_to . " " . $_POST['TargetDevice'] . " ". L::main_backup_initiated. ".",$config["conf_POPUP_MESSAGES"]);
 		}
 

@@ -398,43 +398,50 @@
       "power_off_idle_time_label": "Wählen Sie die Leerlaufzeit aus, nach der das System gestoppt werden soll.",
       "power_off_idle_time_none": "niemals"
     },
-    "telegram": {
-      "header": "Telegram konfigurieren",
-      "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki: Telegram</a>",
-      "token_label": "Token",
-      "chat_id_label": "Chat ID",
-      "error_unreachable": "Telegramm nicht erreichbar",
-      "error_invalid_token": "Ungültiges Token",
-      "error_bad_api_response": "API-Konflikt",
-      "unknown": "unbekannt",
-      "without_name": "ohne Namen",
-      "selected": "Ausgewählt",
-      "select_chat_first": "Bitte zuerst einen Chat auswählen.",
-      "test_message": "Testnachricht von Little-Backup-Box per Bot",
-      "test_message_sent_to": "Testnachricht gesendet an",
-      "test_message_error": "Fehler beim Senden",
-      "test_message_network_error": "Netzwerkfehler",
-      "select_chat": "Chat auswählen",
-      "table_headers": "Anzeige: Name (Typ) — <code>chat_id",
-      "close": "Schließen",
-      "accept": "Übernehmen",
-      "test_message_send": "Testnachricht senden",
-      "no_chats_found": "Keine Chats gefunden. Sende eine Nachricht in der Zielgruppe/dem Kanal oder füge den Bot als Admin hinzu.",
-      "button_select_chat": "Chat wählen"
-    },
-    "social_media_section": "Soziale Medien",
-    "mastodon": {
-      "header": "Mastodon&reg; konfigurieren",
-      "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
-      "token_label": "Zugriffstoken",
-      "base_url_label": "Mastodon-Basis-URL"
-    },
-    "bluesky": {
-      "header": "Bluesky konfigurieren",
-      "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
-      "base_url_label": "Basis-URL",
-      "identifier_label": "Benutzerkennung (E-Mail oder Handle)",
-      "app_password_label": "App-Passwort"
+    "social": {
+      "section": "Soziale Medien",
+      "bluesky": {
+        "header": "Bluesky konfigurieren",
+        "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
+        "base_url_label": "Basis-URL",
+        "identifier_label": "Benutzerkennung (E-Mail oder Handle)",
+        "app_password_label": "App-Passwort"
+      },
+      "telegram": {
+        "header": "Telegram konfigurieren",
+        "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki: Telegram</a>",
+        "token_label": "Token",
+        "chat_id_label": "Chat ID",
+        "error_unreachable": "Telegramm nicht erreichbar",
+        "error_invalid_token": "Ungültiges Token",
+        "error_bad_api_response": "API-Konflikt",
+        "unknown": "unbekannt",
+        "without_name": "ohne Namen",
+        "selected": "Ausgewählt",
+        "select_chat_first": "Bitte zuerst einen Chat auswählen.",
+        "test_message": "Testnachricht von Little-Backup-Box per Bot",
+        "test_message_sent_to": "Testnachricht gesendet an",
+        "test_message_error": "Fehler beim Senden",
+        "test_message_network_error": "Netzwerkfehler",
+        "select_chat": "Chat auswählen",
+        "table_headers": "Anzeige: Name (Typ) — <code>chat_id",
+        "close": "Schließen",
+        "accept": "Übernehmen",
+        "test_message_send": "Testnachricht senden",
+        "no_chats_found": "Keine Chats gefunden. Sende eine Nachricht in der Zielgruppe/dem Kanal oder füge den Bot als Admin hinzu.",
+        "button_select_chat": "Chat wählen"
+      },
+      "mastodon": {
+        "header": "Mastodon&reg; konfigurieren",
+        "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
+        "token_label": "Zugriffstoken",
+        "base_url_label": "Mastodon-Basis-URL"
+      },
+      "general": {
+        "header": "Allgemein",
+        "date_label": "Aufnahmedatum veröffentlichen",
+        "filename_label": "Dateiname veröffentlichen"
+      }
     }
   },
   "tools": {

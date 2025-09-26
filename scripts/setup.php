@@ -225,6 +225,8 @@
 		$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
 		$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?'true':'false';
 		$conf_DIPLAY_IMAGES_KEEP					= isset($conf_DIPLAY_IMAGES_KEEP)?'true':'false';
+		$conf_SOCIAL_PUBLISH_DATE					= isset($conf_SOCIAL_PUBLISH_DATE)?'true':'false';
+		$conf_SOCIAL_PUBLISH_FILENAME				= isset($conf_SOCIAL_PUBLISH_FILENAME)?'true':'false';
 
 		if ($conf_MAIL_PASSWORD != '') {
 			if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
@@ -352,14 +354,16 @@ conf_VPN_TIMEOUT=$conf_VPN_TIMEOUT
 conf_PASSWORD='$conf_PASSWORD'
 conf_PASSWORD_ENCRYPTION='$conf_PASSWORD_ENCRYPTION'
 conf_DIPLAY_IMAGES_KEEP=$conf_DIPLAY_IMAGES_KEEP
-conf_TELEGRAM_TOKEN="$conf_TELEGRAM_TOKEN"
-conf_TELEGRAM_CHAT_ID=$conf_TELEGRAM_CHAT_ID
-conf_TELEGRAM_CHAT_IDENTIFIER="$conf_TELEGRAM_CHAT_IDENTIFIER"
-conf_MASTODON_BASE_URL="$conf_MASTODON_BASE_URL"
-conf_MASTODON_TOKEN="$conf_MASTODON_TOKEN"
-conf_BLUESKY_API_BASE_URL="$conf_BLUESKY_API_BASE_URL"
-conf_BLUESKY_IDENTIFIER="$conf_BLUESKY_IDENTIFIER"
-conf_BLUESKY_APP_PASSWORD="$conf_BLUESKY_APP_PASSWORD"
+conf_SOCIAL_PUBLISH_DATE=$conf_SOCIAL_PUBLISH_DATE
+conf_SOCIAL_PUBLISH_FILENAME=$conf_SOCIAL_PUBLISH_FILENAME
+conf_SOCIAL_TELEGRAM_TOKEN="$conf_SOCIAL_TELEGRAM_TOKEN"
+conf_SOCIAL_TELEGRAM_CHAT_ID=$conf_SOCIAL_TELEGRAM_CHAT_ID
+conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER="$conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER"
+conf_SOCIAL_MASTODON_BASE_URL="$conf_SOCIAL_MASTODON_BASE_URL"
+conf_SOCIAL_MASTODON_TOKEN="$conf_SOCIAL_MASTODON_TOKEN"
+conf_SOCIAL_BLUESKY_API_BASE_URL="$conf_SOCIAL_BLUESKY_API_BASE_URL"
+conf_SOCIAL_BLUESKY_IDENTIFIER="$conf_SOCIAL_BLUESKY_IDENTIFIER"
+conf_SOCIAL_BLUESKY_APP_PASSWORD="$conf_SOCIAL_BLUESKY_APP_PASSWORD"
 
 CONFIGDATA;
 
@@ -681,19 +685,19 @@ CONFIGDATA;
 				<h4><?php echo L::config_backup_default_settings_header; ?></h4>
 
 					<h5><?php echo L::config_backup_move_files_header; ?></h5>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES"<?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?" checked":""; ?>>
 						<label for="conf_BACKUP_DEFAULT_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br />
 
 					<h5><?php echo L::config_backup_rename_header; ?></h5>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_RENAME_FILES" name="conf_BACKUP_DEFAULT_RENAME_FILES" <?php echo $config['conf_BACKUP_DEFAULT_RENAME_FILES']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_RENAME_FILES" name="conf_BACKUP_DEFAULT_RENAME_FILES"<?php echo $config['conf_BACKUP_DEFAULT_RENAME_FILES']=="1"?" checked":""; ?>>
 						<label for="conf_BACKUP_DEFAULT_RENAME_FILES"><?php echo L::config_backup_rename_label.'<br />'.L::config_backup_rename_warning; ?></label><br />
 
 					<h5><?php echo L::config_backup_generate_thumbnails_header; ?></h5>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" name="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" name="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"<?php echo $config['conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS']=="1"?" checked":""; ?>>
 						<label for="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br />
 
 					<h5><?php echo L::config_backup_update_exif_header; ?></h5>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_UPDATE_EXIF" name="conf_BACKUP_DEFAULT_UPDATE_EXIF" <?php echo $config['conf_BACKUP_DEFAULT_UPDATE_EXIF']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_BACKUP_DEFAULT_UPDATE_EXIF" name="conf_BACKUP_DEFAULT_UPDATE_EXIF"<?php echo $config['conf_BACKUP_DEFAULT_UPDATE_EXIF']=="1"?" checked":""; ?>>
 						<label for="conf_BACKUP_DEFAULT_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br />
 
 				<h3><?php echo L::config_backup_header2; ?></h3>
@@ -706,7 +710,7 @@ CONFIGDATA;
 					<h4><?php echo L::config_backup_default2_settings_header; ?></h4>
 
 						<h5><?php echo L::config_backup_move_files_header; ?></h5>
-							<input type="checkbox" id="conf_BACKUP_DEFAULT2_MOVE_FILES" name="conf_BACKUP_DEFAULT2_MOVE_FILES" <?php echo $config['conf_BACKUP_DEFAULT2_MOVE_FILES']=="1"?"checked":""; ?>>
+							<input type="checkbox" id="conf_BACKUP_DEFAULT2_MOVE_FILES" name="conf_BACKUP_DEFAULT2_MOVE_FILES"<?php echo $config['conf_BACKUP_DEFAULT2_MOVE_FILES']=="1"?" checked":""; ?>>
 							<label for="conf_BACKUP_DEFAULT2_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br />
 
 
@@ -751,16 +755,16 @@ CONFIGDATA;
 					<textarea <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" rows="8" style="width: 100%;"><?php echo str_replace(';', "\n", $config['conf_BACKUP_CAMERA_FOLDER_MASK']); ?></textarea>
 
 				<h3><?php echo L::config_backup_general_settings_header; ?></h3>
-					<input type="checkbox" id="conf_BACKUP_MOVE_FILES" name="conf_BACKUP_MOVE_FILES" <?php echo $config['conf_BACKUP_MOVE_FILES']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_BACKUP_MOVE_FILES" name="conf_BACKUP_MOVE_FILES"<?php echo $config['conf_BACKUP_MOVE_FILES']=="1"?" checked":""; ?>>
 					<label for="conf_BACKUP_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br />
 					<br />
-					<input type="checkbox" id="conf_BACKUP_RENAME_FILES" name="conf_BACKUP_RENAME_FILES" <?php echo $config['conf_BACKUP_RENAME_FILES']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_BACKUP_RENAME_FILES" name="conf_BACKUP_RENAME_FILES"<?php echo $config['conf_BACKUP_RENAME_FILES']=="1"?" checked":""; ?>>
 					<label for="conf_BACKUP_RENAME_FILES"><?php echo L::config_backup_rename_header; ?><br /><?php echo L::config_backup_rename_label.'<br />'.L::config_backup_rename_warning; ?></label><br />
 					<br />
-					<input type="checkbox" id="conf_BACKUP_CHECKSUM" name="conf_BACKUP_CHECKSUM" <?php echo $config['conf_BACKUP_CHECKSUM']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_BACKUP_CHECKSUM" name="conf_BACKUP_CHECKSUM"<?php echo $config['conf_BACKUP_CHECKSUM']=="1"?" checked":""; ?>>
 					<label for="conf_BACKUP_CHECKSUM"><?php echo L::config_backup_checksum_header; ?><br /><?php echo L::config_backup_checksum_label.'<br />'.L::config_backup_checksum_warning; ?></label><br />
 					<br />
-					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF" <?php echo $config['conf_POWER_OFF']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF"<?php echo $config['conf_POWER_OFF']=="1"?" checked":""; ?>>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br />
 
 			</details>
@@ -812,7 +816,7 @@ CONFIGDATA;
 						</select>
 
 				<h3><?php echo L::config_view_popup_header; ?></h3>
-					<input type="checkbox" id="conf_POPUP_MESSAGES" name="conf_POPUP_MESSAGES" <?php echo $config['conf_POPUP_MESSAGES']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_POPUP_MESSAGES" name="conf_POPUP_MESSAGES"<?php echo $config['conf_POPUP_MESSAGES']=="1"?" checked":""; ?>>
 					<label for="conf_POPUP_MESSAGES"><?php echo L::config_view_popup_label; ?></label><br />
 
 			</details>
@@ -824,7 +828,7 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_display_behavior_header; ?></h3>
 					<div>
-						<input type="checkbox" id="conf_DISP" name="conf_DISP" <?php echo $config['conf_DISP']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_DISP" name="conf_DISP"<?php echo $config['conf_DISP']=="1"?" checked":""; ?>>
 						<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br />
 					</div>
 
@@ -858,10 +862,10 @@ CONFIGDATA;
 					</div>
 
 					<div>
-						<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT" <?php echo $config['conf_DISP_IP_REPEAT']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_DISP_IP_REPEAT" name="conf_DISP_IP_REPEAT"<?php echo $config['conf_DISP_IP_REPEAT']=="1"?" checked":""; ?>>
 						<label for="conf_DISP_IP_REPEAT"><?php echo L::config_display_ip_label; ?></label><br />
 						<br />
-						<input type="checkbox" id="conf_DISP_SHOW_STATUSBAR" name="conf_DISP_SHOW_STATUSBAR" <?php echo $config['conf_DISP_SHOW_STATUSBAR']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_DISP_SHOW_STATUSBAR" name="conf_DISP_SHOW_STATUSBAR"<?php echo $config['conf_DISP_SHOW_STATUSBAR']=="1"?" checked":""; ?>>
 						<label for="conf_DISP_SHOW_STATUSBAR"><?php echo L::config_display_statusbar_label; ?></label><br />
 						<br />
 						<label for="conf_DISP_FRAME_TIME_IP"><?php echo L::config_display_frame_time_ip_label; ?></label><br />
@@ -931,7 +935,7 @@ CONFIGDATA;
 						<h4><?php echo L::config_display_backlight_header; ?></h4>
 
 							<div>
-								<input type="checkbox" id="conf_DISP_BACKLIGHT_ENABLED" name="conf_DISP_BACKLIGHT_ENABLED" <?php echo $config['conf_DISP_BACKLIGHT_ENABLED']=="1"?"checked":""; ?>>
+								<input type="checkbox" id="conf_DISP_BACKLIGHT_ENABLED" name="conf_DISP_BACKLIGHT_ENABLED"<?php echo $config['conf_DISP_BACKLIGHT_ENABLED']=="1"?" checked":""; ?>>
 								<label for="conf_DISP_BACKLIGHT_ENABLED"><?php echo L::config_display_backlight_enabled_label; ?></label><br />
 							<div>
 					</div>
@@ -1003,7 +1007,7 @@ CONFIGDATA;
 										$config['conf_DISP_I2C_ADDRESS']	= $I2C;
 									}
 							?>
-									<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>" <?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?"checked":""; ?>>
+									<input type="radio" id="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>" name="conf_DISP_I2C_ADDRESS" value="<?php echo $I2C; ?>"<?php echo strcasecmp($config['conf_DISP_I2C_ADDRESS'],$I2C)==0?" checked":""; ?>>
 									<label for="conf_DISP_I2C_ADDRESS_<?php echo $I2C; ?>"><?php echo $I2C; ?> <?php echo strpos($I2C_DETECT," " . $I2C)?" - " . L::config_display_device_available:""; ?></label><br />
 							<?php
 								}
@@ -1018,7 +1022,7 @@ CONFIGDATA;
 										$spi_ports_array=array("0","1");
 										foreach($spi_ports_array as $spi_port) {
 							?>
-									<input type="radio" id="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>" name="conf_DISP_SPI_PORT" value="<?php echo $spi_port; ?>" <?php echo strcasecmp($config['conf_DISP_SPI_PORT'],$spi_port)==0?"checked":""; ?>>
+									<input type="radio" id="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>" name="conf_DISP_SPI_PORT" value="<?php echo $spi_port; ?>"<?php echo strcasecmp($config['conf_DISP_SPI_PORT'],$spi_port)==0?" checked":""; ?>>
 									<label for="conf_DISP_SPI_PORT_<?php echo $spi_port; ?>"><?php echo $spi_port; ?></label><br />
 							<?php
 								}
@@ -1088,12 +1092,12 @@ CONFIGDATA;
 						</div>
 
 						<div>
-							<input type="checkbox" id="conf_DISP_COLOR_BGR" name="conf_DISP_COLOR_BGR" <?php echo $config['conf_DISP_COLOR_BGR']=="1"?"checked":""; ?>>
+							<input type="checkbox" id="conf_DISP_COLOR_BGR" name="conf_DISP_COLOR_BGR"<?php echo $config['conf_DISP_COLOR_BGR']=="1"?" checked":""; ?>>
 							<label for="conf_DISP_COLOR_BGR"><?php echo L::config_display_color_bgr_label; ?></label><br />
 						<div>
 
 						<div>
-							<input type="checkbox" id="conf_DISP_COLOR_INVERSE" name="conf_DISP_COLOR_INVERSE" <?php echo $config['conf_DISP_COLOR_INVERSE']=="1"?"checked":""; ?>>
+							<input type="checkbox" id="conf_DISP_COLOR_INVERSE" name="conf_DISP_COLOR_INVERSE"<?php echo $config['conf_DISP_COLOR_INVERSE']=="1"?" checked":""; ?>>
 							<label for="conf_DISP_COLOR_INVERSE"><?php echo L::config_display_color_inverse_label; ?></label><br />
 						<div>
 
@@ -1122,7 +1126,7 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_menu_enable_header; ?></h3>
 					<div>
-						<input type="checkbox" id="conf_MENU_ENABLED" name="conf_MENU_ENABLED" <?php echo $config['conf_MENU_ENABLED']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_MENU_ENABLED" name="conf_MENU_ENABLED"<?php echo $config['conf_MENU_ENABLED']=="1"?" checked":""; ?>>
 						<label for="conf_MENU_ENABLED"><?php echo L::config_menu_enable_label; ?></label><br />
 					</div>
 
@@ -1309,7 +1313,7 @@ CONFIGDATA;
 				</p>
 				<h3><?php echo L::config_screen_virtual_keyboard_enable_header; ?></h3>
 					<div>
-						<input type="checkbox" id="conf_VIRTUAL_KEYBOARD_ENABLED" name="conf_VIRTUAL_KEYBOARD_ENABLED" <?php echo $config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1"?"checked":""; ?>>
+						<input type="checkbox" id="conf_VIRTUAL_KEYBOARD_ENABLED" name="conf_VIRTUAL_KEYBOARD_ENABLED"<?php echo $config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1"?" checked":""; ?>>
 						<label for="conf_VIRTUAL_KEYBOARD_ENABLED"><?php echo L::config_screen_virtual_keyboard_enable_label; ?></label><br />
 					</div>
 
@@ -1321,19 +1325,19 @@ CONFIGDATA;
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_imageviewer_section; ?></summary>
 
 				<h3><?php echo L::config_backup_generate_thumbnails_header; ?></h3>
-					<input type="checkbox" id="conf_BACKUP_GENERATE_THUMBNAILS" name="conf_BACKUP_GENERATE_THUMBNAILS" <?php echo $config['conf_BACKUP_GENERATE_THUMBNAILS']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_BACKUP_GENERATE_THUMBNAILS" name="conf_BACKUP_GENERATE_THUMBNAILS"<?php echo $config['conf_BACKUP_GENERATE_THUMBNAILS']=="1"?" checked":""; ?>>
 					<label for="conf_BACKUP_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br />
 
 				<h3><?php echo L::config_imageviewer_convert_heic_header; ?></h3>
-					<input type="checkbox" id="conf_VIEW_CONVERT_HEIC" name="conf_VIEW_CONVERT_HEIC" <?php echo $config['conf_VIEW_CONVERT_HEIC']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_VIEW_CONVERT_HEIC" name="conf_VIEW_CONVERT_HEIC"<?php echo $config['conf_VIEW_CONVERT_HEIC']=="1"?" checked":""; ?>>
 					<label for="conf_VIEW_CONVERT_HEIC"><?php echo L::config_imageviewer_convert_heic_label; ?></label><br />
 
 				<h3><?php echo L::config_backup_update_exif_header; ?></h3>
-					<input type="checkbox" id="conf_BACKUP_UPDATE_EXIF" name="conf_BACKUP_UPDATE_EXIF" <?php echo $config['conf_BACKUP_UPDATE_EXIF']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_BACKUP_UPDATE_EXIF" name="conf_BACKUP_UPDATE_EXIF"<?php echo $config['conf_BACKUP_UPDATE_EXIF']=="1"?" checked":""; ?>>
 					<label for="conf_BACKUP_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br />
 
 				<h3><?php echo L::config_imageviewer_write_rating_exif_header; ?></h3>
-					<input type="checkbox" id="conf_VIEW_WRITE_RATING_EXIF" name="conf_VIEW_WRITE_RATING_EXIF" <?php echo $config['conf_VIEW_WRITE_RATING_EXIF']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_VIEW_WRITE_RATING_EXIF" name="conf_VIEW_WRITE_RATING_EXIF"<?php echo $config['conf_VIEW_WRITE_RATING_EXIF']=="1"?" checked":""; ?>>
 					<label for="conf_VIEW_WRITE_RATING_EXIF"><?php echo L::config_imageviewer_write_rating_exif_label; ?></label><br />
 
 			</details>
@@ -1344,14 +1348,14 @@ CONFIGDATA;
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_mail_section; ?></summary>
 
 				<h3><?php echo L::config_mail_notify_header; ?></h3>
-					<input type="checkbox" id="conf_MAIL_NOTIFICATIONS" name="conf_MAIL_NOTIFICATIONS"<?php echo $config['conf_MAIL_NOTIFICATIONS']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_MAIL_NOTIFICATIONS" name="conf_MAIL_NOTIFICATIONS"<?php echo $config['conf_MAIL_NOTIFICATIONS']=="1"?" checked":""; ?>>
 					<label for="conf_MAIL_NOTIFICATIONS"><?php echo L::config_mail_notify_backup_label; ?></label><br />
 
-					<input type="checkbox" id="conf_MAIL_IP" name="conf_MAIL_IP"<?php echo $config['conf_MAIL_IP']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_MAIL_IP" name="conf_MAIL_IP"<?php echo $config['conf_MAIL_IP']=="1"?" checked":""; ?>>
 					<label for="conf_MAIL_IP"><?php echo L::config_mail_notify_ip_label; ?></label><br />
 
 				<h3><?php echo L::config_mail_html_header; ?></h3>
-					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_MAIL_HTML" name="conf_MAIL_HTML"<?php echo $config['conf_MAIL_HTML']=="1"?" checked":""; ?>>
 					<label for="conf_MAIL_HTML"><?php echo L::config_mail_html_label; ?></label><br />
 
 				<h3><?php echo L::config_mail_smtp_header; ?></h3>
@@ -1363,10 +1367,10 @@ CONFIGDATA;
 					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','numpad','bottom'); ?> id="conf_SMTP_PORT" name="conf_SMTP_PORT" size="20" value="<?php echo $config['conf_SMTP_PORT']; ?>">
 
 				<h3><?php echo L::config_mail_security_header; ?></h3>
-					<input type="radio" id="conf_MAIL_SECURITY_STARTTLS" name="conf_MAIL_SECURITY" value="STARTTLS" <?php echo $config['conf_MAIL_SECURITY']!=="SSL"?"checked":""; ?>>
+					<input type="radio" id="conf_MAIL_SECURITY_STARTTLS" name="conf_MAIL_SECURITY" value="STARTTLS"<?php echo $config['conf_MAIL_SECURITY']!=="SSL"?" checked":""; ?>>
 					<label for="conf_MAIL_SECURITY_STARTTLS">STARTTLS</label><br />
 
-					<input type="radio" id="conf_MAIL_SECURITY_SSL" name="conf_MAIL_SECURITY" value="SSL" <?php echo $config['conf_MAIL_SECURITY']=="SSL"?"checked":""; ?>>
+					<input type="radio" id="conf_MAIL_SECURITY_SSL" name="conf_MAIL_SECURITY" value="SSL"<?php echo $config['conf_MAIL_SECURITY']=="SSL"?" checked":""; ?>>
 					<label for="conf_MAIL_SECURITY_SSL">SSL</label><br />
 
 				<h3><?php echo L::config_mail_user_header; ?></h3>
@@ -1501,15 +1505,15 @@ CONFIGDATA;
 								</th>
 
 								<td style="padding-left: 30px; text-align: center">
-									<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rclone" <?php if ($CloudSyncMethods[$CloudService] != 'rsync') {echo 'checked';} ?>>
+									<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rclone"<?php if ($CloudSyncMethods[$CloudService] != 'rsync') {echo ' checked';} ?>>
 								</td>
 
 								<td style="padding-left: 30px; text-align: center;">
-										<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rsync" <?php if ($CloudSyncMethods[$CloudService] == 'rsync') {echo 'checked';} ?>>
+										<input type="radio" id="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" name="conf_BACKUP_SYNC_METHOD_CLOUDS_<?php echo ($CloudService);?>" value="rsync"<?php if ($CloudSyncMethods[$CloudService] == 'rsync') {echo ' checked';} ?>>
 								</td>
 
 								<td style="padding-left: 30px; text-align: center">
-									<input type="checkbox" id="conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_<?php echo ($CloudService);?>" name="conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_<?php echo ($CloudService);?>" <?php if ($CloudFilesStayInPlaces[$CloudService]) {echo 'checked';} ?>>
+									<input type="checkbox" id="conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_<?php echo ($CloudService);?>" name="conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE_<?php echo ($CloudService); ?>"<?php if ($CloudFilesStayInPlaces[$CloudService]) {echo ' checked';} ?>>
 								</td>
 							</tr>
 						<?php } ?>
@@ -1539,36 +1543,43 @@ CONFIGDATA;
 
 		<div class="card" style="margin-top: 2em;">
 			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_social_media_section; ?></summary>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_social_section; ?></summary>
 
-				<h3><?php echo L::config_telegram_header; ?></h3>
-					<?php echo L::config_telegram_install_desc; ?><br />
+				<h3><?php echo L::config_social_general_header; ?></h3>
+					<input type="checkbox" id="conf_SOCIAL_PUBLISH_DATE" name="conf_SOCIAL_PUBLISH_DATE"<?php echo $config['conf_SOCIAL_PUBLISH_DATE']=="1"?"checked":""; ?>>
+					<label for="conf_SOCIAL_PUBLISH_DATE"><?php echo L::config_social_general_date_label; ?></label><br />
+
+					<input type="checkbox" id="conf_SOCIAL_PUBLISH_FILENAME" name="conf_SOCIAL_PUBLISH_FILENAME"<?php echo $config['conf_SOCIAL_PUBLISH_FILENAME']=="1"?"checked":""; ?>>
+					<label for="conf_SOCIAL_PUBLISH_FILENAME"><?php echo L::config_social_general_filename_label; ?></label><br />
+
+				<h3><?php echo L::config_social_telegram_header; ?></h3>
+					<?php echo L::config_social_telegram_install_desc; ?><br />
 					<br />
-					<label for="conf_TELEGRAM_TOKEN"><?php echo L::config_telegram_token_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_TELEGRAM_TOKEN" name="conf_TELEGRAM_TOKEN" size="50" value="<?php echo $config['conf_TELEGRAM_TOKEN']; ?>"><br />
+					<label for="conf_SOCIAL_TELEGRAM_TOKEN"><?php echo L::config_social_telegram_token_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_TELEGRAM_TOKEN" name="conf_SOCIAL_TELEGRAM_TOKEN" size="50" value="<?php echo $config['conf_SOCIAL_TELEGRAM_TOKEN']; ?>"><br />
 
 					<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
 
-				<h3><?php echo L::config_mastodon_header; ?></h3>
-					<?php echo L::config_mastodon_install_desc; ?><br />
+				<h3><?php echo L::config_social_mastodon_header; ?></h3>
+					<?php echo L::config_social_mastodon_install_desc; ?><br />
 					<br />
-					<label for="conf_MASTODON_BASE_URL"><?php echo L::config_mastodon_base_url_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MASTODON_BASE_URL" name="conf_MASTODON_BASE_URL" size="50" value="<?php echo $config['conf_MASTODON_BASE_URL']; ?>"><br />
+					<label for="conf_SOCIAL_MASTODON_BASE_URL"><?php echo L::config_social_mastodon_base_url_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MASTODON_BASE_URL" name="conf_SOCIAL_MASTODON_BASE_URL" size="50" value="<?php echo $config['conf_SOCIAL_MASTODON_BASE_URL']; ?>"><br />
 
-					<label for="conf_MASTODON_TOKEN"><?php echo L::config_mastodon_token_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MASTODON_TOKEN" name="conf_MASTODON_TOKEN" size="50" value="<?php echo $config['conf_MASTODON_TOKEN']; ?>"><br />
+					<label for="conf_SOCIAL_MASTODON_TOKEN"><?php echo L::config_social_mastodon_token_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MASTODON_TOKEN" name="conf_SOCIAL_MASTODON_TOKEN" size="50" value="<?php echo $config['conf_SOCIAL_MASTODON_TOKEN']; ?>"><br />
 
-				<h3><?php echo L::config_bluesky_header; ?></h3>
-					<?php echo L::config_bluesky_install_desc; ?><br />
+				<h3><?php echo L::config_social_bluesky_header; ?></h3>
+					<?php echo L::config_social_bluesky_install_desc; ?><br />
 					<br />
-					<label for="conf_BLUESKY_API_BASE_URL"><?php echo L::config_bluesky_base_url_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BLUESKY_API_BASE_URL" name="conf_BLUESKY_API_BASE_URL" size="50" value="<?php echo $config['conf_BLUESKY_API_BASE_URL']; ?>"><br />
+					<label for="conf_SOCIAL_BLUESKY_API_BASE_URL"><?php echo L::config_social_bluesky_base_url_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_API_BASE_URL" name="conf_SOCIAL_BLUESKY_API_BASE_URL" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_API_BASE_URL']; ?>"><br />
 
-					<label for="conf_BLUESKY_IDENTIFIER"><?php echo L::config_bluesky_identifier_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BLUESKY_IDENTIFIER" name="conf_BLUESKY_IDENTIFIER" size="50" value="<?php echo $config['conf_BLUESKY_IDENTIFIER']; ?>"><br />
+					<label for="conf_SOCIAL_BLUESKY_IDENTIFIER"><?php echo L::config_social_bluesky_identifier_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_IDENTIFIER" name="conf_SOCIAL_BLUESKY_IDENTIFIER" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_IDENTIFIER']; ?>"><br />
 
-					<label for="conf_BLUESKY_APP_PASSWORD"><?php echo L::config_bluesky_app_password_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BLUESKY_APP_PASSWORD" name="conf_BLUESKY_APP_PASSWORD" size="50" value="<?php echo $config['conf_BLUESKY_APP_PASSWORD']; ?>"><br />
+					<label for="conf_SOCIAL_BLUESKY_APP_PASSWORD"><?php echo L::config_social_bluesky_app_password_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_APP_PASSWORD" name="conf_SOCIAL_BLUESKY_APP_PASSWORD" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_APP_PASSWORD']; ?>"><br />
 
 			</details>
 		</div>
@@ -1731,11 +1742,11 @@ CONFIGDATA;
 					</select>
 
 				<h3><?php echo L::config_debug_log_sync_protokoll_header; ?></h3>
-					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_LOG_SYNC" name="conf_LOG_SYNC"<?php echo $config['conf_LOG_SYNC']=="1"?" checked":""; ?>>
 					<label for="conf_LOG_SYNC"><?php echo L::config_debug_log_sync_protokoll_label; ?></label><br />
 
 				<h3><?php echo L::config_debug_display_images_keep_header; ?></h3>
-					<input type="checkbox" id="conf_DIPLAY_IMAGES_KEEP" name="conf_DIPLAY_IMAGES_KEEP"<?php echo $config['conf_DIPLAY_IMAGES_KEEP']=="1"?"checked":""; ?>>
+					<input type="checkbox" id="conf_DIPLAY_IMAGES_KEEP" name="conf_DIPLAY_IMAGES_KEEP"<?php echo $config['conf_DIPLAY_IMAGES_KEEP']=="1"?" checked":""; ?>>
 					<label for="conf_DIPLAY_IMAGES_KEEP"><?php echo L::config_debug_display_images_keep_label; ?> (<?php echo $constants['const_DISPLAY_IMAGE_KEEP_PATH']; ?>)</label><br />
 
 			</details>
