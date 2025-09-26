@@ -700,7 +700,8 @@
           "anyusb": "tout USB",
           "ftp": "Serveur FTP de LBB",
           "telegram": "Telegram",
-          "mastodon": "mastodon"
+          "mastodon": "mastodon",
+          "bluesky": "Bluesky"
         },
         "stop": "ARRÊTER sauvegarde"
       }

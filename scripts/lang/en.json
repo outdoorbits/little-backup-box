@@ -241,7 +241,8 @@
           "anyusb": "any USB",
           "ftp": "LBBs FTP server",
           "telegram": "Telegram",
-          "mastodon": "mastodon"
+          "mastodon": "mastodon",
+          "bluesky": "Bluesky"
         },
         "stop": "STOP backup"
       }
