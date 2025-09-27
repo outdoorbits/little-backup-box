@@ -23,8 +23,8 @@ from telegram import Bot
 from telegram.request import HTTPXRequest
 from telegram import InputFile
 
-import lib_debug
-xxx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class telegram(object):
 
@@ -116,7 +116,6 @@ class telegram(object):
 
 		if self.ok is None:
 			self.ok				= True
-			xxx.d(f'ok - {FilePath}')
 			name				= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
 			self.returnmessage	= f'{msgtype}{name}: o.k.'
 
