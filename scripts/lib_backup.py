@@ -362,19 +362,27 @@ class reporter(object):
 
 		BackupComplete	= True
 
-		# mail content {self.__SourceService}
+		# mail content
+		## prepare name of source
 		SourceDeviceDetails	= self.__lan.l(f'box_backup_mode_{self.__SourceStorageType}')
 		SourceDeviceDetails	= f"{SourceDeviceDetails}{' ' if SourceDeviceDetails and self.__SourceService else ''}{self.__SourceService}"
 		SourceDeviceDetails	= f"{SourceDeviceDetails}{' ' if SourceDeviceDetails and self.__SourceDeviceLbbDeviceID else ''}{self.__SourceDeviceLbbDeviceID}"
 
+		## prepare name of target
+		TargetServiceTL	= self.__lan.l(f'box_backup_mode_social_{self.__TargetService}')
+		TargetServiceTL	= self.__TargetService if TargetServiceTL == f'box_backup_mode_social_{self.__TargetService}' else TargetServiceTL
+
+		## prepare TransferMode
+		TransferMode	= f' ({self.__TransferMode})' if self.__TransferMode != 'social' else ''
+
 		TargetDeviceDetails	= self.__lan.l(f'box_backup_mode_{self.__TargetStorageType}')
-		TargetDeviceDetails	= f"{TargetDeviceDetails}{' ' if TargetDeviceDetails and self.__TargetService else ''}{self.__TargetService}"
+		TargetDeviceDetails	= f"{TargetDeviceDetails}{' ' if TargetDeviceDetails and TargetServiceTL else ''}{TargetServiceTL}"
 		TargetDeviceDetails	= f"{TargetDeviceDetails}{' ' if TargetDeviceDetails and self.__TargetDeviceLbbDeviceID else ''}{self.__TargetDeviceLbbDeviceID}"
 
 		self.mail_content_HTML	= f"<h2>{self.__lan.l('box_backup_mail_summary')}:</h2>"
 
 		self.mail_content_HTML	+= f"\n  <b>{self.__lan.l('box_backup_mail_backup_type')}:</b>"
-		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{SourceDeviceDetails}</b> {self.__lan.l('box_backup_mail_to')} <b>{TargetDeviceDetails}</b> ({self.__TransferMode})</br> \
+		self.mail_content_HTML	+= f"\n    <p style='{CSS_margins_left_1}'><b>{SourceDeviceDetails}</b> {self.__lan.l('box_backup_mail_to')} <b>{TargetDeviceDetails}</b>{TransferMode}</br> \
 		{self.__lan.l(f'box_backup_report_time_elapsed')}: {self.get_time_elapsed()}</b></p></br>\n"
 
 		if self.__move_files:

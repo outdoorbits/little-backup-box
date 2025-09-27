@@ -128,7 +128,7 @@
         "validate": "check",
         "delete": "delete",
         "clean": "clean",
-        "social": "social",
+        "social": "SoMe",
         "social_telegram": "Telegram",
         "social_mastodon": "Mastodon",
         "social_bluesky": "Bluesky"

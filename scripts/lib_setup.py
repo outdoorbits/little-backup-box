@@ -285,7 +285,7 @@ class setup(object):
 					'conf_PASSWORD_ENCRYPTION':							{'value': 'plain', 'type': 'str'},
 					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'},
 					'conf_SOCIAL_PUBLISH_DATE':							{'value': True, 'type': 'bool'},
-					'conf_SOCIAL_PUBLISH_FILENAME':						{'value': True, 'type': 'bool'},
+					'conf_SOCIAL_PUBLISH_FILENAME':						{'value': False, 'type': 'bool'},
 					'conf_SOCIAL_TELEGRAM_TOKEN':						{'value': '', 'type': 'str'},
 					'conf_SOCIAL_TELEGRAM_CHAT_ID':						{'value': 0, 'type': 'int'},
 					'conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER':				{'value': '', 'type': 'str'},

@@ -118,8 +118,8 @@ class socialmedia(object):
 
 	def __reformat_Comment(self, Comment, FileDate, msgtype=None, FilePath=None):
 
-		FileDate	= FileDate if self.conf_SOCIAL_PUBLISH_DATE else ''
-		FilePath	= FilePath if self.conf_SOCIAL_PUBLISH_FILENAME else ''
+		FileDateShow	= FileDate if self.conf_SOCIAL_PUBLISH_DATE else ''
+		FilePathShow	= FilePath if self.conf_SOCIAL_PUBLISH_FILENAME else ''
 
 		# Content
 		Content	= ''
@@ -131,8 +131,8 @@ class socialmedia(object):
 				Content	= ''
 
 		# bottom
-		sep	= '' if not FilePath or not FileDate else ': '
-		Bottom	= f'{Path(FilePath).name}{sep}{FileDate}'
+		sep	= '' if not FilePathShow or not FileDateShow else ': '
+		Bottom	= f'{Path(FilePathShow).name}{sep}{FileDateShow}'
 
 		sep	= '' if not Bottom or not Comment else os.linesep
 		Bottom	= f'{Bottom}{sep}{Comment}'
