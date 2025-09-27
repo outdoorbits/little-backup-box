@@ -30,9 +30,6 @@ class mastodon(object):
 		self.API_BASE_URL   = (MA_API_BASE_URL or "").strip()
 		self.ACCESS_TOKEN   = (MA_ACCESS_TOKEN or "").strip()
 
-		self.ok             = None
-		self.returnmessage  = ''
-
 		if self.configured():
 			self.mastodon = Mastodon(
 				access_token	= self.ACCESS_TOKEN,
@@ -40,6 +37,12 @@ class mastodon(object):
 			)
 		else:
 			self.mastodon = None
+
+		self.reset_return()
+
+	def reset_return(self):
+		self.ok				= None
+		self.returnmessage	= ''
 
 	def configured(self):
 		return(self.ACCESS_TOKEN and self.API_BASE_URL)
@@ -80,6 +83,8 @@ class mastodon(object):
 			self.returnmessage	= f'{msgtype}{name}: o.k.'
 
 	def publish(self, msgtype, Comment='', FilePath=None):
+		self.reset_return()
+
 		if self.mastodon:
 			self.__publish(msgtype, Comment=Comment, FilePath=FilePath)
 		else:

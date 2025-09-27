@@ -23,6 +23,9 @@ from telegram import Bot
 from telegram.request import HTTPXRequest
 from telegram import InputFile
 
+import lib_debug
+xxx	= lib_debug.debug()
+
 class telegram(object):
 
 	def __init__(self, TG_TOKEN, TG_CHAT_ID):
@@ -30,10 +33,13 @@ class telegram(object):
 		self.TOKEN		= (TG_TOKEN or "").strip()
 		self.CHAT_ID	= TG_CHAT_ID
 
+		self.bot_configured	= self.configured()
+
+		self.reset_return()
+
+	def reset_return(self):
 		self.ok				= None
 		self.returnmessage	= ''
-
-		self.bot_configured	= self.configured()
 
 	def configured(self):
 		return(self.TOKEN and self.CHAT_ID != 0)
@@ -110,10 +116,13 @@ class telegram(object):
 
 		if self.ok is None:
 			self.ok				= True
+			xxx.d(f'ok - {FilePath}')
 			name				= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
 			self.returnmessage	= f'{msgtype}{name}: o.k.'
 
 	def publish(self, msgtype, Comment='', FilePath=None):
+		self.reset_return()
+
 		if self.bot_configured:
 			try:
 				asyncio.get_running_loop()

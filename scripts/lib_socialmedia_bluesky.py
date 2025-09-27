@@ -31,9 +31,6 @@ class bluesky(object):
 		self.IDENTIFIER		= (BS_IDENTIFIER or "").strip()
 		self.APP_PASSWORD	= (BS_APP_PASSWORD or "").strip()
 
-		self.ok             = None
-		self.returnmessage  = ''
-
 		if self.configured():
 			try:
 				# Create a client bound to the given service URL (PDS).
@@ -47,6 +44,12 @@ class bluesky(object):
 				self.returnmessage = f'login: {type(e).__name__}, {e}'
 		else:
 			self.bluesky = None
+
+		self.reset_return()
+
+	def reset_return(self):
+		self.ok				= None
+		self.returnmessage	= ''
 
 	def configured(self):
 		return (self.API_BASE_URL and self.IDENTIFIER and self.APP_PASSWORD)
@@ -102,6 +105,8 @@ class bluesky(object):
 			self.returnmessage = f'{msgtype}{name}: o.k.'
 
 	def publish(self, msgtype, Comment='', FilePath=None):
+		self.reset_return()
+
 		if self.bluesky:
 			self.__publish(msgtype, Comment=Comment, FilePath=FilePath)
 		else:
