@@ -43,6 +43,15 @@
 	$comitup_hotspot	= trim(shell_exec("sudo python3 $WORKING_DIR/lib_comitup.py --check_hotspot")) == 'active';
 ?>
 
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+	<symbol id="icon-power" viewBox="0 0 24 24" fill="none">
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Power symbol">
+			<path d="M 17.8 3.0 A 9 9 0 1 1 6.2 3.0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+			<line x1="12" y1="1.8" x2="12" y2="9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+		</svg>
+	</symbol>
+</svg>
+
 <nav class="navbar navbar-expand-sm <?php echo $nav_theme_class; ?>">
 	<div class="container-fluid">
 
@@ -83,7 +92,11 @@
 				?>
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="setup.php"?" active":""; ?>" href="/setup.php"><?php echo L::mainmenue_config; ?></a></li>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPower" role="button" data-bs-toggle="dropdown" aria-expanded="false">&#9211;</a>
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPower" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<svg width="1em" height="1em" style="vertical-align: middle;">
+							<use href="#icon-power"/>
+						</svg>
+					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdownPower">
 						<li><a class="dropdown-item" href="?reboot=true"><?php echo L::main_reboot_button; ?></a></li>
 						<li><a class="dropdown-item" href="?shutdown=true"><?php echo L::main_shutdown_button; ?></a></li>

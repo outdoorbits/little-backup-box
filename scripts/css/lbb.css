@@ -134,6 +134,71 @@ img.rating5, video.rating5, audio.rating5 {
 	border: 4px solid transparent;
 }
 
+/* social media start */
+
+/* outer row */
+.wrap-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  gap:.5rem;
+}
+
+/* each block (left rating, separator, right social) */
+.wrap-row > .meta{
+  flex:0 1 auto;     /* no stretching */
+  min-width:0;       /* allow inner content to shrink */
+  display:flex;
+  flex-wrap:wrap;    /* lets .meta-inner sit side-by-side and wrap within this block */
+  align-items:center;
+  gap:.5rem;
+}
+
+/* keep the right block on the far right while on one line */
+.wrap-row > .meta.meta-social{ margin-left:auto; }
+
+/* rows/items inside each block */
+.wrap-row > .meta > .meta-inner{
+  display:flex;
+  align-items:center;
+  gap:.25rem;
+  white-space:nowrap; /* compact on wide screens */
+  flex-wrap:nowrap;
+}
+
+/* make Bootstrap's gap utilities win on .meta when present */
+.wrap-row > .meta.gap-0 { gap: 0 !important; }
+.wrap-row > .meta.gap-1 { gap: .25rem !important; } /* Bootstrap gap-1 = 0.25rem */
+.wrap-row > .meta.gap-2 { gap: .5rem !important; }  /* optional, for consistency */
+
+/* stacked mode on small screens */
+@media (max-width:768px){
+  .wrap-row{ flex-direction:column; }
+  .wrap-row > .meta.meta-social{ margin-left:0; }
+  .wrap-row > .meta > .meta-inner{
+    white-space:normal; /* allow inner wrapping when stacked */
+    flex-wrap:wrap;
+  }
+}
+
+/* zero space between checkbox and label inside your meta line */
+.meta-inner{
+  gap: 0 !important;                 /* no gap between flex children */
+}
+
+.meta-inner > .form-check-input{
+  margin: 0 !important;              /* override Bootstrap's checkbox margins */
+}
+
+.meta-inner > label{
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;                 /* if label is inline-flex with a gap utility */
+  line-height: 1;                    /* optional: avoids vertical wiggle */
+}
+
+/* social media end */
+
 div.floating {
 	display: inline-block;
 	margin-bottom: 0.3em;

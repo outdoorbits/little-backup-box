@@ -223,17 +223,21 @@
 		$checked_5	= $IMAGE_RATING == 5?"checked":"";
 
 		$RATING	= <<<EOL
-			<div class="rating d-flex align-items-center">
-				<input id="rating_1_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="1" $checked_1>
-				<label for="rating_1_$IMAGE_ID"></label>
-				<input id="rating_2_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="2" $checked_2>
-				<label for="rating_2_$IMAGE_ID"></label>
-				<input id="rating_3_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="3" $checked_3>
-				<label for="rating_3_$IMAGE_ID"></label>
-				<input id="rating_4_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="4" $checked_4>
-				<label for="rating_4_$IMAGE_ID"></label>
-				<input id="rating_5_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="5" $checked_5>
-				<label for="rating_5_$IMAGE_ID"></label>
+			<div class="meta">
+				<div class="meta-inner d-flex align-items-center gap-2">
+					<div class="rating d-flex align-items-center">
+						<input id="rating_1_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="1" $checked_1>
+						<label for="rating_1_$IMAGE_ID"></label>
+						<input id="rating_2_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="2" $checked_2>
+						<label for="rating_2_$IMAGE_ID"></label>
+						<input id="rating_3_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="3" $checked_3>
+						<label for="rating_3_$IMAGE_ID"></label>
+						<input id="rating_4_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="4" $checked_4>
+						<label for="rating_4_$IMAGE_ID"></label>
+						<input id="rating_5_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="5" $checked_5>
+						<label for="rating_5_$IMAGE_ID"></label>
+					</div>
+				</div>
 			</div>
 		EOL;
 		return($RATING);
@@ -245,13 +249,14 @@
 		$PUBLISH	= intval($PUBLISH);
 		$PUBLISHED	= intval($PUBLISHED);
 
+		echo '<div class="meta meta-social ms-auto gap-1">';
 		foreach($social_services as $bit => $ServiceName) {
 			?>
-			<div class="d-flex align-items-center gap-2">
-				<label for="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" class="d-inline-flex align-items-center gap-1 m-0">
-					<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="hidden" value=0>
-					<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="checkbox" value=1 class="form-check-input m-0" <?php echo ($PUBLISH & (1 << $bit))?"checked":""; ?> title="<?php echo L::view_social_publish_on . ' ' . $ServiceName; ?>">
+			<div class="meta-inner d-flex align-items-center gap-0">
+				<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit . '_hidden'; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="hidden" value=0>
+				<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="checkbox" value=1 class="form-check-input m-0" <?php echo ($PUBLISH & (1 << $bit))?"checked":""; ?> title="<?php echo L::view_social_publish_on . ' ' . $ServiceName; ?>">
 
+				<label for="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" class="d-inline-flex align-items-center m-0">
 					<?php
 					$iconVARIANT	= 'nothing';
 					$iconTITLE		= L::view_social_mark_for_publish_on . ' ' . $ServiceName;
@@ -278,6 +283,7 @@
 			</div>
 			<?php
 		}
+		echo '</div>';
 	}
 
 	function media_functions($mediatype, $IMAGE, $IMAGE_FILENAME) {
@@ -1137,16 +1143,18 @@
 										</a>
 									</div>
 
-									<div class="d-flex justify-content-between align-items-center mt-1">
+									<div class="wrap-row d-flex align-items-start gap-2 mt-1">
 
 										<?php echo rating_radio($IMAGE['ID'],$IMAGE['LbbRating']); ?>
 
 										<?php
 											if (!empty($IMAGE['Comment'])) {
 												?>
-													<svg width="16" height="16" class="flex-shrink-0">
-														<use href="#icon-comment"></use>
-													</svg>
+													<div class="meta meta-sep" aria-hidden="true">
+														<svg width="16" height="16" class="flex-shrink-0">
+															<use href="#icon-comment"></use>
+														</svg>
+													</div>
 												<?php
 											}
 
