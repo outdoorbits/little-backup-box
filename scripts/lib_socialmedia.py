@@ -34,10 +34,6 @@ import lib_setup
 # 	- def publish
 ###############################################################################################
 
-from lib_socialmedia_telegram import telegram
-from lib_socialmedia_mastodon import mastodon
-from lib_socialmedia_bluesky import bluesky
-
 # import lib_debug
 # xx	= lib_debug.debug()
 
@@ -77,16 +73,22 @@ class socialmedia(object):
 
 		self.SERVICE_Obj	= None
 		if service == 'telegram':
+			from lib_socialmedia_telegram import telegram
+
 			self.SERVICE_Obj	= telegram(
 				TG_TOKEN=telegram_token,
 				TG_CHAT_ID=telegram_chat_id
 			)
 		elif service == 'mastodon':
+			from lib_socialmedia_mastodon import mastodon
+
 			self.SERVICE_Obj	= mastodon(
 				MA_API_BASE_URL=mastodon_base_url,
 				MA_ACCESS_TOKEN=mastodon_token
 			)
 		elif service == 'bluesky':
+			from lib_socialmedia_bluesky import bluesky
+
 			self.SERVICE_Obj	= bluesky(
 				BS_API_BASE_URL	= bluesky_api_base_url,
 				BS_IDENTIFIER  	= bluesky_identifier,
