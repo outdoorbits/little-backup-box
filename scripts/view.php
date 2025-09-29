@@ -71,6 +71,7 @@
 		$label_filename,
 		$label_creationdate,
 		$label_id,
+		$slideshow_publish,
 		$slideshow_timer
 	) {
 		if ($view_mode == "grid") {
@@ -168,19 +169,25 @@
 					</a>
 				</div>
 
-				<div style="float:right;width: 50%;padding: 5px;">
-					<?php echo L::view_slideshow_header; ?>
-					<select style="margin-top: 0;" onchange="slideshow_init();" id="slideshow_timer">
-						<option value="-" <?php echo ($slideshow_timer=='-'?'selected':''); ?>>-</option>
-						<?php
-							$slideshow_options	= array('1', '2', '3', '4', '5');
-							foreach($slideshow_options as $slideshow_option) {
-							 echo '<option value="'.$slideshow_option.'" '.($slideshow_timer==$slideshow_option?'selected':'').'>'.$slideshow_option.' '.L::seconds_short.'</option>';
-							}
-						?>
-					</select>
-					<button style="margin-top: 0;" type="button" onclick="slideshow_stop()" name="slideshow_stop_button" id="slideshow_stop_button"><?php echo L::view_slideshow_stop; ?></button>
-				</div>
+				<?php
+				if ($slideshow_publish) {
+					?>
+						<div style="float:right;width: 50%;padding: 5px;">
+							<?php echo L::view_slideshow_header; ?>
+							<select style="margin-top: 0;" onchange="slideshow_init();" id="slideshow_timer">
+								<option value="-" <?php echo ($slideshow_timer=='-'?'selected':''); ?>>-</option>
+								<?php
+									$slideshow_options	= array('1', '2', '3', '4', '5');
+									foreach($slideshow_options as $slideshow_option) {
+									echo '<option value="'.$slideshow_option.'" '.($slideshow_timer==$slideshow_option?'selected':'').'>'.$slideshow_option.' '.L::seconds_short.'</option>';
+									}
+								?>
+							</select>
+						</div>
+					<?php
+				}
+
+				?>
 
 				<div style="float:left;width: 100%;padding: 5px;text-align: right;">
 					<div style="float:left;width: 33%;text-align: left;padding: 0;">
@@ -249,7 +256,7 @@
 		$PUBLISH	= intval($PUBLISH);
 		$PUBLISHED	= intval($PUBLISHED);
 
-		echo '<div class="meta meta-social ms-auto gap-1">';
+		echo '<div class="meta meta-social d-flex flex-wrap align-items-center ms-auto gap-1">';
 		foreach($social_services as $bit => $ServiceName) {
 			?>
 			<div class="meta-inner d-flex align-items-center gap-0">
@@ -300,6 +307,7 @@
 		$view_images_magnifying_glass	= L::view_images_magnifying_glass;
 		$view_images_comment			= L::view_images_comment;
 
+		// 1 row
 		echo <<<EOL
 			<div style="width: 100%; font-size: 0.8em;">
 
@@ -325,23 +333,24 @@
 			EOL;
 		}
 
-		echo <<<EOL
-				<!--slideshow-->
+		?>
+				<!-- maximise -->
 				<div style="float:right;text-align: right;padding: 0;">
-					<span class="slideshow-button" onclick="slideshow_display();">&#10541;</span>
+					<span class="slideshow-button" onclick="slideshow_display();">
+						<svg width="1em" height="1em" class="flex-shrink-0"><use href="#icon-maximise"></use></svg>
+					</span>
 				</div>
-		EOL;
-
-		echo <<<EOL
-				<!--Comment-->
-				<textarea id="comment" name="comment_$IMAGE_ID" title="$view_images_comment" rows="2" style="clear: both; width: 100%; resize: vertical;">$IMAGE_Comment</textarea>
 			</div>
 
-			<div class="d-flex align-items-center gap-2 w-100 mt-1">
-		EOL;
+			<!-- Comment, 2. row -->
+			<div style="clear: both; width: 100%; resize: vertical;">
+				<textarea id="comment" name="comment_$IMAGE_ID" title="$view_images_comment" rows="2" style="width: 100%;"><?php echo $IMAGE_Comment; ?></textarea>
+			</div>
 
-		?>
-		<div style="text-align: left;padding: 0;" class="me-auto"><span id="charCount">0</span> <?php echo L::view_characters; ?></div>
+			<!-- functions, 3. row -->
+			<div class="d-flex align-items-center gap-2 w-100 mt-1">
+
+				<div style="text-align: left;padding: 0;" class="me-auto"><span id="charCount">0</span> <?php echo L::view_characters; ?></div>
 
 					<script>
 						const textarea = document.getElementById("comment");
@@ -355,10 +364,12 @@
 
 						textarea.addEventListener("input", updateCount);
 					</script>
-		<?php
 
-		echo social_pannel($IMAGE['ID'], $IMAGE['social_publish'], $IMAGE['social_published']);
-		echo "</div>";
+					<?php echo social_pannel($IMAGE['ID'], $IMAGE['social_publish'], $IMAGE['social_published']); ?>
+
+				</div>
+			</div>
+		<?php
 	}
 
 	function add_to_where($new_where, $not_where_restricted, $WHERE_VARIANTS) {
@@ -886,17 +897,17 @@
 						<label for="filter_medium"><?php echo L::view_filter_medium; ?></label><br>
 
 							<select name="filter_medium" id="filter_medium" onchange="this.form.submit()">
-								<option value="target_usb" <?php echo ($filter_medium == "target_usb"?" selected":""); ?>><?php echo L::view_filter_medium_target_usb; ?></option>";
-								<option value="source_usb" <?php echo ($filter_medium == "source_usb"?" selected":""); ?>><?php echo L::view_filter_medium_source_usb; ?></option>";
+								<option value="target_usb" <?php echo ($filter_medium == "target_usb"?" selected":""); ?>><?php echo L::view_filter_medium_target_usb; ?></option>
+								<option value="source_usb" <?php echo ($filter_medium == "source_usb"?" selected":""); ?>><?php echo L::view_filter_medium_source_usb; ?></option>
 								<?php
 									if ($NVMe_available) {
 										?>
-											<option value="target_nvme" <?php echo ($filter_medium == "target_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_target_nvme; ?></option>";
-											<option value="source_nvme" <?php echo ($filter_medium == "source_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_source_nvme; ?></option>";
+											<option value="target_nvme" <?php echo ($filter_medium == "target_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_target_nvme; ?></option>
+											<option value="source_nvme" <?php echo ($filter_medium == "source_nvme"?" selected":""); ?>><?php echo L::view_filter_medium_source_nvme; ?></option>
 										<?php
 									}
 								?>
-								<option value="internal" <?php echo ($filter_medium == "internal"?" selected":""); ?>><?php echo L::view_filter_medium_internal; ?></option>";
+								<option value="internal" <?php echo ($filter_medium == "internal"?" selected":""); ?>><?php echo L::view_filter_medium_internal; ?></option>
 							</select>
 					</div>
 
@@ -966,7 +977,7 @@
 							</div>
 
 							<div style="float:right;padding: 5px;">
-								<label for="filter_rating"><?php echo L::view_filter_camera_model_name; ?></label><br>
+								<label for="filter_camera_model_name"><?php echo L::view_filter_camera_model_name; ?></label><br>
 									<select name="filter_camera_model_name" id="filter_camera_model_name" onchange="this.form.submit()">
 										<option value="all" <?php echo ($filter_camera_model_name == "all"?" selected":""); ?>>-</option>
 										<?php
@@ -1085,6 +1096,7 @@
 				L::view_filter_order_by_filename,
 				L::view_filter_order_by_creationdate,
 				L::view_filter_order_by_id,
+				true,
 				$slideshow_timer
 			);
 		?>
@@ -1170,6 +1182,13 @@
 											?>
 										</a>
 									</div>
+									<div style="float:right;padding: 2px;font-size:0.8em;" class="hidden-desktop">
+										<a href="<?php echo $GET_PARAMETER . '&view_mode=single&ID=' . $IMAGE_ID; ?>" style="white-space: normal; overflow-wrap: anywhere; word-break: break-word; word-wrap: break-word;">
+											<?php
+											echo pathinfo($IMAGE['File_Name'], PATHINFO_EXTENSION);
+											?>
+										</a>
+									</div>
 
 								</div>
 							<?php
@@ -1182,8 +1201,8 @@
 						$IMAGE_ID				= $IMAGE['ID'];
 						$IMAGE_FILENAME			= $Directory . '/' . $IMAGE['File_Name'];
 						$IMAGE_FILENAME_TIMS	= $Directory . '/tims/' . $IMAGE['File_Name'] . '.JPG';
-						$IMAGE_TYPE				= $IMAGE['File_Type'] !== ""?strtolower($IMAGE['File_Type']):strtolower($IMAGE_FILENAME_PARTS['extension']);
 						$IMAGE_FILENAME_PARTS	= pathinfo($IMAGE_FILENAME);
+						$IMAGE_TYPE				= $IMAGE['File_Type'] !== ""?strtolower($IMAGE['File_Type']):strtolower($IMAGE_FILENAME_PARTS['extension']);
 						?>
 
 						<div style="float:left;width: 100%;padding: 5px;">
@@ -1200,7 +1219,7 @@
 									<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 
 										<div id="slideshowContent" class="slideshow">
-											<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+											<span class="slideshowClose" onclick="slideshow_stop(event)" role="button">&times;</span>
 											<img class="slideshow-content" src="<?php echo urlencode_keep_slashes($FILENAME_DISPLAY); ?>">
 										</div>
 
@@ -1238,7 +1257,7 @@
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 
 											<div id="slideshowContent" class="slideshow">
-												<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+												<span class="slideshowClose" onclick="slideshow_stop(event)" role="button">&times;</span>
 												<video class="slideshow-content" width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
 													<source src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME_PREVIEW); ?>" type="video/<?php echo $IMAGE_TYPE; ?>"></source>
 												</video>
@@ -1265,7 +1284,7 @@
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 
 											<div id="slideshowContent" class="slideshow">
-												<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+												<span class="slideshowClose" onclick="slideshow_stop(event)" role="button">&times;</span>
 												<audio class="slideshow-content" width="100%" class="rating<?php echo $IMAGE['LbbRating']; ?>" controls autoplay>
 													<source src="<?php echo urlencode_keep_slashes($IMAGE_FILENAME); ?>" type="audio/<?php echo $IMAGE_FILENAME_PARTS['extension']; ?>">">
 												</audio>
@@ -1286,7 +1305,7 @@
 										<div style="width: 100%;text-align:center;" title="<?php echo $IMAGE['File_Name']; ?>">
 
 											<div id="slideshowContent" class="slideshow">
-												<span class="slideshowClose" onclick="slideshow_stop();">&times;</span>
+												<span class="slideshowClose" onclick="slideshow_stop(event)" role="button">&times;</span>
 												<img class="slideshow-content" src="<?php echo urlencode_keep_slashes($FILENAME_DISPLAY); ?>">
 											</div>
 
@@ -1347,6 +1366,7 @@
 			L::view_filter_order_by_filename,
 			L::view_filter_order_by_creationdate,
 			L::view_filter_order_by_id,
+			false,
 			$slideshow_timer
 		); ?>
 

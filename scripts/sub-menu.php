@@ -45,10 +45,8 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
 	<symbol id="icon-power" viewBox="0 0 24 24" fill="none">
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Power symbol">
-			<path d="M 17.8 3.0 A 9 9 0 1 1 6.2 3.0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-			<line x1="12" y1="1.8" x2="12" y2="9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-		</svg>
+		<path d="M 17.8 3.0 A 9 9 0 1 1 6.2 3.0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+		<line x1="12" y1="1.8" x2="12" y2="9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 	</symbol>
 </svg>
 

@@ -9,6 +9,12 @@
 	}
 }
 
+@media (min-width: 769px) {
+	.hidden-desktop {
+		display: none;
+	}
+}
+
 html, body {
 	min-height: 100% !important;
 	height: 200%;
