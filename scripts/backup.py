@@ -170,8 +170,6 @@ class backup(object):
 		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO')
 		self.const_FILE_EXTENSIONS_LIST_TEXT			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TEXT')
 
-		self.combination_FILE_EXTENSIONS_LIST_PHOTO		= ';'.join([self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES, self.const_FILE_EXTENSIONS_LIST_HEIC, self.const_FILE_EXTENSIONS_LIST_TIF])
-
 		# Common variables
 		self.SourceDevice				= None
 		self.TargetDevice				= None
@@ -397,7 +395,7 @@ class backup(object):
 
 		if (self.TransferMode == 'social'):
 			# get bit position
-			SocialServices	= lib_socialmedia.get_social_services()
+			SocialServices	= lib_socialmedia.socialmedia().get_social_services()
 			if self.TargetService in SocialServices:
 				bit	= SocialServices.index(self.TargetService)
 			else:
@@ -783,32 +781,20 @@ class backup(object):
 
 ### social upload
 					elif self.TargetDevice.StorageType == 'social':
-						SOCIAL					= lib_socialmedia.socialmedia(
-							service					= self.TargetService,
-							EXTENSIONS_LIST_VIDEO	= self.const_FILE_EXTENSIONS_LIST_VIDEO,
-							EXTENSIONS_LIST_AUDIO	= self.const_FILE_EXTENSIONS_LIST_AUDIO,
-							EXTENSIONS_LIST_PHOTO	= self.combination_FILE_EXTENSIONS_LIST_PHOTO,
-							EXTENSIONS_LIST_TEXT	= self.const_FILE_EXTENSIONS_LIST_TEXT,
-							telegram_token			= self.conf_SOCIAL_TELEGRAM_TOKEN,
-							telegram_chat_id		= self.conf_SOCIAL_TELEGRAM_CHAT_ID,
-							mastodon_base_url		= self.conf_SOCIAL_MASTODON_BASE_URL,
-							mastodon_token			= self.conf_SOCIAL_MASTODON_TOKEN,
-							bluesky_api_base_url	= self.conf_SOCIAL_BLUESKY_API_BASE_URL,
-							bluesky_identifier		= self.conf_SOCIAL_BLUESKY_IDENTIFIER,
-							bluesky_app_password	= self.conf_SOCIAL_BLUESKY_APP_PASSWORD
-						)
+						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService)
 
 						if not SOCIAL.configured():
-
 							if self.TargetService == 'telegram':
 								self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
 							elif seöf.TargetService == 'mastodon':
 								self.__display.message([f's=a:{self.__lan.l("box_backup_mastodon_not_configured_1")}', f's=a:{self.__lan.l("box_backup_mastodon_not_configured_2")}'])
+							elif seöf.TargetService == 'bluesky':
+								self.__display.message([f's=a:{self.__lan.l("box_backup_bluesky_not_configured_1")}', f's=a:{self.__lan.l("box_backup_bluesky_not_configured_2")}'])
 
 							return
 
 						# get bit position
-						SocialServices	= lib_socialmedia.get_social_services()
+						SocialServices	= SOCIAL.get_social_services()
 						if self.TargetService in SocialServices:
 							bit	= SocialServices.index(self.TargetService)
 						else:
@@ -1691,7 +1677,7 @@ if __name__ == "__main__":
 		help=f'Source name, one of {SourceChoices}'
 	)
 
-	SocialServices	= lib_socialmedia.get_social_services()
+	SocialServices	= lib_socialmedia.socialmedia().get_social_services()
 	SocialServices	= [f'social:{SocialService}' for SocialService in SocialServices]
 
 	TargetChoices	= ['usb', 'internal', 'nvme'] + CloudServices + ['cloud_rsync'] + SocialServices

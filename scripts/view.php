@@ -25,8 +25,9 @@
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_MEDIA_DIR"] . '/' . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-	$social_services	= trim(shell_exec('sudo python3 ' . $WORKING_DIR . '/lib_socialmedia.py --action get_social_services'));
-	$social_services	= explode("\n", $social_services);
+	include 'sub-socialmedia.php';
+	$social_services			= get_social_services();
+	$social_services_configured	= get_social_services_configured();
 
 	include("sub-i18n-loader.php");
 
@@ -252,12 +253,14 @@
 
 	function social_pannel($IMAGE_ID, $PUBLISH, $PUBLISHED) {
 		global $social_services;
+		global $social_services_configured;
 
 		$PUBLISH	= intval($PUBLISH);
 		$PUBLISHED	= intval($PUBLISHED);
 
 		echo '<div class="meta meta-social d-flex flex-wrap align-items-center ms-auto gap-1">';
 		foreach($social_services as $bit => $ServiceName) {
+			if (! in_array($ServiceName, $social_services_configured)) {continue;}
 			?>
 			<div class="meta-inner d-flex align-items-center gap-0">
 				<input id="social_publish_<?php echo $IMAGE_ID . '_' . $bit . '_hidden'; ?>" name="social_publish_<?php echo $IMAGE_ID . '_' . $bit; ?>" type="hidden" value=0>

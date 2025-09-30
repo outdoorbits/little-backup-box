@@ -27,6 +27,10 @@ import lib_language
 import lib_time
 import lib_setup
 
+from lib_socialmedia_telegram import telegram
+from lib_socialmedia_mastodon import mastodon
+from lib_socialmedia_bluesky import bluesky
+
 ###############################################################################################
 # social media service objects must have
 # 	- def __init__
@@ -37,31 +41,9 @@ import lib_setup
 # import lib_debug
 # xx	= lib_debug.debug()
 
-def get_social_services():
-	social_services	= [
-		'telegram',
-		'mastodon',
-		'bluesky'
-	]
-	return(social_services)
-
 class socialmedia(object):
 
-	def __init__(
-			self,
-			service=None,
-			EXTENSIONS_LIST_VIDEO=None,
-			EXTENSIONS_LIST_AUDIO=None,
-			EXTENSIONS_LIST_PHOTO=None,
-			EXTENSIONS_LIST_TEXT=None,
-			telegram_token=None,
-			telegram_chat_id=None,
-			mastodon_base_url=None,
-			mastodon_token=None,
-			bluesky_api_base_url=None,
-			bluesky_identifier=None,
-			bluesky_app_password=None
-		):
+	def __init__(self, service=None):
 
 		self.__lan		= lib_language.language()
 		self.__setup	= lib_setup.setup()
@@ -71,34 +53,58 @@ class socialmedia(object):
 
 		self.service	= service
 
-		self.SERVICE_Obj	= None
-		if service == 'telegram':
-			from lib_socialmedia_telegram import telegram
+		self.SERVICE_Obj	= self.get_service_object(service=service)
 
-			self.SERVICE_Obj	= telegram(
-				TG_TOKEN=telegram_token,
-				TG_CHAT_ID=telegram_chat_id
+		self.EXTENSIONS_LIST_VIDEO	= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO').split(';')
+		self.EXTENSIONS_LIST_AUDIO	= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO').split(';')
+		self.EXTENSIONS_LIST_PHOTO	= ';'.join([self.__setup.get_val('const_FILE_EXTENSIONS_LIST_WEB_IMAGES'), self.__setup.get_val('const_FILE_EXTENSIONS_LIST_HEIC'), self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TIF')]).split(';')
+		self.EXTENSIONS_LIST_TEXT	= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_TEXT').split(';')
+
+	def get_service_object(self, service=None, check_only=False):
+		if service == 'telegram':
+			return (
+				telegram(
+					TG_TOKEN	= self.__setup.get_val('conf_SOCIAL_TELEGRAM_TOKEN'),
+					TG_CHAT_ID	= self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID'),
+					check_only	= check_only
+				)
 			)
 		elif service == 'mastodon':
-			from lib_socialmedia_mastodon import mastodon
-
-			self.SERVICE_Obj	= mastodon(
-				MA_API_BASE_URL=mastodon_base_url,
-				MA_ACCESS_TOKEN=mastodon_token
+			return(
+				mastodon(
+					MA_API_BASE_URL	=	self.__setup.get_val('conf_SOCIAL_MASTODON_BASE_URL'),
+					MA_ACCESS_TOKEN	=	self.__setup.get_val('conf_SOCIAL_MASTODON_TOKEN'),
+					check_only	= check_only
+				)
 			)
 		elif service == 'bluesky':
-			from lib_socialmedia_bluesky import bluesky
-
-			self.SERVICE_Obj	= bluesky(
-				BS_API_BASE_URL	= bluesky_api_base_url,
-				BS_IDENTIFIER  	= bluesky_identifier,
-				BS_APP_PASSWORD = bluesky_app_password
+			return(
+				bluesky(
+					BS_API_BASE_URL	= self.__setup.get_val('conf_SOCIAL_BLUESKY_API_BASE_URL'),
+					BS_IDENTIFIER  	= self.__setup.get_val('conf_SOCIAL_BLUESKY_IDENTIFIER'),
+					BS_APP_PASSWORD = self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD'),
+					check_only	= check_only
+				)
 			)
+		else:
+			return(None)
 
-		self.EXTENSIONS_LIST_VIDEO	= EXTENSIONS_LIST_VIDEO.split(';')
-		self.EXTENSIONS_LIST_AUDIO	= EXTENSIONS_LIST_AUDIO.split(';')
-		self.EXTENSIONS_LIST_PHOTO	= EXTENSIONS_LIST_PHOTO.split(';')
-		self.EXTENSIONS_LIST_TEXT	= EXTENSIONS_LIST_TEXT.split(';')
+	def get_social_services(self):
+		social_services	= [
+			'telegram',
+			'mastodon',
+			'bluesky'
+		]
+		return(social_services)
+
+	def get_social_services_configured(self):
+		services_configured	= []
+
+		for service in self.get_social_services():
+			if self.get_service_object(service=service, check_only=True).configured():
+				services_configured.append(service)
+
+		return(services_configured)
 
 	def configured(self):
 		return(False if self.SERVICE_Obj is None else self.SERVICE_Obj.configured())
@@ -182,7 +188,7 @@ def parse_args() -> argparse.Namespace:
 		formatter_class=argparse.RawTextHelpFormatter,
 	)
 
-	actions	= ['get_social_services']
+	actions	= ['get_social_services', 'get_social_services_configured']
 	parser.add_argument(
 		'--action',
 		'-a',
@@ -199,6 +205,9 @@ if __name__ == "__main__":
 	args = parse_args()
 
 	if args.action == 'get_social_services':
-		social_services	= get_social_services()
+		social_services	= socialmedia().get_social_services()
+		print(";".join(social_services))
 
-		print("\n".join(social_services))
+	elif args.action == 'get_social_services_configured':
+		social_services	= socialmedia().get_social_services_configured()
+		print(";".join(social_services))

@@ -31,6 +31,7 @@ import lib_display
 import lib_language
 import lib_network
 import lib_setup
+import lib_socialmedia
 import lib_storage
 import lib_system
 
@@ -78,16 +79,6 @@ class menu(object):
 		self.RCLONE_CONFIG_FILE							= f"{self.const_MEDIA_DIR}/{self.__setup.get_val('const_RCLONE_CONFIG_FILE')}"
 		self.const_MENU_TIMEOUT_SEC						= self.__setup.get_val('const_MENU_TIMEOUT_SEC')
 
-		self.conf_SOCIAL_TELEGRAM_TOKEN						= self.__setup.get_val('conf_SOCIAL_TELEGRAM_TOKEN')
-		self.conf_SOCIAL_TELEGRAM_CHAT_ID						= self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
-
-		self.conf_SOCIAL_MASTODON_BASE_URL						= self.__setup.get_val('conf_SOCIAL_MASTODON_BASE_URL')
-		self.conf_SOCIAL_MASTODON_TOKEN						= self.__setup.get_val('conf_SOCIAL_MASTODON_TOKEN')
-
-		self.conf_SOCIAL_BLUESKY_API_BASE_URL					= self.__setup.get_val('conf_SOCIAL_BLUESKY_API_BASE_URL')
-		self.conf_SOCIAL_BLUESKY_IDENTIFIER					= self.__setup.get_val('conf_SOCIAL_BLUESKY_IDENTIFIER')
-		self.conf_SOCIAL_BLUESKY_APP_PASSWORD					= self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')
-
 		self.buttons	= {}
 
 		## menu-types:
@@ -124,19 +115,8 @@ class menu(object):
 		cloudservices.append('ftp')
 
 		## social media
-		socialservices	= []
-
-		### telegram
-		if self.conf_SOCIAL_TELEGRAM_TOKEN and int(self.conf_SOCIAL_TELEGRAM_CHAT_ID) != 0:
-			socialservices.append('social:telegram')
-
-		### mastodon
-		if self.conf_SOCIAL_MASTODON_BASE_URL and self.conf_SOCIAL_MASTODON_TOKEN:
-			socialservices.append('social:mastodon')
-
-		### bluesky
-		if self.conf_SOCIAL_BLUESKY_API_BASE_URL and self.conf_SOCIAL_BLUESKY_IDENTIFIER and self.conf_SOCIAL_BLUESKY_APP_PASSWORD:
-			socialservices.append('social:bluesky')
+		socialservices	= lib_socialmedia.socialmedia().get_social_services_configured()
+		socialservices	= [f'social:{socialservice}' for socialservice in socialservices]
 
 		# generate menues
 		BACKUP_SOURCES_MENU		= []

@@ -17,21 +17,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-from atproto import Client, models
 from pathlib import Path
+
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class bluesky(object):
 	def __init__(
 		self,
 		BS_API_BASE_URL,   # e.g. "https://bsky.social" or custom PDS base URL
 		BS_IDENTIFIER,     # handle or DID, e.g. "alice.bsky.social"
-		BS_APP_PASSWORD    # app password from settings (NOT your normal password)
+		BS_APP_PASSWORD,    # app password from settings (NOT your normal password)
+		check_only=False
 	):
 		self.API_BASE_URL	= (BS_API_BASE_URL or "").strip()
 		self.IDENTIFIER		= (BS_IDENTIFIER or "").strip()
 		self.APP_PASSWORD	= (BS_APP_PASSWORD or "").strip()
 
-		if self.configured():
+		if not check_only and self.configured():
+			from atproto import Client, models
+			self.models	= models
+
 			try:
 				# Create a client bound to the given service URL (PDS).
 				self.bluesky = Client(base_url=self.API_BASE_URL)
@@ -52,7 +58,7 @@ class bluesky(object):
 		self.returnmessage	= ''
 
 	def configured(self):
-		return (self.API_BASE_URL and self.IDENTIFIER and self.APP_PASSWORD)
+		return (bool(self.API_BASE_URL and self.IDENTIFIER and self.APP_PASSWORD))
 
 	def __publish(self, msgtype, Comment='', FilePath=None):
 
@@ -75,11 +81,11 @@ class bluesky(object):
 
 				# Optional alt-text support (uncomment to use):
 				# alt_text = 'Alt text'
-				# image_obj = models.AppBskyEmbedImages.Image(alt=alt_text, image=blob.blob)
+				# image_obj = self.models.AppBskyEmbedImages.Image(alt=alt_text, image=blob.blob)
 
-				image_obj = models.AppBskyEmbedImages.Image(alt='', image=blob.blob)
+				image_obj = self.models.AppBskyEmbedImages.Image(alt='', image=blob.blob)
 
-				embed = models.AppBskyEmbedImages.Main(images=[image_obj])
+				embed = self.models.AppBskyEmbedImages.Main(images=[image_obj])
 
 				# Create the post with the image embed.
 				self.bluesky.post(text=Comment or '', embed=embed)

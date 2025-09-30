@@ -79,23 +79,13 @@
 		$CloudServices_marked	= array_merge(['cloud_rsync'], $CloudServices_marked);
 	}
 
-	// social networks
-	$SocialServices	= array();
-
-	$telegram_configurated	= ($config['conf_SOCIAL_TELEGRAM_TOKEN']=='' or intval($config['conf_SOCIAL_TELEGRAM_CHAT_ID'])==0) == false;
-	if ($telegram_configurated) {
-		$SocialServices[]	= 'social:telegram';
+	// social media
+	include("sub-socialmedia.php");
+	$SocialServices	= get_social_services_configured();
+	foreach ($SocialServices as &$SocialService) {
+		$SocialService = "social:$SocialService";
 	}
-
-	$mastodon_configurated	= ($config['conf_SOCIAL_MASTODON_TOKEN']=='' or $config['conf_SOCIAL_MASTODON_BASE_URL']=='') == false;
-	if ($mastodon_configurated) {
-		$SocialServices[]	= 'social:mastodon';
-	}
-
-	$bluesky_configurated	= ($config['conf_SOCIAL_BLUESKY_API_BASE_URL']=='' or $config['conf_SOCIAL_BLUESKY_IDENTIFIER']=='' or $config['conf_SOCIAL_BLUESKY_APP_PASSWORD']=='') == false;
-	if ($bluesky_configurated) {
-		$SocialServices[]	= 'social:bluesky';
-	}
+	unset($item);
 
 	$SourceServices	= array(
 		'anyusb'	=> $LocalAutoServices,

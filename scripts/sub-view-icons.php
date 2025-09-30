@@ -50,16 +50,16 @@ HTML;
 
 		// backgrounds
 		$nothing	= '<rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="#dadada"/>';
-		$publish	= '<rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="#baffb6"/>';
-		$published	= '<rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="#27ae60"/>';
+		$publish	= '<rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="#ff6363"/>';
+		$published	= '<rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="#7dfa75"/>';
 
 		$combined	= <<<HTML
 <defs>
 	<linearGradient id="grad-bg" x1="0%" y1="100%" x2="100%" y2="0%">
-	<stop offset="0%" stop-color="#27ae60"/>
-	<stop offset="50%" stop-color="#27ae60"/>
-	<stop offset="50%" stop-color="#baffb6"/>
-	<stop offset="100%" stop-color="#baffb6"/>
+	<stop offset="0%" stop-color="#7dfa75"/>
+	<stop offset="50%" stop-color="#7dfa75"/>
+	<stop offset="50%" stop-color="#ff6363"/>
+	<stop offset="100%" stop-color="#ff6363"/>
 	</linearGradient>
 </defs>
 <rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="url(#grad-bg)"/>

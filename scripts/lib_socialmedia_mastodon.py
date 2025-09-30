@@ -17,20 +17,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-from mastodon import Mastodon
 from pathlib import Path
 
 class mastodon(object):
 	def __init__(
 		self,
 		MA_API_BASE_URL,
-		MA_ACCESS_TOKEN
+		MA_ACCESS_TOKEN,
+		check_only=False
 	):
 
-		self.API_BASE_URL   = (MA_API_BASE_URL or "").strip()
-		self.ACCESS_TOKEN   = (MA_ACCESS_TOKEN or "").strip()
+		self.API_BASE_URL   = (MA_API_BASE_URL or '').strip()
+		self.ACCESS_TOKEN   = (MA_ACCESS_TOKEN or '').strip()
 
-		if self.configured():
+		if not check_only and self.configured():
+			from mastodon import Mastodon
+
 			self.mastodon = Mastodon(
 				access_token	= self.ACCESS_TOKEN,
 				api_base_url	= self.API_BASE_URL
@@ -45,7 +47,7 @@ class mastodon(object):
 		self.returnmessage	= ''
 
 	def configured(self):
-		return(self.ACCESS_TOKEN and self.API_BASE_URL)
+		return(bool(self.ACCESS_TOKEN and self.API_BASE_URL))
 
 	def __publish(self, msgtype, Comment='', FilePath=None):
 

@@ -622,11 +622,15 @@
         "ok": "FTP o.k."
       },
       "telegram": {
-        "not_configured_1": "Telegram&reg;",
+        "not_configured_1": "Telegram",
         "not_configured_2": "non configuré"
       },
       "mastodon": {
-        "not_configured_1": "Mastodon&reg;",
+        "not_configured_1": "Mastodon",
+        "not_configured_2": "non configuré"
+      },
+      "bluesky": {
+        "not_configured_1": "Bluesky",
         "not_configured_2": "non configuré"
       }
     },

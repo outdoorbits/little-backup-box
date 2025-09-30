@@ -17,46 +17,52 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-import asyncio
 from pathlib import Path
-from telegram import Bot
-from telegram.request import HTTPXRequest
-from telegram import InputFile
+
 
 # import lib_debug
 # xx	= lib_debug.debug()
 
 class telegram(object):
 
-	def __init__(self, TG_TOKEN, TG_CHAT_ID):
-
+	def __init__(self, TG_TOKEN, TG_CHAT_ID, check_only=False):
 		self.TOKEN		= (TG_TOKEN or "").strip()
 		self.CHAT_ID	= TG_CHAT_ID
 
-		self.bot_configured	= self.configured()
+		self.bot_configured	= not check_only and self.configured()
 
 		self.reset_return()
+
+		if self.bot_configured:
+			import asyncio
+			self.asyncio		= asyncio
+			from telegram import Bot
+			self.Bot			= Bot
+			from telegram.request import HTTPXRequest
+			self.HTTPXRequest	= HTTPXRequest
+			from telegram import InputFile
+			self.InputFile		= InputFile
 
 	def reset_return(self):
 		self.ok				= None
 		self.returnmessage	= ''
 
 	def configured(self):
-		return(self.TOKEN and self.CHAT_ID != 0)
+		return(bool(self.TOKEN and self.CHAT_ID != 0))
 
 	async def __publish_async(self, msgtype, Comment='', FilePath=None):
 
 		if not FilePath is None:
 			FilePath	= Path(FilePath)
 
-		request	= HTTPXRequest(
+		request	= self.HTTPXRequest(
 				connect_timeout			= 30.0,			# Max seconds to establish the TCP/TLS connection
 				read_timeout			= 120.0,		# Max seconds waiting for Telegram's response (headers/body)
 				write_timeout			= 120.0,		# Max seconds to send non-media request data
 				pool_timeout			= 30.0,			# Max seconds to wait for a free connection from the pool
 				media_write_timeout		= 300.0			# Max seconds to upload media chunks (photos/videos/documents)
 			)
-		async with Bot(token=self.TOKEN, request=request) as BOT:
+		async with self.Bot(token=self.TOKEN, request=request) as BOT:
 			try:
 				if msgtype == 'text':
 					await BOT.send_message(
@@ -68,7 +74,7 @@ class telegram(object):
 					with open(FilePath, 'rb') as f:
 						msg	= await BOT.send_video(
 							chat_id=self.CHAT_ID,
-							video=InputFile(f, filename=FilePath.name),
+							video=self.InputFile(f, filename=FilePath.name),
 							caption=Comment,
 							supports_streaming=True
 						)
@@ -77,7 +83,7 @@ class telegram(object):
 					with open(FilePath, 'rb') as f:
 						msg	= await BOT.send_voice(
 							chat_id=self.CHAT_ID,
-							voice=InputFile(f, filename=FilePath.name),
+							voice=self.InputFile(f, filename=FilePath.name),
 							caption=Comment
 						)
 
@@ -85,7 +91,7 @@ class telegram(object):
 					with open(FilePath, 'rb') as f:
 						msg	= await BOT.send_photo(
 							chat_id=self.CHAT_ID,
-							photo=InputFile(f, filename=FilePath.name),
+							photo=self.InputFile(f, filename=FilePath.name),
 							caption=Comment
 						)
 
@@ -93,7 +99,7 @@ class telegram(object):
 					with open(FilePath, 'rb') as f:
 						msg	= await BOT.send_document(
 							chat_id=self.CHAT_ID,
-							document=InputFile(f, filename=FilePath.name),
+							document=self.InputFile(f, filename=FilePath.name),
 							caption=Comment
 						)
 				else:
@@ -107,7 +113,7 @@ class telegram(object):
 
 				sep	= '' if not FileName else ': '
 
-			except asyncio.CancelledError:
+			except self.asyncio.CancelledError:
 				raise
 			except Exception as e:
 				self.ok				= False
@@ -124,9 +130,9 @@ class telegram(object):
 
 		if self.bot_configured:
 			try:
-				asyncio.get_running_loop()
+				self.asyncio.get_running_loop()
 			except RuntimeError:
-				asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
+				self.asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
 			else:
 				raise RuntimeError("publish() called from async-context – please use 'await publish_async(...)'.")
 		else:
