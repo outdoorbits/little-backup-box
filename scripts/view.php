@@ -347,7 +347,7 @@
 
 			<!-- Comment, 2. row -->
 			<div style="clear: both; width: 100%; resize: vertical;">
-				<textarea id="comment" name="comment_$IMAGE_ID" title="$view_images_comment" rows="2" style="width: 100%;"><?php echo $IMAGE_Comment; ?></textarea>
+				<textarea id="comment" name="comment_<?php echo $IMAGE_ID; ?>" title="<?php echo $view_images_comment; ?>" rows="2" style="width: 100%;"><?php echo $IMAGE_Comment; ?></textarea>
 			</div>
 
 			<!-- functions, 3. row -->
