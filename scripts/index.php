@@ -337,7 +337,7 @@
 									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
 									<?php
 										foreach ($Partitions as $Partition) {
-											list($Lum, $DeviceIdentifier)	= explode(': ', $Partition, 2);
+											list($Lum, $DeviceIdentifier)	= array_pad(explode(': ', $Partition, 2), 2, null);
 											$Lum	= str_replace('/dev/', '', $Lum);
 											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
 										}
@@ -355,7 +355,7 @@
 									<option value=''><?php echo L::main_backup_preset_partition_auto; ?></option>
 									<?php
 										foreach ($Partitions as $Partition) {
-											list($Lum, $DeviceIdentifier)	= explode(': ',$Partition,2);
+											list($Lum, $DeviceIdentifier)	= array_pad(explode(': ', $Partition, 2), 2, null);
 											$Lum	= str_replace('/dev/', '', $Lum);
 											echo "<option value='".$DeviceIdentifier."'>".$Lum.($DeviceIdentifier!=''?" (".trim($DeviceIdentifier, '-').")":'')."</option>";
 										}

@@ -43,6 +43,11 @@ from lib_socialmedia_bluesky import bluesky
 
 class socialmedia(object):
 
+	class messagetype(object):
+		def __init__(self):
+			self.main	= None
+			self.sub	= None
+
 	def __init__(self, service=None):
 
 		self.__lan		= lib_language.language()
@@ -131,22 +136,27 @@ class socialmedia(object):
 
 		# Content
 		Content	= ''
-		if msgtype == 'text' and not FilePath is None:
+		if msgtype is not None and msgtype.main == 'text' and FilePath is not None:
 			try:
 				with open(FilePath, 'r') as f:
 					Content	= f.read()
 			except:
 				Content	= ''
 
+		sep_NewLine	= "\n"
+		if msgtype is not None:
+			if msgtype.sub == 'html':
+				sep_NewLine	= '<br>'
+
 		# bottom
 		sep	= '' if not FilePathShow or not FileDateShow else ': '
 		Bottom	= f'{Path(FilePathShow).name}{sep}{FileDateShow}'
 
-		sep	= '' if not Bottom or not Comment else os.linesep
+		sep	= '' if not Bottom or not Comment else sep_NewLine
 		Bottom	= f'{Bottom}{sep}{Comment}'
 
 		# concat Content and bottom
-		sep	= '' if not Bottom or not Content else  f'{os.linesep}{os.linesep}'
+		sep	= '' if not Bottom or not Content else  f'{sep_NewLine}{sep_NewLine}'
 		CommentNew	= f'{Content}{sep}{Bottom}'
 
 		return(CommentNew)
@@ -157,30 +167,31 @@ class socialmedia(object):
 		else:
 			FileDate	= ''
 
-		msgtype	= None
+		msgtype	= self.messagetype()
 		if FilePath is None:
-			msgtype	= 'text'
+			msgtype.main	= 'text'
 		else:
 			Extension	= Path(FilePath).suffix.lower().replace('.', '', 1)
 
 			if Extension in self.EXTENSIONS_LIST_VIDEO:
-				msgtype	= 'video'
+				msgtype.main	= 'video'
 			elif Extension in self.EXTENSIONS_LIST_AUDIO:
-				msgtype	= 'audio'
+				msgtype.main	= 'audio'
 			elif Extension in self.EXTENSIONS_LIST_TEXT:
-				msgtype	= 'text'
+				msgtype.main	= 'text'
+				msgtype.sub	= Extension
 			elif Extension in self.EXTENSIONS_LIST_PHOTO:
-				msgtype	= 'photo'
+				msgtype.main	= 'photo'
 			else:
-				msgtype = 'document'
+				msgtype.main = 'document'
 
 		Comment	= self.__reformat_Comment(Comment=Comment, FileDate=FileDate, msgtype=msgtype, FilePath=FilePath)
 
-		if msgtype and self.SERVICE_Obj:
+		if msgtype.main and self.SERVICE_Obj:
 			self.SERVICE_Obj.publish(msgtype=msgtype, Comment=Comment, FilePath=FilePath)
 			return({'ok': self.SERVICE_Obj.ok, 'msg': self.SERVICE_Obj.returnmessage})
 		else:
-			return({'ok': False, 'msg': f'msgtype={msgtype}, self.SERVICE_Obj={self.SERVICE_Obj}'})
+			return({'ok': False, 'msg': f'msgtype={msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}, self.SERVICE_Obj={self.SERVICE_Obj}'})
 
 def parse_args() -> argparse.Namespace:
 	parser = argparse.ArgumentParser(

@@ -17,7 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import html
 from pathlib import Path
+import re
 
 class mastodon(object):
 	def __init__(
@@ -55,12 +57,15 @@ class mastodon(object):
 			FilePath	= Path(FilePath)
 
 		try:
-			if msgtype == 'text':
+			if msgtype.main == 'text':
+				if msgtype.sub == 'html':
+					Comment	= self.html_to_plain(Comment)
+
 				self.mastodon.status_post(
 					Comment
 				)
 
-			elif msgtype in ['photo','video','audio']:
+			elif msgtype.main in ['photo','video','audio']:
 				media = self.mastodon.media_post(
 					FilePath
 					# description='Alt text'  # optional alt-text
@@ -72,17 +77,17 @@ class mastodon(object):
 
 			else:
 				self.ok = False
-				self.returnmessage = f"unsupported msgtype {msgtype}"
+				self.returnmessage = f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
 
 		except Exception as e:
 			self.ok				= False
-			name	= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.returnmessage	= f'{msgtype}{name}: {type(e).__name__}, {e}'
+			name	= f' {getattr(FilePath, "name", "")}' if FilePath else ''
+			self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}'
 
 		if self.ok is None:
 			self.ok				= True
-			name				= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.returnmessage	= f'{msgtype}{name}: o.k.'
+			name				= f' {getattr(FilePath, "name", "")}' if FilePath else ''
+			self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.'
 
 	def publish(self, msgtype, Comment='', FilePath=None):
 		self.reset_return()
@@ -91,4 +96,17 @@ class mastodon(object):
 			self.__publish(msgtype, Comment=Comment, FilePath=FilePath)
 		else:
 			self.ok = False
-			self.returnmessage = "not configured"
+			self.returnmessage = 'not configured'
+
+	def html_to_plain(self, Comment: str) -> str:
+		if not Comment:
+			return ''
+		Comment = Comment.replace('\r\n', '\n').replace('\r', '\n')
+
+		Comment = re.sub(r'\s*<br\s*/?>\s*', '\n', Comment, flags=re.IGNORECASE)
+		Comment = re.sub(r'<[^>]+>', '', Comment)
+		Comment = html.unescape(Comment)
+		Comment = '\n'.join(line.rstrip() for line in Comment.splitlines())
+		Comment = re.sub(r'\n\s*\n+', '\n\n', Comment)
+
+		return Comment.strip()

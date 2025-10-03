@@ -17,7 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import html
 from pathlib import Path
+import re
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -66,12 +68,15 @@ class bluesky(object):
 			FilePath = Path(FilePath)
 
 		try:
-			if msgtype == 'text':
+			if msgtype.main == 'text':
+				if msgtype.sub == 'html':
+					Comment	= self.html_to_plain(Comment)
+
 				self.bluesky.post(
 					text = (Comment or '')
 				)
 
-			elif msgtype == 'photo':
+			elif msgtype.main == 'photo':
 				if FilePath is None:
 					raise ValueError('FilePath is required for photo')
 
@@ -90,25 +95,25 @@ class bluesky(object):
 				# Create the post with the image embed.
 				self.bluesky.post(text=Comment or '', embed=embed)
 
-			elif msgtype in ['audio', 'video']:
+			elif msgtype.main in ['audio', 'video']:
 				# As of now, the public Bluesky API client does not provide stable
 				# posting for audio/video in regular feed posts. Mark as unsupported.
 				self.ok = False
-				self.returnmessage = f"unsupported msgtype {msgtype}"
+				self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
 
 			else:
 				self.ok = False
-				self.returnmessage = f"unsupported msgtype {msgtype}"
+				self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
 
 		except Exception as e:
 			self.ok = False
 			name = f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.returnmessage = f'{msgtype}{name}: {type(e).__name__}, {e}'
+			self.returnmessage = f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}'
 
 		if self.ok is None:
 			self.ok = True
 			name = f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.returnmessage = f'{msgtype}{name}: o.k.'
+			self.returnmessage = f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.'
 
 	def publish(self, msgtype, Comment='', FilePath=None):
 		self.reset_return()
@@ -118,3 +123,16 @@ class bluesky(object):
 		else:
 			self.ok = False
 			self.returnmessage = "not configured"
+
+	def html_to_plain(self, Comment: str) -> str:
+		if not Comment:
+			return ''
+		Comment = Comment.replace('\r\n', '\n').replace('\r', '\n')
+
+		Comment = re.sub(r'\s*<br\s*/?>\s*', '\n', Comment, flags=re.IGNORECASE)
+		Comment = re.sub(r'<[^>]+>', '', Comment)
+		Comment = html.unescape(Comment)
+		Comment = '\n'.join(line.rstrip() for line in Comment.splitlines())
+		Comment = re.sub(r'\n\s*\n+', '\n\n', Comment)
+
+		return Comment.strip()

@@ -18,7 +18,7 @@
 #######################################################################
 
 from pathlib import Path
-
+import re
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -42,6 +42,8 @@ class telegram(object):
 			self.HTTPXRequest	= HTTPXRequest
 			from telegram import InputFile
 			self.InputFile		= InputFile
+			from telegram.constants import ParseMode
+			self.ParseMode		= ParseMode
 
 	def reset_return(self):
 		self.ok				= None
@@ -64,13 +66,25 @@ class telegram(object):
 			)
 		async with self.Bot(token=self.TOKEN, request=request) as BOT:
 			try:
-				if msgtype == 'text':
-					await BOT.send_message(
-						chat_id=self.CHAT_ID,
-						text=Comment
+				if msgtype.main == 'text':
+					if msgtype.sub == 'html':
+						Comment = re.sub(r'<br\s*/?>', '\n', Comment, flags=re.IGNORECASE)
+						Comment = Comment.lstrip("\ufeff")
+						Comment = re.sub(r'^\s+', '', Comment)
+
+						TXTParseMode	= self.ParseMode.HTML
+					elif msgtype.sub == 'md':
+						TXTParseMode	= self.ParseMode.MARKDOWN
+					else:
+						TXTParseMode	= None
+
+					msg	= await BOT.send_message(
+						chat_id		= self.CHAT_ID,
+						text		= Comment,
+						parse_mode	= TXTParseMode
 					)
 
-				elif msgtype == 'video' and FilePath:
+				elif msgtype.main == 'video' and FilePath:
 					with open(FilePath, 'rb') as f:
 						msg	= await BOT.send_video(
 							chat_id=self.CHAT_ID,
@@ -79,7 +93,7 @@ class telegram(object):
 							supports_streaming=True
 						)
 
-				elif msgtype == 'audio':
+				elif msgtype.main == 'audio':
 					with open(FilePath, 'rb') as f:
 						msg	= await BOT.send_voice(
 							chat_id=self.CHAT_ID,
@@ -87,7 +101,7 @@ class telegram(object):
 							caption=Comment
 						)
 
-				elif msgtype == 'photo':
+				elif msgtype.main == 'photo':
 					with open(FilePath, 'rb') as f:
 						msg	= await BOT.send_photo(
 							chat_id=self.CHAT_ID,
@@ -95,7 +109,7 @@ class telegram(object):
 							caption=Comment
 						)
 
-				elif msgtype == 'document':
+				elif msgtype.main == 'document':
 					with open(FilePath, 'rb') as f:
 						msg	= await BOT.send_document(
 							chat_id=self.CHAT_ID,
@@ -104,7 +118,7 @@ class telegram(object):
 						)
 				else:
 					self.ok = False
-					self.returnmessage = f"unsupported msgtype {msgtype}"
+					self.returnmessage = f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
 
 				if FilePath:
 					FileName	= FilePath.name
@@ -118,12 +132,12 @@ class telegram(object):
 			except Exception as e:
 				self.ok				= False
 				name	= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-				self.returnmessage	= f'{msgtype}{name}: {type(e).__name__}, {e}'
+				self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}'
 
 		if self.ok is None:
 			self.ok				= True
 			name				= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.returnmessage	= f'{msgtype}{name}: o.k.'
+			self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.'
 
 	def publish(self, msgtype, Comment='', FilePath=None):
 		self.reset_return()

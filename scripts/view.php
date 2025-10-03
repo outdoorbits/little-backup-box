@@ -224,26 +224,18 @@
 	}
 
 	function rating_radio($IMAGE_ID, $IMAGE_RATING) {
-		$checked_1	= $IMAGE_RATING == 1?"checked":"";
-		$checked_2	= $IMAGE_RATING == 2?"checked":"";
-		$checked_3	= $IMAGE_RATING == 3?"checked":"";
-		$checked_4	= $IMAGE_RATING == 4?"checked":"";
-		$checked_5	= $IMAGE_RATING == 5?"checked":"";
-
 		$RATING	= <<<EOL
 			<div class="meta">
 				<div class="meta-inner d-flex align-items-center gap-2">
 					<div class="rating d-flex align-items-center">
-						<input id="rating_1_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="1" $checked_1>
-						<label for="rating_1_$IMAGE_ID"></label>
-						<input id="rating_2_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="2" $checked_2>
-						<label for="rating_2_$IMAGE_ID"></label>
-						<input id="rating_3_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="3" $checked_3>
-						<label for="rating_3_$IMAGE_ID"></label>
-						<input id="rating_4_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="4" $checked_4>
-						<label for="rating_4_$IMAGE_ID"></label>
-						<input id="rating_5_$IMAGE_ID" type="radio" name="rating_$IMAGE_ID" value="5" $checked_5>
-						<label for="rating_5_$IMAGE_ID"></label>
+		EOL;
+
+					foreach (range(1, 5) as $i) {
+						$checked	= $IMAGE_RATING == $i ? " checked" : "";
+						$RATING	.="<input id='rating_${i}_$IMAGE_ID' type='radio' name='rating_$IMAGE_ID' value='${i}'$checked><label for='rating_${i}_$IMAGE_ID'></label>";
+					}
+
+		$RATING	.= <<<EOL
 					</div>
 				</div>
 			</div>
