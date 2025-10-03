@@ -143,10 +143,10 @@ class socialmedia(object):
 			except:
 				Content	= ''
 
-		sep_NewLine	= "\n"
-		if msgtype is not None:
-			if msgtype.sub == 'html':
-				sep_NewLine	= '<br>'
+		if msgtype is not None and msgtype.sub == 'html':
+			sep_NewLine	= '<br>'
+		else:
+			sep_NewLine	= "\n"
 
 		# bottom
 		sep	= '' if not FilePathShow or not FileDateShow else ': '
@@ -156,7 +156,7 @@ class socialmedia(object):
 		Bottom	= f'{Bottom}{sep}{Comment}'
 
 		# concat Content and bottom
-		sep	= '' if not Bottom or not Content else  f'{sep_NewLine}{sep_NewLine}'
+		sep	= '' if not Bottom or not Content else  f' {sep_NewLine}{sep_NewLine}'
 		CommentNew	= f'{Content}{sep}{Bottom}'
 
 		return(CommentNew)

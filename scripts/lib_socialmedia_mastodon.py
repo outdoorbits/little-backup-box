@@ -17,17 +17,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-import html
 from pathlib import Path
-import re
 
-class mastodon(object):
+from lib_socialmedia_parent import services
+
+class mastodon(services):
 	def __init__(
 		self,
 		MA_API_BASE_URL,
 		MA_ACCESS_TOKEN,
 		check_only=False
 	):
+		super().__init__()
 
 		self.API_BASE_URL   = (MA_API_BASE_URL or '').strip()
 		self.ACCESS_TOKEN   = (MA_ACCESS_TOKEN or '').strip()
@@ -42,12 +43,6 @@ class mastodon(object):
 		else:
 			self.mastodon = None
 
-		self.reset_return()
-
-	def reset_return(self):
-		self.ok				= None
-		self.returnmessage	= ''
-
 	def configured(self):
 		return(bool(self.ACCESS_TOKEN and self.API_BASE_URL))
 
@@ -61,9 +56,11 @@ class mastodon(object):
 				if msgtype.sub == 'html':
 					Comment	= self.html_to_plain(Comment)
 
-				self.mastodon.status_post(
-					Comment
-				)
+				CommentParts	= self.split_text(Comment, 500)
+				for CommentPart in CommentParts:
+					self.mastodon.status_post(
+						Comment
+					)
 
 			elif msgtype.main in ['photo','video','audio']:
 				media = self.mastodon.media_post(
@@ -97,16 +94,3 @@ class mastodon(object):
 		else:
 			self.ok = False
 			self.returnmessage = 'not configured'
-
-	def html_to_plain(self, Comment: str) -> str:
-		if not Comment:
-			return ''
-		Comment = Comment.replace('\r\n', '\n').replace('\r', '\n')
-
-		Comment = re.sub(r'\s*<br\s*/?>\s*', '\n', Comment, flags=re.IGNORECASE)
-		Comment = re.sub(r'<[^>]+>', '', Comment)
-		Comment = html.unescape(Comment)
-		Comment = '\n'.join(line.rstrip() for line in Comment.splitlines())
-		Comment = re.sub(r'\n\s*\n+', '\n\n', Comment)
-
-		return Comment.strip()

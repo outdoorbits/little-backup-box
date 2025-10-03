@@ -20,18 +20,20 @@
 from pathlib import Path
 import re
 
+from lib_socialmedia_parent import services
+
 # import lib_debug
 # xx	= lib_debug.debug()
 
-class telegram(object):
+class telegram(services):
 
 	def __init__(self, TG_TOKEN, TG_CHAT_ID, check_only=False):
+		super().__init__()
+
 		self.TOKEN		= (TG_TOKEN or "").strip()
 		self.CHAT_ID	= TG_CHAT_ID
 
 		self.bot_configured	= not check_only and self.configured()
-
-		self.reset_return()
 
 		if self.bot_configured:
 			import asyncio
@@ -44,10 +46,6 @@ class telegram(object):
 			self.InputFile		= InputFile
 			from telegram.constants import ParseMode
 			self.ParseMode		= ParseMode
-
-	def reset_return(self):
-		self.ok				= None
-		self.returnmessage	= ''
 
 	def configured(self):
 		return(bool(self.TOKEN and self.CHAT_ID != 0))
@@ -78,11 +76,13 @@ class telegram(object):
 					else:
 						TXTParseMode	= None
 
-					msg	= await BOT.send_message(
-						chat_id		= self.CHAT_ID,
-						text		= Comment,
-						parse_mode	= TXTParseMode
-					)
+					CommentParts	= self.split_text(Comment, 4096)
+					for CommentPart in CommentParts:
+						msg	= await BOT.send_message(
+							chat_id		= self.CHAT_ID,
+							text		= CommentPart,
+							parse_mode	= TXTParseMode
+						)
 
 				elif msgtype.main == 'video' and FilePath:
 					with open(FilePath, 'rb') as f:
