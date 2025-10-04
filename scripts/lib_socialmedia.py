@@ -48,7 +48,7 @@ class socialmedia(object):
 			self.main	= None
 			self.sub	= None
 
-	def __init__(self, service=None):
+	def __init__(self, service=None, TelegramChatID=0):
 
 		self.__lan		= lib_language.language()
 		self.__setup	= lib_setup.setup()
@@ -56,7 +56,8 @@ class socialmedia(object):
 		self.conf_SOCIAL_PUBLISH_DATE		= self.__setup.get_val('conf_SOCIAL_PUBLISH_DATE')
 		self.conf_SOCIAL_PUBLISH_FILENAME	= self.__setup.get_val('conf_SOCIAL_PUBLISH_FILENAME')
 
-		self.service	= service
+		self.service		= service
+		self.TelegramChatID	= TelegramChatID
 
 		self.SERVICE_Obj	= self.get_service_object(service=service)
 
@@ -67,10 +68,12 @@ class socialmedia(object):
 
 	def get_service_object(self, service=None, check_only=False):
 		if service == 'telegram':
+			self.TelegramChatID	= int(self.TelegramChatID)
+			TelegramChatID	= self.TelegramChatID if self.TelegramChatID != 0 else self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
 			return (
 				telegram(
 					TG_TOKEN	= self.__setup.get_val('conf_SOCIAL_TELEGRAM_TOKEN'),
-					TG_CHAT_ID	= self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID'),
+					TG_CHAT_ID	= TelegramChatID,
 					check_only	= check_only
 				)
 			)

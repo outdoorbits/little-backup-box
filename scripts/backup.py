@@ -131,7 +131,7 @@ class backup(object):
 
 		# Telegram
 		self.conf_SOCIAL_TELEGRAM_TOKEN						= self.__setup.get_val('conf_SOCIAL_TELEGRAM_TOKEN')
-		self.conf_SOCIAL_TELEGRAM_CHAT_ID					= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
+		self.TelegramChatID					= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
 
 		# mastodon
 		self.conf_SOCIAL_MASTODON_BASE_URL						= self.__setup.get_val('conf_SOCIAL_MASTODON_BASE_URL')
@@ -781,14 +781,14 @@ class backup(object):
 
 ### social upload
 					elif self.TargetDevice.StorageType == 'social':
-						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService)
+						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID)
 
 						if not SOCIAL.configured():
 							if self.TargetService == 'telegram':
 								self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
-							elif seöf.TargetService == 'mastodon':
+							elif self.TargetService == 'mastodon':
 								self.__display.message([f's=a:{self.__lan.l("box_backup_mastodon_not_configured_1")}', f's=a:{self.__lan.l("box_backup_mastodon_not_configured_2")}'])
-							elif seöf.TargetService == 'bluesky':
+							elif self.TargetService == 'bluesky':
 								self.__display.message([f's=a:{self.__lan.l("box_backup_bluesky_not_configured_1")}', f's=a:{self.__lan.l("box_backup_bluesky_not_configured_2")}'])
 
 							return
@@ -823,7 +823,11 @@ class backup(object):
 							else:
 								social_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, 'tims', f"{IMAGE_FILE}.JPG")
 
-							success	= SOCIAL.publish(Comment=IMAGE_COMMENT, FilePath=social_image_path, Create_Date=IMAGE_DATE)
+							success	= SOCIAL.publish(
+								Comment		= IMAGE_COMMENT,
+								FilePath	= social_image_path,
+								Create_Date	= IMAGE_DATE
+							)
 
 							self.__reporter.add_synclog(success['msg'])
 
