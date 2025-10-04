@@ -20,6 +20,9 @@
 import html
 import re
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class services(object):
 
 	def __init__(self, check_only=False):
@@ -68,7 +71,7 @@ class services(object):
 			# Push current buffer to chunks and reset it.
 			nonlocal current
 			if current:
-				chunks.append(current)
+				chunks.append(current.strip())
 				current = ""
 
 		def add_piece(piece: str, sep: str = " "):
@@ -163,3 +166,11 @@ class services(object):
 
 		flush()
 		return chunks
+
+	def cut_text(self, text: str, maxlength: int):
+		if maxlength < 3:
+			return(text)
+
+		if len(text) > maxlength:
+			end	= maxlength - 3
+			return(f'{text[0:end]}...')

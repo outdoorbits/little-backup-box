@@ -78,7 +78,7 @@ class telegram(services):
 
 					CommentParts	= self.split_text(Comment, 4096)
 					for CommentPart in CommentParts:
-						msg	= await BOT.send_message(
+						await BOT.send_message(
 							chat_id		= self.CHAT_ID,
 							text		= CommentPart,
 							parse_mode	= TXTParseMode
@@ -86,35 +86,35 @@ class telegram(services):
 
 				elif msgtype.main == 'video' and FilePath:
 					with open(FilePath, 'rb') as f:
-						msg	= await BOT.send_video(
-							chat_id=self.CHAT_ID,
-							video=self.InputFile(f, filename=FilePath.name),
-							caption=Comment,
-							supports_streaming=True
+						await BOT.send_video(
+							chat_id				= self.CHAT_ID,
+							video				= self.InputFile(f, filename=FilePath.name),
+							caption				= self.cut_text(Comment, 1024),
+							supports_streaming	= True
 						)
 
 				elif msgtype.main == 'audio':
 					with open(FilePath, 'rb') as f:
-						msg	= await BOT.send_voice(
-							chat_id=self.CHAT_ID,
-							voice=self.InputFile(f, filename=FilePath.name),
-							caption=Comment
+						await BOT.send_voice(
+							chat_id				= self.CHAT_ID,
+							voice				= self.InputFile(f, filename=FilePath.name),
+							caption				= self.cut_text(Comment, 1024)
 						)
 
 				elif msgtype.main == 'photo':
 					with open(FilePath, 'rb') as f:
-						msg	= await BOT.send_photo(
-							chat_id=self.CHAT_ID,
-							photo=self.InputFile(f, filename=FilePath.name),
-							caption=Comment
+						await BOT.send_photo(
+							chat_id				= self.CHAT_ID,
+							photo				= self.InputFile(f, filename=FilePath.name),
+							caption				= self.cut_text(Comment, 1024)
 						)
 
 				elif msgtype.main == 'document':
 					with open(FilePath, 'rb') as f:
-						msg	= await BOT.send_document(
-							chat_id=self.CHAT_ID,
-							document=self.InputFile(f, filename=FilePath.name),
-							caption=Comment
+						await BOT.send_document(
+							chat_id				= self.CHAT_ID,
+							document			= self.InputFile(f, filename=FilePath.name),
+							caption				= self.cut_text(Comment, 1024)
 						)
 				else:
 					self.ok = False

@@ -69,7 +69,7 @@ class bluesky(services):
 					Comment	= self.html_to_plain(Comment)
 
 				CommentParts	= self.split_text(Comment, 300)
-				for CommentPart in CommentParts:
+				for CommentPart in reversed(CommentParts):
 					self.bluesky.post(
 						text = (CommentPart or '')
 					)
@@ -91,13 +91,16 @@ class bluesky(services):
 				embed = self.models.AppBskyEmbedImages.Main(images=[image_obj])
 
 				# Create the post with the image embed.
-				self.bluesky.post(text=Comment or '', embed=embed)
+				self.bluesky.post(
+					text	= self.cut_text(Comment, 300),
+					embed	= embed
+				)
 
-			elif msgtype.main in ['audio', 'video']:
-				# As of now, the public Bluesky API client does not provide stable
-				# posting for audio/video in regular feed posts. Mark as unsupported.
-				self.ok = False
-				self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
+			# elif msgtype.main in ['audio', 'video']:
+			# 	# As of now, the public Bluesky API client does not provide stable
+			# 	# posting for audio/video in regular feed posts. Mark as unsupported.
+			# 	self.ok = False
+			# 	self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
 
 			else:
 				self.ok = False

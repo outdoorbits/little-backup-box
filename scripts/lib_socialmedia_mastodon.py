@@ -21,6 +21,9 @@ from pathlib import Path
 
 from lib_socialmedia_parent import services
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class mastodon(services):
 	def __init__(
 		self,
@@ -56,10 +59,11 @@ class mastodon(services):
 				if msgtype.sub == 'html':
 					Comment	= self.html_to_plain(Comment)
 
-				CommentParts	= self.split_text(Comment, 500)
-				for CommentPart in CommentParts:
+				maxlength	= self.mastodon.instance()['configuration']['statuses']['max_characters']
+				CommentParts	= self.split_text(Comment, maxlength)
+				for CommentPart in reversed(CommentParts):
 					self.mastodon.status_post(
-						Comment
+						status	= CommentPart
 					)
 
 			elif msgtype.main in ['photo','video','audio']:
@@ -68,8 +72,8 @@ class mastodon(services):
 					# description='Alt text'  # optional alt-text
 				)
 				self.mastodon.status_post(
-					Comment,
-					media_ids=[media['id']]
+					status		= self.cut_text(Comment, 300),
+					media_ids	= [media['id']]
 				)
 
 			else:
