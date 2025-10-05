@@ -629,7 +629,7 @@ class backup(object):
 			for SubPathAtSource in self.SourceDevice.SubPathsAtSource:
 				self.__reporter.new_folder(SubPathAtSource)
 
-				self.__log.message(f"Backup from {SourceStorageType}: {SubPathAtSource}",3)
+				self.__log.message(f"{self.__lan.l('main_backup_backup')} {SourceStorageType}{': ' if SubPathAtSource else ''}{SubPathAtSource}", 3)
 
 				#define SubPathAtSource specific values
 				SourceFolderNumber	+= 1
@@ -784,13 +784,8 @@ class backup(object):
 						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID)
 
 						if not SOCIAL.configured():
-							if self.TargetService == 'telegram':
-								self.__display.message([f's=a:{self.__lan.l("box_backup_telegram_not_configured_1")}', f's=a:{self.__lan.l("box_backup_telegram_not_configured_2")}'])
-							elif self.TargetService == 'mastodon':
-								self.__display.message([f's=a:{self.__lan.l("box_backup_mastodon_not_configured_1")}', f's=a:{self.__lan.l("box_backup_mastodon_not_configured_2")}'])
-							elif self.TargetService == 'bluesky':
-								self.__display.message([f's=a:{self.__lan.l("box_backup_bluesky_not_configured_1")}', f's=a:{self.__lan.l("box_backup_bluesky_not_configured_2")}'])
-
+							if self.TargetService in ['telegram', 'mastodon', 'bluesky']:
+								self.__display.message([f's=a:{self.__lan.l(f"box_backup_mode_social_{self.TargetService}")}', f's=a:{self.__lan.l("box_backup_not_configured")}'])
 							return
 
 						# get bit position

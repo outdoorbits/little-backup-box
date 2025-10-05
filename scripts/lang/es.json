@@ -621,18 +621,7 @@
         "starting": "Iniciando servidor FTP...",
         "ok": "FTP o.k."
       },
-      "telegram": {
-        "not_configured_1": "Telegram",
-        "not_configured_2": "no configurado"
-      },
-      "mastodon": {
-        "not_configured_1": "Mastodon",
-        "not_configured_2": "no configurado"
-      },
-      "bluesky": {
-        "not_configured_1": "Bluesky",
-        "not_configured_2": "no configurado"
-      }
+      "not_configured": "no configurado"
     },
     "cronip": {
       "offline": "desconectado",

@@ -91,7 +91,6 @@ class poweroff(object):
 			time.sleep(3 * self.conf_DISP_FRAME_TIME)
 
 			# cleanup
-			open(self.const_LOGFILE,'w').close()
 			lib_clean.clean().cleanup(jobs=['full'])
 
 			# Power off
@@ -113,7 +112,6 @@ class poweroff(object):
 
 		else:
 			# cleanup
-			open(self.const_LOGFILE,'w').close()
 			lib_clean.clean().cleanup(jobs=['full'], skips=['ipmail', 'display_content', 'log'])
 
 			self.__display.message(

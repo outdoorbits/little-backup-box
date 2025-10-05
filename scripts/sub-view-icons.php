@@ -158,4 +158,45 @@ HTML;
 		<polyline points="14,4 20,4 20,10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 	</symbol>
 
+<!-- 	rating -->
+	<symbol id="icon-reject" viewBox="0 0 24 24">
+		<path d="M6 7 L18 19 M18 7 L6 19" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/>
+	</symbol>
+
+	<symbol id="icon-0" viewBox="0 0 24 24">
+		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
+			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
+			fill="currentColor">0</text>
+	</symbol>
+
+	<symbol id="icon-1" viewBox="0 0 24 24">
+		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
+			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
+			fill="currentColor">1</text>
+	</symbol>
+
+	<symbol id="icon-2" viewBox="0 0 24 24">
+		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
+			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
+			fill="currentColor">2</text>
+	</symbol>
+
+	<symbol id="icon-3" viewBox="0 0 24 24">
+		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
+			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
+			fill="currentColor">3</text>
+	</symbol>
+
+	<symbol id="icon-4" viewBox="0 0 24 24">
+		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
+			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
+			fill="currentColor">4</text>
+	</symbol>
+
+	<symbol id="icon-5" viewBox="0 0 24 24">
+		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
+			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
+			fill="currentColor">5</text>
+	</symbol>
+
 </svg>

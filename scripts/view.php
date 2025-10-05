@@ -139,8 +139,8 @@
 
 					<div style="float:left;width: 50%;padding: 5px">
 						<?php
-							if ($filter_rating == 1) {
-								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"delete_ratings_1\" class=\"danger\">" . L::view_ratings_1_delete_button . "</button>";
+							if ($filter_rating == -1) {
+								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"delete_ratings_reject\" class=\"danger\">" . L::view_ratings_1_delete_button . "</button>";
 							}
 
 							if ($gridcolumns > 1) {
@@ -230,9 +230,21 @@
 					<div class="rating d-flex align-items-center">
 		EOL;
 
-					foreach (range(1, 5) as $i) {
-						$checked	= $IMAGE_RATING == $i ? " checked" : "";
-						$RATING	.="<input id='rating_${i}_$IMAGE_ID' type='radio' name='rating_$IMAGE_ID' value='${i}'$checked><label for='rating_${i}_$IMAGE_ID'></label>";
+					foreach (range(-1, 5) as $i) {
+						$checked	= ($IMAGE_RATING == $i) ? ' checked' : '';
+						$id			= "rating_{$i}_{$IMAGE_ID}";
+						$RATING .= "
+							<input id='$id' type='radio' name='rating_{$IMAGE_ID}' value='{$i}'{$checked}>
+							<label for='$id'>
+							<svg class='ico' width='16' height='16' viewBox='0 0 24 24' focusable='false'>";
+								if ($i == -1) {
+									$RATING .= "<use class='is--m1' href='#icon-reject'></use>";
+								} else {
+									$RATING .= "<use class='is--$i' href='#icon-$i'></use>";
+								}
+						$RATING .= "
+							</svg>
+							</label>";
 					}
 
 		$RATING	.= <<<EOL
@@ -484,7 +496,7 @@
 
 	if ($filter_rating != "all") {
 		$filter_rating	= intval($filter_rating);
-		if (($filter_rating < 1) or ($filter_rating > 5)) {
+		if (($filter_rating < -1) or ($filter_rating > 5)) {
 			$filter_rating	= "all";
 		}
 	}
@@ -547,7 +559,7 @@
 
 	if ($filter_date != "all") {add_to_where("substr(Create_Date,1,10) like '" . str_replace("-","_",$filter_date) . "'", 'dates', $WHERE_VARIANTS);}
 
-	if (isset($delete_ratings_1)) {$filter_rating="all";} # after delete remove rating-filter
+	if (isset($delete_ratings_reject)) {$filter_rating="all";} # after delete remove rating-filter
 
 	if ($filter_rating != "all") {add_to_where("LbbRating = " . $filter_rating, 'ratings', $WHERE_VARIANTS);}
 
@@ -668,7 +680,7 @@
 			if (count($UPDATE_ARRAY) > 0) {$saved_message	=  L::view_saved;}
 
 			# delete media-files
-			if (isset($delete_ratings_1)) {
+			if (isset($delete_ratings_reject)) {
 				foreach($EDIT_ARRAY as $key=>$val) {
 					$key	= intval($key);
 
@@ -681,7 +693,7 @@
 						shell_exec ("sudo rm '" . $DELETE_FILE . "'");
 						shell_exec ("sudo rm '" . $DELETE_TIMS . "'");
 						shell_exec ("sudo rm '" . $DELETE_XMP . "'");
-						$db->exec("delete from EXIF_DATA where ID=" . $key . " and LbbRating=1;");
+						$db->exec("delete from EXIF_DATA where ID=" . $key . " and LbbRating=-1;");
 					}
 
 				}

@@ -87,35 +87,91 @@ ul.danger {
 	font-weight: bold;
 }
 
+/* Rating */
+
 .rating{
-	display : flex;
+	display: inline-flex;
+	gap: 0px;
+	font-size: 0;
 }
 
 .rating input{
-	position : absolute;
-	left     : -100vw;
+	position: absolute;
+	left: -100vw;
 }
 
-.rating label{
-	width      : 16px;
-	height     : 16px;
-	padding    : 16px 0 0;
-	overflow   : hidden;
-	background : url('stars.svg') no-repeat top left;
+.rating label {
+	font-size: 22px;
+	width: auto;
+	height: 20px;
+	margin-right: -5px;
+	padding: 0;
+	display: inline-grid;
+	place-items: center;
+	cursor: pointer;
+	line-height: 1;
+	color: #ddd;
+	position: relative;
+	border-radius: 50%;
 }
 
-.rating:not(:hover) input:indeterminate + label,
-.rating:not(:hover) input:checked ~ input + label,
-.rating input:hover ~ input + label{
-	background-position : -16px 0;
+.rating label .ico {
+	width: 1em;
+	height: 1em;
 }
 
-.rating:not(:hover) input:focus-visible + label{
-background-position : -32px 0;
+/* Hover-Background */
+.rating label:hover::after {
+	content: "";
+	position: absolute;
+	inset: 0; /* fills completely */
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		rgba(200,200,200,0.8) 0%,
+		rgba(200,200,200,0.0) 70%
+	);
+	pointer-events: none;
 }
 
-img.rating1, video.rating1, audio.rating1 {
+/* Mapping: pointed by <use> */
+.rating input[value="-1"] + label .ico .is--m1{ display:inline; }
+.rating input[value="0"]  + label .ico .is--0 { display:inline; }
+.rating input[value="1"]  + label .ico .is--1 { display:inline; }
+.rating input[value="2"]  + label .ico .is--2 { display:inline; }
+.rating input[value="3"]  + label .ico .is--3 { display:inline; }
+.rating input[value="4"]  + label .ico .is--4 { display:inline; }
+.rating input[value="5"]  + label .ico .is--5 { display:inline; }
+
+/* aktive color */
+.rating input[value="-1"]:checked + label { color: #d11; } /* red */
+.rating input[value="0"]:checked  + label { color: #666; } /* grey */
+.rating input[value="1"]:checked  + label,
+.rating input[value="2"]:checked  + label,
+.rating input[value="3"]:checked  + label,
+.rating input[value="4"]:checked  + label,
+.rating input[value="5"]:checked  + label { color: #FFD700; } /* golden */
+
+/* Hover-Feedback */
+.rating input:focus-visible + label {
+	outline: 2px solid #aaa;
+	outline-offset: 2px;
+}
+.rating input:hover + label {
+	filter: brightness(1.5);
+}
+
+/* marking borders of media files following the rating */
+img.rating-1, video.rating1, audio.rating1 {
 	border: 3px solid #F00;
+}
+
+img.rating0, video.rating2, audio.rating2 {
+	border: 0px;
+}
+
+img.rating1, video.rating2, audio.rating2 {
+	border: 0px;
 }
 
 img.rating2, video.rating2, audio.rating2 {

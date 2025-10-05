@@ -52,6 +52,7 @@ class MetadataTool:
 		self.const_FILE_EXTENSIONS_LIST_RAW				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW').split(';')
 		self.const_METADATA_CREATE_SOURCES				= self.__setup.get_val('const_METADATA_CREATE_SOURCES').split(';')
 		self.const_METADATA_MODIFY_SOURCES				= self.__setup.get_val('const_METADATA_MODIFY_SOURCES').split(';')
+		self.const_VIEW_RATING_STANDARD_VALUE			= self.__setup.get_val('const_VIEW_RATING_STANDARD_VALUE')
 
 	def write_metadata(self, path: Path, rating: Optional[int] = None, description: Optional[str] = None) -> None:
 
@@ -185,7 +186,8 @@ class MetadataTool:
 
 	@staticmethod
 	def _normalize_rating(rating: int) -> int:
-		return rating if 1 <= rating <= 5 else 2
+		rating	= int(rating)
+		return rating if -1 <= rating <= 5 else self.const_VIEW_RATING_STANDARD_VALUE
 
 # ---------- CLI ----------
 

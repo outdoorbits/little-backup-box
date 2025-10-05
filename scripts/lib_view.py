@@ -176,7 +176,7 @@ class viewdb(object):
 
 		## rating
 		if 'Rating' in ImageRecord:
-			ImageRecord['LbbRating']	= ImageRecord['Rating'] if int(ImageRecord['Rating'])>0 else self.const_VIEW_RATING_STANDARD_VALUE
+			ImageRecord['LbbRating']	= ImageRecord['Rating'] if int(ImageRecord['Rating']) in range(-1, 6) else self.const_VIEW_RATING_STANDARD_VALUE
 		else:
 			ImageRecord['LbbRating']	= self.const_VIEW_RATING_STANDARD_VALUE
 

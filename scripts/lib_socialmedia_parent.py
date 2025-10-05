@@ -60,7 +60,7 @@ class services(object):
 			return []
 
 		# --- 0) Split into paragraphs while keeping separators normalized to exactly "\n\n"
-		# We keep paragraphs as units and never merge across them unless it still fits.
+		# keep paragraphs as units and never merge across them unless it still fits.
 		raw_parts = re.split(r'(\n{2,})', text)
 		# Normalize any multi-blank-lines to exactly "\n\n"
 		parts = [p if i % 2 == 0 else "\n\n" for i, p in enumerate(raw_parts)]
