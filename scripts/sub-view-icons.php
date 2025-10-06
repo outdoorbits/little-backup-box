@@ -159,44 +159,49 @@ HTML;
 	</symbol>
 
 <!-- 	rating -->
+	<!-- common star shape -->
+	<path id="star-shape" d="M12 3.6l2.62 5.3 5.85.85-4.23 4.12 1 5.8L12 17.5 6.76 19.7l1-5.8L3.53 9.75l5.85-.85L12 3.6z"/>
+
+	<!-- star, filled -->
+	<symbol id="icon-star-filled" viewBox="0 0 24 24">
+		<use href="#star-shape" fill="currentColor"/>
+	</symbol>
+
+	<!-- star, filled, default -->
+	<symbol id="icon-star-filled-default" viewBox="0 0 24 24">
+		<use href="#star-shape" fill="currentColor"/>
+		<circle cx="12" cy="22" r="2" fill="currentColor"/>
+	</symbol>
+
+	<!-- star, outlined -->
+	<symbol id="icon-star-outline" viewBox="0 0 24 24">
+		<use href="#star-shape"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linejoin="round"
+			stroke-linecap="round"
+			transform="translate(12 12) scale(0.92) translate(-12 -12)"/>
+	</symbol>
+
+	<!-- star, outlined, default -->
+	<symbol id="icon-star-outline-default" viewBox="0 0 24 24">
+		<use href="#star-shape"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linejoin="round"
+			stroke-linecap="round"
+			transform="translate(12 12) scale(0.92) translate(-12 -12)"/>
+			<circle cx="12" cy="22" r="2" fill="currentColor"/>
+	</symbol>
+
+	<!-- Reject-X -->
 	<symbol id="icon-reject" viewBox="0 0 24 24">
-		<path d="M6 7 L18 19 M18 7 L6 19" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/>
-	</symbol>
-
-	<symbol id="icon-0" viewBox="0 0 24 24">
-		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
-			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
-			fill="currentColor">0</text>
-	</symbol>
-
-	<symbol id="icon-1" viewBox="0 0 24 24">
-		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
-			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
-			fill="currentColor">1</text>
-	</symbol>
-
-	<symbol id="icon-2" viewBox="0 0 24 24">
-		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
-			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
-			fill="currentColor">2</text>
-	</symbol>
-
-	<symbol id="icon-3" viewBox="0 0 24 24">
-		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
-			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
-			fill="currentColor">3</text>
-	</symbol>
-
-	<symbol id="icon-4" viewBox="0 0 24 24">
-		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
-			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
-			fill="currentColor">4</text>
-	</symbol>
-
-	<symbol id="icon-5" viewBox="0 0 24 24">
-		<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" class="num"
-			font-weight="700" font-family="system-ui, -apple-system, 'Segoe UI', Inter, Arial, sans-serif"
-			fill="currentColor">5</text>
+		<path d="M6 7 L18 19 M18 7 L6 19"
+			stroke="currentColor" stroke-width="2.4"
+			stroke-linecap="round" fill="none"
+			transform="translate(0,1)"/>
 	</symbol>
 
 </svg>

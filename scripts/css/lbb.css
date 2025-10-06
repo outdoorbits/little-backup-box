@@ -87,78 +87,79 @@ ul.danger {
 	font-weight: bold;
 }
 
-/* Rating */
+/* Rating #################################################### */
 
 .rating{
-	display: inline-flex;
-	gap: 0px;
-	font-size: 0;
-}
+  --icon-size: 18px;
+  --gold: #FFD700;
+  --off:  #ddd;
+  --reject: #d11;
 
+  display:inline-flex;
+  flex-direction: row-reverse;
+  gap:0;
+  align-items:center;
+  font-size:0;
+}
 .rating input{
-	position: absolute;
-	left: -100vw;
+  position:absolute;
+  left:-100vw;
 }
 
-.rating label {
-	font-size: 22px;
-	width: auto;
-	height: 20px;
-	margin-right: -5px;
-	padding: 0;
-	display: inline-grid;
-	place-items: center;
-	cursor: pointer;
-	line-height: 1;
-	color: #ddd;
-	position: relative;
-	border-radius: 50%;
+/* Labels & Icons */
+.rating label{
+	font-size: var(--icon-size);
+	line-height:1;
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	margin-right: -2px;
+	margin-left: 0;
+	padding:0;
+	color: var(--off);
+	cursor:pointer;
+	position:relative;
+}
+.rating .ico{
+	width:1em;
+	height:1em;
+	display:block;
 }
 
-.rating label .ico {
-	width: 1em;
-	height: 1em;
-}
+/* 1 */
+.rating input[value="1"]:checked + label,
+.rating input[value="2"]:checked ~ input[value="1"] + label,
+.rating input[value="3"]:checked ~ input[value="1"] + label,
+.rating input[value="4"]:checked ~ input[value="1"] + label,
+.rating input[value="5"]:checked ~ input[value="1"] + label { color: var(--gold); }
 
-/* Hover-Background */
-.rating label:hover::after {
-	content: "";
-	position: absolute;
-	inset: 0; /* fills completely */
-	border-radius: 50%;
-	background: radial-gradient(
-		circle,
-		rgba(200,200,200,0.8) 0%,
-		rgba(200,200,200,0.0) 70%
-	);
-	pointer-events: none;
-}
+/* 2 */
+.rating input[value="2"]:checked + label,
+.rating input[value="3"]:checked ~ input[value="2"] + label,
+.rating input[value="4"]:checked ~ input[value="2"] + label,
+.rating input[value="5"]:checked ~ input[value="2"] + label { color: var(--gold); }
 
-/* Mapping: pointed by <use> */
-.rating input[value="-1"] + label .ico .is--m1{ display:inline; }
-.rating input[value="0"]  + label .ico .is--0 { display:inline; }
-.rating input[value="1"]  + label .ico .is--1 { display:inline; }
-.rating input[value="2"]  + label .ico .is--2 { display:inline; }
-.rating input[value="3"]  + label .ico .is--3 { display:inline; }
-.rating input[value="4"]  + label .ico .is--4 { display:inline; }
-.rating input[value="5"]  + label .ico .is--5 { display:inline; }
+/* 3 */
+.rating input[value="3"]:checked + label,
+.rating input[value="4"]:checked ~ input[value="3"] + label,
+.rating input[value="5"]:checked ~ input[value="3"] + label { color: var(--gold); }
 
-/* aktive color */
-.rating input[value="-1"]:checked + label { color: #d11; } /* red */
-.rating input[value="0"]:checked  + label { color: #666; } /* grey */
-.rating input[value="1"]:checked  + label,
-.rating input[value="2"]:checked  + label,
-.rating input[value="3"]:checked  + label,
-.rating input[value="4"]:checked  + label,
-.rating input[value="5"]:checked  + label { color: #FFD700; } /* golden */
+/* 4 */
+.rating input[value="4"]:checked + label,
+.rating input[value="5"]:checked ~ input[value="4"] + label { color: var(--gold); }
 
-/* Hover-Feedback */
-.rating input:focus-visible + label {
-	outline: 2px solid #aaa;
-	outline-offset: 2px;
-}
-.rating input:hover + label {
-	filter: brightness(1.5);
+/* 5 */
+.rating input[value="5"]:checked + label { color: var(--gold); }
+
+.rating input[value="0"]:checked + label { color: var(--gold); }
+
+.rating input[value="-1"]:checked + label { color: var(--reject); }
+
+.rating label:hover::after{
+  content:"";
+  position:absolute; inset:0; border-radius:50%;
+  background: radial-gradient(circle, rgba(200,200,200,.8) 0%, rgba(200,200,200,0) 70%);
+  pointer-events:none;
 }
 
 /* marking borders of media files following the rating */

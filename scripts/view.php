@@ -230,20 +230,23 @@
 					<div class="rating d-flex align-items-center">
 		EOL;
 
-					foreach (range(-1, 5) as $i) {
+					foreach (range(5, -1, -1) as $i) {
 						$checked	= ($IMAGE_RATING == $i) ? ' checked' : '';
+						$default	= ($IMAGE_RATING == $i) ? '-default' : '';
 						$id			= "rating_{$i}_{$IMAGE_ID}";
 						$RATING .= "
 							<input id='$id' type='radio' name='rating_{$IMAGE_ID}' value='{$i}'{$checked}>
-							<label for='$id'>
-							<svg class='ico' width='16' height='16' viewBox='0 0 24 24' focusable='false'>";
-								if ($i == -1) {
-									$RATING .= "<use class='is--m1' href='#icon-reject'></use>";
-								} else {
-									$RATING .= "<use class='is--$i' href='#icon-$i'></use>";
-								}
+							<label for='{$id}' aria-label='{$i}' title='{$i}'>
+								<svg class='ico' viewBox='0 0 24 24' focusable='false'>";
+									if ($i == -1) {
+										$RATING .= "<svg class='ico' viewBox='0 0 24 24'><use href='#icon-reject'></use></svg>";
+									} elseif ($i == 0) {
+										$RATING .= "<svg class='ico' viewBox='0 0 24 24'><use href='#icon-star-outline{$default}'></use></svg>";
+									} else {
+										$RATING .= "<svg class='ico' viewBox='0 0 24 24'><use href='#icon-star-filled{$default}'></use></svg>";
+									}
 						$RATING .= "
-							</svg>
+								</svg>
 							</label>";
 					}
 
@@ -951,7 +954,7 @@
 									<option value="all" <?php echo ($filter_rating == "all"?" selected":""); ?>><?php echo L::view_filter_rating_all; ?></option>
 									<?php
 										while ($RATING = $RATINGS->fetchArray(SQLITE3_ASSOC)) {
-											echo "<option value=\"" . $RATING['LbbRating'] . "\" " . ($filter_rating == $RATING['LbbRating']?" selected":"") . ">" . $RATING['LbbRating'] . " " . L::view_filter_rating_stars . " (" . $RATING['FILECOUNT'] . ")</option>";
+											echo "<option value=\"" . $RATING['LbbRating'] . "\" " . ($filter_rating == $RATING['LbbRating']?" selected":"") . ">" . ($RATING['LbbRating'] == '-1' ? 'X' : $RATING['LbbRating'] . " " . L::view_filter_rating_stars) . " (" . $RATING['FILECOUNT'] . ")</option>";
 										}
 									?>
 								</select>

@@ -125,7 +125,7 @@ class MetadataTool:
 
 		if rating is not None:
 			self._normalize_rating(rating)
-			update_command.append(f"-XMP-xmp:Rating={rating}")
+			update_command.append(f"-XMP:Rating={rating}")
 
 		if description is not None:
 			# XMP supports UTF-8 and multi-line content natively.
