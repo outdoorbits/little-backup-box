@@ -168,9 +168,8 @@ class services(object):
 		return chunks
 
 	def cut_text(self, text: str, maxlength: int):
-		if maxlength < 3:
-			return(text)
-
-		if len(text) > maxlength:
+		if maxlength >= 3 and len(text) > maxlength:
 			end	= maxlength - 3
 			return(f'{text[0:end]}...')
+		else:
+			return(str(text))

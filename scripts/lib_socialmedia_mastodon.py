@@ -43,8 +43,13 @@ class mastodon(services):
 				access_token	= self.ACCESS_TOKEN,
 				api_base_url	= self.API_BASE_URL
 			)
+			try:
+				self.report_maxlength	= self.mastodon.instance()['configuration']['statuses']['max_characters']
+			except:
+				self.report_maxlength	= 500
 		else:
 			self.mastodon = None
+			self.report_maxlength	= 0
 
 	def configured(self):
 		return(bool(self.ACCESS_TOKEN and self.API_BASE_URL))
@@ -59,8 +64,7 @@ class mastodon(services):
 				if msgtype.sub == 'html':
 					Comment	= self.html_to_plain(Comment)
 
-				maxlength	= self.mastodon.instance()['configuration']['statuses']['max_characters']
-				CommentParts	= self.split_text(Comment, maxlength)
+				CommentParts	= self.split_text(Comment, self.report_maxlength)
 				for CommentPart in reversed(CommentParts):
 					self.mastodon.status_post(
 						status	= CommentPart
@@ -72,7 +76,7 @@ class mastodon(services):
 					# description='Alt text'  # optional alt-text
 				)
 				self.mastodon.status_post(
-					status		= self.cut_text(Comment, 300),
+					status		= self.cut_text(Comment, self.report_maxlength),
 					media_ids	= [media['id']]
 				)
 

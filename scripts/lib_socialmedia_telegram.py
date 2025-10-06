@@ -30,6 +30,9 @@ class telegram(services):
 	def __init__(self, TG_TOKEN, TG_CHAT_ID, check_only=False):
 		super().__init__()
 
+		self.caption_maxlength	= 1024
+		self.report_maxlength	= 4096
+
 		self.TOKEN		= (TG_TOKEN or "").strip()
 		self.CHAT_ID	= TG_CHAT_ID
 
@@ -76,7 +79,7 @@ class telegram(services):
 					else:
 						TXTParseMode	= None
 
-					CommentParts	= self.split_text(Comment, 4096)
+					CommentParts	= self.split_text(Comment, self.report_maxlength)
 					for CommentPart in CommentParts:
 						await BOT.send_message(
 							chat_id		= self.CHAT_ID,
@@ -89,7 +92,7 @@ class telegram(services):
 						await BOT.send_video(
 							chat_id				= self.CHAT_ID,
 							video				= self.InputFile(f, filename=FilePath.name),
-							caption				= self.cut_text(Comment, 1024),
+							caption				= self.cut_text(Comment, self.caption_maxlength),
 							supports_streaming	= True
 						)
 
@@ -98,7 +101,7 @@ class telegram(services):
 						await BOT.send_voice(
 							chat_id				= self.CHAT_ID,
 							voice				= self.InputFile(f, filename=FilePath.name),
-							caption				= self.cut_text(Comment, 1024)
+							caption				= self.cut_text(Comment, self.caption_maxlength)
 						)
 
 				elif msgtype.main == 'photo':
@@ -106,7 +109,7 @@ class telegram(services):
 						await BOT.send_photo(
 							chat_id				= self.CHAT_ID,
 							photo				= self.InputFile(f, filename=FilePath.name),
-							caption				= self.cut_text(Comment, 1024)
+							caption				= self.cut_text(Comment, self.caption_maxlength)
 						)
 
 				elif msgtype.main == 'document':
@@ -114,7 +117,7 @@ class telegram(services):
 						await BOT.send_document(
 							chat_id				= self.CHAT_ID,
 							document			= self.InputFile(f, filename=FilePath.name),
-							caption				= self.cut_text(Comment, 1024)
+							caption				= self.cut_text(Comment, self.caption_maxlength)
 						)
 				else:
 					self.ok = False

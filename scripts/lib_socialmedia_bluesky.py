@@ -34,6 +34,9 @@ class bluesky(services):
 	):
 		super().__init__()
 
+		self.caption_maxlength	= 300
+		self.report_maxlength	= 300
+
 		self.API_BASE_URL	= (BS_API_BASE_URL or "").strip()
 		self.IDENTIFIER		= (BS_IDENTIFIER or "").strip()
 		self.APP_PASSWORD	= (BS_APP_PASSWORD or "").strip()
@@ -68,7 +71,7 @@ class bluesky(services):
 				if msgtype.sub == 'html':
 					Comment	= self.html_to_plain(Comment)
 
-				CommentParts	= self.split_text(Comment, 300)
+				CommentParts	= self.split_text(Comment, self.report_maxlength)
 				for CommentPart in reversed(CommentParts):
 					self.bluesky.post(
 						text = (CommentPart or '')
@@ -92,7 +95,7 @@ class bluesky(services):
 
 				# Create the post with the image embed.
 				self.bluesky.post(
-					text	= self.cut_text(Comment, 300),
+					text	= self.cut_text(Comment, self.caption_maxlength),
 					embed	= embed
 				)
 
