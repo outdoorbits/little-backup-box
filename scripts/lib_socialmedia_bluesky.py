@@ -34,8 +34,7 @@ class bluesky(services):
 	):
 		super().__init__()
 
-		self.caption_maxlength	= 300
-		self.report_maxlength	= 300
+		self.post_maxlength	= 300
 
 		self.API_BASE_URL	= (BS_API_BASE_URL or "").strip()
 		self.IDENTIFIER		= (BS_IDENTIFIER or "").strip()
@@ -67,44 +66,55 @@ class bluesky(services):
 			FilePath = Path(FilePath)
 
 		try:
+			def send_text(text):
+				self.bluesky.post(
+					text = CommentPart
+				)
+
 			if msgtype.main == 'text':
 				if msgtype.sub == 'html':
 					Comment	= self.html_to_plain(Comment)
 
-				CommentParts	= self.split_text(Comment, self.report_maxlength)
+				CommentParts	= self.split_text(Comment, self.post_maxlength)
 				for CommentPart in reversed(CommentParts):
-					self.bluesky.post(
-						text = (CommentPart or '')
-					)
+					send_text(CommentPart)
 
-			elif msgtype.main == 'photo':
-				if FilePath is None:
-					raise ValueError('FilePath is required for photo')
+			elif msgtype.main in ['photo']: # in case of future support of other media types
 
-				# Upload the image as a blob.
-				with FilePath.open('rb') as f:
-					blob = self.bluesky.upload_blob(f)
+				CommentParts	= self.split_text(Comment, self.post_maxlength)
+				for index, CommentPart in enumerate(reversed(CommentParts)):
 
-				# Optional alt-text support (uncomment to use):
-				# alt_text = 'Alt text'
-				# image_obj = self.models.AppBskyEmbedImages.Image(alt=alt_text, image=blob.blob)
+					if index == (len(CommentParts) - 1): # media last
 
-				image_obj = self.models.AppBskyEmbedImages.Image(alt='', image=blob.blob)
+						if msgtype.main == 'photo':
+							if FilePath is None:
+								raise ValueError('FilePath is required for photo')
 
-				embed = self.models.AppBskyEmbedImages.Main(images=[image_obj])
+							# Upload the image as a blob.
+							with FilePath.open('rb') as f:
+								blob = self.bluesky.upload_blob(f)
 
-				# Create the post with the image embed.
-				self.bluesky.post(
-					text	= self.cut_text(Comment, self.caption_maxlength),
-					embed	= embed
-				)
+							# Optional alt-text support (uncomment to use):
+							# alt_text = 'Alt text'
+							# image_obj = self.models.AppBskyEmbedImages.Image(alt=alt_text, image=blob.blob)
 
-			# elif msgtype.main in ['audio', 'video']:
-			# 	# As of now, the public Bluesky API client does not provide stable
-			# 	# posting for audio/video in regular feed posts. Mark as unsupported.
-			# 	self.ok = False
-			# 	self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
+							image_obj = self.models.AppBskyEmbedImages.Image(alt='', image=blob.blob)
 
+							embed = self.models.AppBskyEmbedImages.Main(images=[image_obj])
+
+							# Create the post with the image embedded.
+							self.bluesky.post(
+								text	= CommentPart,
+								embed	= embed
+							)
+
+						# elif msgtype.main in ['audio', 'video']:
+						# 	# As of now, the public Bluesky API client does not provide stable
+						# 	# posting for audio/video in regular feed posts. Mark as unsupported.
+						# 	self.ok = False
+						# 	self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
+					else:
+						send_text(CommentPart)
 			else:
 				self.ok = False
 				self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'

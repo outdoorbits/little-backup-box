@@ -44,12 +44,12 @@ class mastodon(services):
 				api_base_url	= self.API_BASE_URL
 			)
 			try:
-				self.report_maxlength	= self.mastodon.instance()['configuration']['statuses']['max_characters']
+				self.post_maxlength	= self.mastodon.instance()['configuration']['statuses']['max_characters']
 			except:
-				self.report_maxlength	= 500
+				self.post_maxlength	= 500
 		else:
 			self.mastodon = None
-			self.report_maxlength	= 0
+			self.post_maxlength	= 0
 
 	def configured(self):
 		return(bool(self.ACCESS_TOKEN and self.API_BASE_URL))
@@ -60,25 +60,37 @@ class mastodon(services):
 			FilePath	= Path(FilePath)
 
 		try:
+			def send_text(text):
+				self.mastodon.status_post(
+					status	= text
+				)
+
 			if msgtype.main == 'text':
 				if msgtype.sub == 'html':
 					Comment	= self.html_to_plain(Comment)
 
-				CommentParts	= self.split_text(Comment, self.report_maxlength)
+				CommentParts	= self.split_text(Comment, self.post_maxlength)
 				for CommentPart in reversed(CommentParts):
-					self.mastodon.status_post(
-						status	= CommentPart
-					)
+					send_text(CommentPart)
 
 			elif msgtype.main in ['photo','video','audio']:
-				media = self.mastodon.media_post(
-					FilePath
-					# description='Alt text'  # optional alt-text
-				)
-				self.mastodon.status_post(
-					status		= self.cut_text(Comment, self.report_maxlength),
-					media_ids	= [media['id']]
-				)
+
+				CommentParts	= self.split_text(Comment, self.post_maxlength)
+				for index, CommentPart in enumerate(reversed(CommentParts)):
+
+					if index == (len(CommentParts) - 1): # media last
+
+						media = self.mastodon.media_post(
+							FilePath
+							# description='Alt text'  # optional alt-text
+						)
+
+						self.mastodon.status_post(
+							status		= CommentPart,
+							media_ids	= [media['id']]
+						)
+					else:
+						send_text(CommentPart)
 
 			else:
 				self.ok = False

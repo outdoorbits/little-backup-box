@@ -51,10 +51,14 @@ class services(object):
 
 		return Comment.strip()
 
-	def split_text(self, text: str, maxlength: int):
+	def split_text(self, text: str, maxlength_primary: int, maxlength_follow: int = None):
 		# Split 'text' into chunks of size <= maxlength.
 		# Priority: paragraph boundaries (\n\n) -> sentence boundaries -> word boundaries -> hard split.
-		if maxlength <= 0:
+
+		if maxlength_follow is None:
+			maxlength_follow	= maxlength_primary
+
+		if maxlength_primary <= 0 or maxlength_follow <= 0:
 			return [text]
 		if not text:
 			return []
@@ -127,6 +131,8 @@ class services(object):
 
 		i = 0
 		while i < len(parts):
+			maxlength	= maxlength_primary if i == 0 else maxlength_follow
+
 			block = parts[i]
 			if block == "\n\n":
 				# Paragraph separator: try to append it if it still fits; otherwise start a new chunk.
@@ -166,10 +172,3 @@ class services(object):
 
 		flush()
 		return chunks
-
-	def cut_text(self, text: str, maxlength: int):
-		if maxlength >= 3 and len(text) > maxlength:
-			end	= maxlength - 3
-			return(f'{text[0:end]}...')
-		else:
-			return(str(text))

@@ -31,7 +31,7 @@ class telegram(services):
 		super().__init__()
 
 		self.caption_maxlength	= 1024
-		self.report_maxlength	= 4096
+		self.post_maxlength	= 4096
 
 		self.TOKEN		= (TG_TOKEN or "").strip()
 		self.CHAT_ID	= TG_CHAT_ID
@@ -67,6 +67,13 @@ class telegram(services):
 			)
 		async with self.Bot(token=self.TOKEN, request=request) as BOT:
 			try:
+				async def send_text(text, TXTParseMode=None):
+					await BOT.send_message(
+						chat_id		= self.CHAT_ID,
+						text		= text,
+						parse_mode	= TXTParseMode
+					)
+
 				if msgtype.main == 'text':
 					if msgtype.sub == 'html':
 						Comment = re.sub(r'<br\s*/?>', '\n', Comment, flags=re.IGNORECASE)
@@ -79,46 +86,52 @@ class telegram(services):
 					else:
 						TXTParseMode	= None
 
-					CommentParts	= self.split_text(Comment, self.report_maxlength)
+					CommentParts	= self.split_text(Comment, self.post_maxlength)
 					for CommentPart in CommentParts:
-						await BOT.send_message(
-							chat_id		= self.CHAT_ID,
-							text		= CommentPart,
-							parse_mode	= TXTParseMode
-						)
+						await send_text(CommentPart, TXTParseMode)
 
-				elif msgtype.main == 'video' and FilePath:
-					with open(FilePath, 'rb') as f:
-						await BOT.send_video(
-							chat_id				= self.CHAT_ID,
-							video				= self.InputFile(f, filename=FilePath.name),
-							caption				= self.cut_text(Comment, self.caption_maxlength),
-							supports_streaming	= True
-						)
+				elif msgtype.main in ['video', 'audio', 'photo', 'document']:
 
-				elif msgtype.main == 'audio':
-					with open(FilePath, 'rb') as f:
-						await BOT.send_voice(
-							chat_id				= self.CHAT_ID,
-							voice				= self.InputFile(f, filename=FilePath.name),
-							caption				= self.cut_text(Comment, self.caption_maxlength)
-						)
+					CommentParts	= self.split_text(Comment, self.caption_maxlength, self.post_maxlength)
+					for index, CommentPart in enumerate(CommentParts):
 
-				elif msgtype.main == 'photo':
-					with open(FilePath, 'rb') as f:
-						await BOT.send_photo(
-							chat_id				= self.CHAT_ID,
-							photo				= self.InputFile(f, filename=FilePath.name),
-							caption				= self.cut_text(Comment, self.caption_maxlength)
-						)
+						if index == 0 : # media first
 
-				elif msgtype.main == 'document':
-					with open(FilePath, 'rb') as f:
-						await BOT.send_document(
-							chat_id				= self.CHAT_ID,
-							document			= self.InputFile(f, filename=FilePath.name),
-							caption				= self.cut_text(Comment, self.caption_maxlength)
-						)
+							if msgtype.main == 'video' and FilePath:
+								with open(FilePath, 'rb') as f:
+									await BOT.send_video(
+										chat_id				= self.CHAT_ID,
+										video				= self.InputFile(f, filename=FilePath.name),
+										caption				= CommentPart,
+										supports_streaming	= True
+									)
+
+							elif msgtype.main == 'audio':
+								with open(FilePath, 'rb') as f:
+									await BOT.send_voice(
+										chat_id				= self.CHAT_ID,
+										voice				= self.InputFile(f, filename=FilePath.name),
+										caption				= CommentPart
+									)
+
+							elif msgtype.main == 'photo':
+								with open(FilePath, 'rb') as f:
+									await BOT.send_photo(
+										chat_id				= self.CHAT_ID,
+										photo				= self.InputFile(f, filename=FilePath.name),
+										caption				= CommentPart
+									)
+
+							elif msgtype.main == 'document':
+								with open(FilePath, 'rb') as f:
+									await BOT.send_document(
+										chat_id				= self.CHAT_ID,
+										document			= self.InputFile(f, filename=FilePath.name),
+										caption				= CommentPart
+									)
+
+						else:
+							await send_text(CommentPart)
 				else:
 					self.ok = False
 					self.returnmessage = f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
