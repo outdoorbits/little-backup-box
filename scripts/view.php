@@ -582,9 +582,6 @@
 		if (($filter_variable_field != "") and ($filter_variable_value != "")) {add_to_where($filter_variable_field . "='" . $filter_variable_value . "'", 'variable', $WHERE_VARIANTS);}
 	}
 
-	# generate select_limit
-	$select_limit	=  $filter_images_per_page + 2;
-
 	# define path of the database-file
 	$STORAGE_PATH	= "";
 	if ($filter_medium == "target_usb") {
@@ -715,10 +712,13 @@
 				}
 				if ($FETCH_IMAGE['ID'] == $ID) {
 					$select_offset	= intdiv($n-1, $filter_images_per_page) * $filter_images_per_page - 1;
-					$select_offset	= $select_offset >= 0 ? $select_offset : 0;
+					$select_offset	= $select_offset >= 0 ? $select_offset : 0; # no negative select_offset
 				}
 				$IMAGE_ID_LAST = $FETCH_IMAGE['ID'];
 			}
+
+			# generate select_limit
+			$select_limit	=  $select_offset > 0 ? $filter_images_per_page + 2 : $filter_images_per_page + 1;
 
 			$imagecount = $n;
 
@@ -802,15 +802,21 @@
 				$n = 0;
 				foreach ($IMAGES_ARRAY_ALL as $IMAGE) {
 					$n += 1;
-					if (($n == 1) and ($select_offset > 0)) {
+					if (($n == 1) and ($select_offset > 0)) { /*get predecessor ID from first element*/
 						$IMAGE_ID_PRE = $IMAGE['ID'];
-					} elseif ($n == ($select_offset <= 0 ? 1 : 3)) {
+					} elseif ($n == ($select_offset <= 0 ? 1 : 2)) {
 						$IMAGE_ID = $IMAGE['ID'];
-					} elseif ($n == $filter_images_per_page + ($select_offset <= 0 ? 1 : 2)) {
+					} elseif ($n == $filter_images_per_page + ($select_offset <= 0 ? 1 : 2)) { /*get successor form last element visible on the page*/
 						$IMAGE_ID_POST = $IMAGE['ID'];
 					}
 
-					if ((($n > 2) or ($select_offset <= 0)) and ($n <= $filter_images_per_page + ($select_offset <= 0 ? 0 : 2))) {
+					// Form selected images exclude first and last: The first and last items serve as technical predecessor/successor nodes.
+					if (
+						(
+							($n > 1) or ($n == 1 and $select_offset <= 0) /* not first selected image () */
+						) and
+						($n <= $filter_images_per_page + ($select_offset <= 0 ? 0 : 1))) /* not last selected image */
+					{
 						$IMAGES_ARRAY[] = $IMAGE;
 					}
 				}
