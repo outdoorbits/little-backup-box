@@ -583,7 +583,7 @@
 	}
 
 	# generate select_limit
-	$select_limit	=  $filter_images_per_page + 3;
+	$select_limit	=  $filter_images_per_page + 2;
 
 	# define path of the database-file
 	$STORAGE_PATH	= "";
@@ -714,7 +714,8 @@
 					$IMAGE_ID_FIRST = $FETCH_IMAGE['ID'];
 				}
 				if ($FETCH_IMAGE['ID'] == $ID) {
-					$select_offset = intdiv($n-1, $filter_images_per_page) * $filter_images_per_page;
+					$select_offset	= intdiv($n-1, $filter_images_per_page) * $filter_images_per_page - 1;
+					$select_offset	= $select_offset >= 0 ? $select_offset : 0;
 				}
 				$IMAGE_ID_LAST = $FETCH_IMAGE['ID'];
 			}
@@ -805,7 +806,7 @@
 						$IMAGE_ID_PRE = $IMAGE['ID'];
 					} elseif ($n == ($select_offset <= 0 ? 1 : 3)) {
 						$IMAGE_ID = $IMAGE['ID'];
-					} elseif ($n == $filter_images_per_page + ($select_offset <= 0 ? 1 : 3)) {
+					} elseif ($n == $filter_images_per_page + ($select_offset <= 0 ? 1 : 2)) {
 						$IMAGE_ID_POST = $IMAGE['ID'];
 					}
 
