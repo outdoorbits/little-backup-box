@@ -34,6 +34,7 @@ class idletime(object):
 		self.ApacheAccessLogfile				= '/var/log/apache2/lbb-access.log'
 		self.ApacheRcloneAccessLogfile			= '/var/log/apache2/rclone-access.log'
 		self.proftpdAccessLogfile				= '/var/log/proftpd/proftpd.log'
+		self.smbdAccessLogfile					= '/var/log/samba/smb.log'
 
 		#objects
 		self.__setup	= lib_setup.setup()
@@ -79,9 +80,14 @@ class idletime(object):
 			return(f'idletime: logfile rclone gui idletime not reached ({ApacheRcloneLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 		# logfile proftpd
-		proftpdLogfileAgeSec			= CompareTime - os.stat(self.proftpdAccessLogfile).st_mtime if os.path.isfile(self.proftpdAccessLogfile) else IdleSecToPowerOff
+		proftpdLogfileAgeSec		= CompareTime - os.stat(self.proftpdAccessLogfile).st_mtime if os.path.isfile(self.proftpdAccessLogfile) else IdleSecToPowerOff
 		if proftpdLogfileAgeSec < IdleSecToPowerOff:
 			return(f'idletime: logfile proftpd idletime not reached ({proftpdLogfileAgeSec}s < {IdleSecToPowerOff}s)')
+
+		# logfile smbd (samba)
+		smbdLogfileAgeSec			= CompareTime - os.stat(self.smbdAccessLogfile).st_mtime if os.path.isfile(self.smbdAccessLogfile) else IdleSecToPowerOff
+		if smbdLogfileAgeSec < IdleSecToPowerOff:
+			return(f'idletime: logfile smbd idletime not reached ({smbdLogfileAgeSec}s < {IdleSecToPowerOff}s)')
 
 		# check processes
 		for process in [
