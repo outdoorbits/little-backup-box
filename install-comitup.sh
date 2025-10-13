@@ -45,7 +45,10 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		python3-networkmanager comitup comitup-watch
+			python3-cachetools \
+			python3-networkmanager \
+			python3-six \
+			comitup
 
 # Enable and start NetworkManager
 sudo systemctl enable NetworkManager.service
