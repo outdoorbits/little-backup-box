@@ -598,17 +598,17 @@ class storage(object):
 	def __calculate_device_id(self, DatePart, RandomPart):
 		LbbDeviceID	= ''
 
-		Columns	= ['VENDOR','MODEL','SERIAL','FSSIZE','FSTYPE','FSVER','LABEL','UUID','PATH']
+		Columns	= ['VENDOR','MODEL','FSSIZE','FSTYPE','FSVER','LABEL','SERIAL','UUID','PATH']
 
-		searchID	= self.DeviceIdentifier.replace('--uuid ','')
+		searchID		= self.DeviceIdentifier.replace('--uuid', '').strip()
 		SourceCommand	= ' '.join(['lsblk','--output']) + ' ' + ','.join(Columns)
-		Filter			= f'{Columns[0]}\|{searchID}'
 
-		Result	= subprocess.check_output(f"{SourceCommand} | grep -w '{Filter}'",shell=True).decode().strip().split('\n')
+		Result	= subprocess.check_output(rf"{SourceCommand} | grep -w '{Columns[0]}\|{searchID}'", shell=True).decode().strip().split('\n') # find header line also: grep -w '{Columns[0]}\|{searchID}'
+		if len(Result) == 2: # two lines: header and storage
 
-		if len(Result) == 2:
+			ColumnPosition_OLD	= len(Result[1]) # the end of the data line
 
-			ColumnPosition_OLD	= len(Result[1])
+			# get column positions to slice the table
 			ColumnPositions	= {}
 			for Column in reversed(Columns):
 				ColumnPosition		= Result[0].index(Column)
@@ -620,15 +620,23 @@ class storage(object):
 					'ColumnEnd'			: ColumnEnd
 				}
 
+			# build LbbDeviceID
+			Parts	= []
 			for Column in Columns:
 				if Column != 'PATH':
 					Part	= Result[1][ColumnPositions[Column]['ColumnPosition']:ColumnPositions[Column]['ColumnEnd']].strip()
-					LbbDeviceID	+= f'{Part} ' if Part else ''
+					if Part:
+						if Column == 'SERIAL':
+							Part	= Part[-5:].strip()
+						if Column == 'UUID':
+							continue
 
-			LbbDeviceID	= LbbDeviceID.strip().replace(' ','_')
+						Parts.append(Part)
+
+			LbbDeviceID	= '_'.join(Parts).replace(' ','_')
 
 		if not LbbDeviceID:
-			LbbDeviceID	= f"lbb_{DatePart}-{RandomPart}_ID_NOT_STABLE"
+			LbbDeviceID	= f"{DatePart}-{RandomPart}"
 
 		return(f'lbb_{LbbDeviceID}')
 
@@ -660,12 +668,12 @@ class storage(object):
 				RandomPart	= random.randrange(10000,100000,1)
 
 				# set global backup parameters
-				self.LbbDeviceID	= f"lbb_{DatePart}-{RandomPart}"
+				self.LbbDeviceID	= self.__calculate_device_id(DatePart, RandomPart)
 
 				try:
 					open(os.path.join(self.MountPoint, f"{self.LbbDeviceID}.lbbid"),'w').close()
 				except:
-					self.LbbDeviceID	= self.__calculate_device_id(DatePart, RandomPart)
+					pass
 
 			self.LbbSourceDescriptor	= f"{self.__lan.l('box_backup_source_id')}: {self.LbbDeviceID}"
 
@@ -705,7 +713,7 @@ class storage(object):
 			MountPointSearch	= f" {MountPoint} "
 			Command	= f"mount -l | grep '{MountPointSearch}' | grep '{self.ServiceName}'"
 		else:
-			MountPointSearch	= f'MOUNTPOINT="{MountPoint}"\|MOUNTPOINT="{self.__TechMountPoint}"' if self.__TechMountPoint else f'MOUNTPOINT="{MountPoint}"'
+			MountPointSearch	= rf'MOUNTPOINT="{MountPoint}"\|MOUNTPOINT="{self.__TechMountPoint}"' if self.__TechMountPoint else f'MOUNTPOINT="{MountPoint}"'
 			Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{MountPointSearch}'"
 
 		# mount check
@@ -827,10 +835,10 @@ class storage(object):
 			self.__TechMountPoint	= ''
 			self.MountPoint			= ''
 
-	def __HumanReadableNumber(self,Number,Factor=1):
+	def __HumanReadableNumber(self, Number, Factor=1):
 		PowersNames = ['','k','M','G','T','P','E']
 
-		Number	= re.sub('[^0-9\.]', '', f"0{Number}")
+		Number	= re.sub('[^0-9\\.]', '', f"0{Number}")
 		Number = float(Number) * Factor
 		Powers = max(
 						0,
@@ -876,7 +884,7 @@ class storage(object):
 
 	def __display_storage_properties(self):
 		storsize, storused, storfree, storfstype = self.__get_storage_properties()
-		storsize	= re.sub('[^0-9\.]', '', f"0{storsize}")
+		storsize	= re.sub('[^0-9\\.]', '', f"0{storsize}")
 
 		if int(storsize) > 0:
 			PercentInUse	= str(round(int(storused) / int(storsize) * 100,1))
@@ -893,8 +901,8 @@ class storage(object):
 
 		LbbDeviceName	= [f"s=a:{LbbDeviceName}"] if LbbDeviceName else []
 
-		storused		= f"{self.__lan.l('box_backup_storage_used')}: {self.__HumanReadableNumber(storused,1000)}/{self.__HumanReadableNumber(storsize,1000)}"
-		storfree		= f"{self.__lan.l('box_backup_storage_free')}: {self.__HumanReadableNumber(storfree,1000)}"
+		storused		= f"{self.__lan.l('box_backup_storage_used')}: {self.__HumanReadableNumber(storused,1000)}B/{self.__HumanReadableNumber(storsize,1000)}B"
+		storfree		= f"{self.__lan.l('box_backup_storage_free')}: {self.__HumanReadableNumber(storfree,1000)}B"
 		storfstype		= f"{self.__lan.l('box_backup_storage_filesystem_short')}: {storfstype}"
 
 		if self.StorageType in ['usb', 'nvme']:
@@ -1026,7 +1034,7 @@ def get_mounts_list():
 
 	setup	= lib_setup.setup()
 
-	MountPointList	= '\|'.join(get_mountPoints(setup, ['all'], True))
+	MountPointList	= '\\|'.join(get_mountPoints(setup, ['all'], True))
 
 	SourceCommand	= ["mount"]
 	FilterCommand	= ["grep", MountPointList]
@@ -1059,11 +1067,11 @@ def get_available_partitions(StorageType='all', TargetDeviceIdentifier='', exclu
 	TargetDevice_lum_alpha	= ''
 
 	if StorageType in ['anyusb', 'usb']:
-		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}"
+		StorageMask	= rf"^PATH=\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}"
 	elif StorageType == 'nvme':
-		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
+		StorageMask	= rf"^PATH=\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
 	else:
-		StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
+		StorageMask	= rf"^PATH=\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
 
 	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
 	try:
@@ -1184,7 +1192,7 @@ def get_available_partitions(StorageType='all', TargetDeviceIdentifier='', exclu
 def get_available_devices():
 	setup	= lib_setup.setup()
 
-	StorageMask	= f"^PATH=\\\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\\\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
+	StorageMask	= rf"^PATH=\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
 
 	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
 

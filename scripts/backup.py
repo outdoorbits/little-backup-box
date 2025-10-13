@@ -1071,7 +1071,7 @@ class backup(object):
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
 		# find all not renamed media files
-		FindCommand	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
+		FindCommand	= rf"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
 
 		Files	=	subprocess.check_output(FindCommand, shell=True, text=True).splitlines()
 
@@ -1272,7 +1272,7 @@ class backup(object):
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
-		Command	= f"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= rf"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		Images	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		Images[:]	= [element for element in Images if element]
@@ -1370,7 +1370,7 @@ class backup(object):
 			])
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
-		Command	= f"find '{Device.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= rf"find '{Device.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		ImagesList	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		ImagesList[:]	= [element for element in ImagesList if element]
