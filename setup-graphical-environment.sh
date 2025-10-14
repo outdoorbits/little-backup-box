@@ -18,7 +18,7 @@
 #######################################################################
 
 # expected from calling script
-## nothing
+## INSTALLER_DIR
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
@@ -29,6 +29,12 @@ fi
 # Don't start setup if no graphical system installed
 if [ ! -f "/usr/bin/startx" ]; then
 	return
+fi
+
+# check if INSTALLER_DIR is set
+if [[ ! -v INSTALLER_DIR ]]; then
+	echo "INSTALLER_DIR is not defined."
+	exit 1
 fi
 
 # settings
@@ -69,6 +75,17 @@ gtk-enable-auto-mount=false
 gtk-enable-auto-mount-open=false
 EOF
 
+# install wallpaper
+BG_FILE="black.jpg"
+BG_DIR="/usr/share/rpd-wallpaper"
+
+sudo cp "$INSTALLER_DIR/scripts/img/$BG_FILE" "${BG_DIR}/"
+sudo chown -R "root:root" "${BG_DIR}/${BG_FILE}"
+sudo chmod -R 644 "${BG_DIR}/${BG_FILE}"
+
+# activate wallpaper
+sudo find /etc/xdg/pcmanfm/default -type f -name 'desktop-items-?.conf' -exec sed -i.bak 's|^wallpaper=.*|wallpaper=/usr/share/rpd-wallpaper/black.jpg|' {} +
+
 # set background and start browser in kiosk mode
 sudo -u "${USER}" mkdir -p /home/${USER}/.config/labwc
 cat <<EOF | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/null
@@ -77,7 +94,7 @@ cat <<EOF | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/nu
 sleep 1
 
 # set background color
-/usr/bin/swaybg -c '#0f0f0f' &
+/usr/bin/swaybg -c '#000000' &
 
 # start Firefox in kiosk mode
 /usr/bin/firefox -setDefaultBrowser -private --kiosk http://localhost:8080 &
