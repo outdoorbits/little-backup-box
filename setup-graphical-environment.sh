@@ -51,10 +51,15 @@ sudo raspi-config nonint do_boot_behaviour B4
 
 ## edit /etc/lightdm/lightdm.conf to set auto login user
 CONFIG_FILE="/etc/lightdm/lightdm.conf"
+
 VAR="autologin-user"
 NEW_VALUE="${USER}"
+sudo sed $CONFIG_FILE -i -e "s/^\(#\|\)${VAR}=.*/${VAR}=${NEW_VALUE}/"
 
-sudo sed $CONFIG_FILE -i -e "s/^\(#\|\)${VAR}=.*/autologin-user=${NEW_VALUE}/"
+lightdm-xsession
+VAR="autologin-session"
+NEW_VALUE="lightdm-xsession"
+sudo sed $CONFIG_FILE -i -e "s/^\(#\|\)${VAR}=.*/${VAR}=${NEW_VALUE}/"
 
 # disable auto mount for user
 CONFIG_DIR="/home/$USER/.config/pcmanfm/LXDE-pi"
