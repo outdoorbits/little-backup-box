@@ -84,7 +84,7 @@ if [[ ! "${INSTALLER_DIR}" =~ "little-backup-box" ]]; then
 fi
 
 # set locale
-source "${INSTALLER_DIR}/scripts/set_locale.sh"
+source "${INSTALLER_DIR}/set_locale.sh"
 
 # configure unconfigured/broken packages (=safety)
 sudo dpkg --configure -a
