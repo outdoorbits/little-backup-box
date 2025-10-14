@@ -80,7 +80,7 @@ sleep 1
 /usr/bin/swaybg -c '#0f0f0f' &
 
 # start Firefox in kiosk mode
-/usr/bin/firefox --private --kiosk http://localhost:8080 &
+/usr/bin/firefox -setDefaultBrowser -private --kiosk http://localhost:8080 &
 EOF
 
 sudo chmod +x /home/${USER}/.config/labwc/autostart
