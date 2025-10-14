@@ -83,6 +83,25 @@ if [[ ! "${INSTALLER_DIR}" =~ "little-backup-box" ]]; then
     INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/little-backup-box"
 fi
 
+# Clone Little Backup Box
+sudo DEBIAN_FRONTEND=noninteractive \
+		apt-get \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+			git
+
+echo "Cloning Little Backup Box"
+cd
+
+sudo rm -R ${INSTALLER_DIR} 2>/dev/null
+git clone --branch "${branch}" https://github.com/outdoorbits/little-backup-box.git
+GIT_CLONE=$?
+if [ "${GIT_CLONE}" -gt 0 ]; then
+	echo "Cloning little-backup-box from github.com failed. Please try again later."
+	exit 1
+fi
+
 # set locale
 source "${INSTALLER_DIR}/set_locale.sh"
 
@@ -181,7 +200,6 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 			acl \
-			git \
 			screen \
 			rsync \
 			exfat-fuse \
@@ -260,25 +278,14 @@ else
 	sudo sed -i "/^${VAR}/s/\(.[^=]*\)\([ \t]*=[ \t]*\)\(.[^=]*\)/\1\2${VALUE}/" "${CONFIG_TXT}"
 fi
 
-# Clone Little Backup Box
-echo "Cloning Little Backup Box"
-cd
-
-sudo rm -R ${INSTALLER_DIR}
-git clone --branch "${branch}" https://github.com/outdoorbits/little-backup-box.git
-GIT_CLONE=$?
-if [ "${GIT_CLONE}" -gt 0 ]; then
-	echo "Cloning little-backup-box from github.com failed. Please try again later."
-	exit 0
-fi
-
-#write branch into constants
+# configure Little Backup Box
+## write branch into constants
 echo "const_SOFTWARE_BRANCH='${branch}'" | sudo tee -a "${INSTALLER_DIR}/scripts/constants.sh"
 
-# read new constants
+## read new constants
 source "${INSTALLER_DIR}/scripts/constants.sh"
 
-# clean web root, keep still needed files
+## clean web root, keep still needed files
 if [ "${SCRIPT_MODE}" = "update" ]; then
 	# remove files
 	sudo find ${const_WEB_ROOT_LBB} -type f -not -wholename "${const_WEB_ROOT_LBB}/config.cfg" -not -wholename "${const_CMD_RUNNER_LOCKFILE}" -not -wholename "${const_CMD_LOGFILE}" -delete
@@ -287,21 +294,21 @@ if [ "${SCRIPT_MODE}" = "update" ]; then
 	sudo find ${const_WEB_ROOT_LBB} -type d -empty -delete
 fi
 
-# install little-backup-box-files
+## install little-backup-box-files
 sudo mkdir -p "${const_WEB_ROOT_LBB}"
 yes | sudo cp -Rf "${INSTALLER_DIR}/scripts/"* "${const_WEB_ROOT_LBB}/"
 
-# rewrite config files
+## rewrite config files
 sudo python3 "${const_WEB_ROOT_LBB}/lib_setup.py"
 
-# set file permissions in const_WEB_ROOT_LBB
+## set file permissions in const_WEB_ROOT_LBB
 sudo chown ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_WEB_ROOT_LBB}" -R
 sudo chmod 777 ${const_WEB_ROOT_LBB}/*
 
-# write conf_SOFTWARE_DATE_INSTALLED and conf_SOFTWARE_DATE_AVAILABLE into setup
+## write conf_SOFTWARE_DATE_INSTALLED and conf_SOFTWARE_DATE_AVAILABLE into setup
 sudo python3 "${const_WEB_ROOT_LBB}/lib_git.py" --write-installed
 
-# read config file
+## read config file
 CONFIG="${const_WEB_ROOT_LBB}/config.cfg"
 echo "Loading restored settings from ${CONFIG}"
 source "${CONFIG}"
