@@ -1034,7 +1034,7 @@ def get_mounts_list():
 
 	setup	= lib_setup.setup()
 
-	MountPointList	= '\\|'.join(get_mountPoints(setup, ['all'], True))
+	MountPointList	= r'\|'.join(get_mountPoints(setup, ['all'], True))
 
 	SourceCommand	= ["mount"]
 	FilterCommand	= ["grep", MountPointList]
