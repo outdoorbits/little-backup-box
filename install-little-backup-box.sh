@@ -36,8 +36,16 @@ fi
 # get OS release version
 OS_RELEASE=$(lsb_release -a | grep 'Release:' | cut -d':' -f 2 | xargs)
 
-if  [ "${OS_RELEASE}" != "13" ]; then
-	echo "Sorry: Installation or updates are only possible for Raspberry Pi OS Trixie. Older versions are no longer supported."
+if  [ "${OS_RELEASE}" == "13" ]; then
+	echo -e "Info: Detected Raspberry Pi OS Trixie — the current supported and optimized platform for Little Backup Box.\nInstalling the latest version."
+
+elif  [ "${OS_RELEASE}" == "12" ]; then
+	# bookworm
+	echo -e "Note: It looks like you are running an outdated Raspberry Pi OS Bookworm system.\nThe current development version of Little Backup Box is no longer compatible with this release.\nThe last version supporting Bookworm will be installed instead.\nUpgrading to Trixie is strongly recommended."
+	branch='bookworm'; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/${branch}/install-little-backup-box.sh | bash -s -- ${branch} 2> install-error.log
+	exit
+else
+	echo -e "Sorry: Installation and updates are only supported on Raspberry Pi OS Trixie (main branch) and Bookworm (non-asterisk branch).\nThe Bookworm branch is no longer maintained — development has moved to Trixie."
 	exit
 fi
 

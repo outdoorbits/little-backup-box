@@ -114,7 +114,7 @@ In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens
 	<li>Login to your Raspberry Pi. If you are using ssh, there is a report about problems using WINSCP. While WINSCP itself uses putty, it's reported to work with native putty.</li>
 	<li>
 		Run the following command on the Raspberry Pi:<br />
-		<code>branch='trixie'; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/${branch}/install-little-backup-box.sh | bash -s -- ${branch} 2> install-error.log</code><br /><br />
+		<code>branch='main'; curl -sSL https://raw.githubusercontent.com/outdoorbits/little-backup-box/${branch}/install-little-backup-box.sh | bash -s -- ${branch} 2> install-error.log</code><br /><br />
 		Errors are reported into ./install-error.log.
 	</li>
 	<li>
