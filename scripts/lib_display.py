@@ -29,6 +29,8 @@ import shutil
 import subprocess
 import time
 
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class display(object):
 
@@ -104,7 +106,7 @@ class display(object):
 					if not Percent:
 						Percent = 0
 
-					Percent	= re.sub('[^0-9\.]', '', f"0{Percent}")
+					Percent	= re.sub('[^0-9\\.]', '', f"0{Percent}")
 					Percent = float(Percent)
 
 					pgbar_len_done = int(Percent * self.pgbar_len / 100)

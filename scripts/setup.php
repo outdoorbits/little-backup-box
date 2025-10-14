@@ -1446,6 +1446,7 @@ CONFIGDATA;
 						$CloudBaseDirs[$CloudService]	= '';
 					}
 					foreach($CloudBaseDirsRAW as $BaseDir) {
+						if ($BaseDir == '') {continue;}
 						list($CloudService, $CloudBaseDir) = explode('|=|', $BaseDir);
 						$CloudBaseDirs[$CloudService]	= $CloudBaseDir;
 					}

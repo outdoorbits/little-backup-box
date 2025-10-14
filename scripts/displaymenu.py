@@ -20,6 +20,7 @@
 # Provides a menu for the display.
 # It can be used by hardware-buttons. Please read the Wiki at https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu.
 
+import configparser
 from gpiozero import Button
 import sys
 import time
@@ -107,7 +108,10 @@ class menu(object):
 			cloudservices.append('cloud_rsync')
 
 		## rclone services
-		rclone_cloudservices	= subprocess.check_output('sudo rclone config show --config "{}" | grep "^\[.*\]$" | sed "s/^\[//" | sed "s/\]$//"'.format(self.RCLONE_CONFIG_FILE),shell=True).decode('UTF-8').strip().split('\n')
+		cfg = configparser.ConfigParser()
+		cfg.read(self.RCLONE_CONFIG_FILE)
+		rclone_cloudservices = cfg.sections()
+
 		for i in range(len(rclone_cloudservices)):
 			cloudservices.append(f'cloud:{rclone_cloudservices[i]}')
 

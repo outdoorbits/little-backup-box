@@ -59,7 +59,9 @@ sudo DEBIAN_FRONTEND=noninteractive \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-		zip php-zip php-mbstring
+		zip \
+		php-zip \
+		php-mbstring
 
 # Remove obsolete packages
 sudo apt-get autoremove -y
