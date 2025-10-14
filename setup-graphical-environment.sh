@@ -18,8 +18,7 @@
 #######################################################################
 
 # expected from calling script
-## const_WEB_ROOT_LBB
-## USER_WWW_DATA
+## nothing
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
@@ -38,15 +37,8 @@ USER="lbb-desktop"
 # create user
 sudo useradd --create-home -s /bin/bash ${USER}
 
-# remove wireplumber - causing high cpu load
-sudo DEBIAN_FRONTEND=noninteractive \
-		apt-get purge wireplumber -y
-
-sudo DEBIAN_FRONTEND=noninteractive \
-		apt-get autoremove -y
-
-# auto logon $USER
-## enable auto login
+# auto logon ${USER}
+## enable desktop and auto login
 sudo raspi-config nonint do_boot_behaviour B4
 
 ## edit /etc/lightdm/lightdm.conf to set auto login user
@@ -56,53 +48,40 @@ VAR="autologin-user"
 NEW_VALUE="${USER}"
 sudo sed $CONFIG_FILE -i -e "s/^\(#\|\)${VAR}=.*/${VAR}=${NEW_VALUE}/"
 
-lightdm-xsession
-VAR="autologin-session"
-NEW_VALUE="lightdm-xsession"
-sudo sed $CONFIG_FILE -i -e "s/^\(#\|\)${VAR}=.*/${VAR}=${NEW_VALUE}/"
-
 # disable auto mount for user
-CONFIG_DIR="/home/$USER/.config/pcmanfm/LXDE-pi"
-CONFIG_FILE="${CONFIG_DIR}/pcmanfm.conf"
+sudo mkdir -p /etc/polkit-1/rules.d
+sudo tee /etc/polkit-1/rules.d/10-no-automount-${USER}.rules >/dev/null <<EOF
+polkit.addRule(function(action, subject) {
+  if (subject.user == "${USER}" &&
+      action.id.indexOf("org.freedesktop.udisks2.filesystem-mount") === 0) {
+    return polkit.Result.NO;
+  }
+});
+EOF
 
-sudo -u $USER  mkdir -p $CONFIG_DIR
-echo """[volume]
-mount_on_startup=0
-mount_removable=0
-autorun=0
-""" | sudo -u $USER tee $CONFIG_FILE
+sudo service polkit restart
 
-# set background
-BG_FILE="lbb-desktop.png"
-BG_DIR="/home/$USER/backgrounds"
+## legacy fallback to prevent auto mount
+sudo -u ${USER} mkdir -p /home/${USER}/.config/gtk-3.0
+cat <<EOF | sudo -u ${USER} tee /home/${USER}/.config/gtk-3.0/settings.ini
+[Settings]
+gtk-enable-auto-mount=false
+gtk-enable-auto-mount-open=false
+EOF
 
-sudo -u $USER mkdir -p "${BG_DIR}"
-sudo cp "${INSTALLER_DIR}/img/${BG_FILE}" "${BG_DIR}"
-sudo chown $USER:$USER "${BG_DIR}" -R
+# set background and start browser in kiosk mode
+sudo -u "${USER}" mkdir -p /home/${USER}/.config/labwc
+cat <<EOF | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/null
+#!/bin/sh
+# Labwc autostart script
+sleep 1
 
-echo """[*]
-wallpaper_mode=crop
-wallpaper_common=1
-wallpaper=${BG_DIR}/${BG_FILE}
-desktop_bg=#ffffff
-desktop_fg=#e8e8e8
-desktop_shadow=#d6d3de
-desktop_font=PibotoLt 12
-show_wm_menu=0
-sort=mtime;ascending;
-show_documents=0
-show_trash=0
-show_mounts=0
-""" | sudo -u $USER tee /home/$USER/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
+# set background color
+/usr/bin/swaybg -c '#0f0f0f' &
 
+# start Firefox in kiosk mode
+/usr/bin/firefox --private --kiosk http://localhost:8080 &
+EOF
 
-# auto start browser
-AUTOSTART_USER_DIR="/home/$USER/.config/autostart"
-
-sudo -u $USER mkdir -p $AUTOSTART_USER_DIR
-echo """[Desktop Entry]
-Type=Application
-Name=little-backup-box
-Exec=firefox -setDefaultBrowser -private --kiosk=http://localhost:8080
-Terminal=false
-""" | sudo -u $USER tee $AUTOSTART_USER_DIR/little-backup-box.desktop
+sudo chmod +x /home/${USER}/.config/labwc/autostart
+sudo chown -R "${USER}:${USER}" /home/${USER}/.config/labwc
