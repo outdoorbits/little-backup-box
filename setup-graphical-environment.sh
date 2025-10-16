@@ -84,7 +84,7 @@ sudo chown -R "root:root" "${BG_DIR}/${BG_FILE}"
 sudo chmod -R 644 "${BG_DIR}/${BG_FILE}"
 
 # activate wallpaper
-sudo find /etc/xdg/pcmanfm/default -type f -name 'desktop-items-?.conf' -exec sed -i.bak 's|^wallpaper=.*|wallpaper=/usr/share/rpd-wallpaper/black.jpg|' {} +
+sudo find /etc/xdg/pcmanfm/default -type f -name 'desktop-items-?.conf' -exec sed -i "s|^wallpaper=.*|wallpaper=${BG_DIR}/${BG_FILE}|" {} +
 
 # set background and start browser in kiosk mode
 sudo -u "${USER}" mkdir -p /home/${USER}/.config/labwc

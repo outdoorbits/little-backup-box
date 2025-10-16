@@ -64,10 +64,14 @@ class comitup(object):
 
 	def new_status(self, status):
 		# display new status
+		status_translated	= None
 		if status in ['HOTSPOT', 'CONNECTING', 'CONNECTED']:
 			status_translated	= self.__lan.l(f'box_comitup_status_{status}')
 			status_translated	= status_translated if status_translated!=f'box_comitup_status_{status}' else status
+		elif status == 'RESET':
+			status_translated	= self.__lan.l('box_comitup_reset_done')
 
+		if status_translated is not None:
 			self.__display.message([f'set:temp,time={self.__conf_DISP_FRAME_TIME * 4}', ':Comitup:', f':{status_translated}'], logging=False)
 
 		# setup apache ports
@@ -85,7 +89,7 @@ class comitup(object):
 			for Port in BasicPorts:
 				f.write(f'Listen {Port}\n')
 
-			if not (status == 'HOTSPOT' or self.check_hotspot()):
+			if not (status in ['HOTSPOT', 'RESET'] or self.check_hotspot()):
 				f.write(f'Listen 80\n')
 
 		subprocess.run('service apache2 restart || service apache2 start', shell=True)
@@ -94,8 +98,14 @@ class comitup(object):
 		return(len([p for p in psutil.process_iter() if 'comitup-web' in p.name()]) > 0)
 
 	def reset(self):
-		subprocess.run(['sudo', 'comitup-cli', 'd'])
-		self.new_status('RESET')
+		try:
+			subprocess.run(['sudo', 'comitup-cli', 'd'])
+			subprocess.run(['sudo', 'systemctl', 'restart', 'comitup'])
+		except:
+			pass
+		else:
+			# adapt apache ports
+			self.new_status('RESET')
 
 
 if __name__ == "__main__":
