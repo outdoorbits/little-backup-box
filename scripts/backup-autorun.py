@@ -127,9 +127,13 @@ class backup_autorun(object):
 		ip_info.display_ip()
 
 		# ip_info.mail_ip() starts as thread
-		mail_thread	= ip_info.mail_ip()
-		if mail_thread:
-			self.__mail_threads_started.append(mail_thread)
+		try:
+			mail_thread	= ip_info.mail_ip()
+		except:
+			pass
+		else:
+			if mail_thread:
+				self.__mail_threads_started.append(mail_thread)
 
 	def __default_backup(self):
 
