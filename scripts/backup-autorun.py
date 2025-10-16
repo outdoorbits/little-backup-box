@@ -76,13 +76,7 @@ class backup_autorun(object):
 
 		self.__display_hello()
 
-		# ip info
-		ip_info	= lib_cron_ip.ip_info()
-
-		ip_info.display_ip()
-
-		# ip_info.mail_ip() starts as thread
-		self.__mail_threads_started.append(ip_info.mail_ip())
+		self.__ip_info()
 
 		self.__default_backup()
 
@@ -125,6 +119,17 @@ class backup_autorun(object):
 			self.__display.message(['set:time=2', f':IMAGE={self.WORKING_DIR}/img/little-backup-box-color.png'])
 
 		lib_cron_ip.ip_info().display_ip()
+
+	def __ip_info(self):
+		# ip info
+		ip_info	= lib_cron_ip.ip_info()
+
+		ip_info.display_ip()
+
+		# ip_info.mail_ip() starts as thread
+		mail_thread	= ip_info.mail_ip()
+		if mail_thread:
+			self.__mail_threads_started.append(mail_thread)
 
 	def __default_backup(self):
 
