@@ -28,12 +28,23 @@ import time
 
 import lib_setup
 
-def get_IPs(OneLine=False):
+# import lib_debug
+# xx	= lib_debug.debug()
 
-	IPs	= subprocess.check_output(['nmcli', '-g', 'IP4.ADDRESS', 'device', 'show']).decode().strip().replace('|', '\n').replace(' ', '\n').split('\n')
+def get_IPs(OneLine=False):
+	IPs	= []
+	try_count	= 0
+	while try_count <= 3:
+		try_count	+= 1
+		try:
+			IPs	= subprocess.check_output(['nmcli', '-g', 'IP4.ADDRESS', 'device', 'show']).decode().strip().replace('|', '\n').replace(' ', '\n').split('\n')
+			break
+		except:
+			time.sleep(1)
+
 	IPs	= [IP for IP in IPs if IP.strip()]
 	IPs	= [IP.split('/')[0] for IP in IPs]
-	IPs	= [IP for IP in IPs if IP != '127.0.0.1']
+	IPs	= [IP for IP in IPs if not IP.startswith('127.0.0.')]
 
 	if OneLine:
 		if len(IPs) < 1:
