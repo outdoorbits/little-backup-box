@@ -80,73 +80,80 @@
 <!-- 			outer navigation pannel -->
 			<div class="card" style="margin-top: 2em; display: inline-block; width: 100%">
 
+				<div style="display:flow-root; width:100%;">
 <!-- 			left pannel -->
-				<div style="float:left; padding: 5px;">
-					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_FIRST; ?>" style="margin-right: 3ch;"><svg width='24' height='24'><use href='#icon-move-first' /></a>
-					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_PRE; ?>" style="margin-right: 3ch;"><svg width='24' height='24'><use href='#icon-move-left' /></a>
-					<?php
-
-						// images count
-						echo $imagecount . ' ' . L::view_images_images . "\n";
-
-						echo "<br />";
-						echo "<button type='submit' name='ID' value='${IMAGE_ID_PRE}' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-left' /></svg></button>";
-					?>
-				</div>
+					<div style="float:left; padding: 5px;">
+						<?php
+						// navigation left
+							echo "<a href='<?php echo ${GET_PARAMETER}&ID=${IMAGE_ID_FIRST}'><svg width='24' height='24'><use href='#icon-move-first' /></a>";
+							echo "<a href='<?php echo ${GET_PARAMETER}&ID=${IMAGE_ID_PRE}' style='margin-left: 3ch;'><svg width='24' height='24'><use href='#icon-move-left' /></a>";
+							// save
+							echo "<br />";
+							echo "<button type='submit' name='ID' value='${IMAGE_ID_PRE}' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-left' /></svg></button>";
+						?>
+					</div>
 
 <!-- 				right pannel -->
-				<div style="float:right; padding: 5px; text-align: right">
-					<?php
+					<div style="float:right; padding: 5px; text-align: right;">
+						<?php
+							// navigation right
+							echo "<a href='${GET_PARAMETER}&ID=${IMAGE_ID_POST}'><svg width='24' height='24'><use href='#icon-move-right' /></a>";
+							echo "<a href='${GET_PARAMETER}&ID=${IMAGE_ID_LAST}' style='margin-left: 3ch;'><svg width='24' height='24'><use href='#icon-move-last' /></a>";
+							// save
+							echo "<br />";
+							echo "<button type='submit' name='ID' value='${IMAGE_ID_POST}' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-right' /></button>";
+						?>
+					</div>
 
-						// order by date
-						$link_order_text	= $label_creationdate;
-						$link_order			= $GET_PARAMETER . "&order_by=Create_Date&order_dir=";
-						if ($order_by=="Create_Date") {
-							$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
-							$link_order_text	= "<b>" . $link_order_text . "</b>";
-							$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
-						} else {
-							$link_order			.= "ASC";
-						}
-						echo "<a href='" . $link_order . "' style='margin-left: 3ch;'>" . $link_order_text . "</a>";
+<!-- 				center pannel -->
+					<div style="padding: 5px; text-align:center;">
+						<?php
+							// images count
+							echo "${imagecount}&nbsp;" . L::view_images_images;
 
-						// order by filename
-						$link_order_text	= $label_filename;
-						$link_order			= $GET_PARAMETER . "&order_by=File_Name&order_dir=";
-						if ($order_by=="File_Name") {
-							$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
-							$link_order_text	= "<b>" . $link_order_text . "</b>";
-							$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
-						} else {
-							$link_order			.= "ASC";
-						}
-						echo "<a href='" . $link_order . "' style='margin-left: 3ch;'>" . $link_order_text . "</a>";
+							// order by date
+							$link_order_text	= $label_creationdate;
+							$link_order			= $GET_PARAMETER . "&order_by=Create_Date&order_dir=";
+							if ($order_by=="Create_Date") {
+								$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
+								$link_order_text	= "<b>" . $link_order_text . "</b>";
+								$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
+							} else {
+								$link_order			.= "ASC";
+							}
+							echo "<a href='${link_order}' style='margin-left: 3ch;'>${link_order_text}</a>";
 
-						// order by id
-						$link_order_text	= $label_id;
-						$link_order			= $GET_PARAMETER . "&order_by=ID&order_dir=";
-						if ($order_by=="ID") {
-							$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
-							$link_order_text	= "<b>" . $link_order_text . "</b>";
-							$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
-						} else {
-							$link_order			.= "ASC";
-						}
-						echo "<a href='" . $link_order . "' style='margin-left: 3ch; margin-right: 3ch;'>" . $link_order_text . "</a>";
+							// order by filename
+							$link_order_text	= $label_filename;
+							$link_order			= $GET_PARAMETER . "&order_by=File_Name&order_dir=";
+							if ($order_by=="File_Name") {
+								$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
+								$link_order_text	= "<b>" . $link_order_text . "</b>";
+								$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
+							} else {
+								$link_order			.= "ASC";
+							}
+							echo "<a href='${link_order}' style='margin-left: 3ch;'>${link_order_text}</a>";
 
-						// pages
-						$page	= intval(($select_offset + 2) / $filter_images_per_page) + 1;
-						$pages	= intval($imagecount / $filter_images_per_page) + 1;
-						echo L::view_images_page . ' ' . $page . '/' . $pages;
+							// order by id
+							$link_order_text	= $label_id;
+							$link_order			= $GET_PARAMETER . "&order_by=ID&order_dir=";
+							if ($order_by=="ID") {
+								$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
+								$link_order_text	= "<b>" . $link_order_text . "</b>";
+								$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
+							} else {
+								$link_order			.= "ASC";
+							}
+							echo "<a href='${link_order}' style='margin-left: 3ch; margin-right: 3ch;'>${link_order_text}</a>";
 
-						// navigation
-						echo "<a href='${GET_PARAMETER}&ID=${IMAGE_ID_POST}' style='margin-left: 3ch;'><svg width='24' height='24'><use href='#icon-move-right' /></a>";
-						echo "<a href='${GET_PARAMETER}&ID=${IMAGE_ID_LAST}' style='margin-left: 3ch;'><svg width='24' height='24'><use href='#icon-move-last' /></a>";
+							// pages
+							$page	= intval(($select_offset + 2) / $filter_images_per_page) + 1;
+							$pages	= intval($imagecount / $filter_images_per_page) + 1;
+							echo L::view_images_page . '&nbsp;' . $page . '/' . $pages;
+						?>
+					</div>
 
-						echo "<br />";
-						// save
-						echo "<button type='submit' name='ID' value='${IMAGE_ID_POST}' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-right' /></button>";
-					?>
 				</div>
 
 <!-- 				lower pannel -->
