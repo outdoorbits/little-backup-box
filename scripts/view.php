@@ -77,14 +77,28 @@
 	) {
 		if ($view_mode == "grid") {
 			?>
-			<div class="card" style="margin-top: 2em;display: inline-block;width: 100%">
-				<div style="float:left;width: 50%;padding: 5px;">
-					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_FIRST; ?>">&lt;&lt;</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_PRE; ?>">&lt;</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;
+<!-- 			outer navigation pannel -->
+			<div class="card" style="margin-top: 2em; display: inline-block; width: 100%">
+
+<!-- 			left pannel -->
+				<div style="float:left; padding: 5px;">
+					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_FIRST; ?>" style="margin-right: 3ch;"><svg width='24' height='24'><use href='#icon-move-first' /></a>
+					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_PRE; ?>" style="margin-right: 3ch;"><svg width='24' height='24'><use href='#icon-move-left' /></a>
 					<?php
 
+						// images count
+						echo $imagecount . ' ' . L::view_images_images . "\n";
+
+						echo "<br />";
+						echo "<button type='submit' name='ID' value='${IMAGE_ID_PRE}' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-left' /></svg></button>";
+					?>
+				</div>
+
+<!-- 				right pannel -->
+				<div style="float:right; padding: 5px; text-align: right">
+					<?php
+
+						// order by date
 						$link_order_text	= $label_creationdate;
 						$link_order			= $GET_PARAMETER . "&order_by=Create_Date&order_dir=";
 						if ($order_by=="Create_Date") {
@@ -94,16 +108,9 @@
 						} else {
 							$link_order			.= "ASC";
 						}
-						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
+						echo "<a href='" . $link_order . "' style='margin-left: 3ch;'>" . $link_order_text . "</a>";
 
-						$page	= intval(($select_offset + 2) / $filter_images_per_page) + 1;
-						$pages	= intval($imagecount / $filter_images_per_page) + 1;
-						echo "&nbsp;&nbsp;&nbsp;&nbsp;" . L::view_images_page . ' ' . $page . '/' . $pages;
-					?>
-				</div>
-
-				<div style="float:right;width: 50%;padding: 5px;text-align: right">
-					<?php
+						// order by filename
 						$link_order_text	= $label_filename;
 						$link_order			= $GET_PARAMETER . "&order_by=File_Name&order_dir=";
 						if ($order_by=="File_Name") {
@@ -113,11 +120,9 @@
 						} else {
 							$link_order			.= "ASC";
 						}
+						echo "<a href='" . $link_order . "' style='margin-left: 3ch;'>" . $link_order_text . "</a>";
 
-						echo $imagecount . ' ' . L::view_images_images . "&nbsp;&nbsp;&nbsp;&nbsp;";
-
-						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>&nbsp;&nbsp;&nbsp;&nbsp;";
-
+						// order by id
 						$link_order_text	= $label_id;
 						$link_order			= $GET_PARAMETER . "&order_by=ID&order_dir=";
 						if ($order_by=="ID") {
@@ -127,22 +132,28 @@
 						} else {
 							$link_order			.= "ASC";
 						}
-						echo "<a href='" . $link_order . "'>" . $link_order_text . "</a>";
+						echo "<a href='" . $link_order . "' style='margin-left: 3ch; margin-right: 3ch;'>" . $link_order_text . "</a>";
+
+						// pages
+						$page	= intval(($select_offset + 2) / $filter_images_per_page) + 1;
+						$pages	= intval($imagecount / $filter_images_per_page) + 1;
+						echo L::view_images_page . ' ' . $page . '/' . $pages;
+
+						// navigation
+						echo "<a href='${GET_PARAMETER}&ID=${IMAGE_ID_POST}' style='margin-left: 3ch;'><svg width='24' height='24'><use href='#icon-move-right' /></a>";
+						echo "<a href='${GET_PARAMETER}&ID=${IMAGE_ID_LAST}' style='margin-left: 3ch;'><svg width='24' height='24'><use href='#icon-move-last' /></a>";
+
+						echo "<br />";
+						// save
+						echo "<button type='submit' name='ID' value='${IMAGE_ID_POST}' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-right' /></button>";
 					?>
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_POST; ?>">&gt;</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="<?php echo $GET_PARAMETER . "&ID=" . $IMAGE_ID_LAST; ?>">&gt;&gt;</a>
 				</div>
 
-				<div style="display: flow-root;width: 100%">
+<!-- 				lower pannel -->
+				<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
 
-					<div style="float:left;width: 50%;padding: 5px">
+					<div style="padding: 5px;">
 						<?php
-							if ($filter_rating == -1) {
-								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"delete_ratings_reject\" class=\"danger\">" . L::view_ratings_1_delete_button . "</button>";
-							}
-
 							if ($gridcolumns > 1) {
 								echo ("<a href=\"{$GET_PARAMETER}&ID={$IMAGE_ID}&gridcolumns=1\" title=\"" . L::view_grid_single . "\"><svg width=\"2em\" height=\"2em\" class=\"flex-shrink-0\"><use href=\"#icon-columns-one\"></use></svg></a>");
 							} else {
@@ -151,14 +162,21 @@
 						?>
 					</div>
 
-					<div style="float:right;width: 50%;padding: 5px;text-align: right;">
-						<button style="margin-top: 2em;" type="submit" name="save_ratings"><?php echo L::view_ratings_save_button; ?></button>
+					<?php
+							if ($filter_rating == -1) {
+								echo "<div style='padding: 5px;'><button type='submit' name='delete_ratings_reject' class='danger'>" . L::view_ratings_1_delete_button . "</button></div>";
+							}
+					?>
+
+					<div style='padding: 5px; text-align: right;'>
+						<button type='submit' name='save_ratings' title='<?php echo L::view_ratings_save_button; ?>'><?php echo L::view_ratings_save_button; ?></button>
 					</div>
 
 				</div>
 			</div>
 			<?php
 		} else {
+
 // 			$view_mode="single"
 			?>
 			<input type="hidden" name="slideshow_next_link" id="slideshow_next_link" value="<?php echo ($IMAGE_ID_POST ==  0 ? $GET_PARAMETER . "&ID=" . $IMAGE_ID_FIRST : $GET_PARAMETER . "&ID=" . $IMAGE_ID_POST); ?>">
@@ -195,7 +213,7 @@
 <!-- 						previous -->
 						<?php
 							if ($IMAGE_ID_PRE > 0) {
-								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"ID\" value=\"" . $IMAGE_ID_PRE . "\">&lt; " . L::view_ratings_save_button_back . "</button>";
+								echo "<button style='margin-top: 2em;' type='submit' name='ID' value='" . $IMAGE_ID_PRE . "' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-left' /></button>";
 							} else {
 								echo "&nbsp;";
 							}
@@ -204,14 +222,14 @@
 
 <!-- 					this -->
 					<div style="float:left;width: 34%;text-align: center;padding: 0;">
-						<button style="margin-top: 2em;" type="submit" name="ID" value="<?php echo $IMAGE_ID; ?>"><?php echo L::view_ratings_save_button ?></button>
+						<button style="margin-top: 2em;" type="submit" name="ID" value="<?php echo $IMAGE_ID; ?>" title='<?php echo L::view_ratings_save_button; ?>'><?php echo L::view_ratings_save_button ?></button>
 					</div>
 
 <!-- 					next -->
 					<div style="float:left;width: 33%;text-align: right;padding: 0;">
 						<?php
 							if ($IMAGE_ID_POST > 0) {
-								echo "<button style=\"margin-top: 2em;\" type=\"submit\" name=\"ID\" value=\"" . $IMAGE_ID_POST . "\">" . L::view_ratings_save_button_next . " &gt;</button>";
+								echo "<button style='margin-top: 2em;' type='submit' name='ID' value='" . $IMAGE_ID_POST . "' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-right' /></button>";
 							} else {
 								echo "&nbsp;";
 							}

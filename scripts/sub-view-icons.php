@@ -204,4 +204,24 @@ HTML;
 			transform="translate(0,1)"/>
 	</symbol>
 
+<!-- 	move in image list -->
+	<symbol id="icon-move-left" viewBox="0 0 24 24">
+		<path d="M15 6L9 12L15 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	</symbol>
+
+	<symbol id="icon-move-right" viewBox="0 0 24 24">
+		<path d="M9 6L15 12L9 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	</symbol>
+
+	<symbol id="icon-move-first" viewBox="0 0 24 24">
+		<path d="M17 6L11 12L17 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+		<line x1="7" y1="6" x2="7" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+	</symbol>
+
+	<symbol id="icon-move-last" viewBox="0 0 24 24">
+		<path d="M7 6L13 12L7 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+		<line x1="17" y1="6" x2="17" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+	</symbol>
+
+
 </svg>

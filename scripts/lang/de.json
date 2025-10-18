@@ -817,8 +817,6 @@
       "header": "Diashow",
       "stop": "anhalten"
     },
-    "ratings_save_button_next": "weiter",
-    "ratings_save_button_back": "zurück",
     "date_format_python": "Xd.Xm.XY XH:XM:XS",
     "social": {
       "publish_on": "veröffentlichen auf",
@@ -827,7 +825,7 @@
     },
     "grid": {
       "multi": "mehrspaltige Anzeige",
-      "single": "einspaltig"
+      "single": "einspaltige Anzeige"
     },
     "saved": "Änderungen gespeichert",
     "characters": "Zeichen"

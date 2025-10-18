@@ -817,8 +817,6 @@
       "header": "Slideshow",
       "stop": "stop"
     },
-    "ratings_save_button_next": "next",
-    "ratings_save_button_back": "back",
     "date_format_python": "Xd/Xm/XY XH:XM:XS",
     "social": {
       "publish_on": "publish on",
