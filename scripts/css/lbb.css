@@ -163,15 +163,15 @@ ul.danger {
 }
 
 /* marking borders of media files following the rating */
-img.rating-1, video.rating1, audio.rating1 {
+img.rating-1, video.rating-1, audio.rating-1 {
 	border: 3px solid #F00;
 }
 
-img.rating0, video.rating2, audio.rating2 {
+img.rating0, video.rating0, audio.rating0 {
 	border: 0px;
 }
 
-img.rating1, video.rating2, audio.rating2 {
+img.rating1, video.rating1, audio.rating1 {
 	border: 0px;
 }
 
