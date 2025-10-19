@@ -49,7 +49,7 @@ These languages are already available. Do you want to maintain or create a trans
 <a href="gallery.md">Have a look at the gallery</a><br />
 <a href="resources.md">Web resources</a><br /><br />
 <h2>Features</h2>
-Some of the features of the web user interface are
+Some of the features of the box and the web user interface are
 <ul>
 	<li>
 		<b>automate backup from</b>
@@ -93,11 +93,14 @@ Some of the features of the web user interface are
 It's your swiss army knife for reliably performing, checking and managing backups on the go.
 
 <h2>Development status</h2>
-Little Backup Box is still under construction.<br />
-<b>Please test your Installation carefully before productive use!</b><br />
-Little Backup Box has undergone massive development over the past few months. At the moment, no further major innovations are planned. Instead, the focus should now be on finding and correcting any errors and making the system even more reliable.<br />
-Hence the request: Test, test, test!<br />
-Please give feedback on problems or translation errors but also on the successful use, if possible with details of your equipment.<br /><br />
+Little Backup Box has reached a largely stable and functional stage.
+While new features are still being added from time to time - which may initially require some fine-tuning - the established core functions are now highly reliable.
+
+Nevertheless, thorough testing after installation is still recommended, especially on new hardware configurations.
+Please continue to report any issues, translation errors, or suggestions for improvement - but also share your positive experiences, ideally including details of your setup.
+
+Regular updates are strongly recommended to benefit from ongoing refinements and fixes.
+
 <h2>Please mind the wiki!</h2>
 As there is no manual available anymore, the github-wiki should replace it one day: <a href="https://github.com/outdoorbits/little-backup-box/wiki">https://github.com/outdoorbits/little-backup-box/wiki</a>. It's not particularly detailed yet, but it can certainly help with the most common questions.
 
