@@ -209,12 +209,10 @@ If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.
 </ol>
 
 <h2>Authors</h2>
-Stefan Saam, founder is <a href="https://www.tokyoma.de/">Dmitri Popov</a>. He has entrusted me with the further maintenance of Little Backup Box. Thank you Dima for this great project.
+The project now is maintained by Stefan Saam. Founder is Dmitri Popov.
 
 <h2>Contributors</h2>
 <ul>
-	<li>Dmitri Popov</li>
-	<li>Kerry Staite (STL files)</li>
 	<li><a href="https://github.com/munecito">munecito</a> (corrections of the Spanish translation)</li>
 </ul>
 
