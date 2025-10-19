@@ -241,6 +241,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 			python3-dateutil \
 			python3-urllib3 \
 			python3-python-telegram-bot \
+			python3-websockets \
 			smartmontools \
 			dos2unix
 
