@@ -3,6 +3,16 @@
 
 <a href="#installation"><b>Jump to installation instructions</b></a>
 <h2>About</h2>
+Little Backup Box turns a Raspberry Pi into a powerful, mobile backup and media management hub - ideal for photographers, travelers, and professionals working on the go.
+
+It can automatically back up files from cameras, smartphones, and storage devices to local drives, or a wide range of cloud services - including Google Drive, Dropbox, OneDrive, Nextcloud, WebDAV, and many others. Acting as a central hub, Little Backup Box aggregates media from multiple sources and can automatically forward them for further processing, archiving, or publishing.
+
+For remote and secure workflows, Little Backup Box supports VPN integration, allowing cloud synchronization and management through encrypted connections - ideal when operating over public or mobile networks.
+
+Through its responsive web interface, users can view, rate, and filter backed-up photos and videos directly on the device. Selected media can then be automatically uploaded to the cloud or shared on social networks, enabling efficient and flexible media handling anywhere.
+
+Little Backup Box is designed to operate autonomously and efficiently - no external computer required - making it a versatile solution for travel, field work, and event photography workflows.
+
 Depending on your needs and options, little-backup-box can be operated in a simple housing, with a display (possibly with buttons for the display menu) or even with a touchscreen. <br />
 Thanks to the web interface, functionality is fully guaranteed in any case.<br /><br />
 <img src="https://raw.githubusercontent.com/outdoorbits/media/main/little-backup-box/lbb-orange.jpg"  align="left" title="Little Backup Box in its 3D printed case"><BR CLEAR="all">
@@ -17,11 +27,6 @@ Little Backup Box in a tiny protected housing for Raspberry Pi zero 2W</a><br />
 <img src="https://raw.githubusercontent.com/outdoorbits/case-for-little-backup-box/main/Raspberry_Pi_5_SSD/images/little_backup_box_raspberry_finished.jpg"  align="left" title="Housing for Raspberry Pi 5, SSD included"><BR CLEAR="all">
 Little Backup Box with integrated SSD and improved power supply.</a><br /><br />
 
-This software turns a single-board computer into a versatile, pocket-sized backup solution.<br />
-Especially for digital photography, this is the solution for backing up images and media files on mass storage devices when traveling or at events.<br />
-Backups can be made directly from many cameras and smartphones. Of course, USB storages (card reader) can also serve as a source.<br />
-Your valuable data can be backed up on cloud storage from numerous providers - even with VPN protection if necessary.<br />
-Media content can be viewed and rated for the subsequent process.<br /><br /><br />
 <table>
 	<tr>
 		<td>
