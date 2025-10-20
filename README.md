@@ -107,7 +107,7 @@ As there is no manual available anymore, the github-wiki should replace it one d
 <h2 id="installation">Installation</h2>
 <ol>
 	<li>
-		Create a bootable SD card with <b>Raspberry Pi OS (Trixie)</b> for use with Little Backup Box. If you don't plan to use a graphic environment on a regular monitor, you are recommended to use the lite version.'<br />
+		Create a bootable SD card with <b>Raspberry Pi OS (Trixie)</b> for use with Little Backup Box. If you don't plan to use a graphic environment on a regular monitor, you are recommended to use the lite version.<br />
 An easy way is to use <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a>. Please select "Raspberry Pi OS (other)" > "Raspberry Pi OS Lite (32-bit)" or "Raspberry Pi OS Lite (64-bit)".<br />
 In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens the options-dialog. Here you can ...
 		<ul>

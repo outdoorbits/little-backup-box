@@ -668,7 +668,7 @@ BUT DON'T WORRY!\Zn
 The installation will finish seconds later, but maybe you won't see that progress on screen anymore. Your raspberry pi will reboot when setup is finished. Have a look at the action-LED.
 
 \ZuWhat's going on?\Zn
-	Your raspberrys wifi-configuration has been removed by comitup now. Because comitup has no
+Your raspberrys wifi-configuration has been removed by comitup now. Because comitup has no
 access-data for your wifi yet, it can't connect to it and will start as a wifi-hotspot:
 ssid=little-backup-box-nnnn (nnnn is a random number).
 
@@ -676,25 +676,25 @@ Please connect your mobile or notebook to this wifi.
 
 \ZuThere are two options now:\Zn
 
- 1. If you want to configure comitup now, navigate to \Zb\Z1http\Zn://10.41.0.1 (http, not https!)
- and connect your lbb to your wifi.
- Connect your mobile or notbook to the same wifi. If you use a display on your lbb, it will
- tell you its new IP. Connect to lbb:
- \Zb\Z1https\Zn://IP.IN.YOUR.WIFI (secure, certificate can't be verified automatically, please confirm it)
- \Zb\Z1http\Zn://IP.IN.YOUR.WIFI:8080 (insecure)
+1. If you want to configure comitup now, navigate to \Zb\Z1http\Zn://10.41.0.1 (http, not https!)
+and connect your lbb to your wifi.
+Connect your mobile or notbook to the same wifi. If you use a display on your lbb, it will
+tell you its new IP. Connect to lbb:
+\Zb\Z1https\Zn://IP.IN.YOUR.WIFI (secure, certificate can't be verified automatically, please confirm it)
+\Zb\Z1http\Zn://IP.IN.YOUR.WIFI:8080 (insecure)
 
- 2. Alternatively can reach the web UI of Little Backup Box when you are connected to its
- hotspot as follows:
+2. Alternatively can reach the web UI of Little Backup Box when you are connected to its
+hotspot as follows:
 
- \Zb\Z1https\Zn://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)
- \Zb\Z1http\Zn://10.41.0.1:8080 (insecure)
+\Zb\Z1https\Zn://10.41.0.1 (secure, certificate can't be verified automatically, please confirm it)
+\Zb\Z1http\Zn://10.41.0.1:8080 (insecure)
 
- Please use the settings of the web UI to optimally adapt the Little Backup Box for you.
+Please use the settings of the web UI to optimally adapt the Little Backup Box for you.
 
- If you have further questions, please check the wiki first:
- https://github.com/outdoorbits/little-backup-box/wiki
+If you have further questions, please check the wiki first:
+https://github.com/outdoorbits/little-backup-box/wiki
 
- We are always happy to receive your feedback!
+We are always happy to receive your feedback!
 
 Press OK to proceed...
 EOM
