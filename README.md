@@ -187,7 +187,7 @@ In Raspberry Pi Imager you can define options for your image. Shift+Ctrl+x opens
 </ol>
 
 <h2>Start</h2>
-If everything went well, it's done! Open a browser and enter [[https://IP.OF.YOUR.BOX]], [[http://IP.OF.YOUR.BOX:8080]] or even [[https://lbb.local]] or [[http://lbb.local]] <br />Have fun!
+If everything went well, it's done! Open a browser and enter https://IP.OF.YOUR.BOX, http://IP.OF.YOUR.BOX:8080 or even https://lbb.local or http://lbb.local <br />Have fun!
 
 <h2 id="update">Update</h2>
 <ul>
