@@ -116,7 +116,7 @@
 							$link_order			= $GET_PARAMETER . "&order_by=Create_Date&order_dir=";
 							if ($order_by=="Create_Date") {
 								$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
-								$link_order_text	= "<b>" . $link_order_text . "</b>";
+								$link_order_text	= "<b>$link_order_text</b>";
 								$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
 							} else {
 								$link_order			.= "ASC";
@@ -128,7 +128,7 @@
 							$link_order			= $GET_PARAMETER . "&order_by=File_Name&order_dir=";
 							if ($order_by=="File_Name") {
 								$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
-								$link_order_text	= "<b>" . $link_order_text . "</b>";
+								$link_order_text	= "<b>$link_order_text</b>";
 								$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
 							} else {
 								$link_order			.= "ASC";
@@ -140,7 +140,7 @@
 							$link_order			= $GET_PARAMETER . "&order_by=ID&order_dir=";
 							if ($order_by=="ID") {
 								$link_order_text	.= $order_dir == "ASC"?"&darr;":"&uarr;"; #symbol reversed because of print-direction up to down
-								$link_order_text	= "<b>" . $link_order_text . "</b>";
+								$link_order_text	= "<b>$link_order_text</b>";
 								$link_order			.= $order_dir == "ASC"?"DESC":"ASC";
 							} else {
 								$link_order			.= "ASC";

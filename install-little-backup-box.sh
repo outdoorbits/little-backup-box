@@ -124,34 +124,6 @@ else
 fi
 
 # Do all user-interactions
-
-## Prompt to choose the default backup mode
-CHOICE_BACKUP_MODE=1
-if [ "${SCRIPT_MODE}" = "install" ]; then
-	OPTIONS=(
-		1 "none"
-		2 "any USB -> USB storage"
-		3 "any USB -> internal storage"
-		4 "any USB -> NVMe SSD"
-		5 "USB storage -> USB storage"
-		6 "USB storage -> internal storage"
-		7 "USB storage -> NVMe SSD"
-		8 "Camera -> USB storage"
-		9 "Camera -> internal storage"
-		10 "Camera -> NVMe SSD"
-	)
-
-	CHOICE_BACKUP_MODE=$(dialog --clear \
-		--backtitle "$BACKTITLE" \
-		--title "Backup Mode" \
-		--menu "Select the default backup mode:" \
-		20 50 9 \
-		"${OPTIONS[@]}" \
-		2>&1 >/dev/tty)
-
-	clear
-fi
-
 ## Prompt to install comitup
 CHOICE_COMITUP=1
 if [ "${SCRIPT_MODE}" = "install" ]; then
@@ -407,96 +379,6 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	done
 
 fi
-
-# set the default backup mode
-if [ "${SCRIPT_MODE}" = "install" ]; then
-	## append new line to config-file
-	echo -e '' | sudo tee -a "${CONFIG}"
-
-	# write new default-backup-method
-	conf_BACKUP_DEFAULT_SOURCE="none"
-	conf_BACKUP_DEFAULT_TARGET="none"
-
-	case $CHOICE_BACKUP_MODE in
-	1)
-			conf_BACKUP_DEFAULT_SOURCE="none"
-			conf_BACKUP_DEFAULT_TARGET="none"
-		;;
-	2)
-			conf_BACKUP_DEFAULT_SOURCE="anyusb"
-			conf_BACKUP_DEFAULT_TARGET="usb"
-		;;
-	3)
-			conf_BACKUP_DEFAULT_SOURCE="anyusb"
-			conf_BACKUP_DEFAULT_TARGET="internal"
-		;;
-	4)
-			conf_BACKUP_DEFAULT_SOURCE="anyusb"
-			conf_BACKUP_DEFAULT_TARGET="nvme"
-		;;
-	5)
-			conf_BACKUP_DEFAULT_SOURCE="usb"
-			conf_BACKUP_DEFAULT_TARGET="usb"
-		;;
-	6)
-			conf_BACKUP_DEFAULT_SOURCE="usb"
-			conf_BACKUP_DEFAULT_TARGET="internal"
-		;;
-	7)
-			conf_BACKUP_DEFAULT_SOURCE="usb"
-			conf_BACKUP_DEFAULT_TARGET="nvme"
-		;;
-	8)
-			conf_BACKUP_DEFAULT_SOURCE="camera"
-			conf_BACKUP_DEFAULT_TARGET="usb"
-		;;
-	9)
-			conf_BACKUP_DEFAULT_SOURCE="camera"
-			conf_BACKUP_DEFAULT_TARGET="internal"
-		;;
-	10)
-			conf_BACKUP_DEFAULT_SOURCE="camera"
-			conf_BACKUP_DEFAULT_TARGET="nvme"
-		;;
-
-	esac
-else
-	if [ -z "${conf_BACKUP_DEFAULT_SOURCE}" ]; then
-		conf_BACKUP_DEFAULT_SOURCE="none"
-	fi
-	if [ -z "${conf_BACKUP_DEFAULT_TARGET}" ]; then
-		conf_BACKUP_DEFAULT_TARGET="none"
-	fi
-fi
-
-sudo sed -i '/conf_BACKUP_DEFAULT_SOURCE=/d' "${CONFIG}"
-echo "conf_BACKUP_DEFAULT_SOURCE=\"${conf_BACKUP_DEFAULT_SOURCE}\"" | sudo tee -a "${CONFIG}"
-
-sudo sed -i '/conf_BACKUP_DEFAULT_TARGET=/d' "${CONFIG}"
-echo "conf_BACKUP_DEFAULT_TARGET=\"${conf_BACKUP_DEFAULT_TARGET}\"" | sudo tee -a "${CONFIG}"
-
-# set the default SECONDARY backup mode
-## append new line to config-file
-echo -e '' | sudo tee -a "${CONFIG}"
-
-if [ "${SCRIPT_MODE}" = "install" ]; then
-	# write new default-backup-method
-	conf_BACKUP_DEFAULT_SOURCE2="none"
-	conf_BACKUP_DEFAULT_TARGET2="none"
-else
-	if [ -z "${conf_BACKUP_DEFAULT_SOURCE2}" ]; then
-		conf_BACKUP_DEFAULT_SOURCE2="none"
-	fi
-	if [ -z "${conf_BACKUP_DEFAULT_TARGET2}" ]; then
-		conf_BACKUP_DEFAULT_TARGET2="none"
-	fi
-fi
-
-sudo sed -i '/conf_BACKUP_DEFAULT_SOURCE2=/d' "${CONFIG}"
-echo "conf_BACKUP_DEFAULT_SOURCE2=\"${conf_BACKUP_DEFAULT_SOURCE2}\"" | sudo tee -a "${CONFIG}"
-
-sudo sed -i '/conf_BACKUP_DEFAULT_TARGET2=/d' "${CONFIG}"
-echo "conf_BACKUP_DEFAULT_TARGET2=\"${conf_BACKUP_DEFAULT_TARGET2}\"" | sudo tee -a "${CONFIG}"
 
 # remove all from crontab
 crontab -r
