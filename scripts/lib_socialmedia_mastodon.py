@@ -20,6 +20,7 @@
 from pathlib import Path
 
 from lib_socialmedia_parent import services
+import lib_system
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -35,6 +36,9 @@ class mastodon(services):
 
 		self.API_BASE_URL   = (MA_API_BASE_URL or '').strip()
 		self.ACCESS_TOKEN   = (MA_ACCESS_TOKEN or '').strip()
+
+		self.rate_limit_count	= 300
+		self.rate_limit_seconds	= 300
 
 		if not check_only and self.configured():
 			from mastodon import Mastodon

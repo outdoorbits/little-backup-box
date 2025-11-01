@@ -155,7 +155,8 @@
         "starting": "Starting FTP server...",
         "ok": "FTP o.k."
       },
-      "not_configured": "not configured"
+      "not_configured": "not configured",
+      "delay_rate_limit": "Rate limit"
     },
     "poweroff": {
       "poweroff": "Power off",

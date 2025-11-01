@@ -21,6 +21,7 @@ from pathlib import Path
 import re
 
 from lib_socialmedia_parent import services
+import lib_system
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -35,6 +36,9 @@ class telegram(services):
 
 		self.TOKEN		= (TG_TOKEN or "").strip()
 		self.CHAT_ID	= TG_CHAT_ID
+
+		self.rate_limit_count	= 20
+		self.rate_limit_seconds	= 60
 
 		self.bot_configured	= not check_only and self.configured()
 

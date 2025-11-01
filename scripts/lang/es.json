@@ -621,7 +621,8 @@
         "starting": "Iniciando servidor FTP...",
         "ok": "FTP o.k."
       },
-      "not_configured": "no configurado"
+      "not_configured": "no configurado",
+      "delay_rate_limit": "Límite de velocidad"
     },
     "cronip": {
       "offline": "desconectado",

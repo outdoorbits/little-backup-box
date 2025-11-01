@@ -621,7 +621,8 @@
         "starting": "Starte FTP-Server...",
         "ok": "FTP o.k."
       },
-      "not_configured": "nicht konfiguriert"
+      "not_configured": "nicht konfiguriert",
+      "delay_rate_limit": "Posting-Sperre"
     },
     "cronip": {
       "offline": "offline",

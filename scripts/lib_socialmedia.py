@@ -22,10 +22,13 @@ import argparse
 from datetime import datetime
 import os
 from pathlib import Path
+import time
 
+import lib_display
 import lib_language
 import lib_time
 import lib_setup
+import lib_system
 
 from lib_socialmedia_telegram import telegram
 from lib_socialmedia_mastodon import mastodon
@@ -48,8 +51,9 @@ class socialmedia(object):
 			self.main	= None
 			self.sub	= None
 
-	def __init__(self, service=None, TelegramChatID=0):
+	def __init__(self, service=None, TelegramChatID=0, upload_times=[]):
 
+		self.__display	= lib_display.display()
 		self.__lan		= lib_language.language()
 		self.__setup	= lib_setup.setup()
 
@@ -58,6 +62,8 @@ class socialmedia(object):
 
 		self.service		= service
 		self.TelegramChatID	= TelegramChatID
+
+		self.upload_times	= upload_times
 
 		self.SERVICE_Obj	= self.get_service_object(service=service)
 
@@ -191,6 +197,23 @@ class socialmedia(object):
 		Comment	= self.__reformat_Comment(Comment=Comment, FileDate=FileDate, msgtype=msgtype, FilePath=FilePath)
 
 		if msgtype.main and self.SERVICE_Obj:
+			delaytime	= self.SERVICE_Obj.delaytime(self.upload_times)
+			if delaytime > 0:
+				ServiceName	= self.__lan.l(f'box_backup_mode_social_{self.service}')
+				while delaytime > 0:
+					self.__display.message([
+						'set:clear',
+						f":{ServiceName}",
+						f":{self.__lan.l('box_backup_delay_rate_limit')}",
+						f":{delaytime:.0f} s"
+					])
+					time.sleep(1)
+					delaytime	-= 1
+
+			self.upload_times.append(lib_system.get_uptime_sec())
+			while self.SERVICE_Obj.rate_limit_count and len(self.upload_times) > self.SERVICE_Obj.rate_limit_count:
+				self.upload_times.pop(0)
+
 			self.SERVICE_Obj.publish(msgtype=msgtype, Comment=Comment, FilePath=FilePath)
 			return({'ok': self.SERVICE_Obj.ok, 'msg': self.SERVICE_Obj.returnmessage})
 		else:

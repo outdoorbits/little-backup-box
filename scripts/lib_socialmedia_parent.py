@@ -20,6 +20,8 @@
 import html
 import re
 
+import lib_system
+
 # import lib_debug
 # xx	= lib_debug.debug()
 
@@ -27,6 +29,9 @@ class services(object):
 
 	def __init__(self, check_only=False):
 		self.reset_return()
+
+		self.rate_limit_count	= None
+		self.rate_limit_seconds	= None
 
 	def reset_return(self):
 		self.ok				= None
@@ -37,6 +42,17 @@ class services(object):
 
 	def publish(self):
 		return(False)
+
+	def delaytime(self, upload_times):
+		if not self.rate_limit_count or not self.rate_limit_seconds:
+			return(0)
+
+		if len(upload_times) >= self.rate_limit_count:
+			uptime	= lib_system.get_uptime_sec()
+			if uptime - upload_times[0] < self.rate_limit_seconds:
+				return(self.rate_limit_seconds - uptime + upload_times[0])
+
+		return(0)
 
 	def html_to_plain(self, Comment: str) -> str:
 		if not Comment:

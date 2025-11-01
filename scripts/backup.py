@@ -650,6 +650,7 @@ class backup(object):
 
 				TriesCount				= 0
 
+				upload_times	= [] # SoMe
 				while TriesCount < self.const_BACKUP_MAX_TRIES and (TriesCount == 0 or self.__reporter.get_errors()):
 					TriesCount	+= 1
 					self.__reporter.new_try()
@@ -794,7 +795,7 @@ class backup(object):
 
 ### social upload
 					elif self.TargetDevice.StorageType == 'social':
-						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID)
+						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID, upload_times=upload_times)
 
 						if not SOCIAL.configured():
 							if self.TargetService in ['telegram', 'mastodon', 'bluesky']:
@@ -844,6 +845,9 @@ class backup(object):
 								db.dbExecute(f'UPDATE EXIF_DATA SET social_publish = social_publish & ~{2 ** bit}, social_published = social_published | {2 ** bit} WHERE ID={IMAGE_ID};')
 							else:
 								self.__reporter.add_error(success['msg'])
+
+							# preserve list of upload times for next try
+							upload_times	= SOCIAL.upload_times
 
 						missing, more	= self.calculate_files_to_sync(SubPathAtSource)
 						self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
@@ -1279,7 +1283,13 @@ class backup(object):
 		db.dbExecute('VACUUM;')
 
 	## import missing images into database
-		self.__display.message(['set:clear',f":{self.__lan.l('box_backup_generating_database_finding_images1')}",':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),f":{self.__lan.l('box_backup_counting_images')}",f":{self.__lan.l('box_backup_generating_database_finding_images3')}"])
+		self.__display.message([
+			'set:clear',
+			f":{self.__lan.l('box_backup_generating_database_finding_images1')}",
+			':' + self.__lan.l(f"box_backup_mode_{self.TargetDevice.StorageType}"),
+			f":{self.__lan.l('box_backup_counting_images')}",
+			f":{self.__lan.l('box_backup_generating_database_finding_images3')}"
+		])
 
 		# find all images
 

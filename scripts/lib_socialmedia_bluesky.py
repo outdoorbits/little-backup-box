@@ -20,6 +20,7 @@
 from pathlib import Path
 
 from lib_socialmedia_parent import services
+import lib_system
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -39,6 +40,9 @@ class bluesky(services):
 		self.API_BASE_URL	= (BS_API_BASE_URL or "").strip()
 		self.IDENTIFIER		= (BS_IDENTIFIER or "").strip()
 		self.APP_PASSWORD	= (BS_APP_PASSWORD or "").strip()
+
+		self.rate_limit_count	= 1666
+		self.rate_limit_seconds	= 3600
 
 		if not check_only and self.configured():
 			from atproto import Client, models

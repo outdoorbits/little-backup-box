@@ -1,9 +1,10 @@
 <script>
 	async function openChatPicker() {
-	const tokenEl						= document.getElementById('conf_SOCIAL_TELEGRAM_TOKEN');
+	const tokenEl								= document.getElementById('conf_SOCIAL_TELEGRAM_TOKEN');
 	const conf_SOCIAL_TELEGRAM_CHAT_ID			= document.getElementById('conf_SOCIAL_TELEGRAM_CHAT_ID');
 	const conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER	= document.getElementById('conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER');
-	const TELEGRAM_CHAT_ID_PRESENTER	= document.getElementById('TELEGRAM_CHAT_ID_PRESENTER');
+	const TELEGRAM_CHAT_ID_PRESENTER			= document.getElementById('TELEGRAM_CHAT_ID_PRESENTER');
+	const Button_Target_Telegram				= document.getElementById('Target_social:telegram');
 	const token   = (tokenEl?.value || '').trim();
 	if (!token) { alert('Bitte zuerst den Bot-Token eintragen.'); return; }
 
@@ -74,6 +75,13 @@
 		const id			= opt.value;
 		if (conf_SOCIAL_TELEGRAM_CHAT_ID) {conf_SOCIAL_TELEGRAM_CHAT_ID.value = id;}
 		if (conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER) {conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER.value = identifier;}
+		if (Button_Target_Telegram) {
+			if (identifier) {
+				Button_Target_Telegram.innerHTML = '<?php echo L::box_backup_mode_social_telegram; ?>' + '<br />' + identifier;
+			} else {
+				Button_Target_Telegram.innerHTML = '<?php echo L::box_backup_mode_social_telegram; ?>'
+			}
+		}
 		if (TELEGRAM_CHAT_ID_PRESENTER) {TELEGRAM_CHAT_ID_PRESENTER.value = id + ": " + identifier;}
 		chosenP.textContent = `<?php echo L::config_social_telegram_selected; ?>: ${id}`;
 		dlg.close('ok');
@@ -113,5 +121,5 @@
 </button><br />
 <label for="TELEGRAM_CHAT_ID_PRESENTER"><?php echo L::config_social_telegram_chat_id_label; ?></label><br />
 <input type="hidden" id="conf_SOCIAL_TELEGRAM_CHAT_ID" name="conf_SOCIAL_TELEGRAM_CHAT_ID" value="<?php echo $config['conf_SOCIAL_TELEGRAM_CHAT_ID']; ?>">
-<input type="hidden" id="conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER" name="conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER" value="<?php echo $config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']; ?>">
+<input type="hidden" id="conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER" name="conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER" value="<?php echo !empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) ? $_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER'] : $config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']; ?>">
 <input type="text" id="TELEGRAM_CHAT_ID_PRESENTER" name="TELEGRAM_CHAT_ID_PRESENTER" size="20" value="<?php if (intval($config['conf_SOCIAL_TELEGRAM_CHAT_ID']) <> 0) {echo $config['conf_SOCIAL_TELEGRAM_CHAT_ID'].": ".$config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER'];} ?>" disabled>

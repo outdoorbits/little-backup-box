@@ -229,6 +229,9 @@
 								}
 								elseif ($LabelName == 'telegram') {
 									$LabelName		= l::box_backup_mode_social_telegram;
+									if (!empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) or $config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) {
+										$LabelName	= !empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) ? "$LabelName<br />${_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}" : "$LabelName<br />${config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}";
+									}
 								}
 								elseif ($LabelName == 'mastodon') {
 									$LabelName		= l::box_backup_mode_social_mastodon;
