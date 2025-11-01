@@ -22,6 +22,7 @@ from datetime import datetime, timedelta
 import os
 import pathlib
 import random
+import signal
 from string import digits
 import subprocess
 import sys
@@ -80,11 +81,16 @@ class backup(object):
 		lib_clean.clean().cleanup(jobs=['tasks'])
 
 		# Objects
-		self.__setup	= lib_setup.setup()
-		self.__display	= lib_display.display()
-		self.__log		= lib_log.log()
-		self.__lan		= lib_language.language()
-		self.__reporter	= None
+		self.__setup		= lib_setup.setup()
+		self.__display		= lib_display.display()
+		self.__log			= lib_log.log()
+		self.__lan			= lib_language.language()
+		self.__reporter		= None
+		self.BackupProcess	= None
+
+		# signal handler
+		signal.signal(signal.SIGTERM, self._signal_handler)
+		signal.signal(signal.SIGINT, self._signal_handler)
 
 		## Arguments
 
@@ -235,6 +241,13 @@ class backup(object):
 		else:
 			self.__display.message([f":{self.__lan.l('box_backup_invalid_mode_combination_1')}", f":{self.__lan.l('box_backup_invalid_mode_combination_2')}", f":{self.__lan.l('box_backup_invalid_mode_combination_3')}"])
 			return(None)
+
+	def _signal_handler(self, signum, frame):
+		if self.BackupProcess:
+			self.BackupProcess.terminate()
+			self.BackupProcess.wait()
+
+		sys.exit(0)
 
 	def run(self):
 		if not self.backup_combination_possible():
@@ -759,10 +772,10 @@ class backup(object):
 						# gphoto2: Filename-format at backup; %F is undocumented? = path of the file at the camera; $f = filename without suffix; %C=suffix
 						syncCommand	= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=False)
 						self.__log.message(' '.join(syncCommand),3)
-						with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as BackupProcess:
+						with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, text=True) as self.BackupProcess:
 
 							while True:
-								SyncOutputLine = BackupProcess.stdout.readline()
+								SyncOutputLine = self.BackupProcess.stdout.readline()
 								if not SyncOutputLine:
 									break
 
@@ -773,8 +786,8 @@ class backup(object):
 
 							self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
 
-							BackupProcess.wait()
-							SyncReturnCode	= BackupProcess.returncode
+							self.BackupProcess.wait()
+							SyncReturnCode	= self.BackupProcess.returncode
 							self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
 
 						os.chdir(os.path.expanduser('~'))
@@ -846,9 +859,9 @@ class backup(object):
 
 						self.__log.message(' '.join(syncCommand),3)
 
-						with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as BackupProcess:
+						with subprocess.Popen(syncCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, text=True)  as self.BackupProcess:
 							while True:
-								SyncOutputLine = BackupProcess.stdout.readline()
+								SyncOutputLine = self.BackupProcess.stdout.readline()
 								if not SyncOutputLine:
 									break
 
@@ -868,8 +881,8 @@ class backup(object):
 							self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)
 							self.__TIMSCopied	= progress.TIMSCopied
 
-							BackupProcess.wait()
-							SyncReturnCode	= BackupProcess.returncode
+							self.BackupProcess.wait()
+							SyncReturnCode	= self.BackupProcess.returncode
 							self.__reporter.set_values(SyncReturnCode=SyncReturnCode)
 						pass
 
