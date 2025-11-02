@@ -233,7 +233,7 @@ class backup(object):
 
 		# MANAGE TARGET DEVICE
 		# Set the PWR LED to blink short to indicate waiting for the target device
-		lib_system.rpi_leds(trigger='timer',delay_on=250,delay_off=750)
+		lib_system.rpi_leds(led='PWR', trigger='timer', delay_on=250, delay_off=750, brightness=1)
 
 		if self.TargetStorageType in ['usb', 'internal', 'nvme', 'cloud', 'cloud_rsync', 'social']:
 			self.TargetDevice	= lib_storage.storage(StorageName=TargetName, Role=lib_storage.role_Target, WaitForDevice=True, DeviceIdentifierPresetThis=self.DeviceIdentifierPresetTarget, DeviceIdentifierPresetOther=self.DeviceIdentifierPresetSource)
@@ -253,9 +253,6 @@ class backup(object):
 		if not self.backup_combination_possible():
 			self.finish()
 			return()
-
-		# Set the PWR LED ON to indicate that the backup has not yet started
-		lib_system.rpi_leds(trigger='none',brightness=1)
 
 		# backup
 		if (self.TargetDevice and (self.SourceStorageType not in ['thumbnails', 'database', 'exif', 'rename'])):
@@ -588,7 +585,7 @@ class backup(object):
 
 			# MANAGE SOURCE DEVICE
 			# Set the PWR LED to blink long to indicate waiting for the source device
-			lib_system.rpi_leds(trigger='timer',delay_on=750,delay_off=250)
+			lib_system.rpi_leds(led='PWR', trigger='timer', delay_on=750, delay_off=250, brightness=1)
 
 			if SourceStorageType in ['usb', 'internal','nvme', 'camera', 'cloud', 'cloud_rsync', 'ftp']:
 				self.SourceDevice	= lib_storage.storage(StorageName=(SourceStorageType if not SourceService else f'{SourceStorageType}:{SourceService}'), Role=lib_storage.role_Source, WaitForDevice=True, DeviceIdentifierPresetThis=Identifier, DeviceIdentifierPresetOther=self.TargetDevice.DeviceIdentifier, PartnerDevice=self.TargetDevice)
@@ -631,7 +628,8 @@ class backup(object):
 				SyncLog					= self.__conf_LOG_SYNC
 			)
 
-			lib_system.rpi_leds(trigger='heartbeat')
+			# set PWR LED to heartbeat while backup
+			lib_system.rpi_leds(led='PWR', trigger='heartbeat', brightness=1)
 
 			# define variables for backup
 			SourceFolderNumber		= 0
@@ -1042,6 +1040,9 @@ class backup(object):
 			if self.SourceDevice.mountable:
 				self.SourceDevice.umount()
 
+			# Set the PWR LED ON to indicate that the backup has finished
+			lib_system.rpi_leds(led='PWR', trigger='none', brightness='1')
+
 			# Mail result
 			if self.conf_MAIL_NOTIFICATIONS:
 				mail	= lib_mail.mail()
@@ -1055,8 +1056,6 @@ class backup(object):
 				break
 
 		self.__display.message([f":{self.__lan.l('box_finished')}"])
-
-
 
 	def __checkLostDevice(self):
 		lostTargetDevice	= False
@@ -1079,7 +1078,7 @@ class backup(object):
 			return()
 
 		# set led status
-		lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
+		lib_system.rpi_leds(trigger='timer', delay_on=100, delay_off=900, brightness=1)
 
 		DisplayLine1	= self.__lan.l('box_backup_rename_files_renaming_files') # header1
 		DisplayLine2	= self.__lan.l(f'box_backup_mode_{self.TargetDevice.StorageType}') # header2
@@ -1223,6 +1222,9 @@ class backup(object):
 		del progress
 		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
+		# Set the PWR LED ON to indicate that RenameFiles has finished
+		lib_system.rpi_leds(led='PWR', trigger='none', brightness='1')
+
 	def syncDatabase(self):
 		if not self.TargetDevice:
 			return()
@@ -1231,7 +1233,7 @@ class backup(object):
 			return()
 
 		# set LEDs
-		lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
+		lib_system.rpi_leds(trigger='timer', delay_on=100, delay_off=900, brightness=1)
 
 		# prepare database
 		db	= lib_view.viewdb(self.__setup, self.__log, self.TargetDevice.MountPoint)
@@ -1330,6 +1332,9 @@ class backup(object):
 		del progress
 		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
+		# Set the PWR LED ON to indicate that syncDatabase has finished
+		lib_system.rpi_leds(led='PWR', trigger='none', brightness=1)
+
 	def get_AllowedExtensionsFindOptions(self, textfiles=False):
 
 		AllowedExtensionsList	= (
@@ -1364,7 +1369,7 @@ class backup(object):
 		if not Device.isLocal:
 			return()
 
-		lib_system.rpi_leds(trigger='timer',delay_on=900,delay_off=100)
+		lib_system.rpi_leds(trigger='timer', delay_on=900, delay_off=100, brightness=1)
 
 		if os.path.isfile('/usr/lib/libraw/dcraw_emu'):
 			DCRAW_EMU	= '/usr/lib/libraw/dcraw_emu'
@@ -1573,6 +1578,9 @@ class backup(object):
 		del progress
 		self.__display.message([f":{self.__lan.l('box_finished')}"])
 
+		# Set the PWR LED ON to indicate that generateThumbnails has finished
+		lib_system.rpi_leds(led='PWR', trigger='none', brightness=1)
+
 	def updateEXIF(self):	# update exif-information in original files on local drive
 
 		if self.TargetDevice:
@@ -1580,7 +1588,7 @@ class backup(object):
 
 				metadata = lib_metadata.MetadataTool(dry_run = False)
 
-				lib_system.rpi_leds(trigger='timer',delay_on=100,delay_off=900)
+				lib_system.rpi_leds(trigger='timer', delay_on=100, delay_off=900, brightness=1)
 
 				# prepare database
 				db	= lib_view.viewdb(self.__setup,self.__log, self.TargetDevice.MountPoint)
@@ -1618,6 +1626,9 @@ class backup(object):
 				del progress
 				self.__display.message([f":{self.__lan.l('box_finished')}"])
 
+				# Set the PWR LED ON to indicate that updateEXIF has finished
+				lib_system.rpi_leds(led='PWR', trigger='none', brightness=1)
+
 	def get_BannedPathsViewCaseInsensitive(self):
 		# create list of banned paths
 		BannedPathsList		= []
@@ -1629,7 +1640,7 @@ class backup(object):
 
 	def finish(self):
 		# Set the PWR LED ON to indicate that the backup has finished
-		lib_system.rpi_leds(trigger='none',brightness='1')
+		lib_system.rpi_leds(led='PWR', trigger='none', brightness=1)
 
 		lib_storage.umount(self.__setup,'all')
 

@@ -61,7 +61,7 @@
 	<div class="card">
 		<h3><?php echo L::sysinfo_system; ?></h3>
 		<?php
-			$model					= shell_exec("sudo python3 ${WORKING_DIR}/lib_system.py get_pi_model");
+			$model					= shell_exec("sudo python3 ${WORKING_DIR}/lib_system.py --get_pi_model");
 
 			$temp					= shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 			$temp					= round((float) $temp / 1000, 1);
@@ -76,7 +76,7 @@
 			$mem_swap_all			= shell_exec("free | grep Swap | awk '{print $2 / 1024}'");
 			$mem_swap				= round($mem_swap_frac, 1) . " % * " . round($mem_swap_all) . " MB";
 
-			$abnormal_conditions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_system.py get_abnormal_system_conditions");
+			$abnormal_conditions	= shell_exec("sudo python3 ${WORKING_DIR}/lib_system.py --get_abnormal_system_conditions");
 
 			echo '<table>';
 

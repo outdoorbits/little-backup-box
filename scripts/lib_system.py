@@ -17,13 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-import lib_language
-import lib_setup
-
+import argparse
 import datetime
 import os
 import subprocess
-import sys
+
+import lib_language
+import lib_setup
 
 def get_uptime_sec():
 	with open('/proc/uptime', 'r') as f:
@@ -31,7 +31,7 @@ def get_uptime_sec():
 	return(uptime_sec)
 
 
-def rpi_leds(led='PWR',trigger='',delay_on='',delay_off='',brightness=''):
+def rpi_leds(led='PWR', trigger='', delay_on='', delay_off='', brightness=''):
 	# led: ['PWR','ACT']
 	# trigger: ['none','timer','heartbeat']
 	# delay_on, delay_off: in ms
@@ -41,7 +41,7 @@ def rpi_leds(led='PWR',trigger='',delay_on='',delay_off='',brightness=''):
 	delay_off	= str(delay_off)
 	brightness	= str(brightness)
 
-	if led in ['PWR','ACT']:
+	if led in ['PWR', 'ACT']:
 		if trigger:
 			try:
 				with open(f"/sys/class/leds/{led}/trigger",'w') as f:
@@ -136,15 +136,102 @@ def get_pi_model(number_only=False):
 
 	return(model)
 
+def parse_args() -> argparse.Namespace:
+	parser = argparse.ArgumentParser(
+		description="system tools",
+		formatter_class=argparse.RawTextHelpFormatter,
+	)
+
+	parser.add_argument(
+		'--get_uptime_sec',
+		'-u',
+		action	= 'store_true',
+		help	= 'Get system uptime'
+	)
+
+	parser.add_argument(
+		'--get_abnormal_system_conditions',
+		'-sc',
+		action	= 'store_true',
+		help	= 'Get a list of abnormal system conditions'
+	)
+
+	parser.add_argument(
+		'--get_pi_model',
+		'-pi',
+		action	= 'store_true',
+		help	= 'Get Raspberry Pi model'
+	)
+
+	parser.add_argument(
+		'--set_led',
+		'-led',
+		action	= 'store_true',
+		help	= 'Set Raspberry Pi LEDs'
+	)
+
+	LEDs	= ['PWR', 'ACT']
+	parser.add_argument(
+		'-LED',
+		'-L',
+		choices		= LEDs,
+		required	= False,
+		default		= 'PWR',
+		help=f'Select LED {LEDs}.'
+	)
+
+	LED_TRIGGERs	= ['none', 'timer', 'heartbeat']
+	parser.add_argument(
+		'-LED_TRIGGER',
+		'-LT',
+		choices		= LED_TRIGGERs,
+		required	= False,
+		default		= 'none',
+		help=f'Select LED trigger {LED_TRIGGERs}.'
+	)
+
+	parser.add_argument(
+		'-LED_DELAY_ON',
+		'-LON',
+		required	= False,
+		default		= 'none',
+		help=f'Set Delay for ON in ms.'
+	)
+
+	parser.add_argument(
+		'-LED_DELAY_OFF',
+		'-LOFF',
+		required	= False,
+		default		= 'none',
+		help=f'Set Delay for OFF in ms.'
+	)
+
+	LED_BRIGHTNESSs	= ['0', '1']
+	parser.add_argument(
+		'-LED_BRIGHTNESS',
+		'-LB',
+		choices		= LED_BRIGHTNESSs,
+		required	= False,
+		default		= '0',
+		help=f'Select brightness of LED {LED_BRIGHTNESSs}.'
+	)
+
+	args = parser.parse_args()
+
+	return args
+
 if __name__ == "__main__":
-	if len(sys.argv)>1:
-		if sys.argv[1] == 'get_uptime_sec':
-			print(get_uptime_sec())
+	args = parse_args()
 
-		if sys.argv[1] == 'get_abnormal_system_conditions':
-			lan	= lib_language.language()
-			print(get_abnormal_system_conditions(lan))
+	if args.get_uptime_sec:
+		print(get_uptime_sec())
 
-		if sys.argv[1] == 'get_pi_model':
-			print(get_pi_model())
+	if args.get_abnormal_system_conditions:
+		lan	= lib_language.language()
+		print(get_abnormal_system_conditions(lan))
 
+	if args.get_pi_model:
+		print(get_pi_model())
+
+	if args.set_led:
+		rpi_leds(led=args.LED, trigger=args.LED_TRIGGER, delay_on=args.LED_DELAY_ON, delay_off=args.LED_DELAY_OFF, brightness=args.LED_BRIGHTNESS)

@@ -21,8 +21,9 @@ WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${WORKING_DIR}/constants.sh"
 
 ps -ef | grep "${WORKING_DIR}/backup.py" | grep -v grep | awk '{print $2}' | sudo xargs -r kill
-sudo python3 /var/www/little-backup-box/lib_clean.py --clean display_content tasks
-sudo python3 /var/www/little-backup-box/lib_proftpd.py --Action setDefaultRoot --DefaultRoot "${const_MEDIA_DIR}"
+sudo python3 ${WORKING_DIR}/lib_system.py --set_led -LED PWR -LED_TRIGGER none -LED_BRIGHTNESS 1
+sudo python3 ${WORKING_DIR}/lib_clean.py --clean display_content tasks
+sudo python3 ${WORKING_DIR}/lib_proftpd.py --Action setDefaultRoot --DefaultRoot "${const_MEDIA_DIR}"
 
 sudo python3 ${WORKING_DIR}/lib_display.py "$(python3 ${WORKING_DIR}/lib_language.py box_backup_break1)" "$(python3 ${WORKING_DIR}/lib_language.py box_backup_break2)"
 
