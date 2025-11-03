@@ -40,7 +40,8 @@ class progressmonitor(object):
 			SourceDevice=None,
 			TargetDevice=None,
 			vpn=False,
-			TaskNote=''
+			TaskNote='',
+			history_length=100
 		):
 		self.__setup	= setup
 		self.const_IMAGE_DATABASE_FILENAME			= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')
@@ -57,24 +58,21 @@ class progressmonitor(object):
 		self.TargetDevice					= TargetDevice
 		self.vpn							= vpn
 		self.TaskNote						= TaskNote
+		self.history_length					= int(history_length) if history_length > 0 else 0
 
-		self.StartTime						= lib_system.get_uptime_sec()
-		self.StopTime						= 0
 		self.CountProgress					= 0
 		self.CountSkip						= 0
 		self.CountProgress_OLD				= -1
 		self.CountJustCopied				= 0
-		self.CountFilesConfirmed			= 0
-		self.CountFilesNotConfirmed			= 0
-		self.countFilesMissing				= 0
-		self.LastMessageTime				= 0
 		self.TransferRate					= ''
 		self.TIMSCopied						= False
 
-		self.DisplayLine1	= DisplayLine1
-		self.DisplayLine2	= DisplayLine2
+		self.DisplayLine1					= DisplayLine1
+		self.DisplayLine2					= DisplayLine2
 
-		self.FilesList		= []
+		self.FilesList						= []
+		self.__TimeHistory					= []
+		self.last_display_time				= lib_system.get_uptime_sec()
 
 		self.__TaskFilePath	= os.path.join(self.__const_TASKS_PATH, f'task_{id(self)}.txt')
 
@@ -108,6 +106,12 @@ class progressmonitor(object):
 	def progress(self, TransferMode=None, SyncOutputLine='', Success=True, CountProgress=None):
 		# if Success is checked by SyncOutputLine, Success parameter will not be mentioned
 
+		def note_progress():
+			self.CountProgress		+= 1
+			self.__TimeHistory.append(lib_system.get_uptime_sec())
+			while self.history_length > 0 and len(self.__TimeHistory) > self.history_length + 1: # +1 because TimeHistory[0] will be used as baseline, not as item
+				self.__TimeHistory.pop(0)
+
 		SyncOutputLine	= SyncOutputLine.strip('\n')
 
 		if not CountProgress is None:
@@ -133,7 +137,7 @@ class progressmonitor(object):
 					if SyncOutputLine in self.FilesList:
 						return()
 
-					self.CountProgress		+= 1
+					note_progress()
 					self.CountJustCopied	+= 1
 
 					self.FilesList	+= [SyncOutputLine]
@@ -157,7 +161,7 @@ class progressmonitor(object):
 						return()
 
 					if LineType=='INFO' and 'Copied' in LineResult:
-						self.CountProgress		+= 1
+						note_progress()
 						self.CountJustCopied	+= 1
 
 						self.FilesList	+= [FileName]
@@ -167,7 +171,7 @@ class progressmonitor(object):
 
 		elif TransferMode == 'gphoto2':
 			if SyncOutputLine[0:6] == 'Saving' or  SyncOutputLine[0:4] == 'Skip':
-				self.CountProgress	+= 1
+				note_progress()
 
 				if SyncOutputLine[0:6] == 'Saving':
 					self.CountJustCopied	+= 1
@@ -177,12 +181,11 @@ class progressmonitor(object):
 
 		elif TransferMode is None:
 			if Success:
-				self.CountProgress	+= 1
+				note_progress()
 				self.CountJustCopied	+= 1
 
 		if self.CountProgress > self.CountProgress_OLD:
 			self.CountProgress_OLD	= self.CountProgress
-
 			self.__display_progress()
 
 	def rclone_analyse_line(self, Line):
@@ -208,53 +211,56 @@ class progressmonitor(object):
 
 	def __display_progress(self):
 		if (
-				(lib_system.get_uptime_sec() - self.LastMessageTime > (self.__conf_DISP_FRAME_TIME * 2)) or # factor for __conf_DISP_FRAME_TIME to compensate time usage of other messages
-				(self.CountProgress == 0) or
-				(self.FilesToProcess == self.CountProgress)
-		): # print changed progress
+				(lib_system.get_uptime_sec() - self.last_display_time <= (self.__conf_DISP_FRAME_TIME * 2)) and	# factor for __conf_DISP_FRAME_TIME to compensate time usage of other messages
+				(self.CountProgress > 0) and
+				(self.FilesToProcess != self.CountProgress)
+			):
+			return
 
-			if len(self.TransferRate) > 0 and self.TransferRate[0] != ',':
-				self.TransferRate	= f", {self.TransferRate}"
+		# print changed progress
+		if len(self.TransferRate) > 0 and self.TransferRate[0] != ',':
+			self.TransferRate	= f", {self.TransferRate}"
 
-			DisplayLine3	= f"{self.CountProgress} " + self.__lan.l('box_backup_of') + f" {self.FilesToProcess}{'+' if self.FilesToProcess_possible_more else ''}{self.TransferRate}"
+		DisplayLine3	= f"{self.CountProgress} " + self.__lan.l('box_backup_of') + f" {self.FilesToProcess}{'+' if self.FilesToProcess_possible_more else ''}{self.TransferRate}"
 
-			# calculate progress
-			PercentFinished	= None
-			if self.FilesToProcess > 0:
-				if self.CountProgress > 0:
-					PercentFinished	= str(round(self.CountProgress / self.FilesToProcess * 100,1))
-					DisplayLine5	= f"PGBAR={PercentFinished}"
-				else:
-					DisplayLine5	= self.__lan.l('box_backup_checking_old_files')
-
+		# calculate progress
+		PercentFinished	= None
+		if self.FilesToProcess > 0:
+			if self.CountProgress > 0:
+				PercentFinished	= str(round(self.CountProgress / self.FilesToProcess * 100,1))
+				DisplayLine5	= f"PGBAR={PercentFinished}"
 			else:
-				DisplayLine5="PGBAR=0"
+				DisplayLine5	= self.__lan.l('box_backup_checking_old_files')
 
-			# calculte remaining time
-			if self.CountProgress > self.CountSkip and self.FilesToProcess >= self.CountProgress:
-				TimeElapsed		= lib_system.get_uptime_sec() - self.StartTime
-				TimeRemaining	= (self.FilesToProcess - self.CountProgress) * TimeElapsed  / (self.CountProgress - self.CountSkip)
-				TimeRemainingFormatted	= str(timedelta(seconds=TimeRemaining)).split('.')[0]
-			else:
-				TimeRemainingFormatted	= '?'
+		else:
+			DisplayLine5="PGBAR=0"
 
-			# DisplayLine4
-			DisplayLine4	= f"{self.__lan.l('box_backup_time_remaining')}: {TimeRemainingFormatted}"
+		# calculte remaining time
+		delta_n	= len(self.__TimeHistory) - 1
+		if delta_n > 0:
+			delta_t	= self.__TimeHistory[-1] - self.__TimeHistory[0]
+			TimeRemaining	= (self.FilesToProcess - self.CountProgress) * delta_t / delta_n
+			TimeRemainingFormatted	= str(timedelta(seconds=TimeRemaining)).split('.')[0]
+		else:
+			TimeRemainingFormatted	= '?'
 
-			# DisplayLinesExtra
-			DisplayLinesExtra	= []
-			if self.vpn:
-				DisplayLinesExtra.append(f"s=hc:VPN: {self.vpn.check_status()['message']}")
+		# DisplayLine4
+		DisplayLine4	= f"{self.__lan.l('box_backup_time_remaining')}: {TimeRemainingFormatted}"
 
-			# FrameTime
-			FrameTime	= self.__conf_DISP_FRAME_TIME
-			if self.FilesToProcess == self.CountProgress:
-				FrameTime	= self.__conf_DISP_FRAME_TIME * 1.5
+		# DisplayLinesExtra
+		DisplayLinesExtra	= []
+		if self.vpn:
+			DisplayLinesExtra.append(f"s=hc:VPN: {self.vpn.check_status()['message']}")
 
-			# Display
-			self.__display.message([f"set:clear,time={FrameTime}", f"s=hc:{self.DisplayLine1}", f"s=hc:{self.DisplayLine2}", f"s=hc:{DisplayLine3}", f"s=hc:{DisplayLine4}", f"s=hc:{DisplayLine5}"] + DisplayLinesExtra)
+		# FrameTime
+		FrameTime	= self.__conf_DISP_FRAME_TIME
+		if self.FilesToProcess == self.CountProgress:
+			FrameTime	= self.__conf_DISP_FRAME_TIME * 1.5
 
-			self.LastMessageTime	= lib_system.get_uptime_sec()
+		# Display
+		self.__display.message([f"set:clear,time={FrameTime}", f"s=hc:{self.DisplayLine1}", f"s=hc:{self.DisplayLine2}", f"s=hc:{DisplayLine3}", f"s=hc:{DisplayLine4}", f"s=hc:{DisplayLine5}"] + DisplayLinesExtra)
+
+		self.last_display_time	= lib_system.get_uptime_sec()
 
 class reporter(object):
 	# collects information during the backup process and provides ready to use summarys
