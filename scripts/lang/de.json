@@ -441,6 +441,50 @@
         "header": "Allgemein",
         "date_label": "Aufnahmedatum veröffentlichen",
         "filename_label": "Dateiname veröffentlichen"
+      },
+      "matrix": {
+        "header": "Matrix-Integration",
+        "install_desc": "Configure the Matrix bot for notifications or uploads.",
+        "homeserver_label": "Matrix-Homeserver (z.B. https://matrix.example.org)",
+        "token_label": "Access-Token des Bot-Accounts",
+        "error": {
+          "invalid_token": "Ungültiges Access-Token.",
+          "unreachable": "Matrix-Homeserver nicht erreichbar.",
+          "bad_api_response": "Unerwartete Antwort vom Matrix-Server.",
+          "not_set_token": "Bitte zuerst das Matrix-Access-Token eintragen.",
+          "not_set_homeserver": "Bitte zuerst den Matrix-Homeserver eintragen."
+        },
+        "no_rooms_found": "Keine Räume gefunden.",
+        "select_room": "Matrix-Raum auswählen",
+        "table_headers": "Name — Alias — Raum-ID",
+        "close": "Schließen",
+        "accept": "Übernehmen",
+        "test_message_send": "Testnachricht senden",
+        "without_name": "ohne Namen",
+        "selected": "Ausgewählt",
+        "select_room_first": "Bitte zuerst einen Raum auswählen.",
+        "test_message": "Matrix-Testnachricht von Little backup Box",
+        "test_message_sent_to": "Testnachricht gesendet an",
+        "test_message_error": "Fehler beim Senden der Testnachricht",
+        "button_select_room": "Raum auswählen",
+        "room_id_label": "Matrix-Raum-ID",
+        "gettoken": {
+          "header": "Matrix-Token abrufen",
+          "desc": "Melde dich mit deinem Matrix-Benutzerkonto an, um einmalig ein Access-Token für den Bot zu erzeugen. Das Passwort wird nicht gespeichert.",
+          "username_label": "Matrix-Benutzername (z.B. @bot:example.org)",
+          "password_label": "Passwort",
+          "button_label": "Token abrufen",
+          "enter_username_first": "Bitte zuerst den Matrix-Benutzernamen eintragen.",
+          "enter_password_first": "Bitte zuerst das Passwort eintragen.",
+          "fetching": "Token wird abgerufen …",
+          "error": {
+            "invalid_credentials": "Anmeldung fehlgeschlagen. Bitte Benutzername und Passwort prüfen.",
+            "missing_parameters": "Fehlende Eingaben. Bitte alle Felder ausfüllen.",
+            "no_token": "Login war erfolgreich, aber es wurde kein Access-Token zurückgegeben.",
+            "exception": "Fehler beim Abrufen des Tokens."
+          },
+          "success": "Token erfolgreich abgerufen für"
+        }
       }
     }
   },
@@ -597,7 +641,8 @@
         "social": "SoMe",
         "social_telegram": "Telegram",
         "social_mastodon": "Mastodon",
-        "social_bluesky": "Bluesky"
+        "social_bluesky": "Bluesky",
+        "social_matrix": "Matrix"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-Quelle",

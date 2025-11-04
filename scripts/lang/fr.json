@@ -441,6 +441,50 @@
         "header": "Général",
         "date_label": "Date de publication de l'enregistrement",
         "filename_label": "Publier le nom du fichier"
+      },
+      "matrix": {
+        "header": "Intégration Matrix",
+        "install_desc": "Configure the Matrix bot for notifications or uploads.",
+        "homeserver_label": "Serveur Matrix (ex. https://matrix.example.org)",
+        "token_label": "Jeton d’accès du compte bot",
+        "error": {
+          "invalid_token": "Jeton d’accès invalide.",
+          "unreachable": "Serveur Matrix inaccessible.",
+          "bad_api_response": "Réponse inattendue du serveur Matrix.",
+          "not_set_token": "Veuillez d’abord saisir le jeton d’accès Matrix.",
+          "not_set_homeserver": "Veuillez d’abord saisir le serveur Matrix."
+        },
+        "no_rooms_found": "Aucun salon trouvé.",
+        "select_room": "Sélectionner un salon Matrix",
+        "table_headers": "Nom — Alias — ID du salon",
+        "close": "Fermer",
+        "accept": "Valider",
+        "test_message_send": "Envoyer un message de test",
+        "without_name": "sans nom",
+        "selected": "Sélectionné",
+        "select_room_first": "Veuillez d’abord sélectionner un salon.",
+        "test_message": "Message de test Matrix envoyé par le Little backup Box",
+        "test_message_sent_to": "Message de test envoyé à",
+        "test_message_error": "Erreur lors de l’envoi du message de test",
+        "button_select_room": "Sélectionner un salon",
+        "room_id_label": "ID du salon Matrix",
+        "gettoken": {
+          "header": "Récupérer le jeton Matrix",
+          "desc": "Connectez-vous avec votre compte Matrix pour générer un jeton d’accès pour le bot. Le mot de passe ne sera pas enregistré.",
+          "username_label": "Nom d’utilisateur Matrix (p. ex. @bot:example.org)",
+          "password_label": "Mot de passe",
+          "button_label": "Récupérer le jeton",
+          "enter_username_first": "Veuillez d’abord saisir le nom d’utilisateur Matrix.",
+          "enter_password_first": "Veuillez d’abord saisir le mot de passe.",
+          "fetching": "Récupération du jeton…",
+          "error": {
+            "invalid_credentials": "Échec de la connexion. Veuillez vérifier le nom d’utilisateur et le mot de passe.",
+            "missing_parameters": "Données manquantes. Veuillez remplir tous les champs.",
+            "no_token": "La connexion a réussi, mais aucun jeton d’accès n’a été renvoyé.",
+            "exception": "Erreur lors de la récupération du jeton."
+          },
+          "success": "Jeton récupéré avec succès pour"
+        }
       }
     }
   },
@@ -597,7 +641,8 @@
         "social": "médias sociaux",
         "social_telegram": "Telegram",
         "social_mastodon": "Mastodon",
-        "social_bluesky": "Bluesky"
+        "social_bluesky": "Bluesky",
+        "social_matrix": "Matrix"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Source USB",

@@ -131,7 +131,8 @@
         "social": "SoMe",
         "social_telegram": "Telegram",
         "social_mastodon": "Mastodon",
-        "social_bluesky": "Bluesky"
+        "social_bluesky": "Bluesky",
+        "social_matrix": "Matrix"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-source",
@@ -698,6 +699,50 @@
         "header": "Generally",
         "date_label": "Publish recording date",
         "filename_label": "Publish file name"
+      },
+      "matrix": {
+        "header": "Matrix Integration",
+        "install_desc": "Configure the Matrix bot for notifications or uploads.",
+        "homeserver_label": "Matrix homeserver (e.g. https://matrix.example.org)",
+        "token_label": "Access token of the bot account",
+        "error": {
+          "invalid_token": "Invalid access token.",
+          "unreachable": "Matrix homeserver not reachable.",
+          "bad_api_response": "Unexpected response from Matrix server.",
+          "not_set_token": "Please enter the Matrix access token first.",
+          "not_set_homeserver": "Please enter the Matrix homeserver first."
+        },
+        "no_rooms_found": "No rooms found.",
+        "select_room": "Select Matrix room",
+        "table_headers": "Name — Alias — Room ID",
+        "close": "Close",
+        "accept": "Apply",
+        "test_message_send": "Send test message",
+        "without_name": "without name",
+        "selected": "Selected",
+        "select_room_first": "Please select a room first.",
+        "test_message": "Matrix test message from Little backup Box",
+        "test_message_sent_to": "Test message sent to",
+        "test_message_error": "Error sending test message",
+        "button_select_room": "Select room",
+        "room_id_label": "Matrix room ID",
+        "gettoken": {
+          "header": "Fetch Matrix token",
+          "desc": "Log in with your Matrix user account to generate an access token for the bot. The password will not be stored.",
+          "username_label": "Matrix username (e.g. @bot:example.org)",
+          "password_label": "Password",
+          "button_label": "Fetch token",
+          "enter_username_first": "Please enter the Matrix username first.",
+          "enter_password_first": "Please enter the password first.",
+          "fetching": "Fetching token …",
+          "error": {
+            "invalid_credentials": "Login failed. Please check username and password.",
+            "missing_parameters": "Missing input. Please fill in all fields.",
+            "no_token": "Login was successful, but no access token was returned.",
+            "exception": "Error while fetching the token."
+          },
+          "success": "Token successfully fetched for"
+        }
       }
     }
   },

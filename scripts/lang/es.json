@@ -441,6 +441,50 @@
         "header": "General",
         "date_label": "Publicar fecha de grabación",
         "filename_label": "Nombre del archivo de publicación"
+      },
+      "matrix": {
+        "header": "Integración con Matrix",
+        "install_desc": "Configure the Matrix bot for notifications or uploads.",
+        "homeserver_label": "Servidor Matrix (p. ej. https://matrix.example.org)",
+        "token_label": "Token de acceso de la cuenta del bot",
+        "error": {
+          "invalid_token": "Token de acceso no válido.",
+          "unreachable": "Servidor Matrix no accesible.",
+          "bad_api_response": "Respuesta inesperada del servidor Matrix.",
+          "not_set_token": "Por favor, introduce primero el token de acceso de Matrix.",
+          "not_set_homeserver": "Por favor, introduce primero el servidor Matrix."
+        },
+        "no_rooms_found": "No se encontraron salas.",
+        "select_room": "Seleccionar sala de Matrix",
+        "table_headers": "Nombre — Alias — ID de sala",
+        "close": "Cerrar",
+        "accept": "Aceptar",
+        "test_message_send": "Enviar mensaje de prueba",
+        "without_name": "sin nombre",
+        "selected": "Seleccionado",
+        "select_room_first": "Por favor, selecciona una sala primero.",
+        "test_message": "Mensaje de prueba de Matrix del Little backup Box",
+        "test_message_sent_to": "Mensaje de prueba enviado a",
+        "test_message_error": "Error al enviar el mensaje de prueba",
+        "button_select_room": "Seleccionar sala",
+        "room_id_label": "ID de la sala de Matrix",
+        "gettoken": {
+          "header": "Obtener token de Matrix",
+          "desc": "Inicia sesión con tu cuenta de Matrix para generar un token de acceso para el bot. La contraseña no se guardará.",
+          "username_label": "Nombre de usuario de Matrix (p. ej. @bot:example.org)",
+          "password_label": "Contraseña",
+          "button_label": "Obtener token",
+          "enter_username_first": "Por favor, introduce primero el nombre de usuario de Matrix.",
+          "enter_password_first": "Por favor, introduce primero la contraseña.",
+          "fetching": "Obteniendo token…",
+          "error": {
+            "invalid_credentials": "Error de inicio de sesión. Comprueba el nombre de usuario y la contraseña.",
+            "missing_parameters": "Faltan datos. Por favor, rellena todos los campos.",
+            "no_token": "El inicio de sesión fue correcto, pero no se devolvió ningún token de acceso.",
+            "exception": "Error al obtener el token."
+          },
+          "success": "Token obtenido correctamente para"
+        }
       }
     }
   },
@@ -597,7 +641,8 @@
         "social": "redes sociales",
         "social_telegram": "Telegram",
         "social_mastodon": "Mastodon",
-        "social_bluesky": "Bluesky"
+        "social_bluesky": "Bluesky",
+        "social_matrix": "Matrix"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Fuente USB",

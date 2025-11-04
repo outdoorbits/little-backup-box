@@ -364,6 +364,10 @@ conf_SOCIAL_MASTODON_TOKEN="$conf_SOCIAL_MASTODON_TOKEN"
 conf_SOCIAL_BLUESKY_API_BASE_URL="$conf_SOCIAL_BLUESKY_API_BASE_URL"
 conf_SOCIAL_BLUESKY_IDENTIFIER="$conf_SOCIAL_BLUESKY_IDENTIFIER"
 conf_SOCIAL_BLUESKY_APP_PASSWORD="$conf_SOCIAL_BLUESKY_APP_PASSWORD"
+conf_SOCIAL_MATRIX_HOMESERVER="$conf_SOCIAL_MATRIX_HOMESERVER"
+conf_SOCIAL_MATRIX_TOKEN="$conf_SOCIAL_MATRIX_TOKEN"
+conf_SOCIAL_MATRIX_ROOM_ID="$conf_SOCIAL_MATRIX_ROOM_ID"
+conf_SOCIAL_MATRIX_ROOM_IDENTIFIER="$conf_SOCIAL_MATRIX_ROOM_IDENTIFIER"
 
 CONFIGDATA;
 
@@ -1581,6 +1585,20 @@ CONFIGDATA;
 
 					<label for="conf_SOCIAL_BLUESKY_APP_PASSWORD"><?php echo L::config_social_bluesky_app_password_label; ?></label><br />
 					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_APP_PASSWORD" name="conf_SOCIAL_BLUESKY_APP_PASSWORD" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_APP_PASSWORD']; ?>"><br />
+
+				<h3><?php echo L::config_social_matrix_header; ?></h3>
+					<?php echo L::config_social_matrix_install_desc; ?><br />
+					<br />
+
+					<label for="conf_SOCIAL_MATRIX_HOMESERVER"><?php echo L::config_social_matrix_homeserver_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_HOMESERVER" name="conf_SOCIAL_MATRIX_HOMESERVER" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_HOMESERVER'] ?? '', ENT_QUOTES); ?>">
+					<br />
+					<label for="conf_SOCIAL_MATRIX_TOKEN"><?php echo L::config_social_matrix_token_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_TOKEN" name="conf_SOCIAL_MATRIX_TOKEN" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_TOKEN'] ?? '', ENT_QUOTES); ?>">
+					<br />
+					<?php include("${WORKING_DIR}/sub-matrix-token-fetch.php"); ?>
+					<br />
+					<?php include("${WORKING_DIR}/sub-matrix-room-id.php"); ?>
 
 			</details>
 		</div>

@@ -293,7 +293,11 @@ class setup(object):
 					'conf_SOCIAL_MASTODON_TOKEN':						{'value': '', 'type': 'str'},
 					'conf_SOCIAL_BLUESKY_API_BASE_URL':					{'value': 'https://bsky.social', 'type': 'str'},
 					'conf_SOCIAL_BLUESKY_IDENTIFIER':					{'value': '', 'type': 'str'},
-					'conf_SOCIAL_BLUESKY_APP_PASSWORD':					{'value': '', 'type': 'str'}
+					'conf_SOCIAL_BLUESKY_APP_PASSWORD':					{'value': '', 'type': 'str'},
+					'conf_SOCIAL_MATRIX_HOMESERVER':					{'value': '', 'type': 'str'},
+					'conf_SOCIAL_MATRIX_TOKEN':							{'value': '', 'type': 'str'},
+					'conf_SOCIAL_MATRIX_ROOM_ID':						{'value': '', 'type': 'str'},
+					'conf_SOCIAL_MATRIX_ROOM_IDENTIFIER':				{'value': '', 'type': 'str'}
 				}
 		)
 

@@ -183,6 +183,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 			libimage-exiftool-perl \
 			php \
 			php-cli \
+			php-curl \
 			samba \
 			samba-common-bin \
 			proftpd-core \
@@ -214,6 +215,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 			python3-urllib3 \
 			python3-python-telegram-bot \
 			python3-websockets \
+			python3-matrix-nio \
 			smartmontools \
 			dos2unix
 
