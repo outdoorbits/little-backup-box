@@ -70,8 +70,10 @@ Some of the features of the box and the web user interface are
 			<li>
 				<b>social media:</b>
 				<ul>
-					<li>mastodon&reg;</li>
-					<li>Telegram&reg;</li>
+					<li>Mastodon</li>
+					<li>Bluesky</li>
+					<li>Telegram</li>
+					<li>Matrix</li>
 				</ul>
 			</li>
 		</ul>

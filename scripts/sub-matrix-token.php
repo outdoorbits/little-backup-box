@@ -22,7 +22,8 @@ async function openMatrixTokenFetcher() {
 	const homeserverEl	= document.getElementById('conf_SOCIAL_MATRIX_HOMESERVER');
 	const tokenEl		= document.getElementById('conf_SOCIAL_MATRIX_TOKEN');
 
-	const homeserverDefault = (homeserverEl?.value || '').trim();
+	const homeserverDefault	= (homeserverEl?.value || '').trim();
+	const tokenDefault		= (tokenEl?.value || '').trim();
 
 	// Build dialog if not yet present
 	let dlg = document.getElementById('mx-token-fetcher');
@@ -49,15 +50,17 @@ async function openMatrixTokenFetcher() {
 				<input type="password" id="mx-gettoken-password" style="width:100%;">
 			</label>
 
+			<label style="display:block; margin-bottom:.25rem;">
+				<?php echo L::config_social_matrix_token_label; ?><br>
+				<input type="text" id="mx-gettoken-token" style="width:100%;" disabled>
+			</label>
+
 			<div id="mx-gettoken-status" style="margin:.5rem 0; color:#555; min-height:1.2em;"></div>
 
 			<div style="display:flex; gap:.5rem; margin-top:.75rem; justify-content:flex-end; flex-wrap:wrap;">
-				<button id="mx-gettoken-cancel" value="cancel" type="submit">
-					<?php echo L::config_social_matrix_close; ?>
-				</button>
-				<button id="mx-gettoken-fetch" value="default">
-					<?php echo L::config_social_matrix_gettoken_button_label; ?>
-				</button>
+				<button id="mx-gettoken-cancel" value="cancel" type="submit"><?php echo L::config_social_matrix_close; ?></button>
+				<button id="mx-gettoken-fetch" value="default"><?php echo L::config_social_matrix_gettoken_button_label; ?></button>
+				<button id="mx-gettoken-choose" value="default"><?php echo L::config_social_matrix_accept; ?></button>
 			</div>
 		</form>`;
 		document.body.appendChild(dlg);
@@ -65,6 +68,7 @@ async function openMatrixTokenFetcher() {
 		const hsInput	= dlg.querySelector('#mx-gettoken-homeserver');
 		const userInput	= dlg.querySelector('#mx-gettoken-username');
 		const pwInput	= dlg.querySelector('#mx-gettoken-password');
+		const tkInput	= dlg.querySelector('#mx-gettoken-token');
 		const statusEl	= dlg.querySelector('#mx-gettoken-status');
 
 		// Handler für "Fetch token"
@@ -122,15 +126,8 @@ async function openMatrixTokenFetcher() {
 					return;
 				}
 
-				// write token to main input
-				if (tokenEl) {
-					tokenEl.value	= token;
-				}
-
-				// also fill homeserver field if empty
-				if (homeserverEl && !homeserverEl.value) {
-					homeserverEl.value	= homeserver;
-				}
+				// write token to local input
+				tkInput.value	= token;
 
 				statusEl.textContent	= '<?php echo L::config_social_matrix_gettoken_success; ?>' + (userId ? ' ' + userId : '');
 				// dialog offen lassen, damit man die Meldung sieht
@@ -139,12 +136,36 @@ async function openMatrixTokenFetcher() {
 				statusEl.textContent	= '<?php echo L::config_social_matrix_gettoken_error_exception; ?>';
 			}
 		};
+
+		// apply changes
+		dlg.querySelector('#mx-gettoken-choose').onclick	= (e) => {
+			e.preventDefault();
+
+			// write token to main input
+			if (tokenEl) {
+				tokenEl.value	= tkInput.value;
+			}
+
+			// also fill homeserver field if empty
+			if (homeserverEl && !homeserverEl.value) {
+				const homeserver = (hsInput?.value || '').trim();
+				homeserverEl.value	= homeserver;
+			}
+
+			// close dialog
+			dlg.close('ok');
+		};
 	}
 
-	// Default-Wert für Homeserver übergeben
+	// Default-values
 	const hsInput = dlg.querySelector('#mx-gettoken-homeserver');
 	if (hsInput && homeserverDefault && !hsInput.value) {
 		hsInput.value	= homeserverDefault;
+	}
+
+	const tkInput = dlg.querySelector('#mx-gettoken-token');
+	if (tkInput && tokenDefault && !tkInput.value) {
+		tkInput.value	= tokenDefault;
 	}
 
 	if (typeof dlg.showModal === 'function') dlg.showModal();

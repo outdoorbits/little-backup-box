@@ -135,10 +135,11 @@
 	}
 </script>
 
-<button type="button" onclick="openChatPicker()" id="get_telegram_chat_id">
-	<?php echo L::config_social_telegram_button_select_chat; ?>
-</button><br />
 <label for="TELEGRAM_CHAT_ID_PRESENTER"><?php echo L::config_social_telegram_chat_id_label; ?></label><br />
 <input type="hidden" id="conf_SOCIAL_TELEGRAM_CHAT_ID" name="conf_SOCIAL_TELEGRAM_CHAT_ID" value="<?php echo $config['conf_SOCIAL_TELEGRAM_CHAT_ID']; ?>">
 <input type="hidden" id="conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER" name="conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER" value="<?php echo !empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) ? $_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER'] : $config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']; ?>">
 <input type="text" id="TELEGRAM_CHAT_ID_PRESENTER" name="TELEGRAM_CHAT_ID_PRESENTER" size="20" value="<?php if (intval($config['conf_SOCIAL_TELEGRAM_CHAT_ID']) <> 0) {echo $config['conf_SOCIAL_TELEGRAM_CHAT_ID'].": ".$config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER'];} ?>" disabled>
+<br />
+<button type="button" onclick="openChatPicker()" id="get_telegram_chat_id">
+	<?php echo L::config_social_telegram_button_select_chat; ?>
+</button>

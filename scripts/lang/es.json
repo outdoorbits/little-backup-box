@@ -69,7 +69,10 @@
     },
     "file_operations": "Operaciones de archivos",
     "telegram": {
-      "telegram": "Telegram&reg;"
+      "telegram": "Telegram"
+    },
+    "matrix": {
+      "matrix": "Matrix"
     }
   },
   "sysinfo": {
@@ -402,7 +405,7 @@
       "section": "Redes sociales",
       "bluesky": {
         "header": "Configurar Bluesky",
-        "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
+        "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04f_Bluesky\">Wiki: Bluesky</a>",
         "base_url_label": "URL base de la API",
         "identifier_label": "Identificador (correo o usuario)",
         "app_password_label": "Contraseña de la aplicación"
@@ -432,8 +435,8 @@
         "button_select_chat": "Seleccionar chat"
       },
       "mastodon": {
-        "header": "Configurar Mastodon&reg;",
-        "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
+        "header": "Configurar Mastodon",
+        "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Mastodon\">Wiki: Mastodon</a>",
         "token_label": "Token de acceso",
         "base_url_label": "URL base de Mastodon"
       },
@@ -443,8 +446,8 @@
         "filename_label": "Nombre del archivo de publicación"
       },
       "matrix": {
-        "header": "Integración con Matrix",
-        "install_desc": "Configure the Matrix bot for notifications or uploads.",
+        "header": "Configurar Matrix",
+        "install_desc": "Consulte los preparativos en la <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Matrix\">Wiki: Matrix</a>",
         "homeserver_label": "Servidor Matrix (p. ej. https://matrix.example.org)",
         "token_label": "Token de acceso de la cuenta del bot",
         "error": {
@@ -463,7 +466,7 @@
         "without_name": "sin nombre",
         "selected": "Seleccionado",
         "select_room_first": "Por favor, selecciona una sala primero.",
-        "test_message": "Mensaje de prueba de Matrix del Little backup Box",
+        "test_message": "Mensaje de prueba de Matrix del Little Backup Box",
         "test_message_sent_to": "Mensaje de prueba enviado a",
         "test_message_error": "Error al enviar el mensaje de prueba",
         "button_select_room": "Seleccionar sala",

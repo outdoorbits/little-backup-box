@@ -19,29 +19,33 @@
 
 from pathlib import Path
 import re
+import markdown
 import mimetypes
 
 from lib_socialmedia_parent import services
 import lib_system
 
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class matrix(services):
-	def __init__(self, homeserver, access_token, room_id, check_only=False):
-		# homeserver:   e.g. 'https://matrix.example.org'
-		# access_token: permanent access token for the bot user
-		# room_id:      '!something:example.org' (or alias, if your server supports that)
+	def __init__(self, HOMESERVER, ACCESS_TOKEN, ROOM_ID, check_only=False):
+		# HOMESERVER:   e.g. 'https://matrix.example.org'
+		# ACCESS_TOKEN: permanent access token for the bot user
+		# ROOM_ID:      '!something:example.org' (or alias, if your server supports that)
 
 		super().__init__()
 
-		self.caption_maxlength	= 1024     # for the first message caption when sending media
-		self.post_maxlength		= 4096        # general limit for text (Matrix has its own internal limits)
+		self.caption_maxlength	= 1000     # for the first message caption when sending media
+		self.post_maxlength		= 4000     # general limit for text (Matrix has its own internal limits)
 
-		self.homeserver			= (homeserver or "").strip()
-		self.access_token		= (access_token or "").strip()
-		self.room_id			= room_id
+		self.homeserver			= (HOMESERVER or "").strip()
+		self.access_token		= (ACCESS_TOKEN or "").strip()
+		self.room_id			= ROOM_ID
 
-		self.rate_limit_count	= 20
-		self.rate_limit_seconds	= 60
+		self.rate_limit_burst_count	= 10
+		self.rate_limit_count		= 1
+		self.rate_limit_seconds		= 5
 
 		# The bot is considered "configured" if homeserver, room_id, and access_token exist
 		self.bot_configured = (
@@ -97,10 +101,13 @@ class matrix(services):
 
 			# Handle message types
 			if msgtype.main == 'text':
+				if msgtype.sub == 'md':
+					Comment	= markdown.markdown(Comment)
+					msgtype.sub	= 'html'
+
 				if msgtype.sub == 'html':
 					# Replace <br> with \n, strip BOM and leading whitespace
-					Comment_local	= re.sub(r'<br\s*/?>', '\n', Comment, flags=re.IGNORECASE)
-					Comment_local	= Comment_local.lstrip("\ufeff")
+					Comment_local	= Comment.lstrip("\ufeff")
 					Comment_local	= re.sub(r'^\s+', '', Comment_local)
 
 					def make_formatted_part(part):
@@ -116,15 +123,9 @@ class matrix(services):
 						if not ok:
 							break
 
-				elif msgtype.sub == 'md':
-					# No native Markdown support in Matrix → send as plain text
-					CommentParts = self.split_text(Comment, self.post_maxlength)
-					for CommentPart in CommentParts:
-						ok	= await send_text(CommentPart)
-						if not ok:
-							break
 				else:
 					# Plain text
+					# No native Markdown support in Matrix - send as plain text as well
 					CommentParts = self.split_text(Comment, self.post_maxlength)
 					for CommentPart in CommentParts:
 						ok	= await send_text(CommentPart)
@@ -138,13 +139,17 @@ class matrix(services):
 				async def upload_file(path: Path):
 					mime_type, _	= mimetypes.guess_type(path.name)
 					mime_type		= mime_type or "application/octet-stream"
-					with open(path, "rb") as f:
-						data = f.read()
-					upload_resp		= await client.upload(
-						data,
-						content_type=mime_type,
-						filename=path.name
-					)
+
+					file_stat = path.stat()
+
+					with open(path, "r+b") as f:
+						upload_resp, decryption_dict = await client.upload(
+							data_provider	= f,
+							content_type	= mime_type,
+							filename		= path.name,
+							filesize		= file_stat.st_size,
+						)
+
 					if isinstance(upload_resp, self.UploadResponse):
 						return upload_resp.content_uri, mime_type
 					else:
@@ -175,22 +180,22 @@ class matrix(services):
 					if index == 0 and media_uri:
 						# First part: send media with caption
 						content = {
-							"msgtype": matrix_msgtype,
-							"body": FilePath.name if FilePath else "file",
-							"url": media_uri,
+							"msgtype":	matrix_msgtype,
+							"body":		FilePath.name if FilePath else "file",
+							"url":		media_uri,
 						}
 
 						if CommentPart:
-							content["body"]				= CommentPart
+							content["caption"]				= CommentPart
 
 						if media_mime:
 							content.setdefault("info", {})
 							content["info"]["mimetype"]	= media_mime
 
 						resp = await client.room_send(
-							room_id=self.room_id,
-							message_type="m.room.message",
-							content=content
+							room_id			= self.room_id,
+							message_type	= "m.room.message",
+							content			= content
 						)
 						if not isinstance(resp, self.RoomSendResponse):
 							self.ok	= False
@@ -256,4 +261,17 @@ class matrix(services):
 			self.ok				= False
 			self.returnmessage	= "not configured"
 
+	def delaytime(self, upload_times):
+		if not self.rate_limit_count or not self.rate_limit_seconds:
+			return(0)
+
+		if len(upload_times) < self.rate_limit_burst_count:
+			return(0)
+
+		if len(upload_times) >= self.rate_limit_count:
+			uptime	= lib_system.get_uptime_sec()
+			if uptime - upload_times[0] < self.rate_limit_seconds:
+				return(self.rate_limit_seconds - uptime + upload_times[0])
+
+		return(0)
 

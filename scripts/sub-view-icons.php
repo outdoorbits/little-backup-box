@@ -30,12 +30,34 @@
 </symbol>
 HTML;
 
-$telegram = <<<HTML
+		$telegram = <<<HTML
 <symbol id="ICONID" viewBox="0 0 24 24" fill="none">
   BACKGROUND
   <g transform="translate(4,4)">
     <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z" fill="#FFFFFF" stroke="#229ED9" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
   </g>
+</symbol>
+HTML;
+
+		$matrix = <<<HTML
+<symbol id="ICONID" viewBox="0 0 24 24" fill="none">
+	BACKGROUND
+	<g stroke="#000" stroke-width="1.8" stroke-linecap="butt" stroke-linejoin="miter" fill="none">
+		<!-- linke Klammer -->
+		<path d="M4 5 h3 M4 5 v14 M4 19 h3" />
+		<!-- rechte Klammer -->
+		<path d="M20 5 h-3 M20 5 v14 M20 19 h-3" />
+	</g>
+	<!-- zentriertes kleines m -->
+	<text
+		x="12" y="12"
+		font-family="sans-serif"
+		font-size="9"
+		text-anchor="middle"
+		dominant-baseline="middle"
+		fill="#000">
+		m
+	</text>
 </symbol>
 HTML;
 
@@ -67,6 +89,7 @@ HTML;
 
 		$core_icons		= array(
 			'mastodon'	=> $mastodon,
+			'matrix'	=> $matrix,
 			'telegram'	=> $telegram,
 			'bluesky'	=> $bluesky
 		);
