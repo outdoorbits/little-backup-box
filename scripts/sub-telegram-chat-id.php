@@ -1,3 +1,22 @@
+<!--
+# Author: Stefan Saam, github@saams.de
+
+#######################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#######################################################################
+-->
+
 <script>
 	async function openChatPicker() {
 	const tokenEl								= document.getElementById('conf_SOCIAL_TELEGRAM_TOKEN');
@@ -77,7 +96,7 @@
 		if (conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER) {conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER.value = identifier;}
 		if (Button_Target_Telegram) {
 			if (identifier) {
-				Button_Target_Telegram.innerHTML = '<?php echo L::box_backup_mode_social_telegram; ?>' + '<br />' + identifier;
+				Button_Target_Telegram.innerHTML = '<?php echo L::box_backup_mode_social_telegram; ?>' + '<br /><small style="font-weight: normal;">' + identifier + '</small>';
 			} else {
 				Button_Target_Telegram.innerHTML = '<?php echo L::box_backup_mode_social_telegram; ?>'
 			}
@@ -116,10 +135,11 @@
 	}
 </script>
 
-<button type="button" onclick="openChatPicker()" id="get_telegram_chat_id">
-	<?php echo L::config_social_telegram_button_select_chat; ?>
-</button><br />
 <label for="TELEGRAM_CHAT_ID_PRESENTER"><?php echo L::config_social_telegram_chat_id_label; ?></label><br />
 <input type="hidden" id="conf_SOCIAL_TELEGRAM_CHAT_ID" name="conf_SOCIAL_TELEGRAM_CHAT_ID" value="<?php echo $config['conf_SOCIAL_TELEGRAM_CHAT_ID']; ?>">
 <input type="hidden" id="conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER" name="conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER" value="<?php echo !empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) ? $_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER'] : $config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']; ?>">
 <input type="text" id="TELEGRAM_CHAT_ID_PRESENTER" name="TELEGRAM_CHAT_ID_PRESENTER" size="20" value="<?php if (intval($config['conf_SOCIAL_TELEGRAM_CHAT_ID']) <> 0) {echo $config['conf_SOCIAL_TELEGRAM_CHAT_ID'].": ".$config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER'];} ?>" disabled>
+<br />
+<button type="button" onclick="openChatPicker()" id="get_telegram_chat_id">
+	<?php echo L::config_social_telegram_button_select_chat; ?>
+</button>

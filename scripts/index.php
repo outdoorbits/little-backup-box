@@ -230,7 +230,13 @@
 								elseif ($LabelName == 'telegram') {
 									$LabelName		= l::box_backup_mode_social_telegram;
 									if (!empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) or $config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) {
-										$LabelName	= !empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) ? "$LabelName<br />${_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}" : "$LabelName<br />${config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}";
+										$LabelName	= !empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) ? "$LabelName<br /><small style=\"font-weight: normal;\">${_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}</small>" : "$LabelName<br /><small style=\"font-weight: normal;\">${config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}</small>";
+									}
+								}
+								elseif ($LabelName == 'matrix') {
+									$LabelName		= l::box_backup_mode_social_matrix;
+									if (!empty($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) or $config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) {
+										$LabelName	= !empty($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) ? "$LabelName<br /><small style=\"font-weight: normal;\">${_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']}</small>" : "$LabelName<br /><small style=\"font-weight: normal;\">${config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']}</small>";
 									}
 								}
 								elseif ($LabelName == 'mastodon') {
@@ -429,6 +435,17 @@
 						<h4><?php echo L::config_social_telegram_header; ?></h4>
 							<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
 							<input type="hidden" id="conf_SOCIAL_TELEGRAM_TOKEN" name="conf_SOCIAL_TELEGRAM_TOKEN" value="<?php echo $config['conf_SOCIAL_TELEGRAM_TOKEN']; ?>">
+					</div>
+			</details>
+
+			<details>
+				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_matrix_matrix; ?></summary>
+
+					<div class='backupsection'>
+						<h4><?php echo L::config_social_matrix_header; ?></h4>
+							<?php include("${WORKING_DIR}/sub-matrix-room-id.php"); ?>
+							<input type="hidden" id="conf_SOCIAL_MATRIX_HOMESERVER" name="conf_SOCIAL_MATRIX_HOMESERVER" value="<?php echo $config['conf_SOCIAL_MATRIX_HOMESERVER']; ?>">
+							<input type="hidden" id="conf_SOCIAL_MATRIX_TOKEN" name="conf_SOCIAL_MATRIX_TOKEN" value="<?php echo $config['conf_SOCIAL_MATRIX_TOKEN']; ?>">
 					</div>
 			</details>
 		</div>

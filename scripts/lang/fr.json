@@ -69,7 +69,10 @@
     },
     "file_operations": "Opérations sur les fichiers",
     "telegram": {
-      "telegram": "Telegram&reg;"
+      "telegram": "Telegram"
+    },
+    "matrix": {
+      "matrix": "Matrix"
     }
   },
   "sysinfo": {
@@ -402,7 +405,7 @@
       "section": "Réseaux sociaux",
       "bluesky": {
         "header": "Configurer Bluesky",
-        "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
+        "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04f_Bluesky\">Wiki: Bluesky</a>",
         "base_url_label": "URL de base de l’API",
         "identifier_label": "Identifiant (e-mail ou handle)",
         "app_password_label": "Mot de passe de l’application"
@@ -432,8 +435,8 @@
         "button_select_chat": "Sélectionnez le chat"
       },
       "mastodon": {
-        "header": "Configurer Mastodon&reg;",
-        "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
+        "header": "Configurer Mastodon",
+        "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Mastodon\">Wiki: Mastodon</a>",
         "token_label": "Jeton d'accès",
         "base_url_label": "URL de base de Mastodon"
       },
@@ -441,6 +444,50 @@
         "header": "Général",
         "date_label": "Date de publication de l'enregistrement",
         "filename_label": "Publier le nom du fichier"
+      },
+      "matrix": {
+        "header": "Configurer Matrix",
+        "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Matrix\">Wiki: Matrix</a>",
+        "homeserver_label": "Serveur Matrix (ex. https://matrix.example.org)",
+        "token_label": "Jeton d’accès du compte bot",
+        "error": {
+          "invalid_token": "Jeton d’accès invalide.",
+          "unreachable": "Serveur Matrix inaccessible.",
+          "bad_api_response": "Réponse inattendue du serveur Matrix.",
+          "not_set_token": "Veuillez d’abord saisir le jeton d’accès Matrix.",
+          "not_set_homeserver": "Veuillez d’abord saisir le serveur Matrix."
+        },
+        "no_rooms_found": "Aucun salon trouvé.",
+        "select_room": "Sélectionner un salon Matrix",
+        "table_headers": "Nom — Alias — ID du salon",
+        "close": "Fermer",
+        "accept": "Valider",
+        "test_message_send": "Envoyer un message de test",
+        "without_name": "sans nom",
+        "selected": "Sélectionné",
+        "select_room_first": "Veuillez d’abord sélectionner un salon.",
+        "test_message": "Message de test Matrix envoyé par le Little Backup Box",
+        "test_message_sent_to": "Message de test envoyé à",
+        "test_message_error": "Erreur lors de l’envoi du message de test",
+        "button_select_room": "Sélectionner un salon",
+        "room_id_label": "ID du salon Matrix",
+        "gettoken": {
+          "header": "Récupérer le jeton Matrix",
+          "desc": "Connectez-vous avec votre compte Matrix pour générer un jeton d’accès pour le bot. Le mot de passe ne sera pas enregistré.",
+          "username_label": "Nom d’utilisateur Matrix (p. ex. @bot:example.org)",
+          "password_label": "Mot de passe",
+          "button_label": "Récupérer le jeton",
+          "enter_username_first": "Veuillez d’abord saisir le nom d’utilisateur Matrix.",
+          "enter_password_first": "Veuillez d’abord saisir le mot de passe.",
+          "fetching": "Récupération du jeton…",
+          "error": {
+            "invalid_credentials": "Échec de la connexion. Veuillez vérifier le nom d’utilisateur et le mot de passe.",
+            "missing_parameters": "Données manquantes. Veuillez remplir tous les champs.",
+            "no_token": "La connexion a réussi, mais aucun jeton d’accès n’a été renvoyé.",
+            "exception": "Erreur lors de la récupération du jeton."
+          },
+          "success": "Jeton récupéré avec succès pour"
+        }
       }
     }
   },
@@ -597,7 +644,8 @@
         "social": "médias sociaux",
         "social_telegram": "Telegram",
         "social_mastodon": "Mastodon",
-        "social_bluesky": "Bluesky"
+        "social_bluesky": "Bluesky",
+        "social_matrix": "Matrix"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "Source USB",

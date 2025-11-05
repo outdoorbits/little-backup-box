@@ -405,9 +405,10 @@ class backup(object):
 
 		if (self.TransferMode == 'social'):
 			# get bit position
-			SocialServices	= lib_socialmedia.socialmedia().get_social_services()
+			SoMe	= lib_socialmedia.socialmedia()
+			SocialServices	= SoMe.get_social_services()
 			if self.TargetService in SocialServices:
-				bit	= SocialServices.index(self.TargetService)
+				bit	= SoMe.get_social_service_bit(self.TargetService)
 			else:
 				return(0, True)
 
@@ -795,15 +796,16 @@ class backup(object):
 					elif self.TargetDevice.StorageType == 'social':
 						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID, upload_times=upload_times)
 
+						SocialServices	= SOCIAL.get_social_services()
+
 						if not SOCIAL.configured():
-							if self.TargetService in ['telegram', 'mastodon', 'bluesky']:
+							if self.TargetService in SocialServices:
 								self.__display.message([f's=a:{self.__lan.l(f"box_backup_mode_social_{self.TargetService}")}', f's=a:{self.__lan.l("box_backup_not_configured")}'])
 							return
 
 						# get bit position
-						SocialServices	= SOCIAL.get_social_services()
 						if self.TargetService in SocialServices:
-							bit	= SocialServices.index(self.TargetService)
+							bit	= SOCIAL.get_social_service_bit(self.TargetService)
 						else:
 							return
 
@@ -1840,7 +1842,6 @@ if __name__ == "__main__":
 	args['update_exif']			= args['update_exif'].lower() == 'true'			if args['update_exif'] != 'setup'			else 'setup'
 	args['checksum']			= args['checksum'].lower() == 'true'			if args['checksum'] != 'setup'				else 'setup'
 	args['power_off']			= args['power_off'].lower() == 'true'			if args['power_off'] != 'setup'				else 'setup'
-
 
 	SecondaryBackupFollows	= (
 		(not args['SecSourceName'] is None) and \

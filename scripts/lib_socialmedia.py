@@ -31,6 +31,7 @@ import lib_setup
 import lib_system
 
 from lib_socialmedia_telegram import telegram
+from lib_socialmedia_matrix import matrix
 from lib_socialmedia_mastodon import mastodon
 from lib_socialmedia_bluesky import bluesky
 
@@ -83,11 +84,19 @@ class socialmedia(object):
 					check_only	= check_only
 				)
 			)
+		elif service == 'matrix':
+			return(
+				matrix(
+					HOMESERVER		= self.__setup.get_val('conf_SOCIAL_MATRIX_HOMESERVER'),
+					ACCESS_TOKEN	= self.__setup.get_val('conf_SOCIAL_MATRIX_TOKEN'),
+					ROOM_ID			= self.__setup.get_val('conf_SOCIAL_MATRIX_ROOM_ID')
+				)
+			)
 		elif service == 'mastodon':
 			return(
 				mastodon(
-					MA_API_BASE_URL	=	self.__setup.get_val('conf_SOCIAL_MASTODON_BASE_URL'),
-					MA_ACCESS_TOKEN	=	self.__setup.get_val('conf_SOCIAL_MASTODON_TOKEN'),
+					MA_API_BASE_URL	= self.__setup.get_val('conf_SOCIAL_MASTODON_BASE_URL'),
+					MA_ACCESS_TOKEN	= self.__setup.get_val('conf_SOCIAL_MASTODON_TOKEN'),
 					check_only	= check_only
 				)
 			)
@@ -104,12 +113,29 @@ class socialmedia(object):
 			return(None)
 
 	def get_social_services(self):
+		# returns services in the order to display
+		social_services	= [
+			'telegram',
+			'matrix',
+			'mastodon',
+			'bluesky'
+
+		]
+		return(social_services)
+
+	def get_social_service_bit(self, service):
+		# return the bit number representing the service
 		social_services	= [
 			'telegram',
 			'mastodon',
-			'bluesky'
+			'bluesky',
+			'matrix'
 		]
-		return(social_services)
+
+		if service not in social_services:
+			return(None)
+
+		return(social_services.index(service))
 
 	def get_social_services_configured(self):
 		services_configured	= []
@@ -158,8 +184,8 @@ class socialmedia(object):
 			sep_NewLine	= "\n"
 
 		# bottom
-		sep	= '' if not FilePathShow or not FileDateShow else ': '
-		Bottom	= f'{Path(FilePathShow).name}{sep}{FileDateShow}'
+		sep	= '' if not FilePathShow or not FileDateShow else ' - '
+		Bottom	= f'{FileDateShow}{sep}{Path(FilePathShow).name}'
 
 		sep	= '' if not Bottom or not Comment else sep_NewLine
 		Bottom	= f'{Bottom}{sep}{Comment}'
@@ -225,7 +251,7 @@ def parse_args() -> argparse.Namespace:
 		formatter_class=argparse.RawTextHelpFormatter,
 	)
 
-	actions	= ['get_social_services', 'get_social_services_configured']
+	actions	= ['get_social_services', 'get_social_service_bit', 'get_social_services_configured']
 	parser.add_argument(
 		'--action',
 		'-a',
@@ -234,7 +260,19 @@ def parse_args() -> argparse.Namespace:
 		help=f'One of {actions}'
 	)
 
+	services	= socialmedia().get_social_services()
+	parser.add_argument(
+		'--service',
+		'-s',
+		choices		= services,
+		required =	False,
+		help=f'One of {services}'
+	)
+
 	args = parser.parse_args()
+
+	if args.action == "get_social_service_bit" and not args.service:
+		parser.error("--service is required when --action=get_social_service_bit")
 
 	return args
 
@@ -244,6 +282,10 @@ if __name__ == "__main__":
 	if args.action == 'get_social_services':
 		social_services	= socialmedia().get_social_services()
 		print(";".join(social_services))
+
+	if args.action == 'get_social_service_bit':
+		bit	= socialmedia().get_social_service_bit(args.service)
+		print(bit)
 
 	elif args.action == 'get_social_services_configured':
 		social_services	= socialmedia().get_social_services_configured()

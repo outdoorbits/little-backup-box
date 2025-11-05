@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2025-09-25: Uploading selected media to Matrix is now also working.</li>
 	<li>2025-09-25: New branch for Debian Trixie</li>
 	<li>2025-09-25: Uploading selected media to Bluesky is now also working.</li>
 	<li>2025-09-21: Uploading selected media to Mastodon is now also possible.</li>

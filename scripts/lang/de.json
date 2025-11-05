@@ -69,7 +69,10 @@
     },
     "file_operations": "Dateioperationen",
     "telegram": {
-      "telegram": "Telegram&reg;"
+      "telegram": "Telegram"
+    },
+    "matrix": {
+      "matrix": "Matrix"
     }
   },
   "sysinfo": {
@@ -402,7 +405,7 @@
       "section": "Soziale Medien",
       "bluesky": {
         "header": "Bluesky konfigurieren",
-        "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Bluesky\">Wiki: Bluesky</a>",
+        "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04f_Bluesky\">Wiki: Bluesky</a>",
         "base_url_label": "Basis-URL",
         "identifier_label": "Benutzerkennung (E-Mail oder Handle)",
         "app_password_label": "App-Passwort"
@@ -432,8 +435,8 @@
         "button_select_chat": "Chat wählen"
       },
       "mastodon": {
-        "header": "Mastodon&reg; konfigurieren",
-        "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Mastodon\">Wiki: Mastodon</a>",
+        "header": "Mastodon konfigurieren",
+        "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Mastodon\">Wiki: Mastodon</a>",
         "token_label": "Zugriffstoken",
         "base_url_label": "Mastodon-Basis-URL"
       },
@@ -441,6 +444,50 @@
         "header": "Allgemein",
         "date_label": "Aufnahmedatum veröffentlichen",
         "filename_label": "Dateiname veröffentlichen"
+      },
+      "matrix": {
+        "header": "Matrix konfigurieren",
+        "install_desc": "Bitte entnehmen Sie die Vorbereitungen dem <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Matrix\">Wiki: Matrix</a>",
+        "homeserver_label": "Matrix-Homeserver (z.B. https://matrix.example.org)",
+        "token_label": "Access-Token des Bot-Accounts",
+        "error": {
+          "invalid_token": "Ungültiges Access-Token.",
+          "unreachable": "Matrix-Homeserver nicht erreichbar.",
+          "bad_api_response": "Unerwartete Antwort vom Matrix-Server.",
+          "not_set_token": "Bitte zuerst das Matrix-Access-Token eintragen.",
+          "not_set_homeserver": "Bitte zuerst den Matrix-Homeserver eintragen."
+        },
+        "no_rooms_found": "Keine Räume gefunden.",
+        "select_room": "Matrix-Raum auswählen",
+        "table_headers": "Name — Alias — Raum-ID",
+        "close": "Schließen",
+        "accept": "Übernehmen",
+        "test_message_send": "Testnachricht senden",
+        "without_name": "ohne Namen",
+        "selected": "Ausgewählt",
+        "select_room_first": "Bitte zuerst einen Raum auswählen.",
+        "test_message": "Matrix-Testnachricht von Little Backup Box",
+        "test_message_sent_to": "Testnachricht gesendet an",
+        "test_message_error": "Fehler beim Senden der Testnachricht",
+        "button_select_room": "Raum auswählen",
+        "room_id_label": "Matrix-Raum-ID",
+        "gettoken": {
+          "header": "Matrix-Token abrufen",
+          "desc": "Melde dich mit deinem Matrix-Benutzerkonto an, um einmalig ein Access-Token für den Bot zu erzeugen. Das Passwort wird nicht gespeichert.",
+          "username_label": "Matrix-Benutzername (z.B. @bot:example.org)",
+          "password_label": "Passwort",
+          "button_label": "Token abrufen",
+          "enter_username_first": "Bitte zuerst den Matrix-Benutzernamen eintragen.",
+          "enter_password_first": "Bitte zuerst das Passwort eintragen.",
+          "fetching": "Token wird abgerufen …",
+          "error": {
+            "invalid_credentials": "Anmeldung fehlgeschlagen. Bitte Benutzername und Passwort prüfen.",
+            "missing_parameters": "Fehlende Eingaben. Bitte alle Felder ausfüllen.",
+            "no_token": "Login war erfolgreich, aber es wurde kein Access-Token zurückgegeben.",
+            "exception": "Fehler beim Abrufen des Tokens."
+          },
+          "success": "Token erfolgreich abgerufen für"
+        }
       }
     }
   },
@@ -597,7 +644,8 @@
         "social": "SoMe",
         "social_telegram": "Telegram",
         "social_mastodon": "Mastodon",
-        "social_bluesky": "Bluesky"
+        "social_bluesky": "Bluesky",
+        "social_matrix": "Matrix"
       },
       "nvme": "NVMe SSD",
       "nvme_source": "USB-Quelle",

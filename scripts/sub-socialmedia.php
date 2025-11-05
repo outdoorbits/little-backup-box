@@ -28,6 +28,12 @@
 		return($social_services);
 	}
 
+	function get_social_service_bit($service) {
+		$bit	= exec("python3 lib_socialmedia.py --action get_social_service_bit --service $service");
+
+		return($bit);
+	}
+
 	function get_social_services_configured() {
 		$social_services_string	= exec("python3 lib_socialmedia.py --action get_social_services_configured");
 

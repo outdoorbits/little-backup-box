@@ -27,6 +27,13 @@
 
 	include 'sub-socialmedia.php';
 	$social_services			= get_social_services();
+
+	$social_services_by_bit	= [];
+	foreach($social_services as $ServiceName) {
+		$bit	= get_social_service_bit($ServiceName);
+		$social_services_by_bit[$bit]	= $ServiceName;
+	}
+
 	$social_services_configured	= get_social_services_configured();
 
 	include("sub-i18n-loader.php");
@@ -285,13 +292,16 @@
 
 	function social_pannel($IMAGE_ID, $PUBLISH, $PUBLISHED) {
 		global $social_services;
+		global $social_services_by_bit;
 		global $social_services_configured;
 
 		$PUBLISH	= intval($PUBLISH);
 		$PUBLISHED	= intval($PUBLISHED);
 
 		echo '<div class="meta meta-social d-flex flex-wrap align-items-center ms-auto gap-1">';
-		foreach($social_services as $bit => $ServiceName) {
+
+		foreach($social_services as $ServiceName) {
+			$bit 	= (int)array_search($ServiceName, $social_services_by_bit);
 			if (! in_array($ServiceName, $social_services_configured)) {continue;}
 			?>
 			<div class="meta-inner d-flex align-items-center gap-0">
@@ -1054,7 +1064,7 @@
 										<option value="all" <?php echo ($filter_social_publish == "all"?" selected":""); ?>>-</option>
 										<?php
 											while ($SOCIAL_PUBLISH = $SOCIAL_PUBLISHS->fetchArray(SQLITE3_ASSOC)) {
-												$SocialServiceName	= isset($social_services[$SOCIAL_PUBLISH['bit']]) ? $social_services[$SOCIAL_PUBLISH['bit']] : '?';
+												$SocialServiceName	= isset($social_services_by_bit[$SOCIAL_PUBLISH['bit']]) ? $social_services_by_bit[$SOCIAL_PUBLISH['bit']] : '?';
 												echo "<option value=\"" . $SOCIAL_PUBLISH['bit'] . "\" " . ($filter_social_publish == $SOCIAL_PUBLISH['bit']?" selected":"") . ">" . $SocialServiceName . " (" . $SOCIAL_PUBLISH['set_count'] . ")</option>";
 											}
 										?>
@@ -1067,7 +1077,7 @@
 										<option value="all" <?php echo ($filter_social_published == "all"?" selected":""); ?>>-</option>
 										<?php
 											while ($SOCIAL_PUBLISHED = $SOCIAL_PUBLISHEDS->fetchArray(SQLITE3_ASSOC)) {
-												$SocialServiceName	= isset($social_services[$SOCIAL_PUBLISHED['bit']]) ? $social_services[$SOCIAL_PUBLISHED['bit']] : '?';
+												$SocialServiceName	= isset($social_services_by_bit[$SOCIAL_PUBLISHED['bit']]) ? $social_services_by_bit[$SOCIAL_PUBLISHED['bit']] : '?';
 												echo "<option value=\"" . $SOCIAL_PUBLISHED['bit'] . "\" " . ($filter_social_published == $SOCIAL_PUBLISHED['bit']?" selected":"") . ">" . $SocialServiceName . " (" . $SOCIAL_PUBLISHED['set_count'] . ")</option>";
 											}
 										?>
