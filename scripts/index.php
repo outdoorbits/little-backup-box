@@ -230,13 +230,13 @@
 								elseif ($LabelName == 'telegram') {
 									$LabelName		= l::box_backup_mode_social_telegram;
 									if (!empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) or $config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) {
-										$LabelName	= !empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) ? "$LabelName<br />${_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}" : "$LabelName<br />${config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}";
+										$LabelName	= !empty($_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']) ? "$LabelName<br /><small style=\"font-weight: normal;\">${_POST['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}</small>" : "$LabelName<br /><small style=\"font-weight: normal;\">${config['conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER']}</small>";
 									}
 								}
 								elseif ($LabelName == 'matrix') {
 									$LabelName		= l::box_backup_mode_social_matrix;
 									if (!empty($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) or $config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) {
-										$LabelName	= !empty($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) ? "$LabelName<br />(${_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']})" : "$LabelName<br />(${config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']})";
+										$LabelName	= !empty($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) ? "$LabelName<br /><small style=\"font-weight: normal;\">${_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']}</small>" : "$LabelName<br /><small style=\"font-weight: normal;\">${config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']}</small>";
 									}
 								}
 								elseif ($LabelName == 'mastodon') {

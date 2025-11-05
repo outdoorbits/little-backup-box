@@ -96,7 +96,7 @@
 		if (conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER) {conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER.value = identifier;}
 		if (Button_Target_Telegram) {
 			if (identifier) {
-				Button_Target_Telegram.innerHTML = '<?php echo L::box_backup_mode_social_telegram; ?>' + '<br />' + identifier;
+				Button_Target_Telegram.innerHTML = '<?php echo L::box_backup_mode_social_telegram; ?>' + '<br /><small style="font-weight: normal;">' + identifier + '</small>';
 			} else {
 				Button_Target_Telegram.innerHTML = '<?php echo L::box_backup_mode_social_telegram; ?>'
 			}

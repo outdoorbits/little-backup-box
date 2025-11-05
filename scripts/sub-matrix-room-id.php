@@ -111,7 +111,7 @@
 
 			if (Button_Target_Matrix) {
 				if (identifier) {
-					Button_Target_Matrix.innerHTML	= '<?php echo L::box_backup_mode_social_matrix; ?>' + '<br />' + identifier;
+					Button_Target_Matrix.innerHTML	= '<?php echo L::box_backup_mode_social_matrix; ?>' + '<br /><small style="font-weight: normal;">' + identifier + '</small>';
 				} else {
 					Button_Target_Matrix.innerHTML	= '<?php echo L::box_backup_mode_social_matrix; ?>';
 				}
