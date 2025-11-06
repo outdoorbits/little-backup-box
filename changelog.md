@@ -1,7 +1,7 @@
 <h2>Changelog</h2>
 <ul>
-	<li>2025-09-25: Uploading selected media to Matrix is now also working.</li>
-	<li>2025-09-25: New branch for Debian Trixie</li>
+	<li>2025-11-05: Uploading selected media to Matrix is now also working.</li>
+	<li>2025-10-13: New branch for Debian Trixie</li>
 	<li>2025-09-25: Uploading selected media to Bluesky is now also working.</li>
 	<li>2025-09-21: Uploading selected media to Mastodon is now also possible.</li>
 	<li>2025-08-18: Uploading selected media to Telegram is now possible. In addition, images can now be not only rated but also commented on in View. These comments are also published in Telegram. This allows images to be shared quickly and conveniently in Telegram groups and channels.</li>
