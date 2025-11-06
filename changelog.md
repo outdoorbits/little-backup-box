@@ -7,15 +7,15 @@
 	<li>2025-08-18: Uploading selected media to Telegram is now possible. In addition, images can now be not only rated but also commented on in View. These comments are also published in Telegram. This allows images to be shared quickly and conveniently in Telegram groups and channels.</li>
 	<li>2025-02-18: The integrated FTP server can now be used as a backup source. This makes it possible to use the LBB as a bridge from a camera to (almost) any backup destination. Note: The user 'lbb' must be used for this.</li>
 	<li>2024-12-14: Add status bar to display</li>
-	<li>2021-11-16: To optimize automatic backups, thumbnails are now created during the secondary backup (to cloud storage) instead of between the primary (to local disk) and secondary backups. This approach maximizes computing and network efficiency, significantly reducing the overall backup time.</li>
-	<li>2021-10-19: Add option to rename media files after backup based on the files creation date and time. Example: &quot;Image.jpg&quot; from 2024/10/19 12:42:14 will be renamed to &quot;2024-10-19_12-42-14_-_Image.jpg&quot;</li>
+	<li>2024-11-16: To optimize automatic backups, thumbnails are now created during the secondary backup (to cloud storage) instead of between the primary (to local disk) and secondary backups. This approach maximizes computing and network efficiency, significantly reducing the overall backup time.</li>
+	<li>2024-10-19: Add option to rename media files after backup based on the files creation date and time. Example: &quot;Image.jpg&quot; from 2024/10/19 12:42:14 will be renamed to &quot;2024-10-19_12-42-14_-_Image.jpg&quot;</li>
 	<li>2024-09-09: In the settings for both default backups, specify separately whether the files should be copied or moved; Allow moving files from former target devices; bugfixes</li>
 	<li>2024-09-09: Integrate comitup into web UI</li>
 	<li>2024-09-09: Web UI: Change port for http from 8000 to 8080</li>
 	<li>2024-07-01: View: Add slideshow function to single view mode</li>
 	<li>2024-07-01: Speed up transfer to cloud by using rclone (use setup to switch back to rsync)</li>
 	<li>2024-04-08: Add support for NVMe SSD storage on Raspberry Pi 5</li>
-	<li>2024-03-04: Add USB auto source option. All connected devices (cameras and storages) will be backed up.</li>
+	<li>2024-03-04: Add USB auto source option (any USB). All connected devices (cameras and storages) will be backed up.</li>
 	<li>2024-02-26: A minimum size of the partition to be used on the target device can be set in the configuration. This allows smaller partitions to be skipped as a destination.</li>
 	<li>2024-01-25: Enable using of graphic environment</li>
 	<li>2024-01-19: Workaround to enable display with Raspberry Pi 5</li>
