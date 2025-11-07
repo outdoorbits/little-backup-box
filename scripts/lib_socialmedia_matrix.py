@@ -36,16 +36,16 @@ class matrix(services):
 
 		super().__init__()
 
-		self.caption_maxlength	= 1000     # for the first message caption when sending media
-		self.post_maxlength		= 4000     # general limit for text (Matrix has its own internal limits)
+		self.homeserver								= (HOMESERVER or "").strip()
+		self.access_token							= (ACCESS_TOKEN or "").strip()
+		self.room_id								= ROOM_ID
 
-		self.homeserver			= (HOMESERVER or "").strip()
-		self.access_token		= (ACCESS_TOKEN or "").strip()
-		self.room_id			= ROOM_ID
+		self.caption_maxlength						= 1000     # for the first message caption when sending media
+		self.post_maxlength							= 4000     # general limit for text (Matrix has its own internal limits)
 
-		self.rate_limit_burst_count	= 10
-		self.rate_limit_count		= 1
-		self.rate_limit_seconds		= 5
+		self.rate_limit_leading_unlimitted_count	= 10
+		self.rate_limit_count						= 1
+		self.rate_limit_seconds						= 5
 
 		# The bot is considered "configured" if homeserver, room_id, and access_token exist
 		self.bot_configured = (
@@ -265,9 +265,12 @@ class matrix(services):
 		if not self.rate_limit_count or not self.rate_limit_seconds:
 			return(0)
 
-		if len(upload_times) < self.rate_limit_burst_count:
+		# allow first n uploads without time limits
+		if self.rate_limit_leading_unlimitted_count > 0:
+			self.rate_limit_leading_unlimitted_count	-= 1
 			return(0)
 
+		# respect time limit
 		if len(upload_times) >= self.rate_limit_count:
 			uptime	= lib_system.get_uptime_sec()
 			if uptime - upload_times[0] < self.rate_limit_seconds:

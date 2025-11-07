@@ -31,11 +31,11 @@ class telegram(services):
 	def __init__(self, TG_TOKEN, TG_CHAT_ID, check_only=False):
 		super().__init__()
 
-		self.caption_maxlength	= 1024
-		self.post_maxlength	= 4096
+		self.TOKEN				= (TG_TOKEN or "").strip()
+		self.CHAT_ID			= TG_CHAT_ID
 
-		self.TOKEN		= (TG_TOKEN or "").strip()
-		self.CHAT_ID	= TG_CHAT_ID
+		self.caption_maxlength	= 1024
+		self.post_maxlength		= 4096
 
 		self.rate_limit_count	= 20
 		self.rate_limit_seconds	= 60

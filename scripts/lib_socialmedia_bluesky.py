@@ -35,11 +35,11 @@ class bluesky(services):
 	):
 		super().__init__()
 
-		self.post_maxlength	= 300
-
 		self.API_BASE_URL	= (BS_API_BASE_URL or "").strip()
 		self.IDENTIFIER		= (BS_IDENTIFIER or "").strip()
 		self.APP_PASSWORD	= (BS_APP_PASSWORD or "").strip()
+
+		self.post_maxlength	= 300
 
 		self.rate_limit_count	= 1666
 		self.rate_limit_seconds	= 3600
