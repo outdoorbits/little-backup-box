@@ -117,17 +117,8 @@
     "rsync_user_label": "Nombre de usuario para el servidor rsync",
     "rsync_password_header": "Contraseña",
     "rsync_password_label": "Contraseña para el servidor rsync",
-    "password_section": "Contraseña global",
-    "password_header": "Nueva contraseña global",
-    "password_remove_header": "Quitar contraseña",
-    "password_remove_label": "Marque para quitar la protección por contraseña. Las contraseñas para usuarios de Linux (lbb, pi) no se eliminarán.",
     "save_button": "Guardar",
-    "cloud_section": "Configurar servicios en la nube",
-    "cloud_header": "rcloud GUI se abre en una nueva ventana.",
     "username": "Nombre de usuario",
-    "password": "Contraseña",
-    "password_as_set_in": "Contraseña establecida en",
-    "cloud_rclone_gui": "rclone GUI",
     "save_settings_download_link_text": "Configuraciones de descarga",
     "save_settings_download_text": "Descargar un archivo zip con su configuración",
     "save_settings_section": "Configuración de descarga / carga",
@@ -154,7 +145,7 @@
       "generate_thumbnails_header": "Miniaturas",
       "generate_thumbnails_label": "¿Crear miniaturas para View después de la copia de seguridad? (Solo para almacenamiento local)",
       "update_exif_header": "Ajuste automáticamente los datos EXIF ​​​​de los archivos multimedia al importar",
-      "update_exif_label": "Los nuevos medios sin calificación propia reciben la calificación estándar. Si es posible, esto se escribe en el archivo original.",
+      "update_exif_label": "Ajustar los datos EXIF ​​durante la importación",
       "default_settings_header": "Configuración para la copia de seguridad estándar principal",
       "target": {
         "requirements_header": "Requisitos de partición de destino",
@@ -162,10 +153,6 @@
         "requirements_size_ignore": "aceptar todo"
       },
       "none": "sin respaldo automático",
-      "header": "Modo de respaldo predeterminado",
-      "header2": "Modo de respaldo secundario predeterminado (solo respaldos de red)",
-      "label": "Seleccione el modo de copia de seguridad predeterminado:",
-      "label2": "Seleccione un modo de copia de seguridad predeterminado secundario para ejecutar después del principal:",
       "power_off_label": "Apagar después de la copia de seguridad",
       "section": "Respaldo",
       "camera": {
@@ -190,21 +177,27 @@
       "default2_settings_header": "Configuración de copia de seguridad secundaria predeterminada",
       "rename": {
         "header": "Cambiar el nombre de los archivos",
-        "label": "Se intenta leer la fecha de creación de todos los archivos multimedia en los medios de almacenamiento locales. Si esto es posible, se cambiará el nombre del archivo según el siguiente patrón:<br>\nDe &quot;Imagen0123.jpg&quot; será, por ejemplo, &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
-        "warning": "¡Peligro! Luego, los archivos deben eliminarse de la fuente. De lo contrario, se transferirán nuevamente durante la siguiente copia de seguridad, se les cambiará el nombre y así reemplazarán la versión de la copia de seguridad anterior."
+        "warning": "¡Peligro! Luego, los archivos deben eliminarse de la fuente. De lo contrario, se transferirán nuevamente durante la siguiente copia de seguridad, se les cambiará el nombre y así reemplazarán la versión de la copia de seguridad anterior.",
+        "desc": "Se intenta leer la fecha de creación de todos los archivos multimedia en los medios de almacenamiento locales. Si esto es posible, se cambiará el nombre del archivo según el siguiente patrón:<br>\nDe &quot;Imagen0123.jpg&quot; será, por ejemplo, &quot;2024-10-18_23-47-26_-_Image.jpg&quot;."
       },
       "checksum": {
         "header": "¿Comparar suma de comprobación?",
         "label": "Tenga en cuenta las sumas de comprobación de archivos al comparar el origen y el destino. (No aplica para transmisiones por cámara.)",
         "warning": "Tenga cuidado, esto puede ralentizar significativamente la transferencia y aumentar significativamente el uso de la CPU. Al sincronizar con el almacenamiento en la nube, esto crea tráfico de red adicional. Especialmente si ya hay muchos archivos idénticos en el origen y el destino, la sincronización puede tardar mucho tiempo sin que se realice ninguna transferencia."
-      }
+      },
+      "default_header": "Modo de respaldo predeterminado",
+      "default_header2": "Modo de respaldo secundario predeterminado (solo respaldos de red)",
+      "default_label": "Seleccione el modo de copia de seguridad predeterminado:",
+      "default_label2": "Seleccione un modo de copia de seguridad predeterminado secundario para ejecutar después del principal:",
+      "update_exif_desc": "Los nuevos archivos multimedia que no tienen su propia calificación reciben la calificación estándar. Si es posible, esta se escribe en el archivo original o en un archivo adjunto."
     },
     "imageviewer": {
       "section": "Visor de imágenes View",
       "convert_heic_header": "Convertir imágenes heic a jpeg",
       "convert_heic_label": "Cree imágenes jpeg a partir de imágenes en formato heic (heif)",
-      "write_rating_exif_label": "Las calificaciones se ingresan inmediatamente en los archivos originales y se pueden usar en un procesamiento posterior. Alternativamente, estos también se pueden transferir más tarde desde la base de datos a los archivos (página de copia de seguridad).",
-      "write_rating_exif_header": "Escriba las calificaciones modificadas en los archivos originales inmediatamente"
+      "write_rating_exif_label": "Escriba las calificaciones directamente en el archivo",
+      "write_rating_exif_header": "Escriba las calificaciones modificadas en los archivos originales inmediatamente",
+      "write_rating_exif_desc": "Las calificaciones se introducen inmediatamente en los archivos originales o en un archivo complementario y pueden utilizarse para su posterior edición. También pueden transferirse a los archivos más tarde desde la base de datos (página de copia de seguridad)."
     },
     "mail": {
       "password_header": "Contraseña",
@@ -236,10 +229,6 @@
     },
     "alert_password_change_after_reboot_set": "Conjunto de contraseñas globales\nLos cambios serán aplicados después del reinicio",
     "alert_password_change_after_reboot_remove": "Se eliminó la contraseña global\nLos cambios serán aplicados después del reinicio",
-    "cloud_rclone_description": "Dependiendo de su servicio en la nube, su configuración puede caducar. Tal vez tenga que repetir este paso siempre antes del acceso a la nube.",
-    "cloud_restart_header": "Actualice y reinicie la interfaz rclone",
-    "cloud_restart_label": "Una conexión a Internet es obligatoria.",
-    "rclone_gui_restarted": "La interfaz de usuario de rclone se ha reiniciado.",
     "view": {
       "bg_image_header": "Imagen de fondo"
     },
@@ -250,9 +239,6 @@
       "text": "Los datos de acceso WiFi guardados se eliminarán. Se interrumpe una conexión Wi-Fi existente y comitup entra en modo punto de acceso.<br>\nLuego, conéctese al punto de acceso WiFi \"little-backup-box-nnnn\". Ahora puede acceder a la confirmación en <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. Puede acceder a la WebUI de Little Backup Box aquí: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Eliminar credenciales de WiFi"
     },
-    "password_repeat_label": "repetir:",
-    "password_global_lbb_label": "La contraseña para proteger su Little-Backup-Box. Se utiliza para la interfaz web, el navegador de archivos, ssh y samba-Windows-share. El nombre de usuario en todos los casos es lbb. Para el usuario de linux & quot; pi & quot; la contraseña también está configurada.",
-    "password_global_wifi_label": "Si la contraseña tiene una longitud de 8 a 63 caracteres, también se utilizará como contraseña WiFi en el modo de punto de acceso.",
     "alert_password_wifi_size_error": "La contraseña no se puede utilizar para el punto de acceso WiFi. Para ello, la longitud tendría que ser de 8 a 63 caracteres.",
     "vpn": {
       "section": "VPN",
@@ -366,8 +352,6 @@
     "display_message_settings_upload_error_2": "importar la",
     "display_message_settings_upload_error_3": "configuración.",
     "display_message_settings_upload_error_1": "Error al",
-    "password_changed": "Contraseña cambiada.",
-    "password_removed": "Se eliminó la contraseña general.",
     "screen": {
       "section": "Pantalla",
       "virtual_keyboard_enable_header": "Teclado virtual",
@@ -489,6 +473,34 @@
           "success": "Token obtenido correctamente para"
         }
       }
+    },
+    "cloud": {
+      "rclone": {
+        "gui": {
+          "header": "rclone GUI",
+          "open": "Abra la interfaz gráfica de usuario de rcloud en una nueva ventana",
+          "restart_header": "Actualice y reinicie la interfaz rclone",
+          "restart_label": "Actualice y reinicie la interfaz rclone",
+          "restarted": "La interfaz de usuario de rclone se ha reiniciado.",
+          "restart_desc": "Una conexión a Internet es obligatoria."
+        },
+        "desc": "Dependiendo de su servicio en la nube, esta configuración puede ser válida solo por un tiempo limitado."
+      },
+      "section": "Configurar servicios en la nube"
+    },
+    "password": {
+      "password": "Contraseña",
+      "header": "Nueva contraseña global",
+      "as_set_in": "Contraseña establecida en",
+      "changed": "Contraseña cambiada.",
+      "global_lbb_label": "La contraseña para proteger su Little-Backup-Box. Se utiliza para la interfaz web, el navegador de archivos, ssh y samba-Windows-share. El nombre de usuario en todos los casos es lbb. Para el usuario de linux & quot; pi & quot; la contraseña también está configurada.",
+      "global_wifi_label": "Si la contraseña tiene una longitud de 8 a 63 caracteres, también se utilizará como contraseña WiFi en el modo de punto de acceso.",
+      "remove_header": "Quitar contraseña",
+      "remove_label": "Eliminar contraseña",
+      "removed": "Se eliminó la contraseña general.",
+      "repeat_label": "repetir:",
+      "section": "Contraseña global",
+      "remove_desc": "Marque para quitar la protección por contraseña. Las contraseñas para usuarios de Linux (lbb, pi) no se eliminarán."
     }
   },
   "tools": {

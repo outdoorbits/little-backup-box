@@ -81,7 +81,7 @@
 		// rclone_gui
 		if (isset($_POST['restart_rclone_gui'])) {
 			exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null /dev/null 2>&1 &");
-			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_rclone_gui_restarted . '</div>';
+			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_cloud_rclone_gui_restarted . '</div>';
 		}
 
 		// restart display using new config
@@ -199,10 +199,8 @@
 		$conf_SOFTWARE_DATE_AVAILABLE				= $config["conf_SOFTWARE_DATE_AVAILABLE"];
 
 		$conf_BACKUP_DEFAULT_MOVE_FILES				= isset($conf_BACKUP_DEFAULT_MOVE_FILES)?'true':'false';
-		$conf_BACKUP_DEFAULT_RENAME_FILES			= isset($conf_BACKUP_DEFAULT_RENAME_FILES)?'true':'false';
 		$conf_BACKUP_DEFAULT2_MOVE_FILES			= isset($conf_BACKUP_DEFAULT2_MOVE_FILES)?'true':'false';
 		$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS	= isset($conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS)?'true':'false';
-		$conf_BACKUP_DEFAULT_UPDATE_EXIF			= isset($conf_BACKUP_DEFAULT_UPDATE_EXIF)?'true':'false';
 		$conf_BACKUP_MOVE_FILES						= isset($conf_BACKUP_MOVE_FILES)?'true':'false';
 		$conf_POWER_OFF								= isset($conf_POWER_OFF)?'true':'false';
 		$conf_MAIL_IP								= isset($conf_MAIL_IP)?'true':'false';
@@ -272,9 +270,7 @@ conf_TIME_ZONE='$conf_TIME_ZONE'
 conf_BACKUP_DEFAULT_SOURCE='$conf_BACKUP_DEFAULT_SOURCE'
 conf_BACKUP_DEFAULT_TARGET='$conf_BACKUP_DEFAULT_TARGET'
 conf_BACKUP_DEFAULT_MOVE_FILES=$conf_BACKUP_DEFAULT_MOVE_FILES
-conf_BACKUP_DEFAULT_RENAME_FILES=$conf_BACKUP_DEFAULT_RENAME_FILES
 conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS=$conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS
-conf_BACKUP_DEFAULT_UPDATE_EXIF=$conf_BACKUP_DEFAULT_UPDATE_EXIF
 conf_BACKUP_DEFAULT_SOURCE2='$conf_BACKUP_DEFAULT_SOURCE2'
 conf_BACKUP_DEFAULT_TARGET2='$conf_BACKUP_DEFAULT_TARGET2'
 conf_BACKUP_DEFAULT2_MOVE_FILES=$conf_BACKUP_DEFAULT2_MOVE_FILES
@@ -593,184 +589,181 @@ CONFIGDATA;
 			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_backup_section; ?></summary>
 
-				<h3><?php echo L::config_backup_header; ?></h3>
-					<label for="BACKUP_MODE"><?php echo L::config_backup_label; ?></label><br />
-
-					<select name="BACKUP_MODE" id="BACKUP_MODE">
-						<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
-
-<!-- to USB -->
-						<optgroup label="&rarr; <?php echo L::main_usb_button; ?>">
-							<option value="anyusb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb usb"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_usb_button; ?></option>
-							<option value="usb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb usb"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_usb_button; ?></option>
-							<?php
-								if ($NVMe_available) {
-									?>
-										<option value="nvme usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme usb"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_usb_button; ?></option>
-									<?php
-								}
-							?>
-							<option value="internal usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal usb"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_usb_button; ?></option>
-							<option value="camera usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera usb"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_usb_button; ?></option>
-							<option value="ftp usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp usb"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_usb_button; ?></option>
-						</optgroup>
-
-<!-- to NVMe -->
-
-						<?php
-							if ($NVMe_available) {
-								?>
-									<optgroup label="&rarr; <?php echo L::main_nvme_button; ?>">
-										<option value="anyusb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb nvme"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_nvme_button; ?></option>
-										<option value="usb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb nvme"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_nvme_button; ?></option>
-										<option value="internal nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal nvme"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_nvme_button; ?></option>
-										<option value="camera nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera nvme"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_nvme_button; ?></option>
-										<option value="ftp nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp nvme"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_nvme_button; ?></option>
-									</optgroup>
-								<?php
-							}
-						?>
-
-<!-- to internal -->
-						<optgroup label="&rarr; <?php echo L::main_internal_button; ?>">
-							<option value="anyusb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb internal"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_internal_button; ?></option>
-							<option value="usb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb internal"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_internal_button; ?></option>
-							<?php
-								if ($NVMe_available) {
-									?>
-										<option value="nvme internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme internal"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_internal_button; ?></option>
-									<?php
-								}
-							?>
-							<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_internal_button; ?></option>
-							<option value="ftp internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp internal"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_internal_button; ?></option>
-						</optgroup>
-
-<!-- to rsync server -->
-						<?php
-							if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
-						?>
-								<optgroup label="&rarr; <?php echo L::main_rsync_button; ?>">
-									<option value="usb cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
-									<?php
-										if ($NVMe_available) {
-											?>
-												<option value="nvme cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme cloud_rsync"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_rsync_button; ?></option>
-											<?php
-										}
-									?>
-									<option value="internal cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
-								</optgroup>
-						<?php
-							}
-
-// to cloud service
-							foreach($CloudServices as $CloudService) {
-								?>
-									<optgroup label="&rarr; <?php echo $CloudService; ?>">
-										<option value="anyusb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . $CloudService; ?></option>
-										<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
-										<?php
-											if ($NVMe_available) {
-												?>
-													<option value="nvme cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . $CloudService; ?></option>
-												<?php
-											}
-										?>
-										<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
-										<option value="camera cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . $CloudService; ?></option>
-										<option value="ftp cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp cloud:${CloudService}"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . $CloudService; ?></option>
-									</optgroup>
-								<?php
-							}
-						?>
-					</select>
-
-				<h4><?php echo L::config_backup_default_settings_header; ?></h4>
-
-					<h5><?php echo L::config_backup_move_files_header; ?></h5>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES"<?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?" checked":""; ?>>
-						<label for="conf_BACKUP_DEFAULT_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br />
-
-					<h5><?php echo L::config_backup_rename_header; ?></h5>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_RENAME_FILES" name="conf_BACKUP_DEFAULT_RENAME_FILES"<?php echo $config['conf_BACKUP_DEFAULT_RENAME_FILES']=="1"?" checked":""; ?>>
-						<label for="conf_BACKUP_DEFAULT_RENAME_FILES"><?php echo L::config_backup_rename_label.'<br />'.L::config_backup_rename_warning; ?></label><br />
-
-					<h5><?php echo L::config_backup_generate_thumbnails_header; ?></h5>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS" name="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"<?php echo $config['conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS']=="1"?" checked":""; ?>>
-						<label for="conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS"><?php echo L::config_backup_generate_thumbnails_label; ?></label><br />
-
-					<h5><?php echo L::config_backup_update_exif_header; ?></h5>
-						<input type="checkbox" id="conf_BACKUP_DEFAULT_UPDATE_EXIF" name="conf_BACKUP_DEFAULT_UPDATE_EXIF"<?php echo $config['conf_BACKUP_DEFAULT_UPDATE_EXIF']=="1"?" checked":""; ?>>
-						<label for="conf_BACKUP_DEFAULT_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br />
-
-				<h3><?php echo L::config_backup_header2; ?></h3>
-					<label for="BACKUP_MODE_2"><?php echo L::config_backup_label2; ?></label><br />
-
-					<?php
-						get_secondary_backup_selector("BACKUP_MODE_2", $CloudServices, $config, $NVMe_available);
-					?>
-
-					<h4><?php echo L::config_backup_default2_settings_header; ?></h4>
-
-						<h5><?php echo L::config_backup_move_files_header; ?></h5>
-							<input type="checkbox" id="conf_BACKUP_DEFAULT2_MOVE_FILES" name="conf_BACKUP_DEFAULT2_MOVE_FILES"<?php echo $config['conf_BACKUP_DEFAULT2_MOVE_FILES']=="1"?" checked":""; ?>>
-							<label for="conf_BACKUP_DEFAULT2_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br />
-
-
-				<h3><?php echo L::config_backup_target_requirements_header; ?></h3>
-					<label for="conf_BACKUP_TARGET_SIZE_MIN"><?php echo L::config_backup_target_requirements_label; ?></label><br />
-					<select name="conf_BACKUP_TARGET_SIZE_MIN" id="conf_BACKUP_TARGET_SIZE_MIN">
-						<?php
-							$target_size_options	= array(
-								array(
-									'label'	=> l::config_backup_target_requirements_size_ignore,
-									'size'	=> 0
-								),
-								array(
-									'label'	=> '100 MB',
-									'size'	=> 100 * pow (1024,2)
-								),
-								array(
-									'label'	=> '512 MB',
-									'size'	=> 512 * pow (1024,2)
-								),
-								array(
-									'label'	=> '1 GB',
-									'size'	=> 1 * pow (1024,3)
-								),
-								array(
-									'label'	=> '512 GB',
-									'size'	=> 512 * pow (1024,3)
-								),
-								array(
-									'label'	=> '1 TB',
-									'size'	=> 1 * pow (1024,4)
-								),
-							);
-							foreach($target_size_options as $target_size_option) {
-								echo('<option value="' . $target_size_option['size'] . '" ' . ($config["conf_BACKUP_TARGET_SIZE_MIN"]==$target_size_option['size'] ?" selected":"") . '>' . $target_size_option['label'] . '</option>');
-							}
-						?>
-					</select>
-
-				<h3><?php echo L::config_backup_camera_folder_mask_header; ?></h3>
-					<label for="conf_BACKUP_CAMERA_FOLDER_MASK"><?php echo L::config_backup_camera_folder_mask_label; ?></label><br />
-					<textarea <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" rows="8" style="width: 100%;"><?php echo str_replace(';', "\n", $config['conf_BACKUP_CAMERA_FOLDER_MASK']); ?></textarea>
-
 				<h3><?php echo L::config_backup_general_settings_header; ?></h3>
+					<input type="checkbox" id="conf_BACKUP_CHECKSUM" name="conf_BACKUP_CHECKSUM"<?php echo $config['conf_BACKUP_CHECKSUM']=="1"?" checked":""; ?>>
+					<label for="conf_BACKUP_CHECKSUM"><?php echo L::config_backup_checksum_header; ?></label><br />
+					<?php echo L::config_backup_checksum_label; ?><br />
+					<strong><?php echo L::config_backup_checksum_warning; ?></strong><br />
+					<br />
 					<input type="checkbox" id="conf_BACKUP_MOVE_FILES" name="conf_BACKUP_MOVE_FILES"<?php echo $config['conf_BACKUP_MOVE_FILES']=="1"?" checked":""; ?>>
 					<label for="conf_BACKUP_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br />
 					<br />
 					<input type="checkbox" id="conf_BACKUP_RENAME_FILES" name="conf_BACKUP_RENAME_FILES"<?php echo $config['conf_BACKUP_RENAME_FILES']=="1"?" checked":""; ?>>
-					<label for="conf_BACKUP_RENAME_FILES"><?php echo L::config_backup_rename_header; ?><br /><?php echo L::config_backup_rename_label.'<br />'.L::config_backup_rename_warning; ?></label><br />
-					<br />
-					<input type="checkbox" id="conf_BACKUP_CHECKSUM" name="conf_BACKUP_CHECKSUM"<?php echo $config['conf_BACKUP_CHECKSUM']=="1"?" checked":""; ?>>
-					<label for="conf_BACKUP_CHECKSUM"><?php echo L::config_backup_checksum_header; ?><br /><?php echo L::config_backup_checksum_label.'<br />'.L::config_backup_checksum_warning; ?></label><br />
+					<label for="conf_BACKUP_RENAME_FILES"><?php echo L::config_backup_rename_header; ?><br /></label><br />
+					<?php echo L::config_backup_rename_desc; ?><br />
+					<strong><?php echo L::config_backup_rename_warning; ?></strong><br />
 					<br />
 					<input type="checkbox" id="conf_POWER_OFF" name="conf_POWER_OFF"<?php echo $config['conf_POWER_OFF']=="1"?" checked":""; ?>>
 					<label for="conf_POWER_OFF"><?php echo L::config_backup_power_off_label; ?></label><br />
 
+					<h4><?php echo L::config_backup_target_requirements_header; ?></h3>
+						<label for="conf_BACKUP_TARGET_SIZE_MIN"><?php echo L::config_backup_target_requirements_label; ?></label><br />
+						<select name="conf_BACKUP_TARGET_SIZE_MIN" id="conf_BACKUP_TARGET_SIZE_MIN">
+							<?php
+								$target_size_options	= array(
+									array(
+										'label'	=> l::config_backup_target_requirements_size_ignore,
+										'size'	=> 0
+									),
+									array(
+										'label'	=> '100 MB',
+										'size'	=> 100 * pow (1024,2)
+									),
+									array(
+										'label'	=> '512 MB',
+										'size'	=> 512 * pow (1024,2)
+									),
+									array(
+										'label'	=> '1 GB',
+										'size'	=> 1 * pow (1024,3)
+									),
+									array(
+										'label'	=> '512 GB',
+										'size'	=> 512 * pow (1024,3)
+									),
+									array(
+										'label'	=> '1 TB',
+										'size'	=> 1 * pow (1024,4)
+									),
+								);
+								foreach($target_size_options as $target_size_option) {
+									echo('<option value="' . $target_size_option['size'] . '" ' . ($config["conf_BACKUP_TARGET_SIZE_MIN"]==$target_size_option['size'] ?" selected":"") . '>' . $target_size_option['label'] . '</option>');
+								}
+							?>
+						</select>
+
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_backup_camera_folder_mask_header; ?></summary>
+						<label for="conf_BACKUP_CAMERA_FOLDER_MASK"><?php echo L::config_backup_camera_folder_mask_label; ?></label><br />
+						<textarea <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_BACKUP_CAMERA_FOLDER_MASK" name="conf_BACKUP_CAMERA_FOLDER_MASK" rows="8" style="width: 100%;"><?php echo str_replace(';', "\n", $config['conf_BACKUP_CAMERA_FOLDER_MASK']); ?></textarea>
+				</details>
+
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_backup_default_header; ?></summary>
+						<label for="BACKUP_MODE"><?php echo L::config_backup_default_label; ?></label><br />
+
+						<select name="BACKUP_MODE" id="BACKUP_MODE">
+							<option value="none none" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="none none"?" selected":""; ?>><?php echo L::config_backup_none; ?></option>
+
+	<!-- to USB -->
+							<optgroup label="&rarr; <?php echo L::main_usb_button; ?>">
+								<option value="anyusb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb usb"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_usb_button; ?></option>
+								<option value="usb usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb usb"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_usb_button; ?></option>
+								<?php
+									if ($NVMe_available) {
+										?>
+											<option value="nvme usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme usb"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_usb_button; ?></option>
+										<?php
+									}
+								?>
+								<option value="internal usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal usb"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_usb_button; ?></option>
+								<option value="camera usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera usb"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_usb_button; ?></option>
+								<option value="ftp usb" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp usb"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_usb_button; ?></option>
+							</optgroup>
+
+	<!-- to NVMe -->
+
+							<?php
+								if ($NVMe_available) {
+									?>
+										<optgroup label="&rarr; <?php echo L::main_nvme_button; ?>">
+											<option value="anyusb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb nvme"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_nvme_button; ?></option>
+											<option value="usb nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb nvme"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_nvme_button; ?></option>
+											<option value="internal nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal nvme"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_nvme_button; ?></option>
+											<option value="camera nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera nvme"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_nvme_button; ?></option>
+											<option value="ftp nvme" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp nvme"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_nvme_button; ?></option>
+										</optgroup>
+									<?php
+								}
+							?>
+
+	<!-- to internal -->
+							<optgroup label="&rarr; <?php echo L::main_internal_button; ?>">
+								<option value="anyusb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb internal"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . L::main_internal_button; ?></option>
+								<option value="usb internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb internal"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_internal_button; ?></option>
+								<?php
+									if ($NVMe_available) {
+										?>
+											<option value="nvme internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme internal"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_internal_button; ?></option>
+										<?php
+									}
+								?>
+								<option value="camera internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera internal"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . L::main_internal_button; ?></option>
+								<option value="ftp internal" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp internal"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . L::main_internal_button; ?></option>
+							</optgroup>
+
+	<!-- to rsync server -->
+							<?php
+								if (! ($config["conf_RSYNC_SERVER"]=="" or $config["conf_RSYNC_PORT"]=="" or $config["conf_RSYNC_USER"]=="" or $config["conf_RSYNC_PASSWORD"]=="" or $config["conf_RSYNC_SERVER_MODULE"]=="")) {
+							?>
+									<optgroup label="&rarr; <?php echo L::main_rsync_button; ?>">
+										<option value="usb cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud_rsync"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . L::main_rsync_button; ?></option>
+										<?php
+											if ($NVMe_available) {
+												?>
+													<option value="nvme cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme cloud_rsync"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . L::main_rsync_button; ?></option>
+												<?php
+											}
+										?>
+										<option value="internal cloud_rsync" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud_rsync"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . L::main_rsync_button; ?></option>
+									</optgroup>
+							<?php
+								}
+
+	// to cloud service
+								foreach($CloudServices as $CloudService) {
+									?>
+										<optgroup label="&rarr; <?php echo $CloudService; ?>">
+											<option value="anyusb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="anyusb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_anyusb_button . L::right_arrow . $CloudService; ?></option>
+											<option value="usb cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="usb cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_usb_button . L::right_arrow . $CloudService; ?></option>
+											<?php
+												if ($NVMe_available) {
+													?>
+														<option value="nvme cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="nvme cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_nvme_button . L::right_arrow . $CloudService; ?></option>
+													<?php
+												}
+											?>
+											<option value="internal cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="internal cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_internal_button . L::right_arrow . $CloudService; ?></option>
+											<option value="camera cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="camera cloud:${CloudService}"?" selected":""; ?>><?php echo L::main_camera_button . L::right_arrow . $CloudService; ?></option>
+											<option value="ftp cloud:<?php print $CloudService; ?>" <?php echo $config["conf_BACKUP_DEFAULT_SOURCE"] . " " . $config["conf_BACKUP_DEFAULT_TARGET"]=="ftp cloud:${CloudService}"?" selected":""; ?>><?php echo L::box_backup_mode_ftp . L::right_arrow . $CloudService; ?></option>
+										</optgroup>
+									<?php
+								}
+							?>
+						</select>
+
+					<h4><?php echo L::config_backup_default_settings_header; ?></h4>
+
+						<h5><?php echo L::config_backup_move_files_header; ?></h5>
+							<input type="checkbox" id="conf_BACKUP_DEFAULT_MOVE_FILES" name="conf_BACKUP_DEFAULT_MOVE_FILES"<?php echo $config['conf_BACKUP_DEFAULT_MOVE_FILES']=="1"?" checked":""; ?>>
+							<label for="conf_BACKUP_DEFAULT_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br />
+
+				</details>
+
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_backup_default_header2; ?></summary>
+						<label for="BACKUP_MODE_2"><?php echo L::config_backup_default_label2; ?></label><br />
+
+						<?php
+							get_secondary_backup_selector("BACKUP_MODE_2", $CloudServices, $config, $NVMe_available);
+						?>
+
+						<h4><?php echo L::config_backup_default2_settings_header; ?></h4>
+
+							<h5><?php echo L::config_backup_move_files_header; ?></h5>
+								<input type="checkbox" id="conf_BACKUP_DEFAULT2_MOVE_FILES" name="conf_BACKUP_DEFAULT2_MOVE_FILES"<?php echo $config['conf_BACKUP_DEFAULT2_MOVE_FILES']=="1"?" checked":""; ?>>
+								<label for="conf_BACKUP_DEFAULT2_MOVE_FILES"><?php echo L::config_backup_move_files_label; ?></label><br />
+				</details>
 			</details>
 		</div>
 
@@ -1339,10 +1332,12 @@ CONFIGDATA;
 				<h3><?php echo L::config_backup_update_exif_header; ?></h3>
 					<input type="checkbox" id="conf_BACKUP_UPDATE_EXIF" name="conf_BACKUP_UPDATE_EXIF"<?php echo $config['conf_BACKUP_UPDATE_EXIF']=="1"?" checked":""; ?>>
 					<label for="conf_BACKUP_UPDATE_EXIF"><?php echo L::config_backup_update_exif_label; ?></label><br />
+					<?php echo L::config_backup_update_exif_desc; ?>
 
 				<h3><?php echo L::config_imageviewer_write_rating_exif_header; ?></h3>
 					<input type="checkbox" id="conf_VIEW_WRITE_RATING_EXIF" name="conf_VIEW_WRITE_RATING_EXIF"<?php echo $config['conf_VIEW_WRITE_RATING_EXIF']=="1"?" checked":""; ?>>
 					<label for="conf_VIEW_WRITE_RATING_EXIF"><?php echo L::config_imageviewer_write_rating_exif_label; ?></label><br />
+					<?php echo L::config_imageviewer_write_rating_exif_desc; ?>
 
 			</details>
 		</div>
@@ -1524,24 +1519,25 @@ CONFIGDATA;
 						<?php } ?>
 						</table>
 
-				<h3><?php echo L::config_cloud_header; ?></h3>
+				<h3><?php echo L::config_cloud_rclone_gui_header; ?></h3>
+					<a href="/frame.php?page=rclone_gui" target="_blank"><?php echo L::config_cloud_rclone_gui_open; ?></a>
 					<p>
-						<?php echo L::config_cloud_rclone_description ; ?><br />
 						<?php
 							if (empty($config['conf_PASSWORD'])) {
-								echo L::config_username . ": 'lbb', " . L::config_password . ": 'lbb'";
+								echo L::config_username . ": 'lbb', " . L::config_password_password . ": 'lbb'";
 							}
 							else {
 								echo L::config_username . ": 'lbb'; " . L::config_password_as_set_in . " '" . L::config_password_section . "'";
 							}
 						?>
-
+						<br />
+						<?php echo L::config_cloud_rclone_desc; ?><br />
 					</p>
-					<a href="/frame.php?page=rclone_gui" target="_blank"><?php echo L::config_cloud_rclone_gui; ?></a>
 
-				<h3><?php echo L::config_cloud_restart_header; ?></h3>
+				<h3><?php echo L::config_cloud_rclone_gui_restart_header; ?></h3>
 					<input type="checkbox" id="restart_rclone_gui" name="restart_rclone_gui">
-					<label for="restart_rclone_gui"><?php echo L::config_cloud_restart_label; ?></label><br />
+					<label for="restart_rclone_gui"><?php echo L::config_cloud_rclone_gui_restart_label; ?></label><br />
+					<?php echo L::config_cloud_rclone_gui_restart_desc; ?>
 
 			</details>
 		</div>
@@ -1557,48 +1553,56 @@ CONFIGDATA;
 					<input type="checkbox" id="conf_SOCIAL_PUBLISH_FILENAME" name="conf_SOCIAL_PUBLISH_FILENAME"<?php echo $config['conf_SOCIAL_PUBLISH_FILENAME']=="1"?"checked":""; ?>>
 					<label for="conf_SOCIAL_PUBLISH_FILENAME"><?php echo L::config_social_general_filename_label; ?></label><br />
 
-				<h3><?php echo L::config_social_telegram_header; ?></h3>
-					<?php echo L::config_social_telegram_install_desc; ?><br />
-					<br />
-					<label for="conf_SOCIAL_TELEGRAM_TOKEN"><?php echo L::config_social_telegram_token_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_TELEGRAM_TOKEN" name="conf_SOCIAL_TELEGRAM_TOKEN" size="50" value="<?php echo $config['conf_SOCIAL_TELEGRAM_TOKEN']; ?>"><br />
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_social_telegram_header; ?></summary>
+						<?php echo L::config_social_telegram_install_desc; ?><br />
+						<br />
+						<label for="conf_SOCIAL_TELEGRAM_TOKEN"><?php echo L::config_social_telegram_token_label; ?></label><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_TELEGRAM_TOKEN" name="conf_SOCIAL_TELEGRAM_TOKEN" size="50" value="<?php echo $config['conf_SOCIAL_TELEGRAM_TOKEN']; ?>"><br />
 
-					<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
+						<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
+				</details>
 
-				<h3><?php echo L::config_social_mastodon_header; ?></h3>
-					<?php echo L::config_social_mastodon_install_desc; ?><br />
-					<br />
-					<label for="conf_SOCIAL_MASTODON_BASE_URL"><?php echo L::config_social_mastodon_base_url_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MASTODON_BASE_URL" name="conf_SOCIAL_MASTODON_BASE_URL" size="50" value="<?php echo $config['conf_SOCIAL_MASTODON_BASE_URL']; ?>"><br />
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_social_mastodon_header; ?></summary>
+						<?php echo L::config_social_mastodon_install_desc; ?><br />
+						<br />
+						<label for="conf_SOCIAL_MASTODON_BASE_URL"><?php echo L::config_social_mastodon_base_url_label; ?></label><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MASTODON_BASE_URL" name="conf_SOCIAL_MASTODON_BASE_URL" size="50" value="<?php echo $config['conf_SOCIAL_MASTODON_BASE_URL']; ?>"><br />
 
-					<label for="conf_SOCIAL_MASTODON_TOKEN"><?php echo L::config_social_mastodon_token_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MASTODON_TOKEN" name="conf_SOCIAL_MASTODON_TOKEN" size="50" value="<?php echo $config['conf_SOCIAL_MASTODON_TOKEN']; ?>"><br />
+						<label for="conf_SOCIAL_MASTODON_TOKEN"><?php echo L::config_social_mastodon_token_label; ?></label><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MASTODON_TOKEN" name="conf_SOCIAL_MASTODON_TOKEN" size="50" value="<?php echo $config['conf_SOCIAL_MASTODON_TOKEN']; ?>"><br />
+				</details>
 
-				<h3><?php echo L::config_social_bluesky_header; ?></h3>
-					<?php echo L::config_social_bluesky_install_desc; ?><br />
-					<br />
-					<label for="conf_SOCIAL_BLUESKY_API_BASE_URL"><?php echo L::config_social_bluesky_base_url_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_API_BASE_URL" name="conf_SOCIAL_BLUESKY_API_BASE_URL" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_API_BASE_URL']; ?>"><br />
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_social_bluesky_header; ?></summary>
+						<?php echo L::config_social_bluesky_install_desc; ?><br />
+						<br />
+						<label for="conf_SOCIAL_BLUESKY_API_BASE_URL"><?php echo L::config_social_bluesky_base_url_label; ?></label><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_API_BASE_URL" name="conf_SOCIAL_BLUESKY_API_BASE_URL" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_API_BASE_URL']; ?>"><br />
 
-					<label for="conf_SOCIAL_BLUESKY_IDENTIFIER"><?php echo L::config_social_bluesky_identifier_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_IDENTIFIER" name="conf_SOCIAL_BLUESKY_IDENTIFIER" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_IDENTIFIER']; ?>"><br />
+						<label for="conf_SOCIAL_BLUESKY_IDENTIFIER"><?php echo L::config_social_bluesky_identifier_label; ?></label><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_IDENTIFIER" name="conf_SOCIAL_BLUESKY_IDENTIFIER" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_IDENTIFIER']; ?>"><br />
 
-					<label for="conf_SOCIAL_BLUESKY_APP_PASSWORD"><?php echo L::config_social_bluesky_app_password_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_APP_PASSWORD" name="conf_SOCIAL_BLUESKY_APP_PASSWORD" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_APP_PASSWORD']; ?>"><br />
+						<label for="conf_SOCIAL_BLUESKY_APP_PASSWORD"><?php echo L::config_social_bluesky_app_password_label; ?></label><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_APP_PASSWORD" name="conf_SOCIAL_BLUESKY_APP_PASSWORD" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_APP_PASSWORD']; ?>"><br />
+				</details>
 
-				<h3><?php echo L::config_social_matrix_header; ?></h3>
-					<?php echo L::config_social_matrix_install_desc; ?><br />
-					<br />
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_social_matrix_header; ?></summary>
+						<?php echo L::config_social_matrix_install_desc; ?><br />
+						<br />
 
-					<label for="conf_SOCIAL_MATRIX_HOMESERVER"><?php echo L::config_social_matrix_homeserver_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_HOMESERVER" name="conf_SOCIAL_MATRIX_HOMESERVER" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_HOMESERVER'] ?? '', ENT_QUOTES); ?>">
-					<br />
-					<label for="conf_SOCIAL_MATRIX_TOKEN"><?php echo L::config_social_matrix_token_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_TOKEN" name="conf_SOCIAL_MATRIX_TOKEN" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_TOKEN'] ?? '', ENT_QUOTES); ?>">
-					<br />
-					<?php include("${WORKING_DIR}/sub-matrix-token.php"); ?>
-					<br />
-					<?php include("${WORKING_DIR}/sub-matrix-room-id.php"); ?>
+						<label for="conf_SOCIAL_MATRIX_HOMESERVER"><?php echo L::config_social_matrix_homeserver_label; ?></label><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_HOMESERVER" name="conf_SOCIAL_MATRIX_HOMESERVER" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_HOMESERVER'] ?? '', ENT_QUOTES); ?>">
+						<br />
+						<label for="conf_SOCIAL_MATRIX_TOKEN"><?php echo L::config_social_matrix_token_label; ?></label><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_TOKEN" name="conf_SOCIAL_MATRIX_TOKEN" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_TOKEN'] ?? '', ENT_QUOTES); ?>">
+						<br />
+						<?php include("${WORKING_DIR}/sub-matrix-token.php"); ?>
+						<br />
+						<?php include("${WORKING_DIR}/sub-matrix-room-id.php"); ?>
+				</details>
 
 			</details>
 		</div>
@@ -1740,6 +1744,7 @@ CONFIGDATA;
 							echo "<p>";
 							echo "<input type=\"checkbox\" id=\"conf_PASSWORD_REMOVE\" name=\"conf_PASSWORD_REMOVE\">&nbsp;";
 							echo "<label for=\"conf_PASSWORD_REMOVE\">" . L::config_password_remove_label ."</label><br />";
+							echo L::config_password_remove_desc;
 							echo "</p>";
 						}
 					?>

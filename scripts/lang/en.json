@@ -384,17 +384,8 @@
     "rsync_user_label": "Username for the rsync-server",
     "rsync_password_header": "Password",
     "rsync_password_label": "Password for the rsync-server",
-    "password_section": "Global Password",
-    "password_header": "New global Password",
-    "password_remove_header": "Remove password",
-    "password_remove_label": "Check to remove the password-protection. Passwords for linux-users (lbb, pi) will not be removed.",
     "save_button": "Save",
-    "cloud_section": "Configure Cloud-services",
-    "cloud_header": "rcloud GUI opens in a new window.",
     "username": "Username",
-    "password": "Password",
-    "password_as_set_in": "Password as set in",
-    "cloud_rclone_gui": "rclone GUI",
     "save_settings_section": "Download / Upload settings",
     "save_settings_download_header": "Download",
     "save_settings_download_text": "Get a zip-archive with your settings",
@@ -412,7 +403,7 @@
       "generate_thumbnails_header": "Thumbnails",
       "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)",
       "update_exif_header": "Automatically adjust EXIF data of media files on import",
-      "update_exif_label": "New media without their own rating receive the standard rating. If possible, this is written to the original file.",
+      "update_exif_label": "Adjust EXIF ​​data during import",
       "default_settings_header": "Settings for the primary standard backup",
       "target": {
         "requirements_header": "Target partition requirements",
@@ -420,10 +411,6 @@
         "requirements_size_ignore": "accept all"
       },
       "none": "no automatic backup",
-      "header": "Default backup mode",
-      "header2": "Default secondary backup mode (network backups only)",
-      "label": "Select the default backup-mode:",
-      "label2": "Select a secondary default backup-mode to run after the primary:",
       "power_off_label": "Power down after backup",
       "section": "Backup",
       "camera": {
@@ -448,21 +435,27 @@
       "default2_settings_header": "Settings for the secondary standard backup",
       "rename": {
         "header": "Rename files",
-        "label": "An attempt is made to read the creation date from all media files on local storage devices. If this is possible, the file is renamed according to the following pattern:<br>\nFor example, &quot;Image0123.jpg&quot; becomes &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
-        "warning": "Attention! The files should then be deleted from the source. Otherwise they will be transferred again during the next backup, renamed and replacing the version from the previous backup."
+        "warning": "Attention! The files should then be deleted from the source. Otherwise they will be transferred again during the next backup, renamed and replacing the version from the previous backup.",
+        "desc": "An attempt is made to read the creation date from all media files on local storage devices. If this is possible, the file is renamed according to the following pattern:<br>\nFor example, &quot;Image0123.jpg&quot; becomes &quot;2024-10-18_23-47-26_-_Image.jpg&quot;."
       },
       "checksum": {
         "header": "Compare checksum?",
         "label": "Consider file checksums when comparing source and destination. (Does not apply to camera transfers.)",
         "warning": "Be careful, this can significantly slow down transfers and significantly increase CPU usage. When syncing with cloud storage, this generates additional network traffic. Especially if there are already many identical files in the source and destination, synchronization can take a very long time without any transfers occurring."
-      }
+      },
+      "default_header": "Default backup mode",
+      "default_header2": "Default secondary backup mode (network backups only)",
+      "default_label": "Select the default backup-mode:",
+      "default_label2": "Select a secondary default backup-mode to run after the primary:",
+      "update_exif_desc": "New media without their own rating receive the standard rating. If possible, this is written to the original or a sidecar file."
     },
     "imageviewer": {
       "section": "Image viewer View",
       "convert_heic_header": "Convert heic images to jpeg",
       "convert_heic_label": "Create jpeg images from heic (heif) format images",
-      "write_rating_exif_label": "Ratings are immediately entered into the original files and can be used in further processing. Alternatively, these can also be transferred later from the database to the files (backup page).",
-      "write_rating_exif_header": "Write changed ratings to original files immediately"
+      "write_rating_exif_label": "Write the reviews directly into the file",
+      "write_rating_exif_header": "Write changed ratings to original files immediately",
+      "write_rating_exif_desc": "Ratings are immediately written to the original files or a sidecar file and can be used in further processing. Alternatively, they can also be transferred from the database to the files later (backup page)."
     },
     "mail": {
       "password_header": "Password",
@@ -494,10 +487,6 @@
     },
     "alert_password_change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
     "alert_password_change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",
-    "cloud_rclone_description": "Depending on your cloud-service, your configuration can expire. Maybe you have to repeat this step always before cloud-access.",
-    "cloud_restart_header": "Update and restart rclone GUI",
-    "cloud_restart_label": "An internet connection is mandatory.",
-    "rclone_gui_restarted": "The rclone UI has been restarted.",
     "view": {
       "bg_image_header": "Background-image"
     },
@@ -508,9 +497,6 @@
       "text": "Saved WiFi access data will be deleted. An existing WiFi connection is interrupted and comitup goes into hotspot mode.<br>\nThen connect to the \"little-backup-box-nnnn\" WiFi hotspot. Now you can reach commitup at <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. You can access the Little Backup Box WebUI here: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Delete WiFi credentials"
     },
-    "password_repeat_label": "repeat:",
-    "password_global_lbb_label": "The password to protect your Little-Backup-Box. Used for the web-interface, filebrowser, ssh and samba-Windows-shares. Username in all cases is lbb. For linux-user &quot;pi&quot; the password is set too.",
-    "password_global_wifi_label": "If the password has a length of 8 to 63 characters, it will also be used as a WiFi password in hotspot mode.",
     "alert_password_wifi_size_error": "The password cannot be used for the WiFi hotspot. For this, the length would have to be 8 to 63 characters.",
     "vpn": {
       "section": "VPN",
@@ -624,8 +610,6 @@
     "display_message_settings_upload_error_2": "import",
     "display_message_settings_upload_error_3": "failed.",
     "display_message_settings_upload_error_1": "Settings",
-    "password_changed": "Password changed.",
-    "password_removed": "General password removed.",
     "screen": {
       "section": "Screen",
       "virtual_keyboard_enable_header": "Virtual keyboard",
@@ -747,6 +731,34 @@
           "success": "Token successfully fetched for"
         }
       }
+    },
+    "cloud": {
+      "rclone": {
+        "gui": {
+          "header": "rclone GUI",
+          "open": "Open the rcloud GUI in a new window",
+          "restart_header": "Update and restart rclone GUI",
+          "restart_label": "Update and restart rclone GUI",
+          "restarted": "The rclone UI has been restarted.",
+          "restart_desc": "An internet connection is mandatory."
+        },
+        "desc": "Depending on your cloud service, this configuration may only be valid for a limited time."
+      },
+      "section": "Configure Cloud-services"
+    },
+    "password": {
+      "password": "Password",
+      "header": "New global Password",
+      "as_set_in": "Password as set in",
+      "changed": "Password changed.",
+      "global_lbb_label": "The password to protect your Little-Backup-Box. Used for the web-interface, filebrowser, ssh and samba-Windows-shares. Username in all cases is lbb. For linux-user &quot;pi&quot; the password is set too.",
+      "global_wifi_label": "If the password has a length of 8 to 63 characters, it will also be used as a WiFi password in hotspot mode.",
+      "remove_header": "Remove password",
+      "remove_label": "Remove password",
+      "removed": "General password removed.",
+      "repeat_label": "repeat:",
+      "section": "Global Password",
+      "remove_desc": "Check to remove the password-protection. Passwords for linux-users (lbb, pi) will not be removed."
     }
   },
   "tools": {

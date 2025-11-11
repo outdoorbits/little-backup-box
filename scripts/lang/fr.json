@@ -117,17 +117,8 @@
     "rsync_user_label": "Nom d'utilisateur pour le serveur rsync",
     "rsync_password_header": "Mot de passe",
     "rsync_password_label": "Mot de passe pour le serveur rsync",
-    "password_section": "Mot de passe global",
-    "password_header": "Nouveau mot de passe global",
-    "password_remove_header": "Supprimer le mot de passe",
-    "password_remove_label": "Cochez pour supprimer la protection par mot de passe. Les mots de passe des utilisateurs Linux (lbb, pi) ne seront pas supprimés.",
     "save_button": "Sauvegarder",
-    "cloud_section": "Configurer les services Cloud",
-    "cloud_header": "L'interface graphique de rcloud s'ouvre dans une nouvelle fenêtre.",
     "username": "Nom d'utilisateur",
-    "password": "Mot de passe",
-    "password_as_set_in": "Mot de passe tel que défini dans",
-    "cloud_rclone_gui": "rclone GUI",
     "save_settings_download_link_text": "Paramètres de téléchargement",
     "save_settings_download_text": "Obtenez une archive zip avec vos paramètres",
     "save_settings_section": "Paramètres de téléchargement / téléchargement",
@@ -154,7 +145,7 @@
       "generate_thumbnails_header": "Vignettes",
       "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)",
       "update_exif_header": "Ajustez automatiquement les données EXIF ​​​​des fichiers multimédias lors de l'importation",
-      "update_exif_label": "Les nouveaux médias sans leur propre classement reçoivent le classement standard. Si possible, ceci est écrit dans le fichier d'origine.",
+      "update_exif_label": "EXIF lors de l'importation",
       "default_settings_header": "Paramètres de la sauvegarde standard principale",
       "target": {
         "requirements_header": "Exigences de la partition cible",
@@ -162,10 +153,6 @@
         "requirements_size_ignore": "accepter tout"
       },
       "none": "pas de sauvegarde automatique",
-      "header": "Mode de sauvegarde par défaut",
-      "header2": "Mode de sauvegarde secondaire par défaut (sauvegardes réseau uniquement)",
-      "label": "Sélectionnez le mode de sauvegarde par défaut :",
-      "label2": "Sélectionnez un mode de sauvegarde secondaire par défaut à exécuter après le principal :",
       "power_off_label": "Mise hors tension après sauvegarde",
       "section": "Sauvegarde",
       "camera": {
@@ -190,21 +177,27 @@
       "default2_settings_header": "Paramètres de sauvegarde secondaire par défaut",
       "rename": {
         "header": "Renommer les fichiers",
-        "label": "Une tentative est effectuée pour lire la date de création de tous les fichiers multimédias sur le support de stockage local. Si cela est possible, le fichier sera renommé selon le modèle suivant :<br>\nÀ partir de &quot;Image0123.jpg&quot; sera par exemple &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
-        "warning": "Danger! Les fichiers doivent ensuite être supprimés de la source. Dans le cas contraire, ils seront à nouveau transférés lors de la prochaine sauvegarde, renommés et ainsi remplacer la version de la sauvegarde précédente."
+        "warning": "Danger! Les fichiers doivent ensuite être supprimés de la source. Dans le cas contraire, ils seront à nouveau transférés lors de la prochaine sauvegarde, renommés et ainsi remplacer la version de la sauvegarde précédente.",
+        "desc": "Une tentative est effectuée pour lire la date de création de tous les fichiers multimédias sur le support de stockage local. Si cela est possible, le fichier sera renommé selon le modèle suivant :<br>\nÀ partir de &quot;Image0123.jpg&quot; sera par exemple &quot;2024-10-18_23-47-26_-_Image.jpg&quot;."
       },
       "checksum": {
         "header": "Comparer la somme de contrôle ?",
         "label": "Tenez compte des sommes de contrôle des fichiers lors de la comparaison de la source et de la destination. (Ne s'applique pas aux transmissions par caméra.)",
         "warning": "Attention, cela peut ralentir considérablement le transfert et augmenter considérablement l'utilisation du processeur. Lors de la synchronisation avec le stockage cloud, cela crée un trafic réseau supplémentaire. Surtout s'il existe déjà de nombreux fichiers identiques dans la source et la destination, la synchronisation peut prendre beaucoup de temps sans qu'aucun transfert n'ait lieu."
-      }
+      },
+      "default_header": "Mode de sauvegarde par défaut",
+      "default_header2": "Mode de sauvegarde secondaire par défaut (sauvegardes réseau uniquement)",
+      "default_label": "Sélectionnez le mode de sauvegarde par défaut :",
+      "default_label2": "Sélectionnez un mode de sauvegarde secondaire par défaut à exécuter après le principal :",
+      "update_exif_desc": "Les nouveaux médias sans évaluation propre reçoivent l'évaluation standard. Si possible, celle-ci est inscrite dans le fichier d'origine ou dans un fichier annexe."
     },
     "imageviewer": {
       "section": "Visionneuse d'images View",
       "convert_heic_header": "Convertir des images heic en jpeg",
       "convert_heic_label": "Créer des images jpeg à partir d'images au format heic (heif)",
-      "write_rating_exif_label": "Les notations sont immédiatement saisies dans les fichiers d'origine et peuvent être utilisées dans un traitement ultérieur. Alternativement, ceux-ci peuvent également être transférés ultérieurement de la base de données vers les fichiers (page de sauvegarde).",
-      "write_rating_exif_header": "Écrivez immédiatement les notes modifiées dans les fichiers d'origine"
+      "write_rating_exif_label": "Inscrivez les notes directement dans le fichier",
+      "write_rating_exif_header": "Écrivez immédiatement les notes modifiées dans les fichiers d'origine",
+      "write_rating_exif_desc": "Les notes sont immédiatement intégrées aux fichiers originaux ou à un fichier annexe et peuvent être utilisées ultérieurement pour la modification. Elles peuvent également être transférées ultérieurement à partir de la base de données (page de sauvegarde)."
     },
     "mail": {
       "password_header": "Mot de passe",
@@ -236,10 +229,6 @@
     },
     "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
     "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
-    "cloud_rclone_description": "Selon votre service cloud, votre configuration peut expirer. Peut-être que vous devez toujours répéter cette étape avant l'accès au cloud.",
-    "cloud_restart_header": "Mettre à jour et redémarrer l'interface rclone",
-    "cloud_restart_label": "Une connexion internet est obligatoire.",
-    "rclone_gui_restarted": "L'interface utilisateur rclone a été redémarrée.",
     "view": {
       "bg_image_header": "Image de fond"
     },
@@ -250,9 +239,6 @@
       "text": "Les données d'accès WiFi enregistrées seront supprimées. Une connexion Wi-Fi existante est interrompue et comitup passe en mode point d'accès.<br>\nConnectez-vous ensuite au hotspot WiFi \"little-backup-box-nnnn\". Vous pouvez maintenant accéder à commitup sur <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. Vous pouvez accéder à l'interface Web de Little Backup Box ici : <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Supprimer les identifiants WiFi"
     },
-    "password_repeat_label": "répéter:",
-    "password_global_lbb_label": "Le mot de passe pour protéger votre Little-Backup-Box. Utilisé pour l'interface Web, le navigateur de fichiers, ssh et samba-Windows-shares. Le nom d'utilisateur dans tous les cas est lbb. Pour l'utilisateur Linux &quot;pi&quot; le mot de passe est également défini.",
-    "password_global_wifi_label": "Si le mot de passe a une longueur de 8 à 63 caractères, il sera également utilisé comme mot de passe WiFi en mode hotspot.",
     "alert_password_wifi_size_error": "Le mot de passe ne peut pas être utilisé pour le hotspot WiFi. Pour cela, la longueur devrait être de 8 à 63 caractères.",
     "vpn": {
       "section": "VPN",
@@ -366,8 +352,6 @@
     "display_message_settings_upload_error_2": "des paramètres",
     "display_message_settings_upload_error_3": "a échoué.",
     "display_message_settings_upload_error_1": "Paramètres",
-    "password_changed": "Mot de passe changé.",
-    "password_removed": "Mot de passe général supprimé.",
     "screen": {
       "section": "Écran",
       "virtual_keyboard_enable_header": "Clavier virtuel",
@@ -489,6 +473,34 @@
           "success": "Jeton récupéré avec succès pour"
         }
       }
+    },
+    "cloud": {
+      "rclone": {
+        "gui": {
+          "header": "rclone GUI",
+          "open": "Ouvrir l'interface graphique de rcloud dans une nouvelle fenêtre",
+          "restart_header": "Mettre à jour et redémarrer l'interface rclone",
+          "restart_label": "Mettre à jour et redémarrer l'interface rclone",
+          "restarted": "L'interface utilisateur rclone a été redémarrée.",
+          "restart_desc": "Une connexion internet est obligatoire."
+        },
+        "desc": "Selon votre fournisseur de services cloud, cette configuration peut n'être valable que pour une durée limitée."
+      },
+      "section": "Configurer les services Cloud"
+    },
+    "password": {
+      "password": "Mot de passe",
+      "header": "Nouveau mot de passe global",
+      "as_set_in": "Mot de passe tel que défini dans",
+      "changed": "Mot de passe changé.",
+      "global_lbb_label": "Le mot de passe pour protéger votre Little-Backup-Box. Utilisé pour l'interface Web, le navigateur de fichiers, ssh et samba-Windows-shares. Le nom d'utilisateur dans tous les cas est lbb. Pour l'utilisateur Linux &quot;pi&quot; le mot de passe est également défini.",
+      "global_wifi_label": "Si le mot de passe a une longueur de 8 à 63 caractères, il sera également utilisé comme mot de passe WiFi en mode hotspot.",
+      "remove_header": "Supprimer le mot de passe",
+      "remove_label": "Supprimer le mot de passe",
+      "removed": "Mot de passe général supprimé.",
+      "repeat_label": "répéter:",
+      "section": "Mot de passe global",
+      "remove_desc": "Cochez pour supprimer la protection par mot de passe. Les mots de passe des utilisateurs Linux (lbb, pi) ne seront pas supprimés."
     }
   },
   "tools": {

@@ -117,17 +117,8 @@
     "rsync_user_label": "Benutzername für den rsync-Server",
     "rsync_password_header": "Passwort",
     "rsync_password_label": "Passwort für den rsync-Server",
-    "password_section": "Globales Passwort",
-    "password_header": "Neues globales Passwort",
-    "password_remove_header": "Passwort entfernen",
-    "password_remove_label": "Aktivieren Sie dieses Kontrollkästchen, um den Passwortschutz zu entfernen. Passwörter für Linux-Benutzer (lbb, pi) werden nicht entfernt.",
     "save_button": "Speichern",
-    "cloud_section": "Cloud-Dienste konfigurieren",
-    "cloud_header": "rcloud GUI wird in einem neuen Fenster geöffnet.",
     "username": "Benutzername",
-    "password": "Passwort",
-    "password_as_set_in": "Passwort wie festgelegt in",
-    "cloud_rclone_gui": "rclone GUI",
     "save_settings_download_link_text": "Einstellungen herunterladen",
     "save_settings_download_text": "Zip-Archiv mit Einstellungen herunterladen",
     "save_settings_section": "Download / Upload der Einstellungen",
@@ -154,7 +145,7 @@
       "generate_thumbnails_header": "Vorschaubilder",
       "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)",
       "update_exif_header": "EXIF-Daten von Mediendateien beim Import automatisch anpassen",
-      "update_exif_label": "Neue Medien ohne eigene Bewertung erhalten die Standardbewertung. Diese wird - wenn möglich - in die Originaldatei geschrieben.",
+      "update_exif_label": "EXIF-Daten beim Import anpassen",
       "default_settings_header": "Einstellungen für das primäre Standard-Backup",
       "target": {
         "requirements_header": "Anforderungen an die Zielpartition",
@@ -162,10 +153,6 @@
         "requirements_size_ignore": "akzeptiere alle"
       },
       "none": "kein automatisches Backup",
-      "header": "Standard-Backup-Modus",
-      "header2": "Standardmäßiger sekundärer Sicherungsmodus (nur Netzwerk-Backups)",
-      "label": "Wählen Sie den Standard-Backup-Modus:",
-      "label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:",
       "power_off_label": "Ausschalten nach Backup",
       "section": "Backup",
       "camera": {
@@ -190,21 +177,27 @@
       "default2_settings_header": "Einstellungen für das sekundäre Standard-Backup",
       "rename": {
         "header": "Dateien umbenennen",
-        "label": "Aus allen Medien-Dateien auf lokalen Datenträgern wird versucht, das Erstell-Datum auszulesen. Ist dies möglich, wird die Datei nach folgendem Muster umbenannt:<br>\nAus &quot;Image0123.jpg&quot; wird z.B. &quot;2024-10-18_23-47-26_-_Image.jpg&quot;.",
-        "warning": "Achtung! Die Dateien sollten danach von der Quelle gelöscht werden. Ansonsten werden sie beim nächsten Backup erneut übertragen, umbenannt und ersetzen so die Version aus dem vorhergehenden Backup."
+        "warning": "Achtung! Die Dateien sollten danach von der Quelle gelöscht werden. Ansonsten werden sie beim nächsten Backup erneut übertragen, umbenannt und ersetzen so die Version aus dem vorhergehenden Backup.",
+        "desc": "Aus allen Medien-Dateien auf lokalen Datenträgern wird versucht, das Erstell-Datum auszulesen. Ist dies möglich, wird die Datei nach folgendem Muster umbenannt:<br>\nAus &quot;Image0123.jpg&quot; wird z.B. &quot;2024-10-18_23-47-26_-_Image.jpg&quot;."
       },
       "checksum": {
         "header": "Checksumme vergleichen?",
         "label": "Dateiprüfsummen beim Abgleich von Quelle und Ziel berücksichtigen. (Betrifft nicht Übertragungen von Kameras.)",
         "warning": "Vorsicht, dies kann die Übertragung erheblich verlangsamen und die CPU-Auslastung deutlich erhöhen. Bei der Synchronisierung mit Cloud-Speichern erzeugt dies zusätzlichen Netzwerkverkehr. Insbesondere wenn sich in Quelle und Ziel bereits viele identische Dateien befinden, kann die Synchronisierung sehr lange dauern, ohne dass Übertragungen stattfinden."
-      }
+      },
+      "default_header": "Standard-Backup-Modus",
+      "default_header2": "Standardmäßiger sekundärer Sicherungsmodus (nur Netzwerk-Backups)",
+      "default_label": "Wählen Sie den Standard-Backup-Modus:",
+      "default_label2": "Wählen Sie einen sekundären Standard-Sicherungsmodus aus, der nach dem primären ausgeführt werden soll:",
+      "update_exif_desc": "Neue Medien ohne eigene Bewertung erhalten die Standardbewertung. Falls möglich, wird diese in die Originaldatei oder eine Sidecar-Datei geschrieben."
     },
     "imageviewer": {
       "section": "Bildbetrachter View",
       "convert_heic_header": "heic-Bilder in jpeg konvertieren",
       "convert_heic_label": "Von Bildern im Format heic (heif) jpeg-Bilder erstellen",
-      "write_rating_exif_label": "Bewertungen werden sofort in die Original-Dateien eingetragen und können in der Weiterbearbeitung genutzt werden. Alternativ können diese auch später aus der Datenbank auf die Dateien übertragen werden (Backup-Seite).",
-      "write_rating_exif_header": "Geänderte Bewertungen sofort in Originaldateien schreiben"
+      "write_rating_exif_label": "Bewertungen sofort in die Datei schreiben",
+      "write_rating_exif_header": "Geänderte Bewertungen sofort in Originaldateien schreiben",
+      "write_rating_exif_desc": "Bewertungen werden sofort in die Original-Dateien oder eine Sidecar-Datei eingetragen und können in der Weiterbearbeitung genutzt werden. Alternativen können auch in der Datenbank gefunden und die Daten übernommen werden (Backup-Seite)."
     },
     "mail": {
       "password_header": "Passwort",
@@ -236,10 +229,6 @@
     },
     "alert_password_change_after_reboot_set": "Globales Passwort festgelegt\nÄnderungen werden nach dem Neustart wirksam",
     "alert_password_change_after_reboot_remove": "Globales Passwort entfernt\nÄnderungen werden nach dem Neustart wirksam",
-    "cloud_rclone_description": "Abhängig von Ihrem Cloud-Dienst kann Ihre Konfiguration ablaufen. Eventuell müssen Sie diesen Schritt immer vor dem Cloud-Zugriff wiederholen.",
-    "cloud_restart_header": "rclone-Oberfläche aktualisieren und neu starten",
-    "cloud_restart_label": "Eine Internet-Verbindung ist zwingend erforderlich.",
-    "rclone_gui_restarted": "Die rclone-Benutzeroberfläche wurde neu gestartet.",
     "view": {
       "bg_image_header": "Hintergrundbild"
     },
@@ -250,9 +239,6 @@
       "text": "Gespeicherte WiFi-Zugangsdaten werden gelöscht. Eine bestehende WiFi-Verbindung wird unterbrochen und comitup geht in den Hotspot-Modus.<br>\nVerbinden Sie sich danach mit dem WiFi-Hotspot \"little-backup-box-nnnn\". Nun können Sie comitup unter <a href=\"http://10.41.0.1\">http://10.41.0.1</a> erreichen. Zur WebUI der Little Backup Box kommen Sie hier: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "WiFi-Zugangsdaten löschen"
     },
-    "password_repeat_label": "Bitte wiederholen:",
-    "password_global_lbb_label": "Das Passwort zum Schutz Ihrer Little-Backup-Box: Es wird für das Webinterface, Filebrowser, ssh und Samba-Windows-Shares verwendet. Der Benutzername ist in all diesen Fällen &quot;lbb&quot;. Für den Linux-Benutzer &quot;pi&quot; wird dieses Passwort ebenfalls gesetzt.",
-    "password_global_wifi_label": "Falls das Passwort eine Länge von 8 bis 63 Zeichen hat, wird es auch als WiFi-Passwort im Hotspot-Modus verwendet.",
     "alert_password_wifi_size_error": "Das Passwort kann nicht für den WiFi-Hotspot verwendet werden. Dazu müsste die Länge 8 bis 63 Zeichen betragen.",
     "vpn": {
       "section": "VPN",
@@ -366,8 +352,6 @@
     "display_message_settings_upload_error_2": "konnten nicht",
     "display_message_settings_upload_error_3": "importiert werden.",
     "display_message_settings_upload_error_1": "Einstellungen",
-    "password_changed": "Passwort geändert.",
-    "password_removed": "Allgemeines Passwort entfernt.",
     "screen": {
       "section": "Bildschirm",
       "virtual_keyboard_enable_header": "Virtuelle Tastatur",
@@ -489,6 +473,34 @@
           "success": "Token erfolgreich abgerufen für"
         }
       }
+    },
+    "cloud": {
+      "rclone": {
+        "gui": {
+          "header": "rclone GUI",
+          "open": "rcloud GUI in neuen Fenster öffnen",
+          "restart_header": "rclone-Oberfläche aktualisieren und neu starten",
+          "restart_label": "rclone-Oberfläche aktualisieren und neu starten",
+          "restarted": "Die rclone-Benutzeroberfläche wurde neu gestartet.",
+          "restart_desc": "Eine Internet-Verbindung ist zwingend erforderlich."
+        },
+        "desc": "Je nach Ihrem Cloud-Dienst ist diese Konfiguration möglicherweise nur für einen begrenzten Zeitraum gültig."
+      },
+      "section": "Cloud-Dienste konfigurieren"
+    },
+    "password": {
+      "password": "Passwort",
+      "header": "Neues globales Passwort",
+      "as_set_in": "Passwort wie festgelegt in",
+      "changed": "Passwort geändert.",
+      "global_lbb_label": "Das Passwort zum Schutz Ihrer Little-Backup-Box: Es wird für das Webinterface, Filebrowser, ssh und Samba-Windows-Shares verwendet. Der Benutzername ist in all diesen Fällen &quot;lbb&quot;. Für den Linux-Benutzer &quot;pi&quot; wird dieses Passwort ebenfalls gesetzt.",
+      "global_wifi_label": "Falls das Passwort eine Länge von 8 bis 63 Zeichen hat, wird es auch als WiFi-Passwort im Hotspot-Modus verwendet.",
+      "remove_header": "Passwort entfernen",
+      "remove_label": "Passwort entfernen",
+      "removed": "Allgemeines Passwort entfernt.",
+      "repeat_label": "Bitte wiederholen:",
+      "section": "Globales Passwort",
+      "remove_desc": "Aktivieren Sie dieses Kontrollkästchen, um den Passwortschutz zu entfernen. Passwörter für Linux-Benutzer (lbb, pi) werden nicht entfernt."
     }
   },
   "tools": {

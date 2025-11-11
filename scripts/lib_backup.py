@@ -41,7 +41,7 @@ class progressmonitor(object):
 			TargetDevice=None,
 			vpn=False,
 			TaskNote='',
-			history_length=100
+			history_length=10
 		):
 		self.__setup	= setup
 		self.const_IMAGE_DATABASE_FILENAME			= self.__setup.get_val('const_IMAGE_DATABASE_FILENAME')

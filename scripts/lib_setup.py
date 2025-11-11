@@ -201,10 +201,6 @@ class setup(object):
 					'conf_TIME_ZONE':									{'value': 'Europe/London', 'type': 'str'},
 					'conf_BACKUP_DEFAULT_SOURCE':						{'value': 'none', 'type': 'str'},
 					'conf_BACKUP_DEFAULT_TARGET':						{'value': 'none', 'type': 'str'},
-					'conf_BACKUP_DEFAULT_MOVE_FILES':					{'value': False, 'type': 'bool'},
-					'conf_BACKUP_DEFAULT_RENAME_FILES':					{'value': False, 'type': 'bool'},
-					'conf_BACKUP_DEFAULT_GENERATE_THUMBNAILS':			{'value': True, 'type': 'bool'},
-					'conf_BACKUP_DEFAULT_UPDATE_EXIF':					{'value': False, 'type': 'bool'},
 					'conf_BACKUP_DEFAULT_SOURCE2':						{'value': 'none', 'type': 'str'},
 					'conf_BACKUP_DEFAULT_TARGET2':						{'value': 'none', 'type': 'str'},
 					'conf_BACKUP_DEFAULT2_MOVE_FILES':					{'value': False, 'type': 'bool'},
@@ -376,7 +372,8 @@ class setup(object):
 					'const_TASKS_PATH':								{'type': 'str'},
 					'const_METADATA_CREATE_SOURCES':				{'type': 'str'},
 					'const_METADATA_CREATE_SOURCES_HR':				{'type': 'str'},
-					'const_METADATA_MODIFY_SOURCES':				{'type': 'str'}
+					'const_METADATA_MODIFY_SOURCES':				{'type': 'str'},
+					'const_wifi_random_password_path'				{'type': 'str'}
 				}
 		)
 
