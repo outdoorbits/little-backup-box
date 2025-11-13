@@ -134,14 +134,16 @@
 		return ($wifi_country_selector);
 	}
 
-	function check_new_password($title, $pwd_1, $pwd_2, $min_length=5) {
+	function check_new_password($title, $pwd_1, $pwd_2, $min_length=5, $max_length=0) {
 		global $SetupMessages;
 
 		$pwd_valid = false;
 			if ($pwd_1 !== $pwd_2) {
 				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_not_identical,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 			} elseif (strlen($pwd_1) < $min_length) {
-				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_short,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_short . " $min_length",  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+			} elseif ($max_length > 0 and strlen($pwd_1) > $max_length) {
+				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_long . " $max_length",  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 			} elseif (
 					strpos("_" . $pwd_1,"\\") or
 					strpos("_" . $pwd_1,"'") or
@@ -226,15 +228,22 @@
 		$conf_SOCIAL_PUBLISH_DATE					= isset($conf_SOCIAL_PUBLISH_DATE)?'true':'false';
 		$conf_SOCIAL_PUBLISH_FILENAME				= isset($conf_SOCIAL_PUBLISH_FILENAME)?'true':'false';
 
-		$Passwords	= explode(';', $const_PASSWORDS_LIST);
+		// Passwords
+		$Passwords	= explode(';', $constants['const_PASSWORDS_LIST']);
 
 		foreach ($Passwords as $Password) {
-			$$Password	= trim($$Password);
+
+			if ($Password == 'conf_PASSWORD') { /*divided into conf_PASSWORD_1 and conf_PASSWORD_2*/
+				$$Password	= trim($conf_PASSWORD_1);
+				$PwdCompare	= trim($conf_PASSWORD_2);
+			} else {
+				$$Password	= trim($$Password);
+				$PwdCompare		= $$Password;
+			}
 
 			$title		= 'Password';
-			$pwd_1		= $$Password;
-			$pwd_2		= $$Password;
 			$min_length	= 5;
+			$max_length	= 0;
 
 			switch ($Password) {
 				case 'conf_PASSWORD':
@@ -244,57 +253,58 @@
 				case 'conf_WIFI_PASSWORD':
 					$title		= L::config_alert_password_wifi;
 					$min_length	= 8;
+					$max_length	= 63;
 					break;
 
 				case 'conf_MAIL_PASSWORD':
-					$title		= config_alert_password_mail;
+					$title		= L::config_alert_password_mail;
 					break;
 
 				case 'conf_RSYNC_PASSWORD':
-					$title		= config_alert_password_rsync;
+					$title		= L::config_alert_password_rsync;
 					break;
 
 				case 'conf_SOCIAL_BLUESKY_APP_PASSWORD':
-					$title		= config_alert_password_bluesky;
+					$title		= L::config_alert_password_bluesky;
 					break;
 			}
 
 			if ($Password == 'conf_PASSWORD') {
-				$conf_PASSWORD								= $conf_PASSWORD_OLD; // conf_PASSWORD_OLD is given as base64
 				if (isset($conf_PASSWORD_REMOVE)) {
-					$conf_PASSWORD='';
+					$$Password	= '';
 					exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py"); # remove password
 					$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_remove, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-				} elseif ($conf_PASSWORD_1 != '') {
-					if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2, $min_length)) {
-						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $conf_PASSWORD_1 . "'");
-						$conf_PASSWORD=base64_encode($conf_PASSWORD_1);
+				} elseif (! empty($$Password)) {
+					if (check_new_password (L::config_alert_password_global, $$Password, $PwdCompare, $min_length)) {
+						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $$Password . "'");
 
-						if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
-							$SetupMessages	.= popup(L::config_alert_password_wifi_size_error, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-						}
 						$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 					}
 				}
 			} elseif ($Password == 'conf_WIFI_PASSWORD') {
-				if ($conf_WIFI_PASSWORD_TYPE	== 'static' and (empty($$Password) or check_new_password ($title, $pwd_1, $pwd_2, $min_length))) {
-					exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $$Password . "'");
-					$SetupMessages	.= popup(L::config_alert_password_wifi_set . ":\n\"" . $config['conf_WIFI_PASSWORD'] . '"', POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-				} else {
-					$$Password	= '';
+				if ($conf_WIFI_PASSWORD_TYPE	== 'static') {
+					if (empty($$Password) or check_new_password ($title, $$Password, $PwdCompare, $min_length, $max_length)) {
+						/*set password*/
+						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $$Password . "'");
+
+						if ($$Password !== base64_decode($conf_WIFI_PASSWORD_OLD)) {
+							$SetupMessages	.= popup(L::config_alert_password_wifi_changed . ":\n'" . $$Password . "'", POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+						}
+					} else {
+						$$Password	= '';
+					}
 				}
 
 			} else {
-				if ($$Password != '') {
-					if (! check_new_password ($title, $pwd_1, $pwd_2, $min_length)) {
+				if (! check_new_password ($title, $$Password, $PwdCompare, $min_length)) {
 						$$Password	= '';
-					} else {
-						$$Password	= base64_encode($$Password);
 					}
 				}
-			}
+
+				$$Password	= base64_encode($$Password);
 		}
 
+		// write into new config file
 		$CONFIGFILE = "$WORKING_DIR/config.cfg";
 		$config_file_handle = fopen($CONFIGFILE, "w");
 
@@ -380,6 +390,8 @@ conf_RSYNC_USER='$conf_RSYNC_USER'
 conf_RSYNC_PASSWORD='$conf_RSYNC_PASSWORD'
 conf_RSYNC_SERVER_MODULE='$conf_RSYNC_SERVER_MODULE'
 conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
+conf_WIFI_PASSWORD_TYPE='$conf_WIFI_PASSWORD_TYPE'
+conf_WIFI_PASSWORD='$conf_WIFI_PASSWORD'
 conf_VPN_TYPE_RSYNC='$conf_VPN_TYPE_RSYNC'
 conf_VPN_TYPE_CLOUD='$conf_VPN_TYPE_CLOUD'
 conf_VPN_TIMEOUT=$conf_VPN_TIMEOUT
@@ -538,9 +550,10 @@ CONFIGDATA;
 						# reload config
 						$config = parse_ini_file("$WORKING_DIR/config.cfg", false);
 
-						# set new password
-						if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global,base64_decode($config["conf_PASSWORD"]),base64_decode($config["conf_PASSWORD"]))) {
-							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . base64_decode($config["conf_PASSWORD"]) . "'");
+						# set new global password
+						$global_password	= base64_decode($config["conf_PASSWORD"]);
+						if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global, $global_password, $global_password)) {
+							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $global_password . "'");
 							$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 						} else {
 							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py");
@@ -548,9 +561,12 @@ CONFIGDATA;
 						}
 
 						# set new WIFI password
-						if ($config['conf_WIFI_PASSWORD_TYPE']	== 'static' and (empty($config['conf_WIFI_PASSWORD']) or check_new_password ($title, $pwd_1, $pwd_2, $min_length))) {
+						if ($config['conf_WIFI_PASSWORD_TYPE']	== 'static' and (empty($config['conf_WIFI_PASSWORD']) or check_new_password (L::config_alert_password_wifi, $config['conf_WIFI_PASSWORD'], $config['conf_WIFI_PASSWORD'], 8, 63))) {
 							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $config['conf_WIFI_PASSWORD'] . "'");
-							$SetupMessages	.= popup(L::config_alert_password_wifi_set . ":\n\"" . $config['conf_WIFI_PASSWORD'] . '"', POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+
+							if (! empty($config['conf_WIFI_PASSWORD'])) {
+								$SetupMessages	.= popup(L::config_alert_password_wifi_changed . ":\n\"" . $config['conf_WIFI_PASSWORD'] . '"', POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+							}
 						} else {
 							$config['conf_WIFI_PASSWORD']	= '';
 						}
@@ -1735,6 +1751,16 @@ CONFIGDATA;
 				<h3><?php echo L::config_wifi_country_header; ?></h3>
 					<label for="conf_WIFI_COUNTRY"><?php echo L::config_wifi_country_label; ?></label><br />
 					<?php echo get_wifi_country_selector("conf_WIFI_COUNTRY","conf_WIFI_COUNTRY"); ?>
+
+				<h3><?php echo L::config_wifi_password_header; ?></h3>
+					<input type="radio" id="conf_WIFI_PASSWORD_TYPE" name="conf_WIFI_PASSWORD_TYPE" value="static"<?php echo strcasecmp($config['conf_WIFI_PASSWORD_TYPE'],'static')==0?" checked":""; ?>>
+					<label for="conf_WIFI_PASSWORD_TYPE"><?php echo L::config_wifi_password_static_label; ?></label><br />
+					<input type="radio" id="conf_WIFI_PASSWORD_TYPE" name="conf_WIFI_PASSWORD_TYPE" value="dynamic"<?php echo strcasecmp($config['conf_WIFI_PASSWORD_TYPE'],'dynamic')==0?" checked":""; ?>>
+					<label for="conf_WIFI_PASSWORD_TYPE"><?php echo L::config_wifi_password_dynamic_label; ?></label><br />
+
+					<input type="hidden" id="conf_WIFI_PASSWORD_OLD" name="conf_WIFI_PASSWORD_OLD" value="<?php echo $config['conf_WIFI_PASSWORD']; ?>">
+					<label for="conf_WIFI_PASSWORD"><?php echo L::config_wifi_password_label; ?></label><br />
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_WIFI_PASSWORD" name="conf_WIFI_PASSWORD" size="20" value="<?php echo base64_decode($config['conf_WIFI_PASSWORD']); ?>">
 			</details>
 		</div>
 
@@ -1774,7 +1800,6 @@ CONFIGDATA;
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_password_section; ?></summary>
 
 				<h3><?php echo L::config_password_header; ?></h3>
-					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
 					<label for="conf_PASSWORD_1"><p><?php echo L::config_password_global_lbb_label . '</p><p style="text-decoration: underline;">' . L::config_password_global_wifi_label . '</p><p><b>' . L::config_alert_password_characters_not_allowed . '</b>'; ?></label></p>
 					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
 					<label for="conf_PASSWORD_2"><?php echo L::config_password_repeat_label; ?></label><br />

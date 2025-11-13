@@ -18,6 +18,7 @@
 #######################################################################
 
 from pathlib import Path
+import time
 
 from lib_socialmedia_parent import services
 import lib_system
@@ -47,6 +48,7 @@ class mastodon(services):
 				access_token	= self.ACCESS_TOKEN,
 				api_base_url	= self.API_BASE_URL
 			)
+			time.sleep(1) # mastodon often sends on the second try -> maybe this will improve
 			try:
 				self.post_maxlength	= self.mastodon.instance()['configuration']['statuses']['max_characters']
 			except:

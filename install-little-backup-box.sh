@@ -417,9 +417,12 @@ crontab -l | {
 source "${INSTALLER_DIR}/install-tinyfilemanager.sh"
 
 # Change php.ini defaults
-sudo find /etc/php/ -name "php.ini" -exec sudo sed -i "s/^\(max_file_uploads\s*=\s*\).*\$/\1100/" {} \;
-sudo find /etc/php/ -name "php.ini" -exec sudo sed -i "s/^\(post_max_size\s*=\s*\).*\$/\10/" {} \;
-sudo find /etc/php/ -name "php.ini" -exec sudo sed -i "s/^\(upload_max_filesize\s*=\s*\).*\$/\1256M/" {} \;
+sudo find /etc/php/ -name "php.ini" \
+  -exec sudo sed -i 's/^[;]*[[:space:]]*max_file_uploads[[:space:]]*=.*/max_file_uploads = 100/' {} \; \
+  -exec sudo sed -i 's/^[;]*[[:space:]]*post_max_size[[:space:]]*=.*/post_max_size = 0/' {} \; \
+  -exec sudo sed -i 's/^[;]*[[:space:]]*upload_max_filesize[[:space:]]*=.*/upload_max_filesize = 2G/' {} \; \
+  -exec sudo sed -i 's/^[;]*[[:space:]]*max_input_vars[[:space:]]*=.*/max_input_vars = 10000/' {} \;
+
 
 ## install apache2
 sudo DEBIAN_FRONTEND=noninteractive \

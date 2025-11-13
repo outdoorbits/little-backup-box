@@ -130,9 +130,6 @@
     "rsync_module_header": "Module rsync",
     "rsync_module_label1": "Nom du module sur le serveur rsync, par exemple 'little-backup-box' (par défaut :",
     "rsync_module_label2": "). <br> Le nom du module est défini côté serveur dans rsyncd.conf et est mis entre [crochets]. Notez également <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
-    "wifi_section": "Paramètres Wifi",
-    "wifi_country_label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée",
-    "wifi_country_header": "Pays Wi-Fi",
     "backup": {
       "generate_thumbnails_header": "Vignettes",
       "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)",
@@ -497,19 +494,32 @@
         "characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&sbquo;), de guillemets doubles (« &quot;), d'espaces ou de barres obliques inverses (&bsol;).",
         "global": "Mot de passe global",
         "not_identical": "Le mot de passe répété n'est pas identique.",
-        "too_short": "Le mot de passe doit comporter au moins 5 caractères.",
-        "wifi_size_error": "Le mot de passe ne peut pas être utilisé pour le hotspot WiFi. Pour cela, la longueur devrait être de 8 à 63 caractères.",
+        "too_short": "Mot de passe trop court. Longueur minimale :",
         "mail": "Mot de passe de messagerie",
         "wifi": "Mot de passe Wi-Fi",
         "rsync": "rsync-le mot de passe",
         "bluesky": "Mot de passe Bluesky",
-        "wifi_changed": "Le mot de passe Wi-Fi a été modifié"
+        "wifi_changed": "Le mot de passe Wi-Fi a été modifié",
+        "too_long": "Mot de passe trop long. Nombre maximal de caractères :"
       },
       "settings": {
         "upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",
         "upload_problem": "Il y a eu un problème avec le téléchargement. Veuillez réessayer.",
         "upload_success": "Votre fichier de paramètres a été téléchargé et ces fichiers ont été installés :"
       }
+    },
+    "wifi": {
+      "country": {
+        "header": "Pays Wi-Fi",
+        "label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée"
+      },
+      "password": {
+        "header": "Mot de passe Wi-Fi",
+        "label": "Le mot de passe doit comporter entre 8 et 63 caractères.",
+        "static_label": "Le mot de passe saisi ci-dessous sera utilisé.",
+        "dynamic_label": "Un nouveau mot de passe Wi-Fi aléatoire est attribué pour chaque session. L'accès au réseau Wi-Fi de la Little Backup Box n'est alors possible que via l'écran et le code QR."
+      },
+      "section": "Paramètres Wifi"
     }
   },
   "tools": {

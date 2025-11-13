@@ -388,9 +388,6 @@
     "rsync_module_header": "rsync module",
     "rsync_module_label1": "Module name on the rsync server, e.g. 'little-backup-box' (default:",
     "rsync_module_label2": "). <br> The module name is defined on the server side in rsyncd.conf and is set in [square brackets]. Also note <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
-    "wifi_section": "WiFi settings",
-    "wifi_country_label": "Select the country in which this Little Backup Box is to be used",
-    "wifi_country_header": "WiFi country",
     "backup": {
       "generate_thumbnails_header": "Thumbnails",
       "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)",
@@ -755,19 +752,32 @@
         "characters_not_allowed": "The password must not contain quotation marks (&sbquo;), double quotation marks (&quot;), spaces or backslashes (&bsol;).",
         "global": "Global password",
         "not_identical": "Repeated password is not identical.",
-        "too_short": "Password must be at least 5 characters long.",
-        "wifi_size_error": "The password cannot be used for the WiFi hotspot. For this, the length would have to be 8 to 63 characters.",
+        "too_short": "Password too short. Minimum character length:",
         "mail": "Mail-password",
         "wifi": "Wi-Fi password",
         "rsync": "rsync-password",
         "bluesky": "Bluesky password",
-        "wifi_changed": "The Wi-Fi password has been changed"
+        "wifi_changed": "The Wi-Fi password has been changed",
+        "too_long": "Password too long. Maximum character length:"
       },
       "settings": {
         "upload_not_zip": "The file you are trying to upload is not a .zip file. Please try again.",
         "upload_problem": "There was a problem with the upload. Please try again.",
         "upload_success": "Your settings file has been uploaded and this files have been installed:"
       }
+    },
+    "wifi": {
+      "country": {
+        "header": "WiFi country",
+        "label": "Select the country in which this Little Backup Box is to be used"
+      },
+      "password": {
+        "header": "Wi-Fi password",
+        "label": "The password must be between 8 and 63 characters long.",
+        "static_label": "The password entered below will be used.",
+        "dynamic_label": "A new random Wi-Fi password is assigned for each session. Access to the Little Backup Box's Wi-Fi network is then only possible via the display and the QR code."
+      },
+      "section": "WiFi settings"
     }
   },
   "tools": {

@@ -130,9 +130,6 @@
     "rsync_module_header": "Módulo rsync",
     "rsync_module_label1": "Nombre del módulo en el servidor rsync, por ejemplo, 'little-backup-box' (predeterminado:",
     "rsync_module_label2": "). <br> El nombre del módulo se define en el lado del servidor en rsyncd.conf y se establece entre [corchetes]. También tenga en cuenta <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
-    "wifi_section": "Configuración WiFi",
-    "wifi_country_label": "Seleccione el país en el que se utilizará esta Little Backup Box",
-    "wifi_country_header": "País WLAN",
     "backup": {
       "generate_thumbnails_header": "Miniaturas",
       "generate_thumbnails_label": "¿Crear miniaturas para View después de la copia de seguridad? (Solo para almacenamiento local)",
@@ -497,19 +494,32 @@
         "characters_not_allowed": "La contraseña no puede contener comillas (&sbquo;), comillas dobles (&quot;), espacios ni barras invertidas (&bsol;).",
         "global": "Contraseña global",
         "not_identical": "La contraseña repetida no es idéntica.",
-        "too_short": "La contraseña debe contener al menos 5 caracteres.",
-        "wifi_size_error": "La contraseña no se puede utilizar para el punto de acceso WiFi. Para ello, la longitud tendría que ser de 8 a 63 caracteres.",
+        "too_short": "Contraseña demasiado corta. Longitud mínima de caracteres:",
         "mail": "Contraseña de correo",
         "wifi": "Contraseña de Wi-Fi",
         "rsync": "rsync-contraseña",
         "bluesky": "Contraseña de Bluesky",
-        "wifi_changed": "Se ha cambiado la contraseña de la red Wi-Fi"
+        "wifi_changed": "Se ha cambiado la contraseña de la red Wi-Fi",
+        "too_long": "Contraseña demasiado larga. Longitud máxima de caracteres:"
       },
       "settings": {
         "upload_not_zip": "El archivo que está intentando cargar no es un archivo .zip. Inténtelo de nuevo.",
         "upload_problem": "Hubo un problema con la carga. Inténtelo de nuevo.",
         "upload_success": "Su archivo de configuración se ha cargado y los ajustes se han instalado:"
       }
+    },
+    "wifi": {
+      "country": {
+        "header": "País WLAN",
+        "label": "Seleccione el país en el que se utilizará esta Little Backup Box"
+      },
+      "password": {
+        "header": "Contraseña de Wi-Fi",
+        "label": "La contraseña debe tener entre 8 y 63 caracteres.",
+        "static_label": "Se utilizará la contraseña que introduzca a continuación.",
+        "dynamic_label": "Se asigna una nueva contraseña Wi-Fi aleatoria para cada sesión. El acceso a la red Wi-Fi de Little Backup Box solo es posible a través de la pantalla y el código QR."
+      },
+      "section": "Configuración WiFi"
     }
   },
   "tools": {

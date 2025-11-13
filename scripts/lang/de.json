@@ -130,9 +130,6 @@
     "rsync_module_header": "rsync-Modul",
     "rsync_module_label1": "Modulname auf dem rsync-Server, z.B. 'little-backup-box' (Standard:",
     "rsync_module_label2": ").<br>Der Modulname ist serverseitig in rsyncd.conf definiert und in [eckige Klammern] gesetzt. Beachten Sie auch <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'>readme_rsync.md</a>.",
-    "wifi_section": "WLAN-Einstellungen",
-    "wifi_country_label": "Wählen Sie das Land aus, in dem diese Little Backup Box verwendet werden soll",
-    "wifi_country_header": "WLAN-Land",
     "backup": {
       "generate_thumbnails_header": "Vorschaubilder",
       "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)",
@@ -497,19 +494,32 @@
         "characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&sbquo;), doppelte Anführungszeichen (&quot;), Leerzeichen oder Backslashs (&bsol;) enthalten.",
         "global": "Globales Passwort",
         "not_identical": "Wiederholtes Passwort ist nicht identisch.",
-        "too_short": "Das Passwort muss mindestens 5 Zeichen lang sein.",
-        "wifi_size_error": "Das Passwort kann nicht für den WiFi-Hotspot verwendet werden. Dazu müsste die Länge 8 bis 63 Zeichen betragen.",
+        "too_short": "Passwort zu kurz. Mindestzeichenlänge:",
         "mail": "Mail-Passwort",
         "wifi": "WLAN-Passwort",
         "rsync": "rsync-Passwort",
         "bluesky": "Bluesky-Passwort",
-        "wifi_changed": "Das WIFI-Passwort wurde geändert"
+        "wifi_changed": "Das WIFI-Passwort wurde geändert",
+        "too_long": "Passwort zu lang. Maximale Zeichenlänge:"
       },
       "settings": {
         "upload_not_zip": "Die Datei, die Sie hochladen möchten, ist keine ZIP-Datei. Bitte versuche es erneut.",
         "upload_problem": "Beim Hochladen ist ein Problem aufgetreten. Bitte versuche es erneut.",
         "upload_success": "Ihre Einstellungsdatei wurde hochgeladen und diese Dateien wurden installiert:"
       }
+    },
+    "wifi": {
+      "country": {
+        "header": "WLAN-Land",
+        "label": "Wählen Sie das Land aus, in dem diese Little Backup Box verwendet werden soll"
+      },
+      "password": {
+        "header": "WLAN-Passwort",
+        "label": "Das Passwort muss 8 bis 63 Zeichen lang sein.",
+        "static_label": "Das unten eingetragene Passwort wird verwendet.",
+        "dynamic_label": "Bei jeder Sitzung wird ein neues zufälliges WLAN-Passwort vergeben. Der Zugang zum WLAN der Little Backup Box kann dann nur über das Display und den QR-Code erfolgen."
+      },
+      "section": "WLAN-Einstellungen"
     }
   },
   "tools": {

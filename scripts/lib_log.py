@@ -44,8 +44,14 @@ class log(object):
 
 		#replace passwords out of logfile
 		for PWD_var in self.hide_passwords_list:
-			PWD	= base64.b64decode(self.setup.get_val(PWD_var)).decode("utf-8")
-			if PWD != '':
+
+			pwd_probe	= self.setup.get_val(PWD_var).strip()
+			try:
+				PWD	= base64.b64decode(pwd_probe).decode("utf-8")
+			except:
+				PWD	= pwd_probe
+
+			if PWD:
 				Message	= Message.replace(PWD, '***')
 
 		# ensure path and logfile exists

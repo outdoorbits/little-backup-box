@@ -22,8 +22,8 @@ from pathlib import Path
 from lib_socialmedia_parent import services
 import lib_system
 
-# import lib_debug
-# xx	= lib_debug.debug()
+import lib_debug
+xxx	= lib_debug.debug()
 
 class bluesky(services):
 	def __init__(
@@ -53,6 +53,7 @@ class bluesky(services):
 				self.bluesky = Client(base_url=self.API_BASE_URL)
 
 				# Login using identifier (handle / DID) and an app password.
+				xxx.d(f'BS Login {self.IDENTIFIER}, {self.APP_PASSWORD}')
 				self.bluesky.login(self.IDENTIFIER, self.APP_PASSWORD)
 			except Exception as e:
 				self.bluesky = None
