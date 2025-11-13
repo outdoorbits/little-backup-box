@@ -219,14 +219,14 @@ if __name__ == "__main__":
 		'-o',
 		action='store_true',
 		required =	False,
-		help=f'If set, the output will be string type. (Mode=ip only)'
+		help=f'If set, the output will be string type. (for use in Mode=ip only)'
 	)
 
 	parser.add_argument(
 		'--Protocol',
 		'-p',
 		required =	False,
-		help=f'Protocol (http or https). (Mode=qr_links only)'
+		help=f'Protocol (http or https). (for use in Mode=qr_links only)'
 	)
 
 	args	= vars(parser.parse_args())

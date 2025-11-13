@@ -134,13 +134,13 @@
 		return ($wifi_country_selector);
 	}
 
-	function check_new_password($title, $pwd_1, $pwd_2) {
+	function check_new_password($title, $pwd_1, $pwd_2, $min_length=5) {
 		global $SetupMessages;
 
 		$pwd_valid = false;
 			if ($pwd_1 !== $pwd_2) {
 				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_not_identical,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-			} elseif (strlen($pwd_1) < 5) {
+			} elseif (strlen($pwd_1) < $min_length) {
 				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_short,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 			} elseif (
 					strpos("_" . $pwd_1,"\\") or
@@ -226,36 +226,72 @@
 		$conf_SOCIAL_PUBLISH_DATE					= isset($conf_SOCIAL_PUBLISH_DATE)?'true':'false';
 		$conf_SOCIAL_PUBLISH_FILENAME				= isset($conf_SOCIAL_PUBLISH_FILENAME)?'true':'false';
 
-		if ($conf_MAIL_PASSWORD != '') {
-			if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
-				$conf_MAIL_PASSWORD	= '';
-			} else {
-				$conf_MAIL_PASSWORD					= base64_encode($conf_MAIL_PASSWORD);
+		$Passwords	= explode(';', $const_PASSWORDS_LIST);
+
+		foreach ($Passwords as $Password) {
+			$$Password	= trim($$Password);
+
+			$title		= 'Password';
+			$pwd_1		= $$Password;
+			$pwd_2		= $$Password;
+			$min_length	= 5;
+
+			switch ($Password) {
+				case 'conf_PASSWORD':
+					$title		= L::config_alert_password_global;
+					break;
+
+				case 'conf_WIFI_PASSWORD':
+					$title		= L::config_alert_password_wifi;
+					$min_length	= 8;
+					break;
+
+				case 'conf_MAIL_PASSWORD':
+					$title		= config_alert_password_mail;
+					break;
+
+				case 'conf_RSYNC_PASSWORD':
+					$title		= config_alert_password_rsync;
+					break;
+
+				case 'conf_SOCIAL_BLUESKY_APP_PASSWORD':
+					$title		= config_alert_password_bluesky;
+					break;
 			}
-		}
 
-		if ($conf_RSYNC_PASSWORD != '') {
-			if (! check_new_password (L::config_alert_password_rsync_header, $conf_RSYNC_PASSWORD, $conf_RSYNC_PASSWORD)) {
-				$conf_RSYNC_PASSWORD	= '';
-			} else {
-				$conf_RSYNC_PASSWORD				= base64_encode($conf_RSYNC_PASSWORD);
-			}
-		}
+			if ($Password == 'conf_PASSWORD') {
+				$conf_PASSWORD								= $conf_PASSWORD_OLD; // conf_PASSWORD_OLD is given as base64
+				if (isset($conf_PASSWORD_REMOVE)) {
+					$conf_PASSWORD='';
+					exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py"); # remove password
+					$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_remove, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+				} elseif ($conf_PASSWORD_1 != '') {
+					if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2, $min_length)) {
+						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $conf_PASSWORD_1 . "'");
+						$conf_PASSWORD=base64_encode($conf_PASSWORD_1);
 
-		$conf_PASSWORD								= $conf_PASSWORD_OLD; // conf_PASSWORD_OLD is given as base64
-		if (isset($conf_PASSWORD_REMOVE)) {
-			$conf_PASSWORD='';
-			exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py"); # remove password
-			$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_remove, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-		} elseif ($conf_PASSWORD_1 != '') {
-			if (check_new_password (L::config_alert_password_global, $conf_PASSWORD_1, $conf_PASSWORD_2)) {
-				exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $conf_PASSWORD_1 . "'");
-				$conf_PASSWORD=base64_encode($conf_PASSWORD_1);
-
-				if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
-					$SetupMessages	.= popup(L::config_alert_password_wifi_size_error, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+						if ((strlen($conf_PASSWORD_1) < 8) or (strlen($conf_PASSWORD_1) > 63)) {
+							$SetupMessages	.= popup(L::config_alert_password_wifi_size_error, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+						}
+						$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+					}
 				}
-				$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+			} elseif ($Password == 'conf_WIFI_PASSWORD') {
+				if ($conf_WIFI_PASSWORD_TYPE	== 'static' and (empty($$Password) or check_new_password ($title, $pwd_1, $pwd_2, $min_length))) {
+					exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $$Password . "'");
+					$SetupMessages	.= popup(L::config_alert_password_wifi_set . ":\n\"" . $config['conf_WIFI_PASSWORD'] . '"', POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+				} else {
+					$$Password	= '';
+				}
+
+			} else {
+				if ($$Password != '') {
+					if (! check_new_password ($title, $pwd_1, $pwd_2, $min_length)) {
+						$$Password	= '';
+					} else {
+						$$Password	= base64_encode($$Password);
+					}
+				}
 			}
 		}
 
@@ -348,7 +384,6 @@ conf_VPN_TYPE_RSYNC='$conf_VPN_TYPE_RSYNC'
 conf_VPN_TYPE_CLOUD='$conf_VPN_TYPE_CLOUD'
 conf_VPN_TIMEOUT=$conf_VPN_TIMEOUT
 conf_PASSWORD='$conf_PASSWORD'
-conf_PASSWORD_ENCRYPTION='$conf_PASSWORD_ENCRYPTION'
 conf_DIPLAY_IMAGES_KEEP=$conf_DIPLAY_IMAGES_KEEP
 conf_SOCIAL_PUBLISH_DATE=$conf_SOCIAL_PUBLISH_DATE
 conf_SOCIAL_PUBLISH_FILENAME=$conf_SOCIAL_PUBLISH_FILENAME
@@ -510,6 +545,14 @@ CONFIGDATA;
 						} else {
 							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py");
 							$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_remove, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+						}
+
+						# set new WIFI password
+						if ($config['conf_WIFI_PASSWORD_TYPE']	== 'static' and (empty($config['conf_WIFI_PASSWORD']) or check_new_password ($title, $pwd_1, $pwd_2, $min_length))) {
+							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $config['conf_WIFI_PASSWORD'] . "'");
+							$SetupMessages	.= popup(L::config_alert_password_wifi_set . ":\n\"" . $config['conf_WIFI_PASSWORD'] . '"', POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+						} else {
+							$config['conf_WIFI_PASSWORD']	= '';
 						}
 					}
 
@@ -1585,7 +1628,7 @@ CONFIGDATA;
 						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_IDENTIFIER" name="conf_SOCIAL_BLUESKY_IDENTIFIER" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_IDENTIFIER']; ?>"><br />
 
 						<label for="conf_SOCIAL_BLUESKY_APP_PASSWORD"><?php echo L::config_social_bluesky_app_password_label; ?></label><br />
-						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_APP_PASSWORD" name="conf_SOCIAL_BLUESKY_APP_PASSWORD" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_APP_PASSWORD']; ?>"><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_APP_PASSWORD" name="conf_SOCIAL_BLUESKY_APP_PASSWORD" size="50" value="<?php echo base64_decode($config['conf_SOCIAL_BLUESKY_APP_PASSWORD']); ?>"><br />
 				</details>
 
 				<details>
@@ -1732,7 +1775,6 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_password_header; ?></h3>
 					<input type="hidden" id="conf_PASSWORD_OLD" name="conf_PASSWORD_OLD" value="<?php echo $config['conf_PASSWORD']; ?>">
-					<input type="hidden" id="conf_PASSWORD_ENCRYPTION" name="conf_PASSWORD_ENCRYPTION" value="<?php echo $config['conf_PASSWORD_ENCRYPTION']; ?>">
 					<label for="conf_PASSWORD_1"><p><?php echo L::config_password_global_lbb_label . '</p><p style="text-decoration: underline;">' . L::config_password_global_wifi_label . '</p><p><b>' . L::config_alert_password_characters_not_allowed . '</b>'; ?></label></p>
 					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
 					<label for="conf_PASSWORD_2"><?php echo L::config_password_repeat_label; ?></label><br />

@@ -46,7 +46,7 @@ class comitup(object):
 	def config(self, Password=None): # use general password if None is given
 
 		if Password is None:
-			Password	= base64.b64decode(self.__setup.get_val('conf_PASSWORD')).decode("utf-8")
+			Password	= base64.b64decode(self.__setup.get_val('conf_WIFI_PASSWORD')).decode("utf-8")
 
 		try:
 			with open(self.configfile,'w') as f:

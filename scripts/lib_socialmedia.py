@@ -18,7 +18,7 @@
 #######################################################################
 
 import argparse
-
+import base64
 from datetime import datetime
 import os
 from pathlib import Path
@@ -105,7 +105,7 @@ class socialmedia(object):
 				bluesky(
 					BS_API_BASE_URL	= self.__setup.get_val('conf_SOCIAL_BLUESKY_API_BASE_URL'),
 					BS_IDENTIFIER  	= self.__setup.get_val('conf_SOCIAL_BLUESKY_IDENTIFIER'),
-					BS_APP_PASSWORD = self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD'),
+					BS_APP_PASSWORD = base64.b64decode(self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')),
 					check_only	= check_only
 				)
 			)

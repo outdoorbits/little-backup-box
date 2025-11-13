@@ -183,9 +183,9 @@ class setup(object):
 				# set value
 				self.config[conf_var]	= {'value': self.__norm_value(conf_val, conf_type), 'type': conf_type}
 
-			# migrate all passwords to base64
+			# migrate all passwords to base64 (conf_PASSWORD_ENCRYPTION for compatibility of older config files)
 			if self.config['conf_PASSWORD_ENCRYPTION']['value'] == 'plain':
-				for PWD in ['conf_MAIL_PASSWORD', 'conf_RSYNC_PASSWORD', 'conf_PASSWORD']:
+				for PWD in self.constants('const_PASSWORDS_LIST').split(';'):
 					self.config[PWD]['value']	= base64.b64encode(bytes(self.config[PWD]['value'], 'utf-8')).decode('utf-8')
 
 				self.config['conf_PASSWORD_ENCRYPTION']['value']	= 'base64'
@@ -293,7 +293,9 @@ class setup(object):
 					'conf_SOCIAL_MATRIX_HOMESERVER':					{'value': '', 'type': 'str'},
 					'conf_SOCIAL_MATRIX_TOKEN':							{'value': '', 'type': 'str'},
 					'conf_SOCIAL_MATRIX_ROOM_ID':						{'value': '', 'type': 'str'},
-					'conf_SOCIAL_MATRIX_ROOM_IDENTIFIER':				{'value': '', 'type': 'str'}
+					'conf_SOCIAL_MATRIX_ROOM_IDENTIFIER':				{'value': '', 'type': 'str'},
+					'conf_WIFI_PASSWORD_TYPE':							{'value': 'static', 'type': 'str'}, # use password from 'static' or 'dynamic' (for wifi by qr only)
+					'conf_WIFI_PASSWORD':								{'value': 'static', 'type': 'str'}
 				}
 		)
 
@@ -372,8 +374,7 @@ class setup(object):
 					'const_TASKS_PATH':								{'type': 'str'},
 					'const_METADATA_CREATE_SOURCES':				{'type': 'str'},
 					'const_METADATA_CREATE_SOURCES_HR':				{'type': 'str'},
-					'const_METADATA_MODIFY_SOURCES':				{'type': 'str'},
-					'const_wifi_random_password_path'				{'type': 'str'}
+					'const_METADATA_DATE_MODIFY_SOURCES':			{'type': 'str'}
 				}
 		)
 

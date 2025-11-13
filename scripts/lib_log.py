@@ -36,7 +36,7 @@ class log(object):
 		self.LogFilePath			= self.setup.get_val('const_LOGFILE')
 		self.conf_LOGLEVEL			= self.setup.get_val('conf_LOGLEVEL')
 
-		self.hide_passwords_list	= ['conf_PASSWORD', 'conf_MAIL_PASSWORD', 'conf_RSYNC_PASSWORD']
+		self.hide_passwords_list	= self.setup.get_val('const_PASSWORDS_LIST').split(';')
 
 	def message(self, Message, LogLevel=10):
 		if LogLevel < self.conf_LOGLEVEL:
