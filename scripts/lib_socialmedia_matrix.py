@@ -96,7 +96,7 @@ class matrix(services):
 					return True
 				else:
 					self.ok				= False
-					self.add_error_message(f"room_send error: {resp}")
+					self.add_message(f"room_send error: {resp}")
 					return(False)
 
 			# Handle message types
@@ -154,7 +154,7 @@ class matrix(services):
 						return upload_resp.content_uri, mime_type
 					else:
 						self.ok	= False
-						self.add_error_message( f"upload error: {upload_resp}")
+						self.add_message( f"upload error: {upload_resp}")
 						return None, None
 
 				media_uri	= None
@@ -199,7 +199,7 @@ class matrix(services):
 						)
 						if not isinstance(resp, self.RoomSendResponse):
 							self.ok	= False
-							self.add_error_message( f"room_send media error: {resp}")
+							self.add_message( f"room_send media error: {resp}")
 							break
 					else:
 						if CommentPart:
@@ -208,7 +208,7 @@ class matrix(services):
 								break
 			else:
 				self.ok	= False
-				self.add_error_message(f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}')
+				self.add_message(f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}')
 
 			FileName = FilePath.name if FilePath else ''
 			sep = '' if not FileName else ': '
@@ -218,14 +218,14 @@ class matrix(services):
 		except Exception as e:
 			self.ok	= False
 			name = f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.add_error_message(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"} {name}: {type(e).__name__}, {e}')
+			self.add_message(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"} {name}: {type(e).__name__}, {e}')
 		finally:
 			await client.close()
 
 		if self.ok is None:
 			self.ok	= True
 			name = f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.add_error_message(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"} {name}: o.k.')
+			self.add_message(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"} {name}: o.k.')
 
 	def publish(self, msgtype, Comment='', FilePath=None):
 		super().publish()
@@ -248,7 +248,7 @@ class matrix(services):
 				)
 		else:
 			self.ok				= False
-			self.add_error_message("not configured")
+			self.add_message("not configured")
 
 	def delaytime(self, upload_times):
 		if not self.rate_limit_count or not self.rate_limit_seconds:

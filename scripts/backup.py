@@ -831,6 +831,7 @@ class backup(object):
 							progress.progress(Success=success['ok'])
 							if success['ok']:
 								db.dbExecute(f'UPDATE EXIF_DATA SET social_publish = social_publish & ~{2 ** bit}, social_published = social_published | {2 ** bit} WHERE ID={IMAGE_ID};')
+								self.__reporter.add_synclog(success['msg'])
 							else:
 								self.__reporter.add_error(success['msg'])
 
