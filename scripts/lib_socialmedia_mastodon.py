@@ -100,23 +100,23 @@ class mastodon(services):
 
 			else:
 				self.ok = False
-				self.returnmessage = f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
+				self.add_returnmessage(f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}')
 
 		except Exception as e:
 			self.ok				= False
 			name	= f' {getattr(FilePath, "name", "")}' if FilePath else ''
-			self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}'
+			self.add_returnmessage(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}')
 
 		if self.ok is None:
 			self.ok				= True
 			name				= f' {getattr(FilePath, "name", "")}' if FilePath else ''
-			self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.'
+			self.add_returnmessage(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.')
 
 	def publish(self, msgtype, Comment='', FilePath=None):
-		self.reset_return()
+		super().publish()
 
 		if self.mastodon:
 			self.__publish(msgtype, Comment=Comment, FilePath=FilePath)
 		else:
 			self.ok = False
-			self.returnmessage = 'not configured'
+			self.add_returnmessage('not configured')

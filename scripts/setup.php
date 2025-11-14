@@ -1756,8 +1756,9 @@ CONFIGDATA;
 					<input type="radio" id="conf_WIFI_PASSWORD_TYPE" name="conf_WIFI_PASSWORD_TYPE" value="static"<?php echo strcasecmp($config['conf_WIFI_PASSWORD_TYPE'],'static')==0?" checked":""; ?>>
 					<label for="conf_WIFI_PASSWORD_TYPE"><?php echo L::config_wifi_password_static_label; ?></label><br />
 					<input type="radio" id="conf_WIFI_PASSWORD_TYPE" name="conf_WIFI_PASSWORD_TYPE" value="dynamic"<?php echo strcasecmp($config['conf_WIFI_PASSWORD_TYPE'],'dynamic')==0?" checked":""; ?>>
-					<label for="conf_WIFI_PASSWORD_TYPE"><?php echo L::config_wifi_password_dynamic_label; ?></label><br />
-
+					<label for="conf_WIFI_PASSWORD_TYPE"><?php echo L::config_wifi_password_dynamic_label; ?> *</label><br />
+					* <?php echo L::config_wifi_password_dynamic_desc; ?><br />
+					<br />
 					<input type="hidden" id="conf_WIFI_PASSWORD_OLD" name="conf_WIFI_PASSWORD_OLD" value="<?php echo $config['conf_WIFI_PASSWORD']; ?>">
 					<label for="conf_WIFI_PASSWORD"><?php echo L::config_wifi_password_label; ?></label><br />
 					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_WIFI_PASSWORD" name="conf_WIFI_PASSWORD" size="20" value="<?php echo base64_decode($config['conf_WIFI_PASSWORD']); ?>">
@@ -1800,7 +1801,7 @@ CONFIGDATA;
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_password_section; ?></summary>
 
 				<h3><?php echo L::config_password_header; ?></h3>
-					<label for="conf_PASSWORD_1"><p><?php echo L::config_password_global_lbb_label . '</p><p style="text-decoration: underline;">' . L::config_password_global_wifi_label . '</p><p><b>' . L::config_alert_password_characters_not_allowed . '</b>'; ?></label></p>
+					<label for="conf_PASSWORD_1"><p><?php echo L::config_password_global_lbb_label . '</p><p><b>' . L::config_alert_password_characters_not_allowed . '</b>'; ?></label></p>
 					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
 					<label for="conf_PASSWORD_2"><?php echo L::config_password_repeat_label; ?></label><br />
 					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">

@@ -488,8 +488,8 @@ class reporter(object):
 					self.mail_content_HTML	+= f"\n\n  <h4>{tryNumber}. {self.__lan.l('box_backup_try')}</h4>"
 
 					self.mail_content_HTML	+= f'\n<p style="{CSS_margins_left_1}">'
-					SyncLogs	= [f'{str(i+1)+".": <4}: {Report["SyncLogs"][i]}' for i in range(len(Report['SyncLogs']))]
-					self.mail_content_HTML	+= '</br>\n    '.join(SyncLogs)
+					SyncLogs	= [f'{str(i+1)+".": <4}: {Report["SyncLogs"][i].replace("\n", "<br />")}' for i in range(len(Report['SyncLogs']))]
+					self.mail_content_HTML	+= '<br />\n    '.join(SyncLogs)
 					self.mail_content_HTML	+= '</p>'
 
 		self.mail_content_PLAIN	= lib_mail.remove_HTML_tags(self.mail_content_HTML)

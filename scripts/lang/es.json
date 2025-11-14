@@ -479,7 +479,6 @@
       "as_set_in": "Contraseña establecida en",
       "changed": "Contraseña cambiada.",
       "global_lbb_label": "La contraseña para proteger su Little-Backup-Box. Se utiliza para la interfaz web, el navegador de archivos, ssh y samba-Windows-share. El nombre de usuario en todos los casos es lbb. Para el usuario de linux & quot; pi & quot; la contraseña también está configurada.",
-      "global_wifi_label": "Si la contraseña tiene una longitud de 8 a 63 caracteres, también se utilizará como contraseña WiFi en el modo de punto de acceso.",
       "remove_header": "Quitar contraseña",
       "remove_label": "Eliminar contraseña",
       "removed": "Se eliminó la contraseña general.",
@@ -517,7 +516,8 @@
         "header": "Contraseña de Wi-Fi",
         "label": "La contraseña debe tener entre 8 y 63 caracteres.",
         "static_label": "Se utilizará la contraseña que introduzca a continuación.",
-        "dynamic_label": "Se asigna una nueva contraseña Wi-Fi aleatoria para cada sesión. El acceso a la red Wi-Fi de Little Backup Box solo es posible a través de la pantalla y el código QR."
+        "dynamic_label": "Contraseña dinámica",
+        "dynamic_desc": "Se asigna una nueva contraseña de Wi-Fi aleatoria para cada sesión. <strong>El acceso a la red Wi-Fi de Little Backup Box solo será posible mediante la pantalla y el código QR.</strong><br />\nSin embargo, el cambio solo se aplicará si la pantalla está activada y tiene una resolución mínima de 64 x 64 píxeles."
       },
       "section": "Configuración WiFi"
     }
@@ -784,7 +784,8 @@
           "bluesky": "Bluesky"
         },
         "stop": "DETENER copia"
-      }
+      },
+      "wifi": "Código QR de WLAN"
     },
     "backup_local": "localmente",
     "finished": "finalizado",

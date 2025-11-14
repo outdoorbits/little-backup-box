@@ -104,6 +104,8 @@ class poweroff(object):
 				alphabet = string.ascii_letters + string.digits  # A-Z, a-z, 0-9
 				Password = ''.join(secrets.choice(alphabet) for _ in range(13))
 				lib_comitup.comitup().config(Password=Password)
+				self.__setup.set_val('conf_WIFI_PASSWORD', Password)
+				self.__setup.rewrite_configfile()
 
 			# Power off
 			if self.Action == 'poweroff':

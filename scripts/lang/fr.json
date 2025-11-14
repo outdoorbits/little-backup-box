@@ -479,7 +479,6 @@
       "as_set_in": "Mot de passe tel que défini dans",
       "changed": "Mot de passe changé.",
       "global_lbb_label": "Le mot de passe pour protéger votre Little-Backup-Box. Utilisé pour l'interface Web, le navigateur de fichiers, ssh et samba-Windows-shares. Le nom d'utilisateur dans tous les cas est lbb. Pour l'utilisateur Linux &quot;pi&quot; le mot de passe est également défini.",
-      "global_wifi_label": "Si le mot de passe a une longueur de 8 à 63 caractères, il sera également utilisé comme mot de passe WiFi en mode hotspot.",
       "remove_header": "Supprimer le mot de passe",
       "remove_label": "Supprimer le mot de passe",
       "removed": "Mot de passe général supprimé.",
@@ -517,7 +516,8 @@
         "header": "Mot de passe Wi-Fi",
         "label": "Le mot de passe doit comporter entre 8 et 63 caractères.",
         "static_label": "Le mot de passe saisi ci-dessous sera utilisé.",
-        "dynamic_label": "Un nouveau mot de passe Wi-Fi aléatoire est attribué pour chaque session. L'accès au réseau Wi-Fi de la Little Backup Box n'est alors possible que via l'écran et le code QR."
+        "dynamic_label": "Mot de passe dynamique",
+        "dynamic_desc": "Un nouveau mot de passe Wi-Fi aléatoire est généré à chaque session. <strong>L'accès au réseau Wi-Fi de la Little Backup Box se fait alors uniquement via l'écran et le code QR!</strong><br />\nCependant, cette modification ne sera effective que si l'écran est activé et possède une résolution d'au moins 64 x 64 pixels."
       },
       "section": "Paramètres Wifi"
     }
@@ -784,7 +784,8 @@
           "bluesky": "Bluesky"
         },
         "stop": "ARRÊTER sauvegarde"
-      }
+      },
+      "wifi": "Code QR WLAN"
     },
     "backup_local": "localement",
     "finished": "fini",

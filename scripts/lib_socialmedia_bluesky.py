@@ -22,8 +22,8 @@ from pathlib import Path
 from lib_socialmedia_parent import services
 import lib_system
 
-import lib_debug
-xxx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class bluesky(services):
 	def __init__(
@@ -41,8 +41,8 @@ class bluesky(services):
 
 		self.post_maxlength	= 300
 
-		self.rate_limit_count	= 1666
-		self.rate_limit_seconds	= 3600
+		self.rate_limit_count	= 1
+		self.rate_limit_seconds	= 10
 
 		if not check_only and self.configured():
 			from atproto import Client, models
@@ -50,15 +50,14 @@ class bluesky(services):
 
 			try:
 				# Create a client bound to the given service URL (PDS).
-				self.bluesky = Client(base_url=self.API_BASE_URL)
+				self.bluesky	= Client(base_url=self.API_BASE_URL)
 
 				# Login using identifier (handle / DID) and an app password.
-				xxx.d(f'BS Login {self.IDENTIFIER}, {self.APP_PASSWORD}')
 				self.bluesky.login(self.IDENTIFIER, self.APP_PASSWORD)
 			except Exception as e:
 				self.bluesky = None
 				self.ok = False
-				self.returnmessage = f'login: {type(e).__name__}, {e}'
+				self.add_returnmessage(f'login: {type(e).__name__}, {e}')
 		else:
 			self.bluesky = None
 
@@ -66,6 +65,7 @@ class bluesky(services):
 		return (bool(self.API_BASE_URL and self.IDENTIFIER and self.APP_PASSWORD))
 
 	def __publish(self, msgtype, Comment='', FilePath=None):
+		super().publish()
 
 		if FilePath is not None:
 			FilePath = Path(FilePath)
@@ -117,28 +117,26 @@ class bluesky(services):
 						# 	# As of now, the public Bluesky API client does not provide stable
 						# 	# posting for audio/video in regular feed posts. Mark as unsupported.
 						# 	self.ok = False
-						# 	self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
+						# 	self.add_returnmessage(f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}')
 					else:
 						send_text(CommentPart)
 			else:
 				self.ok = False
-				self.returnmessage = f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
+				self.add_returnmessage(f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}')
 
 		except Exception as e:
 			self.ok = False
 			name = f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.returnmessage = f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}'
+			self.add_returnmessage(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}')
 
 		if self.ok is None:
 			self.ok = True
 			name = f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.returnmessage = f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.'
-
+			self.add_returnmessage(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.')
 	def publish(self, msgtype, Comment='', FilePath=None):
-		self.reset_return()
 
 		if self.bluesky:
 			self.__publish(msgtype, Comment=Comment, FilePath=FilePath)
 		else:
 			self.ok = False
-			self.returnmessage = "not configured"
+			self.add_returnmessage("not configured")

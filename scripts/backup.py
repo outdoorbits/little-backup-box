@@ -785,6 +785,8 @@ class backup(object):
 ### social upload
 					elif self.TargetDevice.StorageType == 'social':
 						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID, upload_times=upload_times)
+						if SOCIAL.SERVICE_Obj and SOCIAL.SERVICE_Obj.returnmessage:
+							self.__reporter.add_error(SOCIAL.SERVICE_Obj.returnmessage)
 
 						SocialServices	= SOCIAL.get_social_services()
 

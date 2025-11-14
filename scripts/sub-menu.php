@@ -40,7 +40,7 @@
 
 	exec('which comitup', $comitup_path, $return_code);
 	$comitup_installed	= $return_code == 0;
-	$comitup_hotspot	= trim(shell_exec("sudo python3 $WORKING_DIR/lib_comitup.py --check_hotspot")) == 'active';
+	$comitup_hotspot	= trim(shell_exec("sudo python3 $WORKING_DIR/lib_comitup.py --hotspot_active")) == 'active';
 ?>
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">

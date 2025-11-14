@@ -42,8 +42,8 @@ from lib_socialmedia_bluesky import bluesky
 # 	- def publish
 ###############################################################################################
 
-import lib_debug
-xxx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class socialmedia(object):
 
@@ -101,8 +101,6 @@ class socialmedia(object):
 				)
 			)
 		elif service == 'bluesky':
-			BS_APP_PASSWORD	= base64.b64decode(self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')).decode('utf-8') #xxx
-			xxx.d(f'BS Pwd: {BS_APP_PASSWORD} aus base64: {self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')}')
 			try:
 				BS_APP_PASSWORD	= base64.b64decode(self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')).decode('utf-8')
 			except:

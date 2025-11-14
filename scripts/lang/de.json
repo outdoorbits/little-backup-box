@@ -479,7 +479,6 @@
       "as_set_in": "Passwort wie festgelegt in",
       "changed": "Passwort geändert.",
       "global_lbb_label": "Das Passwort zum Schutz Ihrer Little-Backup-Box: Es wird für das Webinterface, Filebrowser, ssh und Samba-Windows-Shares verwendet. Der Benutzername ist in all diesen Fällen &quot;lbb&quot;. Für den Linux-Benutzer &quot;pi&quot; wird dieses Passwort ebenfalls gesetzt.",
-      "global_wifi_label": "Falls das Passwort eine Länge von 8 bis 63 Zeichen hat, wird es auch als WiFi-Passwort im Hotspot-Modus verwendet.",
       "remove_header": "Passwort entfernen",
       "remove_label": "Passwort entfernen",
       "removed": "Allgemeines Passwort entfernt.",
@@ -517,7 +516,8 @@
         "header": "WLAN-Passwort",
         "label": "Das Passwort muss 8 bis 63 Zeichen lang sein.",
         "static_label": "Das unten eingetragene Passwort wird verwendet.",
-        "dynamic_label": "Bei jeder Sitzung wird ein neues zufälliges WLAN-Passwort vergeben. Der Zugang zum WLAN der Little Backup Box kann dann nur über das Display und den QR-Code erfolgen."
+        "dynamic_label": "Dynamisches Passwort",
+        "dynamic_desc": "Bei jeder Sitzung wird ein neues zufälliges WLAN-Passwort vergeben. <strong>Der Zugang zum WLAN der Little Backup Box kann dann nur über das Display und den QR-Code erfolgen!</strong><br />Die Änderung wird allerdings nur ausgeführt, falls das Display aktiviert wurde und dieses mindestens 64 x 64 Pixel groß ist."
       },
       "section": "WLAN-Einstellungen"
     }
@@ -784,7 +784,8 @@
           "bluesky": "Bluesky"
         },
         "stop": "STOP Backup"
-      }
+      },
+      "wifi": "WLAN-QR-Code"
     },
     "backup_local": "Backup lokal",
     "finished": "erledigt",

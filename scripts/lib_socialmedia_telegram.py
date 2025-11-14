@@ -138,7 +138,7 @@ class telegram(services):
 							await send_text(CommentPart)
 				else:
 					self.ok = False
-					self.returnmessage = f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
+					self.add_returnmessage(f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}')
 
 				if FilePath:
 					FileName	= FilePath.name
@@ -152,23 +152,26 @@ class telegram(services):
 			except Exception as e:
 				self.ok				= False
 				name	= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-				self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}'
+				self.add_returnmessage(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}')
 
 		if self.ok is None:
 			self.ok				= True
 			name				= f" {getattr(FilePath, 'name', '')}" if FilePath else ''
-			self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.'
+			self.add_returnmessage(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.')
 
 	def publish(self, msgtype, Comment='', FilePath=None):
-		self.reset_return()
+		super().publish()
 
 		if self.bot_configured:
 			try:
 				self.asyncio.get_running_loop()
 			except RuntimeError:
-				self.asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
+				try:
+					self.asyncio.run(self.__publish_async(msgtype, Comment=Comment, FilePath=FilePath))
+				except Exception as e:
+					self.add_returnmessage(f'Error: {e}')
 			else:
 				raise RuntimeError("publish() called from async-context – please use 'await publish_async(...)'.")
 		else:
 			self.ok = False
-			self.returnmessage = "not configured"
+			self.add_returnmessage("not configured")

@@ -21,14 +21,13 @@
 
 import base64
 import os
-import string
 import subprocess
 import sys
 
 from configobj import ConfigObj
 
-import lib_debug
-xxx	= lib_debug.debug()
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class setup(object):
 
@@ -218,7 +217,6 @@ class setup(object):
 
 			for PWD in self.constants['const_PASSWORDS_LIST']['value'].split(';'):
 				if not looks_like_base64(self.config[PWD]['value']):
-					xxx.d(f'base64 {PWD}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {looks_like_base64(self.config[PWD]["value"])}')
 					self.config[PWD]['value']	= base64.b64encode(bytes(self.config[PWD]['value'], 'utf-8')).decode('utf-8')
 			return()
 

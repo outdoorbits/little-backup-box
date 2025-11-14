@@ -62,3 +62,4 @@ const_METADATA_CREATE_SOURCES="XMP:CreateDate;XMP:DateCreated;XMP-photoshop:Date
 const_METADATA_CREATE_SOURCES_HR="Create_Date;Date_Created;Date_Time_Original;Sub_Sec_Create_Date;Sub_Sec_Date_Time_Original;Date_Time_Digitized;Date_Time_Created;Media_Create_Date;Track_Create_Date;Content_Create_Date;Creation_Time;File_Creation_Date_Time;File_Modification_Date_Time"
 const_METADATA_DATE_MODIFY_SOURCES="XMP:ModifyDate;Composite:SubSecModifyDate;EXIF:ModifyDate;EXIF:FileModificationDateTime;QuickTime:ModifyDate;QuickTime:TrackModifyDate;File:FileModifyDate"
 const_PASSWORDS_LIST='conf_PASSWORD;conf_WIFI_PASSWORD;conf_MAIL_PASSWORD;conf_RSYNC_PASSWORD;conf_SOCIAL_BLUESKY_APP_PASSWORD'
+const_WIFI_QR_FILE_PATH='/var/www/little-backup-box/tmp/WIFI.png'

@@ -41,6 +41,7 @@ class services(object):
 		return(False)
 
 	def publish(self):
+		self.reset_return()
 		return(False)
 
 	def delaytime(self, upload_times):
@@ -188,3 +189,6 @@ class services(object):
 
 		flush()
 		return chunks
+
+	def add_returnmessage(self, message):
+		self.returnmessage	= f'{self.returnmessage}{"\n" if self.returnmessage else ""}{message}'

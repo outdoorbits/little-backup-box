@@ -77,10 +77,10 @@ def create_ip_link_qr_image(IP, OnlineStatus, IP_QR_FILE, width, height, font=No
 			qr_height	= height
 
 		qr	= qrcode.QRCode(
-			version=1,
+			version				= 1,
 			error_correction	= qrcode.constants.ERROR_CORRECT_L,
 				box_size		= qr_box_size,
-				border			= qr_border,
+				border			= qr_border
 		)
 		qr.add_data(LinkText)
 		qr.make(fit=True)
@@ -98,8 +98,8 @@ def create_ip_link_qr_image(IP, OnlineStatus, IP_QR_FILE, width, height, font=No
 
 			draw			= ImageDraw.Draw(final_image)
 
-			(left, top, right, bottom) = draw.textbbox((0,0), IP, font=font)
-			text_length = right - left
+			(left, top, right, bottom)	= draw.textbbox((0, 0), IP, font=font)
+			text_length					= right - left
 
 			draw.text((int((width - text_length) / 2), qr_height), IP, font=font)
 
