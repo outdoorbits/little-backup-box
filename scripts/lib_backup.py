@@ -281,25 +281,25 @@ class reporter(object):
 
 		self.__move_files				= move_files
 
-		self.__SyncLog				= SyncLog
+		self.__SyncLog					= SyncLog
 
-		self.__Folder				=	None
+		self.__Folder					=	None
 
-		self.__BackupReports	= {}
+		self.__BackupReports			= {}
 
-		self.StartTime			= lib_system.get_uptime_sec()
-		self.StopTime			= 0
+		self.StartTime					= lib_system.get_uptime_sec()
+		self.StopTime					= 0
 
 		#shared values to use as output
-		self.mail_subject			= ''
-		self.mail_content_PLAIN		= ''
-		self.mail_content_HTML		= ''
+		self.mail_subject				= ''
+		self.mail_content_PLAIN			= ''
+		self.mail_content_HTML			= ''
 
-		self.display_summary		= []
+		self.display_summary			= []
 
 	def new_folder(self, Folder):
 		if not Folder:
-			Folder	= '/'
+			Folder		= '/'
 		self.__Folder	= Folder
 
 		self.__BackupReports[Folder]	= []
@@ -491,6 +491,33 @@ class reporter(object):
 					SyncLogs	= [f'{str(i+1)+".": <4}: {Report["SyncLogs"][i].replace("\n", "<br />")}' for i in range(len(Report['SyncLogs']))]
 					self.mail_content_HTML	+= '<br />\n    '.join(SyncLogs)
 					self.mail_content_HTML	+= '</p>'
+
+		# ErrorLog
+		self.mail_content_HTML	+= f"\n\n<br><h2>{self.__lan.l('box_backup_mail_error')}:</h2>"
+
+		separator	= False
+		for Folder in self.__BackupReports:
+
+			if separator:
+				self.mail_content_HTML	+= '\n</br>\n<hr style="width:50%;">\n</br>\n'
+
+			separator	= True
+
+			# folder
+			self.mail_content_HTML	+= f"\n  <h3>{self.__lan.l('box_backup_folder')}: &quot;{Folder}&quot;</h3>"
+
+			# Tries
+			tryNumber	= len(self.__BackupReports[Folder]) + 1
+			for Report in reversed(self.__BackupReports[Folder]):
+
+				tryNumber	+= -1
+
+				self.mail_content_HTML	+= f"\n\n  <h4>{tryNumber}. {self.__lan.l('box_backup_try')}</h4>"
+
+				self.mail_content_HTML	+= f'\n<p style="{CSS_margins_left_1}">'
+				Errors	= [f'{str(i+1)+".": <4}: {Report["Errors"][i].replace("\n", "<br />")}' for i in range(len(Report['Errors']))]
+				self.mail_content_HTML	+= '<br />\n    '.join(Errors)
+				self.mail_content_HTML	+= '</p>'
 
 		self.mail_content_PLAIN	= lib_mail.remove_HTML_tags(self.mail_content_HTML)
 

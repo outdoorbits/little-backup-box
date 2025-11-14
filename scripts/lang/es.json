@@ -490,7 +490,6 @@
       "password": {
         "change_after_reboot_remove": "Se eliminó la contraseña global\nLos cambios serán aplicados después del reinicio",
         "change_after_reboot_set": "Conjunto de contraseñas globales\nLos cambios serán aplicados después del reinicio",
-        "characters_not_allowed": "La contraseña no puede contener comillas (&sbquo;), comillas dobles (&quot;), espacios ni barras invertidas (&bsol;).",
         "global": "Contraseña global",
         "not_identical": "La contraseña repetida no es idéntica.",
         "too_short": "Contraseña demasiado corta. Longitud mínima de caracteres:",

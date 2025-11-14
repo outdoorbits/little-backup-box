@@ -28,6 +28,8 @@ import lib_mail
 import lib_network
 import lib_setup
 
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class ip_info(object):
 
@@ -38,14 +40,14 @@ class ip_info(object):
 		self.__lan	= lib_language.language()
 
 		# setup
-		self.__conf_DISP_IP_REPEAT			= self.__setup.get_val('conf_DISP_IP_REPEAT')
-		self.__const_WIFI_QR_FILE_PATH		= self.__setup.get_val('const_WIFI_QR_FILE_PATH')
+		self.__conf_DISP_IP_REPEAT				= self.__setup.get_val('conf_DISP_IP_REPEAT')
+		self.__const_WIFI_QR_FILE_PATH			= self.__setup.get_val('const_WIFI_QR_FILE_PATH')
 
-		self.__const_DISPLAY_CONTENT_OLD_FILE		= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		self.__const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		self.__const_IP_QR_FILE_PATTERN			= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
 
-		self.__conf_DISP_RESOLUTION_X				= self.__setup.get_val('conf_DISP_RESOLUTION_X')
-		self.__conf_DISP_RESOLUTION_Y				= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		self.__conf_DISP_RESOLUTION_X			= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		self.__conf_DISP_RESOLUTION_Y			= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
 		self.__const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
 		self.__conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
 		self.__conf_DISP_FRAME_TIME_IP			= self.__setup.get_val('conf_DISP_FRAME_TIME_IP')
@@ -59,7 +61,7 @@ class ip_info(object):
 
 	def display_ip(self, FrameTime=None, force=False):
 
-		if not (self.__conf_DISP_IP_REPEAT or force):
+		if not self.__conf_DISP_IP_REPEAT and not force:
 			return()
 
 		FrameTime	= self.__conf_DISP_FRAME_TIME_IP if FrameTime is None else FrameTime
@@ -94,11 +96,17 @@ class ip_info(object):
 		elif force and not self.__IPs:
 			self.__display.message(['set:clear', f":{self.__lan.l('box_cronip_offline')}"], logging=False)
 
-	def display_wifi_qr(self):
+	def display_wifi_qr(self, FrameTime=None, force=False):
+		if not self.__conf_DISP_IP_REPEAT and not force:
+			return()
+
+		FrameTime	= self.__conf_DISP_FRAME_TIME_IP * 2 if FrameTime is None else FrameTime
+
 		if not os.path.isfile(self.__const_WIFI_QR_FILE_PATH):
 			lib_comitup.comitup().create_wifi_link_qr_image()
+
 		if os.path.isfile(self.__const_WIFI_QR_FILE_PATH):
-			self.__display.message([f'set:time={self.__conf_DISP_FRAME_TIME_IP*5},temp,hidden=WIFI_QR', f":IMAGE={self.__const_WIFI_QR_FILE_PATH}"], logging=False)
+			self.__display.message([f'set:time={FrameTime},temp,hidden=WIFI_QR', f":IMAGE={self.__const_WIFI_QR_FILE_PATH}"], logging=False)
 
 	def mail_ip(self):
 		IP_sent_Markerfile					= self.__setup.get_val('const_IP_SENT_MARKERFILE')
@@ -247,8 +255,7 @@ if __name__ == "__main__":
 		ip	= ip_info()
 
 		if args['display']:
-			if lib_comitup.comitup().hotspot_active():
-				ip.display_wifi_qr()
+			ip.display_wifi_qr()
 			ip.display_ip()
 		if args['mail']:
 			thread	= ip.mail_ip()

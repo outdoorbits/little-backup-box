@@ -782,11 +782,9 @@ class backup(object):
 
 						os.chdir(os.path.expanduser('~'))
 
-### social upload
+### SoMe upload
 					elif self.TargetDevice.StorageType == 'social':
 						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID, upload_times=upload_times)
-						if SOCIAL.SERVICE_Obj and SOCIAL.SERVICE_Obj.returnmessage:
-							self.__reporter.add_error(SOCIAL.SERVICE_Obj.returnmessage)
 
 						SocialServices	= SOCIAL.get_social_services()
 
@@ -829,8 +827,6 @@ class backup(object):
 								FilePath	= social_image_path,
 								Create_Date	= IMAGE_DATE
 							)
-
-							self.__reporter.add_synclog(success['msg'])
 
 							progress.progress(Success=success['ok'])
 							if success['ok']:

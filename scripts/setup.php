@@ -37,11 +37,9 @@
 	$CloudServices	= get_cloudservices($constants);
 
 	$TIME_ZONE_old	= $config["conf_TIME_ZONE"];
-
+	$Password_old	= base64_decode($config["conf_PASSWORD"]);
 	$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
-
 	$vpn_types		= array('OpenVPN','WireGuard');
-
 	$SetupMessages	= '';
 
 	// load i18n languages
@@ -144,13 +142,6 @@
 				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_short . " $min_length",  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 			} elseif ($max_length > 0 and strlen($pwd_1) > $max_length) {
 				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_long . " $max_length",  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-			} elseif (
-					strpos("_" . $pwd_1,"\\") or
-					strpos("_" . $pwd_1,"'") or
-					strpos("_" . $pwd_1,"\"") or
-					strpos("_" . $pwd_1," ")
-					) {
-				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_characters_not_allowed,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 			} else {
 				$pwd_valid=true;
 			}
@@ -161,7 +152,7 @@
 	function write_config() {
 		# write config.cfg
 
-		global $WORKING_DIR, $WIFI_COUNTRY, $config, $constants, $vpn_types, $CloudServices, $SetupMessages;
+		global $WORKING_DIR, $WIFI_COUNTRY, $config, $constants, $vpn_types, $CloudServices, $SetupMessages, $Password_old;
 
 		extract ($_POST, EXTR_SKIP);
 
@@ -280,6 +271,8 @@
 
 						$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 					}
+				} else {
+					$$Password	= $Password_old;
 				}
 			} elseif ($Password == 'conf_WIFI_PASSWORD') {
 				if ($conf_WIFI_PASSWORD_TYPE	== 'static') {
@@ -927,7 +920,7 @@ CONFIGDATA;
 						<label for="conf_DISP_FRAME_TIME_IP"><?php echo L::config_display_frame_time_ip_label; ?></label><br />
 							<select name="conf_DISP_FRAME_TIME_IP" id="conf_DISP_FRAME_TIME_IP">
 								<?php
-									$display_frame_times_ip_array=array('1', '1.5', '2', '2.5', '3', '4', '5');
+									$display_frame_times_ip_array=array('1', '1.5', '2', '2.5', '3', '4', '5', '7', '10');
 									foreach($display_frame_times_ip_array as $display_frame_time_ip) {
 										echo "<option value='" . $display_frame_time_ip . "' " . ($config["conf_DISP_FRAME_TIME_IP"] == $display_frame_time_ip?" selected":"") . ">" . $display_frame_time_ip . "</option>";
 									}
@@ -1801,7 +1794,7 @@ CONFIGDATA;
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_password_section; ?></summary>
 
 				<h3><?php echo L::config_password_header; ?></h3>
-					<label for="conf_PASSWORD_1"><p><?php echo L::config_password_global_lbb_label . '</p><p><b>' . L::config_alert_password_characters_not_allowed . '</b>'; ?></label></p>
+					<label for="conf_PASSWORD_1"><?php echo L::config_password_global_lbb_label; ?></label>
 					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_PASSWORD_1" name="conf_PASSWORD_1" size="20" value="">
 					<label for="conf_PASSWORD_2"><?php echo L::config_password_repeat_label; ?></label><br />
 					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_PASSWORD_2" name="conf_PASSWORD_2" size="20" value="">

@@ -490,7 +490,6 @@
       "password": {
         "change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
         "change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
-        "characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&sbquo;), de guillemets doubles (« &quot;), d'espaces ou de barres obliques inverses (&bsol;).",
         "global": "Mot de passe global",
         "not_identical": "Le mot de passe répété n'est pas identique.",
         "too_short": "Mot de passe trop court. Longueur minimale :",

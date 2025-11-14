@@ -423,12 +423,12 @@ class menu(object):
 
 	def get_INFO(self, action):
 		if action == 'ip':
-			FrameTime	= self.conf_DISP_FRAME_TIME_IP * 2
+			FrameTime	= self.conf_DISP_FRAME_TIME_IP
 			lib_cron_ip.ip_info().display_ip(FrameTime=FrameTime, force=True)
 			return([], FrameTime)
 		elif action == 'wifi_qr':
-			FrameTime	= self.conf_DISP_FRAME_TIME_IP * 5 # factor also hard coded in lib_cron_ip
-			lib_cron_ip.ip_info().display_wifi_qr()
+			FrameTime	= self.conf_DISP_FRAME_TIME_IP * 2
+			lib_cron_ip.ip_info().display_wifi_qr(FrameTime=FrameTime, force=True)
 			return([], FrameTime)
 
 		return([], self.conf_DISP_FRAME_TIME)

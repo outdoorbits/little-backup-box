@@ -265,7 +265,7 @@ class setup(object):
 					'conf_DISP_COLOR_BACKGROUND':						{'value': 'black', 'type': 'str'},
 					'conf_DISP_FONT_SIZE':								{'value': 12, 'type': 'int'},
 					'conf_DISP_FRAME_TIME':								{'value': 1, 'type': 'float'},
-					'conf_DISP_FRAME_TIME_IP':							{'value': 2.0, 'type': 'float'},
+					'conf_DISP_FRAME_TIME_IP':							{'value': 3.0, 'type': 'float'},
 					'conf_DISP_IP_REPEAT':								{'value': True, 'type': 'bool'},
 					'conf_DISP_SHOW_STATUSBAR':							{'value': True, 'type': 'bool'},
 					'conf_DISP_BACKLIGHT_PIN':							{'value': 23, 'type': 'int'},
@@ -399,8 +399,8 @@ class setup(object):
 					'const_FONT_PATH':								{'type': 'str'},
 					'const_IDLETIME_LOCKFILE':						{'type': 'str'},
 					'const_TASKS_PATH':								{'type': 'str'},
-					'const_METADATA_CREATE_SOURCES':				{'type': 'str'},
-					'const_METADATA_CREATE_SOURCES_HR':				{'type': 'str'},
+					'const_METADATA_DATE_CREATE_SOURCES':				{'type': 'str'},
+					'const_METADATA_DATE_CREATE_SOURCES_HR':				{'type': 'str'},
 					'const_METADATA_DATE_MODIFY_SOURCES':			{'type': 'str'}
 				}
 		)

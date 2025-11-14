@@ -70,32 +70,40 @@ class comitup(object):
 		except:
 			print("Error writing comitup config file.")
 
-	def get_hotspot_ssid(self):
-		if self.installed():
-			try:
-				output	= subprocess.check_output(['comitup-cli', 'i']).decode()
-			except:
-				return(False)
+	def get_status(self):
 
-			output	= output.split('\n')
+		status	= {
+			'SSID':		False,
+			'state':	False
+		}
 
-			if not 'HOTSPOT state' in output:
-				return(False)
+		if not self.installed():
+			return(status)
 
-			for line in output:
-				if line.startswith('Host'):
-					try:
-						lineparts	= line.split(' ')
-					except:
-						return(False)
-					if len(lineparts) > 1:
-						return(lineparts[1].rsplit('.')[0])
+		try:
+			output	= subprocess.check_output(['comitup-cli', 'i'], timeout=2).decode()
+		except:
+			return(status)
 
-			return(false)
+		output	= output.split('\n')
+
+		for line in output:
+			if line.startswith('Host'):
+				try:
+					lineparts	= line.split(' ')
+				except:
+					pass
+				if len(lineparts) > 1:
+					status['SSID']	= lineparts[1].rsplit('.')[0]
+			elif line.endswith(' state'):
+				lineparts	= line.split(' ')
+				status['state']		= lineparts[0]
+
+		return(status)
 
 	def create_wifi_link_qr_image(self):
 
-		SSID	= self.get_hotspot_ssid()
+		SSID	= self.get_status()['SSID']
 
 		PASSWORD		= self.__conf_WIFI_PASSWORD
 		width			= self.__conf_DISP_RESOLUTION_X

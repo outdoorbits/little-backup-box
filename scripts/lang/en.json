@@ -749,7 +749,6 @@
       "password": {
         "change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",
         "change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
-        "characters_not_allowed": "The password must not contain quotation marks (&sbquo;), double quotation marks (&quot;), spaces or backslashes (&bsol;).",
         "global": "Global password",
         "not_identical": "Repeated password is not identical.",
         "too_short": "Password too short. Minimum character length:",

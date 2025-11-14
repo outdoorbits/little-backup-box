@@ -246,7 +246,7 @@ class socialmedia(object):
 				self.upload_times.pop(0)
 
 			self.SERVICE_Obj.publish(msgtype=msgtype, Comment=Comment, FilePath=FilePath)
-			return({'ok': self.SERVICE_Obj.ok, 'msg': self.SERVICE_Obj.returnmessage})
+			return({'ok': self.SERVICE_Obj.ok, 'msg': self.SERVICE_Obj.error_messages})
 		else:
 			return({'ok': False, 'msg': f'msgtype={msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}, self.SERVICE_Obj={self.SERVICE_Obj}'})
 

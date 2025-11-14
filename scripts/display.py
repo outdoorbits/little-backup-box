@@ -60,6 +60,7 @@ import sys
 import threading
 import time
 
+import lib_comitup
 import lib_network
 import lib_setup
 import lib_system
@@ -313,22 +314,15 @@ class DISPLAY(object):
 				self.statusbar_toggle	= 1
 
 		#comitup
-		try:
-			comitup_status	= subprocess.check_output(['comitup-cli', 'i']).decode().split('\n')
-		except:
-			comitup_status	= []
+		comitup_status	= lib_comitup.comitup().get_status()['state']
 
-		for status in comitup_status:
-			if status.endswith(' state'):
-
-				if status.startswith('HOTSPOT'):
-					statusbar	+= ['HOT']
-				elif status.startswith('CONNECTING'):
-					statusbar	+= ['..?']
-				elif status.startswith('CONNECTED'):
-					statusbar	+= ['WiFi']
-
-				break
+		match comitup_status:
+			case 'HOTSPOT':
+				statusbar.append('HOT')
+			case 'CONNECTING':
+				statusbar.append('..?')
+			case 'CONNECTED':
+				statusbar.append('WiFi')
 
 		if self.statusbar_toggle == 1:
 			#network traffic
@@ -345,12 +339,12 @@ class DISPLAY(object):
 			vmstat_fields	= vmstat[-1].split()
 
 			if len(vmstat_fields) >= 14:
-				statusbar	+= [f'{100-float(vmstat_fields[14]):.0f}%']
+				statusbar.append(f'{100-float(vmstat_fields[14]):.0f}%')
 
 		# temperature
 		try:
 			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
-			statusbar	+= [f'{temp_c:.0f}°C']
+			statusbar.append(f'{temp_c:.0f}°C')
 		except:
 			pass
 

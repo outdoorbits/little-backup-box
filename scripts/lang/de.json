@@ -490,7 +490,6 @@
       "password": {
         "change_after_reboot_remove": "Globales Passwort entfernt\nÄnderungen werden nach dem Neustart wirksam",
         "change_after_reboot_set": "Globales Passwort festgelegt\nÄnderungen werden nach dem Neustart wirksam",
-        "characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&sbquo;), doppelte Anführungszeichen (&quot;), Leerzeichen oder Backslashs (&bsol;) enthalten.",
         "global": "Globales Passwort",
         "not_identical": "Wiederholtes Passwort ist nicht identisch.",
         "too_short": "Passwort zu kurz. Mindestzeichenlänge:",
