@@ -73,6 +73,7 @@ class comitup(object):
 
 		status	= {
 			'SSID':		False,
+			'mode':		False,
 			'state':	False
 		}
 
@@ -94,6 +95,9 @@ class comitup(object):
 					pass
 				if len(lineparts) > 1:
 					status['SSID']	= lineparts[1].rsplit('.')[0]
+			elif line.endswith(' mode'):
+				lineparts	= line.split(' ')
+				status['mode']		= lineparts[0].strip("'")
 			elif line.endswith(' state'):
 				lineparts	= line.split(' ')
 				status['state']		= lineparts[0]
@@ -101,7 +105,7 @@ class comitup(object):
 		return(status)
 
 	def create_wifi_link_qr_image(self):
-		SSID	= self.get_status()['SSID']
+		status	= self.get_status()
 
 		PASSWORD		= self.__conf_WIFI_PASSWORD
 		width			= self.__conf_DISP_RESOLUTION_X
@@ -118,10 +122,10 @@ class comitup(object):
 		shift_x		= size if height <= width else 0
 		shift_y		= size if height > width else 0
 
-		if SSID and width >= 64 and height >= 64:
+		if (status['mode'] == 'router' or status['state'] == 'HOTSPOT') and status['SSID'] and width >= 64 and height >= 64:
 			# create QR code
 
-			LinkText	= f"WIFI:T:WPA;S:{SSID};P:{PASSWORD};H:;;"
+			LinkText	= f"WIFI:T:WPA;S:{status['SSID']};P:{PASSWORD};H:;;"
 
 			qr	= qrcode.QRCode(
 				version				= 3,
@@ -265,7 +269,8 @@ class comitup(object):
 		self.create_wifi_link_qr_image()
 
 	def hotspot_active(self):
-		return(self.get_status()['state'] == 'HOTSPOT')
+		status	= self.get_status()
+		return(status['mode'] == 'router' or status['state'] == 'HOTSPOT')
 
 	def reset(self):
 		try:
@@ -292,6 +297,9 @@ if __name__ == "__main__":
 
 		comitup().config(Password)
 
+	elif Mode == '--get_status':
+		print(comitup().get_status())
+
 	elif Mode == '--set_status':
 		try:
 			Status	= sys.argv[2]
@@ -303,6 +311,8 @@ if __name__ == "__main__":
 
 	elif Mode == '--hotspot_active':
 		print('active' if comitup().hotspot_active() else 'inactive')
+	elif Mode == 'create_wifi_link_qr_image':
+		comitup().create_wifi_link_qr_image()
 
 	elif Mode == '--reset':
 		comitup().reset()

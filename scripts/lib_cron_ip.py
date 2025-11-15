@@ -231,6 +231,10 @@ class ip_info(object):
 	)
 
 if __name__ == "__main__":
+	# create new WIFI QR
+	lib_comitup.comitup().create_wifi_link_qr_image()
+
+	# argument based actions
 	parser = argparse.ArgumentParser(
 		description	= 'This library handles the output of the IP on the display and by email.',
 		add_help	= True,
