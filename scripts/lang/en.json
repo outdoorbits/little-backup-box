@@ -240,7 +240,8 @@
           "bluesky": "Bluesky"
         },
         "stop": "STOP backup"
-      }
+      },
+      "wifi": "WLAN QR code"
     },
     "backup_local": "Backup locally",
     "finished": "finished",
@@ -354,15 +355,7 @@
     "normal": "No abnormal conditions have been detected."
   },
   "config": {
-    "alert_password_mail_header": "Mail-password",
-    "alert_password_rsync_header": "rsync-password",
-    "alert_password_global": "Global password",
-    "alert_password_not_identical": "Repeated password is not identical.",
-    "alert_password_too_short": "Password must be at least 5 characters long.",
     "message_settings_saved": "config.cfg was written successfully.",
-    "alert_settings_upload_not_zip": "The file you are trying to upload is not a .zip file. Please try again.",
-    "alert_settings_upload_success": "Your settings file has been uploaded and this files have been installed:",
-    "alert_settings_upload_problem": "There was a problem with the upload. Please try again.",
     "lang_header": "Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
     "lang_browser_detect": "Browser detect",
@@ -396,9 +389,6 @@
     "rsync_module_header": "rsync module",
     "rsync_module_label1": "Module name on the rsync server, e.g. 'little-backup-box' (default:",
     "rsync_module_label2": "). <br> The module name is defined on the server side in rsyncd.conf and is set in [square brackets]. Also note <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
-    "wifi_section": "WiFi settings",
-    "wifi_country_label": "Select the country in which this Little Backup Box is to be used",
-    "wifi_country_header": "WiFi country",
     "backup": {
       "generate_thumbnails_header": "Thumbnails",
       "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)",
@@ -485,8 +475,6 @@
       "html_header": "Send mails in HTML-format",
       "html_label": "If mails are activated, should they be Formatted in HTML?"
     },
-    "alert_password_change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
-    "alert_password_change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",
     "view": {
       "bg_image_header": "Background-image"
     },
@@ -497,7 +485,6 @@
       "text": "Saved WiFi access data will be deleted. An existing WiFi connection is interrupted and comitup goes into hotspot mode.<br>\nThen connect to the \"little-backup-box-nnnn\" WiFi hotspot. Now you can reach commitup at <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. You can access the Little Backup Box WebUI here: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Delete WiFi credentials"
     },
-    "alert_password_wifi_size_error": "The password cannot be used for the WiFi hotspot. For this, the length would have to be 8 to 63 characters.",
     "vpn": {
       "section": "VPN",
       "upload_header": "Upload configuration file",
@@ -616,7 +603,6 @@
       "virtual_keyboard_enable_label": "Enable virtual keyboard",
       "description": "Settings that affect a screen with a graphical user interface (desktop)."
     },
-    "alert_password_characters_not_allowed": "The password must not contain quotation marks (&sbquo;), double quotation marks (&quot;), spaces or backslashes (&bsol;).",
     "exit": {
       "section": "Terminate LBB",
       "desc": "Close Little Backup Box and free up the computer for other tasks until it restarts.",
@@ -752,13 +738,48 @@
       "as_set_in": "Password as set in",
       "changed": "Password changed.",
       "global_lbb_label": "The password to protect your Little-Backup-Box. Used for the web-interface, filebrowser, ssh and samba-Windows-shares. Username in all cases is lbb. For linux-user &quot;pi&quot; the password is set too.",
-      "global_wifi_label": "If the password has a length of 8 to 63 characters, it will also be used as a WiFi password in hotspot mode.",
       "remove_header": "Remove password",
       "remove_label": "Remove password",
       "removed": "General password removed.",
       "repeat_label": "repeat:",
       "section": "Global Password",
       "remove_desc": "Check to remove the password-protection. Passwords for linux-users (lbb, pi) will not be removed."
+    },
+    "alert": {
+      "password": {
+        "change_after_reboot_remove": "Global password removed\nChanges will take effect after reboot",
+        "change_after_reboot_set": "Global password set\nChanges will take effect after reboot",
+        "global": "Global password",
+        "not_identical": "Repeated password is not identical.",
+        "too_short": "Password too short. Minimum character length:",
+        "mail": "Mail-password",
+        "wifi": "Wi-Fi password",
+        "rsync": "rsync-password",
+        "bluesky": "Bluesky password",
+        "wifi_changed": "The Wi-Fi password has been changed",
+        "too_long": "Password too long. Maximum character length:",
+        "not_ascii": "Only ASCII characters are allowed.",
+        "too_long_qr": "<strong>Warning!</strong> The WiFi QR code only works for passwords up to a length of 13 characters."
+      },
+      "settings": {
+        "upload_not_zip": "The file you are trying to upload is not a .zip file. Please try again.",
+        "upload_problem": "There was a problem with the upload. Please try again.",
+        "upload_success": "Your settings file has been uploaded and this files have been installed:"
+      }
+    },
+    "wifi": {
+      "country": {
+        "header": "WiFi country",
+        "label": "Select the country in which this Little Backup Box is to be used"
+      },
+      "password": {
+        "header": "Wi-Fi password",
+        "label": "The password must be between 8 and 63 characters long.",
+        "static_label": "The password entered below will be used.",
+        "dynamic_label": "Dynamic password",
+        "dynamic_desc": "A new random Wi-Fi password is assigned for each session. <strong>Access to the Little Backup Box's Wi-Fi network is then only possible via the display and the QR code!</strong><br />\nHowever, the change will only be applied if the display is activated and has a resolution of at least 64 x 64 pixels."
+      },
+      "section": "WiFi settings"
     }
   },
   "tools": {

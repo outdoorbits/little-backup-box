@@ -126,21 +126,10 @@
     "save_settings_download_header": "Télécharger",
     "save_settings_upload_header": "Télécharger",
     "save_settings_upload_label": "Sélectionnez le fichier de paramètres",
-    "alert_password_not_identical": "Le mot de passe répété n'est pas identique.",
-    "alert_password_too_short": "Le mot de passe doit comporter au moins 5 caractères.",
-    "alert_settings_upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",
-    "alert_settings_upload_problem": "Il y a eu un problème avec le téléchargement. Veuillez réessayer.",
-    "alert_settings_upload_success": "Votre fichier de paramètres a été téléchargé et ces fichiers ont été installés :",
     "message_settings_saved": "config.cfg a été écrit avec succès.",
-    "alert_password_global": "Mot de passe global",
-    "alert_password_mail_header": "Mot de passe de messagerie",
-    "alert_password_rsync_header": "rsync-le mot de passe",
     "rsync_module_header": "Module rsync",
     "rsync_module_label1": "Nom du module sur le serveur rsync, par exemple 'little-backup-box' (par défaut :",
     "rsync_module_label2": "). <br> Le nom du module est défini côté serveur dans rsyncd.conf et est mis entre [crochets]. Notez également <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
-    "wifi_section": "Paramètres Wifi",
-    "wifi_country_label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée",
-    "wifi_country_header": "Pays Wi-Fi",
     "backup": {
       "generate_thumbnails_header": "Vignettes",
       "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)",
@@ -227,8 +216,6 @@
       "html_header": "Envoyer des e-mails au format HTML",
       "html_label": "Si les mails sont activés, doivent-ils être formatés en HTML ?"
     },
-    "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
-    "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
     "view": {
       "bg_image_header": "Image de fond"
     },
@@ -239,7 +226,6 @@
       "text": "Les données d'accès WiFi enregistrées seront supprimées. Une connexion Wi-Fi existante est interrompue et comitup passe en mode point d'accès.<br>\nConnectez-vous ensuite au hotspot WiFi \"little-backup-box-nnnn\". Vous pouvez maintenant accéder à commitup sur <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. Vous pouvez accéder à l'interface Web de Little Backup Box ici : <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Supprimer les identifiants WiFi"
     },
-    "alert_password_wifi_size_error": "Le mot de passe ne peut pas être utilisé pour le hotspot WiFi. Pour cela, la longueur devrait être de 8 à 63 caractères.",
     "vpn": {
       "section": "VPN",
       "upload_header": "Télécharger le fichier de configuration",
@@ -358,7 +344,6 @@
       "virtual_keyboard_enable_label": "Activer le clavier virtuel",
       "description": "Paramètres qui affectent un écran avec une interface utilisateur graphique (bureau)."
     },
-    "alert_password_characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&sbquo;), de guillemets doubles (« &quot;), d'espaces ou de barres obliques inverses (&bsol;).",
     "exit": {
       "section": "Terminer LBB",
       "desc": "Fermez Little Backup Box et libérez l'ordinateur pour d'autres tâches jusqu'à ce qu'il redémarre.",
@@ -494,13 +479,48 @@
       "as_set_in": "Mot de passe tel que défini dans",
       "changed": "Mot de passe changé.",
       "global_lbb_label": "Le mot de passe pour protéger votre Little-Backup-Box. Utilisé pour l'interface Web, le navigateur de fichiers, ssh et samba-Windows-shares. Le nom d'utilisateur dans tous les cas est lbb. Pour l'utilisateur Linux &quot;pi&quot; le mot de passe est également défini.",
-      "global_wifi_label": "Si le mot de passe a une longueur de 8 à 63 caractères, il sera également utilisé comme mot de passe WiFi en mode hotspot.",
       "remove_header": "Supprimer le mot de passe",
       "remove_label": "Supprimer le mot de passe",
       "removed": "Mot de passe général supprimé.",
       "repeat_label": "répéter:",
       "section": "Mot de passe global",
       "remove_desc": "Cochez pour supprimer la protection par mot de passe. Les mots de passe des utilisateurs Linux (lbb, pi) ne seront pas supprimés."
+    },
+    "alert": {
+      "password": {
+        "change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
+        "change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
+        "global": "Mot de passe global",
+        "not_identical": "Le mot de passe répété n'est pas identique.",
+        "too_short": "Mot de passe trop court. Longueur minimale :",
+        "mail": "Mot de passe de messagerie",
+        "wifi": "Mot de passe Wi-Fi",
+        "rsync": "rsync-le mot de passe",
+        "bluesky": "Mot de passe Bluesky",
+        "wifi_changed": "Le mot de passe Wi-Fi a été modifié",
+        "too_long": "Mot de passe trop long. Nombre maximal de caractères :",
+        "not_ascii": "Seuls les caractères ASCII sont autorisés.",
+        "too_long_qr": "<strong>Attention !</strong> Le code QR WiFi ne fonctionne qu’avec des mots de passe allant jusqu’à 13 caractères."
+      },
+      "settings": {
+        "upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",
+        "upload_problem": "Il y a eu un problème avec le téléchargement. Veuillez réessayer.",
+        "upload_success": "Votre fichier de paramètres a été téléchargé et ces fichiers ont été installés :"
+      }
+    },
+    "wifi": {
+      "country": {
+        "header": "Pays Wi-Fi",
+        "label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée"
+      },
+      "password": {
+        "header": "Mot de passe Wi-Fi",
+        "label": "Le mot de passe doit comporter entre 8 et 63 caractères.",
+        "static_label": "Le mot de passe saisi ci-dessous sera utilisé.",
+        "dynamic_label": "Mot de passe dynamique",
+        "dynamic_desc": "Un nouveau mot de passe Wi-Fi aléatoire est généré à chaque session. <strong>L'accès au réseau Wi-Fi de la Little Backup Box se fait alors uniquement via l'écran et le code QR!</strong><br />\nCependant, cette modification ne sera effective que si l'écran est activé et possède une résolution d'au moins 64 x 64 pixels."
+      },
+      "section": "Paramètres Wifi"
     }
   },
   "tools": {
@@ -765,7 +785,8 @@
           "bluesky": "Bluesky"
         },
         "stop": "ARRÊTER sauvegarde"
-      }
+      },
+      "wifi": "Code QR WLAN"
     },
     "backup_local": "localement",
     "finished": "fini",

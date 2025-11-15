@@ -19,7 +19,9 @@
 
 import base64
 import os
-import psutil
+from PIL import Image, ImageDraw, ImageFont
+import qrcode
+import shutil
 import subprocess
 import sys
 
@@ -28,28 +30,33 @@ import lib_language
 import lib_setup
 
 # import lib_debug
-# xx=lib_debug.debug()
+# xx	= lib_debug.debug()
 
 class comitup(object):
 	def __init__(self):
 
 		#config
-		self.configfile	= '/etc/comitup.conf'
+		self.__configfile	= '/etc/comitup.conf'
 
 		#objects
 		self.__setup	= lib_setup.setup()
 		self.__lan		= lib_language.language()
 		self.__display	= lib_display.display()
 
-		self.__conf_DISP_FRAME_TIME	= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__conf_DISP_FRAME_TIME		= self.__setup.get_val('conf_DISP_FRAME_TIME')
 
-	def config(self, Password=None): # use general password if None is given
+		self.__conf_WIFI_PASSWORD			= base64.b64decode(self.__setup.get_val('conf_WIFI_PASSWORD')).decode("utf-8")
+		self.__conf_DISP_RESOLUTION_X		= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		self.__conf_DISP_RESOLUTION_Y		= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		self.__const_WIFI_QR_FILE_PATH		= self.__setup.get_val('const_WIFI_QR_FILE_PATH')
 
-		if Password is None:
-			Password	= base64.b64decode(self.__setup.get_val('conf_PASSWORD')).decode("utf-8")
+	def installed(self):
+		return(True if shutil.which("comitup-cli") else False)
+
+	def config(self, Password=''): # use general password if None is given
 
 		try:
-			with open(self.configfile,'w') as f:
+			with open(self.__configfile,'w') as f:
 				f.write('ap_name: little-backup-box-<nnnn>\n')
 				f.write('web_service: apache2.service\n')
 				f.write('external_callback: /var/www/little-backup-box/comitup-states.sh\n')
@@ -61,6 +68,170 @@ class comitup(object):
 						f.write(f'ap_password: {Password}\n')
 		except:
 			print("Error writing comitup config file.")
+
+	def get_status(self):
+
+		status	= {
+			'SSID':		False,
+			'mode':		False,
+			'state':	False
+		}
+
+		if not self.installed():
+			return(status)
+
+		try:
+			output	= subprocess.check_output(['comitup-cli', 'i'], timeout=2).decode()
+		except:
+			return(status)
+
+		output	= output.split('\n')
+
+		for line in output:
+			if line.startswith('Host'):
+				try:
+					lineparts	= line.split(' ')
+				except:
+					pass
+				if len(lineparts) > 1:
+					status['SSID']	= lineparts[1].rsplit('.')[0]
+			elif line.endswith(' mode'):
+				lineparts	= line.split(' ')
+				status['mode']		= lineparts[0].strip("'")
+			elif line.endswith(' state'):
+				lineparts	= line.split(' ')
+				status['state']		= lineparts[0]
+
+		return(status)
+
+	def create_wifi_link_qr_image(self):
+		status	= self.get_status()
+
+		PASSWORD		= self.__conf_WIFI_PASSWORD
+		width			= self.__conf_DISP_RESOLUTION_X
+		height			= self.__conf_DISP_RESOLUTION_Y
+		WIFI_QR_FILE	= self.__const_WIFI_QR_FILE_PATH
+
+		qr_box_size	= int(2*height/64)
+		qr_border	= 1
+
+		final_image	= Image.new('RGB', (width, height))
+
+		size		= height if height <= width else width
+
+		shift_x		= size if height <= width else 0
+		shift_y		= size if height > width else 0
+
+		if (status['mode'] == 'router' or status['state'] == 'HOTSPOT') and status['SSID'] and width >= 64 and height >= 64:
+			# create QR code
+
+			LinkText	= f"WIFI:T:WPA;S:{status['SSID']};P:{PASSWORD};H:;;"
+
+			qr	= qrcode.QRCode(
+				version				= 3,
+				error_correction	= qrcode.constants.ERROR_CORRECT_L,
+					box_size		= qr_box_size,
+					border			= qr_border,
+			)
+			qr.add_data(LinkText)
+			qr.make(fit=True)
+
+			qr_image	= qr.make_image(fill_color="black", back_color="white")
+			qr_image	= qr_image.resize((size, size))
+
+			final_image.paste(qr_image, box=(0 , 0))
+		else:
+			# create "NO HOTSPOT"
+			draw		= ImageDraw.Draw(final_image)
+
+			margin		= size // 8
+			circle_bbox	= (margin, margin, size - margin, size - margin)
+
+			draw.ellipse(circle_bbox, outline='white', width=max(1, size // 32))
+
+			draw.line(
+				(margin, size - margin, size - margin, margin),
+				fill='white',
+				width=max(2, size // 24)
+			)
+
+			font	= ImageFont.load_default()
+			text	= "NO\nHOTSPOT"
+			bbox = draw.multiline_textbbox((0, 0), text, font=font)
+			tw = bbox[2] - bbox[0] # width
+			th = bbox[3] - bbox[1] # height
+			tx		= (size - tw) // 2
+			ty		= (size - th) // 2
+			draw.multiline_text((tx, ty), text, font=font, fill='white', align='center')
+
+		# create WIFI symbol at the right
+		draw		= ImageDraw.Draw(final_image)
+
+		size		= size if width - size >= size else width - size
+
+		# center
+		cx = size // 2 + shift_x
+		cy = size // 2 + shift_y
+
+		if shift_x == 0 and width > size:
+			cx	=	width // 2
+		elif shift_y == 0 and height > size:
+			cy	=	height // 2
+
+		thickness = max(2, size // 16)
+
+		# arc 1
+		r1	= size * 7 // 12
+		draw.arc(
+			[cx - r1, cy - r1, cx + r1, cy + r1],
+			start	= 225,
+			end		= 315,
+			fill	= 'white',
+			width	= thickness
+		)
+
+		# arc 2
+		r2	= size * 5 // 12
+		draw.arc(
+			[cx - r2, cy - r2, cx + r2, cy + r2],
+			start	= 220,
+			end		= 320,
+			fill	= 'white',
+			width	= thickness
+		)
+
+		# arc 3
+		r3	= size * 3 // 12
+		draw.arc(
+			[cx - r3, cy - r3, cx + r3, cy + r3],
+			start	= 215,
+			end		= 325,
+			fill	= 'white',
+			width	= thickness
+		)
+
+		point_r = size * 1 // 12
+		draw.ellipse(
+			[cx - point_r, cy - point_r, cx + point_r, cy + point_r],
+			fill	= 'white'
+		)
+
+		font	= ImageFont.load_default()
+		HOT		= 'HOT'
+		bbox	= draw.textbbox((0, 0), HOT, font=font)
+		HOT_w	= bbox[2] - bbox[0]
+
+		HOT_x = cx - HOT_w // 2
+		HOT_y = cy + point_r + (size // 12)
+
+		draw.text((HOT_x, HOT_y), HOT, font=font, fill="white")
+
+		if os.path.exists(WIFI_QR_FILE):
+			os.remove(WIFI_QR_FILE)
+
+		final_image.save(WIFI_QR_FILE)
+
+		return()
 
 	def new_status(self, status):
 		# display new status
@@ -89,13 +260,17 @@ class comitup(object):
 			for Port in BasicPorts:
 				f.write(f'Listen {Port}\n')
 
-			if not (status in ['HOTSPOT', 'RESET'] or self.check_hotspot()):
+			if not (status in ['HOTSPOT', 'RESET'] or self.hotspot_active()):
 				f.write(f'Listen 80\n')
 
 		subprocess.run('service apache2 restart || service apache2 start', shell=True)
 
-	def check_hotspot(self):
-		return(len([p for p in psutil.process_iter() if 'comitup-web' in p.name()]) > 0)
+		# create WIFI QR
+		self.create_wifi_link_qr_image()
+
+	def hotspot_active(self):
+		status	= self.get_status()
+		return(status['mode'] == 'router' or status['state'] == 'HOTSPOT')
 
 	def reset(self):
 		try:
@@ -122,6 +297,9 @@ if __name__ == "__main__":
 
 		comitup().config(Password)
 
+	elif Mode == '--get_status':
+		print(comitup().get_status())
+
 	elif Mode == '--set_status':
 		try:
 			Status	= sys.argv[2]
@@ -131,8 +309,10 @@ if __name__ == "__main__":
 		if Status:
 			comitup().new_status(Status)
 
-	elif Mode == '--check_hotspot':
-		print('active' if comitup().check_hotspot() else 'inactive')
+	elif Mode == '--hotspot_active':
+		print('active' if comitup().hotspot_active() else 'inactive')
+	elif Mode == 'create_wifi_link_qr_image':
+		comitup().create_wifi_link_qr_image()
 
 	elif Mode == '--reset':
 		comitup().reset()

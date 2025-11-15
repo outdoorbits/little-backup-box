@@ -136,17 +136,7 @@ class backup(object):
 		self.ForceSyncDatabase								= self.ForceSyncDatabase or (self.SourceStorageType == 'database') or self.move_files or self.DoGenerateThumbnails or self.DoUpdateEXIF
 
 		# Telegram
-		self.conf_SOCIAL_TELEGRAM_TOKEN						= self.__setup.get_val('conf_SOCIAL_TELEGRAM_TOKEN')
-		self.TelegramChatID					= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
-
-		# mastodon
-		self.conf_SOCIAL_MASTODON_BASE_URL						= self.__setup.get_val('conf_SOCIAL_MASTODON_BASE_URL')
-		self.conf_SOCIAL_MASTODON_TOKEN							= self.__setup.get_val('conf_SOCIAL_MASTODON_TOKEN')
-
-		# bluesky
-		self.conf_SOCIAL_BLUESKY_API_BASE_URL					= self.__setup.get_val('conf_SOCIAL_BLUESKY_API_BASE_URL')
-		self.conf_SOCIAL_BLUESKY_IDENTIFIER						= self.__setup.get_val('conf_SOCIAL_BLUESKY_IDENTIFIER')
-		self.conf_SOCIAL_BLUESKY_APP_PASSWORD					= self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')
+		self.TelegramChatID									= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
 
 		# power off
 		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
@@ -792,7 +782,7 @@ class backup(object):
 
 						os.chdir(os.path.expanduser('~'))
 
-### social upload
+### SoMe upload
 					elif self.TargetDevice.StorageType == 'social':
 						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID, upload_times=upload_times)
 
@@ -838,11 +828,10 @@ class backup(object):
 								Create_Date	= IMAGE_DATE
 							)
 
-							self.__reporter.add_synclog(success['msg'])
-
 							progress.progress(Success=success['ok'])
 							if success['ok']:
 								db.dbExecute(f'UPDATE EXIF_DATA SET social_publish = social_publish & ~{2 ** bit}, social_published = social_published | {2 ** bit} WHERE ID={IMAGE_ID};')
+								self.__reporter.add_synclog(success['msg'])
 							else:
 								self.__reporter.add_error(success['msg'])
 

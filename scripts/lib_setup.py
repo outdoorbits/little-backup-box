@@ -26,6 +26,9 @@ import sys
 
 from configobj import ConfigObj
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class setup(object):
 
 	def __init__(self,rewrite_configfile=False):
@@ -53,6 +56,8 @@ class setup(object):
 			self.rewrite_configfile(standards=True)
 
 		self.__get_config_configured()
+
+		self.__update_config()
 
 		self.setup	= self.config | self.constants
 
@@ -138,6 +143,46 @@ class setup(object):
 
 		os.chown(FilePath, self.__uid, self.__gid)
 
+	def __update_config(self):
+		if self.config['conf_WIFI_PASSWORD']['value'] == '.':
+			conf_PASSWORD	= base64.b64decode(self.config['conf_PASSWORD']['value']).decode('utf-8')
+			if (8 <= len(conf_PASSWORD) <= 63) and all(32 <= ord(c) <= 126 for c in conf_PASSWORD):
+				self.config['conf_WIFI_PASSWORD']['value']	= self.config['conf_PASSWORD']['value']
+			else:
+				self.config['conf_WIFI_PASSWORD']['value']	= ''
+
+		# migrate all passwords to base64
+		def looks_like_base64(s: str) -> bool:
+
+			if len(s) % 4 != 0:
+				return(False)
+
+			# decodeable?
+			try:
+				decoded	= base64.b64decode(s, validate=True)
+			except:
+				return(False)
+
+			# decoded string contains UTF-8 characters only?
+			try:
+				decoded_str = decoded.decode('utf-8')
+			except:
+				# non utf-8 characters, probably no valid decryption
+				return(False)
+
+			# no base64 if there are non pribtable characters
+			if not all(0x20 <= ord(c) <= 0x7E for c in decoded_str):
+				return(False)
+
+			reencoded	= base64.b64encode(decoded).decode('utf-8').rstrip('=')
+			s_stripped	= s.rstrip('=')
+
+			return(reencoded == s_stripped)
+
+		for PWD in self.constants['const_PASSWORDS_LIST']['value'].split(';'):
+			if not looks_like_base64(self.config[PWD]['value']):
+				self.config[PWD]['value']	= base64.b64encode(bytes(self.config[PWD]['value'], 'utf-8')).decode('utf-8')
+
 	def __get_config_configured(self):
 		if os.path.isfile(self.config_file_path):
 
@@ -182,14 +227,6 @@ class setup(object):
 
 				# set value
 				self.config[conf_var]	= {'value': self.__norm_value(conf_val, conf_type), 'type': conf_type}
-
-			# migrate all passwords to base64
-			if self.config['conf_PASSWORD_ENCRYPTION']['value'] == 'plain':
-				for PWD in ['conf_MAIL_PASSWORD', 'conf_RSYNC_PASSWORD', 'conf_PASSWORD']:
-					self.config[PWD]['value']	= base64.b64encode(bytes(self.config[PWD]['value'], 'utf-8')).decode('utf-8')
-
-				self.config['conf_PASSWORD_ENCRYPTION']['value']	= 'base64'
-
 			return()
 
 	def __get_config_standard(self):
@@ -237,7 +274,7 @@ class setup(object):
 					'conf_DISP_COLOR_BACKGROUND':						{'value': 'black', 'type': 'str'},
 					'conf_DISP_FONT_SIZE':								{'value': 12, 'type': 'int'},
 					'conf_DISP_FRAME_TIME':								{'value': 1, 'type': 'float'},
-					'conf_DISP_FRAME_TIME_IP':							{'value': 2.0, 'type': 'float'},
+					'conf_DISP_FRAME_TIME_IP':							{'value': 3.0, 'type': 'float'},
 					'conf_DISP_IP_REPEAT':								{'value': True, 'type': 'bool'},
 					'conf_DISP_SHOW_STATUSBAR':							{'value': True, 'type': 'bool'},
 					'conf_DISP_BACKLIGHT_PIN':							{'value': 23, 'type': 'int'},
@@ -274,11 +311,12 @@ class setup(object):
 					'conf_RSYNC_PASSWORD':								{'value': '', 'type': 'str'},
 					'conf_RSYNC_SERVER_MODULE':							{'value': 'little-backup-box', 'type': 'str'},
 					'conf_WIFI_COUNTRY':								{'value': 'GB', 'type': 'str'},
+					'conf_WIFI_PASSWORD_TYPE':							{'value': 'static', 'type': 'str'}, # use password from 'static' or 'dynamic' (for wifi by qr only)
+					'conf_WIFI_PASSWORD':								{'value': '.', 'type': 'str'}, # '.' is recogniced as marker of a new variable
 					'conf_VPN_TYPE_RSYNC':								{'value': 'none', 'type': 'str'},
 					'conf_VPN_TYPE_CLOUD':								{'value': 'none', 'type': 'str'},
 					'conf_VPN_TIMEOUT':									{'value': 20, 'type': 'int'},
 					'conf_PASSWORD':									{'value': '', 'type': 'str'},
-					'conf_PASSWORD_ENCRYPTION':							{'value': 'plain', 'type': 'str'},
 					'conf_DIPLAY_IMAGES_KEEP':							{'value': False, 'type': 'bool'},
 					'conf_SOCIAL_PUBLISH_DATE':							{'value': True, 'type': 'bool'},
 					'conf_SOCIAL_PUBLISH_FILENAME':						{'value': False, 'type': 'bool'},
@@ -370,9 +408,9 @@ class setup(object):
 					'const_FONT_PATH':								{'type': 'str'},
 					'const_IDLETIME_LOCKFILE':						{'type': 'str'},
 					'const_TASKS_PATH':								{'type': 'str'},
-					'const_METADATA_CREATE_SOURCES':				{'type': 'str'},
-					'const_METADATA_CREATE_SOURCES_HR':				{'type': 'str'},
-					'const_METADATA_MODIFY_SOURCES':				{'type': 'str'}
+					'const_METADATA_DATE_CREATE_SOURCES':				{'type': 'str'},
+					'const_METADATA_DATE_CREATE_SOURCES_HR':				{'type': 'str'},
+					'const_METADATA_DATE_MODIFY_SOURCES':			{'type': 'str'}
 				}
 		)
 

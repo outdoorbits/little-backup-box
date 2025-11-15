@@ -32,6 +32,9 @@ from email.mime.multipart import MIMEMultipart
 from email import encoders
 from email.mime.base import MIMEBase
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class mail(object):
 
 	def __init__(self):

@@ -28,19 +28,21 @@ import lib_system
 class services(object):
 
 	def __init__(self, check_only=False):
-		self.reset_return()
 
 		self.rate_limit_count	= None
 		self.rate_limit_seconds	= None
 
-	def reset_return(self):
-		self.ok				= None
-		self.returnmessage	= ''
+		self.reset_messages()
+
+	def reset_messages(self):
+		self.ok			= None
+		self.messages	= ''
 
 	def configured(self):
 		return(False)
 
 	def publish(self):
+		self.reset_messages()
 		return(False)
 
 	def delaytime(self, upload_times):
@@ -188,3 +190,6 @@ class services(object):
 
 		flush()
 		return chunks
+
+	def add_message(self, message):
+		self.messages	= f'{self.messages}{"\n" if self.messages else ""}{message}'

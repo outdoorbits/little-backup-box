@@ -21,12 +21,15 @@ import argparse
 import base64
 import os
 
+import lib_comitup
 import lib_display
 import lib_language
 import lib_mail
 import lib_network
 import lib_setup
 
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class ip_info(object):
 
@@ -38,6 +41,16 @@ class ip_info(object):
 
 		# setup
 		self.__conf_DISP_IP_REPEAT				= self.__setup.get_val('conf_DISP_IP_REPEAT')
+		self.__const_WIFI_QR_FILE_PATH			= self.__setup.get_val('const_WIFI_QR_FILE_PATH')
+
+		self.__const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		self.__const_IP_QR_FILE_PATTERN			= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
+
+		self.__conf_DISP_RESOLUTION_X			= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		self.__conf_DISP_RESOLUTION_Y			= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		self.__const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
+		self.__conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
+		self.__conf_DISP_FRAME_TIME_IP			= self.__setup.get_val('conf_DISP_FRAME_TIME_IP')
 
 		# Shared values
 		self.__IPs	= []
@@ -48,26 +61,17 @@ class ip_info(object):
 
 	def display_ip(self, FrameTime=None, force=False):
 
-		if not (self.__conf_DISP_IP_REPEAT or force):
+		if not self.__conf_DISP_IP_REPEAT and not force:
 			return()
 
-		const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-		const_IP_QR_FILE_PATTERN		= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
-
-		conf_DISP_RESOLUTION_X			= self.__setup.get_val('conf_DISP_RESOLUTION_X')
-		conf_DISP_RESOLUTION_Y			= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
-		const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
-		conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
-		conf_DISP_FRAME_TIME_IP			= self.__setup.get_val('conf_DISP_FRAME_TIME_IP')
-
-		FrameTime	= conf_DISP_FRAME_TIME_IP if FrameTime is None else FrameTime
+		FrameTime	= self.__conf_DISP_FRAME_TIME_IP if FrameTime is None else FrameTime
 
 		self.get_IPs()
 
 		if self.__IPs:
 			DisplayContentOld	= ''
-			if os.path.isfile(const_DISPLAY_CONTENT_OLD_FILE):
-				with open(const_DISPLAY_CONTENT_OLD_FILE,'r') as f:
+			if os.path.isfile(self.__const_DISPLAY_CONTENT_OLD_FILE):
+				with open(self.__const_DISPLAY_CONTENT_OLD_FILE,'r') as f:
 					DisplayContentOld	= f.read()
 
 			self.__IPsFormatted	= []
@@ -79,7 +83,7 @@ class ip_info(object):
 				IP	= IP.strip()
 
 				if IP and ((IP not in DisplayContentOld) or (OnlineMessage not in DisplayContentOld) or force):
-					IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, OnlineStatus=OnlineStatus, IP_QR_FILE=const_IP_QR_FILE_PATTERN, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
+					IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, OnlineStatus=OnlineStatus, IP_QR_FILE=self.__const_IP_QR_FILE_PATTERN, width=self.__conf_DISP_RESOLUTION_X, height=self.__conf_DISP_RESOLUTION_Y,font=self.__const_FONT_PATH, fontsize=self.__conf_DISP_FONT_SIZE)
 
 					if not IP_QR_FILE is None:
 						self.__display.message([f'set:time={FrameTime},temp,hidden={IP}_{OnlineMessage}', f":IMAGE={IP_QR_FILE}"], logging=False)
@@ -92,15 +96,27 @@ class ip_info(object):
 		elif force and not self.__IPs:
 			self.__display.message(['set:clear', f":{self.__lan.l('box_cronip_offline')}"], logging=False)
 
-	def mail_ip(self):
-		IP_sent_Markerfile			= self.__setup.get_val('const_IP_SENT_MARKERFILE')
-		const_IP_QR_FILE_PATTERN	= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
-		const_FONT_PATH				= self.__setup.get_val('const_FONT_PATH')
+	def display_wifi_qr(self, FrameTime=None, force=False):
+		if not self.__conf_DISP_IP_REPEAT and not force:
+			return()
 
-		conf_MAIL_IP		= self.__setup.get_val('conf_MAIL_IP')
-		conf_DISP_RESOLUTION_X		= self.__setup.get_val('conf_DISP_RESOLUTION_X')
-		conf_DISP_RESOLUTION_Y		= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
-		conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
+		FrameTime	= self.__conf_DISP_FRAME_TIME_IP * 2 if FrameTime is None else FrameTime
+
+		if not os.path.isfile(self.__const_WIFI_QR_FILE_PATH):
+			lib_comitup.comitup().create_wifi_link_qr_image()
+
+		if os.path.isfile(self.__const_WIFI_QR_FILE_PATH):
+			self.__display.message([f'set:time={FrameTime},temp,hidden=WIFI_QR', f":IMAGE={self.__const_WIFI_QR_FILE_PATH}"], logging=False)
+
+	def mail_ip(self):
+		IP_sent_Markerfile					= self.__setup.get_val('const_IP_SENT_MARKERFILE')
+		self.__const_IP_QR_FILE_PATTERN		= self.__setup.get_val('const_IP_QR_FILE_PATTERN')
+		self.__const_FONT_PATH				= self.__setup.get_val('const_FONT_PATH')
+
+		self.__conf_MAIL_IP					= self.__setup.get_val('conf_MAIL_IP')
+		self.__conf_DISP_RESOLUTION_X		= self.__setup.get_val('conf_DISP_RESOLUTION_X')
+		self.__conf_DISP_RESOLUTION_Y		= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
+		self.__conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
 
 		mailObj	= lib_mail.mail()
 
@@ -108,7 +124,7 @@ class ip_info(object):
 
 		if (
 			self.__IPs
-			and conf_MAIL_IP
+			and self.__conf_MAIL_IP
 			and lib_network.get_internet_status()
 		):
 
@@ -140,7 +156,15 @@ class ip_info(object):
 
 			for IP in self.__IPs:
 				# create qr link
-				IP_QR_FILE	= lib_network.create_ip_link_qr_image(IP=IP, OnlineStatus=True, IP_QR_FILE=const_IP_QR_FILE_PATTERN, width=conf_DISP_RESOLUTION_X, height=conf_DISP_RESOLUTION_Y,font=const_FONT_PATH, fontsize=conf_DISP_FONT_SIZE)
+				IP_QR_FILE	= lib_network.create_ip_link_qr_image(
+					IP				= IP,
+					OnlineStatus	= True,
+					IP_QR_FILE		= self.__const_IP_QR_FILE_PATTERN,
+					width			= self.__conf_DISP_RESOLUTION_X,
+					height			= self.__conf_DISP_RESOLUTION_Y,
+					font			= self.__const_FONT_PATH,
+					fontsize		= self.__conf_DISP_FONT_SIZE
+				)
 
 				if IP_QR_FILE is None:
 					qr_link	= ''
@@ -207,6 +231,10 @@ class ip_info(object):
 	)
 
 if __name__ == "__main__":
+	# create new WIFI QR
+	lib_comitup.comitup().create_wifi_link_qr_image()
+
+	# argument based actions
 	parser = argparse.ArgumentParser(
 		description	= 'This library handles the output of the IP on the display and by email.',
 		add_help	= True,
@@ -231,6 +259,7 @@ if __name__ == "__main__":
 		ip	= ip_info()
 
 		if args['display']:
+			ip.display_wifi_qr()
 			ip.display_ip()
 		if args['mail']:
 			thread	= ip.mail_ip()

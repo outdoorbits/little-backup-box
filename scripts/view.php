@@ -92,8 +92,8 @@
 					<div style="float:left; padding: 5px;">
 						<?php
 						// navigation left
-							echo "<a href='<?php echo ${GET_PARAMETER}&ID=${IMAGE_ID_FIRST}'><svg width='24' height='24'><use href='#icon-move-first' /></a>";
-							echo "<a href='<?php echo ${GET_PARAMETER}&ID=${IMAGE_ID_PRE}' style='margin-left: 3ch;'><svg width='24' height='24'><use href='#icon-move-left' /></a>";
+							echo "<a href='${GET_PARAMETER}&ID=${IMAGE_ID_FIRST}'><svg width='24' height='24'><use href='#icon-move-first' /></a>";
+							echo "<a href='${GET_PARAMETER}&ID=${IMAGE_ID_PRE}' style='margin-left: 3ch;'><svg width='24' height='24'><use href='#icon-move-left' /></a>";
 							// save
 							echo "<br />";
 							echo "<button type='submit' name='ID' value='${IMAGE_ID_PRE}' title='" . L::view_ratings_save_button . "'><svg width='24' height='24'><use href='#icon-move-left' /></svg></button>";

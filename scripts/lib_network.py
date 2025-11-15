@@ -26,6 +26,7 @@ from urllib import request
 import sys
 import time
 
+import lib_comitup
 import lib_setup
 
 # import lib_debug
@@ -77,10 +78,10 @@ def create_ip_link_qr_image(IP, OnlineStatus, IP_QR_FILE, width, height, font=No
 			qr_height	= height
 
 		qr	= qrcode.QRCode(
-			version=1,
+			version				= 1,
 			error_correction	= qrcode.constants.ERROR_CORRECT_L,
 				box_size		= qr_box_size,
-				border			= qr_border,
+				border			= qr_border
 		)
 		qr.add_data(LinkText)
 		qr.make(fit=True)
@@ -98,8 +99,8 @@ def create_ip_link_qr_image(IP, OnlineStatus, IP_QR_FILE, width, height, font=No
 
 			draw			= ImageDraw.Draw(final_image)
 
-			(left, top, right, bottom) = draw.textbbox((0,0), IP, font=font)
-			text_length = right - left
+			(left, top, right, bottom)	= draw.textbbox((0, 0), IP, font=font)
+			text_length					= right - left
 
 			draw.text((int((width - text_length) / 2), qr_height), IP, font=font)
 
@@ -144,6 +145,14 @@ def get_qr_links(protocol='https'):
 	conf_DISP_RESOLUTION_X		= __setup.get_val('conf_DISP_RESOLUTION_X')
 	conf_DISP_RESOLUTION_Y		= __setup.get_val('conf_DISP_RESOLUTION_Y')
 	conf_DISP_FONT_SIZE			= __setup.get_val('conf_DISP_FONT_SIZE')
+
+	const_WIFI_QR_FILE_PATH		= __setup.get_val('const_WIFI_QR_FILE_PATH')
+
+	if not os.path.isfile(const_WIFI_QR_FILE_PATH):
+		lib_comitup.comitup().create_wifi_link_qr_image()
+
+	if os.path.isfile(const_WIFI_QR_FILE_PATH):
+		qr_links	= f'{qr_links}<img src="{const_WIFI_QR_FILE_PATH.replace(const_WEB_ROOT_LBB,'',1)}" style="padding: 5px;" title="HOTSPOT"> '
 
 	IPs	= get_IPs().split('\n')
 
@@ -219,14 +228,14 @@ if __name__ == "__main__":
 		'-o',
 		action='store_true',
 		required =	False,
-		help=f'If set, the output will be string type. (Mode=ip only)'
+		help=f'If set, the output will be string type. (for use in Mode=ip only)'
 	)
 
 	parser.add_argument(
 		'--Protocol',
 		'-p',
 		required =	False,
-		help=f'Protocol (http or https). (Mode=qr_links only)'
+		help=f'Protocol (http or https). (for use in Mode=qr_links only)'
 	)
 
 	args	= vars(parser.parse_args())

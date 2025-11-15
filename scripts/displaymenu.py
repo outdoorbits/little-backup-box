@@ -215,6 +215,18 @@ class menu(object):
 
 			{
 				'type':		'item',
+				'title':	self.__lan.l('box_menu_wifi'),
+				'action':	[
+								{
+									'type':		'info',
+									'title':	self.__lan.l('box_menu_wifi'),
+									'action':	'wifi_qr',
+								}
+							],
+			},
+
+			{
+				'type':		'item',
 				'title':	self.__lan.l('box_menu_comitup_reset'),
 				'action':	self.create_confirmed_shell_action(
 								title	= self.__lan.l('box_menu_comitup_reset'),
@@ -411,8 +423,12 @@ class menu(object):
 
 	def get_INFO(self, action):
 		if action == 'ip':
-			FrameTime	= self.conf_DISP_FRAME_TIME_IP * 2
+			FrameTime	= self.conf_DISP_FRAME_TIME_IP
 			lib_cron_ip.ip_info().display_ip(FrameTime=FrameTime, force=True)
+			return([], FrameTime)
+		elif action == 'wifi_qr':
+			FrameTime	= self.conf_DISP_FRAME_TIME_IP * 2
+			lib_cron_ip.ip_info().display_wifi_qr(FrameTime=FrameTime, force=True)
 			return([], FrameTime)
 
 		return([], self.conf_DISP_FRAME_TIME)

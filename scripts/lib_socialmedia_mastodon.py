@@ -18,6 +18,7 @@
 #######################################################################
 
 from pathlib import Path
+import time
 
 from lib_socialmedia_parent import services
 import lib_system
@@ -43,10 +44,16 @@ class mastodon(services):
 		if not check_only and self.configured():
 			from mastodon import Mastodon
 
-			self.mastodon = Mastodon(
-				access_token	= self.ACCESS_TOKEN,
-				api_base_url	= self.API_BASE_URL
-			)
+			try:
+				self.mastodon = Mastodon(
+					access_token	= self.ACCESS_TOKEN,
+					api_base_url	= self.API_BASE_URL
+				)
+			except Exception as e:
+				self.add_message(f'login: {type(e).__name__}, {e}')
+			else:
+				time.sleep(1) # mastodon often sends on the second try -> maybe this will improve
+
 			try:
 				self.post_maxlength	= self.mastodon.instance()['configuration']['statuses']['max_characters']
 			except:
@@ -98,23 +105,23 @@ class mastodon(services):
 
 			else:
 				self.ok = False
-				self.returnmessage = f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}'
+				self.add_message(f'unsupported msgtype.main {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}')
 
 		except Exception as e:
 			self.ok				= False
 			name	= f' {getattr(FilePath, "name", "")}' if FilePath else ''
-			self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}'
+			self.add_message(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: {type(e).__name__}, {e}')
 
 		if self.ok is None:
 			self.ok				= True
 			name				= f' {getattr(FilePath, "name", "")}' if FilePath else ''
-			self.returnmessage	= f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.'
+			self.add_message(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.')
 
 	def publish(self, msgtype, Comment='', FilePath=None):
-		self.reset_return()
+		super().publish()
 
 		if self.mastodon:
 			self.__publish(msgtype, Comment=Comment, FilePath=FilePath)
 		else:
 			self.ok = False
-			self.returnmessage = 'not configured'
+			self.add_message('not configured')

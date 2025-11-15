@@ -126,21 +126,10 @@
     "save_settings_download_header": "Herunterladen",
     "save_settings_upload_header": "Hochladen",
     "save_settings_upload_label": "Wählen Sie die Einstellungsdatei",
-    "alert_password_not_identical": "Wiederholtes Passwort ist nicht identisch.",
-    "alert_password_too_short": "Das Passwort muss mindestens 5 Zeichen lang sein.",
-    "alert_settings_upload_not_zip": "Die Datei, die Sie hochladen möchten, ist keine ZIP-Datei. Bitte versuche es erneut.",
-    "alert_settings_upload_problem": "Beim Hochladen ist ein Problem aufgetreten. Bitte versuche es erneut.",
-    "alert_settings_upload_success": "Ihre Einstellungsdatei wurde hochgeladen und diese Dateien wurden installiert:",
     "message_settings_saved": "config.cfg wurde erfolgreich geschrieben.",
-    "alert_password_global": "Globales Passwort",
-    "alert_password_mail_header": "Mail-Passwort",
-    "alert_password_rsync_header": "rsync-",
     "rsync_module_header": "rsync-Modul",
     "rsync_module_label1": "Modulname auf dem rsync-Server, z.B. 'little-backup-box' (Standard:",
     "rsync_module_label2": ").<br>Der Modulname ist serverseitig in rsyncd.conf definiert und in [eckige Klammern] gesetzt. Beachten Sie auch <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'>readme_rsync.md</a>.",
-    "wifi_section": "WLAN-Einstellungen",
-    "wifi_country_label": "Wählen Sie das Land aus, in dem diese Little Backup Box verwendet werden soll",
-    "wifi_country_header": "WLAN-Land",
     "backup": {
       "generate_thumbnails_header": "Vorschaubilder",
       "generate_thumbnails_label": "Nach dem Backup Vorschaubilder für View erstellen? (Nur für lokale Speicher)",
@@ -227,8 +216,6 @@
       "html_header": "Mails im HTML-Format versenden",
       "html_label": "Wenn Mails aktiviert sind, sollen diese in HTML formatiert werden?"
     },
-    "alert_password_change_after_reboot_set": "Globales Passwort festgelegt\nÄnderungen werden nach dem Neustart wirksam",
-    "alert_password_change_after_reboot_remove": "Globales Passwort entfernt\nÄnderungen werden nach dem Neustart wirksam",
     "view": {
       "bg_image_header": "Hintergrundbild"
     },
@@ -239,7 +226,6 @@
       "text": "Gespeicherte WiFi-Zugangsdaten werden gelöscht. Eine bestehende WiFi-Verbindung wird unterbrochen und comitup geht in den Hotspot-Modus.<br>\nVerbinden Sie sich danach mit dem WiFi-Hotspot \"little-backup-box-nnnn\". Nun können Sie comitup unter <a href=\"http://10.41.0.1\">http://10.41.0.1</a> erreichen. Zur WebUI der Little Backup Box kommen Sie hier: <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "WiFi-Zugangsdaten löschen"
     },
-    "alert_password_wifi_size_error": "Das Passwort kann nicht für den WiFi-Hotspot verwendet werden. Dazu müsste die Länge 8 bis 63 Zeichen betragen.",
     "vpn": {
       "section": "VPN",
       "upload_header": "Konfigurationsdatei hochladen",
@@ -358,7 +344,6 @@
       "virtual_keyboard_enable_label": "Virtuelle Tastatur aktivieren",
       "description": "Einstellungen, welche einen Bildschirm mit grafischer Benutzeroberfläche (Desktop) betreffen."
     },
-    "alert_password_characters_not_allowed": "Das Passwort darf keine Anführungszeichen (&sbquo;), doppelte Anführungszeichen (&quot;), Leerzeichen oder Backslashs (&bsol;) enthalten.",
     "exit": {
       "section": "LBB beenden",
       "desc": "Little-Backup-Box beenden und Rechner bis zum Neustart für andere Aufgaben freigeben. ",
@@ -494,13 +479,48 @@
       "as_set_in": "Passwort wie festgelegt in",
       "changed": "Passwort geändert.",
       "global_lbb_label": "Das Passwort zum Schutz Ihrer Little-Backup-Box: Es wird für das Webinterface, Filebrowser, ssh und Samba-Windows-Shares verwendet. Der Benutzername ist in all diesen Fällen &quot;lbb&quot;. Für den Linux-Benutzer &quot;pi&quot; wird dieses Passwort ebenfalls gesetzt.",
-      "global_wifi_label": "Falls das Passwort eine Länge von 8 bis 63 Zeichen hat, wird es auch als WiFi-Passwort im Hotspot-Modus verwendet.",
       "remove_header": "Passwort entfernen",
       "remove_label": "Passwort entfernen",
       "removed": "Allgemeines Passwort entfernt.",
       "repeat_label": "Bitte wiederholen:",
       "section": "Globales Passwort",
       "remove_desc": "Aktivieren Sie dieses Kontrollkästchen, um den Passwortschutz zu entfernen. Passwörter für Linux-Benutzer (lbb, pi) werden nicht entfernt."
+    },
+    "alert": {
+      "password": {
+        "change_after_reboot_remove": "Globales Passwort entfernt\nÄnderungen werden nach dem Neustart wirksam",
+        "change_after_reboot_set": "Globales Passwort festgelegt\nÄnderungen werden nach dem Neustart wirksam",
+        "global": "Globales Passwort",
+        "not_identical": "Wiederholtes Passwort ist nicht identisch.",
+        "too_short": "Passwort zu kurz. Mindestzeichenlänge:",
+        "mail": "Mail-Passwort",
+        "wifi": "WLAN-Passwort",
+        "rsync": "rsync-Passwort",
+        "bluesky": "Bluesky-Passwort",
+        "wifi_changed": "Das WIFI-Passwort wurde geändert",
+        "too_long": "Passwort zu lang. Maximale Zeichenlänge:",
+        "not_ascii": "Nur ASCII-Zeichen sind erlaubt.",
+        "too_long_qr": "<strong>Achtung!</strong> Der WIFI-QR-Code funktioniert nur für Passwörter bis zu einer Länge von 13 Zeichen."
+      },
+      "settings": {
+        "upload_not_zip": "Die Datei, die Sie hochladen möchten, ist keine ZIP-Datei. Bitte versuche es erneut.",
+        "upload_problem": "Beim Hochladen ist ein Problem aufgetreten. Bitte versuche es erneut.",
+        "upload_success": "Ihre Einstellungsdatei wurde hochgeladen und diese Dateien wurden installiert:"
+      }
+    },
+    "wifi": {
+      "country": {
+        "header": "WLAN-Land",
+        "label": "Wählen Sie das Land aus, in dem diese Little Backup Box verwendet werden soll"
+      },
+      "password": {
+        "header": "WLAN-Passwort",
+        "label": "Das Passwort muss 8 bis 63 Zeichen lang sein.",
+        "static_label": "Das unten eingetragene Passwort wird verwendet.",
+        "dynamic_label": "Dynamisches Passwort",
+        "dynamic_desc": "Bei jeder Sitzung wird ein neues zufälliges WLAN-Passwort vergeben. <strong>Der Zugang zum WLAN der Little Backup Box kann dann nur über das Display und den QR-Code erfolgen!</strong><br />Die Änderung wird allerdings nur ausgeführt, falls das Display aktiviert wurde und dieses mindestens 64 x 64 Pixel groß ist."
+      },
+      "section": "WLAN-Einstellungen"
     }
   },
   "tools": {
@@ -765,7 +785,8 @@
           "bluesky": "Bluesky"
         },
         "stop": "STOP Backup"
-      }
+      },
+      "wifi": "WLAN-QR-Code"
     },
     "backup_local": "Backup lokal",
     "finished": "erledigt",

@@ -212,7 +212,7 @@ if (isset($CMD_HEADER)) {
 	<?php
 		if ($PASSWORD_ASK or $MAIL_ASK) {
 // 			password check necessary
-			if ($config['conf_PASSWORD'] != "") {
+			if (base64_decode($config['conf_PASSWORD']) != "") {
 	?>
 			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 				<input type="hidden" name="CMD" value="<?php echo $CMD; ?>">

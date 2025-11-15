@@ -50,8 +50,8 @@ class MetadataTool:
 		self.const_FILE_EXTENSIONS_LIST_VIDEO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_VIDEO').split(';')
 		self.const_FILE_EXTENSIONS_LIST_AUDIO			= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_AUDIO').split(';')
 		self.const_FILE_EXTENSIONS_LIST_RAW				= self.__setup.get_val('const_FILE_EXTENSIONS_LIST_RAW').split(';')
-		self.const_METADATA_CREATE_SOURCES				= self.__setup.get_val('const_METADATA_CREATE_SOURCES').split(';')
-		self.const_METADATA_MODIFY_SOURCES				= self.__setup.get_val('const_METADATA_MODIFY_SOURCES').split(';')
+		self.const_METADATA_DATE_CREATE_SOURCES				= self.__setup.get_val('const_METADATA_DATE_CREATE_SOURCES').split(';')
+		self.const_METADATA_DATE_MODIFY_SOURCES				= self.__setup.get_val('const_METADATA_DATE_MODIFY_SOURCES').split(';')
 		self.const_VIEW_RATING_STANDARD_VALUE			= self.__setup.get_val('const_VIEW_RATING_STANDARD_VALUE')
 
 	def write_metadata(self, path: Path, rating: Optional[int] = None, description: Optional[str] = None) -> None:
@@ -103,8 +103,8 @@ class MetadataTool:
 			args = [
 				"-overwrite_original",
 				*common,
-				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.const_METADATA_CREATE_SOURCES),
-				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.const_METADATA_MODIFY_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.const_METADATA_DATE_CREATE_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.const_METADATA_DATE_MODIFY_SOURCES),
 				str(xmp_path),
 			]
 			self._run_exiftool(args, context=f"update sidecar {xmp_path.name}")
@@ -113,8 +113,8 @@ class MetadataTool:
 			args = [
 				"-o", str(xmp_path),
 				*common,
-				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.const_METADATA_CREATE_SOURCES),
-				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.const_METADATA_MODIFY_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:CreateDate", self.const_METADATA_DATE_CREATE_SOURCES),
+				*fallback_grouped(str(raw_path), "XMP:ModifyDate",  self.const_METADATA_DATE_MODIFY_SOURCES),
 				str(raw_path),
 			]
 			self._run_exiftool(args, context=f"create sidecar {xmp_path.name}")

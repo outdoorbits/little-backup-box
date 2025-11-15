@@ -18,7 +18,7 @@
 #######################################################################
 
 import argparse
-
+import base64
 from datetime import datetime
 import os
 from pathlib import Path
@@ -101,11 +101,16 @@ class socialmedia(object):
 				)
 			)
 		elif service == 'bluesky':
+			try:
+				BS_APP_PASSWORD	= base64.b64decode(self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD')).decode('utf-8')
+			except:
+				BS_APP_PASSWORD	= ''
+
 			return(
 				bluesky(
 					BS_API_BASE_URL	= self.__setup.get_val('conf_SOCIAL_BLUESKY_API_BASE_URL'),
 					BS_IDENTIFIER  	= self.__setup.get_val('conf_SOCIAL_BLUESKY_IDENTIFIER'),
-					BS_APP_PASSWORD = self.__setup.get_val('conf_SOCIAL_BLUESKY_APP_PASSWORD'),
+					BS_APP_PASSWORD = BS_APP_PASSWORD,
 					check_only	= check_only
 				)
 			)
@@ -241,7 +246,7 @@ class socialmedia(object):
 				self.upload_times.pop(0)
 
 			self.SERVICE_Obj.publish(msgtype=msgtype, Comment=Comment, FilePath=FilePath)
-			return({'ok': self.SERVICE_Obj.ok, 'msg': self.SERVICE_Obj.returnmessage})
+			return({'ok': self.SERVICE_Obj.ok, 'msg': self.SERVICE_Obj.messages})
 		else:
 			return({'ok': False, 'msg': f'msgtype={msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}, self.SERVICE_Obj={self.SERVICE_Obj}'})
 

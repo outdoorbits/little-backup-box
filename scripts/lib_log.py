@@ -36,7 +36,7 @@ class log(object):
 		self.LogFilePath			= self.setup.get_val('const_LOGFILE')
 		self.conf_LOGLEVEL			= self.setup.get_val('conf_LOGLEVEL')
 
-		self.hide_passwords_list	= ['conf_PASSWORD', 'conf_MAIL_PASSWORD', 'conf_RSYNC_PASSWORD']
+		self.hide_passwords_list	= self.setup.get_val('const_PASSWORDS_LIST').split(';')
 
 	def message(self, Message, LogLevel=10):
 		if LogLevel < self.conf_LOGLEVEL:
@@ -44,8 +44,14 @@ class log(object):
 
 		#replace passwords out of logfile
 		for PWD_var in self.hide_passwords_list:
-			PWD	= base64.b64decode(self.setup.get_val(PWD_var)).decode("utf-8")
-			if PWD != '':
+
+			pwd_probe	= self.setup.get_val(PWD_var).strip()
+			try:
+				PWD	= base64.b64decode(pwd_probe).decode("utf-8")
+			except:
+				PWD	= pwd_probe
+
+			if PWD:
 				Message	= Message.replace(PWD, '***')
 
 		# ensure path and logfile exists
