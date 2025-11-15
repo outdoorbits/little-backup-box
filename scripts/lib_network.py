@@ -26,6 +26,7 @@ from urllib import request
 import sys
 import time
 
+import lib_comitup
 import lib_setup
 
 # import lib_debug
@@ -144,6 +145,14 @@ def get_qr_links(protocol='https'):
 	conf_DISP_RESOLUTION_X		= __setup.get_val('conf_DISP_RESOLUTION_X')
 	conf_DISP_RESOLUTION_Y		= __setup.get_val('conf_DISP_RESOLUTION_Y')
 	conf_DISP_FONT_SIZE			= __setup.get_val('conf_DISP_FONT_SIZE')
+
+	const_WIFI_QR_FILE_PATH		= __setup.get_val('const_WIFI_QR_FILE_PATH')
+
+	if not os.path.isfile(const_WIFI_QR_FILE_PATH):
+		lib_comitup.comitup().create_wifi_link_qr_image()
+
+	if os.path.isfile(const_WIFI_QR_FILE_PATH):
+		qr_links	= f'{qr_links}<img src="{const_WIFI_QR_FILE_PATH.replace(const_WEB_ROOT_LBB,'',1)}" style="padding: 5px;" title="HOTSPOT"> '
 
 	IPs	= get_IPs().split('\n')
 

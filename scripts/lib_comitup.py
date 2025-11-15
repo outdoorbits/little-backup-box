@@ -212,6 +212,16 @@ class comitup(object):
 			fill	= 'white'
 		)
 
+		font	= ImageFont.load_default()
+		HOT		= 'HOT'
+		bbox	= draw.textbbox((0, 0), HOT, font=font)
+		HOT_w	= bbox[2] - bbox[0]
+
+		HOT_x = cx - HOT_w // 2
+		HOT_y = cy + point_r + (size // 12)
+
+		draw.text((HOT_x, HOT_y), HOT, font=font, fill="white")
+
 		final_image.save(WIFI_QR_FILE)
 
 		return()

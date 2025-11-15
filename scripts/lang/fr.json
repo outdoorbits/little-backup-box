@@ -498,7 +498,9 @@
         "rsync": "rsync-le mot de passe",
         "bluesky": "Mot de passe Bluesky",
         "wifi_changed": "Le mot de passe Wi-Fi a été modifié",
-        "too_long": "Mot de passe trop long. Nombre maximal de caractères :"
+        "too_long": "Mot de passe trop long. Nombre maximal de caractères :",
+        "not_ascii": "Seuls les caractères ASCII sont autorisés.",
+        "too_long_qr": "<strong>Attention !</strong> Le code QR WiFi ne fonctionne qu’avec des mots de passe allant jusqu’à 13 caractères."
       },
       "settings": {
         "upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",

@@ -498,7 +498,9 @@
         "rsync": "rsync-contraseña",
         "bluesky": "Contraseña de Bluesky",
         "wifi_changed": "Se ha cambiado la contraseña de la red Wi-Fi",
-        "too_long": "Contraseña demasiado larga. Longitud máxima de caracteres:"
+        "too_long": "Contraseña demasiado larga. Longitud máxima de caracteres:",
+        "not_ascii": "Solo se permiten caracteres ASCII.",
+        "too_long_qr": "<strong>¡Atención!</strong> El código QR de WiFi solo funciona con contraseñas de hasta 13 caracteres."
       },
       "settings": {
         "upload_not_zip": "El archivo que está intentando cargar no es un archivo .zip. Inténtelo de nuevo.",

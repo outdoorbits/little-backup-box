@@ -498,7 +498,9 @@
         "rsync": "rsync-Passwort",
         "bluesky": "Bluesky-Passwort",
         "wifi_changed": "Das WIFI-Passwort wurde geändert",
-        "too_long": "Passwort zu lang. Maximale Zeichenlänge:"
+        "too_long": "Passwort zu lang. Maximale Zeichenlänge:",
+        "not_ascii": "Nur ASCII-Zeichen sind erlaubt.",
+        "too_long_qr": "<strong>Achtung!</strong> Der WIFI-QR-Code funktioniert nur für Passwörter bis zu einer Länge von 13 Zeichen."
       },
       "settings": {
         "upload_not_zip": "Die Datei, die Sie hochladen möchten, ist keine ZIP-Datei. Bitte versuche es erneut.",

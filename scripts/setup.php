@@ -36,11 +36,12 @@
 	$NVMe_available	= get_nvme_available($WORKING_DIR, $constants, false);
 	$CloudServices	= get_cloudservices($constants);
 
-	$TIME_ZONE_old	= $config["conf_TIME_ZONE"];
-	$Password_old	= base64_decode($config["conf_PASSWORD"]);
-	$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
-	$vpn_types		= array('OpenVPN','WireGuard');
-	$SetupMessages	= '';
+	$TIME_ZONE_old		= $config["conf_TIME_ZONE"];
+	$Password_old		= base64_decode($config["conf_PASSWORD"]);
+	$WIFI_Password_old	= base64_decode($config["conf_WIFI_PASSWORD"]);
+	$WIFI_COUNTRY		= trim(shell_exec("raspi-config nonint get_wifi_country"));
+	$vpn_types			= array('OpenVPN','WireGuard');
+	$SetupMessages		= '';
 
 	// load i18n languages
 	if (isset($_POST['conf_LANGUAGE'])) {
@@ -132,19 +133,32 @@
 		return ($wifi_country_selector);
 	}
 
-	function check_new_password($title, $pwd_1, $pwd_2, $min_length=5, $max_length=0) {
+	function check_new_password($title, $pwd_1, $pwd_2, $min_length=5, $max_length=0, $ascii_only=False) {
 		global $SetupMessages;
 
 		$pwd_valid = false;
-			if ($pwd_1 !== $pwd_2) {
-				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_not_identical,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-			} elseif (strlen($pwd_1) < $min_length) {
-				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_short . " $min_length",  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-			} elseif ($max_length > 0 and strlen($pwd_1) > $max_length) {
-				$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_long . " $max_length",  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-			} else {
-				$pwd_valid=true;
+
+		$ascii	= True;
+		if ($ascii_only) {
+			foreach (str_split($pwd_1) as $c) {
+				$ord = ord($c);
+				if (!($ord >= 32 && $ord <= 126)) {  // 0x20 bis 0x7E
+					$ascii	= False;
+				}
 			}
+		}
+
+		if ($pwd_1 !== $pwd_2) {
+			$SetupMessages	.= popup($title . "\n" . L::config_alert_password_not_identical,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+		} elseif (strlen($pwd_1) < $min_length) {
+			$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_short . " $min_length",  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+		} elseif ($max_length > 0 and strlen($pwd_1) > $max_length) {
+			$SetupMessages	.= popup($title . "\n" . L::config_alert_password_too_long . " $max_length",  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+		} elseif ($ascii_only and ! $ascii) {
+			$SetupMessages	.= popup($title . "\n" . L::config_alert_password_not_ascii,  POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+		} else {
+			$pwd_valid=true;
+		}
 
 		return($pwd_valid);
 	}
@@ -276,11 +290,11 @@
 				}
 			} elseif ($Password == 'conf_WIFI_PASSWORD') {
 				if ($conf_WIFI_PASSWORD_TYPE	== 'static') {
-					if (empty($$Password) or check_new_password ($title, $$Password, $PwdCompare, $min_length, $max_length)) {
+					if (empty($$Password) or check_new_password ($title, $$Password, $PwdCompare, $min_length, $max_length, True)) {
 						/*set password*/
 						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $$Password . "'");
 
-						if ($$Password !== base64_decode($conf_WIFI_PASSWORD_OLD)) {
+						if ($$Password !== base64_decode($WIFI_Password_old)) {
 							$SetupMessages	.= popup(L::config_alert_password_wifi_changed . ":\n'" . $$Password . "'", POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 						}
 					} else {
@@ -533,6 +547,9 @@ CONFIGDATA;
 							exec ("sudo chown www-data:www-data '" . $constants["const_MEDIA_DIR"] . '/' . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
 						}
 
+						# detect unset settings
+						$conf_WIFI_PASSWORD_was_set	= isset($config['conf_WIFI_PASSWORD']);
+
 						# rewrite config to actual version
 						exec("sudo python3 $WORKING_DIR/lib_setup.py");
 
@@ -554,9 +571,12 @@ CONFIGDATA;
 						}
 
 						# set new WIFI password
-						if ($config['conf_WIFI_PASSWORD_TYPE']	== 'static' and (empty($config['conf_WIFI_PASSWORD']) or check_new_password (L::config_alert_password_wifi, $config['conf_WIFI_PASSWORD'], $config['conf_WIFI_PASSWORD'], 8, 63))) {
-							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $config['conf_WIFI_PASSWORD'] . "'");
+						if (! $conf_WIFI_PASSWORD_was_set) { /* was not part of old config file */
+							$config['conf_WIFI_PASSWORD']	= $config['conf_PASSWORD'];
+						}
 
+						if ($config['conf_WIFI_PASSWORD_TYPE']	== 'static' and (empty($config['conf_WIFI_PASSWORD']) or check_new_password (L::config_alert_password_wifi, base64_decode($config['conf_WIFI_PASSWORD']), $config['conf_WIFI_PASSWORD'], 8, 63, True))) {
+							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $config['conf_WIFI_PASSWORD'] . "'");
 							if (! empty($config['conf_WIFI_PASSWORD'])) {
 								$SetupMessages	.= popup(L::config_alert_password_wifi_changed . ":\n\"" . $config['conf_WIFI_PASSWORD'] . '"', POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 							}
@@ -1430,7 +1450,7 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_mail_password_header; ?></h3>
 					<label for="conf_MAIL_PASSWORD"><?php echo L::config_mail_password_label; ?></label><br />
-					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MAIL_PASSWORD" name="conf_MAIL_PASSWORD" size="20" value="<?php echo base64_decode($config['conf_MAIL_PASSWORD']); ?>">
+					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_MAIL_PASSWORD" name="conf_MAIL_PASSWORD" size="20" value="<?php echo htmlspecialchars(base64_decode($config['conf_MAIL_PASSWORD']), ENT_QUOTES, 'UTF-8'); ?>">
 
 				<h3><?php echo L::config_mail_sender_header; ?></h3>
 					<label for="conf_MAIL_FROM"><?php echo L::config_mail_sender_label; ?></label><br />
@@ -1475,7 +1495,7 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_rsync_password_header; ?></h3>
 					<label for="conf_RSYNC_PASSWORD"><?php echo L::config_rsync_password_label; ?></label><br />
-					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_RSYNC_PASSWORD" name="conf_RSYNC_PASSWORD" size="20" value="<?php echo base64_decode($config['conf_RSYNC_PASSWORD']); ?>">
+					<input type="password" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_RSYNC_PASSWORD" name="conf_RSYNC_PASSWORD" size="20" value="<?php echo htmlspecialchars(base64_decode($config['conf_RSYNC_PASSWORD']), ENT_QUOTES, 'UTF-8'); ?>">
 
 				<h3><?php echo L::config_rsync_module_header; ?></h3>
 					<label for="conf_RSYNC_SERVER_MODULE"><?php echo L::config_rsync_module_label1 .  $config_standard['conf_RSYNC_SERVER_MODULE'] . L::config_rsync_module_label2; ?></label><br />
@@ -1637,7 +1657,7 @@ CONFIGDATA;
 						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_IDENTIFIER" name="conf_SOCIAL_BLUESKY_IDENTIFIER" size="50" value="<?php echo $config['conf_SOCIAL_BLUESKY_IDENTIFIER']; ?>"><br />
 
 						<label for="conf_SOCIAL_BLUESKY_APP_PASSWORD"><?php echo L::config_social_bluesky_app_password_label; ?></label><br />
-						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_APP_PASSWORD" name="conf_SOCIAL_BLUESKY_APP_PASSWORD" size="50" value="<?php echo base64_decode($config['conf_SOCIAL_BLUESKY_APP_PASSWORD']); ?>"><br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_BLUESKY_APP_PASSWORD" name="conf_SOCIAL_BLUESKY_APP_PASSWORD" size="50" value="<?php echo htmlspecialchars(base64_decode($config['conf_SOCIAL_BLUESKY_APP_PASSWORD']), ENT_QUOTES, 'UTF-8'); ?>"><br />
 				</details>
 
 				<details>
@@ -1752,9 +1772,29 @@ CONFIGDATA;
 					<label for="conf_WIFI_PASSWORD_TYPE"><?php echo L::config_wifi_password_dynamic_label; ?> *</label><br />
 					* <?php echo L::config_wifi_password_dynamic_desc; ?><br />
 					<br />
-					<input type="hidden" id="conf_WIFI_PASSWORD_OLD" name="conf_WIFI_PASSWORD_OLD" value="<?php echo $config['conf_WIFI_PASSWORD']; ?>">
 					<label for="conf_WIFI_PASSWORD"><?php echo L::config_wifi_password_label; ?></label><br />
-					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_WIFI_PASSWORD" name="conf_WIFI_PASSWORD" size="20" value="<?php echo base64_decode($config['conf_WIFI_PASSWORD']); ?>">
+					<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_WIFI_PASSWORD" name="conf_WIFI_PASSWORD" size="20" value="<?php echo htmlspecialchars(base64_decode($config['conf_WIFI_PASSWORD']), ENT_QUOTES, 'UTF-8'); ?>"><br />
+					<div id="count_conf_WIFI_PASSWORD"></div>
+					<script>
+						const conf_WIFI_PASSWORD = document.getElementById("conf_WIFI_PASSWORD");
+						const count_conf_WIFI_PASSWORD = document.getElementById("count_conf_WIFI_PASSWORD");
+
+						function update_count_conf_WIFI_PASSWORD() {
+							const n = conf_WIFI_PASSWORD.value.length;
+							count_conf_WIFI_PASSWORD.innerHTML = n + " <?php echo L::view_characters; ?>";
+
+							if (n < 8) {
+								count_conf_WIFI_PASSWORD.innerHTML += "<br /><?php echo L::config_alert_password_too_short; ?> 8";
+							} else if (n > 63) {
+								count_conf_WIFI_PASSWORD.innerHTML += "<br /><?php echo L::config_alert_password_too_long; ?> 63";
+							} else if (n > 13) {
+								count_conf_WIFI_PASSWORD.innerHTML += "<br /><?php echo L::config_alert_password_too_long_qr; ?>";
+							}
+						}
+
+						conf_WIFI_PASSWORD.addEventListener("input", update_count_conf_WIFI_PASSWORD);
+						update_count_conf_WIFI_PASSWORD();
+					</script>
 			</details>
 		</div>
 
