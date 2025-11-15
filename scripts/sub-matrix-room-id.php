@@ -21,9 +21,10 @@
 	async function openMatrixRoomPicker() {
 		const homeserverEl							= document.getElementById('conf_SOCIAL_MATRIX_HOMESERVER');
 		const tokenEl								= document.getElementById('conf_SOCIAL_MATRIX_TOKEN');
+
 		const conf_SOCIAL_MATRIX_ROOM_ID			= document.getElementById('conf_SOCIAL_MATRIX_ROOM_ID');
 		const conf_SOCIAL_MATRIX_ROOM_IDENTIFIER	= document.getElementById('conf_SOCIAL_MATRIX_ROOM_IDENTIFIER');
-		const MATRIX_ROOM_ID_PRESENTER				= document.getElementById('MATRIX_ROOM_ID_PRESENTER');
+		const MATRIX_ROOM_PRESENTER					= document.getElementById('MATRIX_ROOM_PRESENTER');
 		const Button_Target_Matrix					= document.getElementById('Target_social:matrix');
 
 		const homeserver							= (homeserverEl?.value || '').trim();
@@ -116,8 +117,8 @@
 					Button_Target_Matrix.innerHTML	= '<?php echo L::box_backup_mode_social_matrix; ?>';
 				}
 			}
-			if (MATRIX_ROOM_ID_PRESENTER) {
-				MATRIX_ROOM_ID_PRESENTER.value = id + ": " + identifier;
+			if (MATRIX_ROOM_PRESENTER) {
+				MATRIX_ROOM_PRESENTER.value = id + ": " + identifier;
 			}
 
 			chosenP.textContent	= `<?php echo L::config_social_matrix_selected; ?>: ${id}`;
@@ -171,17 +172,19 @@
 		if (typeof dlg.showModal === 'function') dlg.showModal();
 		else dlg.style.display = 'block';
 	}
-	</script>
+</script>
 
-	<label for="MATRIX_ROOM_ID_PRESENTER"><?php echo L::config_social_matrix_room_id_label; ?></label><br />
-	<input type="hidden" id="conf_SOCIAL_MATRIX_ROOM_ID" name="conf_SOCIAL_MATRIX_ROOM_ID" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_ROOM_ID'] ?? '', ENT_QUOTES); ?>">
-	<input type="hidden" id="conf_SOCIAL_MATRIX_ROOM_IDENTIFIER" name="conf_SOCIAL_MATRIX_ROOM_IDENTIFIER" value="<?php echo !empty($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) ? htmlspecialchars($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER'], ENT_QUOTES) : htmlspecialchars($config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER'] ?? '', ENT_QUOTES); ?>">
-	<input type="text" id="MATRIX_ROOM_ID_PRESENTER" name="MATRIX_ROOM_ID_PRESENTER" size="40" value="<?php
-		if (!empty($config['conf_SOCIAL_MATRIX_ROOM_ID'])) {
-			echo htmlspecialchars($config['conf_SOCIAL_MATRIX_ROOM_ID'] . ': ' . ($config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER'] ?? ''), ENT_QUOTES);
-		}
-		?>" disabled>
-	<button type="button" onclick="openMatrixRoomPicker()" id="get_matrix_room_id">
-		<?php echo L::config_social_matrix_button_select_room; ?>
-	</button><br />
+<input type="hidden" id="conf_SOCIAL_MATRIX_ROOM_ID" name="conf_SOCIAL_MATRIX_ROOM_ID" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_ROOM_ID'] ?? '', ENT_QUOTES); ?>">
+<input type="hidden" id="conf_SOCIAL_MATRIX_ROOM_IDENTIFIER" name="conf_SOCIAL_MATRIX_ROOM_IDENTIFIER" value="<?php echo !empty($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER']) ? htmlspecialchars($_POST['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER'], ENT_QUOTES) : htmlspecialchars($config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER'] ?? '', ENT_QUOTES); ?>">
+
+<label for="MATRIX_ROOM_PRESENTER"><?php echo L::config_social_matrix_room_id_label; ?></label><br />
+<input type="text" id="MATRIX_ROOM_PRESENTER" name="MATRIX_ROOM_PRESENTER" size="40" value="<?php
+	if (!empty($config['conf_SOCIAL_MATRIX_ROOM_ID'])) {
+		echo htmlspecialchars($config['conf_SOCIAL_MATRIX_ROOM_ID'] . ': ' . ($config['conf_SOCIAL_MATRIX_ROOM_IDENTIFIER'] ?? ''), ENT_QUOTES);
+	}
+	?>" disabled>
+
+<button type="button" onclick="openMatrixRoomPicker()" id="get_matrix_room_id">
+	<?php echo L::config_social_matrix_button_select_room; ?>
+</button><br />
 

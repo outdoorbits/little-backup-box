@@ -1666,14 +1666,12 @@ CONFIGDATA;
 						<br />
 
 						<label for="conf_SOCIAL_MATRIX_HOMESERVER"><?php echo L::config_social_matrix_homeserver_label; ?></label><br />
-						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_HOMESERVER" name="conf_SOCIAL_MATRIX_HOMESERVER" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_HOMESERVER'] ?? '', ENT_QUOTES); ?>">
-						<br />
-						<label for="conf_SOCIAL_MATRIX_TOKEN"><?php echo L::config_social_matrix_token_label; ?></label><br />
-						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_TOKEN" name="conf_SOCIAL_MATRIX_TOKEN" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_TOKEN'] ?? '', ENT_QUOTES); ?>">
-						<br />
+						<input type="text" <?php echo virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true'); ?> id="conf_SOCIAL_MATRIX_HOMESERVER" name="conf_SOCIAL_MATRIX_HOMESERVER" size="50" value="<?php echo htmlspecialchars($config['conf_SOCIAL_MATRIX_HOMESERVER'] ?? '', ENT_QUOTES); ?>"><br />
+
 						<?php include("${WORKING_DIR}/sub-matrix-token.php"); ?>
 						<br />
 						<?php include("${WORKING_DIR}/sub-matrix-room-id.php"); ?>
+
 				</details>
 
 			</details>
