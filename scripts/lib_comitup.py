@@ -20,7 +20,6 @@
 import base64
 import os
 from PIL import Image, ImageDraw, ImageFont
-import psutil
 import qrcode
 import shutil
 import subprocess
@@ -49,7 +48,7 @@ class comitup(object):
 		self.__conf_WIFI_PASSWORD			= base64.b64decode(self.__setup.get_val('conf_WIFI_PASSWORD')).decode("utf-8")
 		self.__conf_DISP_RESOLUTION_X		= self.__setup.get_val('conf_DISP_RESOLUTION_X')
 		self.__conf_DISP_RESOLUTION_Y		= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
-		self.__const_WIFI_QR_FILE_PATH	= self.__setup.get_val('const_WIFI_QR_FILE_PATH')
+		self.__const_WIFI_QR_FILE_PATH		= self.__setup.get_val('const_WIFI_QR_FILE_PATH')
 
 	def installed(self):
 		return(True if shutil.which("comitup-cli") else False)
@@ -102,7 +101,6 @@ class comitup(object):
 		return(status)
 
 	def create_wifi_link_qr_image(self):
-
 		SSID	= self.get_status()['SSID']
 
 		PASSWORD		= self.__conf_WIFI_PASSWORD
@@ -121,6 +119,7 @@ class comitup(object):
 		shift_y		= size if height > width else 0
 
 		if SSID and width >= 64 and height >= 64:
+			# create QR code
 
 			LinkText	= f"WIFI:T:WPA;S:{SSID};P:{PASSWORD};H:;;"
 
@@ -138,6 +137,7 @@ class comitup(object):
 
 			final_image.paste(qr_image, box=(0 , 0))
 		else:
+			# create "NO HOTSPOT"
 			draw		= ImageDraw.Draw(final_image)
 
 			margin		= size // 8
@@ -222,6 +222,9 @@ class comitup(object):
 
 		draw.text((HOT_x, HOT_y), HOT, font=font, fill="white")
 
+		if os.path.exists(WIFI_QR_FILE):
+			os.remove(WIFI_QR_FILE)
+
 		final_image.save(WIFI_QR_FILE)
 
 		return()
@@ -262,7 +265,7 @@ class comitup(object):
 		self.create_wifi_link_qr_image()
 
 	def hotspot_active(self):
-		return(len([p for p in psutil.process_iter() if 'comitup-web' in p.name()]) > 0)
+		return(self.get_status()['state'] == 'HOTSPOT')
 
 	def reset(self):
 		try:
