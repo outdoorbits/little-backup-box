@@ -33,12 +33,29 @@ jobs:
         working-directory: webapp
         run: npm ci
 
+      - name: Determine base path
+        id: base_path
+        run: |
+          REPO_NAME="${{ github.repository }}"
+          REPO_NAME_ONLY="${REPO_NAME#*/}"
+          OWNER_NAME="${REPO_NAME%%/*}"
+          
+          if [ "$REPO_NAME_ONLY" = "${OWNER_NAME}.github.io" ]; then
+            BASE_PATH="/"
+            echo "Detected user/organization page, using base path: ${BASE_PATH}"
+          else
+            BASE_PATH="/${REPO_NAME_ONLY}/"
+            echo "Detected project page, using base path: ${BASE_PATH}"
+          fi
+          
+          echo "base_path=${BASE_PATH}" >> $GITHUB_OUTPUT
+
       - name: Build static version
         working-directory: webapp
         run: npm run build:static
         env:
           VITE_USE_MOCK_API: 'true'
-          VITE_BASE_PATH: '/'
+          VITE_BASE_PATH: ${{ steps.base_path.outputs.base_path }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

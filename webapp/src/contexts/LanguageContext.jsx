@@ -11,6 +11,10 @@ export function useLanguage() {
   return context;
 }
 
+const ensureTrailingSlash = (path) => (path.endsWith('/') ? path : `${path}/`);
+const basePath = ensureTrailingSlash(import.meta.env.BASE_URL || '/');
+const buildLangUrl = (lang) => `${basePath}lang/${lang}.json`;
+
 export function LanguageProvider({ children }) {
   const { config } = useConfig();
   const [translations, setTranslations] = useState({});
@@ -70,14 +74,14 @@ export function LanguageProvider({ children }) {
 
   const loadTranslations = async (lang) => {
     try {
-      const response = await fetch(`/lang/${lang}.json`);
+      const response = await fetch(buildLangUrl(lang));
       if (response.ok) {
         const data = await response.json();
         setTranslations(data);
         console.log('Translations loaded for language:', lang);
       } else {
         console.warn(`Failed to load ${lang}.json, falling back to en.json`);
-        const fallback = await fetch('/lang/en.json');
+        const fallback = await fetch(buildLangUrl('en'));
         if (fallback.ok) {
           const data = await fallback.json();
           setTranslations(data);
@@ -87,7 +91,7 @@ export function LanguageProvider({ children }) {
     } catch (error) {
       console.error('Failed to load translations:', error);
       try {
-        const fallback = await fetch('/lang/en.json');
+        const fallback = await fetch(buildLangUrl('en'));
         if (fallback.ok) {
           const data = await fallback.json();
           setTranslations(data);

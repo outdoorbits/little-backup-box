@@ -8,7 +8,16 @@
     var path = window.location.pathname;
     var search = window.location.search;
     var hash = window.location.hash;
-    var newPath = '/index.html' + (path !== '/' && path !== '/index.html' ? '?redirect=' + encodeURIComponent(path) : '') + search + hash;
+    
+    var segments = path.split('/').filter(function(p) { return p && p !== 'index.html'; });
+    var basePath = segments.length > 0 ? '/' + segments[0] + '/' : '/';
+    
+    var redirectPath = path;
+    if (segments.length > 1) {
+      redirectPath = '/' + segments.join('/');
+    }
+    
+    var newPath = basePath + 'index.html' + (redirectPath !== basePath && redirectPath !== basePath + 'index.html' ? '?redirect=' + encodeURIComponent(redirectPath) : '') + search + hash;
     window.location.replace(newPath);
   </script>
 </head>

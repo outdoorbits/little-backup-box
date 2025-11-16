@@ -101,9 +101,11 @@ function ThemeSync({ setThemeMode }) {
   return null;
 }
 
+const basename = import.meta.env.BASE_URL || '/';
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Root />
     </BrowserRouter>
   </React.StrictMode>
