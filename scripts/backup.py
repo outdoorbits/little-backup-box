@@ -800,7 +800,8 @@ class backup(object):
 							return
 
 						db	= lib_view.viewdb(self.__setup, self.__log, self.SourceDevice.MountPoint)
-						social_list	= db.dbSelect(f"SELECT ID, Directory, File_Name, Create_Date, Comment FROM EXIF_DATA WHERE (social_publish & (1 << {bit})) ORDER BY Create_Date ASC;")
+						order_by	= SOCIAL.get_order_by()
+						social_list	= db.dbSelect(f"SELECT ID, Directory, File_Name, Create_Date, Comment FROM EXIF_DATA WHERE (social_publish & (1 << {bit})) ORDER BY Create_Date {order_by}, ID {order_by};")
 
 						types_upload_original	= ';'.join([self.const_FILE_EXTENSIONS_LIST_VIDEO, self.const_FILE_EXTENSIONS_LIST_AUDIO, self.const_FILE_EXTENSIONS_LIST_TEXT]).split(';')
 
@@ -835,8 +836,8 @@ class backup(object):
 							else:
 								self.__reporter.add_error(success['msg'])
 
-							# preserve list of upload times for next try
-							upload_times	= SOCIAL.upload_times
+						# preserve list of upload times for next try
+						upload_times	= SOCIAL.get_upload_times()
 
 						missing, more	= self.calculate_files_to_sync(SubPathAtSource)
 						self.__reporter.set_values(FilesProcessed=progress.CountProgress, FilesCopied=progress.CountJustCopied)

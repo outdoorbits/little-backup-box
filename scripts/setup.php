@@ -1782,11 +1782,15 @@ CONFIGDATA;
 							count_conf_WIFI_PASSWORD.innerHTML = n + " <?php echo L::view_characters; ?>";
 
 							if (n < 8) {
-								count_conf_WIFI_PASSWORD.innerHTML += "<br /><?php echo L::config_alert_password_too_short; ?> 8";
+								count_conf_WIFI_PASSWORD.innerHTML	+= "<br /><?php echo L::config_alert_password_too_short; ?> 8";
 							} else if (n > 63) {
-								count_conf_WIFI_PASSWORD.innerHTML += "<br /><?php echo L::config_alert_password_too_long; ?> 63";
+								count_conf_WIFI_PASSWORD.innerHTML	+= "<br /><?php echo L::config_alert_password_too_long; ?> 63";
 							} else if (n > 13) {
-								count_conf_WIFI_PASSWORD.innerHTML += "<br /><?php echo L::config_alert_password_too_long_qr; ?>";
+								count_conf_WIFI_PASSWORD.innerHTML	+= "<br /><?php echo L::config_alert_password_too_long_qr; ?>";
+							}
+
+							if (conf_WIFI_PASSWORD.value.includes(";") || conf_WIFI_PASSWORD.value.includes(":")) {
+								count_conf_WIFI_PASSWORD.innerHTML	+= "<br /><?php echo L::config_alert_password_wifi_invalid_chars; ?>";
 							}
 						}
 

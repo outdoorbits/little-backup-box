@@ -18,8 +18,12 @@
 #######################################################################
 
 import html
+import random
 import re
+import time
 
+import lib_display
+import lib_language
 import lib_system
 
 # import lib_debug
@@ -27,10 +31,28 @@ import lib_system
 
 class services(object):
 
-	def __init__(self, check_only=False):
+	def __init__(
+			self,
+			service,
+			check_only=False,
+			upload_times=[]
+		):
 
-		self.rate_limit_count	= None
-		self.rate_limit_seconds	= None
+		self.__display		= lib_display.display()
+		self.__lan			= lib_language.language()
+
+		self.service						= service
+
+		self.upload_times					= upload_times
+
+		self.rate_limit_count				= None
+		self.rate_limit_seconds				= None
+		self.rate_limits_variable_seconds	= 0
+
+		self.post_maxlength	= 300
+		self.newPostsOnTop					= False
+
+
 
 		self.reset_messages()
 
@@ -45,16 +67,34 @@ class services(object):
 		self.reset_messages()
 		return(False)
 
-	def delaytime(self, upload_times):
+	def keep_posting_rate(self):
+		self.upload_times.append(lib_system.get_uptime_sec())
+
+		delaytime	= self.get_delaytime()
+		if delaytime > 0:
+			ServiceName	= 'unknown service' if not self.service else self.__lan.l(f'box_backup_mode_social_{self.service}')
+			while delaytime > 0:
+				self.__display.message([
+					'set:clear',
+					f":{ServiceName}",
+					f":{self.__lan.l('box_backup_delay_rate_limit')}",
+					f":{delaytime:.0f} s"
+				])
+				time.sleep(1)
+				delaytime	-= 1
+
+	def get_delaytime(self):
+		variable_seconds	= random.randint(0, self.rate_limits_variable_seconds)
+
 		if not self.rate_limit_count or not self.rate_limit_seconds:
-			return(0)
+			return(variable_seconds)
 
-		if len(upload_times) >= self.rate_limit_count:
+		if len(self.upload_times) >= self.rate_limit_count:
 			uptime	= lib_system.get_uptime_sec()
-			if uptime - upload_times[0] < self.rate_limit_seconds:
-				return(self.rate_limit_seconds - uptime + upload_times[0])
+			if uptime - self.upload_times[0] < self.rate_limit_seconds:
+				return(self.rate_limit_seconds - uptime + self.upload_times[0] + variable_seconds)
 
-		return(0)
+		return(variable_seconds)
 
 	def html_to_plain(self, Comment: str) -> str:
 		if not Comment:

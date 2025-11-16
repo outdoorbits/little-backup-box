@@ -21,15 +21,21 @@ from pathlib import Path
 import re
 
 from lib_socialmedia_parent import services
-import lib_system
 
 # import lib_debug
 # xx	= lib_debug.debug()
 
 class telegram(services):
 
-	def __init__(self, TG_TOKEN, TG_CHAT_ID, check_only=False):
-		super().__init__()
+	def __init__(
+			self,
+			service,
+			TG_TOKEN,
+			TG_CHAT_ID,
+			check_only=False,
+			upload_times=[]
+		):
+		super().__init__(service=service, check_only=check_only, upload_times=upload_times)
 
 		self.TOKEN				= (TG_TOKEN or "").strip()
 		self.CHAT_ID			= TG_CHAT_ID
@@ -72,6 +78,7 @@ class telegram(services):
 		async with self.Bot(token=self.TOKEN, request=request) as BOT:
 			try:
 				async def send_text(text, TXTParseMode=None):
+					self.keep_posting_rate()
 					await BOT.send_message(
 						chat_id		= self.CHAT_ID,
 						text		= text,
@@ -102,6 +109,7 @@ class telegram(services):
 						if index == 0 : # media first
 
 							if msgtype.main == 'video' and FilePath:
+								self.keep_posting_rate()
 								with open(FilePath, 'rb') as f:
 									await BOT.send_video(
 										chat_id				= self.CHAT_ID,
@@ -111,6 +119,7 @@ class telegram(services):
 									)
 
 							elif msgtype.main == 'audio':
+								self.keep_posting_rate()
 								with open(FilePath, 'rb') as f:
 									await BOT.send_voice(
 										chat_id				= self.CHAT_ID,
@@ -119,6 +128,7 @@ class telegram(services):
 									)
 
 							elif msgtype.main == 'photo':
+								self.keep_posting_rate()
 								with open(FilePath, 'rb') as f:
 									await BOT.send_photo(
 										chat_id				= self.CHAT_ID,
@@ -128,6 +138,7 @@ class telegram(services):
 
 							elif msgtype.main == 'document':
 								with open(FilePath, 'rb') as f:
+									self.keep_posting_rate()
 									await BOT.send_document(
 										chat_id				= self.CHAT_ID,
 										document			= self.InputFile(f, filename=FilePath.name),

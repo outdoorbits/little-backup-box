@@ -29,12 +29,20 @@ import lib_system
 # xx	= lib_debug.debug()
 
 class matrix(services):
-	def __init__(self, HOMESERVER, ACCESS_TOKEN, ROOM_ID, check_only=False):
+	def __init__(
+			self,
+			service,
+			HOMESERVER,
+			ACCESS_TOKEN,
+			ROOM_ID,
+			check_only=False,
+			upload_times=[]
+		):
 		# HOMESERVER:   e.g. 'https://matrix.example.org'
 		# ACCESS_TOKEN: permanent access token for the bot user
 		# ROOM_ID:      '!something:example.org' (or alias, if your server supports that)
 
-		super().__init__()
+		super().__init__(service=service, check_only=check_only, upload_times=upload_times)
 
 		self.homeserver								= (HOMESERVER or "").strip()
 		self.access_token							= (ACCESS_TOKEN or "").strip()
@@ -87,6 +95,7 @@ class matrix(services):
 				if formatted is not None:
 					content.update(formatted)
 
+				self.keep_posting_rate()
 				resp	= await client.room_send(
 					room_id=self.room_id,
 					message_type="m.room.message",
@@ -192,7 +201,8 @@ class matrix(services):
 							content.setdefault("info", {})
 							content["info"]["mimetype"]	= media_mime
 
-						resp = await client.room_send(
+						self.keep_posting_rate()
+						resp	= await client.room_send(
 							room_id			= self.room_id,
 							message_type	= "m.room.message",
 							content			= content
@@ -250,7 +260,7 @@ class matrix(services):
 			self.ok				= False
 			self.add_message("not configured")
 
-	def delaytime(self, upload_times):
+	def get_delaytime(self):
 		if not self.rate_limit_count or not self.rate_limit_seconds:
 			return(0)
 
@@ -260,10 +270,10 @@ class matrix(services):
 			return(0)
 
 		# respect time limit
-		if len(upload_times) >= self.rate_limit_count:
+		if len(self.upload_times) >= self.rate_limit_count:
 			uptime	= lib_system.get_uptime_sec()
-			if uptime - upload_times[0] < self.rate_limit_seconds:
-				return(self.rate_limit_seconds - uptime + upload_times[0])
+			if uptime - self.upload_times[0] < self.rate_limit_seconds:
+				return(self.rate_limit_seconds - uptime + self.upload_times[0])
 
 		return(0)
 

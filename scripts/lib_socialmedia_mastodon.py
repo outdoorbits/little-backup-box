@@ -21,7 +21,6 @@ from pathlib import Path
 import time
 
 from lib_socialmedia_parent import services
-import lib_system
 
 # import lib_debug
 # xx	= lib_debug.debug()
@@ -29,11 +28,13 @@ import lib_system
 class mastodon(services):
 	def __init__(
 		self,
+		service,
 		MA_API_BASE_URL,
 		MA_ACCESS_TOKEN,
-		check_only=False
+		check_only=False,
+		upload_times=[]
 	):
-		super().__init__()
+		super().__init__(service=service, check_only=check_only, upload_times=upload_times)
 
 		self.API_BASE_URL   = (MA_API_BASE_URL or '').strip()
 		self.ACCESS_TOKEN   = (MA_ACCESS_TOKEN or '').strip()
@@ -41,18 +42,19 @@ class mastodon(services):
 		self.rate_limit_count	= 300
 		self.rate_limit_seconds	= 300
 
+		self.newPostsOnTop					= True
+
 		if not check_only and self.configured():
 			from mastodon import Mastodon
 
 			try:
+				self.keep_posting_rate()
 				self.mastodon = Mastodon(
 					access_token	= self.ACCESS_TOKEN,
 					api_base_url	= self.API_BASE_URL
 				)
 			except Exception as e:
 				self.add_message(f'login: {type(e).__name__}, {e}')
-			else:
-				time.sleep(1) # mastodon often sends on the second try -> maybe this will improve
 
 			try:
 				self.post_maxlength	= self.mastodon.instance()['configuration']['statuses']['max_characters']
@@ -72,6 +74,7 @@ class mastodon(services):
 
 		try:
 			def send_text(text):
+				self.keep_posting_rate()
 				self.mastodon.status_post(
 					status	= text
 				)
@@ -96,6 +99,7 @@ class mastodon(services):
 							# description='Alt text'  # optional alt-text
 						)
 
+						self.keep_posting_rate()
 						self.mastodon.status_post(
 							status		= CommentPart,
 							media_ids	= [media['id']]

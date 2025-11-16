@@ -21,7 +21,9 @@ import base64
 import os
 from PIL import Image, ImageDraw, ImageFont
 import qrcode
+import secrets
 import shutil
+import string
 import subprocess
 import sys
 
@@ -69,8 +71,20 @@ class comitup(object):
 		except:
 			print("Error writing comitup config file.")
 
-	def get_status(self):
+	def dynamic_password(self):
+		if	self.__setup.get_val('conf_WIFI_PASSWORD_TYPE') != 'dynamic' or \
+			not self.__setup.get_val('conf_DISP') or \
+			self.__setup.get_val('conf_DISP_RESOLUTION_X') < 64 or \
+			self.__setup.get_val('conf_DISP_RESOLUTION_Y') < 64:
+			return
 
+		alphabet = string.ascii_letters + string.digits  # A-Z, a-z, 0-9
+		Password = ''.join(secrets.choice(alphabet) for _ in range(13))
+		self.config(Password=Password)
+		self.__setup.set_val('conf_WIFI_PASSWORD', Password)
+		self.__setup.rewrite_configfile()
+
+	def get_status(self):
 		status	= {
 			'SSID':		False,
 			'mode':		False,
@@ -107,10 +121,8 @@ class comitup(object):
 	def create_wifi_link_qr_image(self):
 		status	= self.get_status()
 
-		PASSWORD		= self.__conf_WIFI_PASSWORD
 		width			= self.__conf_DISP_RESOLUTION_X
 		height			= self.__conf_DISP_RESOLUTION_Y
-		WIFI_QR_FILE	= self.__const_WIFI_QR_FILE_PATH
 
 		qr_box_size	= int(2*height/64)
 		qr_border	= 1
@@ -122,10 +134,14 @@ class comitup(object):
 		shift_x		= size if height <= width else 0
 		shift_y		= size if height > width else 0
 
-		if (status['mode'] == 'router' or status['state'] == 'HOTSPOT') and status['SSID'] and width >= 64 and height >= 64:
+		if 	(status['mode'] == 'router' or status['state'] == 'HOTSPOT') and \
+			status['SSID'] and \
+			width >= 64 and \
+			height >= 64 and \
+			not any(c in self.__conf_WIFI_PASSWORD for c in [':', ';']):
 			# create QR code
 
-			LinkText	= f"WIFI:T:WPA;S:{status['SSID']};P:{PASSWORD};H:;;"
+			LinkText	= f"WIFI:T:WPA;S:{status['SSID']};P:{self.__conf_WIFI_PASSWORD};H:;;"
 
 			qr	= qrcode.QRCode(
 				version				= 3,
@@ -226,10 +242,10 @@ class comitup(object):
 
 		draw.text((HOT_x, HOT_y), HOT, font=font, fill="white")
 
-		if os.path.exists(WIFI_QR_FILE):
-			os.remove(WIFI_QR_FILE)
+		if os.path.exists(self.__const_WIFI_QR_FILE_PATH):
+			os.remove(self.__const_WIFI_QR_FILE_PATH)
 
-		final_image.save(WIFI_QR_FILE)
+		final_image.save(self.__const_WIFI_QR_FILE_PATH)
 
 		return()
 

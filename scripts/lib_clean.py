@@ -78,7 +78,7 @@ class clean(object):
 
 	def display_content(self):
 		try:
-			subprocess.run(f'rm {self.__const_DISPLAY_CONTENT_PATH}/*', shell=True)
+			subprocess.run(f"bash -c 'shopt -s nullglob; rm -f {self.__const_DISPLAY_CONTENT_PATH}/*'", shell=True)
 		except:
 			pass
 
@@ -89,19 +89,19 @@ class clean(object):
 
 	def display_image(self):
 		try:
-			subprocess.run(f'rm -R {self.__const_DISPLAY_IMAGE_EXPORT_FILE}', shell=True)
+			subprocess.run(f"bash -c 'shopt -s nullglob; rm -f {self.__const_DISPLAY_IMAGE_EXPORT_FILE}'", shell=True)
 		except:
 			pass
 
 		if not self.__conf_DIPLAY_IMAGES_KEEP:
 			try:
-				subprocess.run(f'rm -R {self.__const_DISPLAY_IMAGE_KEEP_PATH}', shell=True)
+				subprocess.run(f"bash -c 'shopt -s nullglob; rm -f -R {self.__const_DISPLAY_IMAGE_KEEP_PATH}'", shell=True)
 			except:
 				pass
 
 	def tasks(self):
 		try:
-			subprocess.run(f'rm {self.__const_TASKS_PATH}/*', shell=True)
+			subprocess.run(f"bash -c 'shopt -s nullglob; rm -f {self.__const_TASKS_PATH}/*'", shell=True)
 		except:
 			pass
 

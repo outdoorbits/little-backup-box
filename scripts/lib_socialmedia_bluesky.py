@@ -20,29 +20,33 @@
 from pathlib import Path
 
 from lib_socialmedia_parent import services
-import lib_system
 
 # import lib_debug
 # xx	= lib_debug.debug()
 
 class bluesky(services):
+
 	def __init__(
 		self,
+		service,
 		BS_API_BASE_URL,   # e.g. "https://bsky.social" or custom PDS base URL
 		BS_IDENTIFIER,     # handle or DID, e.g. "alice.bsky.social"
 		BS_APP_PASSWORD,    # app password from settings (NOT your normal password)
-		check_only=False
+		check_only=False,
+		upload_times=[]
 	):
-		super().__init__()
+		super().__init__(service=service, check_only=check_only, upload_times=upload_times)
 
 		self.API_BASE_URL	= (BS_API_BASE_URL or "").strip()
 		self.IDENTIFIER		= (BS_IDENTIFIER or "").strip()
 		self.APP_PASSWORD	= (BS_APP_PASSWORD or "").strip()
 
 		self.post_maxlength	= 300
+		self.newPostsOnTop					= True
 
-		self.rate_limit_count	= 1
-		self.rate_limit_seconds	= 10
+		self.rate_limit_count				= 1
+		self.rate_limit_seconds				= 10
+		self.rate_limits_variable_seconds	= 3
 
 		if not check_only and self.configured():
 			from atproto import Client, models
@@ -53,6 +57,7 @@ class bluesky(services):
 				self.bluesky	= Client(base_url=self.API_BASE_URL)
 
 				# Login using identifier (handle / DID) and an app password.
+				self.keep_posting_rate()
 				self.bluesky.login(self.IDENTIFIER, self.APP_PASSWORD)
 			except Exception as e:
 				self.bluesky = None
@@ -72,6 +77,7 @@ class bluesky(services):
 
 		try:
 			def send_text(text):
+				self.keep_posting_rate()
 				self.bluesky.post(
 					text = CommentPart
 				)
@@ -89,7 +95,7 @@ class bluesky(services):
 				CommentParts	= self.split_text(Comment, self.post_maxlength)
 				for index, CommentPart in enumerate(reversed(CommentParts)):
 
-					if index == (len(CommentParts) - 1): # media last
+					if index == (len(CommentParts) - 1): # send media last
 
 						if msgtype.main == 'photo':
 							if FilePath is None:
@@ -108,6 +114,7 @@ class bluesky(services):
 							embed = self.models.AppBskyEmbedImages.Main(images=[image_obj])
 
 							# Create the post with the image embedded.
+							self.keep_posting_rate()
 							self.bluesky.post(
 								text	= CommentPart,
 								embed	= embed
@@ -133,6 +140,7 @@ class bluesky(services):
 			self.ok = True
 			name = f" {getattr(FilePath, 'name', '')}" if FilePath else ''
 			self.add_message(f'{msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}{name}: o.k.')
+
 	def publish(self, msgtype, Comment='', FilePath=None):
 
 		if self.bluesky:

@@ -19,9 +19,7 @@
 
 import os
 import re
-import secrets
 import sqlite3
-import string
 import subprocess
 import sys
 import time
@@ -96,16 +94,8 @@ class poweroff(object):
 			# cleanup
 			lib_clean.clean().cleanup(jobs=['full'])
 
-			# generate new random wifi password
-			if self.__setup.get_val('conf_WIFI_PASSWORD_TYPE') == 'dynamic' and \
-				self.__setup.get_val('conf_DISP') and \
-				self.__setup.get_val('conf_DISP_RESOLUTION_X') >= 64 and \
-				self.__setup.get_val('conf_DISP_RESOLUTION_Y') >= 64:
-				alphabet = string.ascii_letters + string.digits  # A-Z, a-z, 0-9
-				Password = ''.join(secrets.choice(alphabet) for _ in range(13))
-				lib_comitup.comitup().config(Password=Password)
-				self.__setup.set_val('conf_WIFI_PASSWORD', Password)
-				self.__setup.rewrite_configfile()
+			# generate new random wifi password (if configured)
+			lib_comitup.comitup().dynamic_password()
 
 			# Power off
 			if self.Action == 'poweroff':

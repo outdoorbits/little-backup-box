@@ -759,7 +759,8 @@
         "wifi_changed": "The Wi-Fi password has been changed",
         "too_long": "Password too long. Maximum character length:",
         "not_ascii": "Only ASCII characters are allowed.",
-        "too_long_qr": "<strong>Warning!</strong> The WiFi QR code only works for passwords up to a length of 13 characters."
+        "too_long_qr": "<strong>Warning!</strong> The WiFi QR code only works for passwords up to a length of 13 characters.",
+        "wifi_invalid_chars": "The WiFi QR code cannot represent “:” or “;”."
       },
       "settings": {
         "upload_not_zip": "The file you are trying to upload is not a .zip file. Please try again.",
