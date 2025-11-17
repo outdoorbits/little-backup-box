@@ -261,7 +261,17 @@
     "filesystem": "Filesystem",
     "filebrowser": "Files",
     "view": "View",
-    "maintenance": "Maintenance"
+    "maintenance": "Maintenance",
+    "scrape": "Scraped UI"
+  },
+  "scrape": {
+    "title": "Scraped Pages",
+    "description": "Explore the static snapshots of the Little Backup Box interface that were scraped from a running device. Each snapshot opens in a new tab and can be browsed without the backend.",
+    "open": "Open snapshot",
+    "empty": "No scraped pages are available right now.",
+    "error": "Failed to load the list of scraped pages.",
+    "updated": "Last updated:",
+    "generated": "Manifest generated:"
   },
   "main": {
     "internal_button": "Internal storage",

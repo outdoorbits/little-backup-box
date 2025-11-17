@@ -34,6 +34,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import InfoIcon from '@mui/icons-material/Info';
 import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 import LinkIcon from '@mui/icons-material/Link';
+import PublicIcon from '@mui/icons-material/Public';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useConfig } from '../contexts/ConfigContext';
 import { useDrawer } from '../contexts/DrawerContext';
@@ -73,6 +74,7 @@ function Menu() {
     { path: '/maintenance', key: 'maintenance', icon: <BuildCircleIcon /> },
     { path: '/sysinfo', key: 'sysinfo', icon: <InfoIcon /> },
     { path: '/setup', key: 'config', icon: <PaletteIcon /> },
+    { path: '/scrape', key: 'scrape', icon: <PublicIcon /> },
   ];
 
   const handleDrawerToggle = () => {
@@ -278,6 +280,7 @@ function Menu() {
       '/tools': { key: 'mainmenue.filesystem', fallback: 'Filesystem' },
       '/sysinfo': { key: 'mainmenue.sysinfo', fallback: 'System' },
       '/maintenance': { key: 'mainmenue.maintenance', fallback: 'Maintenance' },
+      '/scrape': { key: 'mainmenue.scrape', fallback: 'Scraped UI' },
     };
     const routeInfo = routeMap[location.pathname] || routeMap['/'];
     const translation = t(routeInfo.key);

@@ -7,6 +7,7 @@ import Tools from './pages/Tools';
 import SysInfo from './pages/SysInfo';
 import Maintenance from './pages/Maintenance';
 import Integrations from './pages/Integrations';
+import Scrape from './pages/Scrape';
 
 function RedirectHandler() {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ function App() {
         <Route path="/sysinfo" element={<SysInfo />} />
         <Route path="/maintenance" element={<Maintenance />} />
         <Route path="/integrations" element={<Integrations />} />
+        <Route path="/scrape" element={<Scrape />} />
       </Routes>
     </Layout>
   );

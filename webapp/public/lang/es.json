@@ -15,7 +15,17 @@
     "filebrowser": "Archivos",
     "view": "View",
     "update": "actualización",
-    "maintenance": "Mantenimiento"
+    "maintenance": "Mantenimiento",
+    "scrape": "Interfaz archivada"
+  },
+  "scrape": {
+    "title": "Páginas capturadas",
+    "description": "Explora las instantáneas estáticas de la interfaz de Little Backup Box que se copiaron desde un dispositivo en ejecución. Cada captura se abre en una pestaña nueva y funciona sin el backend.",
+    "open": "Abrir captura",
+    "empty": "No hay páginas capturadas disponibles por ahora.",
+    "error": "No se pudo cargar la lista de páginas capturadas.",
+    "updated": "Última actualización:",
+    "generated": "Manifiesto generado:"
   },
   "main": {
     "internal_button": "Almacenamiento int.",

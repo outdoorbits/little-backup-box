@@ -15,7 +15,17 @@
     "filebrowser": "Des dossiers",
     "view": "View",
     "update": "mise à jour",
-    "maintenance": "Maintenance"
+    "maintenance": "Maintenance",
+    "scrape": "Interface archivée"
+  },
+  "scrape": {
+    "title": "Pages archivées",
+    "description": "Explorez les instantanés statiques de l'interface Little Backup Box qui ont été copiés à partir d'un appareil en fonctionnement. Chaque instantané s'ouvre dans un nouvel onglet et fonctionne sans backend.",
+    "open": "Ouvrir l'instantané",
+    "empty": "Aucune page archivée n'est disponible pour le moment.",
+    "error": "Impossible de charger la liste des pages archivées.",
+    "updated": "Dernière mise à jour :",
+    "generated": "Manifeste généré :"
   },
   "main": {
     "internal_button": "stockage interne",

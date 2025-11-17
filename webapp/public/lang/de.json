@@ -15,7 +15,17 @@
     "filebrowser": "Dateien",
     "view": "View",
     "update": "Update",
-    "maintenance": "Wartung"
+    "maintenance": "Wartung",
+    "scrape": "Archivierte UI"
+  },
+  "scrape": {
+    "title": "Gespeicherte Seiten",
+    "description": "Durchstöbern Sie die statischen Momentaufnahmen der Little Backup Box-Oberfläche, die von einem laufenden Gerät kopiert wurden. Jede Momentaufnahme öffnet sich in einem neuen Tab und funktioniert ohne Backend.",
+    "open": "Snapshot öffnen",
+    "empty": "Derzeit sind keine gespeicherten Seiten verfügbar.",
+    "error": "Die Liste der gespeicherten Seiten konnte nicht geladen werden.",
+    "updated": "Zuletzt aktualisiert:",
+    "generated": "Manifest erstellt:"
   },
   "main": {
     "internal_button": "int. Speicher",
