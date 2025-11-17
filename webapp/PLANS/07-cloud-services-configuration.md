@@ -6,24 +6,24 @@ Implement cloud services configuration including rclone-based cloud storage setu
 ## Missing Features
 
 ### Cloud Service Configuration (per service)
-- [ ] Cloud target basedir input (per service)
-- [ ] Cloud sync method selection (per service):
+- [x] Cloud target basedir input (per service)
+- [x] Cloud sync method selection (per service):
   - copy
   - sync
   - move
-- [ ] Cloud files stay in place toggle (per service)
-- [ ] Configuration table showing all services with settings
+- [x] Cloud files stay in place toggle (per service)
+- [x] Configuration table showing all services with settings
 
 ### rclone GUI
-- [ ] rclone GUI restart button
-- [ ] rclone GUI access information display:
+- [x] rclone GUI restart button
+- [x] rclone GUI access information display:
   - URL
   - Username: 'lbb'
   - Password reference (set in password section)
 
 ### Cloud Service Detection
-- [ ] Auto-detect configured cloud services from rclone config
-- [ ] Display only configured services in UI
+- [x] Auto-detect configured cloud services from rclone config
+- [x] Display only configured services in UI
 
 ## Implementation Details
 

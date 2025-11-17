@@ -519,7 +519,8 @@ async function getCloudServices(req) {
     return result.stdout
       .trim()
       .split('\n')
-      .filter(line => line.trim());
+      .filter(line => line.trim())
+      .map(line => line.replace(/^\[|\]$/g, ''));
   } catch (error) {
     return [];
   }

@@ -14,6 +14,10 @@ import cmdRoutes from './routes/cmd.js';
 import logRoutes from './routes/log.js';
 import displayRoutes from './routes/display.js';
 import systemRoutes from './routes/system.js';
+import socialRoutes from './routes/social.js';
+import cloudRoutes from './routes/cloud.js';
+import vpnRoutes from './routes/vpn.js';
+import networkRoutes from './routes/network.js';
 import { loadConfig, loadConstants } from './utils/configLoader.js';
 import { isLinux, shouldUseMocks } from './utils/systemDetector.js';
 
@@ -51,6 +55,10 @@ app.use('/api/cmd', cmdRoutes);
 app.use('/api/log', logRoutes);
 app.use('/api/display', displayRoutes);
 app.use('/api/system', systemRoutes);
+app.use('/api/social', socialRoutes);
+app.use('/api/cloud', cloudRoutes);
+app.use('/api/vpn', vpnRoutes);
+app.use('/api/network', networkRoutes);
 
 const isDev = process.env.NODE_ENV !== 'production';
 

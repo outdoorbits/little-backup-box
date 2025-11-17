@@ -16,9 +16,14 @@ import {
   Stack,
   Divider,
   Alert,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useConfig } from '../contexts/ConfigContext';
+import DisplayConfig from '../components/DisplayConfig';
 
 function Setup() {
   const { t } = useLanguage();
@@ -120,6 +125,7 @@ function Setup() {
                     <MenuItem value="de">Deutsch</MenuItem>
                     <MenuItem value="es">Español</MenuItem>
                     <MenuItem value="fr">Français</MenuItem>
+                    <MenuItem value="fi">Suomi</MenuItem>
                   </Select>
                 </FormControl>
 
@@ -137,8 +143,42 @@ function Setup() {
                     <MenuItem value="system">System</MenuItem>
                   </Select>
                 </FormControl>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Typography variant="h6" gutterBottom>
+                  {t('config.screen.virtual_keyboard_enable_header') || 'Virtual keyboard'}
+                </Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.conf_VIRTUAL_KEYBOARD_ENABLED === '1' || formData.conf_VIRTUAL_KEYBOARD_ENABLED === true}
+                      onChange={(e) => {
+                        setFormData({ ...formData, conf_VIRTUAL_KEYBOARD_ENABLED: e.target.checked ? '1' : '0' });
+                      }}
+                    />
+                  }
+                  label={t('config.screen.virtual_keyboard_enable_label') || 'Enable virtual keyboard'}
+                />
               </Stack>
 
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Accordion defaultExpanded>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography variant="h5">
+                    {t('config.display.section') || 'Display'}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <DisplayConfig />
+                </AccordionDetails>
+              </Accordion>
             </CardContent>
           </Card>
         </Grid>

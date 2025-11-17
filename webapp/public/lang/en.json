@@ -253,15 +253,36 @@
       "reset_done": "Comitup reset"
     }
   },
+  "network": {
+    "wifi_config": {
+      "title": "WiFi"
+    },
+    "rsync_config": {
+      "title": "rsync Server"
+    },
+    "network_info": {
+      "title": "Network Information"
+    },
+    "internet_status": "Internet Status",
+    "online": "Online",
+    "offline": "Offline",
+    "ip_addresses": "IP Addresses",
+    "refresh": "Refresh",
+    "no_ips": "No IP addresses found",
+    "qr_codes": "QR Codes"
+  },
   "mainmenue": {
     "main": "Backup",
     "sysinfo": "System",
+    "network": "Network",
     "config": "User Interface",
-    "integrations": "Integrations",
+    "integrations": "Service Connections",
     "filesystem": "Filesystem",
-    "filebrowser": "Files",
+    "filebrowser": "File browser",
+    "gallery": "Gallery",
     "view": "View",
     "maintenance": "Maintenance",
+    "rclone_gui": "rclone GUI",
     "scrape": "Scraped UI"
   },
   "scrape": {
@@ -279,11 +300,22 @@
     "rsync_button": "rsync-server",
     "reboot_button": "Reboot",
     "shutdown_button": "Power off",
+    "cancel_button": "Cancel",
+    "reboot_confirm_title": "Reboot the device?",
+    "reboot_confirm_message": "Warning: Backup processes are currently running. They will be interrupted if you proceed. Are you sure you want to reboot?",
+    "reboot_confirm_message_no_backup": "Are you sure you want to reboot the device?",
+    "shutdown_confirm_title": "Shutdown the device?",
+    "shutdown_confirm_message": "Warning: Backup processes are currently running. They will be interrupted if you proceed. Are you sure you want to shutdown?",
+    "shutdown_confirm_message_no_backup": "Are you sure you want to shutdown the device?",
+    "stop_lbb_button": "Stop LBB",
+    "stop_lbb_confirm_title": "Stop Little Backup Box?",
+    "stop_lbb_confirm_message": "Backup processes are currently running. Do you want to stop them and terminate Little Backup Box?",
+    "stop_lbb_confirm_message_no_backup": "Are you sure you want to terminate Little Backup Box?",
     "cloudservice": "cloudservice",
     "stopbackup_button": "STOP",
     "stopbackup_m": "Stopping backup.",
-    "reboot_m": "Little Backup Box reboots. Refresh this page in a few moments.",
-    "shutdown_m": "Little Backup Box is powered off. You can close this page.",
+    "reboot_m": "The device reboots. Refresh this page in a few moments.",
+    "shutdown_m": "The device is powered off. You can close this page.",
     "help_txt": "<ul>\n   <li>any USB: All connected USB devices, both cameras and storage, are backed up.</li>\n   <li>Target rsync server: Cameras cannot be backed up directly to an rsync server. Local caching is required here.</li>\n</ul>\n<p class = 'text-center'> Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.< /p>",
     "usb_button": "USB storage",
     "view_database": "View-Database",
@@ -320,12 +352,19 @@
       "on": "on",
       "rename_checkbox_label": "Rename files (only for local storage)",
       "checksum_checkbox_label": "Compare checksums of files already existing on the target (instead of file size and timestamp)?",
+      "comparison_method_label": "Comparison method",
+      "comparison_file_size_timestamp": "File size and timestamp",
+      "comparison_checksum": "Checksum",
       "previous_runs": "Previous Backup Runs",
       "rerun": "Rerun",
+      "save_as_defaults": "Save as defaults",
+      "defaults_saved": "Defaults saved successfully",
+      "defaults_save_error": "Failed to save defaults",
       "start": "Start Backup",
       "usb_devices": "USB Devices",
       "internal_storage": "Internal Storage",
-      "partitions": "Partitions"
+      "partitions": "Partitions",
+      "local_storage": "Local Storage"
     },
     "logout_button": "Logout",
     "nvme_button": "NVMe SSD",
@@ -381,12 +420,13 @@
     "alert_password_not_identical": "Repeated password is not identical.",
     "alert_password_too_short": "Password must be at least 5 characters long.",
     "message_settings_saved": "config.cfg was written successfully.",
+    "saving": "Saving...",
     "alert_settings_upload_not_zip": "The file you are trying to upload is not a .zip file. Please try again.",
     "alert_settings_upload_success": "Your settings file has been uploaded and this files have been installed:",
     "alert_settings_upload_problem": "There was a problem with the upload. Please try again.",
     "lang_header": "Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
-    "lang_browser_detect": "Browser detect",
+    "lang_browser_detect": "Auto-detect",
     "view_section": "View",
     "view_section_desc": "These settings define the default UI values for new users.",
     "view_theme_header": "Theme",
@@ -430,7 +470,7 @@
       "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)",
       "update_exif_header": "Automatically adjust EXIF data of media files on import",
       "update_exif_label": "Adjust EXIF ​​data during import",
-      "default_settings_header": "Settings for the primary standard backup",
+      "default_settings_header": "Primary standard backup",
       "target": {
         "requirements_header": "Target partition requirements",
         "requirements_label": "What is the minimum size of the target partition to be accepted?",
@@ -448,8 +488,11 @@
         "device_folder_pattern": "For use as pattern in Settings"
       },
       "general_settings_header": "Defaults",
-      "general_settings_desc": "These settings define the default UI values for new users and default configurations for operations such as backups. Individual operations can override these defaults.",
+      "general_settings_desc": "These settings define the default options for backups. These defaults can be overridden in the options section when performing individual backup operations.",
       "move_files_label": "Move files instead of copying them?",
+      "file_operation_label": "File operation",
+      "file_operation_copy": "Copy files",
+      "file_operation_move": "Move files",
       "cloud": {
         "target_basedir_header": "Base folder on cloud servers",
         "target_basedir_label": "The backup on the cloud server is carried out under this directory.",
@@ -460,7 +503,7 @@
         "files_stay_in_place_label": "Do the files remain in the storage location immediately after uploading or are they sorted away? (This only applies to rclone!)"
       },
       "move_files_header": "Copy or move files",
-      "default2_settings_header": "Settings for the secondary standard backup",
+      "default2_settings_header": "Secondary standard backup",
       "rename": {
         "header": "Rename files",
         "warning": "Attention! The files should then be deleted from the source. Otherwise they will be transferred again during the next backup, renamed and replacing the version from the previous backup.",
@@ -536,13 +579,13 @@
     "alert_password_wifi_size_error": "The password cannot be used for the WiFi hotspot. For this, the length would have to be 8 to 63 characters.",
     "vpn": {
       "section": "VPN",
-      "upload_header": "Upload configuration file",
+      "upload_header": "Upload file",
       "upload_type_label": "For which VPN variant should the configuration file be used?",
       "upload_type_none": "Please select",
       "type_none": "Don't use VPN",
       "type_header": "Which VPN to activate?",
       "upload_file_label": "Upload configuration file",
-      "remove_header": "Delete VPN configuration file",
+      "remove_header": "Delete VPN file",
       "timeout_header": "VPN timeout",
       "timeout_label": "What is the maximum time to wait for the VPN connection to be established?",
       "type_cloud_label": "For cloud services",
@@ -551,15 +594,15 @@
     },
     "display": {
       "section": "Display",
-      "activate_label": "Is a display connected and should it be used?",
+      "activate_label": "Enable the display connected to GPIO",
       "connection_header": "Interface for the display",
-      "connection_label": "Which interface should be used?",
+      "connection_label": "Display interface",
       "i2c_address_label": "i2c address of the display",
-      "i2c_header": "I2C display configuration",
+      "i2c_header": "I2C display",
       "ip_label": "Print IP every minute.",
       "device_available": "Device detected",
       "behavior_header": "Display behavior",
-      "spi_header": "SPI display configuration",
+      "spi_header": "SPI display",
       "spi_port_label": "SPI port",
       "driver_label": "Display driver",
       "resolution_x_label": "Horizontal resolution (pixels)",
@@ -585,7 +628,9 @@
         "model_label": "Color",
         "text_label": "Default font color",
         "background_label": "Background color",
-        "bgr_label": "BGR color notation (blue-green-red) instead of RGB (red-green-blue)",
+        "notation_label": "Color notation",
+        "notation_RGB": "RGB (red-green-blue)",
+        "notation_BGR": "BGR (blue-green-red)",
         "inverse_label": "Inverted colors"
       },
       "contrast_label": "Contrast",
@@ -599,8 +644,9 @@
       },
       "backlight_header": "Display backlight",
       "backlight_enabled_label": "Activate display backlight (if available)",
-      "backlight_pin_label": "Which GPIO pin (BCM notation) is connected to the backlight?",
-      "additional_settings_header": "Additional display settings"
+      "backlight_pin_label": "Backlight GPIO pin (BCM notation)",
+      "additional_settings_header": "Additional display",
+      "detect_devices": "Detect devices"
     },
     "menu": {
       "enable_header": "Activate display menu",
@@ -649,8 +695,7 @@
     "screen": {
       "section": "Screen",
       "virtual_keyboard_enable_header": "Virtual keyboard",
-      "virtual_keyboard_enable_label": "Enable virtual keyboard",
-      "description": "Settings that affect a screen with a graphical user interface (desktop)."
+      "virtual_keyboard_enable_label": "Enable virtual keyboard"
     },
     "alert_password_characters_not_allowed": "The password must not contain quotation marks (&sbquo;), double quotation marks (&quot;), spaces or backslashes (&bsol;).",
     "exit": {
@@ -682,14 +727,14 @@
     "social": {
       "section": "Social media",
       "bluesky": {
-        "header": "Configure Bluesky",
+        "header": "Bluesky",
         "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04f_Bluesky\">Wiki: Bluesky</a>",
         "base_url_label": "API Base URL",
         "identifier_label": "Identifier (Email or Handle)",
         "app_password_label": "App Password"
       },
       "telegram": {
-        "header": "Configure Telegram",
+        "header": "Telegram",
         "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki: Telegram</a>",
         "token_label": "Token",
         "chat_id_label": "Chat ID",
@@ -713,7 +758,7 @@
         "button_select_chat": "Select chat"
       },
       "mastodon": {
-        "header": "Configure Mastodon",
+        "header": "Mastodon",
         "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Mastodon\">Wiki: Mastodon</a>",
         "token_label": "Access token",
         "base_url_label": "Mastodon base URL"
@@ -724,7 +769,7 @@
         "filename_label": "Publish file name"
       },
       "matrix": {
-        "header": "Configure Matrix",
+        "header": "Matrix",
         "install_desc": "Please refer to the preparations in the <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Matrix\">Wiki: Matrix</a>",
         "homeserver_label": "Matrix homeserver (e.g. https://matrix.example.org)",
         "token_label": "Access token of the bot account",
@@ -769,6 +814,11 @@
       }
     },
     "cloud": {
+      "target_basedir_header": "Base folder on cloud servers",
+      "target_basedir_label": "The backup on the cloud server is carried out under this directory.",
+      "sync_method_header": "Sync Method",
+      "sync_parameter_header": "Sync Parameters",
+      "files_stay_in_place_header": "Files Stay In Place",
       "rclone": {
         "gui": {
           "header": "rclone GUI",
@@ -776,11 +826,12 @@
           "restart_header": "Update and restart rclone GUI",
           "restart_label": "Update and restart rclone GUI",
           "restarted": "The rclone UI has been restarted.",
-          "restart_desc": "An internet connection is mandatory."
+          "restart_desc": "An internet connection is mandatory.",
+          "password_hint": "Use the global password set in the Password section"
         },
         "desc": "Depending on your cloud service, this configuration may only be valid for a limited time."
       },
-      "section": "Configure Cloud-services"
+      "section": "Cloud Services"
     },
     "password": {
       "password": "Password",
@@ -823,7 +874,8 @@
       "source": "source",
       "usb": "USB",
       "select_partition_label": "Partition",
-      "nvme": "NVMe SSD"
+      "nvme": "NVMe SSD",
+      "mounted": "mounted"
     }
   },
   "cmd": {
@@ -850,7 +902,7 @@
       "description": "Scheduled operation"
     },
     "f3": {
-      "header": "Check USB device for authenticity",
+      "header": "Verify USB drive capacity",
       "warning_non_destructive": "Attention, ALL DATA on the data medium could be deleted!",
       "warning_destructive": "Attention, ALL DATA on the data medium will be deleted!",
       "description_non_destructive": "Data will be preserved as far as possible.",
@@ -941,6 +993,26 @@
       "branch": "Branch",
       "installed_version": "Installed version",
       "available_version": "Available version"
+    }
+  },
+  "integrations": {
+    "social_media": {
+      "title": "Social Media",
+      "test_telegram": "Test Connection",
+      "test_mastodon": "Test Connection",
+      "test_bluesky": "Test Connection",
+      "test_matrix": "Test Connection"
+    },
+    "cloud_services": {
+      "title": "Cloud Services",
+      "no_services": "No cloud services configured. Please configure rclone first."
+    },
+    "vpn": {
+      "title": "VPN",
+      "file_uploaded": "VPN config file uploaded",
+      "file_removed": "VPN config file removed",
+      "confirm_remove": "Are you sure you want to remove the {type} config file?",
+      "remove": "Remove"
     }
   }
 }

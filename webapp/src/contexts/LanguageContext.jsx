@@ -15,11 +15,28 @@ const ensureTrailingSlash = (path) => (path.endsWith('/') ? path : `${path}/`);
 const basePath = ensureTrailingSlash(import.meta.env.BASE_URL || '/');
 const buildLangUrl = (lang) => `${basePath}lang/${lang}.json`;
 
+const detectBrowserLanguage = () => {
+  const supportedLanguages = ['en', 'de', 'es', 'fr', 'fi'];
+  const browserLanguages = navigator.languages || [navigator.language];
+  
+  for (const browserLang of browserLanguages) {
+    const langCode = browserLang.split('-')[0].toLowerCase();
+    if (supportedLanguages.includes(langCode)) {
+      return langCode;
+    }
+  }
+  
+  return 'en';
+};
+
 export function LanguageProvider({ children }) {
   const { config } = useConfig();
   const [translations, setTranslations] = useState({});
   const [language, setLanguage] = useState(() => {
     const savedLanguage = localStorage.getItem('lbb-language');
+    if (savedLanguage === '' || savedLanguage === null) {
+      return '';
+    }
     return savedLanguage || 'en';
   });
   const [hasInitialized, setHasInitialized] = useState(false);
@@ -27,7 +44,7 @@ export function LanguageProvider({ children }) {
   useEffect(() => {
     const handleLanguageChange = (event) => {
       const newLanguage = event.detail || event.target?.value;
-      if (newLanguage && newLanguage !== language) {
+      if (newLanguage !== language) {
         setLanguage(newLanguage);
         localStorage.setItem('lbb-language', newLanguage);
       }
@@ -36,8 +53,8 @@ export function LanguageProvider({ children }) {
     const handleStorageChange = (e) => {
       if (e.key === 'lbb-language') {
         const newLanguage = e.newValue;
-        if (newLanguage && newLanguage !== language) {
-          setLanguage(newLanguage);
+        if (newLanguage !== language) {
+          setLanguage(newLanguage || '');
         }
       }
     };
@@ -55,10 +72,15 @@ export function LanguageProvider({ children }) {
     
     const savedLanguage = localStorage.getItem('lbb-language');
     
-    if (!savedLanguage) {
-      const defaultLanguage = config?.conf_LANGUAGE || 'en';
-      setLanguage(defaultLanguage);
-      localStorage.setItem('lbb-language', defaultLanguage);
+    if (savedLanguage === null) {
+      const defaultLanguage = config?.conf_LANGUAGE || '';
+      if (defaultLanguage === '') {
+        setLanguage('');
+        localStorage.setItem('lbb-language', '');
+      } else {
+        setLanguage(defaultLanguage);
+        localStorage.setItem('lbb-language', defaultLanguage);
+      }
     } else if (savedLanguage !== language) {
       setLanguage(savedLanguage);
     }
@@ -67,9 +89,12 @@ export function LanguageProvider({ children }) {
   }, [config, language, hasInitialized]);
 
   useEffect(() => {
-    loadTranslations(language);
-    document.documentElement.setAttribute('lang', language);
-    localStorage.setItem('lbb-language', language);
+    const langToLoad = language === '' ? detectBrowserLanguage() : language;
+    loadTranslations(langToLoad);
+    document.documentElement.setAttribute('lang', langToLoad);
+    if (language !== '') {
+      localStorage.setItem('lbb-language', language);
+    }
   }, [language]);
 
   const loadTranslations = async (lang) => {

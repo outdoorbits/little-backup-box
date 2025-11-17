@@ -38,18 +38,18 @@ import api from '../utils/api';
 function Home() {
   const { t } = useLanguage();
   const { config, updateConfig } = useConfig();
-  const [services, setServices] = useState({ sourceServices: {}, targetServices: {} });
+  const [services, setServices] = useState({ sourceServices: {}, targetServices: {}, nvmeAvailable: false });
   const [partitions, setPartitions] = useState([]);
   const [runningBackups, setRunningBackups] = useState([]);
   const [backupHistory, setBackupHistory] = useState([]);
   const [formData, setFormData] = useState({
     sourceDevice: 'anyusb',
     targetDevice: '',
-    moveFiles: config?.conf_BACKUP_MOVE_FILES === 'true',
+    moveFiles: config?.conf_BACKUP_MOVE_FILES === 'true' ? 'move' : 'copy',
     renameFiles: config?.conf_BACKUP_RENAME_FILES === 'true',
     generateThumbnails: config?.conf_BACKUP_GENERATE_THUMBNAILS === 'true',
     updateExif: config?.conf_BACKUP_UPDATE_EXIF === 'true',
-    checksum: config?.conf_BACKUP_CHECKSUM === 'true',
+    checksum: config?.conf_BACKUP_CHECKSUM === 'true' ? 'checksum' : 'file_size_timestamp',
     powerOff: config?.conf_POWER_OFF === 'true',
     presetSource: '',
     presetTarget: '',
@@ -64,6 +64,10 @@ function Home() {
   const [defaultBackupConfig, setDefaultBackupConfig] = useState({
     conf_BACKUP_MOVE_FILES: 'false',
     conf_BACKUP_RENAME_FILES: 'false',
+    conf_BACKUP_GENERATE_THUMBNAILS: 'false',
+    conf_BACKUP_UPDATE_EXIF: 'false',
+    conf_BACKUP_CHECKSUM: 'false',
+    conf_POWER_OFF: 'false',
     conf_MAIL_NOTIFICATIONS: '0',
   });
   const isInitialMount = useRef(true);
@@ -72,9 +76,14 @@ function Home() {
   const isSaving = useRef(false);
   const configInitialized = useRef(false);
   const pendingSaveConfig = useRef(null);
+  const isSyncingFromServer = useRef(false);
   const defaultBackupConfigRef = useRef({
     conf_BACKUP_MOVE_FILES: 'false',
     conf_BACKUP_RENAME_FILES: 'false',
+    conf_BACKUP_GENERATE_THUMBNAILS: 'false',
+    conf_BACKUP_UPDATE_EXIF: 'false',
+    conf_BACKUP_CHECKSUM: 'false',
+    conf_POWER_OFF: 'false',
     conf_MAIL_NOTIFICATIONS: '0',
   });
 
@@ -97,29 +106,62 @@ function Home() {
 
   useEffect(() => {
     if (config && !configInitialized.current) {
-      const configString = JSON.stringify({
-        conf_BACKUP_MOVE_FILES: config.conf_BACKUP_MOVE_FILES || 'false',
-        conf_BACKUP_RENAME_FILES: config.conf_BACKUP_RENAME_FILES || 'false',
-        conf_MAIL_NOTIFICATIONS: config.conf_MAIL_NOTIFICATIONS || '0',
-      });
       const newConfig = {
         conf_BACKUP_MOVE_FILES: config.conf_BACKUP_MOVE_FILES || 'false',
         conf_BACKUP_RENAME_FILES: config.conf_BACKUP_RENAME_FILES || 'false',
+        conf_BACKUP_GENERATE_THUMBNAILS: config.conf_BACKUP_GENERATE_THUMBNAILS || 'false',
+        conf_BACKUP_UPDATE_EXIF: config.conf_BACKUP_UPDATE_EXIF || 'false',
+        conf_BACKUP_CHECKSUM: config.conf_BACKUP_CHECKSUM || 'false',
+        conf_POWER_OFF: config.conf_POWER_OFF || 'false',
         conf_MAIL_NOTIFICATIONS: config.conf_MAIL_NOTIFICATIONS || '0',
       };
+      const configString = JSON.stringify(newConfig);
       setDefaultBackupConfig(newConfig);
       lastSavedConfig.current = configString;
       configInitialized.current = true;
       isSaving.current = false;
-    } else if (config && configInitialized.current && !isSaving.current && pendingSaveConfig.current) {
-      const configString = JSON.stringify({
+      
+      setFormData(prev => ({
+        ...prev,
+        moveFiles: newConfig.conf_BACKUP_MOVE_FILES === 'true' ? 'move' : 'copy',
+        renameFiles: newConfig.conf_BACKUP_RENAME_FILES === 'true',
+        generateThumbnails: newConfig.conf_BACKUP_GENERATE_THUMBNAILS === 'true',
+        updateExif: newConfig.conf_BACKUP_UPDATE_EXIF === 'true',
+        checksum: newConfig.conf_BACKUP_CHECKSUM === 'true' ? 'checksum' : 'file_size_timestamp',
+        powerOff: newConfig.conf_POWER_OFF === 'true',
+      }));
+    } else if (config && configInitialized.current && !isSaving.current) {
+      const newConfig = {
         conf_BACKUP_MOVE_FILES: config.conf_BACKUP_MOVE_FILES || 'false',
         conf_BACKUP_RENAME_FILES: config.conf_BACKUP_RENAME_FILES || 'false',
+        conf_BACKUP_GENERATE_THUMBNAILS: config.conf_BACKUP_GENERATE_THUMBNAILS || 'false',
+        conf_BACKUP_UPDATE_EXIF: config.conf_BACKUP_UPDATE_EXIF || 'false',
+        conf_BACKUP_CHECKSUM: config.conf_BACKUP_CHECKSUM || 'false',
+        conf_POWER_OFF: config.conf_POWER_OFF || 'false',
         conf_MAIL_NOTIFICATIONS: config.conf_MAIL_NOTIFICATIONS || '0',
-      });
-      if (pendingSaveConfig.current === configString) {
-        lastSavedConfig.current = configString;
-        pendingSaveConfig.current = null;
+      };
+      const configString = JSON.stringify(newConfig);
+      
+      if (pendingSaveConfig.current) {
+        if (pendingSaveConfig.current === configString) {
+          isSyncingFromServer.current = true;
+          setDefaultBackupConfig(newConfig);
+          lastSavedConfig.current = configString;
+          pendingSaveConfig.current = null;
+          setTimeout(() => {
+            isSyncingFromServer.current = false;
+          }, 0);
+        }
+      } else {
+        const currentConfigString = JSON.stringify(defaultBackupConfig);
+        if (currentConfigString !== configString) {
+          isSyncingFromServer.current = true;
+          setDefaultBackupConfig(newConfig);
+          lastSavedConfig.current = configString;
+          setTimeout(() => {
+            isSyncingFromServer.current = false;
+          }, 0);
+        }
       }
     }
   }, [config]);
@@ -131,6 +173,10 @@ function Home() {
     }
 
     if (isSaving.current) {
+      return;
+    }
+
+    if (isSyncingFromServer.current) {
       return;
     }
 
@@ -176,11 +222,11 @@ function Home() {
         setServices(response.data);
       } else {
         console.error('Invalid services response:', response.data);
-        setServices({ sourceServices: {}, targetServices: {} });
+        setServices({ sourceServices: {}, targetServices: {}, nvmeAvailable: false });
       }
     } catch (error) {
       console.error('Failed to load services:', error);
-      setServices({ sourceServices: {}, targetServices: {} });
+      setServices({ sourceServices: {}, targetServices: {}, nvmeAvailable: false });
     } finally {
       setLoading(false);
     }
@@ -244,6 +290,8 @@ function Home() {
     try {
       const backupData = {
         ...formData,
+        moveFiles: formData.moveFiles === 'move',
+        checksum: formData.checksum === 'checksum',
         presetSource: formData.presetSource || '',
         presetTarget: formData.presetTarget || '',
       };
@@ -277,17 +325,40 @@ function Home() {
     }
   };
 
+  const handleSaveAsDefaults = async () => {
+    const newDefaults = {
+      conf_BACKUP_MOVE_FILES: formData.moveFiles === 'move' ? 'true' : 'false',
+      conf_BACKUP_RENAME_FILES: formData.renameFiles ? 'true' : 'false',
+      conf_BACKUP_GENERATE_THUMBNAILS: formData.generateThumbnails ? 'true' : 'false',
+      conf_BACKUP_UPDATE_EXIF: formData.updateExif ? 'true' : 'false',
+      conf_BACKUP_CHECKSUM: formData.checksum === 'checksum' ? 'true' : 'false',
+      conf_POWER_OFF: formData.powerOff ? 'true' : 'false',
+      conf_MAIL_NOTIFICATIONS: defaultBackupConfig.conf_MAIL_NOTIFICATIONS || '0',
+    };
+    
+    try {
+      await updateConfig(newDefaults);
+      setDefaultBackupConfig(newDefaults);
+      setToastSeverity('success');
+      setToastMessage(t('main.backup.defaults_saved') || 'Defaults saved successfully');
+    } catch (error) {
+      console.error('Failed to save defaults:', error);
+      setToastSeverity('error');
+      setToastMessage(t('main.backup.defaults_save_error') || 'Failed to save defaults');
+    }
+  };
+
   const isBackupRunning = () => {
     return runningBackups.some(backup => 
       backup.sourceDevice === formData.sourceDevice &&
       backup.targetDevice === formData.targetDevice &&
       (backup.presetSource || '') === (formData.presetSource || '') &&
       (backup.presetTarget || '') === (formData.presetTarget || '') &&
-      backup.moveFiles === formData.moveFiles &&
+      backup.moveFiles === (formData.moveFiles === 'move') &&
       backup.renameFiles === formData.renameFiles &&
       backup.generateThumbnails === formData.generateThumbnails &&
       backup.updateExif === formData.updateExif &&
-      backup.checksum === formData.checksum &&
+      backup.checksum === (formData.checksum === 'checksum') &&
       backup.powerOff === formData.powerOff
     );
   };
@@ -415,35 +486,76 @@ function Home() {
                   value={formData.targetDevice}
                   onChange={(e) => setFormData({ ...formData, targetDevice: e.target.value })}
                 >
-                  {Object.entries(services.targetServices || {}).flatMap(([group, items]) => {
-                    const filteredItems = items.filter(service => 
-                      !service.startsWith('cloud:') && 
-                      service !== 'cloud_rsync' &&
-                      !service.startsWith('social:')
-                    );
-                    if (filteredItems.length === 0) {
-                      return [];
-                    }
-                    return [
-                      <ListSubheader key={`header-${group}`}>
-                        {getGroupLabel(group, t)}
-                      </ListSubheader>,
-                      ...filteredItems.map((service) => {
+                  {(() => {
+                    const localStorageItems = [];
+                    const otherItems = [];
+                    
+                    Object.entries(services.targetServices || {}).forEach(([group, items]) => {
+                      const filteredItems = items.filter(service => 
+                        !service.startsWith('cloud:') && 
+                        service !== 'cloud_rsync' &&
+                        !service.startsWith('social:')
+                      );
+                      
+                      filteredItems.forEach((service) => {
+                        if (isLocalStorageTarget(service)) {
+                          localStorageItems.push({ service, group });
+                        } else {
+                          otherItems.push({ service, group });
+                        }
+                      });
+                    });
+                    
+                    const result = [];
+                    
+                    if (localStorageItems.length > 0) {
+                      result.push(
+                        <ListSubheader key="header-local">
+                          {t('main.backup.local_storage') || 'Local Storage'}
+                        </ListSubheader>
+                      );
+                      localStorageItems.forEach(({ service }) => {
                         const isDisabled = isDisallowedCombination(formData.sourceDevice, service);
-                        return (
+                        result.push(
                           <MenuItem key={service} value={service} disabled={isDisabled}>
                             {getServiceLabel(service, t)}
                           </MenuItem>
                         );
-                      })
-                    ];
-                  })}
-                  <ListSubheader>
-                    {t('main.backup.partitions') || 'Partitions'}
-                  </ListSubheader>
-                  <MenuItem value="selected_partition" disabled={isDisallowedCombination(formData.sourceDevice, 'selected_partition')}>
-                    {t('main.backup.selected_partition') || 'Selected partition'}
-                  </MenuItem>
+                      });
+                      const isPartitionDisabled = isDisallowedCombination(formData.sourceDevice, 'selected_partition');
+                      result.push(
+                        <MenuItem key="selected_partition" value="selected_partition" disabled={isPartitionDisabled}>
+                          {t('main.backup.selected_partition') || 'Selected partition'}
+                        </MenuItem>
+                      );
+                    }
+                    
+                    const groupedOther = {};
+                    otherItems.forEach(({ service, group }) => {
+                      if (!groupedOther[group]) {
+                        groupedOther[group] = [];
+                      }
+                      groupedOther[group].push(service);
+                    });
+                    
+                    Object.entries(groupedOther).forEach(([group, items]) => {
+                      result.push(
+                        <ListSubheader key={`header-${group}`}>
+                          {getGroupLabel(group, t)}
+                        </ListSubheader>
+                      );
+                      items.forEach((service) => {
+                        const isDisabled = isDisallowedCombination(formData.sourceDevice, service);
+                        result.push(
+                          <MenuItem key={service} value={service} disabled={isDisabled}>
+                            {getServiceLabel(service, t)}
+                          </MenuItem>
+                        );
+                      });
+                    });
+                    
+                    return result;
+                  })()}
                 </Select>
               </FormControl>
               {formData.targetDevice === 'selected_partition' && (
@@ -497,55 +609,166 @@ function Home() {
                   </Typography>
                   <Divider sx={{ my: 1 }} />
                   <Stack spacing={1}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.moveFiles}
-                          onChange={(e) => setFormData({ ...formData, moveFiles: e.target.checked })}
+                    <FormControl fullWidth>
+                      <FormLabel>{t('config.backup.file_operation_label') || 'File operation'}</FormLabel>
+                      <Select
+                        value={formData.moveFiles}
+                        onChange={(e) => setFormData({ ...formData, moveFiles: e.target.value })}
+                      >
+                        <MenuItem value="copy">
+                          {t('config.backup.file_operation_copy') || 'Copy files'}
+                        </MenuItem>
+                        <MenuItem value="move">
+                          {t('config.backup.file_operation_move') || 'Move files'}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                    {isLocalStorageTarget(formData.targetDevice) && (
+                      <>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={formData.renameFiles}
+                              onChange={(e) => setFormData({ ...formData, renameFiles: e.target.checked })}
+                            />
+                          }
+                          label={t('main.backup.rename_checkbox_label')}
                         />
-                      }
-                      label={t('config.backup.move_files_label')}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.renameFiles}
-                          onChange={(e) => setFormData({ ...formData, renameFiles: e.target.checked })}
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={formData.generateThumbnails}
+                              onChange={(e) => setFormData({ ...formData, generateThumbnails: e.target.checked })}
+                            />
+                          }
+                          label={t('main.backup.generate_thumbnails_checkbox_label')}
                         />
-                      }
-                      label={t('main.backup.rename_checkbox_label')}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.generateThumbnails}
-                          onChange={(e) => setFormData({ ...formData, generateThumbnails: e.target.checked })}
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={formData.updateExif}
+                              onChange={(e) => setFormData({ ...formData, updateExif: e.target.checked })}
+                            />
+                          }
+                          label={t('main.backup.update_exif_checkbox_label')}
                         />
-                      }
-                      label={t('main.backup.generate_thumbnails_checkbox_label')}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.updateExif}
-                          onChange={(e) => setFormData({ ...formData, updateExif: e.target.checked })}
-                        />
-                      }
-                      label={t('main.backup.update_exif_checkbox_label')}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.checksum}
-                          onChange={(e) => setFormData({ ...formData, checksum: e.target.checked })}
-                        />
-                      }
-                      label={t('main.backup.checksum_checkbox_label')}
-                    />
+                      </>
+                    )}
+                    <FormControl fullWidth>
+                      <FormLabel>{t('main.backup.comparison_method_label') || 'Comparison method'}</FormLabel>
+                      <Select
+                        value={formData.checksum}
+                        onChange={(e) => setFormData({ ...formData, checksum: e.target.value })}
+                      >
+                        <MenuItem value="file_size_timestamp">
+                          {t('main.backup.comparison_file_size_timestamp') || 'File size and timestamp'}
+                        </MenuItem>
+                        <MenuItem value="checksum">
+                          {t('main.backup.comparison_checksum') || 'Checksum'}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
                   </Stack>
 
                 </Box>
+
+                <Box>
+                  <Typography variant="subtitle1" gutterBottom>
+                    {t('main.backup.secondary')}
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
+                  <FormControl fullWidth>
+                    <FormLabel>{t('main.backup.secondary_label')}</FormLabel>
+                    <Select
+                      value={`${formData.secSourceName} ${formData.secTargetName}`}
+                      onChange={(e) => {
+                        const parts = e.target.value.split(' ');
+                        setFormData({
+                          ...formData,
+                          secSourceName: parts[0] || 'none',
+                          secTargetName: parts[1] || 'none'
+                        });
+                      }}
+                    >
+                      <MenuItem value="none none">
+                        {t('config.backup.none') || 'no automatic backup'}
+                      </MenuItem>
+                      {services.targetServices?.cloud?.includes('cloud_rsync') && (
+                        <>
+                          <ListSubheader>
+                            → {t('main.rsync_button') || 'rsync server'}
+                          </ListSubheader>
+                          <MenuItem value="usb cloud_rsync">
+                            {t('main.usb_button') || 'USB storage'} → {t('main.rsync_button') || 'rsync server'}
+                          </MenuItem>
+                          {services.nvmeAvailable && (
+                            <MenuItem value="nvme cloud_rsync">
+                              {t('main.nvme_button') || 'NVMe SSD'} → {t('main.rsync_button') || 'rsync server'}
+                            </MenuItem>
+                          )}
+                          <MenuItem value="internal cloud_rsync">
+                            {t('main.internal_button') || 'Int. storage'} → {t('main.rsync_button') || 'rsync server'}
+                          </MenuItem>
+                        </>
+                      )}
+                      {services.targetServices?.cloud
+                        ?.filter(service => service !== 'cloud_rsync' && service.startsWith('cloud:'))
+                        .map((cloudService) => {
+                          const serviceName = cloudService.replace('cloud:', '');
+                          return (
+                            <React.Fragment key={cloudService}>
+                              <ListSubheader>
+                                → {serviceName}
+                              </ListSubheader>
+                              <MenuItem value={`usb ${cloudService}`}>
+                                {t('main.usb_button') || 'USB storage'} → {serviceName}
+                              </MenuItem>
+                              {services.nvmeAvailable && (
+                                <MenuItem value={`nvme ${cloudService}`}>
+                                  {t('main.nvme_button') || 'NVMe SSD'} → {serviceName}
+                                </MenuItem>
+                              )}
+                              <MenuItem value={`internal ${cloudService}`}>
+                                {t('main.internal_button') || 'Int. storage'} → {serviceName}
+                              </MenuItem>
+                            </React.Fragment>
+                          );
+                        })}
+                    </Select>
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <Typography variant="subtitle1" gutterBottom>
+                    {t('config.mail.section') || 'Email'}
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
+                  {hasMissingEmailServerConfig() && (
+                    <Alert severity="warning" sx={{ mt: 2, mb: 2 }}>
+                      {t('config.mail.server_settings_notice') || 'Server settings must be configured before email notifications can be sent.'}
+                    </Alert>
+                  )}
+                  <Stack spacing={1.5}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={defaultBackupConfig.conf_MAIL_NOTIFICATIONS === '1'}
+                          onChange={(e) => setDefaultBackupConfig({ ...defaultBackupConfig, conf_MAIL_NOTIFICATIONS: e.target.checked ? '1' : '0' })}
+                        />
+                      }
+                      label={t('config.mail.notify_backup_label') || 'If possible, send backup reports via email?'}
+                    />
+                  </Stack>
+                </Box>
               </Stack>
+              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  variant="outlined"
+                  onClick={handleSaveAsDefaults}
+                >
+                  {t('main.backup.save_as_defaults') || 'Save as defaults'}
+                </Button>
+              </Box>
             </AccordionDetails>
           </Accordion>
 
@@ -581,11 +804,11 @@ function Home() {
                             ...formData,
                             sourceDevice: backup.sourceDevice,
                             targetDevice: backup.targetDevice,
-                            moveFiles: backup.moveFiles || false,
+                            moveFiles: backup.moveFiles ? 'move' : 'copy',
                             renameFiles: backup.renameFiles || false,
                             generateThumbnails: backup.generateThumbnails || false,
                             updateExif: backup.updateExif || false,
-                            checksum: backup.checksum || false,
+                            checksum: backup.checksum ? 'checksum' : 'file_size_timestamp',
                             powerOff: backup.powerOff || false,
                             presetSource: backup.presetSource || '',
                             presetTarget: backup.presetTarget || '',
@@ -595,6 +818,8 @@ function Home() {
                           try {
                             const backupData = {
                               ...rerunData,
+                              moveFiles: rerunData.moveFiles === 'move',
+                              checksum: rerunData.checksum === 'checksum',
                               presetSource: rerunData.presetSource || '',
                               presetTarget: rerunData.presetTarget || '',
                             };
@@ -644,7 +869,7 @@ function Home() {
                           {backup.renameFiles && <Chip label="Rename" size="small" variant="outlined" />}
                           {backup.generateThumbnails && <Chip label="Thumbnails" size="small" variant="outlined" />}
                           {backup.updateExif && <Chip label="EXIF" size="small" variant="outlined" />}
-                          {backup.checksum && <Chip label="Checksum" size="small" variant="outlined" />}
+                          {backup.checksum && <Chip label={t('main.backup.comparison_checksum') || 'Checksum'} size="small" variant="outlined" />}
                           {backup.powerOff && <Chip label="Power Off" size="small" variant="outlined" color="warning" />}
                         </Stack>
                       }
@@ -699,7 +924,8 @@ function Home() {
                         {backup.renameFiles && <Chip label="Rename" size="small" variant="outlined" />}
                         {backup.generateThumbnails && <Chip label="Thumbnails" size="small" variant="outlined" />}
                         {backup.updateExif && <Chip label="EXIF" size="small" variant="outlined" />}
-                        {backup.checksum && <Chip label="Checksum" size="small" variant="outlined" />}
+                        {backup.checksum && <Chip label={t('main.backup.comparison_checksum') || 'Checksum'} size="small" variant="outlined" />}
+                        {!backup.checksum && <Chip label={t('main.backup.comparison_file_size_timestamp') || 'File size and timestamp'} size="small" variant="outlined" />}
                         {backup.powerOff && <Chip label="Power Off" size="small" variant="outlined" color="warning" />}
                       </Stack>
                     }
@@ -719,49 +945,6 @@ function Home() {
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             {t('config.backup.general_settings_desc') || 'These settings define the default UI values for new users and default configurations for operations such as backups. Individual operations can override these defaults.'}
           </Typography>
-          <Stack spacing={1.5}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={defaultBackupConfig.conf_BACKUP_MOVE_FILES === 'true'}
-                  onChange={(e) => setDefaultBackupConfig({ ...defaultBackupConfig, conf_BACKUP_MOVE_FILES: e.target.checked ? 'true' : 'false' })}
-                />
-              }
-              label={t('config.backup.move_files_label') || 'Move files instead of copying'}
-            />
-            
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={defaultBackupConfig.conf_BACKUP_RENAME_FILES === 'true'}
-                  onChange={(e) => setDefaultBackupConfig({ ...defaultBackupConfig, conf_BACKUP_RENAME_FILES: e.target.checked ? 'true' : 'false' })}
-                />
-              }
-              label={t('main.backup.rename_checkbox_label') || 'Rename files (only for local storage)'}
-            />
-          </Stack>
-
-          <Divider sx={{ my: 3 }} />
-
-          <Typography variant="h6" gutterBottom>
-            {t('config.mail.section') || 'Email'}
-          </Typography>
-          {hasMissingEmailServerConfig() && (
-            <Alert severity="warning" sx={{ mt: 2, mb: 2 }}>
-              {t('config.mail.server_settings_notice') || 'Server settings must be configured before email notifications can be sent.'}
-            </Alert>
-          )}
-          <Stack spacing={1.5}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={defaultBackupConfig.conf_MAIL_NOTIFICATIONS === '1'}
-                  onChange={(e) => setDefaultBackupConfig({ ...defaultBackupConfig, conf_MAIL_NOTIFICATIONS: e.target.checked ? '1' : '0' })}
-                />
-              }
-              label={t('config.mail.notify_backup_label') || 'If possible, send backup reports via email?'}
-            />
-          </Stack>
         </CardContent>
       </Card>
 
@@ -825,6 +1008,12 @@ function getServiceLabel(service, t) {
   };
   
   return labels[name] || name;
+}
+
+function isLocalStorageTarget(target) {
+  if (!target) return false;
+  const localStorageTargets = ['usb', 'internal', 'nvme', 'selected_partition'];
+  return localStorageTargets.includes(target);
 }
 
 function isDisallowedCombination(source, target) {

@@ -6,59 +6,58 @@ Implement comprehensive display hardware configuration section in the Setup page
 ## Missing Features
 
 ### Display Behavior Settings
-- [ ] Display enable/disable toggle
-- [ ] Display font size selection (10, 12, 14, 16)
-- [ ] Display frame time selection (0.1, 0.25, 0.5, 1, 1.5, 2, 2.5, 3 seconds)
-- [ ] Display contrast slider (1-255)
-- [ ] Display IP repeat toggle
-- [ ] Display statusbar toggle
-- [ ] Display frame time for IP selection (1, 1.5, 2, 2.5, 3, 4, 5 seconds)
+- [x] Display enable/disable toggle
+- [x] Display font size selection (10, 12, 14, 16)
+- [x] Display frame time selection (0.1, 0.25, 0.5, 1, 1.5, 2, 2.5, 3 seconds)
+- [x] Display contrast slider (1-255)
+- [x] Display IP repeat toggle
+- [x] Display statusbar toggle
+- [x] Display frame time for IP selection (1, 1.5, 2, 2.5, 3, 4, 5, 7, 10 seconds)
 
 ### Display Colors
-- [ ] Display color text selection (blue, green, red, white, yellow, orange, lightgrey, grey, black)
-- [ ] Display color high selection
-- [ ] Display color alert selection
-- [ ] Display color background selection
+- [x] Display color text selection (blue, green, red, white, yellow, orange, lightgrey, grey, black)
+- [x] Display color high selection
+- [x] Display color alert selection
+- [x] Display color background selection
 
 ### Display Backlight
-- [ ] Display backlight enabled toggle
-- [ ] Display backlight pin selection (0, GPIO 18, GPIO 24)
+- [x] Display backlight enabled toggle
+- [x] Display backlight pin selection (0, GPIO 18, GPIO 24)
 
 ### Display Rotation
-- [ ] Display rotation selection (0°, 180°)
+- [x] Display rotation selection (0°, 180°)
 
 ### Display Hardware Configuration
-- [ ] Display driver selection (none, SSD1306, SSD1309, SSD1322, SSD1331, SH1106, ST7735, ST7735 WAVESHARE LCD display HAT)
-- [ ] Display connection type selection (I2C, SPI)
+- [x] Display driver selection (none, SSD1306, SSD1309, SSD1322, SSD1331, SH1106, ST7735, ST7735 WAVESHARE LCD display HAT)
+- [x] Display connection type selection (I2C, SPI)
 
 ### I2C Configuration
-- [ ] Display I2C address selection (0x3c, 0x3d) with device availability detection
-- [ ] Auto-detect I2C devices using `i2cdetect -y 1`
+- [x] Display I2C address selection (0x3c, 0x3d) with device availability detection
+- [x] Auto-detect I2C devices using `i2cdetect -y 1`
 
 ### SPI Configuration
-- [ ] Display SPI port selection (0, 1)
+- [x] Display SPI port selection (0, 1)
 
 ### Additional Display Settings
-- [ ] Display resolution X selection (96, 128, 160, 250)
-- [ ] Display resolution Y selection (32, 64, 80, 122, 128)
-- [ ] Display offset X selection (-30 to 30)
-- [ ] Display offset Y selection (-30 to 30)
-- [ ] Display color model selection (1, RGB, RGBA)
-- [ ] Display color BGR toggle
-- [ ] Display color inverse toggle
+- [x] Display resolution X selection (96, 128, 160, 250)
+- [x] Display resolution Y selection (32, 64, 80, 122, 128)
+- [x] Display offset X selection (-30 to 30)
+- [x] Display offset Y selection (-30 to 30)
+- [x] Display color model selection (1, RGB, RGBA)
+- [x] Display color BGR toggle
+- [x] Display color inverse toggle
 
 ## Implementation Details
 
 ### Files to Create/Modify
-- `webapp/src/pages/Setup.jsx` - Add Display Hardware Configuration section
-- `webapp/src/components/DisplayConfig.jsx` - New component for display configuration
-- `webapp/server/routes/setup.js` - Add API endpoints for display settings
-- `webapp/public/lang/*.json` - Add translation keys for display settings
+- [x] `webapp/src/pages/Setup.jsx` - Add Display Hardware Configuration section
+- [x] `webapp/src/components/DisplayConfig.jsx` - New component for display configuration
+- [x] `webapp/server/routes/setup.js` - Add API endpoints for display settings
+- [x] `webapp/public/lang/*.json` - Add translation keys for display settings
 
 ### API Endpoints Needed
-- `GET /setup/display` - Get current display configuration
-- `POST /setup/display` - Save display configuration
-- `GET /setup/display/i2c-detect` - Detect available I2C devices
+- [x] `GET /setup/display/i2c-detect` - Detect available I2C devices
+- Note: Display configuration uses existing `/setup/save` endpoint for saving settings
 
 ### Configuration Keys (from PHP setup.php)
 - `conf_DISP`

@@ -34,63 +34,141 @@ router.post('/execute', async (req, res) => {
         commandLine = `sudo bash ${req.WORKING_DIR}/mods/update_libraw.sh`;
         break;
         
-      case 'fsck':
-        if (param2 === 'repair') {
-          commandLine = `sudo fsck -y ${param1}`;
-        } else {
-          commandLine = `sudo fsck -n ${param1}`;
-        }
-        break;
+      case 'fsck': {
+        const devicePath = param1.startsWith('/dev/') ? param1 : `/dev/${param1}`;
         
-      case 'format':
-        // SECURITY NOTE: Formatting is a destructive operation. Ensure proper authorization.
-        // SECURITY NOTE: Validate param1 (device path) to prevent path traversal attacks
+        const fsckDetectCommand = `sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep ${devicePath}`;
+        const fsckDetectResult = await execCommand(fsckDetectCommand, { logger: req.logger });
+        
+        let deviceFstype = '';
+        if (fsckDetectResult.success && fsckDetectResult.stdout) {
+          const fstypeMatch = fsckDetectResult.stdout.match(/FSTYPE="([^"]+)"/);
+          if (fstypeMatch) {
+            deviceFstype = fstypeMatch[1];
+          }
+        }
+        
+        if (!deviceFstype) {
+          return res.status(400).json({ error: 'Could not detect filesystem type' });
+        }
+        
+        let mainCommand = '';
+        if (param2 === 'repair') {
+          if (deviceFstype === 'exfat') {
+            mainCommand = `fsck.${deviceFstype} -p ${devicePath}`;
+          } else {
+            mainCommand = `fsck.${deviceFstype} -f -p ${devicePath}`;
+          }
+        } else {
+          mainCommand = `fsck.${deviceFstype} ${devicePath}`;
+        }
+        
+        const startMsg1 = 'Start';
+        const startMsg2 = 'file system';
+        const stopMsg1 = 'Finished file';
+        const stopMsg2 = 'system';
+        
+        commandLine = `sudo python3 ${req.WORKING_DIR}/lib_display.py ':' '${startMsg1}' ':' '${startMsg2}' ':' '${param2}' && `;
+        commandLine += `echo 'sudo ${mainCommand}' && `;
+        commandLine += `echo '' && `;
+        commandLine += `sudo ${mainCommand} && `;
+        commandLine += `echo '' && `;
+        commandLine += `echo 'FINISHED.' && `;
+        commandLine += `sudo python3 ${req.WORKING_DIR}/lib_display.py ':' '${stopMsg1}' ':' '${stopMsg2}' ':' '${param2}'`;
+        break;
+      }
+        
+      case 'format': {
         if (!param1 || !param2 || param1 === '-' || param2 === '-') {
           return res.status(400).json({ error: 'Invalid parameters' });
         }
         
-        // SECURITY NOTE: Validate device path - should start with /dev/ and not contain .. or other dangerous patterns
-        if (!param1.startsWith('/dev/') || param1.includes('..')) {
+        const formatDevicePath = param1.startsWith('/dev/') ? param1 : `/dev/${param1}`;
+        
+        if (!formatDevicePath.startsWith('/dev/') || formatDevicePath.includes('..')) {
           return res.status(400).json({ error: 'Invalid device path' });
         }
         
-        // TODO: Could use Node.js library for filesystem operations, but mkfs commands require root
-        let formatCommand = '';
-        if (param2 === 'FAT32') {
-          formatCommand = `sudo mkfs.vfat -F 32 ${param1}`;
-        } else if (param2 === 'exFAT') {
-          formatCommand = `sudo mkfs.exfat ${param1}`;
-        } else if (param2.startsWith('NTFS')) {
-          const compression = param2.includes('compression enabled');
-          formatCommand = `sudo mkfs.ntfs ${compression ? '-C' : ''} ${param1}`;
-        } else if (param2 === 'Ext4') {
-          formatCommand = `sudo mkfs.ext4 ${param1}`;
-        } else if (param2 === 'Ext3') {
-          formatCommand = `sudo mkfs.ext3 ${param1}`;
-        } else if (param2 === 'HFS Plus') {
-          formatCommand = `sudo mkfs.hfsplus ${param1}`;
-        } else if (param2 === 'HFS') {
-          formatCommand = `sudo mkfs.hfs ${param1}`;
-        }
+        const startMsg1 = 'Formatting';
+        const startMsg2 = 'started...';
+        const stopMsg1 = 'Formatting';
+        const stopMsg2 = 'completed';
         
-        if (!formatCommand) {
+        let mainFormatCommand = '';
+        let fsckCommand = 'fsck';
+        
+        if (param2 === 'FAT32') {
+          mainFormatCommand = `mkfs.vfat -v -I -F32 ${formatDevicePath}`;
+        } else if (param2 === 'exFAT') {
+          mainFormatCommand = `mkfs.exfat ${formatDevicePath}`;
+        } else if (param2 === 'NTFS (compression enabled)') {
+          mainFormatCommand = `mkfs.ntfs --enable-compression --force --verbose ${formatDevicePath}`;
+        } else if (param2 === 'NTFS (no compression)') {
+          mainFormatCommand = `mkfs.ntfs --force --verbose ${formatDevicePath}`;
+        } else if (param2 === 'Ext4') {
+          mainFormatCommand = `mkfs.ext4 -v -F ${formatDevicePath}`;
+        } else if (param2 === 'Ext3') {
+          mainFormatCommand = `mkfs.ext3 -v -F ${formatDevicePath}`;
+        } else if (param2 === 'HFS Plus') {
+          mainFormatCommand = `mkfs.hfsplus ${formatDevicePath}`;
+          fsckCommand = 'fsck.hfsplus';
+        } else if (param2 === 'HFS') {
+          mainFormatCommand = `mkfs.hfs ${formatDevicePath}`;
+          fsckCommand = 'fsck.hfs';
+        } else {
           return res.status(400).json({ error: 'Invalid format type' });
         }
         
-        commandLine = formatCommand;
+        commandLine = `sudo python3 ${req.WORKING_DIR}/lib_display.py ':' '${startMsg1}' ':' '${param1}: ${param2}' ':' '${startMsg2}' && `;
+        commandLine += `echo 'sudo ${mainFormatCommand}' && `;
+        commandLine += `echo '' && `;
+        commandLine += `sudo ${mainFormatCommand} && `;
+        commandLine += `echo '' && `;
+        commandLine += `sudo fdisk -l ${formatDevicePath} && `;
+        commandLine += `echo '' && `;
+        commandLine += `lsblk -f ${formatDevicePath} && `;
+        commandLine += `echo '' && `;
+        commandLine += `sudo ${fsckCommand} ${formatDevicePath} && `;
+        commandLine += `echo '' && `;
+        commandLine += `echo 'FINISHED.' && `;
+        commandLine += `sudo python3 ${req.WORKING_DIR}/lib_display.py ':' '${stopMsg1}' ':' '${param1}: ${param2}' ':' '${stopMsg2}'`;
         break;
+      }
         
-      case 'f3':
+      case 'f3': {
         if (!param1 || !param2 || param1 === '-' || param2 === '-') {
           return res.status(400).json({ error: 'Invalid parameters' });
         }
         
+        const f3DevicePath = param1.startsWith('/dev/') ? param1 : `/dev/${param1}`;
+        
+        const probeStartMsg1 = 'Examination';
+        const probeStartMsg2 = 'started...';
+        const probeStopMsg1 = 'Examination';
+        const probeStopMsg2 = 'completed';
+        
+        let mainF3Command = '';
+        let description = '';
+        
         if (param2 === 'f3probe_non_destructive') {
-          commandLine = `sudo f3probe --destructive=false ${param1}`;
+          mainF3Command = `f3probe --time-ops ${f3DevicePath}`;
+          description = 'non destructive';
         } else if (param2 === 'f3probe_destructive') {
-          commandLine = `sudo f3probe --destructive=true ${param1}`;
+          mainF3Command = `f3probe --destructive --time-ops ${f3DevicePath}`;
+          description = 'destructive';
+        } else {
+          return res.status(400).json({ error: 'Invalid f3 action' });
         }
+        
+        commandLine = `sudo python3 ${req.WORKING_DIR}/lib_display.py ':' '${probeStartMsg1}' ':' '${param1}: ${description}' ':' '${probeStartMsg2}' && `;
+        commandLine += `echo 'sudo ${mainF3Command}' && `;
+        commandLine += `echo '' && `;
+        commandLine += `sudo ${mainF3Command} && `;
+        commandLine += `echo '' && `;
+        commandLine += `echo 'FINISHED.' && `;
+        commandLine += `sudo python3 ${req.WORKING_DIR}/lib_display.py ':' '${probeStopMsg1}' ':' '${param1}: ${description}' ':' '${probeStopMsg2}'`;
         break;
+      }
         
       case 'comitup_reset':
         const mainCommand = `${req.WORKING_DIR}/comitup-reset.sh`;

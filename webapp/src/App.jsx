@@ -7,6 +7,7 @@ import Tools from './pages/Tools';
 import SysInfo from './pages/SysInfo';
 import Maintenance from './pages/Maintenance';
 import Integrations from './pages/Integrations';
+import Network from './pages/Network';
 import Scrape from './pages/Scrape';
 
 function RedirectHandler() {
@@ -35,6 +36,7 @@ function App() {
         <Route path="/setup" element={<Setup />} />
         <Route path="/tools" element={<Tools />} />
         <Route path="/sysinfo" element={<SysInfo />} />
+        <Route path="/network" element={<Network />} />
         <Route path="/maintenance" element={<Maintenance />} />
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/scrape" element={<Scrape />} />

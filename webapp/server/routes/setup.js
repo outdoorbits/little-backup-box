@@ -321,5 +321,20 @@ router.post('/exit-lbb', async (req, res) => {
   }
 });
 
+router.get('/display/i2c-detect', async (req, res) => {
+  try {
+    const result = await execCommand('sudo i2cdetect -y 1', { logger: req.logger });
+    
+    if (result.success) {
+      res.json({ output: result.stdout || '' });
+    } else {
+      res.json({ output: '' });
+    }
+  } catch (error) {
+    req.logger.error('Failed to detect I2C devices', { error: error.message });
+    res.json({ output: '' });
+  }
+});
+
 export default router;
 

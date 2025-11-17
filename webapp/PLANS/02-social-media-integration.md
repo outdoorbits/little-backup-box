@@ -6,34 +6,34 @@ Implement complete social media integration functionality, allowing users to con
 ## Missing Features
 
 ### General Social Media Settings
-- [ ] Social publish date toggle
-- [ ] Social publish filename toggle
+- [x] Social publish date toggle
+- [x] Social publish filename toggle
 
 ### Telegram Configuration
-- [ ] Telegram token input field
-- [ ] Telegram chat ID input field
-- [ ] Telegram chat identifier input field
-- [ ] Telegram chat ID helper/selector (on main page and setup page)
-- [ ] Test Telegram connection
+- [x] Telegram token input field
+- [x] Telegram chat ID input field
+- [x] Telegram chat identifier input field
+- [x] Telegram chat ID helper/selector (on main page and setup page)
+- [x] Test Telegram connection
 
 ### Mastodon Configuration
-- [ ] Mastodon base URL input field
-- [ ] Mastodon token input field
-- [ ] Test Mastodon connection
+- [x] Mastodon base URL input field
+- [x] Mastodon token input field
+- [x] Test Mastodon connection
 
 ### Bluesky Configuration
-- [ ] Bluesky API base URL input field
-- [ ] Bluesky identifier input field
-- [ ] Bluesky app password input field
-- [ ] Test Bluesky connection
+- [x] Bluesky API base URL input field
+- [x] Bluesky identifier input field
+- [x] Bluesky app password input field
+- [x] Test Bluesky connection
 
 ### Matrix Configuration
-- [ ] Matrix homeserver input field
-- [ ] Matrix token input field
-- [ ] Matrix room ID input field
-- [ ] Matrix room identifier input field
-- [ ] Matrix room ID helper/selector (on main page and setup page)
-- [ ] Test Matrix connection
+- [x] Matrix homeserver input field
+- [x] Matrix token input field
+- [x] Matrix room ID input field
+- [x] Matrix room identifier input field
+- [x] Matrix room ID helper/selector (on main page and setup page)
+- [x] Test Matrix connection
 
 ### View Page Social Media Features
 - [ ] Social media publish checkboxes for each configured service

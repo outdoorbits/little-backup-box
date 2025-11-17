@@ -31,6 +31,11 @@ const isPhpRelativePath = (relativePath) => {
   return pathWithoutQuery.toLowerCase().endsWith('.php');
 };
 
+const isPhpHtmlFile = (relativePath) => {
+  const [pathWithoutQuery] = normalizePosixPath(relativePath).split('?');
+  return pathWithoutQuery.toLowerCase().endsWith('.php.html');
+};
+
 const sanitizeQuerySegment = (value = '') =>
   value
     .replace(/[^a-z0-9]+/gi, '-')
@@ -391,8 +396,11 @@ const copySiteDirectory = (siteId, sourceDir, destinationDir, basePath) => {
         continue;
       }
 
+      if (isPhpHtmlFile(entryRelative)) {
+        continue;
+      }
+
       if (isPhpRelativePath(entryRelative)) {
-        // The content will be written using the sanitized .html path
         writeFile(entryRelative);
         continue;
       }
@@ -440,6 +448,13 @@ const scrapeAssetsPlugin = () => {
 
         const relative = urlWithoutQuery.slice(scrapePrefix.length);
         const relativePosix = normalizePosixPath(relative);
+        
+        if (isPhpHtmlFile(relativePosix)) {
+          res.statusCode = 404;
+          res.end('Not found');
+          return;
+        }
+        
         let requestedPath = path.join(scrapeSourceDir, relative);
 
         if (!fs.existsSync(requestedPath) && phpStaticMap.has(relativePosix)) {
@@ -504,10 +519,10 @@ const scrapeAssetsPlugin = () => {
       if (!scrapeSourceDir || !fs.existsSync(scrapeSourceDir) || manifest.sites.length === 0) {
         return;
       }
-      const targetDir = path.join(outDir, 'scrape');
+      const buildScrapeDir = path.join(outDir, 'scrape');
       for (const site of manifest.sites) {
         const srcDir = path.join(scrapeSourceDir, site.id);
-        const destDir = path.join(targetDir, site.id);
+        const destDir = path.join(buildScrapeDir, site.id);
         copySiteDirectory(site.id, srcDir, destDir, normalizedBase);
       }
     },
@@ -526,6 +541,19 @@ export default defineConfig(() => {
         '/api': {
           target: 'http://localhost:3000',
           changeOrigin: true,
+          secure: false,
+          ws: true,
+          configure: (proxy, _options) => {
+            proxy.on('error', (err, _req, res) => {
+              console.log('Proxy error:', err);
+              if (res && !res.headersSent) {
+                res.writeHead(500, {
+                  'Content-Type': 'text/plain',
+                });
+                res.end('Backend server is not running. Please start it with: npm run dev:server');
+              }
+            });
+          },
         },
         '/css': {
           target: 'http://localhost:3000',

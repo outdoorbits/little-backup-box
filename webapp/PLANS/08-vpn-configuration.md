@@ -6,19 +6,19 @@ Implement VPN configuration for OpenVPN and WireGuard, allowing users to configu
 ## Missing Features
 
 ### VPN Type Configuration
-- [ ] VPN type for rsync selection (none, OpenVPN, WireGuard)
-- [ ] VPN type for cloud selection (none, OpenVPN, WireGuard)
-- [ ] VPN timeout configuration (5, 10, 20, 30, 40, 50, 60, 90, 120, 300, 600 seconds)
+- [x] VPN type for rsync selection (none, OpenVPN, WireGuard)
+- [x] VPN type for cloud selection (none, OpenVPN, WireGuard)
+- [x] VPN timeout configuration (5, 10, 20, 30, 40, 50, 60, 90, 120, 300, 600 seconds)
 
 ### VPN Config File Management
-- [ ] VPN config file upload (for OpenVPN or WireGuard)
-- [ ] VPN config file type selector (OpenVPN, WireGuard, none)
-- [ ] VPN config file removal (per type)
-- [ ] File upload handling (ZIP extraction support)
+- [x] VPN config file upload (for OpenVPN or WireGuard)
+- [x] VPN config file type selector (OpenVPN, WireGuard, none)
+- [x] VPN config file removal (per type)
+- [x] File upload handling (ZIP extraction support)
 
 ### VPN Status
-- [ ] Display current VPN configuration status
-- [ ] Show which VPN type is configured (if any)
+- [x] Display current VPN configuration status
+- [x] Show which VPN type is configured (if any)
 
 ## Implementation Details
 

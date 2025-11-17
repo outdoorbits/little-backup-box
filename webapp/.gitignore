@@ -1,11 +1,15 @@
 node_modules/
-dist/
+dist/**
+!dist/scrape/**/tmp/**
+!dist/scrape/**/*.log
 .env
 *.log
+!scrape-data/**/*.log
 .DS_Store
 .vscode/
 .idea/
 /tmp/
+!scrape-data/**/tmp/
 test-results/
 playwright-report/
 playwright/.cache/

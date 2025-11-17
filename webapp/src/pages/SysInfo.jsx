@@ -8,8 +8,6 @@ import {
   TableBody,
   TableCell,
   TableRow,
-  TableHead,
-  Paper,
   Button,
   Grid,
   List,
@@ -17,50 +15,23 @@ import {
   ListItemText,
   Divider,
   Chip,
+  IconButton,
+  Tooltip,
+  Collapse,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useLanguage } from '../contexts/LanguageContext';
 import api from '../utils/api';
-
-function parseLsblkOutput(output) {
-  if (!output || !output.trim()) {
-    return { headers: [], rows: [] };
-  }
-
-  const lines = output.trim().split('\n').filter(line => line.trim());
-  if (lines.length === 0) {
-    return { headers: [], rows: [] };
-  }
-
-  const headerLine = lines[0];
-  const dataLines = lines.slice(1);
-
-  const headers = headerLine.split('\t').map(h => h.trim()).filter(h => h);
-
-  if (headers.length === 0) {
-    return { headers: [], rows: [] };
-  }
-
-  const rows = dataLines.map(line => {
-    const values = line.split('\t').map(v => v.trim());
-    const row = {};
-    headers.forEach((header, index) => {
-      row[header] = values[index] || '';
-    });
-    return row;
-  });
-
-  return { headers, rows };
-}
 
 function SysInfo() {
   const { t } = useLanguage();
   const [systemInfo, setSystemInfo] = useState(null);
-  const [diskSpace, setDiskSpace] = useState({ headers: [], rows: [] });
-  const [devices, setDevices] = useState({ headers: [], rows: [] });
-  const [deviceStates, setDeviceStates] = useState([]);
   const [cameras, setCameras] = useState([]);
-  const [wifi, setWifi] = useState([]);
+  const [expandedCameras, setExpandedCameras] = useState({});
+  const [copiedText, setCopiedText] = useState('');
 
   useEffect(() => {
     loadAll();
@@ -68,11 +39,7 @@ function SysInfo() {
 
   const loadAll = () => {
     loadSystemInfo();
-    loadDiskSpace();
-    loadDevices();
-    loadDeviceStates();
     loadCameras();
-    loadWifi();
   };
 
   const loadSystemInfo = async () => {
@@ -81,47 +48,6 @@ function SysInfo() {
       setSystemInfo(response.data);
     } catch (error) {
       console.error('Failed to load system info:', error);
-    }
-  };
-
-  const loadDiskSpace = async () => {
-    try {
-      const response = await api.get('/sysinfo/diskspace');
-      if (response.data && response.data.output) {
-        const parsed = parseLsblkOutput(response.data.output);
-        setDiskSpace(parsed);
-      } else {
-        console.error('Invalid response format for disk space:', response.data);
-        setDiskSpace({ headers: [], rows: [] });
-      }
-    } catch (error) {
-      console.error('Failed to load disk space:', error);
-      setDiskSpace({ headers: [], rows: [] });
-    }
-  };
-
-  const loadDevices = async () => {
-    try {
-      const response = await api.get('/sysinfo/devices');
-      if (response.data && response.data.output) {
-        const parsed = parseLsblkOutput(response.data.output);
-        setDevices(parsed);
-      } else {
-        console.error('Invalid response format for devices:', response.data);
-        setDevices({ headers: [], rows: [] });
-      }
-    } catch (error) {
-      console.error('Failed to load devices:', error);
-      setDevices({ headers: [], rows: [] });
-    }
-  };
-
-  const loadDeviceStates = async () => {
-    try {
-      const response = await api.get('/sysinfo/device-states');
-      setDeviceStates(response.data.deviceStates || []);
-    } catch (error) {
-      console.error('Failed to load device states:', error);
     }
   };
 
@@ -134,13 +60,21 @@ function SysInfo() {
     }
   };
 
-  const loadWifi = async () => {
+  const handleCopyToClipboard = async (text) => {
     try {
-      const response = await api.get('/sysinfo/wifi');
-      setWifi(response.data.wifi || []);
+      await navigator.clipboard.writeText(text);
+      setCopiedText(text);
+      setTimeout(() => setCopiedText(''), 2000);
     } catch (error) {
-      console.error('Failed to load WiFi info:', error);
+      console.error('Failed to copy to clipboard:', error);
     }
+  };
+
+  const toggleCameraExpanded = (index) => {
+    setExpandedCameras(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
   };
 
   return (
@@ -236,104 +170,109 @@ function SysInfo() {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                {t('sysinfo.diskspace') || 'Disk Space'}
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              {diskSpace.headers.length > 0 ? (
-                <Paper elevation={0} sx={{ overflowX: 'auto' }}>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        {diskSpace.headers.map((header, index) => (
-                          <TableCell key={index} sx={{ fontWeight: 'bold' }}>
-                            {header}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {diskSpace.rows.map((row, rowIndex) => (
-                        <TableRow key={rowIndex}>
-                          {diskSpace.headers.map((header, colIndex) => (
-                            <TableCell key={colIndex}>
-                              {row[header] || '-'}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Paper>
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  Loading...
-                </Typography>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t('sysinfo.devices') || 'Devices'}
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              {devices.headers.length > 0 ? (
-                <Paper elevation={0} sx={{ overflowX: 'auto' }}>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        {devices.headers.map((header, index) => (
-                          <TableCell key={index} sx={{ fontWeight: 'bold' }}>
-                            {header}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {devices.rows.map((row, rowIndex) => (
-                        <TableRow key={rowIndex}>
-                          {devices.headers.map((header, colIndex) => (
-                            <TableCell key={colIndex}>
-                              {row[header] || '-'}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Paper>
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  Loading...
-                </Typography>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t('sysinfo.cameras') || 'Cameras'}
+                {t('sysinfo.cameras') || 'Cameras/smartphones'}
               </Typography>
               <Divider sx={{ my: 2 }} />
               {cameras.length > 0 ? (
                 <List disablePadding>
-                  {cameras.map((camera, i) => (
-                    <React.Fragment key={i}>
-                      <ListItem disablePadding>
-                        <ListItemText
-                          primary={camera.model}
-                          secondary={camera.port}
-                        />
-                      </ListItem>
-                      {i < cameras.length - 1 && <Divider />}
-                    </React.Fragment>
-                  ))}
+                  {cameras.map((camera, i) => {
+                    const isExpanded = expandedCameras[i];
+                    return (
+                      <React.Fragment key={i}>
+                        <ListItem 
+                          disablePadding
+                          sx={{ flexDirection: 'column', alignItems: 'stretch' }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <ListItemText
+                              primary={camera.model}
+                              secondary={camera.port}
+                              sx={{ flex: 1 }}
+                            />
+                            <IconButton
+                              size="small"
+                              onClick={() => toggleCameraExpanded(i)}
+                            >
+                              {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                            </IconButton>
+                          </Box>
+                          <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+                            <Box sx={{ pl: 2, pr: 2, pb: 1 }}>
+                              {camera.serial && (
+                                <Box sx={{ mb: 2 }}>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                                    {t('sysinfo.camera_serial') || 'Serial number'}:
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    {camera.serial}
+                                  </Typography>
+                                </Box>
+                              )}
+                              {camera.storages && camera.storages.length > 0 && (
+                                <Box>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    {t('sysinfo.camera_storages') || 'Storage paths'}:
+                                  </Typography>
+                                  {camera.storages.map((storage, storageIndex) => {
+                                    const modelPattern = `${camera.model}:!${storage}`;
+                                    const specificPattern = camera.serial 
+                                      ? `${camera.model}_${camera.serial}:!${storage}`
+                                      : null;
+                                    return (
+                                      <Box key={storageIndex} sx={{ mb: 2, p: 1, bgcolor: 'background.default', borderRadius: 1 }}>
+                                        <Typography variant="body2" sx={{ mb: 1, fontFamily: 'monospace' }}>
+                                          {storage}
+                                        </Typography>
+                                        <Box sx={{ ml: 1 }}>
+                                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                            <Typography variant="caption" sx={{ flex: 1 }}>
+                                              {t('config.backup.camera.model_folders_header') || 'Folders to sync by camera model'}:
+                                            </Typography>
+                                            <Tooltip title={copiedText === modelPattern ? 'Copied!' : 'Copy to clipboard'}>
+                                              <IconButton
+                                                size="small"
+                                                onClick={() => handleCopyToClipboard(modelPattern)}
+                                              >
+                                                <ContentCopyIcon fontSize="small" />
+                                              </IconButton>
+                                            </Tooltip>
+                                          </Box>
+                                          <Typography variant="body2" sx={{ fontFamily: 'monospace', mb: 1, ml: 1 }}>
+                                            {modelPattern}
+                                          </Typography>
+                                          {specificPattern && (
+                                            <>
+                                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                                <Typography variant="caption" sx={{ flex: 1 }}>
+                                                  {t('config.backup.camera.specific_device_folders_header') || 'Folders to sync from specific camera'}:
+                                                </Typography>
+                                                <Tooltip title={copiedText === specificPattern ? 'Copied!' : 'Copy to clipboard'}>
+                                                  <IconButton
+                                                    size="small"
+                                                    onClick={() => handleCopyToClipboard(specificPattern)}
+                                                  >
+                                                    <ContentCopyIcon fontSize="small" />
+                                                  </IconButton>
+                                                </Tooltip>
+                                              </Box>
+                                              <Typography variant="body2" sx={{ fontFamily: 'monospace', ml: 1 }}>
+                                                {specificPattern}
+                                              </Typography>
+                                            </>
+                                          )}
+                                        </Box>
+                                      </Box>
+                                    );
+                                  })}
+                                </Box>
+                              )}
+                            </Box>
+                          </Collapse>
+                        </ListItem>
+                        {i < cameras.length - 1 && <Divider />}
+                      </React.Fragment>
+                    );
+                  })}
                 </List>
               ) : (
                 <Typography variant="body2" color="text.secondary">
@@ -343,6 +282,7 @@ function SysInfo() {
             </CardContent>
           </Card>
         </Grid>
+
       </Grid>
     </Box>
   );

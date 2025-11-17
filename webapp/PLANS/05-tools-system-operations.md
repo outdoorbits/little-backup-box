@@ -6,26 +6,26 @@ Implement comprehensive tools page with mount/unmount operations, filesystem rep
 ## Missing Features
 
 ### Mount/Unmount Operations
-- [ ] Mount/Unmount UI with proper button states
-- [ ] Storage type selection (USB, NVMe, Cloud services)
-- [ ] Role selection (source, target)
-- [ ] Device identifier preset selector (before mounting)
-- [ ] Mount status display for all storage types
-- [ ] Cloud storage mount/unmount support
-- [ ] Mount list display
+- [x] Mount/Unmount UI with proper button states
+- [x] Storage type selection (USB, NVMe, Cloud services)
+- [x] Role selection (source, target)
+- [x] Device identifier preset selector (before mounting)
+- [x] Mount status display for all storage types
+- [x] Cloud storage mount/unmount support
+- [x] Mount list display
 
 ### Filesystem Operations
-- [ ] fsck check operation
-  - [ ] Partition selector
-  - [ ] Check button
-  - [ ] Results display
-- [ ] fsck autorepair operation
-  - [ ] Partition selector
-  - [ ] Autorepair button (danger style)
-  - [ ] Results display
-- [ ] Format partition operation
-  - [ ] Partition selector (ignore filesystem)
-  - [ ] Filesystem type selector:
+- [x] fsck check operation
+  - [x] Partition selector
+  - [x] Check button
+  - [x] Results display
+- [x] fsck autorepair operation
+  - [x] Partition selector
+  - [x] Autorepair button (danger style)
+  - [x] Results display
+- [x] Format partition operation
+  - [x] Partition selector (ignore filesystem)
+  - [x] Filesystem type selector:
     - FAT32 (Windows)
     - exFAT (Windows)
     - NTFS (compression enabled) (Windows)
@@ -34,22 +34,22 @@ Implement comprehensive tools page with mount/unmount operations, filesystem rep
     - Ext3 (Linux)
     - HFS Plus (Mac)
     - HFS (Mac)
-  - [ ] Format button (danger style)
-  - [ ] Confirmation dialog
+  - [x] Format button (danger style)
+  - [x] Confirmation dialog
 
 ### F3 Probe Operations
-- [ ] F3 probe non-destructive
-  - [ ] Device selector (full device, not partition)
-  - [ ] Action selector
-  - [ ] Execute button (danger style)
-- [ ] F3 probe destructive
-  - [ ] Device selector
-  - [ ] Action selector
-  - [ ] Execute button (danger style)
-  - [ ] Warning message
+- [x] F3 probe non-destructive
+  - [x] Device selector (full device, not partition)
+  - [x] Action selector
+  - [x] Execute button (danger style)
+- [x] F3 probe destructive
+  - [x] Device selector
+  - [x] Action selector
+  - [x] Execute button (danger style)
+  - [x] Warning message
 
 ### Help Section
-- [ ] Tools help text display (collapsible)
+- [x] Tools help text display (collapsible)
 
 ## Implementation Details
 

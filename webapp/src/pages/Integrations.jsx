@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -37,12 +37,21 @@ import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useConfig } from '../contexts/ConfigContext';
 import api from '../utils/api';
+import SocialMediaConfig from '../components/SocialMediaConfig';
+import CloudConfig from '../components/CloudConfig';
+import VPNConfig from '../components/VPNConfig';
 
 function Integrations() {
   const { t } = useLanguage();
   const { config, updateConfig } = useConfig();
   const [mailFormData, setMailFormData] = useState({});
   const [passwordError, setPasswordError] = useState('');
+  const [rsyncFormData, setRsyncFormData] = useState({});
+  const [rsyncPasswordError, setRsyncPasswordError] = useState('');
+  const [rsyncSaving, setRsyncSaving] = useState(false);
+  const rsyncSaveTimeoutRef = useRef(null);
+  const rsyncLastSavedConfig = useRef(null);
+  const rsyncIsSaving = useRef(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -66,8 +75,72 @@ function Integrations() {
         conf_MAIL_TIMEOUT_SEC: config.conf_MAIL_TIMEOUT_SEC || '30',
       };
       setMailFormData(mailConfig);
+
+      const rsyncConfig = {
+        conf_RSYNC_SERVER: config.conf_RSYNC_SERVER || '',
+        conf_RSYNC_PORT: config.conf_RSYNC_PORT || '',
+        conf_RSYNC_USER: config.conf_RSYNC_USER || '',
+        conf_RSYNC_PASSWORD: config.conf_RSYNC_PASSWORD && config.conf_RSYNC_PASSWORD.trim() ? (() => {
+          try {
+            return atob(config.conf_RSYNC_PASSWORD);
+          } catch (e) {
+            return '';
+          }
+        })() : '',
+        conf_RSYNC_SERVER_MODULE: config.conf_RSYNC_SERVER_MODULE || '',
+      };
+      setRsyncFormData(rsyncConfig);
+      rsyncLastSavedConfig.current = JSON.stringify(rsyncConfig);
     }
   }, [config]);
+
+  useEffect(() => {
+    if (rsyncIsSaving.current) {
+      return;
+    }
+
+    if (Object.keys(rsyncFormData).length === 0) {
+      return;
+    }
+
+    const formDataString = JSON.stringify(rsyncFormData);
+    if (rsyncLastSavedConfig.current === formDataString) {
+      return;
+    }
+
+    if (rsyncSaveTimeoutRef.current) {
+      clearTimeout(rsyncSaveTimeoutRef.current);
+    }
+
+    rsyncSaveTimeoutRef.current = setTimeout(async () => {
+      rsyncIsSaving.current = true;
+      setRsyncSaving(true);
+      try {
+        const rsyncConfigToSave = {
+          conf_RSYNC_SERVER: rsyncFormData.conf_RSYNC_SERVER || '',
+          conf_RSYNC_PORT: rsyncFormData.conf_RSYNC_PORT || '',
+          conf_RSYNC_USER: rsyncFormData.conf_RSYNC_USER || '',
+          conf_RSYNC_PASSWORD: rsyncFormData.conf_RSYNC_PASSWORD ? btoa(rsyncFormData.conf_RSYNC_PASSWORD) : '',
+          conf_RSYNC_SERVER_MODULE: rsyncFormData.conf_RSYNC_SERVER_MODULE || '',
+        };
+        await updateConfig(rsyncConfigToSave);
+        rsyncLastSavedConfig.current = JSON.stringify(rsyncFormData);
+        setMessage(t('config.message_settings_saved') || 'Settings saved');
+      } catch (error) {
+        console.error('Failed to save rsync settings:', error);
+        setMessage('Error saving rsync settings');
+      } finally {
+        rsyncIsSaving.current = false;
+        setRsyncSaving(false);
+      }
+    }, 500);
+
+    return () => {
+      if (rsyncSaveTimeoutRef.current) {
+        clearTimeout(rsyncSaveTimeoutRef.current);
+      }
+    };
+  }, [rsyncFormData, updateConfig, t]);
 
   const validatePassword = (password) => {
     if (!password) {
@@ -83,6 +156,23 @@ function Integrations() {
       return false;
     }
     setPasswordError('');
+    return true;
+  };
+
+  const validateRsyncPassword = (password) => {
+    if (!password) {
+      setRsyncPasswordError('');
+      return true;
+    }
+    if (password.length < 5) {
+      setRsyncPasswordError(t('config.alert_password_too_short') || 'Password must be at least 5 characters long.');
+      return false;
+    }
+    if (/[\\'" ]/.test(password)) {
+      setRsyncPasswordError('Password cannot contain backslash, single quote, double quote, or space.');
+      return false;
+    }
+    setRsyncPasswordError('');
     return true;
   };
 
@@ -381,13 +471,7 @@ function Integrations() {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Card>
-                <CardContent>
-                  <Typography variant="body1" color="text.secondary">
-                    {t('integrations.social_media.coming_soon') || 'Social media integration configuration coming soon.'}
-                  </Typography>
-                </CardContent>
-              </Card>
+              <SocialMediaConfig />
             </AccordionDetails>
           </Accordion>
         </Grid>
@@ -400,13 +484,7 @@ function Integrations() {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Card>
-                <CardContent>
-                  <Typography variant="body1" color="text.secondary">
-                    {t('integrations.cloud_services.coming_soon') || 'Cloud services configuration coming soon.'}
-                  </Typography>
-                </CardContent>
-              </Card>
+              <CloudConfig />
             </AccordionDetails>
           </Accordion>
         </Grid>
@@ -419,11 +497,106 @@ function Integrations() {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
+              <VPNConfig />
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h5">
+                {t('network.rsync_config.title') || 'rsync Server Configuration'}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
               <Card>
                 <CardContent>
-                  <Typography variant="body1" color="text.secondary">
-                    {t('integrations.vpn.coming_soon') || 'VPN configuration coming soon.'}
-                  </Typography>
+                  <Stack spacing={3}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      label={t('config.rsync_server_label') || 'Address of the rsync-server'}
+                      value={rsyncFormData.conf_RSYNC_SERVER || ''}
+                      onChange={(e) => setRsyncFormData({ ...rsyncFormData, conf_RSYNC_SERVER: e.target.value })}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <ServerIcon sx={{ color: 'text.secondary' }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      type="number"
+                      label={t('config.rsync_port_label') || 'Port of the rsync-server'}
+                      value={rsyncFormData.conf_RSYNC_PORT || ''}
+                      onChange={(e) => setRsyncFormData({ ...rsyncFormData, conf_RSYNC_PORT: e.target.value })}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PortIcon sx={{ color: 'text.secondary' }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      label={t('config.rsync_user_label') || 'Username for the rsync-server'}
+                      value={rsyncFormData.conf_RSYNC_USER || ''}
+                      onChange={(e) => setRsyncFormData({ ...rsyncFormData, conf_RSYNC_USER: e.target.value })}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PersonIcon sx={{ color: 'text.secondary' }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      type="password"
+                      label={t('config.rsync_password_label') || 'Password for the rsync-server'}
+                      value={rsyncFormData.conf_RSYNC_PASSWORD || ''}
+                      onChange={(e) => {
+                        setRsyncFormData({ ...rsyncFormData, conf_RSYNC_PASSWORD: e.target.value });
+                        validateRsyncPassword(e.target.value);
+                      }}
+                      error={!!rsyncPasswordError}
+                      helperText={rsyncPasswordError || ''}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LockIcon sx={{ color: 'text.secondary' }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      label={t('config.rsync_module_label1') || 'Module name on the rsync server'}
+                      value={rsyncFormData.conf_RSYNC_SERVER_MODULE || ''}
+                      onChange={(e) => setRsyncFormData({ ...rsyncFormData, conf_RSYNC_SERVER_MODULE: e.target.value })}
+                    />
+
+                    {rsyncSaving && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <CircularProgress size={16} />
+                        <Typography variant="body2" color="text.secondary">
+                          {t('config.saving') || 'Saving...'}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Stack>
                 </CardContent>
               </Card>
             </AccordionDetails>
