@@ -1,5 +1,6 @@
 <h2>Changelog</h2>
 <ul>
+	<li>2025-11-16: WiFi access to the Comitup hotspot can now be done via a QR code displayed on the screen.</li>
 	<li>2025-11-05: Uploading selected media to Matrix is now also working.</li>
 	<li>2025-10-13: New branch for Debian Trixie</li>
 	<li>2025-09-25: Uploading selected media to Bluesky is now also working.</li>
