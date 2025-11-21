@@ -19,7 +19,6 @@
 
 from pathlib import Path
 import re
-import markdown
 import mimetypes
 
 from lib_socialmedia_parent import services
@@ -110,22 +109,20 @@ class matrix(services):
 
 			# Handle message types
 			if msgtype.main == 'text':
+				Comment	= self.cleanComment(Comment)
+
 				if msgtype.sub == 'md':
-					Comment	= markdown.markdown(Comment)
+					Comment		= self.md_to_html(md=Comment)
 					msgtype.sub	= 'html'
 
 				if msgtype.sub == 'html':
-					# Replace <br> with \n, strip BOM and leading whitespace
-					Comment_local	= Comment.lstrip("\ufeff")
-					Comment_local	= re.sub(r'^\s+', '', Comment_local)
-
 					def make_formatted_part(part):
 						return({
 							"format": "org.matrix.custom.html",
 							"formatted_body": part
 						})
 
-					CommentParts	= self.split_text(Comment_local, self.post_maxlength)
+					CommentParts	= self.split_text(Comment, self.post_maxlength)
 					for CommentPart in CommentParts:
 						formatted	= make_formatted_part(CommentPart)
 						ok = await send_text(CommentPart, formatted=formatted)

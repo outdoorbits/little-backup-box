@@ -17,7 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+from bs4 import BeautifulSoup
 import html
+import markdown
+from markdownify import markdownify
 import random
 import re
 import time
@@ -49,7 +52,7 @@ class services(object):
 		self.rate_limit_seconds				= None
 		self.rate_limits_variable_seconds	= 0
 
-		self.post_maxlength	= 300
+		self.post_maxlength					= 300
 		self.newPostsOnTop					= False
 
 
@@ -96,18 +99,35 @@ class services(object):
 
 		return(variable_seconds)
 
-	def html_to_plain(self, Comment: str) -> str:
-		if not Comment:
+	def html_to_plain(self, html: str) -> str:
+		if not html:
 			return ''
-		Comment = Comment.replace('\r\n', '\n').replace('\r', '\n')
 
-		Comment = re.sub(r'\s*<br\s*/?>\s*', '\n', Comment, flags=re.IGNORECASE)
-		Comment = re.sub(r'<[^>]+>', '', Comment)
-		Comment = html.unescape(Comment)
-		Comment = '\n'.join(line.rstrip() for line in Comment.splitlines())
-		Comment = re.sub(r'\n\s*\n+', '\n\n', Comment)
+		soup	= BeautifulSoup(html, "html.parser")
 
-		return Comment.strip()
+		for a in soup.find_all("a"):
+			text = a.get_text(strip=True)
+			href = a.get("href", "")
+			if text and href:
+				a.replace_with(f"{text} ({href})")
+			elif href:
+				a.replace_with(href)
+			else:
+				a.decompose()
+
+		return(soup.get_text().strip())
+
+	def md_to_plain(self, md: str) -> str:
+		return(self.html_to_plain(self.md_to_html(md)))
+
+	def md_to_html(self, md: str) -> str:
+		return(markdown.markdown(md))
+
+	def html_to_md(self, html: str) -> str:
+		return(markdownify(html))
+
+	def cleanComment(self, Comment):
+		return(Comment.lstrip("\ufeff"))
 
 	def split_text(self, text: str, maxlength_primary: int, maxlength_follow: int = None):
 		# Split 'text' into chunks of size <= maxlength.

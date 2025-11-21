@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import bleach
 from pathlib import Path
 import re
 
@@ -86,11 +87,49 @@ class telegram(services):
 					)
 
 				if msgtype.main == 'text':
-					if msgtype.sub == 'html':
-						Comment = re.sub(r'<br\s*/?>', '\n', Comment, flags=re.IGNORECASE)
-						Comment = Comment.lstrip("\ufeff")
-						Comment = re.sub(r'^\s+', '', Comment)
+					Comment	= self.cleanComment(Comment)
 
+					# if msgtype.sub == 'md':
+					# 	Comment		= self.md_to_html(md=Comment)
+					# 	msgtype.sub	= 'html'
+
+					if msgtype.sub == 'html':
+
+						def clean_for_telegram_html(html: str) -> str:
+							if not html:
+								return('')
+
+							TG_ALLOWED_TAGS = [
+								"b", "strong", "i", "em", "u", "ins",
+								"s", "strike", "del",
+								"a", "code", "pre",
+								"span"
+							]
+
+							# 1) no <br> → replace by \n
+							html = re.sub(r"<br\s*/?>\s*\n?", "\n", html, flags=re.IGNORECASE)
+
+							# 2) keep only tg-spoiler as class
+							def filter_attrs(tag, name, value):
+								if tag == "span" and name == "class":
+									return value == "tg-spoiler"
+								if tag == "a" and name == "href":
+									return True
+								if tag == "code" and name == "class":
+									return value.startswith("language-")
+								return False
+
+							cleaned = bleach.clean(
+								html,
+								tags=TG_ALLOWED_TAGS,
+								attributes=filter_attrs,
+								strip=True,  # remove disallowed tags
+							)
+
+							return cleaned
+
+						Comment	= re.sub(r'^\s+', '', Comment) # remove leading spaces
+						Comment	= clean_for_telegram_html(html=Comment)
 						TXTParseMode	= self.ParseMode.HTML
 					elif msgtype.sub == 'md':
 						TXTParseMode	= self.ParseMode.MARKDOWN

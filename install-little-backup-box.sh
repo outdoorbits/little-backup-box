@@ -217,6 +217,8 @@ sudo DEBIAN_FRONTEND=noninteractive \
 			python3-websockets \
 			python3-matrix-nio \
 			python3-markdown \
+			python3-bs4 \
+			python3-bleach \
 			smartmontools \
 			dos2unix
 
@@ -234,7 +236,8 @@ sudo DEBIAN_FRONTEND=noninteractive \
 			python3-pydantic \
 			python3-annotated-types \
 			python3-typing-extensions
-sudo pip install --break-system-packages --no-deps --upgrade atproto libipld
+
+sudo pip install --break-system-packages --no-deps --upgrade atproto libipld markdownify
 
 sudo pip install --break-system-packages --upgrade Mastodon.py
 

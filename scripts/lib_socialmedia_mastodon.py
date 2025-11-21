@@ -80,8 +80,15 @@ class mastodon(services):
 				)
 
 			if msgtype.main == 'text':
+				Comment	= self.cleanComment(Comment)
+
+				if msgtype.sub == 'md':
+					Comment		= self.md_to_plain(md=Comment)
+					msgtype.sub	= 'txt'
+
 				if msgtype.sub == 'html':
-					Comment	= self.html_to_plain(Comment)
+					Comment		= self.html_to_plain(html=Comment)
+					msgtype.sub	= 'txt'
 
 				CommentParts	= self.split_text(Comment, self.post_maxlength)
 				for CommentPart in reversed(CommentParts):
