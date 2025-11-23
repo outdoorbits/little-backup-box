@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Select,
   MenuItem,
   FormControl,
@@ -14,18 +12,15 @@ import {
   Alert,
   Snackbar,
   CircularProgress,
-  Grid,
   Stack,
   TextField,
   RadioGroup,
   Radio,
   FormLabel,
   InputAdornment,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  Tabs,
+  Tab,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EmailIcon from '@mui/icons-material/Email';
 import SaveIcon from '@mui/icons-material/Save';
 import ServerIcon from '@mui/icons-material/Dns';
@@ -35,6 +30,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useConfig } from '../contexts/ConfigContext';
+import { useDrawer } from '../contexts/DrawerContext';
+import { drawerWidth, drawerCollapsedWidth } from '../components/Menu';
 import api from '../utils/api';
 import SocialMediaConfig from '../components/SocialMediaConfig';
 import CloudConfig from '../components/CloudConfig';
@@ -42,6 +39,8 @@ import CloudConfig from '../components/CloudConfig';
 function ServiceConnections() {
   const { t } = useLanguage();
   const { config, updateConfig } = useConfig();
+  const { desktopOpen } = useDrawer();
+  const currentDrawerWidth = desktopOpen ? drawerWidth : drawerCollapsedWidth;
   const [mailFormData, setMailFormData] = useState({});
   const [passwordError, setPasswordError] = useState('');
   const [rsyncFormData, setRsyncFormData] = useState({});
@@ -51,21 +50,24 @@ function ServiceConnections() {
   const rsyncLastSavedConfig = useRef(null);
   const rsyncIsSaving = useRef(false);
   const [message, setMessage] = useState('');
-  const [accordionStates, setAccordionStates] = useState({
-    email: false,
-    socialMedia: false,
-    cloudServices: false,
-    rsync: false,
-  });
+  const [currentTab, setCurrentTab] = useState(0);
+  const mailLastSavedConfig = useRef(null);
+  const [mailIsSaved, setMailIsSaved] = useState(true);
+  const [rsyncIsSaved, setRsyncIsSaved] = useState(true);
+  const socialMediaConfigRef = useRef({ isSaved: true, handleSave: null });
+  const cloudConfigRef = useRef({ isSaved: true, handleSave: null });
 
   useEffect(() => {
-    // Load accordion states from localStorage
-    const savedStates = localStorage.getItem('accordion-integrations');
-    if (savedStates !== null) {
+    // Load selected tab from localStorage
+    const savedTab = localStorage.getItem('integrations-tab');
+    if (savedTab !== null) {
       try {
-        setAccordionStates(JSON.parse(savedStates));
+        const tabIndex = parseInt(savedTab, 10);
+        if (tabIndex >= 0 && tabIndex <= 3) {
+          setCurrentTab(tabIndex);
+        }
       } catch (e) {
-        console.error('Failed to parse saved accordion states:', e);
+        console.error('Failed to parse saved tab:', e);
       }
     }
     if (config) {
@@ -88,6 +90,8 @@ function ServiceConnections() {
         conf_MAIL_TIMEOUT_SEC: config.conf_MAIL_TIMEOUT_SEC || '30',
       };
       setMailFormData(mailConfig);
+      mailLastSavedConfig.current = JSON.stringify(mailConfig);
+      setMailIsSaved(true);
 
       const rsyncConfig = {
         conf_RSYNC_SERVER: config.conf_RSYNC_SERVER || '',
@@ -104,6 +108,7 @@ function ServiceConnections() {
       };
       setRsyncFormData(rsyncConfig);
       rsyncLastSavedConfig.current = JSON.stringify(rsyncConfig);
+      setRsyncIsSaved(true);
     }
   }, [config]);
 
@@ -117,7 +122,10 @@ function ServiceConnections() {
     }
 
     const formDataString = JSON.stringify(rsyncFormData);
-    if (rsyncLastSavedConfig.current === formDataString) {
+    const isSaved = rsyncLastSavedConfig.current === formDataString;
+    setRsyncIsSaved(isSaved);
+
+    if (isSaved) {
       return;
     }
 
@@ -138,6 +146,7 @@ function ServiceConnections() {
         };
         await updateConfig(rsyncConfigToSave);
         rsyncLastSavedConfig.current = JSON.stringify(rsyncFormData);
+        setRsyncIsSaved(true);
         setMessage(t('config.message_settings_saved') || 'Settings saved');
       } catch (error) {
         console.error('Failed to save rsync settings:', error);
@@ -154,6 +163,16 @@ function ServiceConnections() {
       }
     };
   }, [rsyncFormData, updateConfig, t]);
+
+  // Track mail saved state
+  useEffect(() => {
+    if (Object.keys(mailFormData).length === 0) {
+      return;
+    }
+    const formDataString = JSON.stringify(mailFormData);
+    const isSaved = mailLastSavedConfig.current === formDataString;
+    setMailIsSaved(isSaved);
+  }, [mailFormData]);
 
   const validatePassword = (password) => {
     if (!password) {
@@ -189,10 +208,9 @@ function ServiceConnections() {
     return true;
   };
 
-  const handleAccordionChange = (accordionName, isExpanded) => {
-    const newStates = { ...accordionStates, [accordionName]: isExpanded };
-    setAccordionStates(newStates);
-    localStorage.setItem('accordion-integrations', JSON.stringify(newStates));
+  const handleTabChange = (event, newValue) => {
+    setCurrentTab(newValue);
+    localStorage.setItem('integrations-tab', newValue.toString());
   };
 
   const areAllMailFieldsFilled = () => {
@@ -249,6 +267,8 @@ function ServiceConnections() {
       };
       
       await updateConfig(mailConfigToSave);
+      mailLastSavedConfig.current = JSON.stringify(mailFormData);
+      setMailIsSaved(true);
       setMessage(t('config.message_settings_saved') || 'Settings saved');
     } catch (error) {
       console.error('Failed to save mail settings:', error);
@@ -267,6 +287,41 @@ function ServiceConnections() {
     }
   };
 
+  const handleSaveRsync = async () => {
+    if (rsyncFormData.conf_RSYNC_PASSWORD && !validateRsyncPassword(rsyncFormData.conf_RSYNC_PASSWORD)) {
+      return;
+    }
+
+    // Clear any pending auto-save timeout
+    if (rsyncSaveTimeoutRef.current) {
+      clearTimeout(rsyncSaveTimeoutRef.current);
+      rsyncSaveTimeoutRef.current = null;
+    }
+
+    rsyncIsSaving.current = true;
+    setRsyncSaving(true);
+    try {
+      const rsyncConfigToSave = {
+        conf_RSYNC_SERVER: rsyncFormData.conf_RSYNC_SERVER || '',
+        conf_RSYNC_PORT: rsyncFormData.conf_RSYNC_PORT || '',
+        conf_RSYNC_USER: rsyncFormData.conf_RSYNC_USER || '',
+        conf_RSYNC_PASSWORD: rsyncFormData.conf_RSYNC_PASSWORD ? btoa(rsyncFormData.conf_RSYNC_PASSWORD) : '',
+        conf_RSYNC_SERVER_MODULE: rsyncFormData.conf_RSYNC_SERVER_MODULE || '',
+      };
+      await updateConfig(rsyncConfigToSave);
+      rsyncLastSavedConfig.current = JSON.stringify(rsyncFormData);
+      setRsyncIsSaved(true);
+      setMessage(t('config.message_settings_saved') || 'Settings saved');
+    } catch (error) {
+      console.error('Failed to save rsync settings:', error);
+      setMessage('Error saving rsync settings');
+    } finally {
+      rsyncIsSaving.current = false;
+      setRsyncSaving(false);
+    }
+  };
+
+
   if (!config) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -275,20 +330,50 @@ function ServiceConnections() {
     );
   }
 
+  function TabPanel({ children, value, index, ...other }) {
+    // Add bottom padding when save button is sticky (tabs 0, 1, 2, 3)
+    const needsBottomPadding = value === index && (index === 0 || index === 1 || index === 2 || index === 3);
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`integrations-tabpanel-${index}`}
+        aria-labelledby={`integrations-tab-${index}`}
+        {...other}
+      >
+        {value === index && <Box sx={{ pt: 3, pb: needsBottomPadding ? 10 : 0 }}>{children}</Box>}
+      </div>
+    );
+  }
+
   return (
     <Box>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Accordion 
-            expanded={accordionStates.email}
-            onChange={(event, isExpanded) => handleAccordionChange('email', isExpanded)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h5">
-                {t('config.mail.section') || 'Email'}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+        <Tabs value={currentTab} onChange={handleTabChange} aria-label="service connections tabs">
+          <Tab 
+            label={t('config.mail.section') || 'Email'} 
+            id="integrations-tab-0"
+            aria-controls="integrations-tabpanel-0"
+          />
+          <Tab 
+            label={t('integrations.social_media.title') || 'Social Media Integration'} 
+            id="integrations-tab-1"
+            aria-controls="integrations-tabpanel-1"
+          />
+          <Tab 
+            label={t('integrations.cloud_services.title') || 'Cloud Services Configuration'} 
+            id="integrations-tab-2"
+            aria-controls="integrations-tabpanel-2"
+          />
+          <Tab 
+            label={t('network.rsync_config.title') || 'rsync Server Configuration'} 
+            id="integrations-tab-3"
+            aria-controls="integrations-tabpanel-3"
+          />
+        </Tabs>
+      </Box>
+
+      <TabPanel value={currentTab} index={0}>
               {hasMissingEmailServerConfig() && (
                 <Alert severity="warning" sx={{ mb: 2 }}>
                   {t('config.mail.server_settings_notice') || 'Server settings must be configured before email notifications can be sent.'}
@@ -458,11 +543,36 @@ function ServiceConnections() {
                     </FormControl>
                   </Stack>
 
-                  <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
+                  <Stack 
+                    direction="row" 
+                    spacing={2} 
+                    sx={{ 
+                      mt: 4,
+                      ...(currentTab === 0 && {
+                        position: 'fixed',
+                        bottom: 0,
+                        left: { md: `${currentDrawerWidth}px` },
+                        right: 0,
+                        zIndex: 1000,
+                        p: 2,
+                        backgroundColor: 'background.paper',
+                        borderTop: 1,
+                        borderColor: 'divider',
+                        justifyContent: 'center',
+                        transition: (theme) =>
+                          theme.transitions.create('left', {
+                            easing: theme.transitions.easing.sharp,
+                            duration: theme.transitions.duration.enteringScreen,
+                          }),
+                      }),
+                    }}
+                  >
                     <Button
                       variant="contained"
                       startIcon={<SaveIcon />}
                       onClick={handleSaveMail}
+                      disabled={mailIsSaved}
+                      size={currentTab === 0 ? 'large' : 'medium'}
                     >
                       {t('config.save_button') || 'Save'}
                     </Button>
@@ -471,57 +581,34 @@ function ServiceConnections() {
                       startIcon={<EmailIcon />}
                       onClick={handleTestMail}
                       disabled={!areAllMailFieldsFilled()}
+                      size={currentTab === 0 ? 'large' : 'medium'}
                     >
                       {t('config.mail.testmail_header') || 'Send Test Mail'}
                     </Button>
                   </Stack>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
+      </TabPanel>
 
-        <Grid item xs={12}>
-          <Accordion 
-            expanded={accordionStates.socialMedia}
-            onChange={(event, isExpanded) => handleAccordionChange('socialMedia', isExpanded)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h5">
-                {t('integrations.social_media.title') || 'Social Media Integration'}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <SocialMediaConfig />
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
+      <TabPanel value={currentTab} index={1}>
+              <SocialMediaConfig 
+                onSavedStateChange={(isSaved, handleSave) => {
+                  socialMediaConfigRef.current = { isSaved, handleSave };
+                }}
+                isSticky={currentTab === 1}
+                drawerWidth={currentDrawerWidth}
+              />
+      </TabPanel>
 
-        <Grid item xs={12}>
-          <Accordion 
-            expanded={accordionStates.cloudServices}
-            onChange={(event, isExpanded) => handleAccordionChange('cloudServices', isExpanded)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h5">
-                {t('integrations.cloud_services.title') || 'Cloud Services Configuration'}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <CloudConfig />
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
+      <TabPanel value={currentTab} index={2}>
+              <CloudConfig 
+                onSavedStateChange={(isSaved, handleSave) => {
+                  cloudConfigRef.current = { isSaved, handleSave };
+                }}
+                isSticky={currentTab === 2}
+                drawerWidth={currentDrawerWidth}
+              />
+      </TabPanel>
 
-        <Grid item xs={12}>
-          <Accordion 
-            expanded={accordionStates.rsync}
-            onChange={(event, isExpanded) => handleAccordionChange('rsync', isExpanded)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h5">
-                {t('network.rsync_config.title') || 'rsync Server Configuration'}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
+      <TabPanel value={currentTab} index={3}>
               <Stack spacing={3}>
                     <TextField
                       variant="outlined"
@@ -598,19 +685,42 @@ function ServiceConnections() {
                       sx={{ maxWidth: 400 }}
                     />
 
-                    {rsyncSaving && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CircularProgress size={16} />
-                        <Typography variant="body2" color="text.secondary">
-                          {t('config.saving') || 'Saving...'}
-                        </Typography>
-                      </Box>
-                    )}
+                    <Stack 
+                      direction="row" 
+                      spacing={2} 
+                      sx={{ 
+                        mt: 2,
+                        ...(currentTab === 3 && {
+                          position: 'fixed',
+                          bottom: 0,
+                          left: { md: `${currentDrawerWidth}px` },
+                          right: 0,
+                          zIndex: 1000,
+                          p: 2,
+                          backgroundColor: 'background.paper',
+                          borderTop: 1,
+                          borderColor: 'divider',
+                          justifyContent: 'center',
+                          transition: (theme) =>
+                            theme.transitions.create('left', {
+                              easing: theme.transitions.easing.sharp,
+                              duration: theme.transitions.duration.enteringScreen,
+                            }),
+                        }),
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        startIcon={rsyncSaving ? <CircularProgress size={16} /> : <SaveIcon />}
+                        onClick={handleSaveRsync}
+                        disabled={rsyncIsSaved || rsyncSaving}
+                        size={currentTab === 3 ? 'large' : 'medium'}
+                      >
+                        {t('config.save_button') || 'Save'}
+                      </Button>
+                    </Stack>
               </Stack>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-      </Grid>
+      </TabPanel>
 
       <Snackbar
         open={!!message}

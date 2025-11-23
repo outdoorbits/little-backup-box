@@ -398,6 +398,7 @@
     "system": "System",
     "model": "Model",
     "device_states": "Device status",
+    "info": "Info",
     "wifi": {
       "header": "WiFi"
     }
@@ -488,7 +489,6 @@
         "device_folder_pattern": "For use as pattern in Settings"
       },
       "general_settings_header": "Defaults",
-      "general_settings_desc": "These settings define the default options for backups. These defaults can be overridden in the options section when performing individual backup operations.",
       "move_files_label": "Move files instead of copying them?",
       "file_operation_label": "File operation",
       "file_operation_copy": "Copy files",
@@ -579,22 +579,22 @@
     "alert_password_wifi_size_error": "The password cannot be used for the WiFi hotspot. For this, the length would have to be 8 to 63 characters.",
     "vpn": {
       "section": "VPN",
-      "upload_header": "Upload file",
+      "upload_header": "Upload configuration file",
       "upload_type_label": "For which VPN variant should the configuration file be used?",
       "upload_type_none": "Please select",
       "type_none": "Don't use VPN",
       "type_header": "Which VPN to activate?",
       "upload_file_label": "Upload configuration file",
       "remove_header": "Delete VPN file",
-      "timeout_header": "VPN timeout",
+      "timeout_header": "Connection timeout",
       "timeout_label": "What is the maximum time to wait for the VPN connection to be established?",
       "type_cloud_label": "For cloud services",
       "type_rsync_label": "For rsync server backup",
       "type_desc": "Which VPN should be activated before transferring data to a network service? Caution: The Little Backup Box interface may not be accessible while the backup is running. You may be able to reach the box under the VPN IP if your end device is also registered in the same VPN."
     },
     "display": {
-      "section": "Display",
-      "activate_label": "Enable the display connected to GPIO",
+      "section": "GPIO mounted display",
+      "activate_label": "Enable display",
       "connection_header": "Interface for the display",
       "connection_label": "Display interface",
       "i2c_address_label": "i2c address of the display",
@@ -764,7 +764,8 @@
         "base_url_label": "Mastodon base URL"
       },
       "general": {
-        "header": "Generally",
+        "header": "Common settings",
+        "services": "Services",
         "date_label": "Publish recording date",
         "filename_label": "Publish file name"
       },

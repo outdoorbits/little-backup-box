@@ -23,11 +23,16 @@ import {
   TableCell,
   TableRow,
   TableHead,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useDrawer } from '../contexts/DrawerContext';
+import { drawerWidth, drawerCollapsedWidth } from '../components/Menu';
 import api from '../utils/api';
 import DeviceSelector from '../components/DeviceSelector';
+import LogMonitor from '../components/LogMonitor';
 
 function parseLsblkOutput(output) {
   if (!output || !output.trim()) {
@@ -62,6 +67,8 @@ function parseLsblkOutput(output) {
 
 function Filesystem() {
   const { t } = useLanguage();
+  const { desktopOpen } = useDrawer();
+  const currentDrawerWidth = desktopOpen ? drawerWidth : drawerCollapsedWidth;
   const [mounts, setMounts] = useState('');
   const [mountableStorages, setMountableStorages] = useState([]);
   const [selectedSource, setSelectedSource] = useState('');
@@ -82,14 +89,33 @@ function Filesystem() {
   const [formatConfirmOpen, setFormatConfirmOpen] = useState(false);
   const [f3ConfirmOpen, setF3ConfirmOpen] = useState(false);
   const [fsckRepairConfirmOpen, setFsckRepairConfirmOpen] = useState(false);
+  const [currentTab, setCurrentTab] = useState(0);
 
   const [diskSpace, setDiskSpace] = useState({ headers: [], rows: [] });
   const [devices, setDevices] = useState({ headers: [], rows: [] });
   const [deviceStates, setDeviceStates] = useState([]);
 
   useEffect(() => {
+    // Load selected tab from localStorage
+    const savedTab = localStorage.getItem('filesystem-tab');
+    if (savedTab !== null) {
+      try {
+        const tabIndex = parseInt(savedTab, 10);
+        if (tabIndex >= 0 && tabIndex <= 4) {
+          setCurrentTab(tabIndex);
+        }
+      } catch (e) {
+        console.error('Failed to parse saved tab:', e);
+      }
+    }
+    
     loadAll();
   }, []);
+
+  const handleTabChange = (event, newValue) => {
+    setCurrentTab(newValue);
+    localStorage.setItem('filesystem-tab', newValue.toString());
+  };
 
   const loadAll = () => {
     loadMounts();
@@ -434,6 +460,22 @@ function Filesystem() {
     { value: 'f3probe_destructive', label: t('tools.f3.probe_destructive') || 'ERASE data (faster)' },
   ];
 
+  function TabPanel({ children, value, index, ...other }) {
+    // Add bottom padding when refresh button is sticky (all tabs)
+    const needsBottomPadding = value === index;
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`filesystem-tabpanel-${index}`}
+        aria-labelledby={`filesystem-tab-${index}`}
+        {...other}
+      >
+        {value === index && <Box sx={{ pt: 3, pb: needsBottomPadding ? 10 : 0 }}>{children}</Box>}
+      </div>
+    );
+  }
+
   return (
     <Box>
       {message && (
@@ -446,164 +488,182 @@ function Filesystem() {
         </Alert>
       )}
 
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'flex-end', 
-          alignItems: 'center', 
-          mb: 3,
-        }}
-      >
-        <Button
-          variant="contained"
-          startIcon={<RefreshIcon />}
-          onClick={loadAll}
-        >
-          {t('sysinfo.refresh_button') || 'Refresh'}
-        </Button>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={currentTab} onChange={handleTabChange} aria-label="filesystem tabs">
+          <Tab 
+            label={t('sysinfo.info') || 'Info'} 
+            id="filesystem-tab-0"
+            aria-controls="filesystem-tabpanel-0"
+          />
+          <Tab 
+            label={t('tools.mount.header') || 'Mount storage'} 
+            id="filesystem-tab-1"
+            aria-controls="filesystem-tabpanel-1"
+          />
+          <Tab 
+            label={t('tools.repair') || 'Repair'} 
+            id="filesystem-tab-2"
+            aria-controls="filesystem-tabpanel-2"
+          />
+          <Tab 
+            label={t('cmd.format.header') || 'Format device'} 
+            id="filesystem-tab-3"
+            aria-controls="filesystem-tabpanel-3"
+          />
+          <Tab 
+            label={t('cmd.f3.header') || 'Verify USB drive capacity'} 
+            id="filesystem-tab-4"
+            aria-controls="filesystem-tabpanel-4"
+          />
+        </Tabs>
       </Box>
 
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12}>
-          <Box>
-            <Typography variant="h2" gutterBottom>
-              {t('sysinfo.diskspace') || 'Disk Space'}
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              {diskSpace.headers.length > 0 ? (
-              <Paper elevation={0} sx={{ overflowX: 'auto' }}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      {diskSpace.headers.map((header, index) => (
-                        <TableCell key={index} sx={{ fontWeight: 'bold' }}>
-                          {header}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {diskSpace.rows.map((row, rowIndex) => (
-                      <TableRow key={rowIndex}>
-                        {diskSpace.headers.map((header, colIndex) => (
-                          <TableCell key={colIndex}>
-                            {row[header] || '-'}
+      <TabPanel value={currentTab} index={0}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Box>
+              <Typography variant="h2" gutterBottom>
+                {t('sysinfo.diskspace') || 'Disk Space'}
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                {diskSpace.headers.length > 0 ? (
+                <Paper elevation={0} sx={{ overflowX: 'auto' }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        {diskSpace.headers.map((header, index) => (
+                          <TableCell key={index} sx={{ fontWeight: 'bold' }}>
+                            {header}
                           </TableCell>
                         ))}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Paper>
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                Loading...
-              </Typography>
-            )}
-            </Box>
-          </Box>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Box>
-            <Typography variant="h2" gutterBottom>
-              {t('sysinfo.devices') || 'Devices'}
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              {devices.headers.length > 0 ? (
-              <Paper elevation={0} sx={{ overflowX: 'auto' }}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      {devices.headers.map((header, index) => (
-                        <TableCell key={index} sx={{ fontWeight: 'bold' }}>
-                          {header}
-                        </TableCell>
+                    </TableHead>
+                    <TableBody>
+                      {diskSpace.rows.map((row, rowIndex) => (
+                        <TableRow key={rowIndex}>
+                          {diskSpace.headers.map((header, colIndex) => (
+                            <TableCell key={colIndex}>
+                              {row[header] || '-'}
+                            </TableCell>
+                          ))}
+                        </TableRow>
                       ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {devices.rows.map((row, rowIndex) => (
-                      <TableRow key={rowIndex}>
-                        {devices.headers.map((header, colIndex) => (
-                          <TableCell key={colIndex}>
-                            {row[header] || '-'}
+                    </TableBody>
+                  </Table>
+                </Paper>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Loading...
+                </Typography>
+              )}
+              </Box>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Box>
+              <Typography variant="h2" gutterBottom>
+                {t('sysinfo.devices') || 'Devices'}
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                {devices.headers.length > 0 ? (
+                <Paper elevation={0} sx={{ overflowX: 'auto' }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        {devices.headers.map((header, index) => (
+                          <TableCell key={index} sx={{ fontWeight: 'bold' }}>
+                            {header}
                           </TableCell>
                         ))}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Paper>
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                Loading...
-              </Typography>
-            )}
+                    </TableHead>
+                    <TableBody>
+                      {devices.rows.map((row, rowIndex) => (
+                        <TableRow key={rowIndex}>
+                          {devices.headers.map((header, colIndex) => (
+                            <TableCell key={colIndex}>
+                              {row[header] || '-'}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Paper>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Loading...
+                </Typography>
+              )}
+              </Box>
             </Box>
-          </Box>
-        </Grid>
+          </Grid>
 
-        <Grid item xs={12}>
-          <Box>
-            <Typography variant="h2" gutterBottom>
-              {t('sysinfo.device_states') || 'Device status'}
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              {deviceStates.length > 0 ? (
-              <Box>
-                {deviceStates.map((device, deviceIndex) => (
-                  <Box key={deviceIndex} sx={{ mb: 2 }}>
-                    <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
-                      {device.lum}
-                      {device.identifier && (
-                        <Typography component="span" variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
-                          ({device.identifier})
+          <Grid item xs={12}>
+            <Box>
+              <Typography variant="h2" gutterBottom>
+                {t('sysinfo.device_states') || 'Device status'}
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                {deviceStates.length > 0 ? (
+                <Box>
+                  {deviceStates.map((device, deviceIndex) => (
+                    <Box key={deviceIndex} sx={{ mb: 2 }}>
+                      <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        {device.lum}
+                        {device.identifier && (
+                          <Typography component="span" variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
+                            ({device.identifier})
+                          </Typography>
+                        )}
+                      </Typography>
+                      {device.states && device.states.length > 0 ? (
+                        <Box component="pre" sx={{ 
+                          fontFamily: 'monospace', 
+                          fontSize: '0.75rem',
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word',
+                          m: 0,
+                          p: 1,
+                          bgcolor: 'background.default',
+                          borderRadius: 1,
+                        }}>
+                          {device.states.map((state, stateIndex) => {
+                            const paddedValue = String(state.value || '').padEnd(35);
+                            return (
+                              <Box key={stateIndex} component="span" sx={{ display: 'block' }}>
+                                {paddedValue}{state.measured}
+                              </Box>
+                            );
+                          })}
+                        </Box>
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">
+                          -
                         </Typography>
                       )}
-                    </Typography>
-                    {device.states && device.states.length > 0 ? (
-                      <Box component="pre" sx={{ 
-                        fontFamily: 'monospace', 
-                        fontSize: '0.75rem',
-                        whiteSpace: 'pre-wrap',
-                        wordBreak: 'break-word',
-                        m: 0,
-                        p: 1,
-                        bgcolor: 'background.default',
-                        borderRadius: 1,
-                      }}>
-                        {device.states.map((state, stateIndex) => {
-                          const paddedValue = String(state.value || '').padEnd(35);
-                          return (
-                            <Box key={stateIndex} component="span" sx={{ display: 'block' }}>
-                              {paddedValue}{state.measured}
-                            </Box>
-                          );
-                        })}
-                      </Box>
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        -
-                      </Typography>
-                    )}
-                    {deviceIndex < deviceStates.length - 1 && <Divider sx={{ mt: 2 }} />}
-                  </Box>
-                ))}
+                      {deviceIndex < deviceStates.length - 1 && <Divider sx={{ mt: 2 }} />}
+                    </Box>
+                  ))}
+                </Box>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  {deviceStates.length === 0 ? 'No device states available' : 'Loading...'}
+                </Typography>
+              )}
               </Box>
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                {deviceStates.length === 0 ? 'No device states available' : 'Loading...'}
-              </Typography>
-            )}
             </Box>
-          </Box>
+          </Grid>
         </Grid>
-      </Grid>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h2" gutterBottom>
-          {t('tools.mount.header') || 'Mount storage'}
-        </Typography>
+        <LogMonitor />
+      </TabPanel>
+
+      <TabPanel value={currentTab} index={1}>
+        <Box>
+          <Typography variant="h2" gutterBottom>
+            {t('tools.mount.header') || 'Mount storage'}
+          </Typography>
         <Box sx={{ mt: 2 }}>
           <Paper elevation={0} sx={{ mb: 3, p: 2, bgcolor: 'background.default' }}>
           <Typography 
@@ -622,7 +682,7 @@ function Filesystem() {
         
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
-            <FormControl sx={{ maxWidth: 400 }}>
+            <FormControl fullWidth>
               <FormLabel>{t('tools.mount.source') || 'Source'}</FormLabel>
               <Select
                 value={selectedSource}
@@ -695,7 +755,7 @@ function Filesystem() {
             </FormControl>
             
             {selectedSource && hasMultipleDevices(selectedSource, sourcePartitions) && (
-              <FormControl sx={{ maxWidth: 400, mt: 2 }}>
+              <FormControl fullWidth sx={{ mt: 2 }}>
                 <FormLabel>{t('tools.mount.select_partition_label') || 'Partition'}</FormLabel>
                 <Select
                   value={sourcePartition}
@@ -729,7 +789,7 @@ function Filesystem() {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <FormControl sx={{ maxWidth: 400 }}>
+            <FormControl fullWidth>
               <FormLabel>{t('tools.mount.target') || 'Target'}</FormLabel>
               <Select
                 value={selectedTarget}
@@ -802,7 +862,7 @@ function Filesystem() {
             </FormControl>
             
             {selectedTarget && hasMultipleDevices(selectedTarget, targetPartitions) && (
-              <FormControl sx={{ maxWidth: 400, mt: 2 }}>
+              <FormControl fullWidth sx={{ mt: 2 }}>
                 <FormLabel>{t('tools.mount.select_partition_label') || 'Partition'}</FormLabel>
                 <Select
                   value={targetPartition}
@@ -836,11 +896,15 @@ function Filesystem() {
           </Grid>
         </Grid>
         </Box>
-      </Box>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h2" gutterBottom>
-          {t('tools.repair') || 'Repair'}
-        </Typography>
+        </Box>
+        <LogMonitor />
+      </TabPanel>
+
+      <TabPanel value={currentTab} index={2}>
+        <Box>
+          <Typography variant="h2" gutterBottom>
+            {t('tools.repair') || 'Repair'}
+          </Typography>
         <Box sx={{ mt: 2 }}>
           <Alert severity="warning" sx={{ mb: 2 }}>
           {t('cmd.fsck.warning') || 'Do not use unless you know what you are doing. It could damage your storage!'}
@@ -885,12 +949,15 @@ function Filesystem() {
           </Box>
         </Box>
         </Box>
-      </Box>
+        </Box>
+        <LogMonitor />
+      </TabPanel>
 
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h2" gutterBottom>
-          {t('cmd.format.header') || 'Format device'}
-        </Typography>
+      <TabPanel value={currentTab} index={3}>
+        <Box>
+          <Typography variant="h2" gutterBottom>
+            {t('cmd.format.header') || 'Format device'}
+          </Typography>
         <Box sx={{ mt: 2 }}>
           <Alert severity="warning" sx={{ mb: 2 }}>
           {t('cmd.format.warning') || 'Do not use this function if you do not know what you are doing. This will erase your storage and any lost data cannot be recovered.'}
@@ -936,22 +1003,27 @@ function Filesystem() {
               ))}
             </Select>
           </FormControl>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleFormat}
-            disabled={formatPartition === '-' || formatFstype === '-'}
-          >
-            {t('tools.format_b') || 'format disc!'}
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleFormat}
+              disabled={formatPartition === '-' || formatFstype === '-'}
+            >
+              {t('tools.format_b') || 'format disc!'}
+            </Button>
+          </Box>
         </Box>
         </Box>
-      </Box>
+        </Box>
+        <LogMonitor />
+      </TabPanel>
 
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h2" gutterBottom>
-          {t('cmd.f3.header') || 'Verify USB drive capacity'}
-        </Typography>
+      <TabPanel value={currentTab} index={4}>
+        <Box>
+          <Typography variant="h2" gutterBottom>
+            {t('cmd.f3.header') || 'Verify USB drive capacity'}
+          </Typography>
         <Box sx={{ mt: 2 }}>
           <Alert severity="warning" sx={{ mb: 2 }}>
           {t('cmd.f3.warning_non_destructive') || 'Do not use this function if you do not know what you are doing. This may erase your storage, and lost data cannot be recovered.'}
@@ -989,18 +1061,21 @@ function Filesystem() {
               ))}
             </Select>
           </FormControl>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleF3}
-            disabled={f3Device === '-' || f3Action === '-'}
-          >
-            {t('tools.f3.b') || 'start test'}
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleF3}
+              disabled={f3Device === '-' || f3Action === '-'}
+            >
+              {t('tools.f3.b') || 'start test'}
+            </Button>
+          </Box>
         </Box>
         </Box>
-      </Box>
-
+        </Box>
+        <LogMonitor />
+      </TabPanel>
 
       <Dialog open={formatConfirmOpen} onClose={() => setFormatConfirmOpen(false)}>
         <DialogTitle>{t('cmd.format.header') || 'Format device'}</DialogTitle>
@@ -1061,6 +1136,36 @@ function Filesystem() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: { md: `${currentDrawerWidth}px` },
+          right: 0,
+          zIndex: 1000,
+          p: 2,
+          backgroundColor: 'background.paper',
+          borderTop: 1,
+          borderColor: 'divider',
+          display: 'flex',
+          justifyContent: 'center',
+          transition: (theme) =>
+            theme.transitions.create('left', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+        }}
+      >
+        <Button
+          variant="contained"
+          startIcon={<RefreshIcon />}
+          onClick={loadAll}
+          size="large"
+        >
+          {t('sysinfo.refresh_button') || 'Refresh'}
+        </Button>
+      </Box>
     </Box>
   );
 }

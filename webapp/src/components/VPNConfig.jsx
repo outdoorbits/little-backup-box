@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  CardContent,
+  Box,
   Typography,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
   Button,
-  Checkbox,
-  FormControlLabel,
   Stack,
-  Divider,
-  CircularProgress,
-  Alert,
+  CircularProgress
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -113,26 +108,22 @@ function VPNConfig() {
 
   if (!config) {
     return (
-      <Card>
-        <CardContent>
-          <CircularProgress />
-        </CardContent>
-      </Card>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <CircularProgress />
+      </Box>
     );
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Stack spacing={3}>
-          <Typography variant="h6">
+    <Stack spacing={3}>
+          <Typography variant="h2">
             {t('config.vpn.type_header') || 'Which VPN to activate?'}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {t('config.vpn.type_desc') || 'Which VPN should be activated before transferring data to a network service? Caution: The Little Backup Box interface may not be accessible while the backup is running.'}
           </Typography>
 
-          <FormControl fullWidth>
+          <FormControl sx={{ maxWidth: 400 }}>
             <InputLabel>{t('config.vpn.type_rsync_label') || 'For rsync server'}</InputLabel>
             <Select
               value={formData.conf_VPN_TYPE_RSYNC || 'none'}
@@ -148,7 +139,7 @@ function VPNConfig() {
             </Select>
           </FormControl>
 
-          <FormControl fullWidth>
+          <FormControl sx={{ maxWidth: 400 }}>
             <InputLabel>{t('config.vpn.type_cloud_label') || 'For cloud services'}</InputLabel>
             <Select
               value={formData.conf_VPN_TYPE_CLOUD || 'none'}
@@ -164,12 +155,10 @@ function VPNConfig() {
             </Select>
           </FormControl>
 
-          <Divider />
-
-          <Typography variant="h6">
+          <Typography variant="h2">
             {t('config.vpn.timeout_header') || 'VPN timeout'}
           </Typography>
-          <FormControl fullWidth>
+          <FormControl sx={{ maxWidth: 400 }}>
             <InputLabel>{t('config.vpn.timeout_label') || 'What is the maximum time to wait for the VPN connection to be established?'}</InputLabel>
             <Select
               value={formData.conf_VPN_TIMEOUT || 20}
@@ -184,13 +173,11 @@ function VPNConfig() {
             </Select>
           </FormControl>
 
-          <Divider />
-
-          <Typography variant="h6">
+          <Typography variant="h2">
             {t('config.vpn.upload_header') || 'Upload VPN configuration file'}
           </Typography>
 
-          <FormControl fullWidth>
+          <FormControl sx={{ maxWidth: 400 }}>
             <InputLabel>{t('config.vpn.upload_type_label') || 'For which VPN variant should the configuration file be used?'}</InputLabel>
             <Select
               value={uploadType}
@@ -211,7 +198,7 @@ function VPNConfig() {
             component="label"
             startIcon={<CloudUploadIcon />}
             disabled={uploadType === 'none' || loading}
-            fullWidth
+            sx={{ width: 'auto', alignSelf: 'flex-start' }}
           >
             {t('config.vpn.upload_file_label') || 'Select VPN config file'}
             <input
@@ -224,48 +211,39 @@ function VPNConfig() {
 
           {Object.keys(vpnStatus).some((type) => vpnStatus[type]?.fileExists) && (
             <>
-              <Divider />
-              <Typography variant="h6">
+              <Typography variant="h2">
                 {t('config.vpn.remove_header') || 'Delete VPN configuration file'}
               </Typography>
-              <Stack spacing={1}>
+              <Stack spacing={1} alignItems="flex-start">
                 {vpnTypes.map((type) => {
                   if (!vpnStatus[type]?.fileExists) return null;
                   return (
-                    <FormControlLabel
+                    <Button
                       key={type}
-                      control={
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          startIcon={<DeleteIcon />}
-                          onClick={() => handleRemoveFile(type)}
-                          disabled={loading}
-                        >
-                          {t('integrations.vpn.remove') || 'Remove'} {type}
-                        </Button>
-                      }
-                      label=""
-                    />
+                      variant="outlined"
+                      color="error"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => handleRemoveFile(type)}
+                      disabled={loading}
+                    >
+                      {t('integrations.vpn.remove') || 'Remove'} {type}
+                    </Button>
                   );
                 })}
               </Stack>
             </>
           )}
 
-          <Divider />
-
           <Button
             variant="contained"
             startIcon={<SaveIcon />}
             onClick={handleSave}
             disabled={loading}
+            sx={{ width: 'auto', alignSelf: 'flex-start' }}
           >
             {t('config.save_button') || 'Save'}
           </Button>
         </Stack>
-      </CardContent>
-    </Card>
   );
 }
 

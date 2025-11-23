@@ -398,6 +398,7 @@
     "system": "Järjestelmä",
     "model": "Malli",
     "device_states": "Laitteen tila",
+    "info": "Info",
     "wifi": {
       "header": "WiFi"
     }
@@ -488,7 +489,6 @@
         "device_folder_pattern": "Käytettäväksi mallina Asetuksissa"
       },
       "general_settings_header": "Oletusarvot",
-      "general_settings_desc": "Nämä asetukset määrittelevät oletusasetukset varmuus kopioille. Nämä oletusarvot voidaan ohittaa asetukset-osiossa suoritettaessa yksittäisiä varmuus kopio-operaatioita.",
       "move_files_label": "Siirretäänkö tiedostot kopioimisen sijaan?",
       "file_operation_label": "Tiedosto-operaatio",
       "file_operation_copy": "Kopioi tiedostot",
@@ -579,22 +579,22 @@
     "alert_password_wifi_size_error": "Salasanaa ei voida käyttää WiFi-lähettimelle. Tätä varten pituuden on oltava 8–63 merkkiä.",
     "vpn": {
       "section": "VPN",
-      "upload_header": "Lataa tiedosto",
+      "upload_header": "Lataa konfiguraatiotiedosto",
       "upload_type_label": "Mihin VPN-varianttiin konfiguraatiotiedostoa käytetään?",
       "upload_type_none": "Valitse",
       "type_none": "Älä käytä VPN:ää",
       "type_header": "Mikä VPN aktivoidaan?",
       "upload_file_label": "Lataa konfiguraatiotiedosto",
       "remove_header": "Poista VPN-tiedosto",
-      "timeout_header": "VPN-aikakatkaisu",
+      "timeout_header": "Yhteyden aikakatkaisu",
       "timeout_label": "Mikä on maksimiaika odottaa VPN-yhteyden muodostumista?",
       "type_cloud_label": "Pilvipalveluille",
       "type_rsync_label": "Rsync-palvelimen varmuus kopiolle",
       "type_desc": "Mikä VPN aktivoidaan ennen tietojen siirtoa verkkopalveluun? Varoitus: Little Backup Boxin käyttöliittymä ei välttämättä ole käytettävissä, kun varmuus kopio on käynnissä. Saatat pystyä käyttämään laitetta VPN-IP:n kautta, jos päätelaite on myös rekisteröity samaan VPN:ään."
     },
     "display": {
-      "section": "Näyttö",
-      "activate_label": "Ota käyttöön GPIO:hen kytketty näyttö",
+      "section": "GPIO:hen asennettu näyttö",
+      "activate_label": "Ota näyttö käyttöön",
       "connection_header": "Rajapinta näytölle",
       "connection_label": "Näytön rajapinta",
       "i2c_address_label": "Näytön i2c-osoite",
@@ -764,7 +764,8 @@
         "base_url_label": "Mastodon-perus-URL"
       },
       "general": {
-        "header": "Yleisesti",
+        "header": "Yleiset asetukset",
+        "services": "Palvelut",
         "date_label": "Julkaise tallennuspäivämäärä",
         "filename_label": "Julkaise tiedostonimi"
       },

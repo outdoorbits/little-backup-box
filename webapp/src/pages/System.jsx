@@ -19,14 +19,18 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useDrawer } from '../contexts/DrawerContext';
+import { drawerWidth, drawerCollapsedWidth } from '../components/Menu';
 import api from '../utils/api';
 
 function System() {
   const { t } = useLanguage();
+  const { desktopOpen } = useDrawer();
   const [systemInfo, setSystemInfo] = useState(null);
   const [cameras, setCameras] = useState([]);
   const [copiedText, setCopiedText] = useState('');
   const [expandedCameras, setExpandedCameras] = useState({});
+  const currentDrawerWidth = desktopOpen ? drawerWidth : drawerCollapsedWidth;
 
   useEffect(() => {
     // Load accordion states from localStorage
@@ -84,23 +88,6 @@ function System() {
 
   return (
     <Box>
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'flex-end', 
-          alignItems: 'center', 
-          mb: 3,
-        }}
-      >
-        <Button
-          variant="contained"
-          startIcon={<RefreshIcon />}
-          onClick={loadAll}
-        >
-          {t('sysinfo.refresh_button') || 'Refresh'}
-        </Button>
-      </Box>
-
       <Grid container spacing={3}>
         {systemInfo && (
           <Grid item xs={12}>
@@ -275,6 +262,36 @@ function System() {
         </Grid>
 
       </Grid>
+
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: { md: `${currentDrawerWidth}px` },
+          right: 0,
+          zIndex: 1000,
+          p: 2,
+          backgroundColor: 'background.paper',
+          borderTop: 1,
+          borderColor: 'divider',
+          display: 'flex',
+          justifyContent: 'center',
+          transition: (theme) =>
+            theme.transitions.create('left', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+        }}
+      >
+        <Button
+          variant="contained"
+          startIcon={<RefreshIcon />}
+          onClick={loadAll}
+          size="large"
+        >
+          {t('sysinfo.refresh_button') || 'Refresh'}
+        </Button>
+      </Box>
     </Box>
   );
 }

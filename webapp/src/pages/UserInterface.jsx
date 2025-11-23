@@ -97,7 +97,7 @@ function UserInterface() {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Box>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h2" gutterBottom>
               {t('config.backup.general_settings_header') || 'Defaults'}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -135,29 +135,29 @@ function UserInterface() {
                   <MenuItem value="system">System</MenuItem>
                 </Select>
               </FormControl>
-
-              <Box>
-                <Typography variant="h6" gutterBottom>
-                  {t('config.screen.virtual_keyboard_enable_header') || 'Virtual keyboard'}
-                </Typography>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.conf_VIRTUAL_KEYBOARD_ENABLED === '1' || formData.conf_VIRTUAL_KEYBOARD_ENABLED === true}
-                      onChange={(e) => {
-                        setFormData({ ...formData, conf_VIRTUAL_KEYBOARD_ENABLED: e.target.checked ? '1' : '0' });
-                      }}
-                    />
-                  }
-                  label={t('config.screen.virtual_keyboard_enable_label') || 'Enable virtual keyboard'}
-                />
-              </Box>
             </Stack>
           </Box>
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h2" gutterBottom>
+            {t('config.screen.virtual_keyboard_enable_header') || 'Virtual keyboard'}
+          </Typography>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formData.conf_VIRTUAL_KEYBOARD_ENABLED === '1' || formData.conf_VIRTUAL_KEYBOARD_ENABLED === true}
+                onChange={(e) => {
+                  setFormData({ ...formData, conf_VIRTUAL_KEYBOARD_ENABLED: e.target.checked ? '1' : '0' });
+                }}
+              />
+            }
+            label={t('config.screen.virtual_keyboard_enable_label') || 'Enable virtual keyboard'}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <Typography variant="h2" gutterBottom>
             {t('config.display.section') || 'Display'}
           </Typography>
           <DisplayConfig />

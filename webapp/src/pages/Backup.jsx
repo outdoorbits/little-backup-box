@@ -31,6 +31,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useConfig } from '../contexts/ConfigContext';
 import api from '../utils/api';
+import LogMonitor from '../components/LogMonitor';
 
 function Backup() {
   const { t } = useLanguage();
@@ -436,7 +437,7 @@ function Backup() {
         
         <Grid container spacing={3} sx={{ mt: 1 }}>
             <Grid item xs={12} md={6}>
-              <FormControl sx={{ maxWidth: 400 }}>
+              <FormControl fullWidth>
                 <FormLabel>{t('main.source')}</FormLabel>
                 <Select
                   value={formData.sourceDevice}
@@ -471,7 +472,7 @@ function Backup() {
                 </Select>
               </FormControl>
               {formData.sourceDevice === 'selected_partition' && (
-                <FormControl sx={{ maxWidth: 400, mt: 2 }}>
+                <FormControl fullWidth sx={{ mt: 2 }}>
                   <FormLabel>{t('main.backup.preset_source_label')}</FormLabel>
                   <Select
                     value={formData.presetSource || ''}
@@ -488,7 +489,7 @@ function Backup() {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <FormControl sx={{ maxWidth: 400 }}>
+              <FormControl fullWidth>
                 <FormLabel>{t('main.target')}</FormLabel>
                 <Select
                   value={formData.targetDevice}
@@ -567,7 +568,7 @@ function Backup() {
                 </Select>
               </FormControl>
               {formData.targetDevice === 'selected_partition' && (
-                <FormControl sx={{ maxWidth: 400, mt: 2 }}>
+                <FormControl fullWidth sx={{ mt: 2 }}>
                   <FormLabel>{t('main.backup.preset_target_label')}</FormLabel>
                   <Select
                     value={formData.presetTarget || ''}
@@ -949,7 +950,7 @@ function Backup() {
           </Box>
         </Box>
       )}
-
+      <LogMonitor />
 
       <Snackbar
         open={!!toastMessage}

@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import { useConfig } from '../contexts/ConfigContext';
 import { useDrawer } from '../contexts/DrawerContext';
 import Menu, { drawerWidth, drawerCollapsedWidth } from './Menu';
-import LogMonitor from './LogMonitor';
 import DisplayStatus from './DisplayStatus';
 
 function Layout({ children }) {
@@ -24,8 +23,6 @@ function Layout({ children }) {
   useEffect(() => {
     document.documentElement.setAttribute('lang', config?.conf_LANGUAGE || 'en');
   }, [config]);
-
-  const showLogMonitor = ['/', '/sysinfo', '/tools'].includes(location.pathname);
 
   return (
     <Box
@@ -60,7 +57,6 @@ function Layout({ children }) {
         <Container maxWidth="xl" sx={{ flex: 1, py: 3 }}>
           {children}
         </Container>
-        {showLogMonitor && <LogMonitor />}
       </Box>
     </Box>
   );

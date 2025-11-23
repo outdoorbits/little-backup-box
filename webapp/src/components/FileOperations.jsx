@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  CardContent,
   Typography,
   Button,
   Stack,
@@ -35,11 +33,23 @@ function FileOperations() {
   const [presetTarget, setPresetTarget] = useState('');
   const [powerOff, setPowerOff] = useState(false);
   const [nvmeAvailable, setNvmeAvailable] = useState(false);
+  const [accordionExpanded, setAccordionExpanded] = useState(false);
 
   useEffect(() => {
+    // Load accordion state from localStorage
+    const savedState = localStorage.getItem('accordion-file-operations');
+    if (savedState !== null) {
+      setAccordionExpanded(JSON.parse(savedState));
+    }
+    
     loadPartitions();
     checkNVMe();
   }, []);
+
+  const handleAccordionChange = (event, isExpanded) => {
+    setAccordionExpanded(isExpanded);
+    localStorage.setItem('accordion-file-operations', JSON.stringify(isExpanded));
+  };
 
   const loadPartitions = async () => {
     try {
@@ -89,15 +99,16 @@ function FileOperations() {
   };
 
   return (
-    <Card>
-      <CardContent>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h5">
-              {t('main.file_operations') || 'File Operations'}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
+    <Accordion 
+      expanded={accordionExpanded}
+      onChange={handleAccordionChange}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="h5">
+          {t('main.file_operations') || 'File Operations'}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
             {message && (
               <Alert 
                 severity={message.includes('error') || message.includes('Error') ? 'error' : 'success'} 
@@ -113,7 +124,7 @@ function FileOperations() {
             </Alert>
 
             <Stack spacing={3}>
-              <FormControl fullWidth>
+              <FormControl sx={{ maxWidth: 400 }}>
                 <FormLabel>{t('maintenance.file.target') || 'Target Storage'}</FormLabel>
                 <Select
                   value={target}
@@ -126,7 +137,7 @@ function FileOperations() {
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth>
+              <FormControl sx={{ maxWidth: 400 }}>
                 <FormLabel>{t('main.backup.preset_source_label') || 'Set source partition'}</FormLabel>
                 <Select
                   value={presetSource}
@@ -142,7 +153,7 @@ function FileOperations() {
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth>
+              <FormControl sx={{ maxWidth: 400 }}>
                 <FormLabel>{t('main.backup.preset_target_label') || 'Set target partition'}</FormLabel>
                 <Select
                   value={presetTarget}
@@ -189,10 +200,8 @@ function FileOperations() {
                 </Button>
               </Box>
             </Stack>
-          </AccordionDetails>
-        </Accordion>
-      </CardContent>
-    </Card>
+      </AccordionDetails>
+    </Accordion>
   );
 }
 

@@ -56,7 +56,7 @@ function DeviceSelector({
   };
 
   return (
-    <FormControl fullWidth {...props}>
+    <FormControl sx={{ maxWidth: 400 }} {...props}>
       {label && <InputLabel>{label}</InputLabel>}
       <Select
         value={value || nullValue}
@@ -80,4 +80,7 @@ function DeviceSelector({
 }
 
 export default DeviceSelector;
+
+
+
 

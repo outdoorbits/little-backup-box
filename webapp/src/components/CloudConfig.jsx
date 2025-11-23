@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Card,
-  CardContent,
+  Box,
   Typography,
   TextField,
   Button,
   Checkbox,
-  FormControlLabel,
   Stack,
-  Divider,
   Table,
   TableBody,
   TableCell,
@@ -16,10 +13,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-  RadioGroup,
   Radio,
-  FormControl,
-  FormLabel,
   CircularProgress,
   Alert,
 } from '@mui/material';
@@ -29,13 +23,14 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useConfig } from '../contexts/ConfigContext';
 import api from '../utils/api';
 
-function CloudConfig() {
+function CloudConfig({ onSavedStateChange, isSticky = false, drawerWidth = 0 }) {
   const { t } = useLanguage();
   const { config, updateConfig, constants } = useConfig();
   const [cloudServices, setCloudServices] = useState([]);
   const [formData, setFormData] = useState({});
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const lastSavedConfig = useRef(null);
 
   useEffect(() => {
     loadCloudServices();
@@ -53,8 +48,35 @@ function CloudConfig() {
     }
   };
 
+  const handleSave = useCallback(async () => {
+    try {
+      const basedirsArray = Object.entries(formData.basedirs || {})
+        .filter(([_, value]) => value)
+        .map(([service, basedir]) => `${service}|=|${basedir}`);
+      const syncMethodsArray = Object.entries(formData.syncMethods || {})
+        .map(([service, method]) => `${service}|=|${method || 'rclone'}`);
+      const filesStayInPlaceArray = Object.entries(formData.filesStayInPlace || {})
+        .map(([service, value]) => `${service}|=|${value ? 'true' : 'false'}`);
 
-  const loadFormData = () => {
+      const configToSave = {
+        conf_BACKUP_CLOUDS_TARGET_BASEDIR: basedirsArray.join('|;|'),
+        conf_BACKUP_SYNC_METHOD_CLOUDS: syncMethodsArray.join('|;|'),
+        conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE: filesStayInPlaceArray.join('|;|'),
+      };
+
+      await updateConfig(configToSave);
+      lastSavedConfig.current = JSON.stringify(formData);
+      if (onSavedStateChange) {
+        onSavedStateChange(true, handleSave);
+      }
+      setMessage(t('config.message_settings_saved') || 'Settings saved');
+    } catch (error) {
+      console.error('Failed to save cloud settings:', error);
+      setMessage('Error saving cloud settings');
+    }
+  }, [formData, updateConfig, t, onSavedStateChange]);
+
+  const loadFormData = useCallback(() => {
     const basedirsRaw = (config.conf_BACKUP_CLOUDS_TARGET_BASEDIR || '').split('|;|');
     const syncMethodsRaw = (config.conf_BACKUP_SYNC_METHOD_CLOUDS || '').split('|;|');
     const filesStayInPlaceRaw = (config.conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE || '').split('|;|');
@@ -90,42 +112,35 @@ function CloudConfig() {
       }
     });
 
-    setFormData({
+    const newFormData = {
       basedirs,
       syncMethods,
       filesStayInPlace,
-    });
-  };
+    };
+    setFormData(newFormData);
+    lastSavedConfig.current = JSON.stringify(newFormData);
+    if (onSavedStateChange) {
+      onSavedStateChange(true, handleSave);
+    }
+  }, [config, cloudServices, onSavedStateChange, handleSave]);
 
   useEffect(() => {
     if (cloudServices.length > 0 && config) {
       loadFormData();
     }
-  }, [cloudServices, config]);
+  }, [cloudServices, config, loadFormData]);
 
-  const handleSave = async () => {
-    try {
-      const basedirsArray = Object.entries(formData.basedirs || {})
-        .filter(([_, value]) => value)
-        .map(([service, basedir]) => `${service}|=|${basedir}`);
-      const syncMethodsArray = Object.entries(formData.syncMethods || {})
-        .map(([service, method]) => `${service}|=|${method || 'rclone'}`);
-      const filesStayInPlaceArray = Object.entries(formData.filesStayInPlace || {})
-        .map(([service, value]) => `${service}|=|${value ? 'true' : 'false'}`);
-
-      const configToSave = {
-        conf_BACKUP_CLOUDS_TARGET_BASEDIR: basedirsArray.join('|;|'),
-        conf_BACKUP_SYNC_METHOD_CLOUDS: syncMethodsArray.join('|;|'),
-        conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE: filesStayInPlaceArray.join('|;|'),
-      };
-
-      await updateConfig(configToSave);
-      setMessage(t('config.message_settings_saved') || 'Settings saved');
-    } catch (error) {
-      console.error('Failed to save cloud settings:', error);
-      setMessage('Error saving cloud settings');
+  // Track saved state
+  useEffect(() => {
+    if (Object.keys(formData).length === 0 || !formData.basedirs) {
+      return;
     }
-  };
+    const formDataString = JSON.stringify(formData);
+    const isSaved = lastSavedConfig.current === formDataString;
+    if (onSavedStateChange) {
+      onSavedStateChange(isSaved, handleSave);
+    }
+  }, [formData, onSavedStateChange, handleSave]);
 
   const handleRestartRcloneGui = async () => {
     setLoading(true);
@@ -141,18 +156,14 @@ function CloudConfig() {
 
   if (!config || !formData.basedirs) {
     return (
-      <Card>
-        <CardContent>
-          <CircularProgress />
-        </CardContent>
-      </Card>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <CircularProgress />
+      </Box>
     );
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Stack spacing={3}>
+    <Stack spacing={3} sx={{ pb: isSticky ? 10 : 0 }}>
           {cloudServices.length === 0 && (
             <Alert severity="info">
               {t('integrations.cloud_services.no_services') || 'No cloud services configured. Please configure rclone first.'}
@@ -161,7 +172,7 @@ function CloudConfig() {
 
           {cloudServices.length > 0 && (
             <>
-              <Typography variant="h6">
+              <Typography variant="h2">
                 {t('config.cloud.target_basedir_header') || 'Base folder on cloud servers'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -171,8 +182,7 @@ function CloudConfig() {
                 {cloudServices.map((service) => (
                   <TextField
                     key={service}
-                    fullWidth
-                    label={`${service}:`}
+                    label={`${service}`}
                     value={formData.basedirs[service] || ''}
                     onChange={(e) => {
                       setFormData({
@@ -183,13 +193,12 @@ function CloudConfig() {
                         },
                       });
                     }}
+                    sx={{ maxWidth: 500 }}
                   />
                 ))}
               </Stack>
 
-              <Divider />
-
-              <Typography variant="h6">
+              <Typography variant="h2">
                 {t('config.cloud.sync_parameter_header') || 'Sync Parameters'}
               </Typography>
               <TableContainer component={Paper}>
@@ -271,9 +280,7 @@ function CloudConfig() {
             </>
           )}
 
-          <Divider />
-
-          <Typography variant="h6">
+          <Typography variant="h2">
             {t('config.cloud.rclone.gui.header') || 'rclone GUI'}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -284,23 +291,47 @@ function CloudConfig() {
             startIcon={<RefreshIcon />}
             onClick={handleRestartRcloneGui}
             disabled={loading}
+            sx={{ alignSelf: 'flex-start' }}
           >
             {t('config.cloud.rclone.gui.restart_label') || 'Update and restart rclone GUI'}
           </Button>
 
-          <Divider />
-
-          <Button
-            variant="contained"
-            startIcon={<SaveIcon />}
-            onClick={handleSave}
-            disabled={cloudServices.length === 0}
+          <Box
+            sx={{
+              ...(isSticky && {
+                position: 'fixed',
+                bottom: 0,
+                left: { md: `${drawerWidth}px` },
+                right: 0,
+                zIndex: 1000,
+                p: 2,
+                backgroundColor: 'background.paper',
+                borderTop: 1,
+                borderColor: 'divider',
+                display: 'flex',
+                justifyContent: 'center',
+                transition: (theme) =>
+                  theme.transitions.create('left', {
+                    easing: theme.transitions.easing.sharp,
+                    duration: theme.transitions.duration.enteringScreen,
+                  }),
+              }),
+            }}
           >
-            {t('config.save_button') || 'Save'}
-          </Button>
+            <Button
+              variant="contained"
+              startIcon={<SaveIcon />}
+              onClick={handleSave}
+              disabled={cloudServices.length === 0 || lastSavedConfig.current === JSON.stringify(formData)}
+              sx={{ 
+                alignSelf: 'flex-start',
+              }}
+              size={isSticky ? 'large' : 'medium'}
+            >
+              {t('config.save_button') || 'Save'}
+            </Button>
+          </Box>
         </Stack>
-      </CardContent>
-    </Card>
   );
 }
 

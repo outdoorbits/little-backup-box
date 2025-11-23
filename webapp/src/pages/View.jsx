@@ -61,10 +61,10 @@ function View() {
         alignItems={{ xs: 'stretch', sm: 'center' }}
       >
         <TextField
-          fullWidth
           label={t('view.filter.medium') || 'Storage medium'}
           value={storagePath}
           onChange={(e) => setStoragePath(e.target.value)}
+          sx={{ maxWidth: 500 }}
         />
         <Button 
           variant="contained" 
@@ -122,7 +122,7 @@ function View() {
                 }}
               />
               <Box sx={{ mt: 3 }}>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h4" gutterBottom>
                   {selectedImage.File_Name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">

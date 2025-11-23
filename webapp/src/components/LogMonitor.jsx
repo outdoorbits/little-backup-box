@@ -55,7 +55,7 @@ function LogMonitor() {
   };
 
   return (
-    <Card sx={{ mt: 3, mx: 2, mb: 2 }}>
+    <Card sx={{ mt: 3, mb: 2 }}>
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6">

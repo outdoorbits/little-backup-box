@@ -13,7 +13,6 @@ import {
   RadioGroup,
   Radio,
   FormLabel,
-  Divider,
   Button,
   Alert,
   CircularProgress,
@@ -136,10 +135,9 @@ function DisplayConfig() {
 
       <Stack spacing={3}>
         <Box>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h3" gutterBottom>
             {t('config.display.behavior_header') || 'Display behavior'}
           </Typography>
-          <Divider sx={{ my: 1 }} />
           <Stack spacing={2} sx={{ mt: 2 }}>
             <FormControlLabel
               control={
@@ -151,7 +149,7 @@ function DisplayConfig() {
               label={t('config.display.activate_label') || 'Enable the display connected to GPIO'}
             />
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.font_size_label') || 'Font size'}</InputLabel>
               <Select
                 value={formData.conf_DISP_FONT_SIZE || '12'}
@@ -166,7 +164,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.frame_time_label') || 'Minimum display time per frame in seconds'}</InputLabel>
               <Select
                 value={formData.conf_DISP_FRAME_TIME || '1'}
@@ -181,7 +179,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <Box>
+            <Box sx={{ maxWidth: 400 }}>
               <Typography gutterBottom>
                 {t('config.display.contrast_label') || 'Contrast'} ({formData.conf_DISP_CONTRAST || '255'})
               </Typography>
@@ -219,7 +217,7 @@ function DisplayConfig() {
               label={t('config.display.statusbar.label') || 'Show status bar'}
             />
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.frame_time_ip_label') || 'Minimum display time of the IP in seconds'}</InputLabel>
               <Select
                 value={formData.conf_DISP_FRAME_TIME_IP || '2.0'}
@@ -237,12 +235,11 @@ function DisplayConfig() {
         </Box>
 
         <Box>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h3" gutterBottom>
             {t('config.display.colors_header') || 'Color selection when using a color display'}
           </Typography>
-          <Divider sx={{ my: 1 }} />
           <Stack spacing={2} sx={{ mt: 2 }}>
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.color.text_label') || 'Default font color'}</InputLabel>
               <Select
                 value={formData.conf_DISP_COLOR_TEXT || 'grey'}
@@ -257,7 +254,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.color.high_label') || 'Font color for highlighted text'}</InputLabel>
               <Select
                 value={formData.conf_DISP_COLOR_HIGH || 'white'}
@@ -272,7 +269,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.color.alert_label') || 'Font color for warnings'}</InputLabel>
               <Select
                 value={formData.conf_DISP_COLOR_ALERT || 'orange'}
@@ -287,7 +284,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.color.background_label') || 'Background color'}</InputLabel>
               <Select
                 value={formData.conf_DISP_COLOR_BACKGROUND || 'black'}
@@ -305,10 +302,9 @@ function DisplayConfig() {
         </Box>
 
         <Box>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h3" gutterBottom>
             {t('config.display.backlight_header') || 'Display backlight'}
           </Typography>
-          <Divider sx={{ my: 1 }} />
           <Stack spacing={2} sx={{ mt: 2 }}>
             <FormControlLabel
               control={
@@ -320,7 +316,7 @@ function DisplayConfig() {
               label={t('config.display.backlight_enabled_label') || 'Activate display backlight (if available)'}
             />
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.backlight_pin_label') || 'Backlight GPIO pin (BCM notation)'}</InputLabel>
               <Select
                 value={formData.conf_DISP_BACKLIGHT_PIN || '0'}
@@ -338,12 +334,11 @@ function DisplayConfig() {
         </Box>
 
         <Box>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h3" gutterBottom>
             {t('config.display.rotate_header') || 'Rotate screen'}
           </Typography>
-          <Divider sx={{ my: 1 }} />
           <Stack spacing={2} sx={{ mt: 2 }}>
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.rotate_label') || 'Display rotation'}</InputLabel>
               <Select
                 value={formData.conf_DISP_ROTATE || '0'}
@@ -361,12 +356,11 @@ function DisplayConfig() {
         </Box>
 
         <Box>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h3" gutterBottom>
             {t('config.hardware.section') || 'Hardware'}
           </Typography>
-          <Divider sx={{ my: 1 }} />
           <Stack spacing={2} sx={{ mt: 2 }}>
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.driver_label') || 'Display driver'}</InputLabel>
               <Select
                 value={formData.conf_DISP_DRIVER || 'SSD1306'}
@@ -381,7 +375,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.connection_label') || 'Display interface'}</InputLabel>
               <Select
                 value={formData.conf_DISP_CONNECTION || 'I2C'}
@@ -466,12 +460,11 @@ function DisplayConfig() {
         </Box>
 
         <Box>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h3" gutterBottom>
             {t('config.display.additional_settings_header') || 'Additional display settings'}
           </Typography>
-          <Divider sx={{ my: 1 }} />
           <Stack spacing={2} sx={{ mt: 2 }}>
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.resolution_x_label') || 'Horizontal resolution (pixels)'}</InputLabel>
               <Select
                 value={formData.conf_DISP_RESOLUTION_X || '128'}
@@ -486,7 +479,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.resolution_y_label') || 'Vertical resolution (pixels)'}</InputLabel>
               <Select
                 value={formData.conf_DISP_RESOLUTION_Y || '64'}
@@ -501,7 +494,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.offset_x_label') || 'Display shift horizontally (in pixels)'}</InputLabel>
               <Select
                 value={formData.conf_DISP_OFFSET_X || '0'}
@@ -516,7 +509,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.offset_y_label') || 'Display shift vertically (in pixels)'}</InputLabel>
               <Select
                 value={formData.conf_DISP_OFFSET_Y || '0'}
@@ -531,7 +524,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.color.model_label') || 'Color'}</InputLabel>
               <Select
                 value={formData.conf_DISP_COLOR_MODEL || '1'}
@@ -546,7 +539,7 @@ function DisplayConfig() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <InputLabel>{t('config.display.color.notation_label') || 'Color notation'}</InputLabel>
               <Select
                 value={formData.conf_DISP_COLOR_BGR === '1' || formData.conf_DISP_COLOR_BGR === true ? 'BGR' : 'RGB'}

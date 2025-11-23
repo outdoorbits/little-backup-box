@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Card,
-  CardContent,
   Typography,
   Button,
   Stack,
@@ -70,13 +68,12 @@ function UpdateManager() {
   }, []);
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
-          {t('config.update.section')}
-        </Typography>
+    <Box>
+      <Typography variant="h2" gutterBottom>
+        {t('config.update.section')}
+      </Typography>
 
-        {updateStatus && (
+      {updateStatus && (
           <Box sx={{ mb: 2 }}>
             <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
               {t('maintenance.update.branch')}:&nbsp;
@@ -160,8 +157,7 @@ function UpdateManager() {
           }}
           dangerouslySetInnerHTML={{ __html: t('config.update.text') }}
         />
-      </CardContent>
-    </Card>
+    </Box>
   );
 }
 

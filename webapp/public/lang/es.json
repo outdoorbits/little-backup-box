@@ -152,6 +152,7 @@
     "system": "Sistema",
     "model": "Modelo",
     "device_states": "Estado del dispositivo",
+    "info": "Info",
     "wifi": {
       "header": "Wifi"
     }
@@ -231,7 +232,6 @@
         "device_folder_pattern": "Para usar como patrón en Configuración"
       },
       "general_settings_header": "Valores predeterminados",
-      "general_settings_desc": "Estos ajustes definen las opciones predeterminadas para las copias de seguridad. Estos valores predeterminados se pueden anular en la sección de opciones al realizar operaciones de copia de seguridad individuales.",
       "move_files_label": "¿Mover archivos en lugar de copiarlos?",
       "file_operation_label": "Operación de archivos",
       "file_operation_copy": "Copiar archivos",
@@ -322,22 +322,22 @@
     "alert_password_wifi_size_error": "La contraseña no se puede utilizar para el punto de acceso WiFi. Para ello, la longitud tendría que ser de 8 a 63 caracteres.",
     "vpn": {
       "section": "VPN",
-      "upload_header": "Subir archivo",
+      "upload_header": "Subir archivo de configuración",
       "upload_type_label": "¿Para qué variante de VPN se debe usar el archivo de configuración?",
       "upload_type_none": "Por favor seleccione",
       "type_none": "No use VPN",
       "type_header": "¿Qué VPN activar?",
       "upload_file_label": "Subir archivo de configuración",
       "remove_header": "Eliminar archivo VPN",
-      "timeout_header": "Tiempo de espera de VPN",
+      "timeout_header": "Tiempo de espera de conexión",
       "timeout_label": "¿Cuál es el tiempo máximo de espera para que se establezca la conexión VPN?",
       "type_cloud_label": "Para servicios en la nube",
       "type_rsync_label": "Para la copia de seguridad del servidor rsync",
       "type_desc": "¿Qué VPN se debe activar antes de transferir datos a un servicio de red? Precaución: Es posible que no se pueda acceder a la interfaz de Little Backup Box mientras se ejecuta la copia de seguridad. Es posible que pueda llegar al cuadro debajo de la IP de VPN si su dispositivo final también está registrado en la misma VPN."
     },
     "display": {
-      "section": "Pantalla",
-      "activate_label": "Activar la pantalla conectada a GPIO",
+      "section": "Pantalla montada en GPIO",
+      "activate_label": "Activar pantalla",
       "connection_header": "Interfaz para la pantalla",
       "connection_label": "Interfaz de pantalla",
       "i2c_address_label": "Dirección i2c de la pantalla",
@@ -507,7 +507,8 @@
         "base_url_label": "URL base de Mastodon"
       },
       "general": {
-        "header": "General",
+        "header": "Configuración general",
+        "services": "Servicios",
         "date_label": "Publicar fecha de grabación",
         "filename_label": "Nombre del archivo de publicación"
       },

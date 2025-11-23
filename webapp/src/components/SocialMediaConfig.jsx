@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Card,
-  CardContent,
+  Box,
   Typography,
   TextField,
   Button,
@@ -30,7 +29,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useConfig } from '../contexts/ConfigContext';
 import api from '../utils/api';
 
-function SocialMediaConfig() {
+function SocialMediaConfig({ onSavedStateChange, isSticky = false, drawerWidth = 0 }) {
   const { t } = useLanguage();
   const { config, updateConfig } = useConfig();
   const [formData, setFormData] = useState({});
@@ -42,8 +41,24 @@ function SocialMediaConfig() {
   const [matrixRooms, setMatrixRooms] = useState([]);
   const [selectedTelegramChat, setSelectedTelegramChat] = useState(null);
   const [selectedMatrixRoom, setSelectedMatrixRoom] = useState(null);
+  const [accordionStates, setAccordionStates] = useState({
+    telegram: false,
+    mastodon: false,
+    bluesky: false,
+    matrix: false,
+  });
+  const lastSavedConfig = useRef(null);
 
   useEffect(() => {
+    // Load accordion states from localStorage
+    const savedStates = localStorage.getItem('accordion-social-media');
+    if (savedStates !== null) {
+      try {
+        setAccordionStates(JSON.parse(savedStates));
+      } catch (e) {
+        console.error('Failed to parse saved accordion states:', e);
+      }
+    }
     if (config) {
       const socialConfig = {
         conf_SOCIAL_PUBLISH_DATE: config.conf_SOCIAL_PUBLISH_DATE || '0',
@@ -68,22 +83,39 @@ function SocialMediaConfig() {
         conf_SOCIAL_MATRIX_ROOM_IDENTIFIER: config.conf_SOCIAL_MATRIX_ROOM_IDENTIFIER || '',
       };
       setFormData(socialConfig);
+      lastSavedConfig.current = JSON.stringify(socialConfig);
     }
   }, [config]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     try {
       const configToSave = {
         ...formData,
         conf_SOCIAL_BLUESKY_APP_PASSWORD: formData.conf_SOCIAL_BLUESKY_APP_PASSWORD ? btoa(formData.conf_SOCIAL_BLUESKY_APP_PASSWORD) : '',
       };
       await updateConfig(configToSave);
+      lastSavedConfig.current = JSON.stringify(formData);
+      if (onSavedStateChange) {
+        onSavedStateChange(true, handleSave);
+      }
       setMessage(t('config.message_settings_saved') || 'Settings saved');
     } catch (error) {
       console.error('Failed to save social media settings:', error);
       setMessage('Error saving social media settings');
     }
-  };
+  }, [formData, updateConfig, t, onSavedStateChange]);
+
+  // Track saved state
+  useEffect(() => {
+    if (Object.keys(formData).length === 0) {
+      return;
+    }
+    const formDataString = JSON.stringify(formData);
+    const isSaved = lastSavedConfig.current === formDataString;
+    if (onSavedStateChange) {
+      onSavedStateChange(isSaved, handleSave);
+    }
+  }, [formData, onSavedStateChange, handleSave]);
 
   const handleTest = async (service) => {
     setLoading(true);
@@ -212,225 +244,275 @@ function SocialMediaConfig() {
     }
   };
 
+  const handleAccordionChange = (accordionName, isExpanded) => {
+    const newStates = { ...accordionStates, [accordionName]: isExpanded };
+    setAccordionStates(newStates);
+    localStorage.setItem('accordion-social-media', JSON.stringify(newStates));
+  };
+
   if (!config) {
     return (
-      <Card>
-        <CardContent>
-          <CircularProgress />
-        </CardContent>
-      </Card>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <CircularProgress />
+      </Box>
     );
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Stack spacing={3}>
-          <Typography variant="h6">
-            {t('config.social.general.header') || 'General Settings'}
-          </Typography>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.conf_SOCIAL_PUBLISH_DATE === '1'}
-                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_PUBLISH_DATE: e.target.checked ? '1' : '0' })}
-              />
-            }
-            label={t('config.social.general.date_label') || 'Publish recording date'}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.conf_SOCIAL_PUBLISH_FILENAME === '1'}
-                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_PUBLISH_FILENAME: e.target.checked ? '1' : '0' })}
-              />
-            }
-            label={t('config.social.general.filename_label') || 'Publish file name'}
-          />
+    <>
+      <Stack spacing={3} sx={{ pb: isSticky ? 10 : 0 }}>
+        <Typography variant="h2">
+          {t('config.social.general.header') || 'General Settings'}
+        </Typography>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.conf_SOCIAL_PUBLISH_DATE === '1'}
+              onChange={(e) => setFormData({ ...formData, conf_SOCIAL_PUBLISH_DATE: e.target.checked ? '1' : '0' })}
+            />
+          }
+          label={t('config.social.general.date_label') || 'Publish recording date'}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={formData.conf_SOCIAL_PUBLISH_FILENAME === '1'}
+              onChange={(e) => setFormData({ ...formData, conf_SOCIAL_PUBLISH_FILENAME: e.target.checked ? '1' : '0' })}
+            />
+          }
+          label={t('config.social.general.filename_label') || 'Publish file name'}
+        />
 
-          <Divider />
-
-          <Accordion>
+        <Typography variant="h2">
+          {t('config.social.general.services') || 'Services'}
+        </Typography>
+        <Box sx={{ mt: 2 }}>
+          <Accordion 
+            expanded={accordionStates.telegram}
+            onChange={(event, isExpanded) => handleAccordionChange('telegram', isExpanded)}
+          >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">
                 {t('config.social.telegram.header') || 'Telegram'}
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Stack spacing={2}>
-                <Typography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: t('config.social.telegram.install_desc') || '' }} />
-                <TextField
-                  fullWidth
-                  label={t('config.social.telegram.token_label') || 'Token'}
-                  value={formData.conf_SOCIAL_TELEGRAM_TOKEN || ''}
-                  onChange={(e) => setFormData({ ...formData, conf_SOCIAL_TELEGRAM_TOKEN: e.target.value })}
-                />
-                <TextField
-                  fullWidth
-                  label={t('config.social.telegram.chat_id_label') || 'Chat ID'}
-                  value={formData.conf_SOCIAL_TELEGRAM_CHAT_ID && formData.conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER
-                    ? `${formData.conf_SOCIAL_TELEGRAM_CHAT_ID}: ${formData.conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER}`
-                    : formData.conf_SOCIAL_TELEGRAM_CHAT_ID || ''}
-                  disabled
-                />
-                <Button
-                  variant="outlined"
-                  onClick={handleOpenTelegramDialog}
-                  disabled={!formData.conf_SOCIAL_TELEGRAM_TOKEN?.trim()}
-                >
-                  {t('config.social.telegram.button_select_chat') || 'Select chat'}
-                </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<SendIcon />}
-                  onClick={() => handleTest('telegram')}
-                  disabled={loading || !formData.conf_SOCIAL_TELEGRAM_TOKEN?.trim()}
-                >
-                  {t('integrations.social_media.test_telegram') || 'Test Connection'}
-                </Button>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+            <Stack spacing={2}>
+              <Typography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: t('config.social.telegram.install_desc') || '' }} />
+              <TextField
+                label={t('config.social.telegram.token_label') || 'Token'}
+                value={formData.conf_SOCIAL_TELEGRAM_TOKEN || ''}
+                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_TELEGRAM_TOKEN: e.target.value })}
+                sx={{ maxWidth: 400 }}
+              />
+              <TextField
+                label={t('config.social.telegram.chat_id_label') || 'Chat ID'}
+                value={formData.conf_SOCIAL_TELEGRAM_CHAT_ID && formData.conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER
+                  ? `${formData.conf_SOCIAL_TELEGRAM_CHAT_ID}: ${formData.conf_SOCIAL_TELEGRAM_CHAT_IDENTIFIER}`
+                  : formData.conf_SOCIAL_TELEGRAM_CHAT_ID || ''}
+                disabled
+                sx={{ maxWidth: 400 }}
+              />
+              <Button
+                variant="outlined"
+                onClick={handleOpenTelegramDialog}
+                disabled={!formData.conf_SOCIAL_TELEGRAM_TOKEN?.trim()}
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                {t('config.social.telegram.button_select_chat') || 'Select chat'}
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<SendIcon />}
+                onClick={() => handleTest('telegram')}
+                disabled={loading || !formData.conf_SOCIAL_TELEGRAM_TOKEN?.trim()}
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                {t('integrations.social_media.test_telegram') || 'Test Connection'}
+              </Button>
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
 
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">
-                {t('config.social.mastodon.header') || 'Mastodon'}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack spacing={2}>
-                <Typography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: t('config.social.mastodon.install_desc') || '' }} />
-                <TextField
-                  fullWidth
-                  label={t('config.social.mastodon.base_url_label') || 'Mastodon base URL'}
-                  value={formData.conf_SOCIAL_MASTODON_BASE_URL || ''}
-                  onChange={(e) => setFormData({ ...formData, conf_SOCIAL_MASTODON_BASE_URL: e.target.value })}
-                />
-                <TextField
-                  fullWidth
-                  label={t('config.social.mastodon.token_label') || 'Access token'}
-                  value={formData.conf_SOCIAL_MASTODON_TOKEN || ''}
-                  onChange={(e) => setFormData({ ...formData, conf_SOCIAL_MASTODON_TOKEN: e.target.value })}
-                />
-                <Button
-                  variant="outlined"
-                  startIcon={<SendIcon />}
-                  onClick={() => handleTest('mastodon')}
-                  disabled={loading || !formData.conf_SOCIAL_MASTODON_BASE_URL?.trim() || !formData.conf_SOCIAL_MASTODON_TOKEN?.trim()}
-                >
-                  {t('integrations.social_media.test_mastodon') || 'Test Connection'}
-                </Button>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+        <Accordion 
+          expanded={accordionStates.mastodon}
+          onChange={(event, isExpanded) => handleAccordionChange('mastodon', isExpanded)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6">
+              {t('config.social.mastodon.header') || 'Mastodon'}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack spacing={2}>
+              <Typography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: t('config.social.mastodon.install_desc') || '' }} />
+              <TextField
+                label={t('config.social.mastodon.base_url_label') || 'Mastodon base URL'}
+                value={formData.conf_SOCIAL_MASTODON_BASE_URL || ''}
+                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_MASTODON_BASE_URL: e.target.value })}
+                sx={{ maxWidth: 500 }}
+              />
+              <TextField
+                label={t('config.social.mastodon.token_label') || 'Access token'}
+                value={formData.conf_SOCIAL_MASTODON_TOKEN || ''}
+                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_MASTODON_TOKEN: e.target.value })}
+                sx={{ maxWidth: 400 }}
+              />
+              <Button
+                variant="outlined"
+                startIcon={<SendIcon />}
+                onClick={() => handleTest('mastodon')}
+                disabled={loading || !formData.conf_SOCIAL_MASTODON_BASE_URL?.trim() || !formData.conf_SOCIAL_MASTODON_TOKEN?.trim()}
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                {t('integrations.social_media.test_mastodon') || 'Test Connection'}
+              </Button>
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
 
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">
-                {t('config.social.bluesky.header') || 'Bluesky'}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack spacing={2}>
-                <Typography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: t('config.social.bluesky.install_desc') || '' }} />
-                <TextField
-                  fullWidth
-                  label={t('config.social.bluesky.base_url_label') || 'API Base URL'}
-                  value={formData.conf_SOCIAL_BLUESKY_API_BASE_URL || ''}
-                  onChange={(e) => setFormData({ ...formData, conf_SOCIAL_BLUESKY_API_BASE_URL: e.target.value })}
-                />
-                <TextField
-                  fullWidth
-                  label={t('config.social.bluesky.identifier_label') || 'Identifier (Email or Handle)'}
-                  value={formData.conf_SOCIAL_BLUESKY_IDENTIFIER || ''}
-                  onChange={(e) => setFormData({ ...formData, conf_SOCIAL_BLUESKY_IDENTIFIER: e.target.value })}
-                />
-                <TextField
-                  fullWidth
-                  type="password"
-                  label={t('config.social.bluesky.app_password_label') || 'App Password'}
-                  value={formData.conf_SOCIAL_BLUESKY_APP_PASSWORD || ''}
-                  onChange={(e) => setFormData({ ...formData, conf_SOCIAL_BLUESKY_APP_PASSWORD: e.target.value })}
-                />
-                <Button
-                  variant="outlined"
-                  startIcon={<SendIcon />}
-                  onClick={() => handleTest('bluesky')}
-                  disabled={loading || !formData.conf_SOCIAL_BLUESKY_API_BASE_URL?.trim() || !formData.conf_SOCIAL_BLUESKY_IDENTIFIER?.trim() || !formData.conf_SOCIAL_BLUESKY_APP_PASSWORD?.trim()}
-                >
-                  {t('integrations.social_media.test_bluesky') || 'Test Connection'}
-                </Button>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+        <Accordion 
+          expanded={accordionStates.bluesky}
+          onChange={(event, isExpanded) => handleAccordionChange('bluesky', isExpanded)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6">
+              {t('config.social.bluesky.header') || 'Bluesky'}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack spacing={2}>
+              <Typography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: t('config.social.bluesky.install_desc') || '' }} />
+              <TextField
+                label={t('config.social.bluesky.base_url_label') || 'API Base URL'}
+                value={formData.conf_SOCIAL_BLUESKY_API_BASE_URL || ''}
+                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_BLUESKY_API_BASE_URL: e.target.value })}
+                sx={{ maxWidth: 500 }}
+              />
+              <TextField
+                label={t('config.social.bluesky.identifier_label') || 'Identifier (Email or Handle)'}
+                value={formData.conf_SOCIAL_BLUESKY_IDENTIFIER || ''}
+                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_BLUESKY_IDENTIFIER: e.target.value })}
+                sx={{ maxWidth: 400 }}
+              />
+              <TextField
+                type="password"
+                label={t('config.social.bluesky.app_password_label') || 'App Password'}
+                value={formData.conf_SOCIAL_BLUESKY_APP_PASSWORD || ''}
+                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_BLUESKY_APP_PASSWORD: e.target.value })}
+                sx={{ maxWidth: 400 }}
+              />
+              <Button
+                variant="outlined"
+                startIcon={<SendIcon />}
+                onClick={() => handleTest('bluesky')}
+                disabled={loading || !formData.conf_SOCIAL_BLUESKY_API_BASE_URL?.trim() || !formData.conf_SOCIAL_BLUESKY_IDENTIFIER?.trim() || !formData.conf_SOCIAL_BLUESKY_APP_PASSWORD?.trim()}
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                {t('integrations.social_media.test_bluesky') || 'Test Connection'}
+              </Button>
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
 
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">
-                {t('config.social.matrix.header') || 'Matrix'}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack spacing={2}>
-                <Typography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: t('config.social.matrix.install_desc') || '' }} />
-                <TextField
-                  fullWidth
-                  label={t('config.social.matrix.homeserver_label') || 'Matrix homeserver'}
-                  value={formData.conf_SOCIAL_MATRIX_HOMESERVER || ''}
-                  onChange={(e) => setFormData({ ...formData, conf_SOCIAL_MATRIX_HOMESERVER: e.target.value })}
-                />
-                <TextField
-                  fullWidth
-                  label={t('config.social.matrix.token_label') || 'Access token'}
-                  value={formData.conf_SOCIAL_MATRIX_TOKEN || ''}
-                  onChange={(e) => setFormData({ ...formData, conf_SOCIAL_MATRIX_TOKEN: e.target.value })}
-                />
-                <TextField
-                  fullWidth
-                  label={t('config.social.matrix.room_id_label') || 'Matrix room ID'}
-                  value={formData.conf_SOCIAL_MATRIX_ROOM_ID && formData.conf_SOCIAL_MATRIX_ROOM_IDENTIFIER
-                    ? `${formData.conf_SOCIAL_MATRIX_ROOM_ID}: ${formData.conf_SOCIAL_MATRIX_ROOM_IDENTIFIER}`
-                    : formData.conf_SOCIAL_MATRIX_ROOM_ID || ''}
-                  disabled
-                />
-                <Button
-                  variant="outlined"
-                  onClick={handleOpenMatrixDialog}
-                  disabled={!formData.conf_SOCIAL_MATRIX_HOMESERVER?.trim() || !formData.conf_SOCIAL_MATRIX_TOKEN?.trim()}
-                >
-                  {t('config.social.matrix.button_select_room') || 'Select room'}
-                </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<SendIcon />}
-                  onClick={() => handleTest('matrix')}
-                  disabled={loading || !formData.conf_SOCIAL_MATRIX_HOMESERVER?.trim() || !formData.conf_SOCIAL_MATRIX_TOKEN?.trim()}
-                >
-                  {t('integrations.social_media.test_matrix') || 'Test Connection'}
-                </Button>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+        <Accordion 
+          expanded={accordionStates.matrix}
+          onChange={(event, isExpanded) => handleAccordionChange('matrix', isExpanded)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6">
+              {t('config.social.matrix.header') || 'Matrix'}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Stack spacing={2}>
+              <Typography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: t('config.social.matrix.install_desc') || '' }} />
+              <TextField
+                label={t('config.social.matrix.homeserver_label') || 'Matrix homeserver'}
+                value={formData.conf_SOCIAL_MATRIX_HOMESERVER || ''}
+                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_MATRIX_HOMESERVER: e.target.value })}
+                sx={{ maxWidth: 500 }}
+              />
+              <TextField
+                label={t('config.social.matrix.token_label') || 'Access token'}
+                value={formData.conf_SOCIAL_MATRIX_TOKEN || ''}
+                onChange={(e) => setFormData({ ...formData, conf_SOCIAL_MATRIX_TOKEN: e.target.value })}
+                sx={{ maxWidth: 400 }}
+              />
+              <TextField
+                label={t('config.social.matrix.room_id_label') || 'Matrix room ID'}
+                value={formData.conf_SOCIAL_MATRIX_ROOM_ID && formData.conf_SOCIAL_MATRIX_ROOM_IDENTIFIER
+                  ? `${formData.conf_SOCIAL_MATRIX_ROOM_ID}: ${formData.conf_SOCIAL_MATRIX_ROOM_IDENTIFIER}`
+                  : formData.conf_SOCIAL_MATRIX_ROOM_ID || ''}
+                disabled
+                sx={{ maxWidth: 400 }}
+              />
+              <Button
+                variant="outlined"
+                onClick={handleOpenMatrixDialog}
+                disabled={!formData.conf_SOCIAL_MATRIX_HOMESERVER?.trim() || !formData.conf_SOCIAL_MATRIX_TOKEN?.trim()}
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                {t('config.social.matrix.button_select_room') || 'Select room'}
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<SendIcon />}
+                onClick={() => handleTest('matrix')}
+                disabled={loading || !formData.conf_SOCIAL_MATRIX_HOMESERVER?.trim() || !formData.conf_SOCIAL_MATRIX_TOKEN?.trim()}
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                {t('integrations.social_media.test_matrix') || 'Test Connection'}
+              </Button>
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
+        </Box>
 
-          <Divider />
-
+        <Box
+          sx={{
+            ...(isSticky && {
+              position: 'fixed',
+              bottom: 0,
+              left: { md: `${drawerWidth}px` },
+              right: 0,
+              zIndex: 1000,
+              p: 2,
+              backgroundColor: 'background.paper',
+              borderTop: 1,
+              borderColor: 'divider',
+              display: 'flex',
+              justifyContent: 'center',
+              transition: (theme) =>
+                theme.transitions.create('left', {
+                  easing: theme.transitions.easing.sharp,
+                  duration: theme.transitions.duration.enteringScreen,
+                }),
+            }),
+          }}
+        >
           <Button
             variant="contained"
             startIcon={<SaveIcon />}
             onClick={handleSave}
+            disabled={lastSavedConfig.current === JSON.stringify(formData)}
+            sx={{ 
+              alignSelf: 'flex-start',
+            }}
+            size={isSticky ? 'large' : 'medium'}
           >
             {t('config.save_button') || 'Save'}
           </Button>
-        </Stack>
+        </Box>
+      </Stack>
 
-        <Dialog open={telegramDialogOpen} onClose={() => setTelegramDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={telegramDialogOpen} onClose={() => setTelegramDialogOpen(false)} maxWidth="sm" fullWidth>
           <DialogTitle>{t('config.social.telegram.select_chat') || 'Select chat'}</DialogTitle>
           <DialogContent>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {t('config.social.telegram.table_headers') || 'Display: Name (Type) — chat_id'}
             </Typography>
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <Select
                 value={selectedTelegramChat?.id || ''}
                 onChange={(e) => {
@@ -469,7 +551,7 @@ function SocialMediaConfig() {
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {t('config.social.matrix.table_headers') || 'Name — Alias — Room ID'}
             </Typography>
-            <FormControl fullWidth>
+            <FormControl sx={{ maxWidth: 400 }}>
               <Select
                 value={selectedMatrixRoom?.room_id || ''}
                 onChange={(e) => {
@@ -502,11 +584,13 @@ function SocialMediaConfig() {
               {t('config.social.matrix.accept') || 'Apply'}
             </Button>
           </DialogActions>
-        </Dialog>
-      </CardContent>
-    </Card>
+      </Dialog>
+    </>
   );
 }
 
 export default SocialMediaConfig;
+
+
+
 

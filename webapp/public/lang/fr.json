@@ -152,6 +152,7 @@
     "system": "Système",
     "model": "Modèle",
     "device_states": "Statut du périphérique",
+    "info": "Info",
     "wifi": {
       "header": "Wifi"
     }
@@ -231,7 +232,6 @@
         "device_folder_pattern": "À utiliser comme modèle dans les paramètres"
       },
       "general_settings_header": "Valeurs par défaut",
-      "general_settings_desc": "Ces paramètres définissent les options par défaut pour les sauvegardes. Ces valeurs par défaut peuvent être remplacées dans la section des options lors de l'exécution d'opérations de sauvegarde individuelles.",
       "move_files_label": "Déplacer des fichiers au lieu de les copier?",
       "file_operation_label": "Opération sur les fichiers",
       "file_operation_copy": "Copier les fichiers",
@@ -322,22 +322,22 @@
     "alert_password_wifi_size_error": "Le mot de passe ne peut pas être utilisé pour le hotspot WiFi. Pour cela, la longueur devrait être de 8 à 63 caractères.",
     "vpn": {
       "section": "VPN",
-      "upload_header": "Télécharger le fichier",
+      "upload_header": "Télécharger le fichier de configuration",
       "upload_type_label": "Pour quelle variante VPN le fichier de configuration doit-il être utilisé ?",
       "upload_type_none": "Veuillez sélectionner",
       "type_none": "N'utilisez pas de VPN",
       "type_header": "Quel VPN activer ?",
       "upload_file_label": "Télécharger le fichier de configuration",
       "remove_header": "Supprimer le fichier VPN",
-      "timeout_header": "Délai d'expiration du VPN",
+      "timeout_header": "Délai d'expiration de connexion",
       "timeout_label": "Quel est le temps maximum d'attente pour que la connexion VPN soit établie ?",
       "type_cloud_label": "Pour les services cloud",
       "type_rsync_label": "Pour la sauvegarde du serveur rsync",
       "type_desc": "Quel VPN doit être activé avant de transférer des données vers un service réseau ? Attention : L'interface de Little Backup Box peut ne pas être accessible pendant l'exécution de la sauvegarde. Vous pourrez peut-être accéder à la boîte sous l'IP VPN si votre terminal est également enregistré dans le même VPN."
     },
     "display": {
-      "section": "Filtrer",
-      "activate_label": "Activer l'écran connecté au GPIO",
+      "section": "Écran monté sur GPIO",
+      "activate_label": "Activer l'écran",
       "connection_header": "Interface pour l'affichage",
       "connection_label": "Interface d'affichage",
       "i2c_address_label": "Adresse i2c de l'écran",
@@ -507,7 +507,8 @@
         "base_url_label": "URL de base de Mastodon"
       },
       "general": {
-        "header": "Général",
+        "header": "Paramètres généraux",
+        "services": "Services",
         "date_label": "Date de publication de l'enregistrement",
         "filename_label": "Publier le nom du fichier"
       },

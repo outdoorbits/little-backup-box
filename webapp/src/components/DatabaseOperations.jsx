@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  CardContent,
   Typography,
   Stack,
   Alert,
@@ -31,11 +29,23 @@ function DatabaseOperations() {
   const [presetTarget, setPresetTarget] = useState('');
   const [powerOff, setPowerOff] = useState(false);
   const [nvmeAvailable, setNvmeAvailable] = useState(false);
+  const [accordionExpanded, setAccordionExpanded] = useState(false);
 
   useEffect(() => {
+    // Load accordion state from localStorage
+    const savedState = localStorage.getItem('accordion-database-operations');
+    if (savedState !== null) {
+      setAccordionExpanded(JSON.parse(savedState));
+    }
+    
     loadPartitions();
     checkNVMe();
   }, []);
+
+  const handleAccordionChange = (event, isExpanded) => {
+    setAccordionExpanded(isExpanded);
+    localStorage.setItem('accordion-database-operations', JSON.stringify(isExpanded));
+  };
 
   const loadPartitions = async () => {
     try {
@@ -85,15 +95,16 @@ function DatabaseOperations() {
   };
 
   return (
-    <Card>
-      <CardContent>
-        <Accordion defaultExpanded>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h5">
-              {t('maintenance.database.section') || 'Database Operations'}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
+    <Accordion 
+      expanded={accordionExpanded}
+      onChange={handleAccordionChange}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="h5">
+          {t('maintenance.database.section') || 'Database Operations'}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
             {message && (
               <Alert 
                 severity={message.includes('error') || message.includes('Error') ? 'error' : 'success'} 
@@ -105,7 +116,7 @@ function DatabaseOperations() {
             )}
 
             <Stack spacing={3}>
-              <FormControl fullWidth>
+              <FormControl sx={{ maxWidth: 400 }}>
                 <FormLabel>{t('maintenance.database.target') || 'Target Storage'}</FormLabel>
                 <Select
                   value={target}
@@ -118,7 +129,7 @@ function DatabaseOperations() {
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth>
+              <FormControl sx={{ maxWidth: 400 }}>
                 <FormLabel>{t('main.backup.preset_source_label') || 'Set source partition'}</FormLabel>
                 <Select
                   value={presetSource}
@@ -134,7 +145,7 @@ function DatabaseOperations() {
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth>
+              <FormControl sx={{ maxWidth: 400 }}>
                 <FormLabel>{t('main.backup.preset_target_label') || 'Set target partition'}</FormLabel>
                 <Select
                   value={presetTarget}
@@ -162,10 +173,8 @@ function DatabaseOperations() {
               />
 
             </Stack>
-          </AccordionDetails>
-        </Accordion>
-      </CardContent>
-    </Card>
+      </AccordionDetails>
+    </Accordion>
   );
 }
 

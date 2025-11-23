@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Layout from './components/Layout';
-import Home from './pages/Home';
-import Setup from './pages/Setup';
-import Tools from './pages/Tools';
-import SysInfo from './pages/SysInfo';
+import Backup from './pages/Backup';
+import UserInterface from './pages/UserInterface';
+import Filesystem from './pages/Filesystem';
+import System from './pages/System';
 import Maintenance from './pages/Maintenance';
-import Integrations from './pages/Integrations';
+import ServiceConnections from './pages/ServiceConnections';
 import Network from './pages/Network';
-import Scrape from './pages/Scrape';
+import ScrapedUI from './pages/ScrapedUI';
 
 function RedirectHandler() {
   const navigate = useNavigate();
@@ -32,14 +32,14 @@ function App() {
     <Layout>
       <RedirectHandler />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/setup" element={<Setup />} />
-        <Route path="/tools" element={<Tools />} />
-        <Route path="/sysinfo" element={<SysInfo />} />
+        <Route path="/" element={<Backup />} />
+        <Route path="/setup" element={<UserInterface />} />
+        <Route path="/tools" element={<Filesystem />} />
+        <Route path="/sysinfo" element={<System />} />
         <Route path="/network" element={<Network />} />
         <Route path="/maintenance" element={<Maintenance />} />
-        <Route path="/integrations" element={<Integrations />} />
-        <Route path="/scrape" element={<Scrape />} />
+        <Route path="/integrations" element={<ServiceConnections />} />
+        <Route path="/scrape" element={<ScrapedUI />} />
       </Routes>
     </Layout>
   );
