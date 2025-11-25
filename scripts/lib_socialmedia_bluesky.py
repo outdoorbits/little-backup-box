@@ -44,27 +44,28 @@ class bluesky(services):
 		self.post_maxlength	= 300
 		self.newPostsOnTop					= True
 
-		self.rate_limit_count				= 1
-		self.rate_limit_seconds				= 10
-		self.rate_limits_variable_seconds	= 3
+		self.rate_limit_count				= 1666 # 5000 points / 3 points per create
+		self.rate_limit_seconds				= 3600
+		self.rate_limits_variable_seconds	= 2.0
 
-		if not check_only and self.configured():
-			from atproto import Client, models
-			self.models	= models
-
-			try:
-				# Create a client bound to the given service URL (PDS).
-				self.bluesky	= Client(base_url=self.API_BASE_URL)
-
-				# Login using identifier (handle / DID) and an app password.
-				self.keep_posting_rate()
-				self.bluesky.login(self.IDENTIFIER, self.APP_PASSWORD)
-			except Exception as e:
-				self.bluesky = None
-				self.ok = False
-				self.add_message(f'login: {type(e).__name__}, {e}')
-		else:
+		if check_only or not self.configured():
 			self.bluesky = None
+			return
+
+		from atproto import Client, models
+		self.models	= models
+
+		try:
+			# Create a client bound to the given service URL (PDS).
+			self.bluesky	= Client(base_url=self.API_BASE_URL)
+
+			# Login using identifier (handle / DID) and an app password.
+			self.keep_posting_rate()
+			self.bluesky.login(self.IDENTIFIER, self.APP_PASSWORD)
+		except Exception as e:
+			self.bluesky	= None
+			self.ok			= False
+			self.add_message(f'login: {type(e).__name__}, {e}')
 
 	def configured(self):
 		return (bool(self.API_BASE_URL and self.IDENTIFIER and self.APP_PASSWORD))

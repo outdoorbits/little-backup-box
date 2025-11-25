@@ -50,12 +50,10 @@ class services(object):
 
 		self.rate_limit_count				= None
 		self.rate_limit_seconds				= None
-		self.rate_limits_variable_seconds	= 0
+		self.rate_limits_variable_seconds	= 0.0
 
 		self.post_maxlength					= 300
 		self.newPostsOnTop					= False
-
-
 
 		self.reset_messages()
 
@@ -83,11 +81,11 @@ class services(object):
 					f":{self.__lan.l('box_backup_delay_rate_limit')}",
 					f":{delaytime:.0f} s"
 				])
-				time.sleep(1)
+				time.sleep(delaytime if delaytime < 1 else 1)
 				delaytime	-= 1
 
 	def get_delaytime(self):
-		variable_seconds	= random.randint(0, self.rate_limits_variable_seconds)
+		variable_seconds	= random.uniform(0, self.rate_limits_variable_seconds)
 
 		if not self.rate_limit_count or not self.rate_limit_seconds:
 			return(variable_seconds)
@@ -103,13 +101,14 @@ class services(object):
 		if not html:
 			return ''
 
-		soup	= BeautifulSoup(html, "html.parser")
+		soup	= BeautifulSoup(html, 'html.parser')
 
-		for a in soup.find_all("a"):
+		for a in soup.find_all('a'):
 			text = a.get_text(strip=True)
-			href = a.get("href", "")
-			if text and href:
-				a.replace_with(f"{text} ({href})")
+			href = a.get('href', '').strip()
+
+			if text and href and text != href:
+				a.replace_with(f'{text} ({href})')
 			elif href:
 				a.replace_with(href)
 			else:
@@ -127,7 +126,7 @@ class services(object):
 		return(markdownify(html))
 
 	def cleanComment(self, Comment):
-		return(Comment.lstrip("\ufeff"))
+		return(Comment.lstrip("\ufeff").strip())
 
 	def split_text(self, text: str, maxlength_primary: int, maxlength_follow: int = None):
 		# Split 'text' into chunks of size <= maxlength.
