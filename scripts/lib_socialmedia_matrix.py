@@ -35,6 +35,7 @@ class matrix(services):
 			ACCESS_TOKEN,
 			ROOM_ID,
 			check_only=False,
+			publish_filename=True,
 			upload_times=[]
 		):
 		# HOMESERVER:   e.g. 'https://matrix.example.org'
@@ -46,6 +47,8 @@ class matrix(services):
 		self.homeserver								= (HOMESERVER or "").strip()
 		self.access_token							= (ACCESS_TOKEN or "").strip()
 		self.room_id								= ROOM_ID
+
+		self.publish_filename						= publish_filename
 
 		self.caption_maxlength						= 1000     # for the first message caption when sending media
 		self.post_maxlength							= 4000     # general limit for text (Matrix has its own internal limits)
@@ -184,15 +187,36 @@ class matrix(services):
 
 				for index, CommentPart in enumerate(CommentParts):
 					if index == 0 and media_uri:
-						# First part: send media with caption
+
 						content = {
 							"msgtype":	matrix_msgtype,
-							"body":		FilePath.name if FilePath else "file",
 							"url":		media_uri,
 						}
 
+						if FilePath:
+							suffix	= FilePath.suffix or ''
+						else:
+							suffix	= ''
+
+						if FilePath:
+							content["filename"] = (FilePath.name if (self.publish_filename and FilePath) else f'file{suffix}')
+
 						if CommentPart:
-							content["caption"]				= CommentPart
+							# CommentPart as body
+							CommentPart_plain	= self.html_to_plain(CommentPart) or ""
+
+							if not CommentPart_plain:
+								CommentPart_plain	= CommentPart or (FilePath.name if (self.publish_filename and FilePath) else f'file{suffix}')
+
+							content["body"]	= CommentPart_plain
+
+							if CommentPart_plain != CommentPart:
+								content["format"] = "org.matrix.custom.html"
+								content["formatted_body"] = CommentPart
+
+						else:
+							# Fallback: no comment - use file name if allowed
+							content["body"] = FilePath.name if (self.publish_filename and FilePath) else f'file{suffix}'
 
 						if media_mime:
 							content.setdefault("info", {})

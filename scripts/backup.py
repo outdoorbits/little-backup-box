@@ -67,6 +67,7 @@ class backup(object):
 		DeviceIdentifierPresetSource=None,
 		DeviceIdentifierPresetTarget=None,
 		TelegramChatID=None,
+		MatrixRoomID=None,
 		PowerOff='setup',
 		SecondaryBackupFollows=False
 	):
@@ -137,6 +138,9 @@ class backup(object):
 
 		# Telegram
 		self.TelegramChatID									= TelegramChatID if TelegramChatID else self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
+
+		# Matrix
+		self.MatrixRoomID									= MatrixRoomID if MatrixRoomID else self.__setup.get_val('conf_SOCIAL_MATRIX_ROOM_ID')
 
 		# power off
 		self.PowerOff										= PowerOff if PowerOff != 'setup' else self.__setup.get_val('conf_POWER_OFF')
@@ -784,7 +788,7 @@ class backup(object):
 
 ### SoMe upload
 					elif self.TargetDevice.StorageType == 'social':
-						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID, upload_times=upload_times)
+						SOCIAL	= lib_socialmedia.socialmedia(service=self.TargetService, TelegramChatID=self.TelegramChatID, MatrixRoomID=self.MatrixRoomID, upload_times=upload_times)
 
 						SocialServices	= SOCIAL.get_social_services()
 
@@ -1787,6 +1791,14 @@ if __name__ == "__main__":
 	)
 
 	parser.add_argument(
+		'--matrix-room-id',
+		'-mrid',
+		required	= False,
+		default='',
+		help='Matrix Room ID'
+	)
+
+	parser.add_argument(
 		'--power-off',
 		'-p',
 		required	= False,
@@ -1865,6 +1877,7 @@ if __name__ == "__main__":
 		DeviceIdentifierPresetSource		= args['device_identifier_preset_source'],
 		DeviceIdentifierPresetTarget		= args['device_identifier_preset_target'],
 		TelegramChatID						= args['telegram_chat_id'],
+		MatrixRoomID						= args['matrix_room_id'],
 		PowerOff							= args['power_off'],
 		SecondaryBackupFollows				= SecondaryBackupFollows
 	)

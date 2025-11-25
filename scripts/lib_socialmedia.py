@@ -56,6 +56,7 @@ class socialmedia(object):
 			self,
 			service=None,
 			TelegramChatID=0,
+			MatrixRoomID=None,
 			upload_times=[]
 		):
 
@@ -68,6 +69,7 @@ class socialmedia(object):
 
 		self.service		= service
 		self.TelegramChatID	= TelegramChatID
+		self.MatrixRoomID	= MatrixRoomID
 
 		self.SERVICE_Obj	= self.get_service_object(service=service, upload_times=upload_times)
 
@@ -78,7 +80,7 @@ class socialmedia(object):
 
 	def get_service_object(self, service=None, check_only=False, upload_times=[]):
 		if service == 'telegram':
-			self.TelegramChatID	= int(self.TelegramChatID)
+			self.TelegramChatID		= int(self.TelegramChatID)
 			TelegramChatID	= self.TelegramChatID if self.TelegramChatID != 0 else self.__setup.get_val('conf_SOCIAL_TELEGRAM_CHAT_ID')
 			return (
 				telegram(
@@ -90,13 +92,15 @@ class socialmedia(object):
 				)
 			)
 		elif service == 'matrix':
+			self.MatrixRoomID			=  self.MatrixRoomID if self.MatrixRoomID else self.__setup.get_val('conf_SOCIAL_MATRIX_ROOM_ID')
 			return(
 				matrix(
-					service			= self.service,
-					HOMESERVER		= self.__setup.get_val('conf_SOCIAL_MATRIX_HOMESERVER'),
-					ACCESS_TOKEN	= self.__setup.get_val('conf_SOCIAL_MATRIX_TOKEN'),
-					ROOM_ID			= self.__setup.get_val('conf_SOCIAL_MATRIX_ROOM_ID'),
-					upload_times	= upload_times
+					service				= self.service,
+					HOMESERVER			= self.__setup.get_val('conf_SOCIAL_MATRIX_HOMESERVER'),
+					ACCESS_TOKEN		= self.__setup.get_val('conf_SOCIAL_MATRIX_TOKEN'),
+					ROOM_ID				= self.MatrixRoomID,
+					publish_filename	= self.__setup.get_val('conf_SOCIAL_PUBLISH_FILENAME'),
+					upload_times		= upload_times
 				)
 			)
 		elif service == 'mastodon':
