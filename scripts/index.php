@@ -81,8 +81,8 @@
 
 	// social media
 	include("sub-socialmedia.php");
-	$SocialServices	= get_social_services_configured();
-	foreach ($SocialServices as &$SocialService) {
+	$SocialServices_configured	= get_social_services_configured();
+	foreach ($SocialServices_configured as &$SocialService) {
 		$SocialService = "social:$SocialService";
 	}
 	unset($item);
@@ -97,7 +97,7 @@
 	$TargetServices			= array(
 		'usb'		=> $LocalServices,
 		'cloud'		=> $CloudServices_marked,
-		'social'	=> $SocialServices
+		'social'	=> $SocialServices_configured
 	);
 ?>
 
@@ -261,8 +261,8 @@
 		</div>
 
 		<div class="card" style="margin-top: 3em;">
-			<details>
 
+			<details>
 				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_backup_modifications; ?></summary>
 
 				<div class='backupsection'>
@@ -428,26 +428,31 @@
 				</div>
 			</details>
 
-			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_telegram_telegram; ?></summary>
+			<?php if (in_array('social:telegram', $SocialServices_configured)) { ?>
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_telegram_telegram; ?></summary>
 
-					<div class='backupsection'>
-						<h4><?php echo L::config_social_telegram_header; ?></h4>
-							<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
-							<input type="hidden" id="conf_SOCIAL_TELEGRAM_TOKEN" name="conf_SOCIAL_TELEGRAM_TOKEN" value="<?php echo $config['conf_SOCIAL_TELEGRAM_TOKEN']; ?>">
-					</div>
-			</details>
+						<div class='backupsection'>
+							<h4><?php echo L::config_social_telegram_header; ?></h4>
+								<?php include("${WORKING_DIR}/sub-telegram-chat-id.php"); ?>
+								<input type="hidden" id="conf_SOCIAL_TELEGRAM_TOKEN" name="conf_SOCIAL_TELEGRAM_TOKEN" value="<?php echo $config['conf_SOCIAL_TELEGRAM_TOKEN']; ?>">
+						</div>
+				</details>
+			<?php }
 
-			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_matrix_matrix; ?></summary>
+			if (in_array('social:matrix', $SocialServices_configured)) { ?>
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::main_matrix_matrix; ?></summary>
 
-					<div class='backupsection'>
-						<h4><?php echo L::config_social_matrix_header; ?></h4>
-							<?php include("${WORKING_DIR}/sub-matrix-room-id.php"); ?>
-							<input type="hidden" id="conf_SOCIAL_MATRIX_HOMESERVER" name="conf_SOCIAL_MATRIX_HOMESERVER" value="<?php echo $config['conf_SOCIAL_MATRIX_HOMESERVER']; ?>">
-							<input type="hidden" id="conf_SOCIAL_MATRIX_TOKEN" name="conf_SOCIAL_MATRIX_TOKEN" value="<?php echo $config['conf_SOCIAL_MATRIX_TOKEN']; ?>">
-					</div>
-			</details>
+						<div class='backupsection'>
+							<h4><?php echo L::config_social_matrix_header; ?></h4>
+								<?php include("${WORKING_DIR}/sub-matrix-room-id.php"); ?>
+								<input type="hidden" id="conf_SOCIAL_MATRIX_HOMESERVER" name="conf_SOCIAL_MATRIX_HOMESERVER" value="<?php echo $config['conf_SOCIAL_MATRIX_HOMESERVER']; ?>">
+								<input type="hidden" id="conf_SOCIAL_MATRIX_TOKEN" name="conf_SOCIAL_MATRIX_TOKEN" value="<?php echo $config['conf_SOCIAL_MATRIX_TOKEN']; ?>">
+						</div>
+				</details>
+			<?php } ?>
+
 		</div>
 
 	</form>
