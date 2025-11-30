@@ -4,3 +4,6 @@
 X_*
 /scripts/__pycache__
 /scripts/cache
+lbb/lib/python3.9/site-packages/
+lib/python3.9/site-packages/
+scrape/lbb.local/node_modules
