@@ -91,7 +91,7 @@
       "usb_source": "USB-source",
       "cloud": "cloud",
       "cloud_ok": "Cloud o.k.",
-      "internal_ok": "Int. storage o.k.",
+      "internal_ok": "Internal storage o.k.",
       "serial": "Serial number",
       "source_id": "Source ID",
       "usb": "USB",
@@ -117,7 +117,7 @@
         "cloud_rsync": "rsync server",
         "database": "Database",
         "exif": "EXIF",
-        "internal": "Int. storage",
+        "internal": "Internal storage",
         "thumbnails": "Thumbnails",
         "usb": "USB storage",
         "usbs": "USB storages",
@@ -455,7 +455,7 @@
       "recipient_header": "Recipient",
       "recipient_label": "Mailaddress of the recipient",
       "section": "Email Notifications",
-      "smtp_header": "SMTP-server",
+      "smtp_header": "Email Server",
       "smtp_label": "Address of the SMTP-mailserver",
       "user_header": "Username",
       "user_label": "Username for the mailserver",
@@ -473,7 +473,7 @@
       "notify_backup_label": "If possible, send backup reports via email?",
       "notify_ip_label": "If possible, send the current links of this Little Backup Box via email?",
       "html_header": "Send mails in HTML-format",
-      "html_label": "If mails are activated, should they be Formatted in HTML?"
+      "html_label": "Format emails in HTML"
     },
     "view": {
       "bg_image_header": "Background-image"
@@ -589,8 +589,8 @@
       "text": "<h3>Update Little Backup Box</h3><p>Caution:<ul><li>The update can render the system unusable.</li><li>The update can cause a considerable download volume and thus possibly costs.</li><li>The update can take several minutes or longer, depending on the Internet speed.</li></ul><br>Only perform the update if you ...<ul><li>could also perform a new installation if necessary</li><li>have a stable internet connection</li><li>have a stable power supply</li></ul></p>",
       "section": "Update",
       "available": "Update available",
-      "not_available": "No update available",
-      "check_label": "Check for new update"
+      "not_available": "System up to date",
+      "check_label": "Check for updates"
     },
     "display_message_settings_uploaded_1": "Settings",
     "display_message_settings_uploaded_2": "imported.",
@@ -858,7 +858,7 @@
       "medium": "Storage medium",
       "section": "Filter",
       "images_per_page": "Images per page",
-      "medium_internal": "Int. storage",
+      "medium_internal": "Internal storage",
       "directory": "Folder",
       "no_medium": "No valid medium selected.",
       "date": "Date",

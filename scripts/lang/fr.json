@@ -196,7 +196,7 @@
       "recipient_header": "Destinataire",
       "recipient_label": "Adresse e-mail du destinataire",
       "section": "Notifications par email",
-      "smtp_header": "SMTP-Serveur",
+      "smtp_header": "Serveur de messagerie",
       "smtp_label": "Adresse du serveur de messagerie SMTP",
       "user_header": "Nom d'utilisateur",
       "user_label": "Nom d'utilisateur pour le serveur de messagerie",
@@ -214,7 +214,7 @@
       "notify_backup_label": "Si possible, envoyer des rapports de sauvegarde par e-mail ?",
       "notify_ip_label": "Si possible, envoyer les liens actuels de cette Little Backup Box par email ?",
       "html_header": "Envoyer des e-mails au format HTML",
-      "html_label": "Si les mails sont activés, doivent-ils être formatés en HTML ?"
+      "html_label": "Formater les e-mails en HTML"
     },
     "view": {
       "bg_image_header": "Image de fond"
@@ -330,8 +330,8 @@
       "text": "<h3>Mettre à jour Little Backup Box</h3><p>Attention :<ul><li>La mise à jour peut rendre le système inutilisable.</li> <li>La mise à jour peut entraîner un volume de téléchargement considérable et donc éventuellement des coûts.</li><li>La mise à jour peut prendre plusieurs minutes ou plus, selon la vitesse d'Internet.</li></ul><br>Uniquement effectuez la mise à jour si vous ...<ul><li>pouvez également effectuer une nouvelle installation si nécessaire</li><li>disposez d'une connexion Internet stable</li><li>disposez d'une alimentation électrique stable</li> </ul></p>",
       "section": "Mettre à jour",
       "available": "Mise à jour disponible",
-      "not_available": "Pas de mise a jour disponible",
-      "check_label": "Rechercher une nouvelle mise à jour"
+      "not_available": "Système à jour",
+      "check_label": "Rechercher des mises à jour"
     },
     "display_message_settings_uploaded_1": "Paramètres",
     "display_message_settings_uploaded_2": "importés.",

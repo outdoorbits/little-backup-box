@@ -196,7 +196,7 @@
       "recipient_header": "Destinatario",
       "recipient_label": "Dirección de correo del destinatario",
       "section": "Notificaciónes de Correo Electrónico",
-      "smtp_header": "SMTP-Servidor",
+      "smtp_header": "Servidor de Correo",
       "smtp_label": "Dirección del servidor de correo SMTP",
       "user_header": "Nombre de usuario",
       "user_label": "Nombre de usuario del servidor de correo",
@@ -214,7 +214,7 @@
       "notify_backup_label": "Si es posible, ¿enviar informes de respaldo por correo electrónico?",
       "notify_ip_label": "Si es posible, ¿enviar enlaces actuales a esta Little Backup Box por correo electrónico?",
       "html_header": "Enviar correos en formato HTML",
-      "html_label": "Si los correos están activados, ¿deberían estar formateados en HTML?"
+      "html_label": "Formatear correos en HTML"
     },
     "view": {
       "bg_image_header": "Imagen de fondo"
@@ -330,8 +330,8 @@
       "text": "<h3> Actualizar Little Backup Box </h3> <p> Precaución: <ul><li> La actualización puede inutilizar el sistema. </li> <li> La actualización puede causar un volumen de descarga de datos considerable y, por lo tanto, podria incurrir en costos. </li> <li> La actualización puede demorar varios minutos o más, dependiendo de la velocidad de Internet. </li> </ul> <br> Solo realice la actualización si ... <ul> <li> también podría realizar una nueva instalación de ser necesario </li> <li> tiene una conexión a Internet estable </li> <li> esta conectado a una fuente de alimentación estable </li> </ul> </p>",
       "section": "Actualizar",
       "available": "Actualización disponible",
-      "not_available": "Actualización no disponible",
-      "check_label": "Buscar nueva actualización"
+      "not_available": "Sistema actualizado",
+      "check_label": "Buscar actualizaciones"
     },
     "display_message_settings_uploaded_1": "Ajustes",
     "display_message_settings_uploaded_2": "importados.",
