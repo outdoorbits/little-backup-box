@@ -3,6 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
+import rateLimit from 'express-rate-limit';
 import { createLogger } from './utils/logger.js';
 import configRoutes from './routes/config.js';
 import backupRoutes from './routes/backup.js';
@@ -29,6 +30,14 @@ const PORT = process.env.PORT || 3000;
 
 const logger = createLogger();
 
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10000,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,6 +53,8 @@ app.use((req, res, next) => {
   req.logger = logger;
   next();
 });
+
+app.use('/api', apiLimiter);
 
 app.use('/api/config', configRoutes);
 app.use('/api/backup', backupRoutes);
