@@ -9,11 +9,44 @@
   "mainmenue": {
     "main": "Sauvegarde",
     "sysinfo": "système",
-    "config": "Réglages",
-    "tools": "Outils",
-    "filebrowser": "Des dossiers",
+    "network": "Réseau",
+    "config": "Interface utilisateur",
+    "integrations": "Connexions de Services",
+    "filesystem": "Système de fichiers",
+    "filebrowser": "Navigateur de fichiers",
+    "gallery": "Galerie",
     "view": "View",
-    "update": "mise à jour"
+    "update": "mise à jour",
+    "maintenance": "Maintenance",
+    "rclone_gui": "rclone GUI",
+    "scrape": "Interface archivée"
+  },
+  "network": {
+    "wifi_config": {
+      "title": "WiFi"
+    },
+    "rsync_config": {
+      "title": "rsync Server"
+    },
+    "network_info": {
+      "title": "Informations réseau"
+    },
+    "internet_status": "État Internet",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "ip_addresses": "Adresses IP",
+    "refresh": "Actualiser",
+    "no_ips": "Aucune adresse IP trouvée",
+    "qr_codes": "Codes QR"
+  },
+  "scrape": {
+    "title": "Pages archivées",
+    "description": "Explorez les instantanés statiques de l'interface Little Backup Box qui ont été copiés à partir d'un appareil en fonctionnement. Chaque instantané s'ouvre dans un nouvel onglet et fonctionne sans backend.",
+    "open": "Ouvrir l'instantané",
+    "empty": "Aucune page archivée n'est disponible pour le moment.",
+    "error": "Impossible de charger la liste des pages archivées.",
+    "updated": "Dernière mise à jour :",
+    "generated": "Manifeste généré :"
   },
   "main": {
     "internal_button": "stockage interne",
@@ -21,9 +54,20 @@
     "rsync_button": "rsync-serveur",
     "reboot_button": "Redémarrer",
     "shutdown_button": "Éteindre",
+    "cancel_button": "Annuler",
+    "reboot_confirm_title": "Redémarrer l'appareil?",
+    "reboot_confirm_message": "Avertissement: Les processus de sauvegarde sont actuellement en cours d'exécution. Ils seront interrompus si vous continuez. Êtes-vous sûr de vouloir redémarrer?",
+    "reboot_confirm_message_no_backup": "Êtes-vous sûr de vouloir redémarrer l'appareil?",
+    "shutdown_confirm_title": "Éteindre l'appareil?",
+    "shutdown_confirm_message": "Avertissement: Les processus de sauvegarde sont actuellement en cours d'exécution. Ils seront interrompus si vous continuez. Êtes-vous sûr de vouloir éteindre?",
+    "shutdown_confirm_message_no_backup": "Êtes-vous sûr de vouloir éteindre l'appareil?",
+    "stop_lbb_button": "Arrêter LBB",
+    "stop_lbb_confirm_title": "Arrêter Little Backup Box?",
+    "stop_lbb_confirm_message": "Les processus de sauvegarde sont actuellement en cours d'exécution. Voulez-vous les arrêter et terminer Little Backup Box?",
+    "stop_lbb_confirm_message_no_backup": "Êtes-vous sûr de vouloir terminer Little Backup Box?",
     "cloudservice": "service cloud",
-    "reboot_m": "Little Backup Box redémarre. Actualisez cette page dans quelques instants.",
-    "shutdown_m": "Little Backup Box est éteint. Vous pouvez fermer cette page.",
+    "reboot_m": "L'appareil redémarre. Actualisez cette page dans quelques instants.",
+    "shutdown_m": "L'appareil est éteint. Vous pouvez fermer cette page.",
     "help_txt": "<ul>\n   <li>tous USB : tous les périphériques USB connectés, caméras et stockage, sont sauvegardés.</li>\n   <li>Serveur rsync cible: les caméras ne peuvent pas être sauvegardées directement sur un serveur rsync. La mise en cache locale est requise ici.</li>\n</ul>\n<p class = 'text-center'> Veuillez lire le <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.< / p>",
     "stopbackup_button": "ARRÊTER",
     "stopbackup_m": "Arrêt de la sauvegarde.",
@@ -41,6 +85,8 @@
     "target_execute": "exécuter",
     "backup": {
       "modifications": "Modifications",
+      "options": "Options",
+      "configuration": "Exécuter la sauvegarde",
       "backup": "Sauvegarde depuis",
       "generate_thumbnails_checkbox_label": "Générer des vignettes et lire dans la base de données (uniquement pour le stockage local)",
       "initiated": "initié",
@@ -50,14 +96,29 @@
       "preset_target_label": "Définir la partition cible",
       "preset_source_label": "Définir la partition source",
       "preset_partition_auto": "sélection automatique",
+      "selected_partition": "Partition sélectionnée",
       "stopped": "Sauvegarde abandonnée",
+      "running": "Sauvegardes en cours",
       "primary": "Sauvegarde principale",
       "secondary": "Sauvegarde secondaire",
       "general": "Général",
       "secondary_label": "Une sauvegarde cloud doit-elle être effectuée après la sauvegarde principale?",
       "on": "sur",
       "rename_checkbox_label": "Renommer les fichiers (uniquement pour le stockage local)",
-      "checksum_checkbox_label": "Comparer les sommes de contrôle des fichiers déjà présents sur la destination (au lieu de la taille du fichier et de l'horodatage) ?"
+      "checksum_checkbox_label": "Comparer les sommes de contrôle des fichiers déjà présents sur la destination (au lieu de la taille du fichier et de l'horodatage) ?",
+      "comparison_method_label": "Méthode de comparaison",
+      "comparison_file_size_timestamp": "Taille de fichier et horodatage",
+      "comparison_checksum": "Somme de contrôle",
+      "previous_runs": "Exécutions de sauvegarde précédentes",
+      "rerun": "Réexécuter",
+      "save_as_defaults": "Enregistrer comme valeurs par défaut",
+      "defaults_saved": "Valeurs par défaut enregistrées avec succès",
+      "defaults_save_error": "Échec de l'enregistrement des valeurs par défaut",
+      "start": "Démarrer la sauvegarde",
+      "usb_devices": "Périphériques USB",
+      "internal_storage": "Stockage interne",
+      "partitions": "Partitions",
+      "local_storage": "Stockage Local"
     },
     "logout_button": "Se déconnecter",
     "nvme_button": "NVMe SSD",
@@ -91,6 +152,7 @@
     "system": "Système",
     "model": "Modèle",
     "device_states": "Statut du périphérique",
+    "info": "Info",
     "wifi": {
       "header": "Wifi"
     }
@@ -98,16 +160,21 @@
   "config": {
     "lang_header": "Choisir la langue/Select language",
     "lang_label": "Language-selector will always be labeled in English too.",
-    "lang_browser_detect": "Détection du navigateur/Browser detect",
+    "lang_browser_detect": "Détection automatique/Auto-detect",
     "view_section": "voir",
+    "view_section_desc": "Ces paramètres définissent les valeurs par défaut de l'interface utilisateur pour les nouveaux utilisateurs.",
     "view_theme_header": "Schéma de couleur",
     "view_theme_label": "Sélectionnez un thème de couleur :",
     "view_theme_light": "lumière",
     "view_theme_dark": "foncé",
     "view_theme_sepia": "sépia",
+    "view_theme_system": "Système",
     "view_bg_image_label": "Vous pouvez sélectionner une image pour votre arrière-plan. Veuillez stocker vos propres images dans",
     "view_popup_header": "Messages contextuels",
     "view_popup_label": "Autoriser les messages contextuels.",
+    "general": {
+      "default_settings_desc": "Ces paramètres définissent les valeurs par défaut pour les nouveaux utilisateurs et les sessions. Ils peuvent être remplacés à l'aide des contrôles de la barre de navigation."
+    },
     "rsync_section": "rsync-server-configuration",
     "rsync_server_header": "serveur-rsync",
     "rsync_server_label": "Adresse du serveur rsync",
@@ -121,21 +188,33 @@
     "username": "Nom d'utilisateur",
     "save_settings_download_link_text": "Paramètres de téléchargement",
     "save_settings_download_text": "Obtenez une archive zip avec vos paramètres",
-    "save_settings_section": "Paramètres de téléchargement / téléchargement",
+    "save_settings_section": "Paramètres de sauvegarde / restauration",
     "save_settings_upload_button": "Paramètres de téléchargement",
     "save_settings_download_header": "Télécharger",
     "save_settings_upload_header": "Télécharger",
     "save_settings_upload_label": "Sélectionnez le fichier de paramètres",
+    "alert_password_not_identical": "Le mot de passe répété n'est pas identique.",
+    "alert_password_too_short": "Le mot de passe doit comporter au moins 5 caractères.",
+    "alert_settings_upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",
+    "alert_settings_upload_problem": "Il y a eu un problème avec le téléchargement. Veuillez réessayer.",
+    "alert_settings_upload_success": "Votre fichier de paramètres a été téléchargé et ces fichiers ont été installés :",
     "message_settings_saved": "config.cfg a été écrit avec succès.",
+    "saving": "Enregistrement...",
+    "alert_password_global": "Mot de passe global",
+    "alert_password_mail_header": "Mot de passe de messagerie",
+    "alert_password_rsync_header": "rsync-le mot de passe",
     "rsync_module_header": "Module rsync",
     "rsync_module_label1": "Nom du module sur le serveur rsync, par exemple 'little-backup-box' (par défaut :",
     "rsync_module_label2": "). <br> Le nom du module est défini côté serveur dans rsyncd.conf et est mis entre [crochets]. Notez également <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
+    "wifi_section": "Paramètres Wifi",
+    "wifi_country_label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée",
+    "wifi_country_header": "Pays Wi-Fi",
     "backup": {
       "generate_thumbnails_header": "Vignettes",
       "generate_thumbnails_label": "Créer des vignettes pour View après la sauvegarde? (Uniquement pour le stockage local)",
       "update_exif_header": "Ajustez automatiquement les données EXIF ​​​​des fichiers multimédias lors de l'importation",
       "update_exif_label": "EXIF lors de l'importation",
-      "default_settings_header": "Paramètres de la sauvegarde standard principale",
+      "default_settings_header": "Sauvegarde standard principale",
       "target": {
         "requirements_header": "Exigences de la partition cible",
         "requirements_label": "Quelle est la taille minimale de la partition cible à accepter ?",
@@ -144,6 +223,7 @@
       "none": "pas de sauvegarde automatique",
       "power_off_label": "Mise hors tension après sauvegarde",
       "section": "Sauvegarde",
+      "section_desc": "Ces paramètres définissent les configurations par défaut pour les opérations telles que les sauvegardes. Les opérations individuelles peuvent remplacer ces valeurs par défaut.",
       "camera": {
         "folder_mask_header": "Répertoires à sauvegarder sur les smartphones et les caméras",
         "folder_mask_label": "Des instructions pour le comportement de sauvegarde pour certains appareils photo ou smartphones peuvent être données ici.<br>\nLes entrées ici ont la forme : <br>\n&quot;CAMERA:CHEMIN&quot; <br>\nLe nom d'une caméra connectée se trouve sur la page &quot;Système&quot; sur &quot;Appareil photo/Smartphone&quot;.<br>\nSi une instruction doit s'appliquer à toutes les caméras, &quot;*&quot; (sans autres ajouts) peut être utilisé comme joker pour tous les appareils.<br>\nLe chemin n'a pas besoin d'être spécifié en entier. Il suffit d'en utiliser une partie importante. <br>\nExemples : <br>\n&quot;*:DCIM&quot; <br>\n&quot;*:DCIM;MyCamera:IMAGES&quot; <br>\n&quot;&quot; (Le champ reste vide, sauvegardez tous les dossiers de toutes les caméras.)<br>\nPlus d'informations sur le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04.-Setup\">wiki</a>",
@@ -151,8 +231,11 @@
         "specific_device_folders_header": "Carpetas para sincronizar desde una cámara específica",
         "device_folder_pattern": "À utiliser comme modèle dans les paramètres"
       },
-      "general_settings_header": "Réglages généraux",
+      "general_settings_header": "Valeurs par défaut",
       "move_files_label": "Déplacer des fichiers au lieu de les copier?",
+      "file_operation_label": "Opération sur les fichiers",
+      "file_operation_copy": "Copier les fichiers",
+      "file_operation_move": "Déplacer les fichiers",
       "cloud": {
         "target_basedir_header": "Dossier d'accueil sur les serveurs cloud",
         "target_basedir_label": "La sauvegarde est effectuée sous ce répertoire.",
@@ -163,7 +246,7 @@
         "files_stay_in_place_label": "¿Los archivos permanecen en la ubicación de almacenamiento inmediatamente después de cargarlos o se clasifican? (¡Esto sólo afecta a rclone!)"
       },
       "move_files_header": "Copier ou déplacer des fichiers",
-      "default2_settings_header": "Paramètres de sauvegarde secondaire par défaut",
+      "default2_settings_header": "Sauvegarde secondaire par défaut",
       "rename": {
         "header": "Renommer les fichiers",
         "warning": "Danger! Les fichiers doivent ensuite être supprimés de la source. Dans le cas contraire, ils seront à nouveau transférés lors de la prochaine sauvegarde, renommés et ainsi remplacer la version de la sauvegarde précédente.",
@@ -191,31 +274,41 @@
     "mail": {
       "password_header": "Mot de passe",
       "password_label": "Mot de passe pour le serveur de messagerie",
+      "password_helper": "Votre mot de passe du serveur SMTP",
       "port_header": "Port SMTP",
-      "port_label": "Port du serveur de messagerie SMTP (par défaut :",
+      "port_label": "Port du serveur de messagerie SMTP",
+      "port_helper": "Port par défaut :",
       "recipient_header": "Destinataire",
       "recipient_label": "Adresse e-mail du destinataire",
-      "section": "Notifications par email",
+      "recipient_helper": "Adresse e-mail qui recevra les notifications",
+      "section": "E-mail",
+      "server_settings_notice": "Les paramètres du serveur doivent être configurés avant que les notifications par e-mail puissent être envoyées.",
       "smtp_header": "Serveur de messagerie",
       "smtp_label": "Adresse du serveur de messagerie SMTP",
+      "smtp_helper": "Entrez le nom d'hôte ou l'adresse IP de votre serveur SMTP",
       "user_header": "Nom d'utilisateur",
       "user_label": "Nom d'utilisateur pour le serveur de messagerie",
+      "user_helper": "Votre nom d'utilisateur du serveur SMTP",
       "testmail_header": "Envoyer un e-mail test",
       "testmail_label": "Après l'enregistrement, une tentative d'envoi d'un e-mail de test est effectuée.",
       "testmail_subject": "Salutations de LBB",
       "testmail_content": "Félicitations, la distribution du courrier fonctionne.",
       "testmail_sent": "L'e-mail de test a été envoyé",
+      "testmail_error": "Échec de l'envoi de l'e-mail de test",
       "sender_header": "Expéditeur",
       "sender_label": "Adresse e-mail de l'expéditeur",
+      "sender_helper": "Adresse e-mail qui apparaîtra comme expéditeur",
       "security_header": "Sécurité de la connexion",
       "timeout_header": "Délai d'expiration du courrier",
       "timeout_label": "Au bout de quel délai faut-il arrêter l'envoi des rapports de sauvegarde ?",
       "notify_header": "Envoyer des e-mails",
-      "notify_backup_label": "Si possible, envoyer des rapports de sauvegarde par e-mail ?",
-      "notify_ip_label": "Si possible, envoyer les liens actuels de cette Little Backup Box par email ?",
+      "notify_backup_label": "Envoyer le résumé de sauvegarde par e-mail",
+      "notify_ip_label": "Envoyer les liens d'accès par e-mail lorsque l'adresse IP réseau change",
       "html_header": "Envoyer des e-mails au format HTML",
       "html_label": "Formater les e-mails en HTML"
     },
+    "alert_password_change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
+    "alert_password_change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
     "view": {
       "bg_image_header": "Image de fond"
     },
@@ -226,6 +319,7 @@
       "text": "Les données d'accès WiFi enregistrées seront supprimées. Une connexion Wi-Fi existante est interrompue et comitup passe en mode point d'accès.<br>\nConnectez-vous ensuite au hotspot WiFi \"little-backup-box-nnnn\". Vous pouvez maintenant accéder à commitup sur <a href=\"http://10.41.0.1\">http://10.41.0.1</a>. Vous pouvez accéder à l'interface Web de Little Backup Box ici : <a href=\"https://10.41.0.1\">https://10.41.0.1</a>.",
       "linktext": "Supprimer les identifiants WiFi"
     },
+    "alert_password_wifi_size_error": "Le mot de passe ne peut pas être utilisé pour le hotspot WiFi. Pour cela, la longueur devrait être de 8 à 63 caractères.",
     "vpn": {
       "section": "VPN",
       "upload_header": "Télécharger le fichier de configuration",
@@ -234,24 +328,24 @@
       "type_none": "N'utilisez pas de VPN",
       "type_header": "Quel VPN activer ?",
       "upload_file_label": "Télécharger le fichier de configuration",
-      "remove_header": "Supprimer le fichier de configuration VPN",
-      "timeout_header": "Délai d'expiration du VPN",
+      "remove_header": "Supprimer le fichier VPN",
+      "timeout_header": "Délai d'expiration de connexion",
       "timeout_label": "Quel est le temps maximum d'attente pour que la connexion VPN soit établie ?",
       "type_cloud_label": "Pour les services cloud",
       "type_rsync_label": "Pour la sauvegarde du serveur rsync",
       "type_desc": "Quel VPN doit être activé avant de transférer des données vers un service réseau ? Attention : L'interface de Little Backup Box peut ne pas être accessible pendant l'exécution de la sauvegarde. Vous pourrez peut-être accéder à la boîte sous l'IP VPN si votre terminal est également enregistré dans le même VPN."
     },
     "display": {
-      "section": "Filtrer",
-      "activate_label": "Un écran est-il connecté et doit-il être utilisé ?",
+      "section": "Écran monté sur GPIO",
+      "activate_label": "Activer l'écran",
       "connection_header": "Interface pour l'affichage",
-      "connection_label": "Quelle interface utiliser ?",
+      "connection_label": "Interface d'affichage",
       "i2c_address_label": "Adresse i2c de l'écran",
-      "i2c_header": "Configuration de l'affichage I2C",
+      "i2c_header": "Affichage I2C",
       "ip_label": "Imprimez l'IP toutes les minutes.",
       "device_available": "Périphérique détecté",
       "behavior_header": "Comportement d'affichage",
-      "spi_header": "Configuration de l'affichage SPI",
+      "spi_header": "Affichage SPI",
       "spi_port_label": "Port SPI",
       "driver_label": "Pilote d'affichage",
       "resolution_x_label": "Résolution horizontale (pixels)",
@@ -277,7 +371,9 @@
         "model_label": "Couleur",
         "text_label": "Couleur de police par défaut",
         "background_label": "Couleur d'arrière-plan",
-        "bgr_label": "Notation des couleurs BGR (bleu-vert-rouge) au lieu de RVB (rouge-vert-bleu)",
+        "notation_label": "Notation des couleurs",
+        "notation_RGB": "RGB (red-green-blue)",
+        "notation_BGR": "BGR (blue-green-red)",
         "inverse_label": "Couleurs inversées"
       },
       "contrast_label": "Contraste",
@@ -291,8 +387,9 @@
       },
       "backlight_header": "Rétroéclairage de l'écran",
       "backlight_enabled_label": "Activer le rétroéclairage de l'écran (si disponible)",
-      "backlight_pin_label": "Quelle broche GPIO (notation BCM) est connectée au rétroéclairage ?",
-      "additional_settings_header": "Paramètres d'affichage supplémentaires"
+      "backlight_pin_label": "Broche GPIO du rétroéclairage (notation BCM)",
+      "additional_settings_header": "Affichage supplémentaire",
+      "detect_devices": "Détecter les appareils"
     },
     "menu": {
       "enable_header": "Activer le menu d'affichage",
@@ -341,9 +438,9 @@
     "screen": {
       "section": "Écran",
       "virtual_keyboard_enable_header": "Clavier virtuel",
-      "virtual_keyboard_enable_label": "Activer le clavier virtuel",
-      "description": "Paramètres qui affectent un écran avec une interface utilisateur graphique (bureau)."
+      "virtual_keyboard_enable_label": "Activer le clavier virtuel"
     },
+    "alert_password_characters_not_allowed": "Le mot de passe ne peut pas contenir de guillemets (&sbquo;), de guillemets doubles (« &quot;), d'espaces ou de barres obliques inverses (&bsol;).",
     "exit": {
       "section": "Terminer LBB",
       "desc": "Fermez Little Backup Box et libérez l'ordinateur pour d'autres tâches jusqu'à ce qu'il redémarre.",
@@ -373,14 +470,14 @@
     "social": {
       "section": "Réseaux sociaux",
       "bluesky": {
-        "header": "Configurer Bluesky",
+        "header": "Bluesky",
         "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04f_Bluesky\">Wiki: Bluesky</a>",
         "base_url_label": "URL de base de l’API",
         "identifier_label": "Identifiant (e-mail ou handle)",
         "app_password_label": "Mot de passe de l’application"
       },
       "telegram": {
-        "header": "Configurer Telegram",
+        "header": "Telegram",
         "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04c_Telegram\">Wiki : Telegram</a>",
         "token_label": "Jeton",
         "chat_id_label": "ID de discussion",
@@ -404,18 +501,19 @@
         "button_select_chat": "Sélectionnez le chat"
       },
       "mastodon": {
-        "header": "Configurer Mastodon",
+        "header": "Mastodon",
         "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04e_Mastodon\">Wiki: Mastodon</a>",
         "token_label": "Jeton d'accès",
         "base_url_label": "URL de base de Mastodon"
       },
       "general": {
-        "header": "Général",
+        "header": "Paramètres généraux",
+        "services": "Services",
         "date_label": "Date de publication de l'enregistrement",
         "filename_label": "Publier le nom du fichier"
       },
       "matrix": {
-        "header": "Configurer Matrix",
+        "header": "Matrix",
         "install_desc": "Veuillez vous référer aux préparatifs dans le <a href=\"https://github.com/outdoorbits/little-backup-box/wiki/04d_Matrix\">Wiki: Matrix</a>",
         "homeserver_label": "Serveur Matrix (ex. https://matrix.example.org)",
         "token_label": "Jeton d’accès du compte bot",
@@ -460,6 +558,11 @@
       }
     },
     "cloud": {
+      "target_basedir_header": "Dossier d'accueil sur les serveurs cloud",
+      "target_basedir_label": "La sauvegarde est effectuée sous ce répertoire.",
+      "sync_method_header": "Méthode de synchronisation",
+      "sync_parameter_header": "Paramètres de synchronisation",
+      "files_stay_in_place_header": "Les fichiers restent en place",
       "rclone": {
         "gui": {
           "header": "rclone GUI",
@@ -467,11 +570,12 @@
           "restart_header": "Mettre à jour et redémarrer l'interface rclone",
           "restart_label": "Mettre à jour et redémarrer l'interface rclone",
           "restarted": "L'interface utilisateur rclone a été redémarrée.",
-          "restart_desc": "Une connexion internet est obligatoire."
+          "restart_desc": "Une connexion internet est obligatoire.",
+          "password_hint": "Utilisez le mot de passe global défini dans la section Mot de passe"
         },
         "desc": "Selon votre fournisseur de services cloud, cette configuration peut n'être valable que pour une durée limitée."
       },
-      "section": "Configurer les services Cloud"
+      "section": "Services Cloud"
     },
     "password": {
       "password": "Mot de passe",
@@ -479,49 +583,13 @@
       "as_set_in": "Mot de passe tel que défini dans",
       "changed": "Mot de passe changé.",
       "global_lbb_label": "Le mot de passe pour protéger votre Little-Backup-Box. Utilisé pour l'interface Web, le navigateur de fichiers, ssh et samba-Windows-shares. Le nom d'utilisateur dans tous les cas est lbb. Pour l'utilisateur Linux &quot;pi&quot; le mot de passe est également défini.",
+      "global_wifi_label": "Si le mot de passe a une longueur de 8 à 63 caractères, il sera également utilisé comme mot de passe WiFi en mode hotspot.",
       "remove_header": "Supprimer le mot de passe",
       "remove_label": "Supprimer le mot de passe",
       "removed": "Mot de passe général supprimé.",
       "repeat_label": "répéter:",
       "section": "Mot de passe global",
       "remove_desc": "Cochez pour supprimer la protection par mot de passe. Les mots de passe des utilisateurs Linux (lbb, pi) ne seront pas supprimés."
-    },
-    "alert": {
-      "password": {
-        "change_after_reboot_remove": "Mot de passe global supprimé\nLes modifications prendront effet après le redémarrage",
-        "change_after_reboot_set": "Ensemble de mot de passe global\nLes modifications prendront effet après le redémarrage",
-        "global": "Mot de passe global",
-        "not_identical": "Le mot de passe répété n'est pas identique.",
-        "too_short": "Mot de passe trop court. Longueur minimale :",
-        "mail": "Mot de passe de messagerie",
-        "wifi": "Mot de passe Wi-Fi",
-        "rsync": "rsync-le mot de passe",
-        "bluesky": "Mot de passe Bluesky",
-        "wifi_changed": "Le mot de passe Wi-Fi a été modifié",
-        "too_long": "Mot de passe trop long. Nombre maximal de caractères :",
-        "not_ascii": "Seuls les caractères ASCII sont autorisés.",
-        "too_long_qr": "<strong>Attention !</strong> Le code QR WiFi ne fonctionne qu’avec des mots de passe allant jusqu’à 13 caractères.",
-        "wifi_invalid_chars": "Le code QR WiFi ne peut pas représenter « : » ni « ; »."
-      },
-      "settings": {
-        "upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",
-        "upload_problem": "Il y a eu un problème avec le téléchargement. Veuillez réessayer.",
-        "upload_success": "Votre fichier de paramètres a été téléchargé et ces fichiers ont été installés :"
-      }
-    },
-    "wifi": {
-      "country": {
-        "header": "Pays Wi-Fi",
-        "label": "Sélectionnez le pays dans lequel cette Little Backup Box doit être utilisée"
-      },
-      "password": {
-        "header": "Mot de passe Wi-Fi",
-        "label": "Le mot de passe doit comporter entre 8 et 63 caractères.",
-        "static_label": "Le mot de passe saisi ci-dessous sera utilisé.",
-        "dynamic_label": "Mot de passe dynamique",
-        "dynamic_desc": "Un nouveau mot de passe Wi-Fi aléatoire est généré à chaque session. <strong>L'accès au réseau Wi-Fi de la Little Backup Box se fait alors uniquement via l'écran et le code QR!</strong><br />\nCependant, cette modification ne sera effective que si l'écran est activé et possède une résolution d'au moins 64 x 64 pixels."
-      },
-      "section": "Paramètres Wifi"
     }
   },
   "tools": {
@@ -550,7 +618,8 @@
       "source": "Origine",
       "usb": "USB",
       "select_partition_label": "Partition",
-      "nvme": "NVMe SSD"
+      "nvme": "NVMe SSD",
+      "mounted": "monté"
     }
   },
   "box": {
@@ -663,14 +732,14 @@
         "cloud_rsync": "Serveur rsync",
         "database": "Base de données",
         "exif": "EXIF",
-        "internal": "Int. Stockage",
+        "internal": "Stockage intégré (carte SD / eMMC)",
         "thumbnails": "De vignettes",
         "usb": "Stockage USB",
         "usbs": "Stockages USB",
         "nvme": "NVMe SSD",
         "nvmes": "NVMe SSDs",
         "rename": "Rebaptiser",
-        "ftp": "Serveur FTP de LBB",
+        "ftp": "Stockage FTP",
         "validate": "vérifier",
         "delete": "supprimer",
         "clean": "nettoyer",
@@ -780,14 +849,13 @@
           "nvme": "NVMe SSD",
           "usb": "USB ",
           "anyusb": "tout USB",
-          "ftp": "Serveur FTP de LBB",
+          "ftp": "Stockage FTP",
           "telegram": "Telegram",
           "mastodon": "mastodon",
           "bluesky": "Bluesky"
         },
         "stop": "ARRÊTER sauvegarde"
-      },
-      "wifi": "Code QR WLAN"
+      }
     },
     "backup_local": "localement",
     "finished": "fini",
@@ -836,7 +904,7 @@
       "description": "Opération programmée"
     },
     "f3": {
-      "header": "Vérifier l'authenticité du périphérique USB",
+      "header": "Vérifier la capacité du lecteur USB",
       "warning_non_destructive": "Attention, TOUTES LES DONNEES sur le support de données pourraient être supprimées !",
       "warning_destructive": "Attention, TOUTES LES DONNEES sur le support de données seront supprimées!",
       "description_non_destructive": "Les données seront conservées dans la mesure du possible.",
@@ -916,5 +984,48 @@
   "units": {
     "minutes_long": "minutes",
     "celsius": "°C"
+  },
+  "maintenance": {
+    "title": "Maintenance",
+    "update": {
+      "check_error": "Échec de la vérification des mises à jour",
+      "no_update_available": "Aucune mise à jour disponible à installer",
+      "install_started": "Installation de la mise à jour démarrée",
+      "install_error": "Échec de l'installation de la mise à jour",
+      "branch": "Branche",
+      "installed_version": "Version installée",
+      "available_version": "Version disponible"
+    },
+    "database": {
+      "section": "Opérations de base de données",
+      "target": "Stockage cible",
+      "operation_started": "Opération démarrée",
+      "operation_error": "Échec du démarrage de l'opération"
+    },
+    "file": {
+      "target": "Stockage cible",
+      "rename_started": "Opération de renommage démarrée",
+      "rename_error": "Échec du démarrage de l'opération de renommage"
+    }
+  },
+  "integrations": {
+    "social_media": {
+      "title": "Médias Sociaux",
+      "test_telegram": "Tester la Connexion",
+      "test_mastodon": "Tester la Connexion",
+      "test_bluesky": "Tester la Connexion",
+      "test_matrix": "Tester la Connexion"
+    },
+    "cloud_services": {
+      "title": "Services Cloud",
+      "no_services": "Aucun service cloud configuré. Veuillez configurer rclone d'abord."
+    },
+    "vpn": {
+      "title": "VPN",
+      "file_uploaded": "Fichier de configuration VPN téléchargé",
+      "file_removed": "Fichier de configuration VPN supprimé",
+      "confirm_remove": "Êtes-vous sûr de vouloir supprimer le fichier de configuration {type}?",
+      "remove": "Supprimer"
+    }
   }
 }
