@@ -1,0 +1,234 @@
+<!doctype html>
+
+
+
+<html lang="en" data-theme="dark">
+<!-- Author: Stefan Saam github@saams.de, Dmitri Popov, dmpop@linux.com
+		License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
+
+<head>
+	
+<title>Little Backup Box</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/lbb.css">
+
+<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+<link rel="apple-touch-icon" href="img/icons/favicon-180.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="img/icons/favicon-192.png"/>
+<link rel="icon" type="image/png" sizes="512x512" href="img/icons/favicon-512.png"/>
+	<script type="text/javascript" src="js/logmonitor.js"></script>
+	<script type="text/javascript" src="js/display.js"></script>
+</head>
+
+<body onload="refreshLogMonitor();refreshDisplay();" >
+	
+<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+
+	
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+	<symbol id="icon-power" viewBox="0 0 24 24" fill="none">
+		<path d="M 17.8 3.0 A 9 9 0 1 1 6.2 3.0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+		<line x1="12" y1="1.8" x2="12" y2="9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+	</symbol>
+</svg>
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+	<div class="container-fluid">
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
+				<li class="nav-item"><a class="nav-link" href="index.html">Backup</a></li>
+				<li class="nav-item"><a class="nav-link" href="sysinfo.html">System</a></li>
+				<li class="nav-item"><a class="nav-link active" href="tools.html">Tools</a></li>
+				<li class="nav-item"><a class="nav-link" href="view.html">View</a></li>
+			</ul>
+		</div>
+
+		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
+				<li class="nav-item"><a class="nav-link" href="frame-page-files.html">Files</a></li>
+											<li class="nav-item"><a class="nav-link disabled" href="frame-page-comitup.html">comitup</a></li>
+									</ul>
+		</div>
+
+		<div class="navbar-collapse collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+								<li class="nav-item"><a class="nav-link" href="setup.html">Settings</a></li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="tools.html#" id="navbarDropdownPower" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<svg width="1em" height="1em" style="vertical-align: middle;">
+							<use href="#icon-power"/>
+						</svg>
+					</a>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdownPower">
+						<li><a class="dropdown-item" href="/scrape/lbb.local/tools-reboot-true.html">Reboot</a></li>
+						<li><a class="dropdown-item" href="/scrape/lbb.local/tools-shutdown-true.html">Power off</a></li>
+						<li><a class="dropdown-item" href="http://logout@lbb.local:80">Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+</nav>
+
+	
+	<div class="card">
+		<h3 class="text-center" style="margin-top: 0em;">Mount storage</h3>
+		<hr>
+			<form class="text-center" style="margin-top: 1em;" method="POST">
+				<div class="backupsection"><button class='usb' name='mount' value='target_usb'>Mount: USB target</button><button class='usb' name='mount' value='source_usb'>Mount: USB source</button></div>			</form>
+	</div>
+
+			<div class="card" style="margin-top: 3em;">
+			<h2 style="margin-top: 0em;">Log monitor</h2><hr>			
+<div class="logmonitor-static-wrapper" style="margin-top: 1rem;">
+  <h2>Log monitor</h2>
+  <pre class="logmonitor-static" style="background:#111;color:#0f0;padding:1em;overflow:auto;">Little Backup Box
+
+</pre>
+  <p class="logmonitor-note" style="font-style:italic;color:#888;margin-top:0.5rem;">(Static log snapshot – live updates disabled in archived view)</p>
+</div>
+
+			<div class="text-center" style="margin-top: 0.5em;">
+				<span class="logmonitor-refresh-static" style="font-size:0.9em;color:#888;">Auto-refresh disabled</span>
+											<span class="logmonitor-download-static" style="font-size:0.9em;color:#888;">Download unavailable in static archive</span>
+							<form action="tools.html" method="POST">
+								<button style="margin-top: 2em;" type="delete" name="delete_logfile" class="danger">Delete log</button>
+							</form>
+									</div>
+		</div>
+		
+	<div class="card" style="margin-top: 3em;">
+		<h3 class="text-center" style="margin-top: 0em;">Repair</h3>
+		<hr>
+			<form class="text-center" style="margin-top: 1em;" method="POST">
+					<label for="partition">Select partition</label>
+						<select  name='PARAM1' id='PARAM1'>
+<option value='-'>-</option>
+<option value='sdc1'>sdc1 (uuid 67E3-17ED)</option>
+<option value='sdc2'>sdc2 (uuid 6752-D0BF)</option>
+<option value='sdd1'>sdd1 (uuid 67E3-17ED)</option>
+</select><button name='fsck_check'>Check</button><button name='fsck_autorepair' class='danger'>Repair</button>			</form>
+	</div>
+
+	<div class="card" style="margin-top: 3em;">
+		<h3 class="text-center" style="margin-top: 0em;">Format device</h3>
+		<hr>
+			<form class="text-center" style="margin-top: 1em;" method="POST">
+					<label for="PARAM1">Select partition:</label>
+					<br>
+					<select  name='PARAM1' id='PARAM1'>
+<option value='-'>-</option>
+<option value='sda'>sda (/dev/sda)</option>
+<option value='sdb'>sdb (/dev/sdb)</option>
+<option value='sdc'>sdc (/dev/sdc)</option>
+<option value='sdc1'>sdc1 (uuid 67E3-17ED)</option>
+<option value='sdc2'>sdc2 (uuid 6752-D0BF)</option>
+<option value='sdd'>sdd (/dev/sdd)</option>
+<option value='sdd1'>sdd1 (uuid 67E3-17ED)</option>
+<option value='sdd2'>sdd2 (uuid a01f0a2d-a4fc-40da-8148-2ba0eb21269e)</option>
+</select>					<br>
+					<label for="PARAM2">file system type:</label>
+					<br>
+					<select name="PARAM2">
+						<option value="-">-</option>
+						<option value="FAT32">FAT32 (Windows&#174;)</option>
+						<option value="exFAT">exFAT (Windows&#174;)</option>
+						<option value="NTFS (compression enabled)">NTFS (compression enabled) (Windows&#174;)</option>
+						<option value="NTFS (no compression)">NTFS (compression disabled) (Windows&#174;)</option>
+						<option value="Ext4">Ext4 (Linux)</option>
+						<option value="Ext3">Ext3 (Linux)</option>
+						<option value="HFS Plus">HFS Plus (Mac)</option>
+						<option value="HFS">HFS (Mac)</option>
+					</select>
+					<br>
+					<button name='format' class='danger'>format disc!</button>			</form>
+	</div>
+
+	<div class="card" style="margin-top: 3em;">
+		<h3 class="text-center" style="margin-top: 0em;">Check USB device for authenticity</h3>
+		<hr>
+			<form class="text-center" style="margin-top: 1em;" method="POST">
+					<label for="PARAM1">Select partition:</label>
+					<br>
+					<select  name='PARAM1' id='PARAM1'>
+<option value='-'>-</option>
+<option value='sda'>sda</option>
+<option value='sdb'>sdb</option>
+<option value='sdc'>sdc</option>
+<option value='sdd'>sdd</option>
+</select>					<br>
+					<label for="PARAM2">Select test:</label>
+					<br>
+					<select name="PARAM2">
+						<option value="-">-</option>
+						<option value="f3probe_non_destructive">try to preserve data (slow)</option>
+						<option value="f3probe_destructive">ERASE data (faster)</option>
+					</select>
+					<br>
+					<button name='f3' class='danger'>start test</button>			</form>
+	</div>
+
+	<div class="card" style="margin-top: 3em;">
+		<details>
+			<summary style="letter-spacing: 1px; text-transform: uppercase;">Help</summary>
+			<p><h2>Repair</h2>
+ <p class='text-center'><mark>Do not use unless you know what you are doing. It could damage your storage!</mark></p>
+ <h3>Procedure:</h3>
+ <ol>
+ <li>Check your power supply. Power interruption may damage storage beyond repair.</li>
+ <li>Make sure that no backup job is running.</li>
+ <li>Do not click any buttons until all check and repair operations are completed. Do not start any processes!</li>
+ <li>Run filesystem check first.</li>
+ <li>If you see any errors in the log, run filesystem repair.</li>
+ </ol>
+<h2>Format</h2>
+   <p class='text-center'><mark>Do not use this function if you do not know what you are doing. This will erase your storage and any lost data cannot be recovered.</mark> </p>
+<h3>Options:</h3>
+<ul>
+<li>FAT32 (Windows&#174;): Widespread, file size is limited to 4GB.</li>
+<li>exFAT (Windows&#174;): Less common, no file size limit.</li>
+<li>NTFS (Windows&#174;): Limited compatibility with many devices, no file size limitation.
+<ul>
+<li>NTFS (compression enabled): Saves disk space, but can significantly reduce performance.</li>
+<li>NTFS (no compression)</li>
+</ul>
+</li>
+<li>Ext4 (Linux): Current Linux file system</li>
+<li>Ext3 (Linux): Predecessor of Ext4, only recommended if the memory also needs to be compatible with older devices that do not yet support Ext4.</li>
+</ul>
+<h2>Check USB device for authenticity</h2>
+   <p class='text-center'><mark>Do not use this function if you do not know what you are doing. This may erase your storage, and lost data cannot be recovered.</mark> </p>
+<h3>Options:</h3>
+<ul>
+<li>ERASE data (faster): f3probe runs without attempting to keep the data.</li>
+<li>try to preserve data (slow): f3probe is running, attempting to preserve the data.</li>
+</ul></p>
+		</details>
+	</div>
+
+	
+<div class="footer">
+	<form action="tools.html" class="text-center" style="margin-top: 1em;" method="POST">
+			<div class="card" style="margin-top: 3em;">
+				<button type="submit" name="reboot" value="1" class="danger">Reboot</button>
+				<button type="submit" name="shutdown" value="1" class="danger">Power off</button>
+			</div>
+	</form>
+
+</div>
+
+<!-- IP Info -->
+<div class="card" style="margin-top: 3em;"><img src="tmp/WIFI.png" style="padding: 5px;" title="HOTSPOT"> <a href="http://10.0.1.40"><img src="tmp/ip-qr-link-10-0-1-40_64_online.png" style="padding: 5px;"></a> 
+</div>
+	</body>
+
+</html>
