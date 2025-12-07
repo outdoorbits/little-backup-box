@@ -1,0 +1,301 @@
+/* modified from Classless.css v0.94 (Typical Full Version)
+
+MIT License
+
+Copyright (c) 2021 Emanuel Regnath
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+Table of Contents:
+ 1. Custom Settings
+ 2. Base Tags
+ 3. Extra Tags
+ 4. Classes
+*/
+
+/* 1. Custom Settings
+–––––––––––––––––––––––––––––––––––––––––––– */
+
+/* Free, Beautiful Unicode Font */
+
+html[data-theme='light'], :root {
+	--width: 50rem;
+	--navpos: absolute;
+	/* fixed | absolute */
+	--clight: #f4f5f6;
+	--cdark: #888;
+	--cmed: #d1d1d1;
+	--clink: #07c;
+	--cemph: #088;
+	--cfg: #433;
+	--cbg: #fff;
+	--cusb: #0F0;
+	--canyusb: #FFD700;
+	--ccamera: #fca503;
+	--ccloud: #79caff;
+	--csocial: #24A1DE;
+	--cdanger: #f00;
+	--cdisabled: #d3d3d3;
+	--ornament: "‹‹‹ ›››";
+	--font-p: 13pt Arial, sans-serif;
+	--font-h: 13pt Arial, sans-serif;
+	--font-c: 12pt monospace;
+}
+
+html[data-theme='dark'] {
+	--clight: #333;
+	--cdark: #999;
+	--cmed: #566;
+	--clink: #1ad;
+	--cemph: #0b9;
+	--cbg: #252220;
+	--cfg: #cecbc4;
+}
+
+html[data-theme='sepia'] {
+	--clight: #f3efea;
+	--cdark: #6c605c;
+	--cmed: #a8928e;
+	--clink: #bd0000;
+	--cemph: #a35403;
+	--cbg: #fefbf4;
+	--cfg: #433;
+	--ornament: "❦ ❦ ❦";
+	--font-p: 13pt Arial, sans-serif;
+	--font-h: 13pt Arial, sans-serif;
+	--font-c: 12pt monospace;
+}
+
+
+/* 2. Reset & Base Tags
+–––––––––––––––––––––––––––––––––––––––––––– */
+
+/* Tiny Reset for block elements  */
+
+* {
+	box-sizing: border-box;
+	border-spacing: 0;
+}
+
+header, footer, figure, table, video, details, blockquote, ul, ol, dl, fieldset, pre, pre>code, caption {
+	display: block;
+	margin: 0.5rem 0rem 1rem;
+	width: 100%;
+	overflow-x: visible;
+	overflow-y: visible;
+	text-align: left;
+}
+
+html {
+	background-color: var(--cbg);
+}
+
+body {
+	margin: auto;
+	max-width: var(--width);
+	padding: 2rem 0.6rem 0rem;
+	overflow-x: hidden;
+	font: var(--font-p);
+	color: var(--cfg);
+	line-height: 1.5em;
+}
+
+body>footer {
+	margin: 10rem 0rem 0rem;
+}
+
+/* lists */
+
+ul, ol {
+	padding-top: 0.5rem;
+}
+
+li, dd {
+	margin-bottom: 0.5rem;
+}
+
+dt {
+	font-weight: bold;
+}
+
+/* links */
+
+a, summary {
+	color: var(--clink);
+	cursor: pointer;
+	text-decoration: underline solid var(--cmed);
+	text-underline-position: under;
+}
+
+a:hover, button:not([disabled]):hover, select:hover {
+	color: var(--cemph);
+	border-color: var(--cemph);
+}
+
+/* headings */
+
+h1, h2, h3, h4, h5 {
+	margin: 1.5em 0 0em;
+	font: var(--font-h);
+	line-height: 1.2em;
+}
+
+h1+h2, h2+h3, h3+h4, h4+h5 {
+	margin-top: .5em;
+	padding-top: 0;
+}
+
+/* non-clashing headings */
+
+h1 {
+	font-size: 2.2em;
+	font-weight: 300;
+}
+
+h2 {
+	font-size: 2.0em;
+	font-weight: 300;
+	font-variant: small-caps;
+}
+
+h3 {
+	font-size: 1.5em;
+	font-weight: 400;
+}
+
+h4 {
+	font-size: 1.1em;
+	font-weight: 700;
+}
+
+h5 {
+	font-size: 1.2em;
+	font-weight: 400;
+	color: var(--cdark);
+}
+
+h6 {
+	font-size: 1.0em;
+	font-weight: 700;
+	font-style: italic;
+	display: inline;
+}
+
+h6+p {
+	display: inline;
+}
+
+summary {
+	color: var(--cfg);
+}
+
+hr {
+	border: 0;
+	border-top: 0.1rem solid var(--cmed);
+}
+
+/* forms and inputs  */
+
+textarea, input, button, select, iframe {
+	border-radius: .3rem;
+	border: .1rem solid var(--cmed);
+	padding: 0.5rem;
+	outline: none;
+}
+
+fieldset select, input:not([type='checkbox']):not([type='radio']) {
+	display: block;
+	width: 100%;
+	font-size: 100%;
+	margin-bottom: 1rem;
+}
+
+button, select {
+	padding: 0.5rem 1rem;
+	cursor: pointer;
+	font-weight: bold;
+	letter-spacing: 0.1rem;
+	color: var(--clink);
+	background-color: var(--clight);
+	margin: .5rem;
+	border: .1rem solid var(--clink);
+}
+
+button[disabled] {
+	color: var(--cdark);
+	border-color: var(--cmed);
+}
+
+
+/* cards */
+
+.card {
+	display: block;
+	margin: .5rem 0;
+	padding: .5rem 1rem 0.5rem;
+	border-radius: .3rem;
+	box-shadow: .1rem .1rem .4rem 0 var(--cdark);
+}
+
+
+/* colors */
+
+.text-black {
+	color: #000;
+}
+
+.text-white {
+	color: #fff;
+}
+
+.text-primary {
+	color: var(--cprim);
+}
+
+.text-secondary {
+	color: var(--cdark);
+}
+
+.bg-white {
+	background-color: #fff;
+}
+
+.bg-light {
+	background-color: var(--clight);
+}
+
+.bg-primary {
+	background-color: var(--cprim);
+}
+
+.bg-secondary {
+	background-color: var(--cmed);
+}
+
+/* spacing */
+
+.w-25 {
+	width: 25.00% !important;
+}
+
+.w-33 {
+	width: 33.33% !important;
+}
+
+.w-50 {
+	width: 50.00% !important;
+}
+
+.w-75 {
+	width: 75.00% !important;
+}
+
+.w-100 {
+	width: 100.0% !important;
+}
+
