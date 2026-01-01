@@ -1,0 +1,13 @@
+{
+  "printWidth": 120,
+  "semi": false,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": "bin/registry",
+      "options": {
+        "parser": "babylon"
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+
+
+<html lang="" data-theme="dark">
+
+<head>
+	
+<title>Little Backup Box</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/lbb.css">
+
+<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+<link rel="apple-touch-icon" href="img/icons/favicon-180.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="img/icons/favicon-192.png"/>
+<link rel="icon" type="image/png" sizes="512x512" href="img/icons/favicon-512.png"/>
+	<script type="text/javascript" src="js/display.js"></script>
+</head>
+
+<body  onload="refreshDisplay();">
+	
+<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+	
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+	<symbol id="icon-power" viewBox="0 0 24 24" fill="none">
+		<path d="M 17.8 3.0 A 9 9 0 1 1 6.2 3.0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+		<line x1="12" y1="1.8" x2="12" y2="9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+	</symbol>
+</svg>
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+	<div class="container-fluid">
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
+				<li class="nav-item"><a class="nav-link" href="index.php.html">Backup</a></li>
+				<li class="nav-item"><a class="nav-link" href="sysinfo.php.html">System</a></li>
+				<li class="nav-item"><a class="nav-link" href="tools.php.html">Tools</a></li>
+				<li class="nav-item"><a class="nav-link" href="view.php.html">View</a></li>
+			</ul>
+		</div>
+
+		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
+				<li class="nav-item"><a class="nav-link" href="frame.php%3Fpage=files.html">Files</a></li>
+											<li class="nav-item"><a class="nav-link disabled" href="frame.php%3Fpage=comitup.html">comitup</a></li>
+									</ul>
+		</div>
+
+		<div class="navbar-collapse collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+								<li class="nav-item"><a class="nav-link" href="setup.php.html">Settings</a></li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="frame.php%3Fpage=comitup.html#" id="navbarDropdownPower" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<svg width="1em" height="1em" style="vertical-align: middle;">
+							<use href="#icon-power"/>
+						</svg>
+					</a>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdownPower">
+						<li><a class="dropdown-item" href="http://localhost:8080/frame.php?reboot=true">Reboot</a></li>
+						<li><a class="dropdown-item" href="http://localhost:8080/frame.php?shutdown=true">Power off</a></li>
+						<li><a class="dropdown-item" href="http://logout@localhost:8080:80">Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+</nav>
+
+	
+ 		<div style="width: 100vw; height: 60vh; margin-left: calc(-50vw + 50%); border: none; background: #FF0000;">
+			<iframe id="pageframe" src="http://localhost:8080/comitup/" style="width: 100%; height: 100%; border: none; background: #FFFFFF;"></iframe>
+		</div>
+
+		
+<div class="footer">
+	<form action="frame.php%3Fpage=comitup.html" class="text-center" style="margin-top: 1em;" method="POST">
+			<div class="card" style="margin-top: 3em;">
+				<button type="submit" name="reboot" value="1" class="danger">Reboot</button>
+				<button type="submit" name="shutdown" value="1" class="danger">Power off</button>
+			</div>
+	</form>
+
+</div>
+
+<!-- IP Info -->
+<div class="card" style="margin-top: 3em;"><img src="tmp/WIFI.png" style="padding: 5px;" title="HOTSPOT"> <a href="http://10.0.1.40"><img src="tmp/ip-qr-link-10-0-1-40_64_online.png" style="padding: 5px;"></a> 
+</div></body>
+
+</html>
