@@ -27,7 +27,7 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 # Don't start setup if no graphical system installed
-if [ ! -f "/usr/bin/startx" ]; then
+if [ ! -f "/usr/sbin/lightdm" ]; then
 	return
 fi
 
@@ -36,6 +36,15 @@ if [[ ! -v INSTALLER_DIR ]]; then
 	echo "INSTALLER_DIR is not defined."
 	exit 1
 fi
+
+# install dependencies
+sudo DEBIAN_FRONTEND=noninteractive \
+	apt-get \
+		-o "Dpkg::Options::=--force-confold" \
+		-o "Dpkg::Options::=--force-confdef" \
+		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+			swaybg \
+			firefox-esr
 
 # settings
 USER="lbb-desktop"
@@ -86,6 +95,15 @@ sudo chmod -R 644 "${BG_DIR}/${BG_FILE}"
 # activate wallpaper
 sudo find /etc/xdg/pcmanfm/default -type f -name 'desktop-items-?.conf' -exec sed -i "s|^wallpaper=.*|wallpaper=${BG_DIR}/${BG_FILE}|" {} +
 
+# define Firefox-profile
+FF_DIR="/home/${USER}/.mozilla/firefox/kiosk.default"
+sudo -u "${USER}" mkdir -p "${FF_DIR}"
+cat <<EOF | sudo -u "${USER}" tee "${FF_DIR}/prefs.js" >/dev/null
+user_pref("browser.shell.checkDefaultBrowser", false);
+user_pref("gfx.webrender.software", true);
+user_pref("layers.acceleration.disabled", true);
+EOF
+
 # set background and start browser in kiosk mode
 sudo -u "${USER}" mkdir -p /home/${USER}/.config/labwc
 cat <<EOF | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/null
@@ -93,11 +111,16 @@ cat <<EOF | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/nu
 # Labwc autostart script
 sleep 1
 
+# Mirror screens so it shows on HDMI and internal simultaneously
+for output in \$(wlr-randr | grep "^[^ ]" | awk '{print \$1}'); do
+    wlr-randr --output "\$output" --pos 0,0 --enable &
+done
+
 # set background color
 /usr/bin/swaybg -c '#000000' &
 
 # start Firefox in kiosk mode
-/usr/bin/firefox -setDefaultBrowser -private --kiosk http://localhost:8080 &
+/usr/bin/firefox-esr --profile "${FF_DIR}" --kiosk --private-window http://localhost:8080 &
 EOF
 
 sudo chmod +x /home/${USER}/.config/labwc/autostart
