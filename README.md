@@ -2,9 +2,6 @@
 <img src="https://github.com/outdoorbits/little-backup-box/raw/main/scripts/img/little-backup-box-color.png" alt="Little Backup Box" style="height: 4em;">
 
 <a href="#installation"><b>Jump to installation instructions</b></a>
-
-> New web app preview available at https://gadgetmies.github.io/little-backup-box/
-
 <h2>About</h2>
 Little Backup Box turns a Raspberry Pi into a powerful, mobile backup and media management hub - ideal for photographers, travelers, and professionals working on the go.
 
