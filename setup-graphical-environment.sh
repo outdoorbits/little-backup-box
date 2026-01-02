@@ -19,6 +19,7 @@
 
 # expected from calling script
 ## INSTALLER_DIR
+## SETUP
 
 # Don't start as root
 if [[ $EUID -eq 0 ]]; then
@@ -32,7 +33,7 @@ if [ ! -f "/usr/sbin/lightdm" ]; then
 fi
 
 # check if INSTALLER_DIR is set
-if [[ ! -v INSTALLER_DIR ]]; then
+if [[ -z INSTALLER_DIR ]]; then
 	echo "INSTALLER_DIR is not defined."
 	exit 1
 fi
@@ -74,6 +75,7 @@ polkit.addRule(function(action, subject) {
 });
 EOF
 
+# activate rules
 sudo service polkit restart
 
 ## legacy fallback to prevent auto mount
@@ -83,6 +85,12 @@ cat <<EOF | sudo -u ${USER} tee /home/${USER}/.config/gtk-3.0/settings.ini
 gtk-enable-auto-mount=false
 gtk-enable-auto-mount-open=false
 EOF
+
+# modify /boot/firmware/config.txt
+grep -qxF "include lbb-display.txt" /boot/firmware/config.txt || echo "include lbb-display.txt" | sudo tee -a /boot/firmware/config.txt
+
+# create /boot/firmware/lbb-display.txt
+sudo python3 /var/www/little-backup-box/create_display_config.py --driver "${conf_SCREEN_DRIVER}" --speed "${conf_SCREEN_SPEED}" --rotate "${conf_SCREEN_ROTATE}"
 
 # install wallpaper
 BG_FILE="black.jpg"
@@ -106,21 +114,35 @@ EOF
 
 # set background and start browser in kiosk mode
 sudo -u "${USER}" mkdir -p /home/${USER}/.config/labwc
-cat <<EOF | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/null
-#!/bin/sh
-# Labwc autostart script
-sleep 1
+cat <<'EOF' | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/null
+#!/bin/bash
 
-# Mirror screens so it shows on HDMI and internal simultaneously
-for output in \$(wlr-randr | grep "^[^ ]" | awk '{print \$1}'); do
-    wlr-randr --output "\$output" --pos 0,0 --enable &
-done
+# 1. Identify all connected displays
+# We look for 'connected' status but filter OUT anything named HDMI
+DETECTOR=$(grep -l "connected" /sys/class/drm/card*-*/status | grep -v "HDMI")
 
-# set background color
-/usr/bin/swaybg -c '#000000' &
+# 2. Extract the card name
+# Example: /sys/class/drm/card2-SPI-1/status -> card2
+SPI_CARD_PATH=$(echo "$DETECTOR" | head -n 1)
+SPI_CARD=$(echo "$SPI_CARD_PATH" | cut -d'/' -f5 | cut -d'-' -f1)
 
-# start Firefox in kiosk mode
-/usr/bin/firefox-esr --profile "${FF_DIR}" --kiosk --private-window http://localhost:8080 &
+# 3. Fallback and Debug
+# If no SPI card is found, we fall back to card1 (typical for Pi 5)
+if [ -z "$SPI_CARD" ]; then
+    echo "No SPI display detected via status, falling back to card1"
+    SPI_CARD="card1"
+else
+    echo "Found SPI display on $SPI_CARD"
+fi
+
+# 4. Apply to Environment
+export WLR_DRM_DEVICES=/dev/dri/$SPI_CARD:/dev/dri/card0
+export MOZ_ENABLE_WAYLAND=1
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
+
+# 5. Start Firefox
+sleep 2
+firefox-esr --profile "$HOME/.mozilla/firefox/kiosk.default" --kiosk --private-window http://localhost:8080 &
 EOF
 
 sudo chmod +x /home/${USER}/.config/labwc/autostart

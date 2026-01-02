@@ -1702,7 +1702,7 @@ if __name__ == "__main__":
 		'--SourceName',
 		'-s',
 		choices		= SourceChoices,
-		required =	True,
+		required	=	True,
 		help=f'Source name, one of {SourceChoices}'
 	)
 
