@@ -85,8 +85,6 @@ dtparam=dc-gpio=24'''
 
 	Pi4	= '' if rpi >= 5 else 'hdmi_force_hotplug=1'
 
-	Pi5	= '' if rpi < 5 else 'dtparam=drm=on'
-
 	CONFIG	= f"""# Display settings
 
 # Enable SPI bus
@@ -97,7 +95,8 @@ dtoverlay=vc4-kms-v3d
 
 {Pi4}
 {DRIVER}
-{Pi5}
+
+dtparam=drm=on
 """
 	print(CONFIG)
 	with open(CONFIG_FILE, 'w') as config_file:
