@@ -535,9 +535,6 @@ sudo chmod 644 "/etc/proftpd/lbb_DefaultRoot.conf"
 
 sudo service proftpd restart
 
-# install display driver
-source "${INSTALLER_DIR}/install-display-driver.sh"
-
 # setup graphical environment
 source "${INSTALLER_DIR}/setup-graphical-environment.sh"
 
