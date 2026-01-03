@@ -64,7 +64,7 @@
 		}
 
 		// stop firefox
-		shell_exec("sudo pkill -f firefox");
+		shell_exec("sudo pkill -f firefox-esr");
 	}
 	// write new config
 	elseif (isset($_POST['save'])) {

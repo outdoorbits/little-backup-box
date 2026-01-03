@@ -92,6 +92,18 @@ grep -qxF "include lbb-display.txt" /boot/firmware/config.txt || echo "include l
 # create /boot/firmware/lbb-display.txt
 sudo python3 /var/www/little-backup-box/create_display_config.py --driver "${conf_SCREEN_DRIVER}" --speed "${conf_SCREEN_SPEED}" --rotate "${conf_SCREEN_ROTATE}"
 
+# create and activate /etc/udev/hwdb.d/61-ads7846-touch.hwdb
+cat <<'EOF' | sudo -u "${USER}" tee /etc/udev/hwdb.d/61-ads7846-touch.hwdb >/dev/null
+evdev:name:ADS7846 Touchscreen*:*
+ LIBINPUT_MODEL_PRESSURE_PAD=1
+ LIBINPUT_ATTR_PRESSURE_RANGE=10:255
+ LIBINPUT_ATTR_TOUCH_SIZE_RANGE=1:1
+ LIBINPUT_CALIBRATION_MATRIX=1.114044 0 -0.050625  0 -1.169666 1.080834  0 0 1
+EOF
+
+sudo systemd-hwdb update
+sudo udevadm trigger -s input
+
 # install wallpaper
 BG_FILE="black.jpg"
 BG_DIR="/usr/share/rpd-wallpaper"
@@ -111,6 +123,11 @@ user_pref("browser.shell.checkDefaultBrowser", false);
 user_pref("gfx.webrender.software", true);
 user_pref("layers.acceleration.disabled", true);
 EOF
+
+# adapt firefox scrollbar
+sudo cp ./setup-firefox.sh /home/lbb-desktop/setup-firefox.sh
+sudo chown lbb-desktop:lbb-desktop /home/lbb-desktop/setup-firefox.sh
+sudo -u lbb-desktop /home/lbb-desktop/setup-firefox.sh
 
 # set background and start browser in kiosk mode
 sudo -u "${USER}" mkdir -p /home/${USER}/.config/labwc
