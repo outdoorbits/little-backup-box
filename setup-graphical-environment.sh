@@ -86,80 +86,65 @@ gtk-enable-auto-mount=false
 gtk-enable-auto-mount-open=false
 EOF
 
-# modify /boot/firmware/config.txt
-grep -qxF "include lbb-display.txt" /boot/firmware/config.txt || echo "include lbb-display.txt" | sudo tee -a /boot/firmware/config.txt
-
-# create /boot/firmware/lbb-display.txt
+# setup display and touchscreen
 sudo python3 /var/www/little-backup-box/create_display_config.py --driver "${conf_SCREEN_DRIVER}" --speed "${conf_SCREEN_SPEED}" --rotate "${conf_SCREEN_ROTATE}"
 
-# create and activate /etc/udev/hwdb.d/61-ads7846-touch.hwdb
-cat <<'EOF' | sudo -u "${USER}" tee /etc/udev/hwdb.d/61-ads7846-touch.hwdb >/dev/null
-evdev:name:ADS7846 Touchscreen*:*
- LIBINPUT_MODEL_PRESSURE_PAD=1
- LIBINPUT_ATTR_PRESSURE_RANGE=10:255
- LIBINPUT_ATTR_TOUCH_SIZE_RANGE=1:1
- LIBINPUT_CALIBRATION_MATRIX=1.114044 0 -0.050625  0 -1.169666 1.080834  0 0 1
-EOF
-
-sudo systemd-hwdb update
-sudo udevadm trigger -s input
+# modify /boot/firmware/config.txt (include lbb-display.txt)
+grep -qxF "include lbb-display.txt" /boot/firmware/config.txt || echo "include lbb-display.txt" | sudo tee -a /boot/firmware/config.txt
 
 # install wallpaper
 BG_FILE="black.jpg"
 BG_DIR="/usr/share/rpd-wallpaper"
 
-sudo cp "$INSTALLER_DIR/scripts/img/$BG_FILE" "${BG_DIR}/"
+echo "const_WEB_ROOT_LBB: $const_WEB_ROOT_LBB"
+sudo cp "$const_WEB_ROOT_LBB/img/$BG_FILE" "${BG_DIR}/"
 sudo chown -R "root:root" "${BG_DIR}/${BG_FILE}"
 sudo chmod -R 644 "${BG_DIR}/${BG_FILE}"
 
 # activate wallpaper
 sudo find /etc/xdg/pcmanfm/default -type f -name 'desktop-items-?.conf' -exec sed -i "s|^wallpaper=.*|wallpaper=${BG_DIR}/${BG_FILE}|" {} +
 
-# define Firefox-profile
-FF_DIR="/home/${USER}/.mozilla/firefox/kiosk.default"
-sudo -u "${USER}" mkdir -p "${FF_DIR}"
-cat <<EOF | sudo -u "${USER}" tee "${FF_DIR}/prefs.js" >/dev/null
-user_pref("browser.shell.checkDefaultBrowser", false);
-user_pref("gfx.webrender.software", true);
-user_pref("layers.acceleration.disabled", true);
-EOF
-
-# adapt firefox scrollbar
-sudo cp ./setup-firefox.sh /home/lbb-desktop/setup-firefox.sh
-sudo chown lbb-desktop:lbb-desktop /home/lbb-desktop/setup-firefox.sh
-sudo -u lbb-desktop /home/lbb-desktop/setup-firefox.sh
+# adapt firefox
+$INSTALLER_DIR/setup-firefox.sh
 
 # set background and start browser in kiosk mode
+URL="http://localhost:8080"
 sudo -u "${USER}" mkdir -p /home/${USER}/.config/labwc
-cat <<'EOF' | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/null
+cat <<EOF | sudo -u "${USER}" tee /home/${USER}/.config/labwc/autostart >/dev/null
 #!/bin/bash
 
 # 1. Identify all connected displays
 # We look for 'connected' status but filter OUT anything named HDMI
-DETECTOR=$(grep -l "connected" /sys/class/drm/card*-*/status | grep -v "HDMI")
+DETECTOR=\$(grep -l "connected" /sys/class/drm/card*-*/status | grep -v "HDMI")
 
 # 2. Extract the card name
 # Example: /sys/class/drm/card2-SPI-1/status -> card2
-SPI_CARD_PATH=$(echo "$DETECTOR" | head -n 1)
-SPI_CARD=$(echo "$SPI_CARD_PATH" | cut -d'/' -f5 | cut -d'-' -f1)
+SPI_CARD_PATH=\$(echo "$DETECTOR" | head -n 1)
+SPI_CARD=\$(echo "\$SPI_CARD_PATH" | cut -d'/' -f5 | cut -d'-' -f1)
 
 # 3. Fallback and Debug
 # If no SPI card is found, we fall back to card1 (typical for Pi 5)
-if [ -z "$SPI_CARD" ]; then
+if [ -z "\$SPI_CARD" ]; then
     echo "No SPI display detected via status, falling back to card1"
     SPI_CARD="card1"
 else
-    echo "Found SPI display on $SPI_CARD"
+    echo "Found SPI display on \$SPI_CARD"
 fi
 
 # 4. Apply to Environment
-export WLR_DRM_DEVICES=/dev/dri/$SPI_CARD:/dev/dri/card0
+export WLR_DRM_DEVICES=/dev/dri/\$SPI_CARD:/dev/dri/card0
 export MOZ_ENABLE_WAYLAND=1
-export XDG_RUNTIME_DIR=/run/user/$(id -u)
+export XDG_RUNTIME_DIR=/run/user/\$(id -u)
 
 # 5. Start Firefox
-sleep 2
-firefox-esr --profile "$HOME/.mozilla/firefox/kiosk.default" --kiosk --private-window http://localhost:8080 &
+## wait for server
+for i in \$(seq 1 60); do
+	curl -fsS "$URL" >/dev/null && break
+	sleep 1
+done
+
+sleep 1
+firefox-esr --profile "$HOME/.mozilla/firefox/kiosk.default" --kiosk --private-window $URL &
 EOF
 
 sudo chmod +x /home/${USER}/.config/labwc/autostart

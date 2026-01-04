@@ -216,6 +216,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
 			python3-python-telegram-bot \
 			python3-websockets \
 			python3-matrix-nio \
+			python3-six \
 			python3-markdown \
 			python3-bs4 \
 			python3-bleach \

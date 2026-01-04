@@ -18,14 +18,81 @@
 #######################################################################
 
 import argparse
+import subprocess
 
+import lib_setup
 import lib_system
 
-CONFIG_FILE	= '/boot/firmware/lbb-display.txt'
+class display_config(object):
+	def __init__(self, args):
+		self.CONFIG_FILE	= '/boot/firmware/lbb-display.txt'
+		self.UDEV_FILE		= '/etc/udev/hwdb.d/61-ads7846-touch.hwdb'
+
+		self.args			= args
+
+		self.__setup	= lib_setup.setup()
+
+		self.conf_TOUCH_MATRIX_X	= self.__setup.get_val('conf_TOUCH_MATRIX_X')
+		self.conf_TOUCH_MATRIX_Y	= self.__setup.get_val('conf_TOUCH_MATRIX_Y')
+
+	def setup_display(self):
+		self.__write_config_txt()
+		self.__write_touch_udev()
+
+	def __write_config_txt(self):
+		rpi	= lib_system.get_pi_model(number_only=True)
+
+		# define driver
+		match self.args['driver']:
+			case 'piscreen':
+				DRIVER	= f'dtoverlay=piscreen,speed={self.args['speed']},rotate={self.args['rotate']}'
+			case 'waveshare35a':
+				DRIVER	= f'dtoverlay=waveshare35a,speed={self.args['speed']},rotate={self.args['rotate']}'
+			case 'mipi-dbi':
+				DRIVER	= f'''dtoverlay=mipi-dbi,spi0-0,ili9486
+	dtparam=speed={self.args['speed']}
+	dtparam=rotate={self.args['rotate']}
+	dtparam=reset-gpio=25
+	dtparam=dc-gpio=24'''
+
+		# Raspberry Pi 4 specific settings
+		Pi4	= '' if rpi >= 5 else 'hdmi_force_hotplug=1'
+
+		# assemble include for config.txt
+		CONFIG	= f"""# Display settings
+
+	# Enable SPI bus
+	dtparam=spi=on
+
+	# Primary graphics driver for Raspberry Pi
+	dtoverlay=vc4-kms-v3d
+
+	{Pi4}
+	{DRIVER}
+
+	dtparam=drm=on
+	"""
+		with open(self.CONFIG_FILE, 'w') as config_file:
+			config_file.write(CONFIG)
+
+	def __write_touch_udev(self):
+		# create and activate /etc/udev/hwdb.d/61-ads7846-touch.hwdb
+		CONFIG	= f"""evdev:name:ADS7846 Touchscreen*:*
+ LIBINPUT_MODEL_PRESSURE_PAD=1
+ LIBINPUT_ATTR_PRESSURE_RANGE=10:255
+ LIBINPUT_ATTR_TOUCH_SIZE_RANGE=1:1
+ LIBINPUT_CALIBRATION_MATRIX={self.conf_TOUCH_MATRIX_X} {self.conf_TOUCH_MATRIX_Y} 0 0 1
+		"""
+		with open(self.UDEV_FILE, 'w') as config_file:
+				config_file.write(CONFIG)
+
+		subprocess.run(['sudo', 'systemd-hwdb', 'update'])
+		subprocess.run(['sudo', 'udevadm', 'trigger', '-s', 'input'])
+
 
 def get_arguments():
 	parser = argparse.ArgumentParser(
-		description	= f'Creates {CONFIG_FILE}.',
+		description	= f'Creates display configuration for SPI touchscreens.',
 		add_help	= True
 	)
 
@@ -62,42 +129,9 @@ def get_arguments():
 	return(vars(parser.parse_args()))
 
 if __name__ == "__main__":
-	arguments	= get_arguments()
+	args	= get_arguments()
+	print(args)
 
-	print(arguments['driver'])
-	print(arguments['speed'])
-	print(arguments['rotate'])
+	display_config(args).setup_display()
 
-	rpi	= lib_system.get_pi_model(number_only=True)
-	print(rpi)
 
-	match arguments['driver']:
-		case 'piscreen':
-			DRIVER	= f'dtoverlay=piscreen,speed={arguments['speed']},rotate={arguments['rotate']}'
-		case 'waveshare35a':
-			DRIVER	= f'dtoverlay=waveshare35a,speed={arguments['speed']},rotate={arguments['rotate']}'
-		case 'mipi-dbi':
-			DRIVER	= f'''dtoverlay=mipi-dbi,spi0-0,ili9486
-dtparam=speed={arguments['speed']}
-dtparam=rotate={arguments['rotate']}
-dtparam=reset-gpio=25
-dtparam=dc-gpio=24'''
-
-	Pi4	= '' if rpi >= 5 else 'hdmi_force_hotplug=1'
-
-	CONFIG	= f"""# Display settings
-
-# Enable SPI bus
-dtparam=spi=on
-
-# Primary graphics driver for Raspberry Pi
-dtoverlay=vc4-kms-v3d
-
-{Pi4}
-{DRIVER}
-
-dtparam=drm=on
-"""
-	print(CONFIG)
-	with open(CONFIG_FILE, 'w') as config_file:
-		config_file.write(CONFIG)

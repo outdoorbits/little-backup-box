@@ -164,6 +164,12 @@ def parse_args() -> argparse.Namespace:
 	)
 
 	parser.add_argument(
+		'--number_only',
+		action='store_true',
+		help='Return model number only (used with --get_pi_model)'
+	)
+
+	parser.add_argument(
 		'--set_led',
 		'-led',
 		action	= 'store_true',
@@ -231,7 +237,7 @@ if __name__ == "__main__":
 		print(get_abnormal_system_conditions(lan))
 
 	if args.get_pi_model:
-		print(get_pi_model())
+		print(get_pi_model(args.number_only))
 
 	if args.set_led:
 		rpi_leds(led=args.LED, trigger=args.LED_TRIGGER, delay_on=args.LED_DELAY_ON, delay_off=args.LED_DELAY_OFF, brightness=args.LED_BRIGHTNESS)
