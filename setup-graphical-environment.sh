@@ -144,7 +144,7 @@ for i in \$(seq 1 60); do
 done
 
 sleep 1
-firefox-esr --profile "$HOME/.mozilla/firefox/kiosk.default" --kiosk --private-window $URL &
+firefox-esr --profile "/home/lbb-desktop/.mozilla/firefox-esr/kiosk.default" --kiosk --private-window $URL &
 EOF
 
 sudo chmod +x /home/${USER}/.config/labwc/autostart

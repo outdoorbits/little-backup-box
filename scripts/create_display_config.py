@@ -130,7 +130,6 @@ def get_arguments():
 
 if __name__ == "__main__":
 	args	= get_arguments()
-	print(args)
 
 	display_config(args).setup_display()
 
