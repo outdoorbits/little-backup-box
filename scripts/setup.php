@@ -77,6 +77,12 @@
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_mail_testmail_sent . '</div>';
 		}
 
+		// touchscreen calibration
+		if (isset($_POST['start_touchscreen_calibration'])) {
+			exec("nohup sudo $WORKING_DIR/kiosk-calibrate.sh > /tmp/script.log 2>&1 &");
+			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_touch_calibration_started . '</div>';
+		}
+
 		// rclone_gui
 		if (isset($_POST['restart_rclone_gui'])) {
 			exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null /dev/null 2>&1 &");
@@ -221,6 +227,8 @@
 		$conf_DISP_SHOW_STATUSBAR					= isset($conf_DISP_SHOW_STATUSBAR)?'true':'false';
 		$conf_MENU_ENABLED							= isset($conf_MENU_ENABLED)?'true':'false';
 		$conf_VIRTUAL_KEYBOARD_ENABLED				= isset($conf_VIRTUAL_KEYBOARD_ENABLED)?'true':'false';
+		$conf_TOUCH_MATRIX_X						= $config['conf_TOUCH_MATRIX_X'];
+		$conf_TOUCH_MATRIX_Y						= $config['conf_TOUCH_MATRIX_Y'];
 		$conf_LOG_SYNC								= isset($conf_LOG_SYNC)?'true':'false';
 		$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?'true':'false';
 		$conf_BACKUP_RENAME_FILES					= isset($conf_BACKUP_RENAME_FILES)?'true':'false';
@@ -302,7 +310,7 @@
 					}
 				}
 
-			} else {
+			} elseif (! empty($$Password)) {
 				if (! check_new_password ($title, $$Password, $PwdCompare, $min_length)) {
 						$$Password	= '';
 					}
@@ -366,6 +374,11 @@ conf_MENU_BUTTON_BOUNCETIME=$conf_MENU_BUTTON_BOUNCETIME
 conf_MENU_BUTTON_EDGE_DETECTION='$conf_MENU_BUTTON_EDGE_DETECTION'
 conf_MENU_BUTTON_RESISTOR_PULL='$conf_MENU_BUTTON_RESISTOR_PULL'
 conf_VIRTUAL_KEYBOARD_ENABLED=$conf_VIRTUAL_KEYBOARD_ENABLED
+conf_SCREEN_DRIVER='$conf_SCREEN_DRIVER'
+conf_SCREEN_SPEED='$conf_SCREEN_SPEED'
+conf_SCREEN_ROTATE='$conf_SCREEN_ROTATE'
+conf_TOUCH_MATRIX_X='$conf_TOUCH_MATRIX_X'
+conf_TOUCH_MATRIX_Y='$conf_TOUCH_MATRIX_Y'
 conf_FAN_PWM_TEMP_C=$conf_FAN_PWM_TEMP_C
 conf_FAN_PWM_GPIO=$conf_FAN_PWM_GPIO
 conf_THEME=$conf_THEME
@@ -1380,6 +1393,44 @@ CONFIGDATA;
 				<p>
 					<?php echo L::config_screen_description; ?>
 				</p>
+
+				<h3><?php echo L::config_screen_driver_header; ?></h3>
+					<label for="conf_SCREEN_DRIVER"><?php echo L::config_screen_driver_label; ?></label><br />
+						<select name="conf_SCREEN_DRIVER" id="conf_SCREEN_DRIVER">
+							<?php
+							$screen_drivers=array('piscreen', 'waveshare35a', 'mipi-dbi');
+							foreach($screen_drivers as $screen_driver) {
+								echo "<option value='" . $screen_driver . "' " . ($config["conf_SCREEN_DRIVER"] == $screen_driver?" selected":"") . ">" . $screen_driver . "</option>";
+							}
+							?>
+						</select>
+
+				<h3><?php echo L::config_screen_rotate_header; ?></h3>
+					<label for="conf_SCREEN_ROTATE"><?php echo L::config_screen_rotate_label; ?></label><br />
+						<select name="conf_SCREEN_ROTATE" id="conf_SCREEN_ROTATE">
+							<?php
+							$screen_rotations=array('0', '90', '180', '270');
+							foreach($screen_rotations as $screen_rotation) {
+								echo "<option value='" . $screen_rotation . "' " . ($config["conf_SCREEN_ROTATE"] == $screen_rotation?" selected":"") . ">" . $screen_rotation . "</option>";
+							}
+							?>
+						</select>
+
+				<h3><?php echo L::config_screen_speed_header; ?></h3>
+					<label for="conf_SCREEN_SPEED"><?php echo L::config_screen_speed_label; ?></label><br />
+						<select name="conf_SCREEN_SPEED" id="conf_SCREEN_SPEED">
+							<?php
+							$screen_speeds=array('16000000');
+							foreach($screen_speeds as $screen_speed) {
+								echo "<option value='" . $screen_speed . "' " . ($config["conf_SCREEN_SPEED"] == $screen_speed?" selected":"") . ">" . $screen_speed . "</option>";
+							}
+							?>
+						</select>
+
+				<h3><?php echo L::config_touch_calibration_header; ?></h3>
+					<input type="checkbox" id="start_touchscreen_calibration" name="start_touchscreen_calibration">
+					<label for="start_touchscreen_calibration"><?php echo L::config_touch_calibration_label; ?></label><br />
+
 				<h3><?php echo L::config_screen_virtual_keyboard_enable_header; ?></h3>
 					<div>
 						<input type="checkbox" id="conf_VIRTUAL_KEYBOARD_ENABLED" name="conf_VIRTUAL_KEYBOARD_ENABLED"<?php echo $config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1"?" checked":""; ?>>

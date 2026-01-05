@@ -17,21 +17,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
-import argparse
 import subprocess
 
 import lib_setup
 import lib_system
 
 class display_config(object):
-	def __init__(self, args):
+	def __init__(self):
 		self.CONFIG_FILE	= '/boot/firmware/lbb-display.txt'
 		self.UDEV_FILE		= '/etc/udev/hwdb.d/61-ads7846-touch.hwdb'
 
-		self.args			= args
-
 		self.__setup	= lib_setup.setup()
 
+		self.conf_SCREEN_DRIVER		= self.__setup.get_val('conf_SCREEN_DRIVER')
+		self.conf_SCREEN_SPEED		= self.__setup.get_val('conf_SCREEN_SPEED')
+		self.conf_SCREEN_ROTATE		= self.__setup.get_val('conf_SCREEN_ROTATE')
 		self.conf_TOUCH_MATRIX_X	= self.__setup.get_val('conf_TOUCH_MATRIX_X')
 		self.conf_TOUCH_MATRIX_Y	= self.__setup.get_val('conf_TOUCH_MATRIX_Y')
 
@@ -43,15 +43,15 @@ class display_config(object):
 		rpi	= lib_system.get_pi_model(number_only=True)
 
 		# define driver
-		match self.args['driver']:
+		match self.conf_SCREEN_DRIVER:
 			case 'piscreen':
-				DRIVER	= f'dtoverlay=piscreen,speed={self.args['speed']},rotate={self.args['rotate']}'
+				DRIVER	= f'dtoverlay=piscreen,speed={self.conf_SCREEN_SPEED},rotate={self.conf_SCREEN_ROTATE}'
 			case 'waveshare35a':
-				DRIVER	= f'dtoverlay=waveshare35a,speed={self.args['speed']},rotate={self.args['rotate']}'
+				DRIVER	= f'dtoverlay=waveshare35a,speed={self.conf_SCREEN_SPEED},rotate={self.conf_SCREEN_ROTATE}'
 			case 'mipi-dbi':
 				DRIVER	= f'''dtoverlay=mipi-dbi,spi0-0,ili9486
-	dtparam=speed={self.args['speed']}
-	dtparam=rotate={self.args['rotate']}
+	dtparam=speed={self.conf_SCREEN_SPEED}
+	dtparam=rotate={self.conf_SCREEN_ROTATE}
 	dtparam=reset-gpio=25
 	dtparam=dc-gpio=24'''
 
@@ -76,7 +76,7 @@ class display_config(object):
 			config_file.write(CONFIG)
 
 	def __write_touch_udev(self):
-		# create and activate /etc/udev/hwdb.d/61-ads7846-touch.hwdb
+		# create and activate self.UDEV_FILE
 		CONFIG	= f"""evdev:name:ADS7846 Touchscreen*:*
  LIBINPUT_MODEL_PRESSURE_PAD=1
  LIBINPUT_ATTR_PRESSURE_RANGE=10:255
@@ -89,48 +89,7 @@ class display_config(object):
 		subprocess.run(['sudo', 'systemd-hwdb', 'update'])
 		subprocess.run(['sudo', 'udevadm', 'trigger', '-s', 'input'])
 
-
-def get_arguments():
-	parser = argparse.ArgumentParser(
-		description	= f'Creates display configuration for SPI touchscreens.',
-		add_help	= True
-	)
-
-	Drivers	= ['piscreen', 'waveshare35a', 'mipi-dbi']
-	parser.add_argument(
-		'--driver',
-		'-d',
-		choices		= Drivers,
-		required	= False,
-		default		= Drivers[0],
-		help=f'Driver name, one of {Drivers}'
-	)
-
-	Speeds	= ['16000000']
-	parser.add_argument(
-		'--speed',
-		'-s',
-		choices		= Speeds,
-		required	= False,
-		default		= Speeds[0],
-		help=f'Speed, one of {Speeds}'
-	)
-
-	Rotations	= ['0', '90', '180', '270']
-	parser.add_argument(
-		'--rotate',
-		'-r',
-		choices		= Rotations,
-		required	= False,
-		default		= Rotations[0],
-		help=f'Rotation, one of {Rotations}'
-	)
-
-	return(vars(parser.parse_args()))
-
 if __name__ == "__main__":
-	args	= get_arguments()
-
-	display_config(args).setup_display()
+	display_config().setup_display()
 
 

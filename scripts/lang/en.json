@@ -601,7 +601,19 @@
       "section": "Screen",
       "virtual_keyboard_enable_header": "Virtual keyboard",
       "virtual_keyboard_enable_label": "Enable virtual keyboard",
-      "description": "Settings that affect a screen with a graphical user interface (desktop)."
+      "description": "Settings that affect a display with a graphical user interface (desktop). Warning: The settings will only take effect after a reboot.",
+      "driver": {
+        "header": "Display driver",
+        "label": "Select the appropriate display driver."
+      },
+      "rotate": {
+        "header": "Display rotation",
+        "label": "Please select the display rotation in degrees."
+      },
+      "speed": {
+        "header": "Display speed",
+        "label": "Select the speed at which your display can be driven."
+      }
     },
     "exit": {
       "section": "Terminate LBB",
@@ -781,6 +793,13 @@
         "dynamic_desc": "A new random Wi-Fi password is assigned for each session. <strong>Access to the Little Backup Box's Wi-Fi network is then only possible via the display and the QR code!</strong><br />\nHowever, the change will only be applied if the display is activated and has a resolution of at least 64 x 64 pixels."
       },
       "section": "WiFi settings"
+    },
+    "touch": {
+      "calibration": {
+        "header": "Touchscreen calibration",
+        "label": "Start the calibration program on the touchscreen.",
+        "started": "The touchscreen calibration has been started. Please tap as precisely as possible in the center of the four successive markers. Note: The changes will only take effect after a reboot."
+      }
     }
   },
   "tools": {

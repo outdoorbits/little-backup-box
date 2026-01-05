@@ -342,7 +342,19 @@
       "section": "Pantalla",
       "virtual_keyboard_enable_header": "Teclado virtual",
       "virtual_keyboard_enable_label": "Habilitar teclado virtual",
-      "description": "Configuraciones que afectan a una pantalla con interfaz gráfica de usuario (escritorio)."
+      "description": "Configuraciones que afectan a una pantalla con una interfaz gráfica de usuario (escritorio). Atención: Los cambios solo entrarán en vigor después de reiniciar.",
+      "driver": {
+        "header": "Controlador de pantalla",
+        "label": "Seleccione el controlador de pantalla adecuado."
+      },
+      "rotate": {
+        "header": "Rotación de la pantalla",
+        "label": "Por favor, seleccione la rotación de la pantalla en grados."
+      },
+      "speed": {
+        "header": "Velocidad de la pantalla",
+        "label": "Seleccione la velocidad a la que se puede controlar su pantalla."
+      }
     },
     "exit": {
       "section": "Terminar LBB",
@@ -522,6 +534,13 @@
         "dynamic_desc": "Se asigna una nueva contraseña de Wi-Fi aleatoria para cada sesión. <strong>El acceso a la red Wi-Fi de Little Backup Box solo será posible mediante la pantalla y el código QR.</strong><br />\nSin embargo, el cambio solo se aplicará si la pantalla está activada y tiene una resolución mínima de 64 x 64 píxeles."
       },
       "section": "Configuración WiFi"
+    },
+    "touch": {
+      "calibration": {
+        "header": "Calibración de la pantalla táctil",
+        "label": "Inicie el programa de calibración en la pantalla táctil.",
+        "started": "La calibración de la pantalla táctil se ha iniciado. Por favor, toque con la mayor precisión posible el centro de las cuatro marcas consecutivas. Atención: Los cambios solo entrarán en vigor después de reiniciar."
+      }
     }
   },
   "tools": {

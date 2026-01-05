@@ -342,7 +342,19 @@
       "section": "Bildschirm",
       "virtual_keyboard_enable_header": "Virtuelle Tastatur",
       "virtual_keyboard_enable_label": "Virtuelle Tastatur aktivieren",
-      "description": "Einstellungen, welche einen Bildschirm mit grafischer Benutzeroberfläche (Desktop) betreffen."
+      "description": "Einstellungen, welche einen Bildschirm mit grafischer Benutzeroberfläche (Desktop) betreffen. Achtung: Die Einstellungen werden erst nach einem Neustart wirksam.",
+      "driver": {
+        "header": "Bildschirm-Treiber",
+        "label": "Wählen Sie den passenden Bildschirmtreiber"
+      },
+      "rotate": {
+        "header": "Bildschirmrotation",
+        "label": "Bitte wählen Sie die Bildschirmrotation in Grad."
+      },
+      "speed": {
+        "header": "Bildschirmgeschwindigkeit",
+        "label": "Wählen Sie die Geschwindigkeit, mit der Ihr Bildschirm angesprochen werden kann."
+      }
     },
     "exit": {
       "section": "LBB beenden",
@@ -522,6 +534,13 @@
         "dynamic_desc": "Bei jeder Sitzung wird ein neues zufälliges WLAN-Passwort vergeben. <strong>Der Zugang zum WLAN der Little Backup Box kann dann nur über das Display und den QR-Code erfolgen!</strong><br />Die Änderung wird allerdings nur ausgeführt, falls das Display aktiviert wurde und dieses mindestens 64 x 64 Pixel groß ist."
       },
       "section": "WLAN-Einstellungen"
+    },
+    "touch": {
+      "calibration": {
+        "header": "Touchscreen-Kalibrierung",
+        "label": "Das Kalibrierungsprogramm auf dem Touchscreen starten.",
+        "started": "Die Kalibrierung des Touchscreens wurde gestartet. Bitte tippen Sie möglichst exakt in die Mitte der vier aufeinanderfolgenden Markierungen. Achtung: Die Änderungen werden erst nach einem Neustart wirksam."
+      }
     }
   },
   "tools": {

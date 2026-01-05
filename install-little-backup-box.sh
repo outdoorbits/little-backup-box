@@ -28,8 +28,8 @@
 
 
 # Don't start as root
-if [[ $EUID -eq 0 ]]; then
-    echo "Run the script as a regular user"
+if [[ $EUID -ne 0 ]]; then
+    echo "Run the script as user root"
     exit 1
 fi
 
@@ -220,6 +220,8 @@ sudo DEBIAN_FRONTEND=noninteractive \
 			python3-markdown \
 			python3-bs4 \
 			python3-bleach \
+			python3-flask \
+			python3-evdev \
 			smartmontools \
 			dos2unix
 

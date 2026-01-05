@@ -87,7 +87,7 @@ gtk-enable-auto-mount-open=false
 EOF
 
 # setup display and touchscreen
-sudo python3 /var/www/little-backup-box/create_display_config.py --driver "${conf_SCREEN_DRIVER}" --speed "${conf_SCREEN_SPEED}" --rotate "${conf_SCREEN_ROTATE}"
+sudo python3 /var/www/little-backup-box/create_display_config.py
 
 # modify /boot/firmware/config.txt (include lbb-display.txt)
 grep -qxF "include lbb-display.txt" /boot/firmware/config.txt || echo "include lbb-display.txt" | sudo tee -a /boot/firmware/config.txt
