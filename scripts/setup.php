@@ -83,7 +83,7 @@
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_touch_calibration_started . '</div>';
 		}
 
-		// screen_config
+		// screen config
 		if ($_POST['conf_DISP'] != $_POST['conf_DISP_OLD']) {
 			exec("nohup sudo python3 $WORKING_DIR/create_screen_config.py --activate ${_POST['conf_DISP']} 2>&1 &");
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_screen_usage_updated . '</div>';
@@ -601,6 +601,9 @@ CONFIGDATA;
 						} else {
 							$config['conf_WIFI_PASSWORD']	= '';
 						}
+
+						# screen config
+						exec("nohup sudo python3 $WORKING_DIR/create_screen_config.py 2>&1 &");
 					}
 
 				} else {
