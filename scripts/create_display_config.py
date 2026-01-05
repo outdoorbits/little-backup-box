@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #######################################################################
 
+import os
 import subprocess
 
 import lib_setup
@@ -36,6 +37,9 @@ class display_config(object):
 		self.conf_TOUCH_MATRIX_Y	= self.__setup.get_val('conf_TOUCH_MATRIX_Y')
 
 	def setup_display(self):
+		if not os.path.isfile('/usr/sbin/lightdm'):
+			return(False)
+
 		self.__write_config_txt()
 		self.__write_touch_udev()
 
