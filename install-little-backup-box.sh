@@ -28,8 +28,8 @@
 
 
 # Don't start as root
-if [[ $EUID -ne 0 ]]; then
-    echo "Run the script as user root"
+if [[ $EUID -eq 0 ]]; then
+    echo "Do not run the script as user root"
     exit 1
 fi
 
