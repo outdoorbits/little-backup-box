@@ -79,8 +79,14 @@
 
 		// touchscreen calibration
 		if (isset($_POST['start_touchscreen_calibration'])) {
-			exec("nohup sudo $WORKING_DIR/kiosk-calibrate.sh > /tmp/script.log 2>&1 &");
+			exec("nohup sudo $WORKING_DIR/kiosk-calibrate.sh 2>&1 &");
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_touch_calibration_started . '</div>';
+		}
+
+		// screen_config
+		if ($_POST['conf_DISP'] != $_POST['conf_DISP_OLD']) {
+			exec("nohup sudo python3 $WORKING_DIR/create_screen_config.py --activate ${_POST['conf_DISP']} 2>&1 &");
+			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_screen_usage_updated . '</div>';
 		}
 
 		// rclone_gui
@@ -219,7 +225,6 @@
 		$conf_MAIL_IP								= isset($conf_MAIL_IP)?'true':'false';
 		$conf_MAIL_NOTIFICATIONS					= isset($conf_MAIL_NOTIFICATIONS)?'true':'false';
 		$conf_MAIL_HTML								= isset($conf_MAIL_HTML)?'true':'false';
-		$conf_DISP									= isset($conf_DISP)?'true':'false';
 		$conf_DISP_COLOR_BGR						= isset($conf_DISP_COLOR_BGR)?'true':'false';
 		$conf_DISP_COLOR_INVERSE					= isset($conf_DISP_COLOR_INVERSE)?'true':'false';
 		$conf_DISP_BACKLIGHT_ENABLED				= isset($conf_DISP_BACKLIGHT_ENABLED)?'true':'false';
@@ -342,7 +347,7 @@ conf_BACKUP_SYNC_METHOD_CLOUDS='$conf_BACKUP_SYNC_METHOD_CLOUDS'
 conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE='$conf_BACKUP_CLOUDS_TARGET_FILES_STAY_IN_PLACE'
 conf_BACKUP_MOVE_FILES=$conf_BACKUP_MOVE_FILES
 conf_POWER_OFF=$conf_POWER_OFF
-conf_DISP=$conf_DISP
+conf_DISP='$conf_DISP'
 conf_DISP_CONNECTION='$conf_DISP_CONNECTION'
 conf_DISP_DRIVER='$conf_DISP_DRIVER'
 conf_DISP_I2C_ADDRESS='$conf_DISP_I2C_ADDRESS'
@@ -910,8 +915,11 @@ CONFIGDATA;
 
 				<h3><?php echo L::config_display_behavior_header; ?></h3>
 					<div>
-						<input type="checkbox" id="conf_DISP" name="conf_DISP"<?php echo $config['conf_DISP']=="1"?" checked":""; ?>>
-						<label for="conf_DISP"><?php echo L::config_display_activate_label; ?></label><br />
+						<input type="hidden" id="conf_DISP_OLD" name="conf_DISP_OLD" value="<?php echo $config['conf_DISP']; ?>">
+						<input type="radio" id="conf_DISP" name="conf_DISP" value="display"<?php echo $config['conf_DISP']=="display"?" checked":""; ?>>
+						<label for="conf_DISP"><?php echo L::config_display_activate_display_label; ?></label><br />
+						<input type="radio" id="conf_DISP" name="conf_DISP" value="0"<?php echo $config['conf_DISP']=="0"?" checked":""; ?>>
+						<label for="conf_DISP"><?php echo L::config_display_activate_none_label; ?></label><br />
 					</div>
 
 					<div>
@@ -1387,58 +1395,67 @@ CONFIGDATA;
 			</details>
 		</div>
 
-		<div class="card" style="margin-top: 2em;">
-			<details>
-				<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_screen_section; ?></summary>
-				<p>
-					<?php echo L::config_screen_description; ?>
-				</p>
+		<?php if (file_exists('/usr/sbin/lightdm')) { ?>
+			<div class="card" style="margin-top: 2em;">
+				<details>
+					<summary style="letter-spacing: 1px; text-transform: uppercase;"><?php echo L::config_screen_section; ?></summary>
+					<p>
+						<?php echo L::config_screen_description; ?>
+					</p>
 
-				<h3><?php echo L::config_screen_driver_header; ?></h3>
-					<label for="conf_SCREEN_DRIVER"><?php echo L::config_screen_driver_label; ?></label><br />
-						<select name="conf_SCREEN_DRIVER" id="conf_SCREEN_DRIVER">
-							<?php
-							$screen_drivers=array('piscreen', 'waveshare35a', 'mipi-dbi');
-							foreach($screen_drivers as $screen_driver) {
-								echo "<option value='" . $screen_driver . "' " . ($config["conf_SCREEN_DRIVER"] == $screen_driver?" selected":"") . ">" . $screen_driver . "</option>";
-							}
-							?>
-						</select>
-
-				<h3><?php echo L::config_screen_rotate_header; ?></h3>
-					<label for="conf_SCREEN_ROTATE"><?php echo L::config_screen_rotate_label; ?></label><br />
-						<select name="conf_SCREEN_ROTATE" id="conf_SCREEN_ROTATE">
-							<?php
-							$screen_rotations=array('0', '90', '180', '270');
-							foreach($screen_rotations as $screen_rotation) {
-								echo "<option value='" . $screen_rotation . "' " . ($config["conf_SCREEN_ROTATE"] == $screen_rotation?" selected":"") . ">" . $screen_rotation . "</option>";
-							}
-							?>
-						</select>
-
-				<h3><?php echo L::config_screen_speed_header; ?></h3>
-					<label for="conf_SCREEN_SPEED"><?php echo L::config_screen_speed_label; ?></label><br />
-						<select name="conf_SCREEN_SPEED" id="conf_SCREEN_SPEED">
-							<?php
-							$screen_speeds=array('16000000');
-							foreach($screen_speeds as $screen_speed) {
-								echo "<option value='" . $screen_speed . "' " . ($config["conf_SCREEN_SPEED"] == $screen_speed?" selected":"") . ">" . $screen_speed . "</option>";
-							}
-							?>
-						</select>
-
-				<h3><?php echo L::config_touch_calibration_header; ?></h3>
-					<input type="checkbox" id="start_touchscreen_calibration" name="start_touchscreen_calibration">
-					<label for="start_touchscreen_calibration"><?php echo L::config_touch_calibration_label; ?></label><br />
-
-				<h3><?php echo L::config_screen_virtual_keyboard_enable_header; ?></h3>
 					<div>
-						<input type="checkbox" id="conf_VIRTUAL_KEYBOARD_ENABLED" name="conf_VIRTUAL_KEYBOARD_ENABLED"<?php echo $config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1"?" checked":""; ?>>
-						<label for="conf_VIRTUAL_KEYBOARD_ENABLED"><?php echo L::config_screen_virtual_keyboard_enable_label; ?></label><br />
+						<input type="radio" id="conf_DISP" name="conf_DISP" value="screen"<?php echo $config['conf_DISP']=="screen"?" checked":""; ?>>
+						<label for="conf_DISP"><?php echo L::config_display_activate_screen_label; ?></label><br />
+						<input type="radio" id="conf_DISP" name="conf_DISP" value="0"<?php echo $config['conf_DISP']=="0"?" checked":""; ?>>
+						<label for="conf_DISP"><?php echo L::config_display_activate_none_label; ?></label><br />
 					</div>
 
-			</details>
-		</div>
+					<h3><?php echo L::config_screen_driver_header; ?></h3>
+						<label for="conf_SCREEN_DRIVER"><?php echo L::config_screen_driver_label; ?></label><br />
+							<select name="conf_SCREEN_DRIVER" id="conf_SCREEN_DRIVER">
+								<?php
+								$screen_drivers=array('piscreen', 'waveshare35a', 'mipi-dbi');
+								foreach($screen_drivers as $screen_driver) {
+									echo "<option value='" . $screen_driver . "' " . ($config["conf_SCREEN_DRIVER"] == $screen_driver?" selected":"") . ">" . $screen_driver . "</option>";
+								}
+								?>
+							</select>
+
+					<h3><?php echo L::config_screen_rotate_header; ?></h3>
+						<label for="conf_SCREEN_ROTATE"><?php echo L::config_screen_rotate_label; ?></label><br />
+							<select name="conf_SCREEN_ROTATE" id="conf_SCREEN_ROTATE">
+								<?php
+								$screen_rotations=array('0', '90', '180', '270');
+								foreach($screen_rotations as $screen_rotation) {
+									echo "<option value='" . $screen_rotation . "' " . ($config["conf_SCREEN_ROTATE"] == $screen_rotation?" selected":"") . ">" . $screen_rotation . "</option>";
+								}
+								?>
+							</select>
+
+					<h3><?php echo L::config_screen_speed_header; ?></h3>
+						<label for="conf_SCREEN_SPEED"><?php echo L::config_screen_speed_label; ?></label><br />
+							<select name="conf_SCREEN_SPEED" id="conf_SCREEN_SPEED">
+								<?php
+								$screen_speeds=array('16000000');
+								foreach($screen_speeds as $screen_speed) {
+									echo "<option value='" . $screen_speed . "' " . ($config["conf_SCREEN_SPEED"] == $screen_speed?" selected":"") . ">" . $screen_speed . "</option>";
+								}
+								?>
+							</select>
+
+					<h3><?php echo L::config_touch_calibration_header; ?></h3>
+						<input type="checkbox" id="start_touchscreen_calibration" name="start_touchscreen_calibration">
+						<label for="start_touchscreen_calibration"><?php echo L::config_touch_calibration_label; ?></label><br />
+
+					<h3><?php echo L::config_screen_virtual_keyboard_enable_header; ?></h3>
+						<div>
+							<input type="checkbox" id="conf_VIRTUAL_KEYBOARD_ENABLED" name="conf_VIRTUAL_KEYBOARD_ENABLED"<?php echo $config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1"?" checked":""; ?>>
+							<label for="conf_VIRTUAL_KEYBOARD_ENABLED"><?php echo L::config_screen_virtual_keyboard_enable_label; ?></label><br />
+						</div>
+
+				</details>
+			</div>
+		<?php } ?>
 
 		<div class="card" style="margin-top: 2em;">
 			<details>

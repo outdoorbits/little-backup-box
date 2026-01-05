@@ -140,7 +140,7 @@ main() {
 
 	wait_for_cal_done
 
-	python3 /var/www/little-backup-box/create_display_config.py
+	python3 /var/www/little-backup-box/create_screen_config.py
 
 	stop_firefox
 	stop_cal_server

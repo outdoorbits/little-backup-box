@@ -98,39 +98,39 @@ class DISPLAY(object):
 		self.__display_content_files			= display_content_files(self.__setup)
 
 		# setup
-		self.__conf_DISP_CONNECTION				= self.__setup.get_val('conf_DISP_CONNECTION')
-		self.__conf_DISP_DRIVER					= self.__setup.get_val('conf_DISP_DRIVER')
+		self.__conf_DISP_CONNECTION					= self.__setup.get_val('conf_DISP_CONNECTION')
+		self.__conf_DISP_DRIVER						= self.__setup.get_val('conf_DISP_DRIVER')
 		self.__conf_DISP_I2C_ADDRESS				= self.__setup.get_val('conf_DISP_I2C_ADDRESS')
 		self.__conf_DISP_SPI_PORT					= self.__setup.get_val('conf_DISP_SPI_PORT')
 		self.__conf_DISP_RESOLUTION_X				= self.__setup.get_val('conf_DISP_RESOLUTION_X')
 		self.__conf_DISP_RESOLUTION_Y				= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
 		self.__conf_DISP_OFFSET_X					= self.__setup.get_val('conf_DISP_OFFSET_X')
 		self.__conf_DISP_OFFSET_Y					= self.__setup.get_val('conf_DISP_OFFSET_Y')
-		self.__conf_DISP_ROTATE					= self.__setup.get_val('conf_DISP_ROTATE')
+		self.__conf_DISP_ROTATE						= self.__setup.get_val('conf_DISP_ROTATE')
 		self.__conf_DISP_CONTRAST					= self.__setup.get_val('conf_DISP_CONTRAST')
-		self.__conf_DISP_COLOR_BGR				= self.__setup.get_val('conf_DISP_COLOR_BGR')
-		self.__conf_DISP_COLOR_INVERSE			= self.__setup.get_val('conf_DISP_COLOR_INVERSE')
+		self.__conf_DISP_COLOR_BGR					= self.__setup.get_val('conf_DISP_COLOR_BGR')
+		self.__conf_DISP_COLOR_INVERSE				= self.__setup.get_val('conf_DISP_COLOR_INVERSE')
 		self.__conf_DISP_COLOR_MODEL				= self.__setup.get_val('conf_DISP_COLOR_MODEL')
-		self.__conf_DISP_COLOR_TEXT				= self.__setup.get_val('conf_DISP_COLOR_TEXT')
-		self.__conf_DISP_COLOR_HIGH				= self.__setup.get_val('conf_DISP_COLOR_HIGH')
+		self.__conf_DISP_COLOR_TEXT					= self.__setup.get_val('conf_DISP_COLOR_TEXT')
+		self.__conf_DISP_COLOR_HIGH					= self.__setup.get_val('conf_DISP_COLOR_HIGH')
 		self.__conf_DISP_COLOR_ALERT				= self.__setup.get_val('conf_DISP_COLOR_ALERT')
 		self.__conf_DISP_COLOR_BACKGROUND			= self.__setup.get_val('conf_DISP_COLOR_BACKGROUND')
-		self.__conf_DISP_FONT_SIZE				= self.__setup.get_val('conf_DISP_FONT_SIZE')
-		self.__conf_DISP_FRAME_TIME				= self.__setup.get_val('conf_DISP_FRAME_TIME')
-		self.__conf_DISP_SHOW_STATUSBAR			= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
-		self.__conf_DISP_BACKLIGHT_PIN			= self.__setup.get_val('conf_DISP_BACKLIGHT_PIN')
-		self.__conf_DISP_BACKLIGHT_ENABLED		= self.__setup.get_val('conf_DISP_BACKLIGHT_ENABLED')
+		self.__conf_DISP_FONT_SIZE					= self.__setup.get_val('conf_DISP_FONT_SIZE')
+		self.__conf_DISP_FRAME_TIME					= self.__setup.get_val('conf_DISP_FRAME_TIME')
+		self.__conf_DISP_SHOW_STATUSBAR				= self.__setup.get_val('conf_DISP_SHOW_STATUSBAR')
+		self.__conf_DISP_BACKLIGHT_PIN				= self.__setup.get_val('conf_DISP_BACKLIGHT_PIN')
+		self.__conf_DISP_BACKLIGHT_ENABLED			= self.__setup.get_val('conf_DISP_BACKLIGHT_ENABLED')
 		self.__conf_MENU_ENABLED					= self.__setup.get_val('conf_MENU_ENABLED')
-		self.__conf_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('conf_DIPLAY_IMAGES_KEEP')
+		self.__conf_DIPLAY_IMAGES_KEEP				= self.__setup.get_val('conf_DIPLAY_IMAGES_KEEP')
 
 		self.__const_DISPLAY_CONTENT_OLD_FILE		= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
 		self.__const_DISPLAY_LINES_LIMIT			= self.__setup.get_val('const_DISPLAY_LINES_LIMIT')
 		self.__const_DISPLAY_STATUSBAR_TOGGLE_SEC	= self.__setup.get_val('const_DISPLAY_STATUSBAR_TOGGLE_SEC')
-		self.__const_FONT_PATH					= self.__setup.get_val('const_FONT_PATH')
+		self.__const_FONT_PATH						= self.__setup.get_val('const_FONT_PATH')
 		self.__const_DISPLAY_CONTENT_PATH			= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
-		self.__const_DISPLAY_IMAGE_EXPORT_FILE	= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
+		self.__const_DISPLAY_IMAGE_EXPORT_FILE		= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
 		self.__const_DISPLAY_IMAGE_KEEP_PATH		= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
-		self.__const_TASKS_PATH					= self.__setup.get_val('const_TASKS_PATH')
+		self.__const_TASKS_PATH						= self.__setup.get_val('const_TASKS_PATH')
 
 		#define colors
 		color = {}
@@ -164,6 +164,7 @@ class DISPLAY(object):
 
 		self.hardware_ready	= True
 
+		serial	= None
 		try:
 			if self.__conf_DISP_CONNECTION == 'I2C':
 				serial = i2c(port=1, address=self.__conf_DISP_I2C_ADDRESS)
@@ -183,7 +184,7 @@ class DISPLAY(object):
 			print(f'Display connection to {self.__conf_DISP_CONNECTION} could not be enabled.', file=sys.stderr)
 
 		try:
-			if self.__conf_DISP_DRIVER == 'none':
+			if self.__conf_DISP_DRIVER == 'none' or serial is None:
 				self.device	= self.__display_dummy()
 				self.hardware_ready	= False
 			elif self.__conf_DISP_DRIVER == 'SSD1306':

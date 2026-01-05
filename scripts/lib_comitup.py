@@ -73,7 +73,7 @@ class comitup(object):
 
 	def dynamic_password(self):
 		if	self.__setup.get_val('conf_WIFI_PASSWORD_TYPE') != 'dynamic' or \
-			not self.__setup.get_val('conf_DISP') or \
+			not self.__setup.get_val('conf_DISP') == 'display' or \
 			self.__setup.get_val('conf_DISP_RESOLUTION_X') < 64 or \
 			self.__setup.get_val('conf_DISP_RESOLUTION_Y') < 64:
 			return

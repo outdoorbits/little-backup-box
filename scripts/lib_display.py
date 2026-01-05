@@ -55,7 +55,7 @@ class display(object):
 		self.__start_display()
 
 	def __start_display(self):
-		if self.conf_DISP and subprocess.run(f'sudo pgrep -fa "{self.WORKING_DIR}/display.p[y]" | grep -v "pgrep"', shell=True, stdout=subprocess.DEVNULL).returncode != 0:
+		if self.conf_DISP == 'display' and subprocess.run(f'sudo pgrep -fa "{self.WORKING_DIR}/display.p[y]" | grep -v "pgrep"', shell=True, stdout=subprocess.DEVNULL).returncode != 0:
 			# grep: returncode=1 if no matches found
 			try:
 				subprocess.run(f"sh -c 'sudo {self.python} {self.WORKING_DIR}/display.py &'", shell=True)
@@ -74,7 +74,7 @@ class display(object):
 
 		if Lines:
 			# if display is disabled, write message into const_DISPLAY_CONTENT_OLD_FILE to prevent repeating IP message
-			DisplayFilePath	= os.path.join(self.const_DISPLAY_CONTENT_PATH,"{:014d}.txt".format(int(lib_system.get_uptime_sec()*100))) if self.conf_DISP else self.const_DISPLAY_CONTENT_OLD_FILE
+			DisplayFilePath	= os.path.join(self.const_DISPLAY_CONTENT_PATH,"{:014d}.txt".format(int(lib_system.get_uptime_sec()*100))) if self.conf_DISP == 'display' else self.const_DISPLAY_CONTENT_OLD_FILE
 
 			# write DisplayFile in any case to prevent repeting IP message
 			for i in range (4):
@@ -121,7 +121,7 @@ class display(object):
 				self.log.message(LogMessage)
 
 	def wait_for_empty_stack(self):
-		if not self.conf_DISP:
+		if self.conf_DISP != 'display':
 			return(None)
 
 		while self.display_content_files.get_ContentFilesList():

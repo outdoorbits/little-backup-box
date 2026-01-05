@@ -502,7 +502,6 @@
     },
     "display": {
       "section": "Display",
-      "activate_label": "Is a display connected and should it be used?",
       "connection_header": "Interface for the display",
       "connection_label": "Which interface should be used?",
       "i2c_address_label": "i2c address of the display",
@@ -551,7 +550,12 @@
       "backlight_header": "Display backlight",
       "backlight_enabled_label": "Activate display backlight (if available)",
       "backlight_pin_label": "Which GPIO pin (BCM notation) is connected to the backlight?",
-      "additional_settings_header": "Additional display settings"
+      "additional_settings_header": "Additional display settings",
+      "activate": {
+        "display_label": "A display connected via GPIO should be used.",
+        "none_label": "No display",
+        "screen_label": "A screen (or touchscreen) connected via GPIO should be used."
+      }
     },
     "menu": {
       "enable_header": "Activate display menu",
@@ -613,7 +617,8 @@
       "speed": {
         "header": "Display speed",
         "label": "Select the speed at which your display can be driven."
-      }
+      },
+      "usage_updated": "The display configuration has been saved."
     },
     "exit": {
       "section": "Terminate LBB",

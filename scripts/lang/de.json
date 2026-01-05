@@ -243,7 +243,6 @@
     },
     "display": {
       "section": "Display",
-      "activate_label": "Ist ein Display angeschlossen und soll es verwendet werden?",
       "connection_header": "Schnittstelle für das Display",
       "connection_label": "Welche Schnittstelle soll verwendet werden?",
       "i2c_address_label": "i2c-Adresse des Displays",
@@ -292,7 +291,12 @@
       "backlight_header": "Display-Hintergrundbeleuchtung",
       "backlight_enabled_label": "Display-Hintergrundbeleuchtung aktivieren (falls vorhanden)",
       "backlight_pin_label": "Welcher GPIO-PIN (BCM-Notation) ist mit der Hintergrundbeleuchtung verbunden?",
-      "additional_settings_header": "Weitere Display-Einstellungen "
+      "additional_settings_header": "Weitere Display-Einstellungen ",
+      "activate": {
+        "display_label": "Ein am GPIO angeschlossenes Display soll verwendet werden.",
+        "none_label": "Keine Anzeige",
+        "screen_label": "Ein am GPIO angeschlossener Bildschirm (oder Touchscreen) soll verwendet werden."
+      }
     },
     "menu": {
       "enable_header": "Display-Menu aktivieren",
@@ -354,7 +358,8 @@
       "speed": {
         "header": "Bildschirmgeschwindigkeit",
         "label": "Wählen Sie die Geschwindigkeit, mit der Ihr Bildschirm angesprochen werden kann."
-      }
+      },
+      "usage_updated": "Die Konfiguration der Anzeige wurde gespeichert."
     },
     "exit": {
       "section": "LBB beenden",

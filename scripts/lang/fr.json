@@ -243,7 +243,6 @@
     },
     "display": {
       "section": "Filtrer",
-      "activate_label": "Un écran est-il connecté et doit-il être utilisé ?",
       "connection_header": "Interface pour l'affichage",
       "connection_label": "Quelle interface utiliser ?",
       "i2c_address_label": "Adresse i2c de l'écran",
@@ -292,7 +291,12 @@
       "backlight_header": "Rétroéclairage de l'écran",
       "backlight_enabled_label": "Activer le rétroéclairage de l'écran (si disponible)",
       "backlight_pin_label": "Quelle broche GPIO (notation BCM) est connectée au rétroéclairage ?",
-      "additional_settings_header": "Paramètres d'affichage supplémentaires"
+      "additional_settings_header": "Paramètres d'affichage supplémentaires",
+      "activate": {
+        "display_label": "Un écran connecté au GPIO doit être utilisé.",
+        "none_label": "Aucun affichage",
+        "screen_label": "Un écran (ou écran tactile) connecté au GPIO doit être utilisé."
+      }
     },
     "menu": {
       "enable_header": "Activer le menu d'affichage",
@@ -354,7 +358,8 @@
       "speed": {
         "header": "Vitesse de l’écran",
         "label": "Sélectionnez la vitesse à laquelle votre écran peut être piloté."
-      }
+      },
+      "usage_updated": "La configuration de l’affichage a été enregistrée."
     },
     "exit": {
       "section": "Terminer LBB",

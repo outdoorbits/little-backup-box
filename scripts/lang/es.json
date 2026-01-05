@@ -243,7 +243,6 @@
     },
     "display": {
       "section": "Pantalla",
-      "activate_label": "¿Hay una pantalla conectada y debería usarse?",
       "connection_header": "Interfaz para la pantalla",
       "connection_label": "¿Qué interfaz se debe utilizar?",
       "i2c_address_label": "Dirección i2c de la pantalla",
@@ -292,7 +291,12 @@
       "backlight_header": "Retroiluminación de la pantalla",
       "backlight_enabled_label": "Activar la retroiluminación de la pantalla (si está disponible)",
       "backlight_pin_label": "¿Qué pin GPIO (notación BCM) está conectado a la luz de fondo?",
-      "additional_settings_header": "Configuraciones de pantalla adicionales"
+      "additional_settings_header": "Configuraciones de pantalla adicionales",
+      "activate": {
+        "display_label": "Se debe utilizar una pantalla conectada al GPIO.",
+        "none_label": "Sin pantalla",
+        "screen_label": "Se debe utilizar una pantalla (o pantalla táctil) conectada al GPIO."
+      }
     },
     "menu": {
       "enable_header": "Activar menú de visualización",
@@ -354,7 +358,8 @@
       "speed": {
         "header": "Velocidad de la pantalla",
         "label": "Seleccione la velocidad a la que se puede controlar su pantalla."
-      }
+      },
+      "usage_updated": "La configuración de la pantalla se ha guardado."
     },
     "exit": {
       "section": "Terminar LBB",

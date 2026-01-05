@@ -144,6 +144,7 @@ class setup(object):
 		os.chown(FilePath, self.__uid, self.__gid)
 
 	def __update_config(self):
+		# conf_WIFI_PASSWORD
 		if self.config['conf_WIFI_PASSWORD']['value'] == '.':
 			conf_PASSWORD	= base64.b64decode(self.config['conf_PASSWORD']['value']).decode('utf-8')
 			if (8 <= len(conf_PASSWORD) <= 63) and all(32 <= ord(c) <= 126 for c in conf_PASSWORD):
@@ -182,6 +183,13 @@ class setup(object):
 		for PWD in self.constants['const_PASSWORDS_LIST']['value'].split(';'):
 			if not looks_like_base64(self.config[PWD]['value']):
 				self.config[PWD]['value']	= base64.b64encode(bytes(self.config[PWD]['value'], 'utf-8')).decode('utf-8')
+
+		# conf_DISP
+		match self.config['conf_DISP']['value'].lower():
+			case 'true':
+				self.config['conf_DISP']['value']	= 'display'
+			case 'false':
+				self.config['conf_DISP']['value']	= 'screen'
 
 	def __get_config_configured(self):
 		if os.path.isfile(self.config_file_path):
@@ -254,7 +262,7 @@ class setup(object):
 					'conf_POWER_OFF':									{'value': False, 'type': 'bool'},
 					'conf_VIEW_CONVERT_HEIC':							{'value': True, 'type': 'bool'},
 					'conf_VIEW_WRITE_RATING_EXIF':						{'value': False, 'type': 'bool'},
-					'conf_DISP':										{'value': False, 'type': 'bool'},
+					'conf_DISP':										{'value': '0', 'type': 'str'}, 					# ['display', 'screen', '0']
 					'conf_DISP_CONNECTION':								{'value': 'I2C', 'type': 'str'},
 					'conf_DISP_DRIVER':									{'value': 'SSD1306', 'type': 'str'},
 					'conf_DISP_I2C_ADDRESS':							{'value': '0x3c', 'type': 'int16'},

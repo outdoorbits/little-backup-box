@@ -379,14 +379,20 @@ if [ "${SCRIPT_MODE}" = "install" ]; then
 	for I2C in "${I2C_LIST[@]}"; do
 		if [[ "${I2C_DETECT}" =~ " ${I2C}" ]]; then
 			sudo sed -i '/conf_DISP=/d' "${CONFIG}"
-			echo -e 'conf_DISP=true' | sudo tee -a "${CONFIG}"
+			echo -e "conf_DISP='display'" | sudo tee -a "${CONFIG}"
 
 			sudo sed -i '/conf_DISP_I2C_ADDRESS=/d' "${CONFIG}"
 			echo -e "conf_DISP_I2C_ADDRESS=\"${I2C}\"" | sudo tee -a "${CONFIG}"
+
+			conf_DISP='display'
 			break
 		fi
 	done
 
+	if [[ "$conf_DISP" != "display" && -f /usr/sbin/lightdm ]]; then
+		sudo sed -i '/conf_DISP=/d' "${CONFIG}"
+		echo -e "conf_DISP='screen'" | sudo tee -a "${CONFIG}"
+	fi
 fi
 
 # remove all from crontab
