@@ -308,7 +308,8 @@ sudo usermod -aG ${USER_WWW_DATA} ${USER_SAMBA}
 # Create the required media-directories
 echo "Creating the required media-directories"
 
-sudo mkdir -p "${const_MEDIA_DIR}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_INTERNAL_BACKUP_DIR}"
+sudo mkdir -p "${const_MEDIA_DIR}/${const_BACKGROUND_IMAGES_DIR}/lbb"
 
 sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_USB_TARGET}" > /dev/null 2>&1
 sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_USB_SOURCE}" > /dev/null 2>&1
@@ -323,12 +324,13 @@ sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_TECH_NVME_SOURCE}" > /dev/nul
 sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_CLOUD_TARGET}" > /dev/null 2>&1
 sudo umount "${const_MEDIA_DIR}/${const_MOUNTPOINT_CLOUD_SOURCE}" > /dev/null 2>&1
 
-sudo mkdir -p "${const_MEDIA_DIR}/${const_BACKGROUND_IMAGES_DIR}/lbb"
-
 sudo chown -R ${USER_WWW_DATA}:${USER_WWW_DATA} "${const_MEDIA_DIR}"
-sudo chmod -R 777 "${const_MEDIA_DIR}"
-sudo setfacl -Rdm u:${USER_WWW_DATA}:rwX,g:${USER_WWW_DATA}:rwX "${const_MEDIA_DIR}"
-sudo setfacl -Rdm u:${USER_SAMBA}:rwX,g:${USER_SAMBA}:rwX "${const_MEDIA_DIR}"
+sudo chmod -R 770 "${const_MEDIA_DIR}"
+
+sudo setfacl -R \
+	-m u:${USER_WWW_DATA}:rwX,g:${USER_WWW_DATA}:rwX \
+	-d -m u:${USER_WWW_DATA}:rwX,g:${USER_WWW_DATA}:rwX \
+	"${const_MEDIA_DIR}"
 
 # move background images in place
 mv "${INSTALLER_DIR}/scripts/img/backgrounds/"* "${const_MEDIA_DIR}/${const_BACKGROUND_IMAGES_DIR}/lbb/"

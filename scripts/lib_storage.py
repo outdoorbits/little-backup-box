@@ -384,6 +384,12 @@ class storage(object):
 		# create path
 		self.createPath()
 
+		try:
+			subprocess.run(['sudo', 'setfacl', '-R', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', '-d', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', self.MountPoint])
+		except:
+			pass
+
+
 		self.__display_storage_properties()
 
 		return(True)
