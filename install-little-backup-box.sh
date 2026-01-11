@@ -249,6 +249,7 @@ sudo systemctl disable openvpn.service
 
 # change hostname
 sudo raspi-config nonint do_hostname lbb
+sudo sed -i -E "s/^([[:space:]]*hostname:[[:space:]]*).*/\1lbb/" "/boot/firmware/user-data"
 
 # raspberry pi 5: usb_max_current_enable
 CONFIG_TXT="/boot/firmware/config.txt"
@@ -640,7 +641,7 @@ echo "***"
 echo "*** If you have further questions, please check the wiki first:"
 echo "*** https://github.com/outdoorbits/little-backup-box/wiki"
 echo "***"
-echo "*** IF YOU ARE USING COMITUP: READ ALSO %quot;How to proceed%quot; in README/Installation!"
+echo "*** IF YOU ARE USING COMITUP: READ ALSO 'How to proceed' in README/Installation!"
 echo "***"
 echo "*** We are always happy to receive your feedback!"
 echo "********************************************************************************************"
