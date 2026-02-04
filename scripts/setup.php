@@ -380,8 +380,8 @@ conf_MENU_BUTTON_EDGE_DETECTION='$conf_MENU_BUTTON_EDGE_DETECTION'
 conf_MENU_BUTTON_RESISTOR_PULL='$conf_MENU_BUTTON_RESISTOR_PULL'
 conf_VIRTUAL_KEYBOARD_ENABLED=$conf_VIRTUAL_KEYBOARD_ENABLED
 conf_SCREEN_DRIVER='$conf_SCREEN_DRIVER'
-conf_SCREEN_SPEED='$conf_SCREEN_SPEED'
-conf_SCREEN_ROTATE='$conf_SCREEN_ROTATE'
+conf_SCREEN_SPEED=$conf_SCREEN_SPEED
+conf_SCREEN_ROTATE=$conf_SCREEN_ROTATE
 conf_TOUCH_MATRIX_X='$conf_TOUCH_MATRIX_X'
 conf_TOUCH_MATRIX_Y='$conf_TOUCH_MATRIX_Y'
 conf_FAN_PWM_TEMP_C=$conf_FAN_PWM_TEMP_C
@@ -868,7 +868,7 @@ CONFIGDATA;
 					<label for="conf_POWER_OFF_IDLE_TIME"><?php echo L::config_energy_power_off_idle_time_label; ?></label><br />
 					<select name="conf_POWER_OFF_IDLE_TIME" id="conf_POWER_OFF_IDLE_TIME">
 						<?php
-							$IDLE_TIME_OPTIONS=array(0,2,5,10,15,20,30);
+							$IDLE_TIME_OPTIONS=array(0, 2, 5, 10, 15, 20, 30);
 							foreach($IDLE_TIME_OPTIONS as $IDLE_TIME_OPTION) {
 								echo "<option value=\"" . $IDLE_TIME_OPTION ."\"". ($config["conf_POWER_OFF_IDLE_TIME"]==$IDLE_TIME_OPTION?" selected":"") . ">" . ($IDLE_TIME_OPTION=="0"?L::config_energy_power_off_idle_time_none:$IDLE_TIME_OPTION . " " . L::units_minutes_long) ."</option>";
 							}
@@ -1535,7 +1535,7 @@ CONFIGDATA;
 					<label for="conf_MAIL_TIMEOUT_SEC"><?php echo L::config_mail_timeout_label; ?></label><br />
 					<select name="conf_MAIL_TIMEOUT_SEC" id="conf_MAIL_TIMEOUT_SEC">
 						<?php
-							$mail_timeouts	= array(5,10,20,30,40,50,60,90,120,300,600);
+							$mail_timeouts	= array(5, 10, 20, 30, 40, 50, 60, 90, 120, 300, 600);
 							foreach($mail_timeouts as $mail_timeout) {
 								echo "<option value='" . $mail_timeout . "' " . ($config["conf_MAIL_TIMEOUT_SEC"] == $mail_timeout?" selected":"") . ">" . $mail_timeout . ' ' . L::seconds_short . "</option>";
 							}
@@ -1781,7 +1781,7 @@ CONFIGDATA;
 					<label for="conf_VPN_TIMEOUT"><?php echo L::config_vpn_timeout_label; ?></label><br />
 					<select name="conf_VPN_TIMEOUT" id="conf_VPN_TIMEOUT">
 						<?php
-							$vpn_timeouts	= array(5,10,20,30,40,50,60,90,120,300,600);
+							$vpn_timeouts	= array(5, 10, 20, 30, 40, 50, 60, 90, 120, 300, 600);
 							foreach($vpn_timeouts as $vpn_timeout) {
 								echo "<option value='" . $vpn_timeout . "' " . ($config["conf_VPN_TIMEOUT"] == $vpn_timeout?" selected":"") . ">" . $vpn_timeout . ' ' . L::seconds_short . "</option>";
 							}
@@ -1892,9 +1892,34 @@ CONFIGDATA;
 						<label for="conf_FAN_PWM_GPIO"><?php echo L::config_hardware_fan_gpio_label; ?></label><br />
 						<select name="conf_FAN_PWM_GPIO" id="conf_FAN_PWM_GPIO">
 							<?php
-								$conf_FAN_PWM_GPIOs=array('-','14','15','18','23','24'); # allowed 2..27
+								$conf_FAN_PWM_GPIOs=array(
+									array(
+										'GPIO'	=> 0,
+										'label'	=> '-'
+									),
+									array(
+										'GPIO'	=> 14,
+										'label'	=> '14'
+									),
+									array(
+										'GPIO'	=> 15,
+										'label'	=> '15'
+									),
+									array(
+										'GPIO'	=> 18,
+										'label'	=> '18'
+									),
+									array(
+										'GPIO'	=> 23,
+										'label'	=> '23'
+									),
+									array(
+										'GPIO'	=> 24,
+										'label'	=> '24'
+									)
+								);
 								foreach($conf_FAN_PWM_GPIOs as $conf_FAN_PWM_GPIO) {
-									echo "<option value=\"" . $conf_FAN_PWM_GPIO ."\"". ($config["conf_FAN_PWM_GPIO"]==$conf_FAN_PWM_GPIO?" selected":"") . ">" . $conf_FAN_PWM_GPIO . "</option>";
+									echo "<option value=\"" . $conf_FAN_PWM_GPIO['GPIO'] ."\"". ($config["conf_FAN_PWM_GPIO"]==$conf_FAN_PWM_GPIO['GPIO']?" selected":"") . ">" . $conf_FAN_PWM_GPIO['label'] . "</option>";
 								}
 							?>
 						</select>

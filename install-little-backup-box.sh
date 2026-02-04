@@ -248,8 +248,8 @@ sudo pip install --break-system-packages --upgrade Mastodon.py
 sudo systemctl disable openvpn.service
 
 # change hostname
-sudo raspi-config nonint do_hostname lbb
-sudo sed -i -E "s/^([[:space:]]*hostname:[[:space:]]*).*/\1lbb/" "/boot/firmware/user-data"
+sudo raspi-config nonint do_hostname lbb # session only
+sudo sed -i -E "s/^([[:space:]]*hostname:[[:space:]]*).*/\1lbb/" "/boot/firmware/user-data" # permanent
 
 # raspberry pi 5: usb_max_current_enable
 CONFIG_TXT="/boot/firmware/config.txt"

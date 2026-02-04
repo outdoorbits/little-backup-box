@@ -266,7 +266,7 @@ class setup(object):
 					'conf_DISP_CONNECTION':								{'value': 'I2C', 'type': 'str'},
 					'conf_DISP_DRIVER':									{'value': 'SSD1306', 'type': 'str'},
 					'conf_DISP_I2C_ADDRESS':							{'value': '0x3c', 'type': 'int16'},
-					'conf_DISP_SPI_PORT':								{'value': '0', 'type': 'int'},
+					'conf_DISP_SPI_PORT':								{'value': 0, 'type': 'int'},
 					'conf_DISP_RESOLUTION_X':							{'value': 128, 'type': 'int'},
 					'conf_DISP_RESOLUTION_Y':							{'value': 64, 'type': 'int'},
 					'conf_DISP_OFFSET_X':								{'value': 0, 'type': 'int'},
