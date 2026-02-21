@@ -37,6 +37,9 @@
 		$nav_theme_class	= "navbar-light bg-light";
 	}
 	$scriptname=basename($_SERVER["SCRIPT_FILENAME"]);
+	if ($scriptname == 'frame.php' and isset($_GET['page'])) {
+		$scriptname	= $_GET['page'];
+	}
 
 	exec('which comitup', $comitup_path, $return_code);
 	$comitup_installed	= $return_code == 0;
@@ -60,7 +63,7 @@
 		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="index.php"?" active":""; ?>" href="/index.php"><?php echo L::mainmenue_main; ?></a></li>
-				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="sysinfo.php"?" active":""; ?>" href="/sysinfo.php"><?php echo L::mainmenue_sysinfo; ?></a></li>
+				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="sysinfo"?" active":""; ?>" href="/frame.php?page=sysinfo"><?php echo L::mainmenue_sysinfo; ?></a></li>
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="tools.php"?" active":""; ?>" href="/tools.php"><?php echo L::mainmenue_tools; ?></a></li>
 				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="view.php"?" active":""; ?>" href="/view.php"><?php echo L::mainmenue_view; ?></a></li>
 			</ul>
@@ -68,11 +71,11 @@
 
 		<div class="collapse navbar-collapse w-50" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0  w-100">
-				<li class="nav-item"><a class="nav-link" href="/frame.php?page=files"><?php echo L::mainmenue_filebrowser; ?></a></li>
+				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="files"?" active":""; ?>" href="/frame.php?page=files"><?php echo L::mainmenue_filebrowser; ?></a></li>
 				<?php
 					if ($comitup_installed) {
 						?>
-							<li class="nav-item"><a class="nav-link<?php echo $comitup_hotspot?'':' disabled'; ?>" href="/frame.php?page=comitup">comitup</a></li>
+							<li class="nav-item<?php echo $scriptname=="comitup"?" active":""; ?>"><a class="nav-link<?php echo $comitup_hotspot?'':' disabled'; ?>" href="/frame.php?page=comitup">comitup</a></li>
 						<?php
 					}
 				?>
@@ -88,7 +91,7 @@
 						<?php
 					}
 				?>
-				<li class="nav-item"><a class="nav-link<?php echo $scriptname=="setup.php"?" active":""; ?>" href="/setup.php"><?php echo L::mainmenue_config; ?></a></li>
+				<li class="nav-item"><a class="nav-link<?php echo in_array($scriptname, ["setup.php", "rclone_gui"])?" active":""; ?>" href="/setup.php"><?php echo L::mainmenue_config; ?></a></li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPower" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 						<svg width="1em" height="1em" style="vertical-align: middle;">

@@ -37,13 +37,10 @@
 
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
-	<script type="text/javascript" src="js/logmonitor.js"></script>
-	<script type="text/javascript" src="js/display.js"></script>
-	<script type="text/javascript" src="js/refresh_site.js"></script>
 	<script type="text/javascript" src="js/copy2clipboard.js"></script>
 </head>
 
-<body onload="refreshLogMonitor();refreshDisplay();refresh_site();" <?php echo $background; ?>>
+<body <?php echo $background; ?>>
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<!-- Suppress form re-submit prompt on refresh -->
 	<script>
@@ -51,12 +48,6 @@
 			window.history.replaceState(null, null, window.location.href);
 		}
 	</script>
-
-	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
-	<?php
-		include "${WORKING_DIR}/sub-display.php";
-		display();
-	?>
 
 	<div class="card">
 		<h3><?php echo L::sysinfo_system; ?></h3>
@@ -125,6 +116,7 @@
 			unset($Partitions);
 			exec("sudo python3 ${WORKING_DIR}/lib_storage.py --Action get_available_partitions --skipMounted False --ignore-fs True", $Partitions);
 
+			$output	= false;
 			foreach ($Partitions as $Partition) {
 				$output	= false;
 
@@ -285,12 +277,6 @@
 	</div>
 
 	<div class="text-center"><button onClick="history.go(0)" role="button"><?php echo (L::sysinfo_refresh_button); ?></button></div>
-
-	<?php include "sub-logmonitor.php";
-		logmonitor($sourcefile=$constants['const_LOGFILE'], $title=L::log_logmonitor, $allow_logfile_operations=true);
-	?>
-
-	<?php include "sub-footer.php"; ?>
 
 </body>
 

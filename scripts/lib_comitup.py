@@ -118,6 +118,14 @@ class comitup(object):
 
 		return(status)
 
+	def wifi_adapter_available(self):
+		Command	= ["nmcli", "-t", "-f", "DEVICE,TYPE", "device"]
+		result = subprocess.run(Command, capture_output=True, text=True)
+		for line in result.stdout.splitlines():
+			if ":wifi" in line:
+				return True
+		return False
+
 	def create_wifi_link_qr_image(self):
 		status	= self.get_status()
 
@@ -180,67 +188,68 @@ class comitup(object):
 			ty		= (size - th) // 2
 			draw.multiline_text((tx, ty), text, font=font, fill='white', align='center')
 
-		# create WIFI symbol at the right
-		draw		= ImageDraw.Draw(final_image)
+		if self.wifi_adapter_available():
+			# create WIFI symbol at the right
+			draw		= ImageDraw.Draw(final_image)
 
-		size		= size if width - size >= size else width - size
+			size		= size if width - size >= size else width - size
 
-		# center
-		cx = size // 2 + shift_x
-		cy = size // 2 + shift_y
+			# center
+			cx = size // 2 + shift_x
+			cy = size // 2 + shift_y
 
-		if shift_x == 0 and width > size:
-			cx	=	width // 2
-		elif shift_y == 0 and height > size:
-			cy	=	height // 2
+			if shift_x == 0 and width > size:
+				cx	=	width // 2
+			elif shift_y == 0 and height > size:
+				cy	=	height // 2
 
-		thickness = max(2, size // 16)
+			thickness = max(2, size // 16)
 
-		# arc 1
-		r1	= size * 7 // 12
-		draw.arc(
-			[cx - r1, cy - r1, cx + r1, cy + r1],
-			start	= 225,
-			end		= 315,
-			fill	= 'white',
-			width	= thickness
-		)
+			# arc 1
+			r1	= size * 7 // 12
+			draw.arc(
+				[cx - r1, cy - r1, cx + r1, cy + r1],
+				start	= 225,
+				end		= 315,
+				fill	= 'white',
+				width	= thickness
+			)
 
-		# arc 2
-		r2	= size * 5 // 12
-		draw.arc(
-			[cx - r2, cy - r2, cx + r2, cy + r2],
-			start	= 220,
-			end		= 320,
-			fill	= 'white',
-			width	= thickness
-		)
+			# arc 2
+			r2	= size * 5 // 12
+			draw.arc(
+				[cx - r2, cy - r2, cx + r2, cy + r2],
+				start	= 220,
+				end		= 320,
+				fill	= 'white',
+				width	= thickness
+			)
 
-		# arc 3
-		r3	= size * 3 // 12
-		draw.arc(
-			[cx - r3, cy - r3, cx + r3, cy + r3],
-			start	= 215,
-			end		= 325,
-			fill	= 'white',
-			width	= thickness
-		)
+			# arc 3
+			r3	= size * 3 // 12
+			draw.arc(
+				[cx - r3, cy - r3, cx + r3, cy + r3],
+				start	= 215,
+				end		= 325,
+				fill	= 'white',
+				width	= thickness
+			)
 
-		point_r = size * 1 // 12
-		draw.ellipse(
-			[cx - point_r, cy - point_r, cx + point_r, cy + point_r],
-			fill	= 'white'
-		)
+			point_r = size * 1 // 12
+			draw.ellipse(
+				[cx - point_r, cy - point_r, cx + point_r, cy + point_r],
+				fill	= 'white'
+			)
 
-		font	= ImageFont.load_default()
-		HOT		= 'HOT'
-		bbox	= draw.textbbox((0, 0), HOT, font=font)
-		HOT_w	= bbox[2] - bbox[0]
+			font	= ImageFont.load_default()
+			HOT		= 'HOT' if status['state'] == 'HOTSPOT' else 'WiFi'
+			bbox	= draw.textbbox((0, 0), HOT, font=font)
+			HOT_w	= bbox[2] - bbox[0]
 
-		HOT_x = cx - HOT_w // 2
-		HOT_y = cy + point_r + (size // 12)
+			HOT_x = cx - HOT_w // 2
+			HOT_y = cy + point_r + (size // 12)
 
-		draw.text((HOT_x, HOT_y), HOT, font=font, fill="white")
+			draw.text((HOT_x, HOT_y), HOT, font=font, fill="white")
 
 		if os.path.exists(self.__const_WIFI_QR_FILE_PATH):
 			os.remove(self.__const_WIFI_QR_FILE_PATH)

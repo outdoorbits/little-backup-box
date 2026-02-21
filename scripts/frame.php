@@ -38,6 +38,7 @@
 
 	$framed_pages	= array(
 		'comitup'		=> '/comitup/',
+		'sysinfo'		=> '/sysinfo.php',
 		'files'			=> '/files',
 		'rclone_gui'	=> '/rclone/'
 	);
@@ -58,6 +59,9 @@
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 	<script type="text/javascript" src="js/display.js"></script>
+	<?php
+		if ($frame_index == "sysinfo") {echo '<script src="js/refresh_iframe.js"></script>';}
+	?>
 </head>
 
 <body <?php echo $background; ?> onload="refreshDisplay();">
@@ -68,9 +72,15 @@
 		display();
 	?>
 
- 		<div style="width: 100vw; height: 60vh; margin-left: calc(-50vw + 50%); border: none; background: #FF0000;">
-			<iframe id="pageframe" src="<?php echo $framed_pages[$frame_index]; ?>" style="width: 100%; height: 100%; border: none; background: #FFFFFF;"></iframe>
+ 		<div style="width: 100vw; height: 60vh; margin-left: calc(-50vw + 50%); border: none;">
+ 			<iframe id="pageframe" src="<?php echo $framed_pages[$frame_index]; ?>" style="width: 100%; height: 100%; border: none;"></iframe>
 		</div>
+
+		<?php
+			if ($frame_index == "sysinfo") {
+				echo "<script>startIframeRefresh('pageframe', '$framed_pages[$frame_index]', 10000);</script>";
+			}
+		?>
 
 		<?php include "sub-footer.php"; ?>
 </body>
