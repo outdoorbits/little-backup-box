@@ -102,11 +102,13 @@ class ip_info(object):
 
 		FrameTime	= self.__conf_DISP_FRAME_TIME_IP * 2 if FrameTime is None else FrameTime
 
-		if not os.path.isfile(self.__const_WIFI_QR_FILE_PATH):
-			lib_comitup.comitup().create_wifi_link_qr_image()
+		cu	= lib_comitup.comitup()
+		if cu.hotspot_active() or force:
+			if not os.path.isfile(self.__const_WIFI_QR_FILE_PATH):
+				cu.create_wifi_link_qr_image()
 
-		if os.path.isfile(self.__const_WIFI_QR_FILE_PATH):
-			self.__display.message([f'set:time={FrameTime},temp,hidden=WIFI_QR', f":IMAGE={self.__const_WIFI_QR_FILE_PATH}"], logging=False)
+			if os.path.isfile(self.__const_WIFI_QR_FILE_PATH):
+				self.__display.message([f'set:time={FrameTime},temp,hidden=WIFI_QR', f":IMAGE={self.__const_WIFI_QR_FILE_PATH}"], logging=False)
 
 	def mail_ip(self):
 		IP_sent_Markerfile					= self.__setup.get_val('const_IP_SENT_MARKERFILE')
