@@ -59,12 +59,13 @@
 <head>
 	<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>
 	<script type="text/javascript" src="js/display.js"></script>
+	<script type="text/javascript" src="js/logmonitor.js"></script>
 	<?php
 		if ($frame_index == "sysinfo") {echo '<script src="js/refresh_iframe.js"></script>';}
 	?>
 </head>
 
-<body <?php echo $background; ?> onload="refreshDisplay();">
+<body <?php echo $background; ?> onload="refreshLogMonitor();refreshDisplay();">
 	<?php include "${WORKING_DIR}/sub-standards-body-loader.php"; ?>
 	<?php include "${WORKING_DIR}/sub-menu.php"; ?>
 	<?php
@@ -80,6 +81,10 @@
 			if ($frame_index == "sysinfo") {
 				echo "<script>startIframeRefresh('pageframe', '$framed_pages[$frame_index]', 10000);</script>";
 			}
+		?>
+
+		<?php include "sub-logmonitor.php";
+			logmonitor($sourcefile=$constants['const_LOGFILE'], $title=L::log_logmonitor, $allow_logfile_operations=true);
 		?>
 
 		<?php include "sub-footer.php"; ?>
