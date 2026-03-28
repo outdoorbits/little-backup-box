@@ -18,6 +18,7 @@
 #######################################################################
 
 from pathlib import Path
+import re
 
 from lib_socialmedia_parent import services
 
@@ -70,6 +71,40 @@ class bluesky(services):
 	def configured(self):
 		return (bool(self.API_BASE_URL and self.IDENTIFIER and self.APP_PASSWORD))
 
+	def detect_link_facets(self, text):
+		# Detect URLs in text and return a list of RichtextFacet objects for Bluesky.
+		if not text:
+			return None
+
+		# Match http(s) URLs; stop at whitespace, closing brackets, angle brackets, quotes
+		url_pattern = re.compile(r'https?://[^\s\)\]\}>,;!?\"\'\u00AB\u00BB\u201C\u201D]+')
+
+		facets = []
+		for match in url_pattern.finditer(text):
+			url = match.group(0)
+
+			# Strip common trailing punctuation that is unlikely part of the URL
+			while url and url[-1] in '.,;:!?)]}':
+				url = url[:-1]
+
+			# Byte offsets (AT Protocol requires UTF-8 byte positions)
+			byte_start = len(text[:match.start()].encode('utf-8'))
+			byte_end   = byte_start + len(url.encode('utf-8'))
+
+			facets.append(
+				self.models.AppBskyRichtextFacet.Main(
+					index=self.models.AppBskyRichtextFacet.ByteSlice(
+						byte_start=byte_start,
+						byte_end=byte_end,
+					),
+					features=[
+						self.models.AppBskyRichtextFacet.Link(uri=url)
+					],
+				)
+			)
+
+		return facets if facets else None
+
 	def __publish(self, msgtype, Comment='', FilePath=None):
 		super().publish()
 
@@ -80,7 +115,8 @@ class bluesky(services):
 			def send_text(text):
 				self.keep_posting_rate()
 				self.bluesky.post(
-					text = CommentPart
+					text	= CommentPart,
+					facets	= self.detect_link_facets(CommentPart)
 				)
 
 			if msgtype.main == 'text':
@@ -125,7 +161,8 @@ class bluesky(services):
 							self.keep_posting_rate()
 							self.bluesky.post(
 								text	= CommentPart,
-								embed	= embed
+								embed	= embed,
+								facets	= self.detect_link_facets(CommentPart)
 							)
 
 						# elif msgtype.main in ['audio', 'video']:

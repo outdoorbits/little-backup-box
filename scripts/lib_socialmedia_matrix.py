@@ -142,6 +142,12 @@ class matrix(services):
 							break
 
 			elif msgtype.main in ['video', 'audio', 'photo', 'document']:
+
+				# Convert markdown to HTML (same as text path)
+				if msgtype.sub == 'md':
+					Comment		= self.md_to_html(md=Comment)
+					msgtype.sub	= 'html'
+
 				CommentParts	= self.split_text(Comment, self.caption_maxlength, self.post_maxlength)
 
 				# Upload function
@@ -185,64 +191,52 @@ class matrix(services):
 				else:
 					matrix_msgtype	= "m.file"
 
-				for index, CommentPart in enumerate(CommentParts):
-					if index == 0 and media_uri:
-
-						content = {
-							"msgtype":	matrix_msgtype,
-							"url":		media_uri,
-						}
-
-						if FilePath:
-							suffix	= FilePath.suffix or ''
-						else:
-							suffix	= ''
-
-						if FilePath:
-							content["filename"] = (FilePath.name if (self.publish_filename and FilePath) else f'file{suffix}')
-
-						if CommentPart:
-							# CommentPart as body
-							CommentPart_plain	= self.html_to_plain(CommentPart) or ""
-
-							if not CommentPart_plain:
-								CommentPart_plain	= CommentPart or (FilePath.name if (self.publish_filename and FilePath) else f'file{suffix}')
-
-							content["body"]	= CommentPart_plain
-
-							if CommentPart_plain != CommentPart:
-								content["format"] = "org.matrix.custom.html"
-								content["formatted_body"] = CommentPart
-
-						else:
-							# Fallback: no comment - use file name if allowed
-							content["body"] = FilePath.name if (self.publish_filename and FilePath) else f'file{suffix}'
-
-						if media_mime:
-							content.setdefault("info", {})
-							content["info"]["mimetype"]	= media_mime
-
-						self.keep_posting_rate()
-						resp	= await client.room_send(
-							room_id			= self.room_id,
-							message_type	= "m.room.message",
-							content			= content
-						)
-						if not isinstance(resp, self.RoomSendResponse):
-							self.ok	= False
-							self.add_message( f"room_send media error: {resp}")
-							break
+				# --- 1) Send the media message (body = filename as fallback) ---
+				if media_uri:
+					if FilePath:
+						suffix	= FilePath.suffix or ''
 					else:
+						suffix	= ''
+
+					filename_display = (FilePath.name if (self.publish_filename and FilePath) else f'file{suffix}')
+
+					content = {
+						"msgtype":	matrix_msgtype,
+						"url":		media_uri,
+						"body":		filename_display,
+						"filename":	filename_display,
+					}
+
+					if media_mime:
+						content.setdefault("info", {})
+						content["info"]["mimetype"]	= media_mime
+
+					self.keep_posting_rate()
+					resp	= await client.room_send(
+						room_id			= self.room_id,
+						message_type	= "m.room.message",
+						content			= content
+					)
+					if not isinstance(resp, self.RoomSendResponse):
+						self.ok	= False
+						self.add_message(f"room_send media error: {resp}")
+
+				# --- 2) Send all CommentParts as separate text messages ---
+				if self.ok is not False:
+					for CommentPart in CommentParts:
 						if CommentPart:
-							ok	= await send_text(CommentPart)
+							formatted = None
+							if msgtype.sub == 'html':
+								formatted = {
+									"format": "org.matrix.custom.html",
+									"formatted_body": CommentPart
+								}
+							ok	= await send_text(CommentPart, formatted=formatted)
 							if not ok:
 								break
 			else:
 				self.ok	= False
 				self.add_message(f'unsupported msgtype {msgtype.main}{"" if msgtype.sub is None else f" ({msgtype.sub})"}')
-
-			FileName = FilePath.name if FilePath else ''
-			sep = '' if not FileName else ': '
 
 		except self.asyncio.CancelledError:
 			raise
