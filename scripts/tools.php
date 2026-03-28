@@ -247,10 +247,14 @@
 
 	<?php
 	if (isset($_POST['mount'])) {
-		[$Role,$Storage]	= explode('_',$_POST['mount'],2);
+		[$Role, $Storage]	= explode('_',$_POST['mount'],2);
 		$DeviceIdentifierPresetThis	= isset($_POST['DeviceIdentifierPreset_'.$Storage])?$_POST['DeviceIdentifierPreset_'.$Storage]:'';
 
-		$command = "sudo python3 ${WORKING_DIR}/lib_storage.py --Action mount --StorageName $Storage --Role $Role --DeviceIdentifierPresetThis \\'$DeviceIdentifierPresetThis\\'";
+		$Role						= escapeshellarg($Role);
+		$Storage					= escapeshellarg($Storage);
+		$DeviceIdentifierPresetThisArg = !empty($DeviceIdentifierPresetThis) ? '--DeviceIdentifierPresetThis ' . escapeshellarg($DeviceIdentifierPresetThis) : '';
+
+		$command = "sudo python3 ${WORKING_DIR}/lib_storage.py --Action mount --StorageName $Storage --Role $Role $DeviceIdentifierPresetThisArg";
 		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' \"${command}\" '1'");
 
 		echo "<script>";
@@ -259,7 +263,10 @@
 	}
 
 	elseif (isset($_POST['umount'])) {
-		[$Role,$Storage]	= explode('_',$_POST['umount'],2);
+		[$Role, $Storage]	= explode('_',$_POST['umount'],2);
+
+		$Role						= escapeshellarg($Role);
+		$Storage					= escapeshellarg($Storage);
 
 		$command = "sudo python3 ${WORKING_DIR}/lib_storage.py --Action umount --StorageName $Storage --Role $Role";
 		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' '${command}' '1'");

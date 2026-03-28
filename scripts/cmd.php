@@ -282,8 +282,6 @@ function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {
 	$theme = $config["conf_THEME"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='/img/backgrounds/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
-	include "${WORKING_DIR}/sub-security.php";
-
 // 			allowed parameters
 
 			if ($CMD == '') {
@@ -313,176 +311,176 @@ function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {
 				break;
 
 			case 'fsck':
-				$DEVICE_FSTYPE	= exec("sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep /dev/".clean_argument($PARAM1));
+				$DEVICE_FSTYPE	= exec("sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep ".escapeshellarg("/dev/".$PARAM1));
 				$DEVICE_FSTYPE	= explode('FSTYPE=',$DEVICE_FSTYPE)[1];
 				$DEVICE_FSTYPE	= explode('"',$DEVICE_FSTYPE)[1];
 
 				if ($PARAM2 == 'repair') {
 					if ($DEVICE_FSTYPE	== 'exfat') {
-						$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE -p '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE -p ".escapeshellarg("/dev/".$PARAM1);
 					}
 					else {
-						$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE -f -p '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE -f -p ".escapeshellarg("/dev/".$PARAM1);
 					}
 				}
 				else {
 // 					check only
-					$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE '/dev/".clean_argument($PARAM1)."'";
+					$MAIN_COMMAND	= "fsck.$DEVICE_FSTYPE ".escapeshellarg("/dev/".$PARAM1);
 				}
 
-				$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_fsck_start1 . "' ':" . L::box_cmd_fsck_start2 . "' ':" . clean_argument($PARAM2,array(' ')) . "'";
+				$COMMAND_LINE	=  "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_fsck_start1 . "' ':" . L::box_cmd_fsck_start2 . "' " . escapeshellarg(":" . $PARAM2);
 				$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 				$COMMAND_LINE	.= ";echo ''";
 				$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 				$COMMAND_LINE	.= ";echo ''";
 				$COMMAND_LINE	.= ";echo 'FINISHED.'";
-				$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_fsck_stop1 . "' ':" . L::box_cmd_fsck_stop2 . "' ':" . clean_argument($PARAM2,array(' ')) . "'";
+				$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_fsck_stop1 . "' ':" . L::box_cmd_fsck_stop2 . "' " . escapeshellarg(":" . $PARAM2);
 				break;
 
 			case 'format':
 				if (($PARAM1 !== "-") and ($PARAM1 !== " ") and ($PARAM2 !== "-") and ($PARAM2 !== " ")) {
 					if ($PARAM2 == "FAT32") {
-						$MAIN_COMMAND	= "mkfs.vfat -v -I -F32 '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "mkfs.vfat -v -I -F32 ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fdisk -l ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";lsblk -f ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fsck ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_stop2 . "'";
 					}
 
 					elseif ($PARAM2 == "exFAT") {
-						$MAIN_COMMAND	= "mkfs.exfat '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "mkfs.exfat ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fdisk -l ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";lsblk -f ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fsck ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_stop2 . "'";
 					}
 
 					elseif ($PARAM2 == "NTFS (compression enabled)") {
-						$MAIN_COMMAND	= "mkfs.ntfs --enable-compression --force --verbose '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "mkfs.ntfs --enable-compression --force --verbose ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fdisk -l ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";lsblk -f ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fsck ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_stop2 . "'";
 					}
 
 					elseif ($PARAM2 == "NTFS (no compression)") {
-						$MAIN_COMMAND	= "mkfs.ntfs --force --verbose '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "mkfs.ntfs --force --verbose ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fdisk -l ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";lsblk -f ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fsck ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_stop2 . "'";
 					}
 
 					elseif ($PARAM2 == "Ext4") {
-						$MAIN_COMMAND	= "mkfs.ext4 -v -F '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "mkfs.ext4 -v -F ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fdisk -l ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";lsblk -f ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fsck ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_stop2 . "'";
 					}
 
 					elseif ($PARAM2 == "Ext3") {
-						$MAIN_COMMAND	= "mkfs.ext3 -v -F '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "mkfs.ext3 -v -F ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fdisk -l ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";lsblk -f ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fsck '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fsck ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_stop2 . "'";
 					}
 
 					elseif ($PARAM2 == "HFS Plus") {
-						$MAIN_COMMAND	= "mkfs.hfsplus '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "mkfs.hfsplus ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fdisk -l ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";lsblk -f ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fsck.hfsplus '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fsck.hfsplus ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_stop2 . "'";
 					}
 
 					elseif ($PARAM2 == "HFS") {
-						$MAIN_COMMAND	= "mkfs.hfs '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "mkfs.hfs ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_start1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fdisk -l '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fdisk -l ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";lsblk -f '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";lsblk -f ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
-						$COMMAND_LINE	.= ";sudo fsck.hfs '/dev/".clean_argument($PARAM1)."'";
+						$COMMAND_LINE	.= ";sudo fsck.hfs ".escapeshellarg("/dev/".$PARAM1);
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": ".clean_argument($PARAM2,array(' '))."' ':" . L::box_cmd_format_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_format_stop1 . "' ".escapeshellarg(":".$PARAM1.": ".$PARAM2)." ':" . L::box_cmd_format_stop2 . "'";
 					}
 
 					else {
@@ -497,27 +495,27 @@ function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {
 			case 'f3':
 				switch($PARAM2) {
 					case 'f3probe_non_destructive':
-						$MAIN_COMMAND	= "f3probe --time-ops '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "f3probe --time-ops ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_start1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_non_destructive . "' ':" . L::box_cmd_f3_probe_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_start1 . "' ".escapeshellarg(":".$PARAM1.": " . L::box_cmd_f3_probe_non_destructive)." ':" . L::box_cmd_f3_probe_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_non_destructive . "' ':" . L::box_cmd_f3_probe_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_stop1 . "' ".escapeshellarg(":".$PARAM1.": " . L::box_cmd_f3_probe_non_destructive)." ':" . L::box_cmd_f3_probe_stop2 . "'";
 						break;
 
 					case 'f3probe_destructive':
-						$MAIN_COMMAND	= "f3probe --destructive --time-ops '/dev/".clean_argument($PARAM1)."'";
+						$MAIN_COMMAND	= "f3probe --destructive --time-ops ".escapeshellarg("/dev/".$PARAM1);
 
-						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_start1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_destructive . "' ':" . L::box_cmd_f3_probe_start2 . "'";
+						$COMMAND_LINE	= "sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_start1 . "' ".escapeshellarg(":".$PARAM1.": " . L::box_cmd_f3_probe_destructive)." ':" . L::box_cmd_f3_probe_start2 . "'";
 						$COMMAND_LINE	.= ";echo 'sudo $MAIN_COMMAND'";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";sudo $MAIN_COMMAND";
 						$COMMAND_LINE	.= ";echo ''";
 						$COMMAND_LINE	.= ";echo 'FINISHED.'";
-						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_stop1 . "' ':".clean_argument($PARAM1,array(' ')).": " . L::box_cmd_f3_probe_destructive . "' ':" . L::box_cmd_f3_probe_stop2 . "'";
+						$COMMAND_LINE	.= ";sudo python3 $WORKING_DIR/lib_display.py ':" . L::box_cmd_f3_probe_stop1 . "' ".escapeshellarg(":".$PARAM1.": " . L::box_cmd_f3_probe_destructive)." ':" . L::box_cmd_f3_probe_stop2 . "'";
 						break;
 
 					default:
@@ -550,18 +548,13 @@ function exec_command($CMD, $PARAM1, $PARAM2, $MAIL_RESULT) {
 
 		# mail result
 		if ($MAIL_RESULT) {
-			# no more output to the web ui
-			flush();
+			# wait for process and send mail in background, so the HTTP request can finish
+			$MAIL_CMD = 'while ps -p ' . intval($PID) . ' 2>/dev/null; do sleep 1; done; '
+						. 'sudo python3 ' . $WORKING_DIR . '/lib_mail.py '
+							. escapeshellarg($CMD . ' ' . $PARAM1 . ' ' . $PARAM2) . ' '
+							. '"$(cat ' . escapeshellarg($constants['const_CMD_LOGFILE']) . ')"';
+			shell_exec(sprintf('sh -c %s > /dev/null 2>&1 &', escapeshellarg($MAIL_CMD)));
 
-			# wait until process is finished
-			if ($PID > 0) {
-				while (posix_getpgid($PID)) {sleep(0.5);}
-			}
-
-			# read result from logfile
-			$RESULT	= file_get_contents($constants['const_CMD_LOGFILE']);
-
-			shell_exec('sudo python3 ' . $WORKING_DIR . '/lib_mail.py "' . $CMD . ' ' . clean_argument($PARAM1,array(' ')) . ' ' . clean_argument($PARAM2,array(' ')) . '" "' . $RESULT . '"');
 		}
 
 		unlink($constants["const_CMD_RUNNER_LOCKFILE"]);
