@@ -91,6 +91,9 @@ $MAIL_ASKED					= isset($INPUT['MAIL_ASKED']) ? $INPUT['MAIL_ASKED'] : '';
 
 $MAIL_RESULT	= isset($INPUT['MAIL_RESULT']);
 
+$BACK_URL		= isset($INPUT['BACK_URL']) ? $INPUT['BACK_URL'] : (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/');
+$BACK_URL		= parse_url($BACK_URL, PHP_URL_PATH) ?: '/';
+
 $CMD			= isset($INPUT['CMD']) ? $INPUT['CMD'] : '';
 $PARAM1			= isset($INPUT['PARAM1']) ? $INPUT['PARAM1'] : '';
 $PARAM2			= isset($INPUT['PARAM2']) ? $INPUT['PARAM2'] : '';
@@ -215,6 +218,7 @@ if (isset($CMD_HEADER)) {
 			if (base64_decode($config['conf_PASSWORD']) != "") {
 	?>
 			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+				<input type="hidden" name="BACK_URL" value="<?php echo htmlspecialchars($BACK_URL); ?>">
 				<input type="hidden" name="CMD" value="<?php echo $CMD; ?>">
 				<input type="hidden" name="PARAM1" value="<?php echo $PARAM1; ?>">
 				<input type="hidden" name="PARAM2" value="<?php echo $PARAM2; ?>">
@@ -249,7 +253,7 @@ if (isset($CMD_HEADER)) {
 			}
 			?>
 				<p>
-					<a href="/"><?php echo L::cmd_link_text_home; ?></a>
+					<a href="<?php echo htmlspecialchars($BACK_URL); ?>"><?php echo L::cmd_link_text_home; ?></a>
 				</p>
 			<?php
 		} elseif (isset($CMD)) {
@@ -258,7 +262,7 @@ if (isset($CMD_HEADER)) {
 			logmonitor(sourcefile: $constants['const_CMD_LOGFILE'], title: '', allow_logfile_operations: true);
 			?>
 		<p>
-			<a href="/"><?php echo L::cmd_link_text_home_running; ?></a>
+			<a href="<?php echo htmlspecialchars($BACK_URL); ?>"><?php echo L::cmd_link_text_home_running; ?></a>
 		</p>
 	<?php
 		}
