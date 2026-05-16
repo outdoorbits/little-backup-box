@@ -100,7 +100,7 @@ class backup_autorun(object):
 		for FileDos2Unix in FilesDos2Unix:
 			if os.path.isfile(FileDos2Unix):
 				try:
-					subprocess.run(['dos2unix', FileDos2Unix])
+					subprocess.run(['/usr/bin/dos2unix', FileDos2Unix])
 				except:
 					pass
 
@@ -168,7 +168,7 @@ class backup_autorun(object):
 			]
 
 		if PrimaryBackupConfig:
-			Command	= ['python3', f'{self.WORKING_DIR}/backup.py'] + PrimaryBackupConfig + SecondaryBackupConfig
+			Command	= ['/usr/bin/python3', f'{self.WORKING_DIR}/backup.py'] + PrimaryBackupConfig + SecondaryBackupConfig
 			subprocess.run(Command)
 
 if __name__ == '__main__':

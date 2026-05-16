@@ -311,7 +311,7 @@ class backup(object):
 			ExcludeOptions	+= ['--exclude', excludePath]
 
 		if TransferMode == 'gphoto2':
-			syncCommand	= ['gphoto2', '--camera', self.SourceDevice.DeviceIdentifier, '--port', self.SourceDevice.CameraPort, '--folder', f'{SubPathAtSource}']
+			syncCommand	= ['/usr/bin/gphoto2', '--camera', self.SourceDevice.DeviceIdentifier, '--port', self.SourceDevice.CameraPort, '--folder', f'{SubPathAtSource}']
 
 			if dry_run:
 				syncCommand	+= ['--list-files']
@@ -326,7 +326,7 @@ class backup(object):
 
 			# basic command
 			rsyncSSH	= self.TargetDevice.rsyncSSH if self.TargetDevice.StorageType == 'cloud_rsync' else self.SourceDevice.rsyncSSH
-			syncCommand		= rsyncSSH + ['rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--size-only']
+			syncCommand		= rsyncSSH + ['/usr/bin/rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--size-only']
 
 			# checksum if configured
 			if self.DoChecksum and not dry_run:
@@ -351,7 +351,7 @@ class backup(object):
 			TargetPath	= f'{self.TargetDevice.ServiceName}:{os.path.join(self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget) if self.TargetDevice.FilesStayInPlace else self.TargetDevice.CloudBaseDir}' if self.TargetDevice.ServiceName else f'{os.path.join(self.TargetDevice.MountPoint, self.SourceDevice.SubPathAtTarget)}'
 
 			# basic command
-			syncCommand	= ['rclone']
+			syncCommand	= ['/usr/bin/rclone']
 
 			# checksum if configured
 			if self.DoChecksum and not dry_run:
@@ -421,7 +421,7 @@ class backup(object):
 
 				#define FilterCommand
 				if self.TransferMode == 'rsync':
-					FilterCommand		= ['grep', 'Number of regular files transferred:']
+					FilterCommand		= ['/usr/bin/grep', 'Number of regular files transferred:']
 				elif self.TransferMode == 'rclone':
 					FilterCommand	= []
 
@@ -468,7 +468,7 @@ class backup(object):
 			for SubPathAtSource in checkPathsList:
 
 				SourceCommand		= self.get_syncCommand(TransferMode='gphoto2', SubPathAtSource=SubPathAtSource, dry_run=True)
-				FilterCommand		= ['grep', '^#']
+				FilterCommand		= ['/usr/bin/grep', '^#']
 
 				self.__log.message(' '.join(SourceCommand) + ' | ' + ' '.join(FilterCommand),3)
 
@@ -892,7 +892,7 @@ class backup(object):
 
 					# Remove empty files (maybe can result from disconnection of a source-device)
 					if self.TargetDevice.mountable and self.TargetDevice.FilesStayInPlace:
-						SourceCommand	= ['find',  os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0', '-not', '-name', '*.lbbid']
+						SourceCommand	= ['/usr/bin/find',  os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget), '-type', 'f','-size', '0', '-not', '-name', '*.lbbid']
 
 						emptyFiles	= []
 						try:
@@ -1018,7 +1018,7 @@ class backup(object):
 								if not os.path.isfile(os.path.join(self.TargetDevice.MountPoint, self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget, cam_folder, cam_file)):
 									continue
 
-								Command	= ["gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', f"/{cam_folder}", '--delete-file', cam_file]
+								Command	= ["/usr/bin/gphoto2", "--camera", self.SourceDevice.DeviceIdentifier, "--port", self.SourceDevice.CameraPort, '--folder', f"/{cam_folder}", '--delete-file', cam_file]
 								try:
 									subprocess.run(Command)
 								except:
@@ -1083,7 +1083,7 @@ class backup(object):
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
 		# find all not renamed media files
-		FindCommand	= rf"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
+		FindCommand	= rf"/usr/bin/find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions())} \) {' '.join(BannedPathsViewCaseInsensitive)} -not -name '[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]_-_*'"
 
 		Files	=	subprocess.check_output(FindCommand, shell=True, text=True).splitlines()
 
@@ -1094,7 +1094,7 @@ class backup(object):
 
 		DateTags		= ['-DateTimeOriginal', '-CreateDate']
 		ExifCommand		= [
-			'exiftool',
+			'/usr/bin/exiftool',
 			'-use', 'MWG',
 			'-dateFormat', '%Y-%m-%d_%H-%M-%S',
 			'-FilePath',
@@ -1293,7 +1293,7 @@ class backup(object):
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
 
-		Command	= rf"find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= rf"/usr/bin/find '{self.TargetDevice.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		Images	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		Images[:]	= [element for element in Images if element]
@@ -1371,12 +1371,12 @@ class backup(object):
 			DCRAW_EMU	= '/usr/lib/libraw/dcraw_emu'
 		else:
 			try:
-				DCRAW_EMU	= subprocess.check_output(['whereis', 'dcraw_emu']).decode().strip().split('\n')[0].split(' ')[1]
+				DCRAW_EMU	= subprocess.check_output(['/usr/bin/whereis', 'dcraw_emu']).decode().strip().split('\n')[0].split(' ')[1]
 			except:
 				DCRAW_EMU	= 'dcraw_emu'
 
 		# remove all empty tims files
-		Command	= ['find',  Device.MountPoint, '-type', 'f','-size', '0', '-path', '*/tims/*', '-delete']
+		Command	= ['/usr/bin/find',  Device.MountPoint, '-type', 'f','-size', '0', '-path', '*/tims/*', '-delete']
 		try:
 			subprocess.run(Command)
 		except:
@@ -1394,7 +1394,7 @@ class backup(object):
 			])
 
 		BannedPathsViewCaseInsensitive	= self.get_BannedPathsViewCaseInsensitive()
-		Command	= rf"find '{Device.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= rf"/usr/bin/find '{Device.MountPoint}' -type f \( {' '.join(self.get_AllowedExtensionsFindOptions(textfiles=True))} \) -not -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		ImagesList	= subprocess.check_output(Command, shell=True).decode().strip().split('\n')
 		ImagesList[:]	= [element for element in ImagesList if element]
@@ -1402,7 +1402,7 @@ class backup(object):
 		ImagesList = [i.replace(Device.MountPoint,'',1) for i in ImagesList]
 
 		# find all tims
-		Command	= f"find '{Device.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
+		Command	= f"/usr/bin/find '{Device.MountPoint}' -type f -iname '*.jpg' -path '*/tims/*' {' '.join(BannedPathsViewCaseInsensitive)}"
 
 		TIMSList	= subprocess.check_output(Command,shell=True).decode().strip().split('\n')
 		TIMSList[:]	= [element for element in TIMSList if element]
@@ -1454,7 +1454,7 @@ class backup(object):
 
 			if SourceFilePathNameExt in f"{self.const_FILE_EXTENSIONS_LIST_WEB_IMAGES};{self.const_FILE_EXTENSIONS_LIST_TIF}".split(';'):
 				# file-types: jpeg, tif image
-				Command	= ["convert", f"{os.path.join(Device.MountPoint, SourceFilePathName)}[0]", "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/convert", f"{os.path.join(Device.MountPoint, SourceFilePathName)}[0]", "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
@@ -1463,21 +1463,21 @@ class backup(object):
 
 				# file-type: heic/heif
 				# convert heif to jpg
-				Command	= ['heif-convert', os.path.join(Device.MountPoint, SourceFilePathName), os.path.join(Device.MountPoint, f'{SourceFilePathName}.JPG')]
+				Command	= ['/usr/bin/heif-convert', os.path.join(Device.MountPoint, SourceFilePathName), os.path.join(Device.MountPoint, f'{SourceFilePathName}.JPG')]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 				# transfer exif from heif to jpg
-				Command	= ['exiftool', '-overwrite_original', '-ignoreMinorErrors', '-TagsFromFile', os.path.join(Device.MountPoint, SourceFilePathName), os.path.join(Device.MountPoint, f'{SourceFilePathName}.JPG')]
+				Command	= ['/usr/bin/exiftool', '-overwrite_original', '-ignoreMinorErrors', '-TagsFromFile', os.path.join(Device.MountPoint, SourceFilePathName), os.path.join(Device.MountPoint, f'{SourceFilePathName}.JPG')]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 				# create tims file
-				Command	= ["convert", os.path.join(Device.MountPoint, f"{SourceFilePathName}.JPG"), "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/convert", os.path.join(Device.MountPoint, f"{SourceFilePathName}.JPG"), "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
@@ -1488,7 +1488,7 @@ class backup(object):
 				if conf_VIEW_CONVERT_HEIC:
 					MissingTIMSList.append(f"{SourceFilePathName}.JPG")
 				else:
-					Command	= ["rm", os.path.join(Device.MountPoint, f"{SourceFilePathName}.JPG")]
+					Command	= ["/usr/bin/rm", os.path.join(Device.MountPoint, f"{SourceFilePathName}.JPG")]
 					try:
 						subprocess.run(Command)
 					except:
@@ -1505,7 +1505,7 @@ class backup(object):
 
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_VIDEO.split(';'):
 				# file-type: video
-				Command	= ["ffmpeg", "-i", os.path.join(Device.MountPoint, SourceFilePathName), "-ss", "00:00:01", "-vframes", "1", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/ffmpeg", "-i", os.path.join(Device.MountPoint, SourceFilePathName), "-ss", "00:00:01", "-vframes", "1", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
@@ -1513,42 +1513,42 @@ class backup(object):
 
 				if not os.path.isfile(os.path.join(Device.MountPoint, TIMS_SubpathFilename)):
 					# tims file not generated. Video too short? Try at second 0
-					Command	= ["ffmpeg", "-i", f"{Device.MountPoint}/{SourceFilePathName}", "-ss", "00:00:00", "-vframes", "1", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+					Command	= ["/usr/bin/ffmpeg", "-i", f"{Device.MountPoint}/{SourceFilePathName}", "-ss", "00:00:00", "-vframes", "1", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 					try:
 						subprocess.run(Command)
 					except:
 						print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-				Command	= ["mogrify", "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/mogrify", "-resize", "800>", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				subprocess.run(Command)
 
-				Command	=["composite", "-gravity", "center", f"{self.__WORKING_DIR}/img/play.png", os.path.join(Device.MountPoint, TIMS_SubpathFilename), os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	=["/usr/bin/composite", "-gravity", "center", f"{self.__WORKING_DIR}/img/play.png", os.path.join(Device.MountPoint, TIMS_SubpathFilename), os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_AUDIO.split(';'):
-				Command	= ["cp", f"{self.__WORKING_DIR}/img/audio.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/cp", f"{self.__WORKING_DIR}/img/audio.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-				Command	= ["convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_TEXT.split(';'):
-				Command	= ["cp", f"{self.__WORKING_DIR}/img/text.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/cp", f"{self.__WORKING_DIR}/img/text.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-				Command	= ["convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
@@ -1557,13 +1557,13 @@ class backup(object):
 			if not os.path.isfile(os.path.join(Device.MountPoint, TIMS_SubpathFilename)):
 				self.__log.message(f"ERROR: TIMS of '{os.path.join(Device.MountPoint, SourceFilePathName)}' ('{os.path.join(Device.MountPoint, TIMS_SubpathFilename)}') not regular created.")
 
-				Command	= ["cp", f"{self.__WORKING_DIR}/img/unknown.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/cp", f"{self.__WORKING_DIR}/img/unknown.JPG", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
 					print(f"Error: {' '.join(Command)}",file=sys.stderr)
 
-				Command	= ["convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				Command	= ["/usr/bin/convert", os.path.join(Device.MountPoint, TIMS_SubpathFilename), "-gravity", "center", "-pointsize", "50", "-annotate", "0", FileName, os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					subprocess.run(Command)
 				except:
@@ -1681,7 +1681,7 @@ if __name__ == "__main__":
 	const_RCLONE_CONFIG_FILE	= setup.get_val('const_RCLONE_CONFIG_FILE')
 
 	#get possible CloudServices
-	rclone_config	= subprocess.check_output(['rclone', 'config', 'show', '--config', os.path.join(const_MEDIA_DIR, const_RCLONE_CONFIG_FILE)]).decode().split('\n')
+	rclone_config	= subprocess.check_output(['/usr/bin/rclone', 'config', 'show', '--config', os.path.join(const_MEDIA_DIR, const_RCLONE_CONFIG_FILE)]).decode().split('\n')
 
 	CloudServices	= []
 

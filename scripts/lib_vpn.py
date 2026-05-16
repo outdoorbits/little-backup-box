@@ -29,6 +29,8 @@ import subprocess
 import sys
 import time
 
+# import lib_debug
+# xx	= lib_debug.debug()
 
 class vpn(object):
 
@@ -63,7 +65,7 @@ class vpn(object):
 		if self.VPNMode in ['OpenVPN', 'WireGuard']:
 
 			if self.VPNMode == 'OpenVPN':
-				Command	= ['ip', 'tuntap', 'show']
+				Command	= ['/usr/bin/ip', 'tuntap', 'show']
 				try:
 					Status	= (
 						(subprocess.check_output(Command) != '') and
@@ -73,7 +75,7 @@ class vpn(object):
 					Status	= False
 
 			elif self.VPNMode == "WireGuard":
-				Command	= ['wg','show',self.__VPN_FileName.split('.')[0]]
+				Command	= ['/usr/bin/wg','show',self.__VPN_FileName.split('.')[0]]
 				try:
 					wg_show	= subprocess.check_output(Command).decode()
 					Status = (
@@ -105,13 +107,19 @@ class vpn(object):
 			self.__display.message([f":{self.__lan.l('box_backup_vpn_connecting')}"])
 
 			if self.VPNMode == 'OpenVPN':
-				Command	= ['bash','-c','openvpn','--config',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
+				Command	= ['/usr/bin/bash', '-c', f'/usr/sbin/openvpn --config {self.__VPN_Dir}/{self.__VPN_FileName}']
 				self.__log.message(' '.join(Command),3)
-				subprocess.Popen(Command,stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+				try:
+					self.__VPN_Connection	= subprocess.Popen(Command,stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+				except:
+					pass
 			elif self.VPNMode == 'WireGuard':
-				Command	= ['wg-quick','up',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
+				Command	= ['/usr/bin/wg-quick','up',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
 				self.__log.message(' '.join(Command),3)
-				subprocess.run(Command)
+				try:
+					subprocess.run(Command)
+				except:
+					pass
 
 			VPN_TimeoutTime	= lib_system.get_uptime_sec() + self.__conf_VPN_TIMEOUT
 
@@ -128,12 +136,12 @@ class vpn(object):
 		return(connected)
 
 	def stop(self):
-		self.__display.message([f":{self.__lan.l('box_backup_vpn_disconnecting')}",self.VPNMode])
+		self.__display.message([f":{self.__lan.l('box_backup_vpn_disconnecting')}", self.VPNMode])
 		if self.VPNMode == 'OpenVPN':
 			if self.__VPN_Connection:
 					self.__VPN_Connection.kill()
 		elif self.VPNMode == 'WireGuard':
-			subprocess.run(['wg-quick','down',self.__VPN_FileName.split('.')[0]])
+			subprocess.run(['/usr/bin/wg-quick','down',self.__VPN_FileName.split('.')[0]])
 
 
 

@@ -91,7 +91,7 @@ class menu(object):
 		# info: displays an information
 
 		kill_backup_process	= [f'{self.WORKING_DIR}/stop_backup.sh']
-		start_backup_trunk	= ['python3',f'{self.WORKING_DIR}/backup.py']
+		start_backup_trunk	= ['/usr/bin/python3',f'{self.WORKING_DIR}/backup.py']
 
 		# local backups
 		local_services	= ['anyusb', 'usb', 'internal','camera']
@@ -239,7 +239,7 @@ class menu(object):
 				'title':	self.__lan.l('box_menu_vpn_stop'),
 				'action':	self.create_confirmed_shell_action(
 								title	= self.__lan.l('box_menu_vpn_stop'),
-								command	= [['python3', f"{self.WORKING_DIR}/lib_vpn.py", 'stop']]
+								command	= [['/usr/bin/python3', f"{self.WORKING_DIR}/lib_vpn.py", 'stop']]
 							),
 			},
 		]
@@ -250,7 +250,7 @@ class menu(object):
 				'title':	self.__lan.l('box_menu_power_reboot'),
 				'action':	self.create_confirmed_shell_action(
 								title	= self.__lan.l('box_menu_power_reboot'),
-								command	= [['python3',f'{self.WORKING_DIR}/lib_poweroff.py','reboot' ]]
+								command	= [['/usr/bin/python3',f'{self.WORKING_DIR}/lib_poweroff.py','reboot' ]]
 							),
 			},
 
@@ -259,7 +259,7 @@ class menu(object):
 				'title':	self.__lan.l('box_menu_power_shutdown'),
 				'action':	self.create_confirmed_shell_action(
 								title	= self.__lan.l('box_menu_power_shutdown'),
-								command	= [['sudo','python3',f'{self.WORKING_DIR}/lib_poweroff.py','poweroff' ]]
+								command	= [['/usr/bin/python3',f'{self.WORKING_DIR}/lib_poweroff.py','poweroff' ]]
 							),
 			},
 		]

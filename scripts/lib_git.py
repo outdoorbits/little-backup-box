@@ -44,7 +44,7 @@ class git(object):
 	def __get_ActualVersionsDate(self):
 
 		if self.ActualVersionsDate is None:
-			command	= ['curl', 'https://api.github.com/repos/outdoorbits/little-backup-box/commits/main']
+			command	= ['/usr/bin/curl', 'https://api.github.com/repos/outdoorbits/little-backup-box/commits/main']
 
 			try:
 				Respository	= json.loads(subprocess.check_output(command).decode())

@@ -101,8 +101,8 @@ dtparam=dc-gpio=24'''
 		with open(self.UDEV_FILE, 'w') as config_file:
 				config_file.write(CONFIG)
 
-		subprocess.run(['systemd-hwdb', 'update'])
-		subprocess.run(['udevadm', 'trigger', '-s', 'input'])
+		subprocess.run(['/usr/bin/systemd-hwdb', 'update'])
+		subprocess.run(['/usr/bin/udevadm', 'trigger', '-s', 'input'])
 
 def parse_args() -> argparse.Namespace:
 	parser = argparse.ArgumentParser(

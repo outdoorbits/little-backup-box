@@ -63,14 +63,14 @@ class password(object):
 				f.write('    Require local\n')
 				f.write('</RequireAny>\n')
 
-			subprocess.run(f'echo "{Password}" | htpasswd -ci "/etc/apache2/includes/htpasswd" "{self.user}"',shell=True)
+			subprocess.run(f'/usr/bin/echo "{Password}" | /usr/bin/htpasswd -ci "/etc/apache2/includes/htpasswd" "{self.user}"',shell=True)
 
 			# Linux
-			subprocess.run(f'echo "pi:{Password}" | chpasswd',shell=True)
-			subprocess.run(f'echo "{self.user}:{Password}" | chpasswd',shell=True)
+			subprocess.run(f'/usr/bin/echo "pi:{Password}" | /usr/sbin/chpasswd',shell=True)
+			subprocess.run(f'/usr/bin/echo "{self.user}:{Password}" | /usr/sbin/chpasswd',shell=True)
 
 			# samba
-			subprocess.run(f'(echo {Password}; echo {Password}) | smbpasswd -a -s "{self.user}"',shell=True)
+			subprocess.run(f'(/usr/bin/echo {Password}; /usr/bin/echo {Password}) | /usr/bin/smbpasswd -a -s "{self.user}"',shell=True)
 
 			with open('/etc/samba/login.conf','w') as f:
 				f.write(f'valid users = {self.user}\n')
@@ -82,7 +82,7 @@ class password(object):
 			self.__log.message(self.__lan.l('config_password_changed'))
 
 		# restart samba
-		subprocess.run('service smbd restart',shell=True)
+		subprocess.run('/usr/sbin/service smbd restart',shell=True)
 
 if __name__ == "__main__":
 	Password	= None

@@ -38,7 +38,7 @@ def get_IPs(OneLine=False):
 	while try_count <= 3:
 		try_count	+= 1
 		try:
-			IPs	= subprocess.check_output(['nmcli', '-g', 'IP4.ADDRESS', 'device', 'show']).decode().strip().replace('|', '\n').replace(' ', '\n').split('\n')
+			IPs	= subprocess.check_output(['/usr/bin/nmcli', '-g', 'IP4.ADDRESS', 'device', 'show']).decode().strip().replace('|', '\n').replace(' ', '\n').split('\n')
 			break
 		except:
 			time.sleep(1)

@@ -95,7 +95,7 @@ class comitup(object):
 			return(status)
 
 		try:
-			output	= subprocess.check_output(['comitup-cli', 'i'], timeout=2).decode()
+			output	= subprocess.check_output(['/usr/sbin/comitup-cli', 'i'], timeout=2).decode()
 		except:
 			return(status)
 
@@ -119,7 +119,7 @@ class comitup(object):
 		return(status)
 
 	def wifi_adapter_available(self):
-		Command	= ["nmcli", "-t", "-f", "DEVICE,TYPE", "device"]
+		Command	= ["/usr/bin/nmcli", "-t", "-f", "DEVICE,TYPE", "device"]
 		result = subprocess.run(Command, capture_output=True, text=True)
 		for line in result.stdout.splitlines():
 			if ":wifi" in line:
@@ -288,7 +288,7 @@ class comitup(object):
 			if not (status in ['HOTSPOT', 'RESET'] or self.hotspot_active()):
 				f.write(f'Listen 80\n')
 
-		subprocess.run('service apache2 restart || service apache2 start', shell=True)
+		subprocess.run('/usr/sbin/service apache2 restart || /usr/sbin/service apache2 start', shell=True)
 
 		# create WIFI QR
 		self.create_wifi_link_qr_image()
@@ -299,8 +299,8 @@ class comitup(object):
 
 	def reset(self):
 		try:
-			subprocess.run(['comitup-cli', 'd'])
-			subprocess.run(['systemctl', 'restart', 'comitup'])
+			subprocess.run(['/usr/sbin/comitup-cli', 'd'])
+			subprocess.run(['/usr/bin/systemctl', 'restart', 'comitup'])
 		except:
 			pass
 		else:

@@ -41,8 +41,8 @@ class setup(object):
 
 		self.__mount_user		= "www-data"
 		self.__mount_group		= "www-data"
-		self.__uid		= int(subprocess.check_output(['id','-u',f"{self.__mount_user}"]).decode().strip())
-		self.__gid		= int(subprocess.check_output(['id','-g',f"{self.__mount_group}"]).decode().strip())
+		self.__uid		= int(subprocess.check_output(['/usr/bin/id','-u',f"{self.__mount_user}"]).decode().strip())
+		self.__gid		= int(subprocess.check_output(['/usr/bin/id','-g',f"{self.__mount_group}"]).decode().strip())
 
 		# constants
 		constants=self.__get_constants_types()

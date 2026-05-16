@@ -132,7 +132,7 @@ class viewdb(object):
 
 		ImageFile	= os.path.join(self.MountPoint, ImageFileSubpathFilename)
 		try:
-			EXIF_List	= subprocess.check_output(f"exiftool -use MWG '{ImageFile}' | grep ':'", shell=True).decode().strip().split('\n')
+			EXIF_List	= subprocess.check_output(f"/usr/bin/exiftool -use MWG '{ImageFile}' | /usr/bin/grep ':'", shell=True).decode().strip().split('\n')
 		except:
 			EXIF_List	= []
 
@@ -144,7 +144,7 @@ class viewdb(object):
 			XMPFile	= pathlib.Path(ImageFile).with_suffix('.xmp')
 			if os.path.isfile(XMPFile):
 				try:
-					EXIF_List	= subprocess.check_output(f"exiftool -use MWG '{XMPFile}' | grep ':'", shell=True).decode().strip().split('\n')
+					EXIF_List	= subprocess.check_output(f"/usr/bin/exiftool -use MWG '{XMPFile}' | /usr/bin/grep ':'", shell=True).decode().strip().split('\n')
 				except:
 					EXIF_List	= []
 

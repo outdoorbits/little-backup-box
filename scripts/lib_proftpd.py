@@ -91,7 +91,7 @@ class proftpd(object):
 
 			if job == 'restart':
 				# proftpd running?
-				command	= ['service', 'proftpd', 'status']
+				command	= ['/usr/sbin/service', 'proftpd', 'status']
 				try:
 					proftpd_active	= 'Active: active (running)' in subprocess.check_output(command).decode()
 				except:
@@ -104,7 +104,7 @@ class proftpd(object):
 
 			self.__display.message([f'set:temp,time={self.__conf_DISP_FRAME_TIME * 4}', f":{self.__lan.l('box_backup_ftp_starting')}", self.FTP_DefaultRoot])
 
-			command	= ['service', 'proftpd', job]
+			command	= ['/usr/sbin/service', 'proftpd', job]
 			print(f'proftpd {job}')
 			subprocess.run(command)
 

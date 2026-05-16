@@ -73,7 +73,7 @@ def rpi_leds(led='PWR', trigger='', delay_on='', delay_off='', brightness=''):
 def get_abnormal_system_conditions(lan):
 	Conditions	= ''
 
-	Status	= int(subprocess.check_output('vcgencmd get_throttled',shell=True).decode().split('=')[1],16)
+	Status	= int(subprocess.check_output('/usr/bin/vcgencmd get_throttled',shell=True).decode().split('=')[1],16)
 
 	if Status != 0x0:
 

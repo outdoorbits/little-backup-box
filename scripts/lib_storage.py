@@ -101,8 +101,8 @@ class storage(object):
 
 		self.__mount_user		= "www-data"
 		self.__mount_group		= "www-data"
-		self.__mount_uid		= int(subprocess.check_output(['id','-u',f"{self.__mount_user}"]).decode().strip())
-		self.__mount_gid		= int(subprocess.check_output(['id','-g',f"{self.__mount_group}"]).decode().strip())
+		self.__mount_uid		= int(subprocess.check_output(['/usr/bin/id','-u',f"{self.__mount_user}"]).decode().strip())
+		self.__mount_gid		= int(subprocess.check_output(['/usr/bin/id','-g',f"{self.__mount_group}"]).decode().strip())
 
 		self.__display	= lib_display.display()
 		self.__log		= lib_log.log()
@@ -187,7 +187,7 @@ class storage(object):
 		while True:
 			# force to re-scan usb-devices
 			if udevadm_loop > 1:
-				Command	= ['udevadm', 'trigger']
+				Command	= ['/usr/bin/udevadm', 'trigger']
 				subprocess.run(Command)
 
 				udevadm_loop	= 0
@@ -256,7 +256,7 @@ class storage(object):
 
 				if self.FS_Type in ['fat','vfat','exfat','ntfs']:
 					#windows-filesystems
-					Command	= f"mount {DeviceChosenIdentifier} {self.MountPoint} -o uid={self.__mount_uid},gid={self.__mount_gid},umask=0"
+					Command	= f"/usr/bin/mount {DeviceChosenIdentifier} {self.MountPoint} -o uid={self.__mount_uid},gid={self.__mount_gid},umask=0"
 					self.__log.message(Command,3)
 					try:
 						Result	= subprocess.check_output(Command,shell=True).decode()
@@ -265,7 +265,7 @@ class storage(object):
 
 				elif self.FS_Type in ['hfs','hfsplus']:
 					# mac-filesystems
-					Command	= f"mount -t {self.FS_Type} {DeviceChosenIdentifier} {self.MountPoint} -o uid={self.__mount_uid},gid={self.__mount_gid},umask=0"
+					Command	= f"/usr/bin/mount -t {self.FS_Type} {DeviceChosenIdentifier} {self.MountPoint} -o uid={self.__mount_uid},gid={self.__mount_gid},umask=0"
 					self.__log.message(Command,3)
 					try:
 						Result	= subprocess.check_output(Command,shell=True).decode()
@@ -278,9 +278,9 @@ class storage(object):
 
 					self.createPath(self.__TechMountPoint)
 
-					CommandMount	= f"mount {DeviceChosenIdentifier} {self.__TechMountPoint}"
+					CommandMount	= f"/usr/bin/mount {DeviceChosenIdentifier} {self.__TechMountPoint}"
 					self.__log.message(CommandMount,3)
-					CommandBindFS	= f"bindfs --force-user={self.__mount_user} --force-group={self.__mount_group} --perms=0770 {self.__TechMountPoint} {self.MountPoint}"
+					CommandBindFS	= f"/usr/bin/bindfs --force-user={self.__mount_user} --force-group={self.__mount_group} --perms=0770 {self.__TechMountPoint} {self.MountPoint}"
 					self.__log.message(CommandBindFS,3)
 					try:
 						subprocess.check_output(CommandMount,shell=True)
@@ -337,8 +337,8 @@ class storage(object):
 						pass
 
 				if self.MountPoint:
-					Command	= f"rclone mount '{self.ServiceName}':'' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --allow-non-empty --config {self.__RCLONE_CONFIG_FILE}"
-					Command	= f"sh -c '{Command} &'"
+					Command	= f"/usr/bin/rclone mount '{self.ServiceName}':'' {self.MountPoint} --umask=0 --read-only=false --uid={self.__mount_uid} --gid={self.__mount_gid} --allow-other --allow-non-empty --config {self.__RCLONE_CONFIG_FILE}"
+					Command	= f"/usr/bin/sh -c '{Command} &'"
 					subprocess.run(Command,shell=True)
 
 					EndTime	= time.time()+self.__setup.get_val('const_MOUNT_CLOUD_TIMEOUT')
@@ -385,7 +385,7 @@ class storage(object):
 		self.createPath()
 
 		try:
-			subprocess.run(['setfacl', '-R', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', '-d', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', self.MountPoint])
+			subprocess.run(['/usr/bin/setfacl', '-R', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', '-d', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', self.MountPoint])
 		except:
 			pass
 
@@ -441,7 +441,7 @@ class storage(object):
 
 		self.__display.message([f":{self.__lan.l('box_backup_camera_ok')}", f":{self.__lan.l('box_backup_working')}..."])
 
-		Command	= ["gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--summary"]
+		Command	= ["/usr/bin/gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--summary"]
 
 		try:
 			CameraSummaryList	= subprocess.check_output(Command).decode().strip().split('\n')
@@ -586,7 +586,7 @@ class storage(object):
 		return(True)
 
 	def __clean_mountpoint(self):
-		Command	= ["rm", "-R", f"{self.MountPoint}/*"]
+		Command	= ["/usr/bin/rm", "-R", f"{self.MountPoint}/*"]
 		subprocess.run(Command,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 
 	def createPath(self, MountPoint='', SubPathBelowMountPoint=''):
@@ -598,7 +598,7 @@ class storage(object):
 	def set_mountpoint_permissions(self, MountPoint=''):
 		MountPoint	= MountPoint if MountPoint else self.MountPoint
 
-		Command	= ["chown", f"{self.__mount_user}:{self.__mount_group}", MountPoint, "-R"]
+		Command	= ["/usr/bin/chown", f"{self.__mount_user}:{self.__mount_group}", MountPoint, "-R"]
 		subprocess.run(Command)
 
 	def __calculate_device_id(self, DatePart, RandomPart):
@@ -607,9 +607,9 @@ class storage(object):
 		Columns	= ['VENDOR','MODEL','FSSIZE','FSTYPE','FSVER','LABEL','SERIAL','UUID','PATH']
 
 		searchID		= self.DeviceIdentifier.replace('--uuid', '').strip()
-		SourceCommand	= ' '.join(['lsblk','--output']) + ' ' + ','.join(Columns)
+		SourceCommand	= ' '.join(['/usr/bin/lsblk','--output']) + ' ' + ','.join(Columns)
 
-		Result	= subprocess.check_output(rf"{SourceCommand} | grep -w '{Columns[0]}\|{searchID}'", shell=True).decode().strip().split('\n') # find header line also: grep -w '{Columns[0]}\|{searchID}'
+		Result	= subprocess.check_output(rf"{SourceCommand} | /usr/bin/grep -w '{Columns[0]}\|{searchID}'", shell=True).decode().strip().split('\n') # find header line also: grep -w '{Columns[0]}\|{searchID}'
 		if len(Result) == 2: # two lines: header and storage
 
 			ColumnPosition_OLD	= len(Result[1]) # the end of the data line
@@ -717,15 +717,15 @@ class storage(object):
 		# prepare for mount check
 		if (self.StorageType == 'cloud') and self.ServiceName:
 			MountPointSearch	= f" {MountPoint} "
-			Command	= f"mount -l | grep '{MountPointSearch}' | grep '{self.ServiceName}'"
+			Command	= f"/usr/bin/mount -l | /usr/bin/grep '{MountPointSearch}' | /usr/bin/grep '{self.ServiceName}'"
 		else:
 			MountPointSearch	= rf'MOUNTPOINT="{MountPoint}"\|MOUNTPOINT="{self.__TechMountPoint}"' if self.__TechMountPoint else f'MOUNTPOINT="{MountPoint}"'
-			Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{MountPointSearch}'"
+			Command	= f"/usr/bin/lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | /usr/bin/grep '{MountPointSearch}'"
 
 		# mount check
 		MOUNTED = True
 		try:
-			subprocess.check_output(Command, shell=True) # raises an error if grep has no match
+			subprocess.check_output(Command, shell=True) # raises an error if /usr/bin/grep has no match
 		except:
 			MOUNTED	= False
 
@@ -736,13 +736,13 @@ class storage(object):
 				MountPointSearchs.append(self.__TechMountPoint)
 
 			for MountPointSearch in MountPointSearchs:
-				Command	= f"mount -l | grep ' on {MountPointSearch} '"
+				Command	= f"/usr/bin/mount -l | /usr/bin/grep ' on {MountPointSearch} '"
 
 				try:
 					subprocess.check_output(Command, shell=True)
 
 					# if grep had no match, an error raised
-					Command	= ['umount', MountPointSearch]
+					Command	= ['/usr/bin/umount', MountPointSearch]
 					subprocess.run(Command)
 				except:
 					pass
@@ -777,7 +777,7 @@ class storage(object):
 				self.__display.message([f":{self.__lan.l('box_backup_umount')}", f":{l_box_backup_MountPointDescription}"])
 
 			# smbd stop
-			Command	= ['service','smbd','stop']
+			Command	= ['/usr/sbin/service','smbd','stop']
 			try:
 				subprocess.run(Command)
 			except:
@@ -786,14 +786,14 @@ class storage(object):
 			# umount self.MountPoint
 			if self.MountPoint:
 				if self.FS_Type in ['hfs','hfsplus'] + ['ext2','ext3','ext4']:
-					Command	= ['fusermount','-uz', self.MountPoint]
+					Command	= ['/usr/bin/fusermount','-uz', self.MountPoint]
 					try:
 						Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
 						os.rmdir(self.MountPoint)
 					except:
 						Result	= ''
 				else:
-					Command	= ['umount', '-l', self.MountPoint]
+					Command	= ['/usr/bin/umount', '-l', self.MountPoint]
 					try:
 						Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
 						os.rmdir(self.MountPoint)
@@ -802,7 +802,7 @@ class storage(object):
 
 			# umount TechMountPoint
 			if self.__TechMountPoint:
-				Command	= [ 'umount', '-l', self.__TechMountPoint]
+				Command	= [ '/usr/bin/umount', '-l', self.__TechMountPoint]
 				try:
 					Result	= subprocess.check_output(Command, stderr=subprocess.DEVNULL).decode()
 					os.rmdir(self.__TechMountPoint)
@@ -810,7 +810,7 @@ class storage(object):
 					Result	= ''
 
 			# smbd start
-			Command	= ['service','smbd','start']
+			Command	= ['/usr/sbin/service','smbd','start']
 			try:
 				subprocess.run(Command)
 			except:
@@ -862,25 +862,25 @@ class storage(object):
 
 	def __get_storage_properties(self):
 		if self.MountPoint:
-			Command	= [ 'df', self.MountPoint, '--output=size']
+			Command	= [ '/usr/bin/df', self.MountPoint, '--output=size']
 			try:
 				storsize		= subprocess.check_output(Command).decode().split('\n')[1].strip()
 			except:
 				storsize		= '?'
 
-			Command	= ['df',f"{self.MountPoint}",'--output=used']
+			Command	= ['/usr/bin/df',f"{self.MountPoint}",'--output=used']
 			try:
 				storused		= subprocess.check_output(Command).decode().split('\n')[1].strip()
 			except:
 				storused		= '?'
 
-			Command	= ['df',f"{self.MountPoint}",'--output=avail']
+			Command	= ['/usr/bin/df',f"{self.MountPoint}",'--output=avail']
 			try:
 				storfree		= subprocess.check_output(Command).decode().split('\n')[1].strip()
 			except:
 				storfree		= '?'
 
-			Command	= ['df',f"{self.MountPoint}",'--output=fstype']
+			Command	= ['/usr/bin/df',f"{self.MountPoint}",'--output=fstype']
 			try:
 				storfstype		= subprocess.check_output(Command).decode().split('\n')[1].strip()
 				if storfstype == 'fuse' and self.StorageType == 'usb':
@@ -1012,14 +1012,14 @@ def umount(setup, MountPoints):
 
 		if os.path.isdir(MountPoint):
 			if getFS_Type(MountPoint) in ['hfs','hfsplus']:
-				Command	= ['fusermount','-uz', MountPoint]
+				Command	= ['/usr/bin/fusermount','-uz', MountPoint]
 				try:
 					subprocess.run(Command, stderr=subprocess.DEVNULL)
 					os.rmdir(MountPoint)
 				except:
 					pass
 			else:
-				Command	= ['umount', '-l', MountPoint]
+				Command	= ['/usr/bin/umount', '-l', MountPoint]
 				try:
 					subprocess.run(Command, stderr=subprocess.DEVNULL)
 					os.rmdir(MountPoint)
@@ -1035,7 +1035,7 @@ def remove_all_mountpoints(setup):
 	MountPoints	= get_mountPoints(setup, ['all'], True)
 
 	for MountPoint in MountPoints:
-		Command	= ['rm','-R', MountPoint]
+		Command	= ['/usr/bin/rm','-R', MountPoint]
 		try:
 			subprocess.run(Command)
 		except:
@@ -1048,8 +1048,8 @@ def get_mounts_list():
 
 	MountPointList	= r'\|'.join(get_mountPoints(setup, ['all'], True))
 
-	SourceCommand	= ["mount"]
-	FilterCommand	= ["grep", MountPointList]
+	SourceCommand	= ["/usr/bin/mount"]
+	FilterCommand	= ["/usr/bin/grep", MountPointList]
 	try:
 		Mounts	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('\n')
 	except:
@@ -1085,7 +1085,7 @@ def get_available_partitions(StorageType='all', TargetDeviceIdentifier='', exclu
 	else:
 		StorageMask	= rf"^PATH=\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
 
-	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
+	Command	= f"/usr/bin/lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | /usr/bin/grep '{StorageMask}'"
 	try:
 		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
 		DeviceListRaw = subprocess.check_output(Command,shell=True).decode().split('\n')
@@ -1176,7 +1176,7 @@ def get_available_partitions(StorageType='all', TargetDeviceIdentifier='', exclu
 		DeviceList_old	= DeviceList
 		DeviceList	= []
 		for USB_Device in DeviceList_old:
-			Command	= f"blockdev --getsize64 {USB_Device['lum']}"
+			Command	= f"/usr/sbin/blockdev --getsize64 {USB_Device['lum']}"
 			try:
 				SizeBytes = int(subprocess.check_output(Command,shell=True).decode())
 			except:
@@ -1206,7 +1206,7 @@ def get_available_devices():
 
 	StorageMask	= rf"^PATH=\"/dev/{setup.get_val('const_STORAGE_EXT_MASK')}\|^PATH=\"/dev/{setup.get_val('const_STORAGE_NVME_MASK')}"
 
-	Command	= f"lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep '{StorageMask}'"
+	Command	= f"/usr/bin/lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | /usr/bin/grep '{StorageMask}'"
 
 	try:
 		# get all devices having MOUNTPOINT="" and starting with "PATH=\"...
@@ -1266,7 +1266,7 @@ def format_CameraIdentifier(Model, Port):
 	return(f"{Model} {Port}")
 
 def get_available_cameras():
-	Command	= ["gphoto2", "--auto-detect"]
+	Command	= ["/usr/bin/gphoto2", "--auto-detect"]
 
 	try:
 		Cameras	= subprocess.check_output(Command).decode().split('\n')

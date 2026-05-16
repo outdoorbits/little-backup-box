@@ -332,7 +332,7 @@ class DISPLAY(object):
 
 		# if sill not retuned: CPU usage
 		try:
-			vmstat	= subprocess.check_output(['vmstat']).decode().strip().split('\n')
+			vmstat	= subprocess.check_output(['/usr/bin/vmstat']).decode().strip().split('\n')
 		except:
 			vmstat	= []
 
@@ -344,7 +344,7 @@ class DISPLAY(object):
 
 		# temperature
 		try:
-			temp_c	= float(subprocess.check_output(['cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
+			temp_c	= float(subprocess.check_output(['/usr/bin/cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
 			statusbar.append(f'{temp_c:.0f}°C')
 		except:
 			pass
@@ -599,6 +599,10 @@ class DISPLAY(object):
 
 					Line = Line.strip()
 
+					# skip empty lines
+					if not Line:
+						continue
+
 					if Line[0:4] == 'set:': # global settings line
 
 						settingStr = Line[4:]
@@ -634,13 +638,12 @@ class DISPLAY(object):
 
 					elif len (Lines) < self.__const_DISPLAY_LINES_LIMIT: # content line
 
-						if Line:
-							if (Line[0:1] == ':'):
-									Line = "s=h{}".format(Line)
-							elif ":" not in Line:
-								Line = "s=h:{}".format(Line)
+						if (Line[0:1] == ':'):
+								Line = "s=h{}".format(Line)
+						elif ":" not in Line:
+							Line = "s=h:{}".format(Line)
 
-							Lines.append(Line)
+						Lines.append(Line)
 
 				CF.close()
 
@@ -659,8 +662,31 @@ class DISPLAY(object):
 											Line = "s=b:{}".format(Line)
 											Lines.append(Line)
 
+			else:
+				# no new content file:
+				# reload last displayed content if Lines is empty
+				if not Lines and os.path.isfile(self.__const_DISPLAY_CONTENT_OLD_FILE):
+
+					with open(self.__const_DISPLAY_CONTENT_OLD_FILE, 'r') as oCF:
+						for Line in oCF:
+
+							Line = Line.strip()
+
+							if not Line or Line.startswith('set:'):
+								continue
+
+							Lines.append(Line)
+
+			# absolute fallback against empty screens
+			if not Lines:
+				Lines = ["s=b:"]
+
+			if ContentFile:
 				# remove content file
-				os.remove(ContentFile)
+				try:
+					os.remove(ContentFile)
+				except:
+					pass
 
 				# display temp only:
 				if temp_screen and os.path.isfile(self.__const_DISPLAY_CONTENT_OLD_FILE):
@@ -671,23 +697,23 @@ class DISPLAY(object):
 							newCF.write(f"\nset:hidden={hidden_info}")
 
 				# move lines to old lines file
-				with open(self.__const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
-					oCF.write("\n".join(Lines))
+				if not temp_screen:
+					with open(self.__const_DISPLAY_CONTENT_OLD_FILE, 'w') as oCF:
+						oCF.write("\n".join(Lines))
 
-					if hidden_info:
-						oCF.write(f"\nset:hidden={hidden_info}")
+						if hidden_info:
+							oCF.write(f"\nset:hidden={hidden_info}")
 
-				if self.hardware_ready:
-					self.show(Lines=Lines, statusbar=self.get_statusbar(), new_content=True)
-					display_time	= time.time()
-
-			# statusbar
-			if (
-				self.__conf_DISP_SHOW_STATUSBAR and
-				time.time() - display_time >= self.__const_DISPLAY_STATUSBAR_TOGGLE_SEC
-				):
-				self.show(Lines=Lines, statusbar=self.get_statusbar(), new_content=False)
+				self.show(Lines=Lines, statusbar=self.get_statusbar(), new_content=True)
 				display_time	= time.time()
+			else:
+				# statusbar
+				if (
+					self.__conf_DISP_SHOW_STATUSBAR and
+					time.time() - display_time >= self.__const_DISPLAY_STATUSBAR_TOGGLE_SEC
+					):
+					self.show(Lines=Lines, statusbar=self.get_statusbar(), new_content=False)
+					display_time	= time.time()
 
 			time.sleep(FrameTime)
 

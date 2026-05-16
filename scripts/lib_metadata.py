@@ -174,7 +174,7 @@ class MetadataTool:
 			print(f"[DRY] {shlex.join(['exiftool'] + args)}")
 			return
 		try:
-			res = subprocess.run(["exiftool"] + args, text=True, capture_output=True)
+			res = subprocess.run(["/usr/bin/exiftool"] + args, text=True, capture_output=True)
 		except FileNotFoundError:
 			return
 		if res.returncode != 0:

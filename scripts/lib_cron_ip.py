@@ -97,6 +97,7 @@ class ip_info(object):
 			self.__display.message(['set:clear', f":{self.__lan.l('box_cronip_offline')}"], logging=False)
 
 	def display_wifi_qr(self, FrameTime=None, force=False):
+
 		if not self.__conf_DISP_IP_REPEAT and not force:
 			return()
 
@@ -120,86 +121,89 @@ class ip_info(object):
 		self.__conf_DISP_RESOLUTION_Y		= self.__setup.get_val('conf_DISP_RESOLUTION_Y')
 		self.__conf_DISP_FONT_SIZE			= self.__setup.get_val('conf_DISP_FONT_SIZE')
 
-		mailObj	= lib_mail.mail()
+		if not self.__conf_MAIL_IP:
+			return
 
 		self.get_IPs()
 
 		if (
-			self.__IPs
-			and self.__conf_MAIL_IP
-			and lib_network.get_internet_status()
+			not self.__IPs or
+			not lib_network.get_internet_status()
 		):
+			return
 
-			# read lockfile
-			MarkerfileContent	= ''
-			if os.path.isfile(IP_sent_Markerfile):
-				with open(IP_sent_Markerfile,'r') as f:
-					MarkerfileContent	= f.read()
-			known_IPs	= MarkerfileContent.split(',')
+		mailObj	= lib_mail.mail()
 
-			# check for changed IP
-			IPs_changed      = sorted(self.__IPs) != sorted(known_IPs)
+		# read lockfile
+		MarkerfileContent	= ''
+		if os.path.isfile(IP_sent_Markerfile):
+			with open(IP_sent_Markerfile,'r') as f:
+				MarkerfileContent	= f.read()
+		known_IPs	= MarkerfileContent.split(',')
 
-			# write lockfile
-			if IPs_changed:
-				with open(IP_sent_Markerfile,'w') as f:
-					f.write(','.join(self.__IPs))
+		# check for changed IP
+		IPs_changed      = sorted(self.__IPs) != sorted(known_IPs)
 
-			# create links
-			indexLinksPlainSSL		= ''
-			indexLinksPlain8080		= ''
-			sambaLinksPlain			= ''
-			ftpLinksPlain			= ''
+		# write lockfile
+		if IPs_changed:
+			with open(IP_sent_Markerfile,'w') as f:
+				f.write(','.join(self.__IPs))
 
-			indexLinksHTMLSSL		= ''
-			indexLinksHTML8080		= ''
-			sambaLinksHTML			= ''
-			ftpLinksHTML			= ''
+		# create links
+		indexLinksPlainSSL		= ''
+		indexLinksPlain8080		= ''
+		sambaLinksPlain			= ''
+		ftpLinksPlain			= ''
 
-			for IP in self.__IPs:
-				# create qr link
-				IP_QR_FILE	= lib_network.create_ip_link_qr_image(
-					IP				= IP,
-					OnlineStatus	= True,
-					IP_QR_FILE		= self.__const_IP_QR_FILE_PATTERN,
-					width			= self.__conf_DISP_RESOLUTION_X,
-					height			= self.__conf_DISP_RESOLUTION_Y,
-					font			= self.__const_FONT_PATH,
-					fontsize		= self.__conf_DISP_FONT_SIZE
-				)
+		indexLinksHTMLSSL		= ''
+		indexLinksHTML8080		= ''
+		sambaLinksHTML			= ''
+		ftpLinksHTML			= ''
 
-				if IP_QR_FILE is None:
+		for IP in self.__IPs:
+			# create qr link
+			IP_QR_FILE	= lib_network.create_ip_link_qr_image(
+				IP				= IP,
+				OnlineStatus	= True,
+				IP_QR_FILE		= self.__const_IP_QR_FILE_PATTERN,
+				width			= self.__conf_DISP_RESOLUTION_X,
+				height			= self.__conf_DISP_RESOLUTION_Y,
+				font			= self.__const_FONT_PATH,
+				fontsize		= self.__conf_DISP_FONT_SIZE
+			)
+
+			if IP_QR_FILE is None:
+				qr_link	= ''
+			else:
+				try:
+					with open(IP_QR_FILE, "rb") as qr_file:
+						base64_image	= base64.b64encode(qr_file.read()).decode()
+
+					qr_link	= f'<br><img src="data:image/png;base64, {base64_image}" style="border:5px solid black;">'
+				except:
+					base64_image	= ''
 					qr_link	= ''
-				else:
-					try:
-						with open(IP_QR_FILE, "rb") as qr_file:
-							base64_image	= base64.b64encode(qr_file.read()).decode()
 
-						qr_link	= f'<br><img src="data:image/png;base64, {base64_image}" style="border:5px solid black;">'
-					except:
-						base64_image	= ''
-						qr_link	= ''
+			indexLinksPlainSSL	+= f'\n\t\t https://{IP}'
+			indexLinksPlain8080	+= f'\n\t\thttp://{IP}:8080'
+			sambaLinksPlain		+= f'\n\t\tsmb://{IP}'
+			ftpLinksPlain		+= f'\n\t ftp://lbb@{IP}'
 
-				indexLinksPlainSSL	+= f'\n\t\t https://{IP}'
-				indexLinksPlain8080	+= f'\n\t\thttp://{IP}:8080'
-				sambaLinksPlain		+= f'\n\t\tsmb://{IP}'
-				ftpLinksPlain		+= f'\n\t ftp://lbb@{IP}'
+			indexLinksHTMLSSL	+= f'<br>\n<a href="https://{IP}">https://{IP}{qr_link}</a>'
+			indexLinksHTML8080	+= f'<br>\n<a href="http://{IP}:8080">http://{IP}:8080</a>'
+			sambaLinksHTML		+= f'<br>\n<a href="smb://{IP}">smb://{IP}</a>'
+			ftpLinksHTML		+= f'<br>\n<a href="ftp://lbb@{IP}">ftp://lbb@{IP}</a>'
 
-				indexLinksHTMLSSL	+= f'<br>\n<a href="https://{IP}">https://{IP}{qr_link}</a>'
-				indexLinksHTML8080	+= f'<br>\n<a href="http://{IP}:8080">http://{IP}:8080</a>'
-				sambaLinksHTML		+= f'<br>\n<a href="smb://{IP}">smb://{IP}</a>'
-				ftpLinksHTML		+= f'<br>\n<a href="ftp://lbb@{IP}">ftp://lbb@{IP}</a>'
-
-			#send mail
-			if IPs_changed:
-				# returns thread of sendmail process
-				return(
-						mailObj.sendmail(
-						Subject		= f"{self.__lan.l('box_cronip_mail_info')}: {', '.join(self.__IPs)}",
-						TextPlain	= self.__getTextPlain(indexLinksPlainSSL, indexLinksPlain8080, sambaLinksPlain, ftpLinksPlain),
-						TextHTML	= self.__getTextHTML(indexLinksHTMLSSL, indexLinksHTML8080, sambaLinksHTML, ftpLinksHTML)
-						)
+		#send mail
+		if IPs_changed:
+			# returns thread of sendmail process
+			return(
+					mailObj.sendmail(
+					Subject		= f"{self.__lan.l('box_cronip_mail_info')}: {', '.join(self.__IPs)}",
+					TextPlain	= self.__getTextPlain(indexLinksPlainSSL, indexLinksPlain8080, sambaLinksPlain, ftpLinksPlain),
+					TextHTML	= self.__getTextHTML(indexLinksHTMLSSL, indexLinksHTML8080, sambaLinksHTML, ftpLinksHTML)
 					)
+				)
 
 	def __getTextPlain(self, indexLinksPlainSSL, indexLinksPlain8080, sambaLinksPlain, ftpLinksPlain):
 		return(f"""

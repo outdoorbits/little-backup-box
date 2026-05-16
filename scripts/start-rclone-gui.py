@@ -40,7 +40,7 @@ class start_rclone_gui(object):
 	def run(self):
 		# kill rclone-gui
 		try:
-			subprocess.run(['pkill', '-f', 'rclone rcd --rc-web-gui'])
+			subprocess.run(['/usr/bin/pkill', '-f', 'rclone rcd --rc-web-gui'])
 		except:
 			print("Error: pkill -f 'rclone rcd --rc-web-gui'")
 
@@ -52,7 +52,7 @@ class start_rclone_gui(object):
 				print(f"open({self.RCLONE_CONFIG_FILE},'w')")
 
 		try:
-			subprocess.run(['777', self.RCLONE_CONFIG_FILE])
+			subprocess.run(['/usr/bin/chmod', '777', self.RCLONE_CONFIG_FILE])
 		except:
 			print(f"Error: chmod 777 {self.RCLONE_CONFIG_FILE}")
 
@@ -60,7 +60,7 @@ class start_rclone_gui(object):
 
 		UpdateGUIArgument	= '--rc-web-gui-force-update' if self.update_gui else ''
 
-		Command	= f"sh -c 'rclone rcd --rc-web-gui {UpdateGUIArgument} --rc-web-gui-no-open-browser --rc-addr :5572 --config {self.RCLONE_CONFIG_FILE} --rc-user lbb --rc-pass \'{PassWord}\' &'"
+		Command	= f"/usr/bin/sh -c '/usr/bin/rclone rcd --rc-web-gui {UpdateGUIArgument} --rc-web-gui-no-open-browser --rc-addr :5572 --config {self.RCLONE_CONFIG_FILE} --rc-user lbb --rc-pass \'{PassWord}\' &'"
 		try:
 			subprocess.run(Command,shell=True)
 		except:

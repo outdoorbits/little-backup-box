@@ -97,7 +97,7 @@ class idletime(object):
 			['--full',	'rclone copy'],
 			['--full',	'rclone move']
 		]:
-			if subprocess.run(['pgrep'] + process).returncode == 0:
+			if subprocess.run(['/usr/bin/pgrep'] + process).returncode == 0:
 				# secure gap between processes by updating timestamp of logfile
 				Path(self.const_LOGFILE).touch()
 
