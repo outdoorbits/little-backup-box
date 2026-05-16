@@ -411,32 +411,35 @@ crontab -r
 # remove all from crontab of user www-data
 sudo -u www-data crontab -r
 
+# remove all from crontab of user root
+sudo crontab -r
+
 # write basic crontab
 ## disable power management for all wlan
-sudo -u www-data crontab -l 2>/dev/null | {
+sudo crontab -l 2>/dev/null | {
 	cat
-    echo "@reboot sudo bash -c \"iw dev | awk '\\\$1==\\\"Interface\\\"{print \\\$2}' | xargs -I {} iw dev {} set power_save off\""
-} | sudo -u www-data crontab -
+    echo "@reboot bash -c \"iw dev | awk '\\\$1==\\\"Interface\\\"{print \\\$2}' | xargs -I {} iw dev {} set power_save off\""
+} | sudo crontab -
 
-sudo -u www-data crontab -l 2>/dev/null | {
+sudo crontab -l 2>/dev/null | {
     cat
-    echo "@reboot sudo python3 ${const_WEB_ROOT_LBB}/backup-autorun.py"
-} | sudo -u www-data crontab -
+    echo "@reboot python3 ${const_WEB_ROOT_LBB}/backup-autorun.py"
+} | sudo crontab -
 
-sudo -u www-data crontab -l 2>/dev/null | {
+sudo crontab -l 2>/dev/null | {
     cat
-    echo "@reboot sudo python3 ${const_WEB_ROOT_LBB}/start-rclone-gui.py"
-} | sudo -u www-data crontab -
+    echo "@reboot python3 ${const_WEB_ROOT_LBB}/start-rclone-gui.py"
+} | sudo crontab -
 
-sudo -u www-data crontab -l 2>/dev/null | {
+sudo crontab -l 2>/dev/null | {
     cat
     echo "* * * * * ${const_WEB_ROOT_LBB}/cron_ip.sh"
-} | sudo -u www-data crontab -
+} | sudo crontab -
 
-sudo -u www-data crontab -l 2>/dev/null | {
+sudo crontab -l 2>/dev/null | {
     cat
-    echo "* * * * * sudo python3 ${const_WEB_ROOT_LBB}/cron_idletime.py"
-} | sudo -u www-data crontab -
+    echo "* * * * * python3 ${const_WEB_ROOT_LBB}/cron_idletime.py"
+} | sudo crontab -
 
 # tinyfilemanager
 source "${INSTALLER_DIR}/install-tinyfilemanager.sh"
