@@ -341,6 +341,13 @@ sudo usermod -aG sudo ${USER_WWW_DATA}
 yes | sudo cp -f "${INSTALLER_DIR}/etc/sudoers_d_www-data" "/etc/sudoers.d/www-data"
 sudo chmod 0440 "/etc/sudoers.d/www-data"
 
+# allow sudo for pi and www-data without password
+echo 'pi ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/010_pi-nopasswd
+sudo chmod 0440 /etc/sudoers.d/010_pi-nopasswd
+
+echo 'www-data ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/010_www-data-nopasswd
+sudo chmod 0440 /etc/sudoers.d/010_www-data-nopasswd
+
 # change owner and make installer scripts executable
 sudo chmod 777 ${INSTALLER_DIR}/*.sh
 
