@@ -32,6 +32,9 @@ import lib_setup
 import lib_storage
 import lib_system
 
+# import lib_debug
+# xx	= lib_debug.debug()
+
 class poweroff(object):
 
 	def __init__(self, Action='poweroff', DisplayMessage=[]):
@@ -60,7 +63,6 @@ class poweroff(object):
 		lib_storage.umount(self.__setup,'all')
 
 		if self.Action in ['poweroff','reboot']:
-
 			if self.Action == 'poweroff':
 				self.__display.message(
 					[
@@ -104,7 +106,10 @@ class poweroff(object):
 				# Set the PWR LED BLINKING to indicate that the system is shutting down
 				lib_system.rpi_leds(trigger='timer',delay_on=500,delay_off=500)
 
-				subprocess.run(['halt'])
+				try:
+					subprocess.run(['/usr/sbin/halt'])
+				except:
+					pass
 
 			elif self.Action == 'reboot':
 				self.__display.message(['set:kill'])
@@ -112,7 +117,7 @@ class poweroff(object):
 				# Set the PWR LED BLINKING to indicate that the system is rebooting
 				lib_system.rpi_leds(trigger='timer',delay_on=500,delay_off=500)
 
-				subprocess.run(['reboot'])
+				subprocess.run(['/usr/sbin/reboot'])
 
 		else:
 			# cleanup
