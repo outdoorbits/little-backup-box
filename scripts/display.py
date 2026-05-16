@@ -344,7 +344,7 @@ class DISPLAY(object):
 
 		# temperature
 		try:
-			temp_c	= float(subprocess.check_output(['sudo', 'cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
+			temp_c	= float(subprocess.check_output(['cat', '/sys/class/thermal/thermal_zone0/temp']).decode()) / 1000
 			statusbar.append(f'{temp_c:.0f}°C')
 		except:
 			pass

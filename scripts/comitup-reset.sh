@@ -21,4 +21,4 @@
 
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-sudo python3 /var/www/little-backup-box/lib_comitup.py --reset
+python3 /var/www/little-backup-box/lib_comitup.py --reset

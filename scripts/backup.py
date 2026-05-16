@@ -1681,7 +1681,7 @@ if __name__ == "__main__":
 	const_RCLONE_CONFIG_FILE	= setup.get_val('const_RCLONE_CONFIG_FILE')
 
 	#get possible CloudServices
-	rclone_config	= subprocess.check_output(['sudo', 'rclone', 'config', 'show', '--config', os.path.join(const_MEDIA_DIR, const_RCLONE_CONFIG_FILE)]).decode().split('\n')
+	rclone_config	= subprocess.check_output(['rclone', 'config', 'show', '--config', os.path.join(const_MEDIA_DIR, const_RCLONE_CONFIG_FILE)]).decode().split('\n')
 
 	CloudServices	= []
 

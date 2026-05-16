@@ -63,7 +63,7 @@ class vpn(object):
 		if self.VPNMode in ['OpenVPN', 'WireGuard']:
 
 			if self.VPNMode == 'OpenVPN':
-				Command	= ['sudo', 'ip', 'tuntap', 'show']
+				Command	= ['ip', 'tuntap', 'show']
 				try:
 					Status	= (
 						(subprocess.check_output(Command) != '') and
@@ -73,7 +73,7 @@ class vpn(object):
 					Status	= False
 
 			elif self.VPNMode == "WireGuard":
-				Command	= ['sudo','wg','show',self.__VPN_FileName.split('.')[0]]
+				Command	= ['wg','show',self.__VPN_FileName.split('.')[0]]
 				try:
 					wg_show	= subprocess.check_output(Command).decode()
 					Status = (
@@ -105,11 +105,11 @@ class vpn(object):
 			self.__display.message([f":{self.__lan.l('box_backup_vpn_connecting')}"])
 
 			if self.VPNMode == 'OpenVPN':
-				Command	= ['sudo','bash','-c','openvpn','--config',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
+				Command	= ['bash','-c','openvpn','--config',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
 				self.__log.message(' '.join(Command),3)
 				subprocess.Popen(Command,stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
 			elif self.VPNMode == 'WireGuard':
-				Command	= ['sudo','wg-quick','up',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
+				Command	= ['wg-quick','up',f"{self.__VPN_Dir}/{self.__VPN_FileName}"]
 				self.__log.message(' '.join(Command),3)
 				subprocess.run(Command)
 
@@ -133,7 +133,7 @@ class vpn(object):
 			if self.__VPN_Connection:
 					self.__VPN_Connection.kill()
 		elif self.VPNMode == 'WireGuard':
-			subprocess.run(['sudo','wg-quick','down',self.__VPN_FileName.split('.')[0]])
+			subprocess.run(['wg-quick','down',self.__VPN_FileName.split('.')[0]])
 
 
 

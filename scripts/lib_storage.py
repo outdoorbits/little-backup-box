@@ -385,7 +385,7 @@ class storage(object):
 		self.createPath()
 
 		try:
-			subprocess.run(['sudo', 'setfacl', '-R', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', '-d', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', self.MountPoint])
+			subprocess.run(['setfacl', '-R', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', '-d', '-m', f'u:{self.__mount_user}:rwX,g:{self.__mount_group}:rwX', self.MountPoint])
 		except:
 			pass
 
@@ -778,7 +778,10 @@ class storage(object):
 
 			# smbd stop
 			Command	= ['service','smbd','stop']
-			subprocess.run(Command)
+			try:
+				subprocess.run(Command)
+			except:
+				pass
 
 			# umount self.MountPoint
 			if self.MountPoint:
@@ -808,7 +811,10 @@ class storage(object):
 
 			# smbd start
 			Command	= ['service','smbd','start']
-			subprocess.run(Command)
+			try:
+				subprocess.run(Command)
+			except:
+				pass
 
 			if not silent:
 				self.__log.message(f"umount: {self.MountPoint}? {Result}", 2)

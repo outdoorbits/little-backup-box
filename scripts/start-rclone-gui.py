@@ -40,9 +40,9 @@ class start_rclone_gui(object):
 	def run(self):
 		# kill rclone-gui
 		try:
-			subprocess.run(['sudo', 'pkill', '-f', 'rclone rcd --rc-web-gui'])
+			subprocess.run(['pkill', '-f', 'rclone rcd --rc-web-gui'])
 		except:
-			print("Error: sudo pkill -f 'rclone rcd --rc-web-gui'")
+			print("Error: pkill -f 'rclone rcd --rc-web-gui'")
 
 		# prepare rclone config file
 		if not os.path.isfile(self.RCLONE_CONFIG_FILE):
@@ -52,15 +52,15 @@ class start_rclone_gui(object):
 				print(f"open({self.RCLONE_CONFIG_FILE},'w')")
 
 		try:
-			subprocess.run(['sudo', 'chmod', '777', self.RCLONE_CONFIG_FILE])
+			subprocess.run(['777', self.RCLONE_CONFIG_FILE])
 		except:
-			print(f"Error: sudo chmod 777 {self.RCLONE_CONFIG_FILE}")
+			print(f"Error: chmod 777 {self.RCLONE_CONFIG_FILE}")
 
 		PassWord	= self.conf_PASSWORD if self.conf_PASSWORD else 'lbb'
 
 		UpdateGUIArgument	= '--rc-web-gui-force-update' if self.update_gui else ''
 
-		Command	= f"sh -c 'sudo rclone rcd --rc-web-gui {UpdateGUIArgument} --rc-web-gui-no-open-browser --rc-addr :5572 --config {self.RCLONE_CONFIG_FILE} --rc-user lbb --rc-pass \'{PassWord}\' &'"
+		Command	= f"sh -c 'rclone rcd --rc-web-gui {UpdateGUIArgument} --rc-web-gui-no-open-browser --rc-addr :5572 --config {self.RCLONE_CONFIG_FILE} --rc-user lbb --rc-pass \'{PassWord}\' &'"
 		try:
 			subprocess.run(Command,shell=True)
 		except:

@@ -90,8 +90,8 @@ class menu(object):
 		# shell: action contains the shell-command-array, title is ignored
 		# info: displays an information
 
-		kill_backup_process	= ['sudo',f'{self.WORKING_DIR}/stop_backup.sh']
-		start_backup_trunk	= ['sudo','python3',f'{self.WORKING_DIR}/backup.py']
+		kill_backup_process	= [f'{self.WORKING_DIR}/stop_backup.sh']
+		start_backup_trunk	= ['python3',f'{self.WORKING_DIR}/backup.py']
 
 		# local backups
 		local_services	= ['anyusb', 'usb', 'internal','camera']
@@ -230,7 +230,7 @@ class menu(object):
 				'title':	self.__lan.l('box_menu_comitup_reset'),
 				'action':	self.create_confirmed_shell_action(
 								title	= self.__lan.l('box_menu_comitup_reset'),
-								command	= [['sudo',f'{self.WORKING_DIR}/comitup-reset.sh']]
+								command	= [[f'{self.WORKING_DIR}/comitup-reset.sh']]
 							),
 			},
 
@@ -239,7 +239,7 @@ class menu(object):
 				'title':	self.__lan.l('box_menu_vpn_stop'),
 				'action':	self.create_confirmed_shell_action(
 								title	= self.__lan.l('box_menu_vpn_stop'),
-								command	= [['sudo','python3', f"{self.WORKING_DIR}/lib_vpn.py", 'stop']]
+								command	= [['python3', f"{self.WORKING_DIR}/lib_vpn.py", 'stop']]
 							),
 			},
 		]
@@ -250,7 +250,7 @@ class menu(object):
 				'title':	self.__lan.l('box_menu_power_reboot'),
 				'action':	self.create_confirmed_shell_action(
 								title	= self.__lan.l('box_menu_power_reboot'),
-								command	= [['sudo','python3',f'{self.WORKING_DIR}/lib_poweroff.py','reboot' ]]
+								command	= [['python3',f'{self.WORKING_DIR}/lib_poweroff.py','reboot' ]]
 							),
 			},
 

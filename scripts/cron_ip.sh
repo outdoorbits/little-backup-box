@@ -20,10 +20,10 @@
 WORKING_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # run directly
-sudo python3 ${WORKING_DIR}/lib_cron_ip.py --display --mail
+python3 ${WORKING_DIR}/lib_cron_ip.py --display --mail
 
 # run in seconds 15, 30 and 45
 for n in {1..3}; do
 	sleep 15
- 	sudo python3 ${WORKING_DIR}/lib_cron_ip.py --mail
+ 	python3 ${WORKING_DIR}/lib_cron_ip.py --mail
 done

@@ -104,7 +104,7 @@ class poweroff(object):
 				# Set the PWR LED BLINKING to indicate that the system is shutting down
 				lib_system.rpi_leds(trigger='timer',delay_on=500,delay_off=500)
 
-				subprocess.run(['sudo', 'halt'])
+				subprocess.run(['halt'])
 
 			elif self.Action == 'reboot':
 				self.__display.message(['set:kill'])
@@ -112,7 +112,7 @@ class poweroff(object):
 				# Set the PWR LED BLINKING to indicate that the system is rebooting
 				lib_system.rpi_leds(trigger='timer',delay_on=500,delay_off=500)
 
-				subprocess.run(['sudo', 'reboot'])
+				subprocess.run(['reboot'])
 
 		else:
 			# cleanup

@@ -299,8 +299,8 @@ class comitup(object):
 
 	def reset(self):
 		try:
-			subprocess.run(['sudo', 'comitup-cli', 'd'])
-			subprocess.run(['sudo', 'systemctl', 'restart', 'comitup'])
+			subprocess.run(['comitup-cli', 'd'])
+			subprocess.run(['systemctl', 'restart', 'comitup'])
 		except:
 			pass
 		else:
