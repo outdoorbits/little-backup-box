@@ -479,8 +479,8 @@ class storage(object):
 		self.__display.message([f":{CameraModel}", f":{CameraManufacturer}", f":SN: {CameraSerialDisp}"])
 
 		# define camera backup folders
-		SourceCommand	= ["gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--storage-info"]
-		FilterCommand	= ["grep", "basedir"]
+		SourceCommand	= ["/usr/bin/gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--storage-info"]
+		FilterCommand	= ["/usr/bin/grep", "basedir"]
 		try:
 			CameraBaseDirs	= lib_common.pipe(SourceCommand,FilterCommand).decode().strip().replace('basedir=','').split('\n')
 		except:
@@ -526,8 +526,8 @@ class storage(object):
 			if len(self.SubPathsAtSource) == 0:
 				self.__display.message([f":{self.__lan.l('box_backup_camera_scanning_folders')}"])
 
-				SourceCommand	= ["gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--list-folders"]
-				FilterCommand	= ["grep", "^There are"]
+				SourceCommand	= ["/usr/bin/gphoto2", "--camera", self.DeviceIdentifier, "--port", self.CameraPort, "--list-folders"]
+				FilterCommand	= ["/usr/bin/grep", "^There are"]
 
 				try:
 					CameraFoldersRaw	= lib_common.pipe(SourceCommand,FilterCommand).decode().strip().split('\n')
@@ -1303,8 +1303,8 @@ def get_available_cameras():
 	return(available_cameras)
 
 def getFS_Type(MountPoint):
-	SourceCommand	= ["lsblk", "-p", "-P", "-o", "PATH,MOUNTPOINT,UUID,FSTYPE"]
-	FilterCommand	= ["grep", f'MOUNTPOINT="{MountPoint}"']
+	SourceCommand	= ["/usr/bin/lsblk", "-p", "-P", "-o", "PATH,MOUNTPOINT,UUID,FSTYPE"]
+	FilterCommand	= ["/usr/bin/grep", f'MOUNTPOINT="{MountPoint}"']
 	try:
 		FS_Type	= lib_common.pipe(SourceCommand,FilterCommand).decode().split('FSTYPE=',1)[1].split('"')[1]
 	except:

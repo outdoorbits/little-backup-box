@@ -1497,7 +1497,7 @@ class backup(object):
 			elif SourceFilePathNameExt in self.const_FILE_EXTENSIONS_LIST_RAW.split(';'):
 				# file-type: raw-image
 				SourceCommand	= [DCRAW_EMU, "-w", "-Z", "-", os.path.join(Device.MountPoint, SourceFilePathName)]
-				FilterCommand	= ["convert", "-", "-resize", "800", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
+				FilterCommand	= ["/usr/bin/convert", "-", "-resize", "800", os.path.join(Device.MountPoint, TIMS_SubpathFilename)]
 				try:
 					lib_common.pipe(SourceCommand,FilterCommand)
 				except:
