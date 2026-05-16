@@ -117,7 +117,10 @@ class poweroff(object):
 				# Set the PWR LED BLINKING to indicate that the system is rebooting
 				lib_system.rpi_leds(trigger='timer',delay_on=500,delay_off=500)
 
-				subprocess.run(['/usr/sbin/reboot'])
+				try:
+					subprocess.run(['/usr/sbin/reboot'])
+				except:
+					pass
 
 		else:
 			# cleanup
