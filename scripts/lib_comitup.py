@@ -60,7 +60,6 @@ class comitup(object):
 		try:
 			with open(self.__configfile,'w') as f:
 				f.write('ap_name: little-backup-box-<nnnn>\n')
-				f.write('web_service: apache2.service\n')
 				f.write('external_callback: /var/www/little-backup-box/comitup-states.sh\n')
 				if Password:
 					if (
