@@ -272,7 +272,7 @@
     "cloudservice": "cloudservice",
     "stopbackup_button": "STOP",
     "stopbackup_m": "Stopping backup.",
-    "reboot_m": "Little Backup Box reboots. Refresh this page in a few moments.",
+    "reboot_m": "Little Backup Box is rebooting.<br>In a few seconds, you can access your<br><a href=\"/\">Little Backup Box</a><br>again.",
     "shutdown_m": "Little Backup Box is powered off. You can close this page.",
     "help_txt": "<ul>\n   <li>any USB: All connected USB devices, both cameras and storage, are backed up.</li>\n   <li>Target rsync server: Cameras cannot be backed up directly to an rsync server. Local caching is required here.</li>\n</ul>\n<p class = 'text-center'> Please read the <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.< /p>",
     "usb_button": "USB storage",

@@ -99,8 +99,8 @@
 						</svg>
 					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdownPower">
-						<li><a class="dropdown-item" href="?reboot=true"><?php echo L::main_reboot_button; ?></a></li>
-						<li><a class="dropdown-item" href="?shutdown=true"><?php echo L::main_shutdown_button; ?></a></li>
+						<li><a class="dropdown-item" href="shutdown.php?reboot=true"><?php echo L::main_reboot_button; ?></a></li>
+						<li><a class="dropdown-item" href="shutdown.php?shutdown=true"><?php echo L::main_shutdown_button; ?></a></li>
 						<li><a class="dropdown-item" href="<?php echo "{$PROTOCOL}://logout@{$HTTP_HOST}"; ?>"><?php echo L::main_logout_button; ?></a></li>
 					</ul>
 				</li>

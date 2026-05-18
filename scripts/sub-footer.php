@@ -28,7 +28,7 @@
 ?>
 
 <div class="footer">
-	<form action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES); ?>" class="text-center" style="margin-top: 1em;" method="POST">
+	<form action="shutdown.php" class="text-center" style="margin-top: 1em;" method="POST">
 			<div class="card" style="margin-top: 3em;">
 				<button type="submit" name="reboot" value="1" class="danger"><?php echo L::main_reboot_button; ?></button>
 				<button type="submit" name="shutdown" value="1" class="danger"><?php echo L::main_shutdown_button; ?></button>
@@ -60,12 +60,4 @@
 		echo('<div class="card" style="margin-top: 3em;">' . $info_box . '</div>');
 	}
 
-// execute form action
-	if (isset($_POST['reboot']) or isset($_GET['reboot'])) {
-		popup(L::main_reboot_m,$config["conf_POPUP_MESSAGES"]);
-		exec("sudo python3 $WORKING_DIR/lib_poweroff.py reboot");
-	} elseif (isset($_POST['shutdown']) or isset($_GET['shutdown'])) {
-		popup(L::main_shutdown_m,$config["conf_POPUP_MESSAGES"]);
-		exec("sudo python3 $WORKING_DIR/lib_poweroff.py poweroff");
-	}
 ?>

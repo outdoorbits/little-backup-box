@@ -22,7 +22,7 @@
     "reboot_button": "Reiniciar",
     "shutdown_button": "Apagar",
     "cloudservice": "servicio de almacenamiento en la nube",
-    "reboot_m": "Little Backup Box se reiniciará. Actualice esta página en unos momentos.",
+    "reboot_m": "Little Backup Box se está reiniciando.<br>En unos segundos, podrás acceder a tu<br><a href=\"/\">Little Backup Box</a><br>de nuevo.",
     "shutdown_m": "Little Backup Box está apagado. Puede cerrar esta página.",
     "help_txt": "<ul>\n   <li>todo USB: se realiza una copia de seguridad de todos los dispositivos USB conectados, tanto cámaras como almacenamiento.</li>\n   <li>Servidor rsync de destino: no se puede realizar una copia de seguridad de las cámaras directamente en un servidor rsync. Aquí se requiere almacenamiento en caché local.</li>\n</ul>\n<p class = 'text-center'> Lea la <a href='https://github.com/outdoorbits/little-backup-box/wiki/05.-Operation'>Wiki</a>.< / p>",
     "stopbackup_button": "DETENER",
