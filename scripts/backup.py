@@ -818,7 +818,7 @@ class backup(object):
 
 							Extension	= None
 							try:
-								Extension	= os.path.splitext(IMAGE_FILE)[1].replace('.', '')
+								Extension	= os.path.splitext(IMAGE_FILE)[1].replace('.', '').lower()
 							except:
 								pass
 
