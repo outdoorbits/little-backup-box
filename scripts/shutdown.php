@@ -29,8 +29,6 @@
 	include("sub-i18n-loader.php");
 ?>
 <html lang="en" data-theme="<?php echo $theme; ?>">
-	<!-- Author: Stefan Saam github@saams.de
-			License: GPLv3 https://www.gnu.org/licenses/gpl-3.0.txt -->
 
 	<head>
 		<?php include "${WORKING_DIR}/sub-standards-header-loader.php"; ?>

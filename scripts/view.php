@@ -884,6 +884,7 @@
 	if ($filter_directory != "all") {$GET_PARAMETER	.= "&filter_directory=" . str_replace("=","+",base64_encode($filter_directory));}
 	if ($filter_date != "all") {$GET_PARAMETER	.= "&filter_date=" . $filter_date;}
 	if ($filter_rating != "all") {$GET_PARAMETER	.= "&filter_rating=$filter_rating";}
+	if ($filter_file_type != "all") {$GET_PARAMETER	.= "&filter_file_type=$filter_file_type";}
 	if ($filter_file_type_extension != "all") {$GET_PARAMETER	.= "&filter_file_type_extension=$filter_file_type_extension";}
 	if ($filter_camera_model_name != "all") {$GET_PARAMETER	.= "&filter_camera_model_name=$filter_camera_model_name";}
 	if ($filter_social_publish != "all") {$GET_PARAMETER	.= "&filter_social_publish=$filter_social_publish";}
@@ -902,6 +903,7 @@
 	if ($filter_directory != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_directory\" value=\"" . str_replace("=","+",base64_encode($filter_directory)) . "\">";}
 	if ($filter_date != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_date\" value=\"" . $filter_date . "\">";}
 	if ($filter_rating != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_rating\" value=\"" . $filter_rating . "\">";}
+	if ($filter_file_type != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_file_type\" value=\"" . $filter_file_type . "\">";}
 	if ($filter_file_type_extension != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_file_type_extension\" value=\"" . $filter_file_type_extension . "\">";}
 	if ($filter_camera_model_name != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_camera_model_name\" value=\"" . $filter_camera_model_name . "\">";}
 	if ($filter_social_publish != "all") {$HIDDEN_INPUTS	.="<input type=\"hidden\" name=\"filter_social_publish\" value=\"" . $filter_social_publish . "\">";}
