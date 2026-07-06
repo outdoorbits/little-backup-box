@@ -1,0 +1,4 @@
+- use firefox-esr extension on-screen keyboard
+- enable / disable kayboard in settings
+- detect portal page
+- link to this page, wrapping it by frame.php
