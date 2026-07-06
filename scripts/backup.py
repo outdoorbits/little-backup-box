@@ -818,11 +818,11 @@ class backup(object):
 
 							Extension	= None
 							try:
-								Extension	= os.path.splitext(IMAGE_FILE)[1].replace('.', '').lower()
+								Extension	= os.path.splitext(IMAGE_FILE)[1].replace('.', '')
 							except:
 								pass
 
-							if Extension in types_upload_original:
+							if Extension.lower() in types_upload_original:
 								social_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, f"{IMAGE_FILE}")
 							else:
 								social_image_path	= os.path.join(self.SourceDevice.MountPoint, IMAGE_DIR, 'tims', f"{IMAGE_FILE}.JPG")
