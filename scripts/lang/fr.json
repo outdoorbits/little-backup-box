@@ -524,6 +524,9 @@
         "upload_not_zip": "Le fichier que vous essayez de télécharger n'est pas un fichier .zip. Veuillez réessayer.",
         "upload_problem": "Il y a eu un problème avec le téléchargement. Veuillez réessayer.",
         "upload_success": "Votre fichier de paramètres a été téléchargé et ces fichiers ont été installés :"
+      },
+      "keyboard": {
+        "effect_after_reboot": "Les paramètres du clavier virtuel ne seront pris en compte qu'après un redémarrage."
       }
     },
     "wifi": {

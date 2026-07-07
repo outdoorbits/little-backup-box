@@ -524,6 +524,9 @@
         "upload_not_zip": "El archivo que está intentando cargar no es un archivo .zip. Inténtelo de nuevo.",
         "upload_problem": "Hubo un problema con la carga. Inténtelo de nuevo.",
         "upload_success": "Su archivo de configuración se ha cargado y los ajustes se han instalado:"
+      },
+      "keyboard": {
+        "effect_after_reboot": "Los ajustes del teclado en pantalla solo se aplicarán después de reiniciar el equipo."
       }
     },
     "wifi": {

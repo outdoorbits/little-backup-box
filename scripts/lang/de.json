@@ -524,6 +524,9 @@
         "upload_not_zip": "Die Datei, die Sie hochladen möchten, ist keine ZIP-Datei. Bitte versuche es erneut.",
         "upload_problem": "Beim Hochladen ist ein Problem aufgetreten. Bitte versuche es erneut.",
         "upload_success": "Ihre Einstellungsdatei wurde hochgeladen und diese Dateien wurden installiert:"
+      },
+      "keyboard": {
+        "effect_after_reboot": "Die Einstellungen für die Bildschirmtastatur werden erst nach einem Neustart wirksam."
       }
     },
     "wifi": {

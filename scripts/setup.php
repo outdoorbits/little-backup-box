@@ -245,6 +245,12 @@
 		$conf_SOCIAL_PUBLISH_DATE					= isset($conf_SOCIAL_PUBLISH_DATE)?'true':'false';
 		$conf_SOCIAL_PUBLISH_FILENAME				= isset($conf_SOCIAL_PUBLISH_FILENAME)?'true':'false';
 
+
+		// keyboard
+		if (strtolower($config["conf_VIRTUAL_KEYBOARD_ENABLED"]) != $conf_VIRTUAL_KEYBOARD_ENABLED) {
+			$SetupMessages	.= popup(L::config_alert_keyboard_effect_after_reboot, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+		}
+
 		// Passwords
 		$Passwords	= explode(';', $constants['const_PASSWORDS_LIST']);
 
@@ -620,7 +626,6 @@ CONFIGDATA;
 <head>
 	<?php
 		include "${WORKING_DIR}/sub-standards-header-loader.php";
-		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 	?>
 	<script type="text/javascript" src="js/display.js"></script>
 </head>
@@ -2062,7 +2067,6 @@ CONFIGDATA;
 		?>
 
 		<?php include "sub-footer.php"; ?>
-		<?php echo virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]); ?>
 </body>
 
 </html>

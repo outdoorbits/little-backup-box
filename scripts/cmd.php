@@ -69,7 +69,6 @@ doFlush();
 <head>
 	<?php
 		include "${WORKING_DIR}/sub-standards-header-loader.php";
-		echo virtual_keyboard_css($config["conf_VIRTUAL_KEYBOARD_ENABLED"]);
 	?>
 	<script src="js/logmonitor.js"></script>
 </head>
@@ -266,7 +265,6 @@ if (isset($CMD_HEADER)) {
 	<?php
 		}
 }
-		echo virtual_keyboard_js($config["conf_VIRTUAL_KEYBOARD_ENABLED"],$config["conf_LANGUAGE"],$config["conf_THEME"]);
 	?>
 </body>
 </html>
