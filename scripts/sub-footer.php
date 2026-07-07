@@ -18,12 +18,6 @@
 #######################################################################*/
 
 // Usage:
-// 1. in the beginning of the main script load the library:
-// 		include("sub-virtual-keyboard.php");
-//
-// 2. in the html head integrate the css:
-// 		<?php virtual_keyboard_css();
-//
 //$WORKING_DIR and $constants must be defined in main script.-->
 ?>
 

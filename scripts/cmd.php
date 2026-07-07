@@ -28,7 +28,6 @@ $background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $consta
 
 include("sub-i18n-loader.php");
 
-include("sub-virtual-keyboard.php");
 include("sub-logmonitor.php");
 
 $run_command	= false;
@@ -236,7 +235,7 @@ if (isset($CMD_HEADER)) {
 					<?php
 						if ($PASSWORD_ASK) {
 							echo '<label for="PWD">' . L::cmd_input_password . ':</label>';
-							echo '<input type="password" ' . virtual_keyboard_options($config["conf_VIRTUAL_KEYBOARD_ENABLED"],'','all','bottom','true') . ' size="20" name="PWD" id="PWD"><br>';
+							echo '<input type="password" size="20" name="PWD" id="PWD"><br>';
 						}
 					?>
 
