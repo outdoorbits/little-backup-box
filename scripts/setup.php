@@ -88,6 +88,15 @@
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_screen_usage_updated . '</div>';
 		}
 
+		// keyboard
+		if (
+			(isset($_POST['conf_VIRTUAL_KEYBOARD_ENABLED']) != isset($_POST['conf_VIRTUAL_KEYBOARD_ENABLED_OLD'])) or
+			($_POST['conf_LANGUAGE'] != $_POST['conf_LANGUAGE_OLD'])
+		) {
+			exec("sudo python3 " . $constants["const_WEB_ROOT_LBB"] . "/firefox-keyboard.py " . (isset($_POST['conf_VIRTUAL_KEYBOARD_ENABLED']) ? "enable --layout " . $config['conf_LANGUAGE'] : "disable"));
+			$SetupMessages	.= popup(L::config_alert_keyboard_effect_after_reboot, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
+		}
+
 		// rclone_gui
 		if (isset($_POST['restart_rclone_gui'])) {
 			exec("sudo python3 $WORKING_DIR/start-rclone-gui.py True > /dev/null /dev/null 2>&1 &");
@@ -244,12 +253,6 @@
 		$conf_DIPLAY_IMAGES_KEEP					= isset($conf_DIPLAY_IMAGES_KEEP)?'true':'false';
 		$conf_SOCIAL_PUBLISH_DATE					= isset($conf_SOCIAL_PUBLISH_DATE)?'true':'false';
 		$conf_SOCIAL_PUBLISH_FILENAME				= isset($conf_SOCIAL_PUBLISH_FILENAME)?'true':'false';
-
-
-		// keyboard
-		if (strtolower($config["conf_VIRTUAL_KEYBOARD_ENABLED"]) != $conf_VIRTUAL_KEYBOARD_ENABLED) {
-			$SetupMessages	.= popup(L::config_alert_keyboard_effect_after_reboot, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
-		}
 
 		// Passwords
 		$Passwords	= explode(';', $constants['const_PASSWORDS_LIST']);
@@ -652,6 +655,7 @@ CONFIGDATA;
 
 				<div>
 					<h3><?php echo L::config_lang_header; ?></h3>
+						<typut type="hidden" name="conf_LANGUAGE_OLD" value="<?php echo $config["conf_LANGUAGE"]; ?>">
 						<label for="conf_LANGUAGE"><?php echo L::config_lang_label; ?></label><br />
 							<select name="conf_LANGUAGE" id="conf_LANGUAGE">
 							<?php
@@ -1456,6 +1460,11 @@ CONFIGDATA;
 
 					<h3><?php echo L::config_screen_virtual_keyboard_enable_header; ?></h3>
 						<div>
+							<?php
+								if ($config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1") {
+									print '<input type="hidden" name="conf_VIRTUAL_KEYBOARD_ENABLED_OLD" value="1">';
+								}
+							?>
 							<input type="checkbox" id="conf_VIRTUAL_KEYBOARD_ENABLED" name="conf_VIRTUAL_KEYBOARD_ENABLED"<?php echo $config['conf_VIRTUAL_KEYBOARD_ENABLED']=="1"?" checked":""; ?>>
 							<label for="conf_VIRTUAL_KEYBOARD_ENABLED"><?php echo L::config_screen_virtual_keyboard_enable_label; ?></label><br />
 						</div>

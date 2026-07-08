@@ -21,6 +21,7 @@
 # expected from calling script
 ## INSTALLER_DIR
 ## SETUP
+## CONSTANTS
 
 set -euo pipefail
 
@@ -88,15 +89,13 @@ cat <<'EOF' | sudo -u "${USER}" tee "${CHROME_DIR}/userChrome.css" >/dev/null
 EOF
 
 # install on-screen-keyboard
-"$INSTALLER_DIR/install-firefox-keyboard.sh" install
+"$INSTALLER_DIR/install-firefox-keyboard.sh"
 
 if [[ "${conf_VIRTUAL_KEYBOARD_ENABLED:-}" == [Tt][Rr][Uu][Ee] ]]; then
-	"$INSTALLER_DIR/install-firefox-keyboard.sh" enable
+	sudo python3 "${const_WEB_ROOT_LBB}/firefox-keyboard.py" enable ${conf_LANGUAGE}
 else
-	"$INSTALLER_DIR/install-firefox-keyboard.sh" disable
+	sudo python3 "${const_WEB_ROOT_LBB}/firefox-keyboard.py" disable
 fi
-
-"$INSTALLER_DIR/install-firefox-keyboard.sh"
 
 #finished
 echo "Firefox ESR kiosk profile configured:"
