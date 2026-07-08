@@ -96,7 +96,7 @@ else
 	"$INSTALLER_DIR/install-firefox-keyboard.sh" disable
 fi
 
-"$INSTALLER_DIR/install-firefox-keyboard.sh" restart_firefox_for_lbb_desktop
+"$INSTALLER_DIR/install-firefox-keyboard.sh"
 
 #finished
 echo "Firefox ESR kiosk profile configured:"

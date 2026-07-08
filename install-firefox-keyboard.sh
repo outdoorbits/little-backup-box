@@ -20,152 +20,111 @@
 
 set -euo pipefail
 
-ADDON_SLUG="on-screen-keyboard"
-ADDON_XPI_URL="https://addons.mozilla.org/firefox/downloads/latest/${ADDON_SLUG}/latest.xpi"
+ADDON_ID="kiosk-keyboard@little-backup-box"
+ADDON_NAME="LBB Kiosk Keyboard"
+ADDON_VERSION="1.0.0"
 
-ADDON_DIR="/opt/little-backup-box/firefox-addons"
-XPI_FILE="${ADDON_DIR}/on-screen-keyboard.xpi"
-ID_FILE="${ADDON_DIR}/on-screen-keyboard.id"
+BASE_DIR="/opt/little-backup-box/firefox-keyboard"
+SRC_DIR="${BASE_DIR}/extension"
+XPI_FILE="${BASE_DIR}/lbb-kiosk-keyboard.xpi"
 
-POLICY_DIR="/etc/firefox/policies"
-POLICY_FILE="${POLICY_DIR}/policies.json"
+KIOSKBOARD_VERSION="2.3.0"
 
-ensure_tools() {
+VENDOR_DIR="${SRC_DIR}/vendor/kioskboard"
+CONTENT_DIR="${SRC_DIR}/content"
+
+require_tools() {
 	sudo apt-get update
 	sudo DEBIAN_FRONTEND=noninteractive \
 		apt-get \
 		-o "Dpkg::Options::=--force-confold" \
 		-o "Dpkg::Options::=--force-confdef" \
-		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
+		install -y -q \
 			curl \
-			jq \
-			unzip \
-			ca-certificates
+			ca-certificates \
+			zip
 }
 
-download_addon() {
-	sudo install -d -m 0755 "${ADDON_DIR}"
+download_with_fallback() {
+	local output="$1"
+	shift
 
-	tmp="$(mktemp)"
-	curl -fsSL "${ADDON_XPI_URL}" -o "${tmp}"
-	sudo install -m 0644 "${tmp}" "${XPI_FILE}"
-	rm -f "${tmp}"
+	local url
+	for url in "$@"; do
+		if curl -fsSL "$url" -o "$output"; then
+			return 0
+		fi
+	done
 
-	addon_id="$(
-		unzip -p "${XPI_FILE}" manifest.json \
-		| jq -r '.browser_specific_settings.gecko.id // .applications.gecko.id // empty'
-	)"
-
-	if [[ -z "${addon_id}" ]]; then
-		echo "Could not determine Firefox add-on ID from manifest.json." >&2
-		echo "Install once manually and check about:support, or inspect the XPI metadata." >&2
-		exit 1
-	fi
-
-	printf '%s\n' "${addon_id}" | sudo tee "${ID_FILE}" >/dev/null
-	sudo chmod 0644 "${ID_FILE}"
-
-	echo "Downloaded add-on:"
-	echo "  XPI: ${XPI_FILE}"
-	echo "  ID : ${addon_id}"
+	echo "Download failed for ${output}" >&2
+	exit 1
 }
 
-ensure_policy_file() {
-	sudo install -d -m 0755 "${POLICY_DIR}"
+prepare_dirs() {
+	rm -rf "${SRC_DIR}"
 
-	if [[ ! -s "${POLICY_FILE}" ]]; then
-		printf '{ "policies": {} }\n' | sudo tee "${POLICY_FILE}" >/dev/null
-		sudo chmod 0644 "${POLICY_FILE}"
-	fi
-
-	if ! jq empty "${POLICY_FILE}" >/dev/null 2>&1; then
-		echo "Invalid JSON in ${POLICY_FILE}" >&2
-		exit 1
-	fi
+	mkdir -p "${VENDOR_DIR}"
+	mkdir -p "${CONTENT_DIR}"
 }
 
-addon_id() {
-	if [[ ! -s "${ID_FILE}" ]]; then
-		echo "Missing ${ID_FILE}. Run: $0 install" >&2
-		exit 1
-	fi
-	cat "${ID_FILE}"
+download_kioskboard() {
+	download_with_fallback \
+		"${VENDOR_DIR}/kioskboard-aio.min.js" \
+		"https://unpkg.com/kioskboard@${KIOSKBOARD_VERSION}/dist/kioskboard-aio-${KIOSKBOARD_VERSION}.min.js" \
+		"https://cdn.jsdelivr.net/npm/kioskboard@${KIOSKBOARD_VERSION}/dist/kioskboard-aio-${KIOSKBOARD_VERSION}.min.js" \
+		"https://unpkg.com/kioskboard@${KIOSKBOARD_VERSION}/src/all-in-one/kioskboard-aio.js"
+
+	download_with_fallback \
+		"${VENDOR_DIR}/kioskboard.min.css" \
+		"https://unpkg.com/kioskboard@${KIOSKBOARD_VERSION}/dist/kioskboard-${KIOSKBOARD_VERSION}.min.css" \
+		"https://cdn.jsdelivr.net/npm/kioskboard@${KIOSKBOARD_VERSION}/dist/kioskboard-${KIOSKBOARD_VERSION}.min.css" \
+		"https://unpkg.com/kioskboard@${KIOSKBOARD_VERSION}/src/kioskboard.css"
+
+	cat > "${VENDOR_DIR}/THIRD_PARTY_LICENSES.txt" <<EOF
+KioskBoard ${KIOSKBOARD_VERSION}
+https://github.com/furcan/KioskBoard
+License: MIT
+
+The KioskBoard package is bundled here only for local/offline use inside
+the Little Backup Box Firefox kiosk extension.
+EOF
 }
 
-enable_addon() {
-	ensure_policy_file
-
-	id="$(addon_id)"
-	file_url="file://${XPI_FILE}"
-
-	tmp="$(mktemp)"
-	jq \
-		--arg id "${id}" \
-		--arg url "${file_url}" \
-		'
-		.policies.ExtensionSettings =
-		((.policies.ExtensionSettings // {}) + {
-			($id): {
-			"installation_mode": "force_installed",
-			"install_url": $url,
-			"updates_disabled": true
-			}
-		})
-		' "${POLICY_FILE}" > "${tmp}"
-
-	sudo install -m 0644 "${tmp}" "${POLICY_FILE}"
-	rm -f "${tmp}"
-
-	echo "On-screen keyboard enabled by Firefox policy."
-	echo "Restart Firefox for the change to take effect."
+write_manifest() {
+	cat > "${SRC_DIR}/manifest.json" <<EOF
+{
+  "manifest_version": 2,
+  "name": "${ADDON_NAME}",
+  "version": "${ADDON_VERSION}",
+  "description": "Injects KioskBoard into external web forms for Little Backup Box kiosk mode.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "${ADDON_ID}"
+    }
+  },
+  "permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "vendor/kioskboard/kioskboard-aio.min.js",
+        "content/lbb-kioskboard-init.js"
+      ],
+      "css": [
+        "vendor/kioskboard/kioskboard.min.css",
+        "content/lbb-kioskboard.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ]
 }
-
-disable_addon() {
-	ensure_policy_file
-
-	id="$(addon_id)"
-
-	tmp="$(mktemp)"
-	jq \
-		--arg id "${id}" \
-		'
-		.policies.ExtensionSettings =
-		((.policies.ExtensionSettings // {}) + {
-			($id): {
-			"installation_mode": "blocked"
-			}
-		})
-		' "${POLICY_FILE}" > "${tmp}"
-
-	sudo install -m 0644 "${tmp}" "${POLICY_FILE}"
-	rm -f "${tmp}"
-
-	echo "On-screen keyboard blocked/disabled by Firefox policy."
-	echo "Restart Firefox for the change to take effect."
+EOF
 }
-
-restart_firefox_for_lbb_desktop() {
-	# Falls Firefox durch Autostart/systemd wieder gestartet wird, reicht pkill.
-	sudo pkill -u lbb-desktop -x firefox-esr 2>/dev/null || true
-	sudo pkill -u lbb-desktop -x firefox 2>/dev/null || true
-}
-
-case "${1:-}" in
-	install)
-		ensure_tools
-		download_addon
-		;;
-	enable)
-		enable_addon
-		;;
-	disable)
-		disable_addon
-		;;
-	restart)
-		restart_firefox_for_lbb_desktop
-		;;
-	*)
-		echo "Usage: $0 {install|enable|disable|restart}" >&2
-		exit 1
-		;;
-esac
