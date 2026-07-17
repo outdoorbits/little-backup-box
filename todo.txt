@@ -2,3 +2,36 @@
 - enable / disable kayboard in settings
 - detect portal page
 - link to this page, wrapping it by frame.php
+
+
+- check for captive portal
+	sudo tee /etc/NetworkManager/conf.d/20-connectivity.conf >/dev/null <<'EOF'
+	[connectivity]
+	enabled=true
+	uri=http://connectivitycheck.gstatic.com/generate_204
+	response=
+	interval=300
+	EOF
+
+
+	sudo nmcli general reload conf
+
+	sudo NetworkManager --print-config | sed -n '/^\[connectivity\]/,/^\[/p'
+
+	sudo nmcli networking connectivity check
+
+full      = unrestricted Internet access
+portal    = Captive Portal detected
+limited   = network available, but no full Internet access
+none      = no connectivity
+unknown   = unknown / connectivity check not properly configured
+
+URL="http://connectivitycheck.gstatic.com/generate_204"
+
+curl -4 -sS -m 8 \
+  --max-redirs 0 \
+  -D /tmp/portal.headers \
+  -o /tmp/portal.body \
+  "$URL"
+
+grep -i '^Location:' /tmp/portal.headers

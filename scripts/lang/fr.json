@@ -13,7 +13,8 @@
     "tools": "Outils",
     "filebrowser": "Des dossiers",
     "view": "View",
-    "update": "mise à jour"
+    "update": "mise à jour",
+    "captive_portal": "portail captif"
   },
   "main": {
     "internal_button": "stockage interne",

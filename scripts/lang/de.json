@@ -13,7 +13,8 @@
     "tools": "Tools",
     "filebrowser": "Dateien",
     "view": "View",
-    "update": "Update"
+    "update": "Update",
+    "captive_portal": "Captive Portal"
   },
   "main": {
     "internal_button": "int. Speicher",

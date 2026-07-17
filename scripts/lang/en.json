@@ -261,7 +261,8 @@
     "tools": "Tools",
     "filebrowser": "Files",
     "view": "View",
-    "update": "update"
+    "update": "update",
+    "captive_portal": "captive portal"
   },
   "main": {
     "internal_button": "int. storage",

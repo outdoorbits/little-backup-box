@@ -40,18 +40,20 @@ class clean(object):
 			'tasks':			self.tasks,
 			'log':				self.log,
 			'idlelock':			self.idlelock,
-			'cmdlock':			self.cmdlock
+			'cmdlock':			self.cmdlock,
+			'portal_page':		self.portal_page
 		}
 
-		self.__const_DISPLAY_CONTENT_PATH		= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
-		self.__const_DISPLAY_CONTENT_OLD_FILE	= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
-		self.__const_DISPLAY_IMAGE_KEEP_PATH	= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
-		self.__conf_DIPLAY_IMAGES_KEEP			= self.__setup.get_val('conf_DIPLAY_IMAGES_KEEP')
-		self.__const_TASKS_PATH					= self.__setup.get_val('const_TASKS_PATH')
-		self.__const_IP_SENT_MARKERFILE			= self.__setup.get_val('const_IP_SENT_MARKERFILE')
-		self.__const_LOGFILE					= self.__setup.get_val('const_LOGFILE')
-		self.__const_IDLETIME_LOCKFILE			= self.__setup.get_val('const_IDLETIME_LOCKFILE')
-		self.__const_CMD_LOGFILE				= self.__setup.get_val('const_CMD_LOGFILE')
+		self.__const_DISPLAY_CONTENT_PATH			= self.__setup.get_val('const_DISPLAY_CONTENT_PATH')
+		self.__const_DISPLAY_CONTENT_OLD_FILE		= self.__setup.get_val('const_DISPLAY_CONTENT_OLD_FILE')
+		self.__const_DISPLAY_IMAGE_KEEP_PATH		= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
+		self.__conf_DIPLAY_IMAGES_KEEP				= self.__setup.get_val('conf_DIPLAY_IMAGES_KEEP')
+		self.__const_TASKS_PATH						= self.__setup.get_val('const_TASKS_PATH')
+		self.__const_IP_SENT_MARKERFILE				= self.__setup.get_val('const_IP_SENT_MARKERFILE')
+		self.__const_LOGFILE						= self.__setup.get_val('const_LOGFILE')
+		self.__const_IDLETIME_LOCKFILE				= self.__setup.get_val('const_IDLETIME_LOCKFILE')
+		self.__const_CMD_LOGFILE					= self.__setup.get_val('const_CMD_LOGFILE')
+		self.__const_NETWORK_PORTAL_PAGE_LINK_FILE	= self.__setup.get_val('const_NETWORK_PORTAL_PAGE_LINK_FILE')
 
 		self.jobs	= []
 		self.skips	= []
@@ -126,6 +128,15 @@ class clean(object):
 			shutil.chown(self.__const_CMD_LOGFILE, user='www-data', group='www-data')
 		except:
 			pass
+
+	def portal_page(self):
+		try:
+			with open(self.__const_NETWORK_PORTAL_PAGE_LINK_FILE,'w') as f:
+				f.write('')
+			shutil.chown(self.__const_NETWORK_PORTAL_PAGE_LINK_FILE, user='www-data', group='www-data')
+		except:
+			pass
+
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(

@@ -13,7 +13,8 @@
     "tools": "Herramientas",
     "filebrowser": "Archivos",
     "view": "View",
-    "update": "actualización"
+    "update": "actualización",
+    "captive_portal": "portal cautivo"
   },
   "main": {
     "internal_button": "Almacenamiento int.",

@@ -36,11 +36,21 @@
 		$PROTOCOL	= "http://";
 	}
 
+	$captive_portal = '';
+
+	$captive_portal_file	= $constants['const_NETWORK_PORTAL_PAGE_LINK_FILE'];
+
+	if (is_file($captive_portal_file) && is_readable($captive_portal_file)) {
+		$captive_portal	= fgets(fopen($captive_portal_file, 'r'));
+		$captive_portal	= $captive_portal !== false ? rtrim($captive_portal, "\r\n") : '';
+	}
+
 	$framed_pages	= array(
-		'comitup'		=> '/comitup/',
-		'sysinfo'		=> '/sysinfo.php',
-		'files'			=> '/files',
-		'rclone_gui'	=> '/rclone/'
+		'comitup'			=> '/comitup/',
+		'captive_portal'	=> $captive_portal,
+		'sysinfo'			=> '/sysinfo.php',
+		'files'				=> '/files',
+		'rclone_gui'		=> '/rclone/'
 	);
 
 	$frame_index	= '';

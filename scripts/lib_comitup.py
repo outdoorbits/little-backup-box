@@ -261,6 +261,12 @@ class comitup(object):
 		# display new status
 		status_translated	= None
 		if status in ['HOTSPOT', 'CONNECTING', 'CONNECTED']:
+			if status == 'CONNECTED':
+				try:
+					subprocess.run(f"/usr/bin/sh -c '{self.python} {self.WORKING_DIR}/portal_page_detector.py &'", shell=True)
+				except:
+					print('Error: Portal page detector not started.', file=sys.stderr)
+
 			status_translated	= self.__lan.l(f'box_comitup_status_{status}')
 			status_translated	= status_translated if status_translated!=f'box_comitup_status_{status}' else status
 		elif status == 'RESET':
