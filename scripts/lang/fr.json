@@ -681,8 +681,6 @@
       "connect_source_1": "Prêt",
       "connect_target_1": "Prêt",
       "connect_source_any_1": "Prêt",
-      "break1": "Sauvegarde",
-      "break2": "abandonnée",
       "mode": {
         "anyusb": "tout USB",
         "camera": "Caméra",
@@ -731,7 +729,11 @@
         "ok": "FTP o.k."
       },
       "not_configured": "non configuré",
-      "delay_rate_limit": "Limite de débit"
+      "delay_rate_limit": "Limite de débit",
+      "break_done_1": "Sauvegarde",
+      "break_done_2": "abandonnée",
+      "break_start_1": "Annulation",
+      "break_start_2": "sauvegarde ..."
     },
     "cronip": {
       "offline": "hors ligne",

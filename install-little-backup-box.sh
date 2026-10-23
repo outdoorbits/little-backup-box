@@ -207,8 +207,8 @@ sudo DEBIAN_FRONTEND=noninteractive \
 			python3-pip \
 			python3-pil \
 			python3-configobj \
-			python3-gpiozero \
 			python3-rpi-lgpio \
+			python3-libgpiod \
 			python3-qrcode \
 			python3-psutil \
 			python3-dateutil \

@@ -107,8 +107,6 @@
       "connect_source_1": "Ready",
       "connect_target_1": "Ready",
       "connect_source_any_1": "Ready",
-      "break1": "Backup",
-      "break2": "aborted",
       "mode": {
         "anyusb": "any USB",
         "camera": "Camera",
@@ -157,7 +155,11 @@
         "ok": "FTP o.k."
       },
       "not_configured": "not configured",
-      "delay_rate_limit": "Rate limit"
+      "delay_rate_limit": "Rate limit",
+      "break_done_1": "Backup",
+      "break_done_2": "aborted",
+      "break_start_1": "Backup",
+      "break_start_2": "is being aborted ..."
     },
     "poweroff": {
       "poweroff": "Power off",
