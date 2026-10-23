@@ -49,7 +49,6 @@
 # temp:		show previous screen again after this
 # hidden:	markertext to write into const_DISPLAY_CONTENT_OLD_FILE
 # kill:		terminate display daemon
-import traceback
 
 import os
 import pathlib
@@ -177,9 +176,8 @@ class DISPLAY(object):
 				print('Error: No valid connection type for display',file=sys.stderr)
 				if self.__conf_DISP_DRIVER != 'none':
 					raise Exception('Error: No valid connection type for display')
-		except Exception:
+		except:
 			self.hardware_ready	= False
-			traceback.print_exc()
 
 		try:
 			if self.__conf_DISP_DRIVER == 'none' or serial is None:
