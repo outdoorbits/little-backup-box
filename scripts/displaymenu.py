@@ -21,7 +21,6 @@
 # It can be used by hardware-buttons. Please read the Wiki at https://github.com/outdoorbits/little-backup-box/wiki/02a.-Displaymenu.
 
 import configparser
-from gpiozero import Button
 import sys
 import time
 import os
@@ -29,6 +28,7 @@ import subprocess
 
 import lib_cron_ip
 import lib_display
+from lib_gpio import Button
 import lib_language
 import lib_network
 import lib_setup
@@ -286,16 +286,16 @@ class menu(object):
 		]
 
 		# define menu variables an (re-)set them
-		self.reset(ShowMenu=False)
+		self.LAST_INPUT_TIME	= time.time() - self.const_MENU_TIMEOUT_SEC
 
 		self.GPIO_init()
-
-		# debug commands
-		self.debug()
 
 		# iternal loop
 		while menu_controller.proceed:
 			time.sleep(1)
+
+		for button in self.buttons.values():
+			button.close()
 
 	def GPIO_init(self):
 		if self.conf_MENU_BUTTON_COMBINATION:
@@ -324,58 +324,52 @@ class menu(object):
 									GPIO_PIN, ButtonFunction	= ButtonDef.split('=')
 									GPIO_PIN	= int(GPIO_PIN)
 
-									self.GPIO_config_button(GPIO_PIN,ButtonFunction)
-
+									self.GPIO_config_button(GPIO_PIN, ButtonFunction)
 
 	def GPIO_config_button(self,GPIO_PIN,ButtonFunction):
 		# rotate buttons
 		if self.conf_MENU_BUTTON_ROTATE == 2:
-			if ButtonFunction == 'up':
-				ButtonFunction	= 'down'
-			elif ButtonFunction == 'down':
-				ButtonFunction	= 'up'
-			elif ButtonFunction == 'left':
-				ButtonFunction	= 'right'
-			elif ButtonFunction == 'right':
-				ButtonFunction	= 'left'
+			if ButtonFunction	== 'up':
+				callback = self.move_up
+			elif ButtonFunction	== 'down':
+				callback = self.move_down
+			elif ButtonFunction	== 'left':
+				callback = self.move_left
+			elif ButtonFunction	== 'right':
+				callback = self.move_right
+			else:
+				return
+
+		# Assign callback.
+		if ButtonFunction	== 'up':
+			callback = self.move_up
+		elif ButtonFunction	== 'down':
+			callback = self.move_down
+		elif ButtonFunction	== 'left':
+			callback = self.move_left
+		elif ButtonFunction	== 'right':
+			callback = self.move_right
+		else:
+			return
 
 		# define button
 		try:
-			self.buttons[GPIO_PIN]				= Button(pin=GPIO_PIN, pull_up=self.GPIO_MENU_BUTTON_RESISTOR_PULL_UP, bounce_time=self.conf_MENU_BUTTON_BOUNCETIME / 1000)
+			self.buttons[GPIO_PIN] = Button(
+				pin				= GPIO_PIN,
+				callback		= callback,
+				pull_up			= self.GPIO_MENU_BUTTON_RESISTOR_PULL_UP,
+				edge_rising		= self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING,
+				bounce_time		= self.conf_MENU_BUTTON_BOUNCETIME / 1000
+			)
 		except:
 			return()
-
-		# add events to buttons
-		if ButtonFunction == 'up':
-			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
-				self.buttons[GPIO_PIN].when_pressed	= self.move_up
-			else:
-				self.buttons[GPIO_PIN].when_released	= self.move_up
-
-		if ButtonFunction == 'down':
-			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
-				self.buttons[GPIO_PIN].when_pressed		= self.move_down
-			else:
-				self.buttons[GPIO_PIN].when_released	= self.move_down
-
-		if ButtonFunction == 'left':
-			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
-				self.buttons[GPIO_PIN].when_pressed	= self.move_left
-			else:
-				self.buttons[GPIO_PIN].when_released	= self.move_left
-
-		if ButtonFunction == 'right':
-			if self.GPIO_MENU_BUTTON_EDGE_DETECTION_RISING:
-				self.buttons[GPIO_PIN].when_pressed	= self.move_right
-			else:
-				self.buttons[GPIO_PIN].when_released	= self.move_right
 
 	def reset(self, ShowMenu=False):
 		self.MENU_LEVEL		= 0 # integer
 		self.MENU			= []
 		self.MENU_POS		= []
 		self.MENU_SHIFT		= []
-		self.HEAD_LINES	= 0
+		self.HEAD_LINES		= 0
 
 		self.LAST_INPUT_TIME	= time.time()
 
@@ -388,10 +382,15 @@ class menu(object):
 			self.display()
 
 	def check_timeout(self):
-		if abs(time.time() - self.LAST_INPUT_TIME) >= self.const_MENU_TIMEOUT_SEC:
-			self.reset()
-		else:
-			self.LAST_INPUT_TIME	= time.time()
+		elapsed = time.time() - self.LAST_INPUT_TIME
+
+		if elapsed >= self.const_MENU_TIMEOUT_SEC:
+			self.reset(ShowMenu=True)
+			self.LAST_INPUT_TIME = time.time()
+			return True
+
+		self.LAST_INPUT_TIME = time.time()
+		return False
 
 	def create_confirmed_shell_action(self, title, command):
 		return([
@@ -434,8 +433,6 @@ class menu(object):
 		return([], self.conf_DISP_FRAME_TIME)
 
 	def display(self):
-		self.check_timeout()
-
 		self.set_shift()
 
 		FrameTime			= self.const_MENU_FRAME_TIME
@@ -511,9 +508,13 @@ class menu(object):
 			n += 1
 
 		if LINES:
-			self.__display.message([f'set:clear,time={FrameTime}'] + LINES)
+			self.__display.message([f'set:clear,time={FrameTime}'] + LINES, Prefix='+')
 
 	def move_down(self):
+
+		if self.check_timeout():
+			return
+
 		if len(self.MENU[self.MENU_LEVEL]) > (self.MENU_POS[self.MENU_LEVEL] + 1):
 			self.MENU_POS[self.MENU_LEVEL] += 1
 		else:
@@ -522,13 +523,22 @@ class menu(object):
 		self.display()
 
 	def move_up(self):
+
+		if self.check_timeout():
+			return
+
 		if self.MENU_POS[self.MENU_LEVEL] > 0:
 			self.MENU_POS[self.MENU_LEVEL] += -1
 		elif (len(self.MENU[self.MENU_LEVEL]) > 0):
 			self.MENU_POS[self.MENU_LEVEL] = len(self.MENU[self.MENU_LEVEL]) - 1
+
 		self.display()
 
 	def move_right(self):
+
+		if self.check_timeout():
+			return
+
 		menu_new	= self.MENU[self.MENU_LEVEL][self.MENU_POS[self.MENU_LEVEL]]['action']
 		self.MENU_LEVEL += 1
 
@@ -545,17 +555,14 @@ class menu(object):
 		self.display()
 
 	def move_left(self):
+
+		if self.check_timeout():
+			return
+
 		if self.MENU_LEVEL > 0:
 			self.MENU_LEVEL += -1
+
 		self.display()
-
-##debug
-	def debug(self):
-		return()
-
-		self.move_right()#debug
-		self.move_right()#debug
-		self.move_up()#debug
 
 if __name__ == "__main__":
 	# setup=lib_setup.setup()

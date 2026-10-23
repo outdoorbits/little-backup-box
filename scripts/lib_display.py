@@ -68,7 +68,7 @@ class display(object):
 			except:
 				print('Error: Display daemon not started', file=sys.stderr)
 
-	def message(self, RawLines, logging=True): # Lines = ['abc','def',...]
+	def message(self, RawLines, logging=True, Prefix='_'): # Lines = ['abc','def',...]
 		self.__start_display()
 
 		# cut RawLines (if a RawLine contains newline) and assemble Lines
@@ -79,10 +79,17 @@ class display(object):
 				Lines.append(SubLine)
 
 		if Lines:
-			# if display is disabled, write message into const_DISPLAY_CONTENT_OLD_FILE to prevent repeating IP message
-			DisplayFilePath	= os.path.join(self.const_DISPLAY_CONTENT_PATH,"{:014d}.txt".format(int(lib_system.get_uptime_sec()*100))) if self.conf_DISP == 'display' else self.const_DISPLAY_CONTENT_OLD_FILE
+			# If the display is disabled, store the message as the last displayed content
+			# instead of adding it to the display queue.
+			DisplayFilePath	= os.path.join(
+				self.const_DISPLAY_CONTENT_PATH,"{Prefix}{Uptime:014d}.txt".format(
+					Prefix	= Prefix,
+					Uptime	= int(lib_system.get_uptime_sec()*100)
+				)
+			) if self.conf_DISP == 'display' else self.const_DISPLAY_CONTENT_OLD_FILE
 
-			# write DisplayFile in any case to prevent repeting IP message
+			# Write the message even if the display is disabled, so it is recorded
+			# as the last displayed content.
 			for i in range (4):
 				try:
 					with open(DisplayFilePath,'w') as DisplayFile:

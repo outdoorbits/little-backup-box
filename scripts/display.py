@@ -51,7 +51,6 @@
 # kill:		terminate display daemon
 
 import os
-import RPi.GPIO as GPIO
 import pathlib
 import shutil
 import signal
@@ -90,12 +89,9 @@ class DISPLAY(object):
 
 		self.loop_continue	= True
 
-		# cleanup pins
-		GPIO.cleanup()
-
 		# objects
-		self.__setup							= lib_setup.setup()
-		self.__display_content_files			= display_content_files(self.__setup)
+		self.__setup								= lib_setup.setup()
+		self.__display_content_files				= display_content_files(self.__setup)
 
 		# setup
 		self.__conf_DISP_CONNECTION					= self.__setup.get_val('conf_DISP_CONNECTION')
@@ -131,6 +127,7 @@ class DISPLAY(object):
 		self.__const_DISPLAY_IMAGE_EXPORT_FILE		= self.__setup.get_val('const_DISPLAY_IMAGE_EXPORT_FILE')
 		self.__const_DISPLAY_IMAGE_KEEP_PATH		= self.__setup.get_val('const_DISPLAY_IMAGE_KEEP_PATH')
 		self.__const_TASKS_PATH						= self.__setup.get_val('const_TASKS_PATH')
+		self.__const_MENU_TIMEOUT_SEC				= self.__setup.get_val('const_MENU_TIMEOUT_SEC')
 
 		#define colors
 		color = {}
@@ -181,7 +178,6 @@ class DISPLAY(object):
 					raise Exception('Error: No valid connection type for display')
 		except:
 			self.hardware_ready	= False
-			print(f'Display connection to {self.__conf_DISP_CONNECTION} could not be enabled.', file=sys.stderr)
 
 		try:
 			if self.__conf_DISP_DRIVER == 'none' or serial is None:
@@ -565,6 +561,8 @@ class DISPLAY(object):
 	def main(self):
 		display_time	= time.time()
 		Lines 			= []
+		old_Prefix		= ''
+		MenuHoldTime	= 0
 
 		# start endless loop to display content
 		while(self.loop_continue):
@@ -573,7 +571,7 @@ class DISPLAY(object):
 			hidden_info				= ''
 
 			# re-check for new files earlier than conf_DISP_FRAME_TIME, if no message was found
-			FrameTime = self.__conf_DISP_FRAME_TIME / 4
+			FrameTime = 0.1
 
 			ContentFile	= self.__display_content_files.get_next_file_name()
 
@@ -583,11 +581,10 @@ class DISPLAY(object):
 					continue
 
 				# file could be in writing process, wait for minimal file age
-				if time.time() - os.stat(ContentFile).st_mtime < 0.2:
-					time.sleep(0.2)
+				if time.time() - os.stat(ContentFile).st_mtime < 0.1:
+					time.sleep(0.1)
 
 				Lines = []
-				FrameTime = self.__conf_DISP_FRAME_TIME
 
 				# read content file
 				try:
@@ -595,6 +592,23 @@ class DISPLAY(object):
 				except:
 					continue
 
+				# delay, when menu presentation ends
+				FileName	= os.path.basename(ContentFile)
+
+				FrameTime	= 0.1 if FileName[0] == '+' else self.__conf_DISP_FRAME_TIME
+
+				if old_Prefix == '+' and FileName[0] != '+': # menue ends
+					if MenuHoldTime == 0:
+						MenuHoldTime	= time.time() + self.__const_MENU_TIMEOUT_SEC
+
+					if MenuHoldTime - time.time() > 0:
+						time.sleep(0.1)
+						continue
+
+				old_Prefix		= FileName[0]
+				MenuHoldTime	= 0
+
+				# prepare lines
 				for Line in CF:
 
 					Line = Line.strip()
@@ -705,7 +719,6 @@ class DISPLAY(object):
 							oCF.write(f"\nset:hidden={hidden_info}")
 
 				self.show(Lines=Lines, statusbar=self.get_statusbar(), new_content=True)
-				display_time	= time.time()
 			else:
 				# statusbar
 				if (
@@ -738,5 +751,11 @@ if __name__ == "__main__":
 	display	= DISPLAY()
 	display.main()
 
-	sys.exit()
+	try:
+		display.main()
+	finally:
+		display.menu_controller.terminate()
+
+		if display.hardware_ready:
+			display.device.cleanup()
 

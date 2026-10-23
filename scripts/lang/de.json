@@ -681,8 +681,6 @@
       "connect_source_1": "Bereit",
       "connect_target_1": "Bereit",
       "connect_source_any_1": "Bereit",
-      "break1": "Backup",
-      "break2": "abgebrochen",
       "mode": {
         "anyusb": "alle USB",
         "camera": "Kamera",
@@ -731,7 +729,11 @@
         "ok": "FTP o.k."
       },
       "not_configured": "nicht konfiguriert",
-      "delay_rate_limit": "Posting-Sperre"
+      "delay_rate_limit": "Posting-Sperre",
+      "break_done_1": "Backup",
+      "break_done_2": "abgebrochen",
+      "break_start_1": "Backup",
+      "break_start_2": "wird abgebrochen ..."
     },
     "cronip": {
       "offline": "offline",
