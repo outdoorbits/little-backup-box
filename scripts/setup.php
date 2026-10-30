@@ -84,7 +84,7 @@
 
 		// screen config
 		if ($_POST['conf_DISP'] != $_POST['conf_DISP_OLD']) {
-			exec("nohup sudo python3 $WORKING_DIR/create_screen_config.py --activate ${_POST['conf_DISP']} 2>&1 &");
+			exec("nohup sudo python3 $WORKING_DIR/create_screen_config.py --activate " . escapeshellarg($_POST['conf_DISP']) . " 2>&1 &");
 			$SetupMessages .= '<div class="card" style="margin-top: 2em;">' . L::config_screen_usage_updated . '</div>';
 		}
 
@@ -93,7 +93,7 @@
 			(isset($_POST['conf_VIRTUAL_KEYBOARD_ENABLED']) != isset($_POST['conf_VIRTUAL_KEYBOARD_ENABLED_OLD'])) or
 			($_POST['conf_LANGUAGE'] != $_POST['conf_LANGUAGE_OLD'])
 		) {
-			exec("sudo python3 " . $constants["const_WEB_ROOT_LBB"] . "/firefox-keyboard.py " . (isset($_POST['conf_VIRTUAL_KEYBOARD_ENABLED']) ? "enable --layout " . $config['conf_LANGUAGE'] : "disable"));
+			exec("sudo python3 " . $constants["const_WEB_ROOT_LBB"] . "/firefox-keyboard.py " . (isset($_POST['conf_VIRTUAL_KEYBOARD_ENABLED']) ? "enable --layout " . escapeshellarg($config['conf_LANGUAGE']) : "disable"));
 			$SetupMessages	.= popup(L::config_alert_keyboard_effect_after_reboot, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 		}
 
@@ -126,12 +126,12 @@
 
 	# set timezone
 	if ($TIME_ZONE_old !== $config["conf_TIME_ZONE"]) {
-		shell_exec("sudo raspi-config nonint do_change_timezone ".$config["conf_TIME_ZONE"]);
+		shell_exec("sudo raspi-config nonint do_change_timezone ".escapeshellarg($config["conf_TIME_ZONE"]));
 	}
 
 	# write wifi country-code from config.cfg
 	if (($WIFI_COUNTRY !== $config["conf_WIFI_COUNTRY"]) and ($config["conf_WIFI_COUNTRY"] !== "")) {
-		shell_exec("sudo raspi-config nonint do_wifi_country ".$config["conf_WIFI_COUNTRY"]);
+		shell_exec("sudo raspi-config nonint do_wifi_country ".escapeshellarg($config["conf_WIFI_COUNTRY"]));
 		$WIFI_COUNTRY	= trim(shell_exec("raspi-config nonint get_wifi_country"));
 	}
 
@@ -302,7 +302,7 @@
 					$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_remove, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 				} elseif (! empty($$Password)) {
 					if (check_new_password (L::config_alert_password_global, $$Password, $PwdCompare, $min_length)) {
-						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $$Password . "'");
+						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py " . escapeshellarg($$Password));
 
 						$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 					}
@@ -313,7 +313,7 @@
 				if ($conf_WIFI_PASSWORD_TYPE	== 'static') {
 					if (empty($$Password) or check_new_password ($title, $$Password, $PwdCompare, $min_length, $max_length, True)) {
 						/*set password*/
-						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $$Password . "'");
+						exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config " . escapeshellarg($$Password));
 
 						if ($$Password !== base64_decode($WIFI_Password_old)) {
 							$SetupMessages	.= popup(L::config_alert_password_wifi_changed . ":\n'" . $$Password . "'", POPUP_ALLOWED: true, ECHO_OUTPUT: false);
@@ -589,7 +589,7 @@ CONFIGDATA;
 						# set new global password
 						$global_password	= base64_decode($config["conf_PASSWORD"]);
 						if (isset ($config["conf_PASSWORD"]) and check_new_password(L::config_alert_password_global, $global_password, $global_password)) {
-							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py '" . $global_password . "'");
+							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py " . escapeshellarg($global_password));
 							$SetupMessages	.= popup(L::config_alert_password_change_after_reboot_set, POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 						} else {
 							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_password.py");
@@ -602,7 +602,7 @@ CONFIGDATA;
 						}
 
 						if ($config['conf_WIFI_PASSWORD_TYPE']	== 'static' and (empty($config['conf_WIFI_PASSWORD']) or check_new_password (L::config_alert_password_wifi, base64_decode($config['conf_WIFI_PASSWORD']), $config['conf_WIFI_PASSWORD'], 8, 63, True))) {
-							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config '" . $config['conf_WIFI_PASSWORD'] . "'");
+							exec("sudo python3 " . $_SERVER['CONTEXT_DOCUMENT_ROOT'] . "/lib_comitup.py --config " . escapeshellarg($config['conf_WIFI_PASSWORD']));
 							if (! empty($config['conf_WIFI_PASSWORD'])) {
 								$SetupMessages	.= popup(L::config_alert_password_wifi_changed . ":\n\"" . $config['conf_WIFI_PASSWORD'] . '"', POPUP_ALLOWED: true, ECHO_OUTPUT: false);
 							}
