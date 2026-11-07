@@ -673,7 +673,7 @@
 			foreach($EDIT_ARRAY as $ID_IMAGE=>$Values) {
 
 				# get database-values before update
-				$statement	= $db->prepare("SELECT Directory, File_Name, Rating, LbbRating, Comment, social_publish FROM EXIF_DATA where ID=" . $ID_IMAGE . ";");
+				$statement	= $db->prepare("SELECT Directory, File_Name, Rating, LbbRating, Comment, social_publish FROM EXIF_DATA where ID=" . (int)$ID_IMAGE . ";");
 				$IMAGES		= $statement->execute();
 				$IMAGE		= $IMAGES->fetchArray(SQLITE3_ASSOC);
 
@@ -713,11 +713,11 @@
 
 				# write comment into the file's metadata
 				if (isset($UPDATE['Comment']) and isset($UPDATE['Rating'])) {
-					shell_exec("sudo python3 {$WORKING_DIR}/lib_metadata.py '{$STORAGE_PATH}/{$IMAGE['Directory']}/{$IMAGE['File_Name']}' --comment '{$UPDATE['Comment']}' --rating '{$UPDATE['Rating']}'");
+					shell_exec("sudo python3 " . escapeshellarg("{$WORKING_DIR}/lib_metadata.py") . " " . escapeshellarg("{$STORAGE_PATH}/{$IMAGE['Directory']}/{$IMAGE['File_Name']}") . " --comment " . escapeshellarg($UPDATE['Comment']) . " --rating " . escapeshellarg((string)$UPDATE['Rating']));
 				} elseif (isset($UPDATE['Rating'])) {
-					shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --rating '" . $UPDATE['Rating'] . "'");
+					shell_exec("sudo python3 lib_metadata.py " . escapeshellarg($STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name']) . " --rating " . escapeshellarg((string)$UPDATE['Rating']));
 				} elseif (isset($UPDATE['Comment'])) {
-					shell_exec("sudo python3 lib_metadata.py '" . $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'] . "' --comment '" . $UPDATE['Comment'] . "'");
+					shell_exec("sudo python3 lib_metadata.py " . escapeshellarg($STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name']) . " --comment " . escapeshellarg($UPDATE['Comment']));
 				}
 			}
 
@@ -734,9 +734,9 @@
 						$DELETE_FILE	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . $IMAGE['File_Name'];
 						$DELETE_TIMS	= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/tims/' . $IMAGE['File_Name'] . '.JPG';
 						$DELETE_XMP		= $STORAGE_PATH . '/' . $IMAGE['Directory'] . '/' . pathinfo($IMAGE['File_Name'], PATHINFO_FILENAME) . '.xmp';
-						shell_exec ("sudo rm '" . $DELETE_FILE . "'");
-						shell_exec ("sudo rm '" . $DELETE_TIMS . "'");
-						shell_exec ("sudo rm '" . $DELETE_XMP . "'");
+						shell_exec ("sudo rm -- " . escapeshellarg($DELETE_FILE));
+						shell_exec ("sudo rm -- " . escapeshellarg($DELETE_TIMS));
+						shell_exec ("sudo rm -- " . escapeshellarg($DELETE_XMP));
 						$db->exec("delete from EXIF_DATA where ID=" . $key . " and LbbRating=-1;");
 					}
 
