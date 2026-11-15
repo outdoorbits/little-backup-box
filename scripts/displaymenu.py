@@ -326,19 +326,17 @@ class menu(object):
 
 									self.GPIO_config_button(GPIO_PIN, ButtonFunction)
 
-	def GPIO_config_button(self,GPIO_PIN,ButtonFunction):
-		# rotate buttons
+	def GPIO_config_button(self, GPIO_PIN, ButtonFunction):
+		# Rotate buttons
 		if self.conf_MENU_BUTTON_ROTATE == 2:
-			if ButtonFunction	== 'up':
-				callback = self.move_up
-			elif ButtonFunction	== 'down':
-				callback = self.move_down
-			elif ButtonFunction	== 'left':
-				callback = self.move_left
-			elif ButtonFunction	== 'right':
-				callback = self.move_right
-			else:
-				return
+			if ButtonFunction == 'up':
+				ButtonFunction = 'down'
+			elif ButtonFunction == 'down':
+				ButtonFunction = 'up'
+			elif ButtonFunction == 'left':
+				ButtonFunction = 'right'
+			elif ButtonFunction == 'right':
+				ButtonFunction = 'left'
 
 		# Assign callback.
 		if ButtonFunction	== 'up':
