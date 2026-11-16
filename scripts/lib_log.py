@@ -74,7 +74,7 @@ class log(object):
 		if LogCommand:
 			log	= f"{log}>{Command}\n"
 
-			CommandResult	= subprocess.check_output(f"eval {Command} 2>&1", shell=True).decode()
+			CommandResult	= subprocess.check_output(Command, shell=True, stderr=subprocess.STDOUT).decode()
 
 		log	= f"{log}{CommandResult}"
 

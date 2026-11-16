@@ -255,7 +255,7 @@
 		$DeviceIdentifierPresetThisArg = !empty($DeviceIdentifierPresetThis) ? '--DeviceIdentifierPresetThis ' . escapeshellarg($DeviceIdentifierPresetThis) : '';
 
 		$command = "sudo python3 ${WORKING_DIR}/lib_storage.py --Action mount --StorageName $Storage --Role $Role $DeviceIdentifierPresetThisArg";
-		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' \"${command}\" '1'");
+		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' " . escapeshellarg($command) . " '1'");
 
 		echo "<script>";
 			echo "window.location = window.location.href;";
@@ -269,7 +269,7 @@
 		$Storage					= escapeshellarg($Storage);
 
 		$command = "sudo python3 ${WORKING_DIR}/lib_storage.py --Action umount --StorageName $Storage --Role $Role";
-		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' '${command}' '1'");
+		shell_exec ("python3 $WORKING_DIR/lib_log.py 'execute' '' " . escapeshellarg($command) . " '1'");
 
 		echo "<script>";
 			echo "window.location = window.location.href;";
@@ -284,10 +284,10 @@
 		if (($PARAM1 !== "-") and ($PARAM2 !== "-")) {
 			?>
 			<script>
-					document.location.href="/cmd.php?CMD=fsck&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
+					document.location.href="/cmd.php?CMD=fsck&PARAM1=<?php echo urlencode($PARAM1); ?>&PARAM2=<?php echo urlencode($PARAM2); ?>";
 			</script>
 			<?php
-			shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' \"fsck ${PARAM1} ${PARAM2}\" \"1\"");
+			shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' " . escapeshellarg("fsck ${PARAM1} ${PARAM2}") . " \"1\"");
 		}
 	}
 
@@ -299,10 +299,10 @@
 		if (($PARAM1 !== "-") and ($PARAM2 !== "-")) {
 			?>
 			<script>
-					document.location.href="/cmd.php?CMD=format&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
+					document.location.href="/cmd.php?CMD=format&PARAM1=<?php echo urlencode($PARAM1); ?>&PARAM2=<?php echo urlencode($PARAM2); ?>";
 			</script>
 			<?php
-			shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' \"format ${PARAM1} ${PARAM2}\" \"1\"");
+			shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' " . escapeshellarg("format ${PARAM1} ${PARAM2}") . " \"1\"");
 		}
 	}
 
@@ -314,10 +314,10 @@
 			if (($PARAM1 !== "-") and ($PARAM2 !== "-")) {
 				?>
 				<script>
-						document.location.href="/cmd.php?CMD=f3&PARAM1=<?php echo $PARAM1; ?>&PARAM2=<?php echo $PARAM2; ?>";
+						document.location.href="/cmd.php?CMD=f3&PARAM1=<?php echo urlencode($PARAM1); ?>&PARAM2=<?php echo urlencode($PARAM2); ?>";
 				</script>
 				<?php
-				shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' \"format ${PARAM1} ${PARAM2}\" \"1\"");
+				shell_exec ("python3 $WORKING_DIR/lib_log.py 'message' " . escapeshellarg("format ${PARAM1} ${PARAM2}") . " \"1\"");
 			}
 	}
 
