@@ -501,48 +501,51 @@
 			$Function	= $FunctionValues[0];
 			$Target		= $FunctionValues[1];
 
-			$sync_database	= 'False';
-			if ($Function == 'thumbnails') {
-				$generate_thumbnails	= 'True';
-				$update_exif			= 'False';
+			if (in_array ($Function, ['thumbnails', 'database', 'exif', 'rename']) {
 
-				$ButtonLabel_Function	= L::main_function_thumbnails;
-			}
-			elseif ($Function == 'database') {
-				$sync_database			= 'True';
-				$generate_thumbnails	= 'False';
-				$update_exif			= 'False';
+				$sync_database	= 'False';
+				if ($Function == 'thumbnails') {
+					$generate_thumbnails	= 'True';
+					$update_exif			= 'False';
 
-				$ButtonLabel_Function	= L::main_function_sync;
-			}
-			elseif ($Function == 'exif') {
-				$rename_files			= 'False';
-				$generate_thumbnails	= 'False';
-				$update_exif			= 'True';
+					$ButtonLabel_Function	= L::main_function_thumbnails;
+				}
+				elseif ($Function == 'database') {
+					$sync_database			= 'True';
+					$generate_thumbnails	= 'False';
+					$update_exif			= 'False';
 
-				$ButtonLabel_Function	= L::main_function_exif;
-			}
-			elseif ($Function == 'rename') {
-				$rename_files			= 'True';
-				$generate_thumbnails	= 'False';
-				$update_exif			= 'False';
+					$ButtonLabel_Function	= L::main_function_sync;
+				}
+				elseif ($Function == 'exif') {
+					$rename_files			= 'False';
+					$generate_thumbnails	= 'False';
+					$update_exif			= 'True';
 
-				$ButtonLabel_Function	= L::main_function_exif;
-			}
+					$ButtonLabel_Function	= L::main_function_exif;
+				}
+				elseif ($Function == 'rename') {
+					$rename_files			= 'True';
+					$generate_thumbnails	= 'False';
+					$update_exif			= 'False';
 
-			if ($Target == 'internal') {
-				$ButtonLabel_Target	= L::main_internal_button;
-			}
-			elseif ($Target == 'nvme') {
-				$ButtonLabel_Target	= L::main_nvme_button;
-			}
-			else {
-				$ButtonLabel_Target	= L::main_usb_button;
-			}
+					$ButtonLabel_Function	= L::main_function_exif;
+				}
 
-			shell_exec("sudo $WORKING_DIR/stop_backup.sh");
-			shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName $Function --TargetName $Target --rename-files $rename_files --force-sync-database $sync_database --generate-thumbnails $generate_thumbnails --update-exif $update_exif --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
-			popup($ButtonLabel_Function . " " . L::main_backup_on . " " . $ButtonLabel_Target . ".",$config["conf_POPUP_MESSAGES"]);
+				if ($Target == 'internal') {
+					$ButtonLabel_Target	= L::main_internal_button;
+				}
+				elseif ($Target == 'nvme') {
+					$ButtonLabel_Target	= L::main_nvme_button;
+				}
+				else {
+					$ButtonLabel_Target	= L::main_usb_button;
+				}
+
+				shell_exec("sudo $WORKING_DIR/stop_backup.sh");
+				shell_exec("sudo python3 $WORKING_DIR/backup.py --SourceName " . escapeshellarg($Function) . " --TargetName $Target --rename-files $rename_files --force-sync-database $sync_database --generate-thumbnails $generate_thumbnails --update-exif $update_exif --device-identifier-preset-source " . escapeshellarg($preset_source) . " --device-identifier-preset-target " . escapeshellarg($preset_target) . " --power-off $power_off_force> /dev/null 2>&1 &");
+				popup($ButtonLabel_Function . " " . L::main_backup_on . " " . $ButtonLabel_Target . ".",$config["conf_POPUP_MESSAGES"]);
+			}
 		}
 
 		// stop backup
