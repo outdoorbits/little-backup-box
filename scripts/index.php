@@ -501,7 +501,7 @@
 			$Function	= $FunctionValues[0];
 			$Target		= $FunctionValues[1];
 
-			if (in_array ($Function, ['thumbnails', 'database', 'exif', 'rename']) {
+			if (in_array ($Function, ['thumbnails', 'database', 'exif', 'rename'])) {
 
 				$sync_database	= 'False';
 				if ($Function == 'thumbnails') {
