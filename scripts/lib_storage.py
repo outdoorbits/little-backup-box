@@ -29,6 +29,7 @@ import re
 from string import digits
 import subprocess
 import sys
+import tempfile
 import time
 
 import lib_common
@@ -378,6 +379,31 @@ class storage(object):
 			self.LbbDeviceID		= conf_RSYNC_SERVER_MODULE
 
 		return(configured)
+
+	def rsync_create_path(self, SubPath=''):
+		# cloud_rsync only: make sure MountPoint/SubPath exists on the rsync server.
+		# rsync daemons older than 3.2.3 (e.g. Synology DSM) don't know --mkpath and drop the connection,
+		# so create the path by syncing an empty directory tree into the module instead.
+		if self.StorageType != 'cloud_rsync' or not self.MountPoint:
+			return(True)
+
+		Address, _, ModuleAndPath	= self.MountPoint.removeprefix('rsync://').partition('/')
+		Module, _, PathInModule		= ModuleAndPath.partition('/')
+		PathInModule				= os.path.join(PathInModule, SubPath).strip('/')
+
+		if not PathInModule:
+			return(True)
+
+		with tempfile.TemporaryDirectory() as TempDir:
+			os.makedirs(os.path.join(TempDir, PathInModule))
+
+			Command	= self.rsyncSSH + ['/usr/bin/rsync', '--recursive', '--no-perms', '--no-owner', '--no-group', f'{TempDir}/', f'rsync://{Address}/{Module}/']
+			Result	= subprocess.run(Command, capture_output=True, text=True)
+
+		if Result.returncode != 0:
+			self.__log.message(f"rsync: could not create '{PathInModule}' in module '{Module}': {Result.stderr.strip()}", 1)
+
+		return(Result.returncode == 0)
 
 	def __mount_internal(self):
 
