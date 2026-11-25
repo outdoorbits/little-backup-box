@@ -395,6 +395,8 @@
     "rsync_module_header": "rsync module",
     "rsync_module_label1": "Module name on the rsync server, e.g. 'little-backup-box' (default:",
     "rsync_module_label2": "). <br> The module name is defined on the server side in rsyncd.conf and is set in [square brackets]. Also note <a href='https://github.com/outdoorbits/little-backup-box/blob/main/readme_rsync.md'> readme_rsync.md </a>.",
+    "rsync_compress_header": "Compression",
+    "rsync_compress_label": "Compress transfers to the rsync server. Photos and videos are already compressed, so this mostly costs CPU time: on slow devices (e.g. Raspberry Pi 3) turning it off can speed up backups considerably.",
     "backup": {
       "generate_thumbnails_header": "Thumbnails",
       "generate_thumbnails_label": "Create thumbnails for View after backup? (Local storages only)",

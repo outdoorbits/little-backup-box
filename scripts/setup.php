@@ -246,6 +246,7 @@
 		$conf_POPUP_MESSAGES						= isset($conf_POPUP_MESSAGES)?'true':'false';
 		$conf_BACKUP_RENAME_FILES					= isset($conf_BACKUP_RENAME_FILES)?'true':'false';
 		$conf_BACKUP_CHECKSUM						= isset($conf_BACKUP_CHECKSUM)?'true':'false';
+		$conf_RSYNC_COMPRESS						= isset($conf_RSYNC_COMPRESS)?'true':'false';
 		$conf_BACKUP_GENERATE_THUMBNAILS			= isset($conf_BACKUP_GENERATE_THUMBNAILS)?'true':'false';
 		$conf_BACKUP_UPDATE_EXIF					= isset($conf_BACKUP_UPDATE_EXIF)?'true':'false';
 		$conf_VIEW_CONVERT_HEIC						= isset($conf_VIEW_CONVERT_HEIC)?'true':'false';
@@ -422,6 +423,7 @@ conf_RSYNC_PORT='$conf_RSYNC_PORT'
 conf_RSYNC_USER='$conf_RSYNC_USER'
 conf_RSYNC_PASSWORD='$conf_RSYNC_PASSWORD'
 conf_RSYNC_SERVER_MODULE='$conf_RSYNC_SERVER_MODULE'
+conf_RSYNC_COMPRESS=$conf_RSYNC_COMPRESS
 conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
 conf_WIFI_PASSWORD_TYPE='$conf_WIFI_PASSWORD_TYPE'
 conf_WIFI_PASSWORD='$conf_WIFI_PASSWORD'
@@ -1584,6 +1586,10 @@ CONFIGDATA;
 				<h3><?php echo L::config_rsync_module_header; ?></h3>
 					<label for="conf_RSYNC_SERVER_MODULE"><?php echo L::config_rsync_module_label1 .  $config_standard['conf_RSYNC_SERVER_MODULE'] . L::config_rsync_module_label2; ?></label><br />
 					<input type="text" id="conf_RSYNC_SERVER_MODULE" name="conf_RSYNC_SERVER_MODULE" size="20" value="<?php echo $config['conf_RSYNC_SERVER_MODULE']; ?>">
+
+				<h3><?php echo L::config_rsync_compress_header; ?></h3>
+					<input type="checkbox" id="conf_RSYNC_COMPRESS" name="conf_RSYNC_COMPRESS"<?php echo $config['conf_RSYNC_COMPRESS']=="1"?" checked":""; ?>>
+					<label for="conf_RSYNC_COMPRESS"><?php echo L::config_rsync_compress_label; ?></label><br />
 			</details>
 		</div>
 

@@ -332,11 +332,13 @@ class backup(object):
 			if self.DoChecksum and not dry_run:
 				syncCommand.append('--checksum')
 
-			# use compression for cloud syncs only
+			# use compression for cloud syncs only, if enabled (photos are already compressed, so it mostly costs CPU)
 			if self.TargetDevice.isLocal and self.SourceDevice.isLocal:
 				syncCommand	+= ['--no-compress', '--whole-file']
-			else:
+			elif self.__setup.get_val('conf_RSYNC_COMPRESS'):
 				syncCommand	+= ['--compress']
+			else:
+				syncCommand	+= ['--no-compress']
 
 			if self.move_files:
 				syncCommand	+= ['--remove-source-files']

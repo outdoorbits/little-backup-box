@@ -323,6 +323,7 @@ class setup(object):
 					'conf_RSYNC_USER':									{'value': '', 'type': 'str'},
 					'conf_RSYNC_PASSWORD':								{'value': '', 'type': 'str'},
 					'conf_RSYNC_SERVER_MODULE':							{'value': 'little-backup-box', 'type': 'str'},
+					'conf_RSYNC_COMPRESS':								{'value': True, 'type': 'bool'},
 					'conf_WIFI_COUNTRY':								{'value': 'GB', 'type': 'str'},
 					'conf_WIFI_PASSWORD_TYPE':							{'value': 'static', 'type': 'str'}, # use password from 'static' or 'dynamic' (for wifi by qr only)
 					'conf_WIFI_PASSWORD':								{'value': '.', 'type': 'str'}, # '.' is recogniced as marker of a new variable
