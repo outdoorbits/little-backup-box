@@ -326,7 +326,11 @@ class backup(object):
 
 			# basic command
 			rsyncSSH	= self.TargetDevice.rsyncSSH if self.TargetDevice.StorageType == 'cloud_rsync' else self.SourceDevice.rsyncSSH
-			syncCommand		= rsyncSSH + ['/usr/bin/rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--mkpath', '--min-size=1', '--size-only']
+			syncCommand		= rsyncSSH + ['/usr/bin/rsync', SourcePath, TargetPath, '-avh', '--info=FLIST0,PROGRESS2', '--stats', '--no-owner', '--no-group', '--no-perms', '--min-size=1', '--size-only']
+
+			# older rsync daemons reject --mkpath: rsync targets get their path from TargetDevice.rsync_create_path() instead
+			if self.TargetDevice.StorageType != 'cloud_rsync':
+				syncCommand	+= ['--mkpath']
 
 			# checksum if configured
 			if self.DoChecksum and not dry_run:
@@ -700,6 +704,9 @@ class backup(object):
 						continue
 
 					self.__display.message([f":{self.__lan.l('box_backup_working')}..."])
+
+					if not self.TargetDevice.rsync_create_path(os.path.join(self.TargetDevice.CloudBaseDir, self.SourceDevice.SubPathAtTarget)):
+						self.__reporter.add_error('Err.: Creating target path failed!')
 
 					FilesToProcess, FilesToProcess_possible_more	= self.calculate_files_to_sync(SubPathAtSource)
 
